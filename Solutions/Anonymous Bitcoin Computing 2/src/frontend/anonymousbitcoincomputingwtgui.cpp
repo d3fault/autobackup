@@ -25,9 +25,7 @@
 #define ABC_ANCHOR_TEXTS_ACCOUNT "Account"
 
 #define ABC_INTERNAL_PATH_HOME "/home" //if home has any "sub" paths, then our hack to handle clean urls logic will break (should use internalPathMatches instead)
-#define ABC_INTERNAL_PATH_ADS "/advertising"
-#define ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE ABC_INTERNAL_PATH_ADS \
-                                    "/buy-ad-space"
+
 
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
 #define ABC_INTERNAL_PATH_ADS_SELL_AD_SPACE ABC_INTERNAL_PATH_ADS \
@@ -36,11 +34,13 @@
     "/create-new-ad-campaign"
 #endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
 
+#if 0
 //hardcoded internal paths, would be dynamic ideally
 #define ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE \
                                         "/d3fault"
 #define ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0 ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT \
                                             "/0"
+#endif
 
 #define ABC_ANCHOR_TEXTS_PATH_HOME "Home"
 #define ABC_ANCHOR_TEXTS_PATH_ADS "Advertising"
@@ -96,7 +96,7 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
       m_404NotFoundWidget(0),
       m_HomeWidget(0),
       m_AdvertisingWidget(0),
-      m_AdvertisingBuyAdSpaceWidget(0),
+      //m_AdvertisingBuyAdSpaceWidget(0),
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
       m_AdvertisingSellAdSpaceWidget(0),
       m_AdvertisingSellAdSpaceCreateNewAdCampaignWidget(0),
@@ -233,8 +233,8 @@ void AnonymousBitcoinComputingWtGUI::showHomeWidget()
     if(!m_HomeWidget)
     {
         m_HomeWidget = new WContainerWidget(m_MainStack);
-        new WText("Mostly empty site for now, you probably want this: ", m_HomeWidget);
-        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0, m_HomeWidget);
+        new WText("Welcome to " ABC_HUMAN_READABLE_NAME_PLX ".", m_HomeWidget);
+        //new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0, m_HomeWidget);
     }
     m_MainStack->setCurrentWidget(m_HomeWidget);
 }
@@ -253,6 +253,7 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingWidget()
     }
     m_MainStack->setCurrentWidget(m_AdvertisingWidget);
 }
+#if 0 //old, hardcoded for just d3fault/0
 void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceWidget()
 {
     if(!m_AdvertisingBuyAdSpaceWidget)
@@ -264,6 +265,7 @@ void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceWidget()
     }
     m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceWidget);
 }
+#endif
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
 void AnonymousBitcoinComputingWtGUI::showAdvertisingSellAdSpaceWidget()
 {
@@ -451,18 +453,25 @@ void AnonymousBitcoinComputingWtGUI::showAllUsersWithAtLeastOneAdCampaignWidget(
     }
     m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget);
 }
-void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget()
+void AnonymousBitcoinComputingWtGUI::showAdvertisingBuyAdSpaceD3faultWidget(const string &username)
 {
+    //TODOreq: they might have typed the url in directly. the username is not KNOWN to have any ad campaigns at all
     if(!m_AdvertisingBuyAdSpaceD3faultWidget)
     {
+        //TODOreq: m_AdvertisingBuyAdSpaceD3faultWidget = new WContainerWidget(username, m_MainStack);
         m_AdvertisingBuyAdSpaceD3faultWidget = new WContainerWidget(m_MainStack);
-        new WText("d3fault's ad space campaigns:", m_AdvertisingBuyAdSpaceD3faultWidget); //TODOreq: spinbox to jump to campaigns is sure way the fuck more efficient than views/etc, but one I allow campaigns to have titles and such then views are a must
+        new WText(username + "'s ad space campaigns: TODO", m_AdvertisingBuyAdSpaceD3faultWidget); //TODOreq: spinbox to jump to campaigns is sure way the fuck more efficient than views/etc, but one I allow campaigns to have titles and such then views are a must
         new WBreak(m_AdvertisingBuyAdSpaceD3faultWidget);
-        new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0, m_AdvertisingBuyAdSpaceD3faultWidget);
+        //new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0, m_AdvertisingBuyAdSpaceD3faultWidget);
     }
+#if 0 //TODOreq
+    else
+    {
+        m_AdvertisingBuyAdSpaceD3faultWidget->setCampaignOwnerWeWantToSeeAdCampaignsFor(username);
+    }
+#endif
     m_MainStack->setCurrentWidget(m_AdvertisingBuyAdSpaceD3faultWidget);
 }
-
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
 void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &campaignOwner, const std::string &campaignIndex)
 {
@@ -1982,13 +1991,13 @@ void AnonymousBitcoinComputingWtGUI::queryCouchbaseViewBegin(const string &viewP
     ldskjfldskjfsdf ;-sdflsdkjf ;-P don't compile biatch'
         #endif
 }
-void AnonymousBitcoinComputingWtGUI::queryCouchbaseViewFinished(const ViewQueryPageContentsType &pageContents, bool internalServerErrorOrJsonError)
+void AnonymousBitcoinComputingWtGUI::queryCouchbaseViewFinished(const ViewQueryPageContentsType &pageContents, int totalPages, bool internalServerErrorOrJsonError)
 {
     resumeRendering();
     switch(m_WhatTheQueryCouchbaseViewWasFor)
     {
     case ALLUSERSWITHATLEASTONEADCAMPAIGNQUERYCOUCHBASEVIEW:
-        m_AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget->showPageOfUsersWithAtLeastOneAdCampaign(pageContents, internalServerErrorOrJsonError);
+        m_AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget->showPageOfUsersWithAtLeastOneAdCampaign(pageContents, totalPages, internalServerErrorOrJsonError);
         break;
     case INITIALINVALIDNULLQUERYCOUCHBASEVIEW:
     default:
@@ -2214,32 +2223,16 @@ void AnonymousBitcoinComputingWtGUI::handleInternalPathChanged(const std::string
 
             //lines below this line (regardless of scope) are 'non-subscribeable' area
 
-            //TODOreq: fetch first page of list of campaigns for the known campaign owner
+            unsubscribeIfSubscribedToAnything();
+            showAdvertisingBuyAdSpaceD3faultWidget(campaignOwnerInternalPathPart);
             return;
         }
-        //TODOreq: fetch first page of list of campaign owners
+        unsubscribeIfSubscribedToAnything();
         showAllUsersWithAtLeastOneAdCampaignWidget();
         return;
     }
 
-    //handle changing from subscribable area to non-subscribable area (aka, unsubscribe)
-    if(m_CurrentlySubscribedTo.first != INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING)
-    {
-        //we need to unsubscribe from whatever we're subscribed to
-
-        //looks like i need some auxillary message queues for communicating with backend... fffff /lazy
-        //also applies to changing sessionId, guh. 'get' and 'store' just don't cut-it/qualify (though i could PROBABLY hack them in xD). I'm mainly hesitant because it is MACRO HELL dealing with that shiz (i was tempted to do it for 'cas' vs. 'no-cas' etc, but ultimately said fuck it and just hacked onto the regular (but in hindsight, it wouldn't have worked [easily] because i only have 1x couchbase get/store callback!). I smell a refactor commit, which scares me because they often are the last times i touch codebases
-
-#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
-        const std::string &keyToUnsubscribeFrom = m_CurrentlySubscribedTo.second;
-#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
-        const std::string &keyToUnsubscribeFrom = adSpaceCampaignKey("d3fault", "0");
-#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
-        getAndSubscribeCouchbaseDocumentByKeySavingCas(keyToUnsubscribeFrom, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeUnsubscribeMode); //TODOreq: to be future proof for use with other subscriptions i'd have to call a method passing in m_CurrentlySubscribedTo in order to get the key to pass in here (easy but lazy)
-
-        //we don't expect a response from the backend, so this is our frontend's flag that we are now unsubscribed
-        m_CurrentlySubscribedTo = std::make_pair(INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING, "");
-    }
+    unsubscribeIfSubscribedToAnything();
 
     if(isHomePath(newInternalPath)) //why do we have this both here and in the constructor? because setInternalPath() does not go to/through the constructor, so showHome() would never be called if they click a link etc that does setInternalPath("/home"). They'd only be able to get there by navigating directly to the site/home without a session (which is a common case but yea~)
     {
@@ -2491,6 +2484,27 @@ void AnonymousBitcoinComputingWtGUI::usernameOrPasswordYouProvidedIsIncorrect()
 {
     m_LoginStatusMessagesPlaceholder->setText("The username or password you provided is incorrect "); //TODOoptional: how do we tell them that it failed the second time? 'highlighting' animation makes sense, as does clearing the message when they start typing again
     m_LoginPasswordLineEdit->setText("");
+}
+void AnonymousBitcoinComputingWtGUI::unsubscribeIfSubscribedToAnything()
+{
+    //handle changing from subscribable area to non-subscribable area (aka, unsubscribe)
+    if(m_CurrentlySubscribedTo.first != INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING)
+    {
+        //we need to unsubscribe from whatever we're subscribed to
+
+        //looks like i need some auxillary message queues for communicating with backend... fffff /lazy
+        //also applies to changing sessionId, guh. 'get' and 'store' just don't cut-it/qualify (though i could PROBABLY hack them in xD). I'm mainly hesitant because it is MACRO HELL dealing with that shiz (i was tempted to do it for 'cas' vs. 'no-cas' etc, but ultimately said fuck it and just hacked onto the regular (but in hindsight, it wouldn't have worked [easily] because i only have 1x couchbase get/store callback!). I smell a refactor commit, which scares me because they often are the last times i touch codebases
+
+#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
+        const std::string &keyToUnsubscribeFrom = m_CurrentlySubscribedTo.second;
+#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
+        const std::string &keyToUnsubscribeFrom = adSpaceCampaignKey("d3fault", "0");
+#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+        getAndSubscribeCouchbaseDocumentByKeySavingCas(keyToUnsubscribeFrom, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeUnsubscribeMode); //TODOreq: to be future proof for use with other subscriptions i'd have to call a method passing in m_CurrentlySubscribedTo in order to get the key to pass in here (easy but lazy)
+
+        //we don't expect a response from the backend, so this is our frontend's flag that we are now unsubscribed
+        m_CurrentlySubscribedTo = std::make_pair(INITIALINVALIDNULLNOTSUBSCRIBEDTOANYTHING, "");
+    }
 }
 void AnonymousBitcoinComputingWtGUI::doLoginTasks()
 {

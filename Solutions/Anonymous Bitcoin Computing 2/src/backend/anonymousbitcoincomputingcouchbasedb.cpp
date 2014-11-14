@@ -45,11 +45,19 @@ if(skip > 0) \
     viewPath += boost::lexical_cast<std::string>(skip); \
 }
 
-#define ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNum, thePageContents, internalServerErrorOrJsonError) \
+#define ABC_CALCULATE_TOTAL_PAGES_FROM_TOTAL_ROWS \
+int totalRows = boost::lexical_cast<int>(pt.get<std::string>("total_rows")); \
+m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty = (totalRows / AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE); /* optimization to calculate this now rather than on every request */ \
+if((totalRows % AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE) != 0) /* account for the very last page not necessarily being full */ \
+{ \
+    ++m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty; \
+}
+
+#define ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNum, thePageContents, totalPages, internalServerErrorOrJsonError) \
 std::list<ViewQueryCouchbaseDocumentByKeyRequest*> *listOfUsersThatWantToBeGivenThePageResults = m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes.at(pageNum); /* we don't try/catch because it's gotta be there at this point */ \
 for(std::list<ViewQueryCouchbaseDocumentByKeyRequest*>::const_iterator it = listOfUsersThatWantToBeGivenThePageResults->begin(); it != listOfUsersThatWantToBeGivenThePageResults->end(); ++it) \
 { \
-    (*it)->respond(thePageContents, internalServerErrorOrJsonError); \
+    (*it)->respond(thePageContents, totalPages, internalServerErrorOrJsonError); \
 } \
 m_AllUsersWithAtLeastOneAdCampaignView_PagesCurrentlyBeingRequested_AndTheUsersThatWantThePageWhenItComes.erase(pageNum); /* see TODOoptimization in change session id about using a find iterator instead */ \
 delete listOfUsersThatWantToBeGivenThePageResults;
@@ -76,6 +84,7 @@ AnonymousBitcoinComputingCouchbaseDB::AnonymousBitcoinComputingCouchbaseDB()
     , m_PendingStoreCount(0)
     , m_PendingGetCount(0)
     , m_IsFinishedWithAllPendingRequests(false)
+    , m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty(1)
     , m_ViewPageCacheTimeoutTimerForAllPagesOfAllViews(NULL)
     , m_BeginStoppingCouchbaseCleanlyEvent(NULL)
     , m_FinalCleanUpAndJoinEvent(NULL)
@@ -855,13 +864,13 @@ void AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallback(int pageNum
     if(error != LCB_SUCCESS)
     {
         cerr << "view query (" << std::string(resp->v.v0.path, resp->v.v0.npath) << ") callback has lcb error: " << lcb_strerror(m_Couchbase, error) << endl;
-        ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNumJustGot, ret, true)
+        ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNumJustGot, ret, 1, true)
         return;
     }
     if(resp->v.v0.status != LCB_HTTP_STATUS_OK)
     {
         cerr << "view query (" << std::string(resp->v.v0.path, resp->v.v0.npath) << ") http response status was not LCB_HTTP_STATUS_OK. was: " << resp->v.v0.status << endl;
-        ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNumJustGot, ret, true)
+        ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNumJustGot, ret, 1, true)
         return;
     }
 
@@ -873,7 +882,7 @@ void AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallback(int pageNum
     if(errorMaybe.is_initialized())
     {
         cerr << "view query (" << std::string(resp->v.v0.path, resp->v.v0.npath) << ") callback has json error: " << errorMaybe.get() << endl;
-        ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNumJustGot, ret, true)
+        ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNumJustGot, ret, 1, true)
         return;
     }
     const ptree &rowsPt = pt.get_child("rows");
@@ -881,7 +890,8 @@ void AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallback(int pageNum
     {
         ret.get()->push_back(row.second.get<std::string>("key" /* emitted view key, username in this case*/));
     }
-    ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNumJustGot, ret, false)
+    ABC_CALCULATE_TOTAL_PAGES_FROM_TOTAL_ROWS
+    ABC_VIEW_QUERY_RESPOND_TO_ALL_USERS_WHO_WANT_PAGE_NUM(pageNumJustGot, ret, m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty, false)
     if(ret.get()->empty())
     {
         return; //the below call to back() would segfault otherwise. it almost makes sense to cache the fact that it's empty, BUT that should never happen to begin with
@@ -891,16 +901,11 @@ void AnonymousBitcoinComputingCouchbaseDB::viewQueryCompleteCallback(int pageNum
     cacheTheLastUsernamesDocIdAndAllUsernamesOnThatPage(pageNumJustGot, rowsPt.back().second.get<std::string>("id" /* docid, that is */), &ret);
     //m_AllUsersWithAtLeastOneAdCampaignView_CachedPagesAndTheirLastDocIdsAndLastKeys.insert(std::make_pair(pageNumJustGot, std::make_pair(rowsPt.back().second.get<std::string>("id" /* docid, that is */), ret)));
 
-    //since we inserted a cache item, update/set "total_rows" (total pages actually, based on total_rows ofc)
-    int totalRows = boost::lexical_cast<int>(pt.get<std::string>("total_rows"));
-    m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty = (totalRows / AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE); //optimization to calculate this now rather than on every request
-    if((totalRows % AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE) != 0) //account for the very last page not necessarily being full
-    {
-        ++m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty;
-    }
+    //OLD (now total pages is returned with the response, so it had to be calculated earlier. I just have to be careful with whether or not I give it to my "respond to all users who want page num" macro, or when calling respond directly, etc): since we inserted a cache item, update/set "total_rows" (total pages actually, based on total_rows ofc)
+
     //TODOreq: I'm not sure if I should cache the last docid [for using as startkey_docid] if the page doesn't contain the max amount of 'items per page'. For example on the very last page, only 5 of the 10 items might be shown, so uhhhh (mind=exploded). Idk tbh, but yea figure it out...
 }
-#ifdef ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE
+#ifdef ABC_DO_COUCHBASE_DURABILITY_POLL_BEFORE_CONSIDERING_STORE_COMPLETE //tl;dr: durability polling only works [easily] with LCB_ADD
 void AnonymousBitcoinComputingCouchbaseDB::durabilityCallbackStatic(lcb_t instance, const void *cookie, lcb_error_t error, const lcb_durability_resp_t *resp)
 {
     const_cast<AnonymousBitcoinComputingCouchbaseDB*>(static_cast<const AnonymousBitcoinComputingCouchbaseDB*>(lcb_get_cookie(instance)))->durabilityCallback(cookie, error, resp);
@@ -1096,7 +1101,6 @@ void AnonymousBitcoinComputingCouchbaseDB::scheduleGetRequest(AutoRetryingWithEx
 }
 void AnonymousBitcoinComputingCouchbaseDB::scheduleStoreRequest(AutoRetryingWithExponentialBackoffCouchbaseStoreRequest *autoRetryingWithExponentialBackoffCouchbaseStoreRequest)
 {
-
     lcb_store_cmd_t cmd;
     const lcb_store_cmd_t *cmds[1];
     cmds[0] = &cmd;
@@ -1343,7 +1347,8 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
         if(pageNum_WithOneBeingTheFirstPage > m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty)
         {
             //page does not exist
-            originalRequest->respond(ViewQueryPageContentsType());
+            ViewQueryPageContentsType emptyPage(new ViewQueryPageContentsPointedType());
+            originalRequest->respond(emptyPage, m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty);
             return;
         }
 
@@ -1352,7 +1357,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
         if(it->first == pageNum_WithOneBeingTheFirstPage)
         {
             //cache CONTENT hit, respond immediately
-            originalRequest->respond(it->second.second);
+            originalRequest->respond(it->second.second, m_AllUsersWithAtLeastOneAdCampaignView_TotalPageCount_OnlyValidWhenCacheIsNotEmpty);
             return;
         }
         //cache miss, so decrement the iterator (as long as it isn't begin()) in order to get "a page before the one we want that is in the cache", and then use it's startkey_docid to get us as close as possible to the page being requested in a much more efficient way than specifying startkey or skip only
@@ -1402,7 +1407,8 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
     {
         delete viewQueryCookie; //TODOreq: if lcb_make_http_request returns an error, is the callback still called? my cookie on the heap would be leaking memory if it isn't. Additionally, the request would be responded to (with error set) twice! I doubt the callback is called, but I don't KNOW
         cerr <<  "Failed to schedule view query (" << viewPath << ") with lcb error: " << lcb_strerror(m_Couchbase, error) << endl;
-        originalRequest->respond(ViewQueryPageContentsType(), true);
+        ViewQueryPageContentsType emptyPage(new ViewQueryPageContentsPointedType());
+        originalRequest->respond(emptyPage, 1, true);
         return;
     }
     //now create the list of users that want the page and add ourselves to it

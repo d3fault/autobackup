@@ -12,7 +12,7 @@ ViewQueryCouchbaseDocumentByKeyRequest::ViewQueryCouchbaseDocumentByKeyRequest(c
     , PageNum_WithOneBeingTheFirstPage(pageNum_MustBeGreaterThanOrEqualToOne)
 { }
 //TODOoptimization: get/store have respond as static, idk why. unnecessary derefs galore
-void ViewQueryCouchbaseDocumentByKeyRequest::respond(const ViewQueryPageContentsType &pageContents, bool internalServerErrorOrJsonError)
+void ViewQueryCouchbaseDocumentByKeyRequest::respond(const ViewQueryPageContentsType &pageContents, int totalPages, bool internalServerErrorOrJsonError)
 {
-    Wt::WServer::instance()->post(WtSessionId, boost::bind(boost::bind(&AnonymousBitcoinComputingWtGUI::queryCouchbaseViewFinished, PointerToAnonymousBitcoinComputingWtGUI, _1, _2), pageContents, internalServerErrorOrJsonError));
+    Wt::WServer::instance()->post(WtSessionId, boost::bind(boost::bind(&AnonymousBitcoinComputingWtGUI::queryCouchbaseViewFinished, PointerToAnonymousBitcoinComputingWtGUI, _1, _2, _3), pageContents, totalPages, internalServerErrorOrJsonError));
 }

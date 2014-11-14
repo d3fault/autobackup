@@ -15,7 +15,7 @@ public:
     std::string ViewPath;
     int PageNum_WithOneBeingTheFirstPage;
 
-    void respond(const ViewQueryPageContentsType &pageContents, bool internalServerErrorOrJsonError = false);
+    void respond(const ViewQueryPageContentsType &pageContents, int totalPages, bool internalServerErrorOrJsonError = false);
 };
 
 #endif // VIEWQUERYCOUCHBASEDOCUMENTBYKEYREQUEST_H

@@ -59,6 +59,10 @@ using namespace Wt::Utils;
 using namespace boost::property_tree;
 using namespace std;
 
+#define ABC_INTERNAL_PATH_ADS "/advertising"
+#define ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE ABC_INTERNAL_PATH_ADS \
+                                    "/buy-ad-space"
+
 /////////////////////////////////////////////////////BEGIN MACRO HELL///////////////////////////////////////////////
 
 //100ms javascript interval
@@ -262,8 +266,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WContainerWidget *m_AdvertisingWidget;
     void showAdvertisingWidget();
 
-    WContainerWidget *m_AdvertisingBuyAdSpaceWidget;
-    void showAdvertisingBuyAdSpaceWidget();
+    //WContainerWidget *m_AdvertisingBuyAdSpaceWidget;
+    //void showAdvertisingBuyAdSpaceWidget();
 
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
     WContainerWidget *m_AdvertisingSellAdSpaceWidget;
@@ -299,7 +303,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     //hardcoded (not as hardcoded as one might think! un-hardcoding wip if ABC_MULTI_CAMPAIGN_OWNER_MODE is defined)
     bool m_BuyInProgress;
     WContainerWidget *m_AdvertisingBuyAdSpaceD3faultWidget;
-    void showAdvertisingBuyAdSpaceD3faultWidget();
+    void showAdvertisingBuyAdSpaceD3faultWidget(const std::string &username);
     AdvertisingBuyOwnersAdSpaceCampaignWithIndexWidget *m_AdvertisingBuyAdSpaceD3faultCampaign0Widget;
     bool m_FirstPopulate;
     WText *m_CampaignLengthHoursLabel;
@@ -385,7 +389,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
 
     //views (as in couchbase views. map/reduce 'views', not SHIT YOU LOOK AT views. guh shit naming)
     void queryCouchbaseViewBegin(const std::string &viewPathWithoutAnyParams, int pageNum_MustBeGreaterThanOrEqualToOne);
-    void queryCouchbaseViewFinished(const ViewQueryPageContentsType &pageContents, bool internalServerErrorOrJsonError);
+    void queryCouchbaseViewFinished(const ViewQueryPageContentsType &pageContents, int totalPages, bool internalServerErrorOrJsonError);
 
     bool isHomePath(const std::string &pathToCheck);
     void handleInternalPathChanged(const std::string &newInternalPath);
@@ -399,6 +403,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void usernameOrPasswordYouProvidedIsIncorrect();
     std::string m_UserAccountLockedJsonToMaybeUseInAccountRecoveryAtLogin;
     u_int64_t m_CasFromUserAccountLockedAndStuckLockedButErrRecordedDuringRecoveryProcessAfterLoginOrSomethingLoLWutIamHighButActuallyNotNeedMoneyToGetHighGuhLifeLoLSoErrLemmeTellYouAboutMyDay;
+
+    void unsubscribeIfSubscribedToAnything();
     void doLoginTasks();
     void handleLogoutButtonClicked();
 
