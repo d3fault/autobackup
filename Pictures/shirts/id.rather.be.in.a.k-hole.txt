@@ -1,0 +1,10 @@
+I'd rather be in a K-Hole
+
+
+"K-Hole" should be on the last line by itself, and the other words should mostly match the width. 3 lines max, since it's so short.
+So maybe:
+I'd rather be
+in a
+K-Hole
+
+etc (when making the image decide it)

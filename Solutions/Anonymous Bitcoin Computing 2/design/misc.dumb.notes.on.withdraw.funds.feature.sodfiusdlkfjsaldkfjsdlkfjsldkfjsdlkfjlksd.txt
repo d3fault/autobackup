@@ -1,0 +1,10 @@
+Coding the 'withdraw funds' feature in Abc2 is pretty easy, but dangerous as fuck. Easy to make functional, also easy to make insecure/bugged ;-P. I want to just jump in and code, it but I can't even decide what design I want. Periodic auto-payouts, threshhold payouts, requests auto-satisfied, requests manually-satisfied, all of the above (which FIRST, then?)?
+
+Manual payouts (whether in some other app or in 'admin panel' of Abc2) might seem safer on the surface, but they are still racy. The 'profile' doc still needs to be 'locked' as I do it, otherwise they could "buy an ad slot" (deducting their balance) 'just before' I pay them a certain amount, which now would be an overpayment.
+
+
+Now that I'm finally getting this down in words, I think a separate/standalone app where I process "payout requests" might be best, SIMPLY BECAUSE THEN I CAN WATCH FOR ERRORS/SUCCESS AND HANDLE ACCORDINGLY. Automating INTO abc2 and trying to predict points of failure is where the real danger lies.
+
+Manual recovery should always be possible since I'm a 1337 fucking d00d, assuming I spit out appropriate errors (so I can see just where/how it failed). Plus machines are almost always successful if there's a human watching them ;-). I doubt I'll see 'fails' (as in server fails etc) very often.
+
+I'm definitely still planning on using the "payout wallet with meh ('just enough') amount of funds" strategy ofc, to minimize losses from inevitible hacks.

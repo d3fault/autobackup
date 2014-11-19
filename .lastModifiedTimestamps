@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1415985807
+Documents/minddump/:1416326110
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1415954813
+Documents/minddump/dreams/:1416416948
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -73,11 +73,13 @@ Documents/minddump/dreams/drop.a.baby.from.the.second.floor.to.feed.a.zombie.and
 Documents/minddump/dreams/dsalkfjsdlfkjsdlkfjsdouflkjsdoufsdkfjouljkeroudskfjsdofiusflkj.txt:1381112329
 Documents/minddump/dreams/dsfadsfjsdfljdsflkjdlskfjsdlfkjoweurljsofuaslkfjsdofusldkfj.txt:1379128082
 Documents/minddump/dreams/dsfljsldfjsldjflsdjflskjdflkjsdflkjsdlfkjsldkjfkljwelkrjosdufjweroulkjsdfljlksdjlkdjflkjsdflksf.txt:1380539761
+Documents/minddump/dreams/dsflkjsdklfjskldjflksjdflkjsdlfoiuewrlkjsdklfjlsdkjflksd.txt:1416416948
 Documents/minddump/dreams/dsklfjasdlkfjslkdjfsdfouweorldskjfosudflkjwerusdfjsfdouil.txt:1391187726
 Documents/minddump/dreams/dslfjksdlkfjsdlkjfklsdjfsdfhlksdjflksjdflkjsdflkjsd.txt:1415645949
 Documents/minddump/dreams/dslfjsdlkfjsdlkfjlkdsjflkjsdflkjsdlkfjsldfjsdlkfjslk.txt:1410404788
 Documents/minddump/dreams/dslfkjasdlfkjasdofusadlfjsdofusdaljfsoadufsldkfjou.txt:1388950253
 Documents/minddump/dreams/dslfkjlksdjfskdjfksjldflksdjfoudsfljweoursjdfousdfkjslfouer.txt:1391010154
+Documents/minddump/dreams/electricity.asldkfjasldfkjdslkfjsdlkfjsdlfjsd.txt:1416043529
 Documents/minddump/dreams/ewroiusfdflksjdflksjdfouwelrkjousldkfjosudflkjsdfou.txt:1384928265
 Documents/minddump/dreams/eye.socket.void.3d.glasses.etc.txt:1354515660
 Documents/minddump/dreams/falkdsjflkjasdfjsfosldfjsodufslkdjfsodiufkljowiuer.txt:1384659022
@@ -175,10 +177,12 @@ Documents/minddump/dreams/sdflskdfjsdlkfjowuerlkjofuasldfjosdufsdfousdfljsdfou.t
 Documents/minddump/dreams/sdflskdjflkjsdlfjslkdjflsjdflksjdflkjsdlkfjouwekrjousdflkjlskdfjsdlkf.txt:1394142935
 Documents/minddump/dreams/sdhflsjdflkjsdfouwelkrjohsldfjksdfoweurkhgdysdfoi.txt:1403567611
 Documents/minddump/dreams/sdjflsjdflkjsdlkfjsdklfjsldkjfouwerkljsdfousdflkjsdf.txt:1412431712
+Documents/minddump/dreams/sdkfjlkasdjflksdjfklsjdflkjsdfoiuslkfjsoiuflskdjfsoduiflsdkfj.txt:1416243327
 Documents/minddump/dreams/sdkfjslkdjflksdjfklsjdflkjdsfkljdsfjdofulskdjfosduflskdjflksdjflksjdfousdflkjsdf.txt:1408991548
 Documents/minddump/dreams/sdkjflskjdflskjdfosudfljsdfousdfljsfdoulkjeroiusdlfkjsdofuo.txt:1391895285
 Documents/minddump/dreams/sdlafjlasjflsajdfsdufowieurlkasjdfouasfdljouwerlkjsdoafuslfdjkaslf.txt:1381489684
 Documents/minddump/dreams/sdlfjsldjflsdjflskdjflkjsdflkjsdlkfjsdf.txt:1401173176
+Documents/minddump/dreams/sdlfjsldkjflksjdfkljsdlkfjksldjflsjdflkjsdklfjklsdjfksjdfklsjdfkljsdklfjsdklf.txt:1416329133
 Documents/minddump/dreams/sdlfkjlsdjflksdjflksdjflksdjflksdjflksjdfkljsdlkfjsdlkfjsdlk.txt:1415169897
 Documents/minddump/dreams/sdlfkjsldkjflksdjfklasjdfosudlkjewoulkjsdofusdlfkjou.txt:1391478361
 Documents/minddump/dreams/sdlkfjalsdkjfsdhfoiewurlkjdsfosudflkjoiwuerkjsdflkdfds.txt:1412140752
@@ -234,6 +238,7 @@ Documents/minddump/3.options.from.here.with.no.going.back.except.can.always.upgr
 Documents/minddump/5meo.attempt.2.and.way.higher.read.this.shit.its.good.asdlfjsadofuwerlkjsadfoulkjasdf.txt:1334481071
 Documents/minddump/AdAgency.prototype.the.wt.in.session.modification.as.well.as.out.of.session.YAT.yet.another.tangent.coined.txt:1332958174
 Documents/minddump/PostgreSQL.sucks.just.sayin.scalability.thoughts.txt:1338081216
+Documents/minddump/USAs.motto.is.innovate.submit.or.die.aslkdfjldskjflskadfjlksdf.txt:1416239040
 Documents/minddump/a.drug.deal.or.just.convo.using.only.the.word.fuck.txt:1341286990
 Documents/minddump/a.perfect.end.lasjdfasdlfkjs.4.lexi.txt:1320836605
 Documents/minddump/a.person.is.made.up.entirely.by.their.thoughts.txt:1339487552
@@ -1456,6 +1461,7 @@ Documents/minddump/lsdjflsdjflksjdlkfjsdkljfsdlkjfoiwherljsdflkjsdfl.txt:1405678
 Documents/minddump/lsdjflsdkjfklsdjfkjsdfkljsdlkfowuerlkjsdfhdskfjklsdjfsldkjf.txt:1414785399
 Documents/minddump/lsdjflsjadflkjskdlfjsdlkfjsdofusdlkfjsoduflsdjfljkewrousdf.txt:1393796085
 Documents/minddump/lsdjkflskajdfkjsdlfkjlwkejroulsdkjflksjdflksdfjouewlrkjousdfls.txt:1400127929
+Documents/minddump/lsdkfjlkasdjflksadjflkjsdofusldfjsoduflsdjfousdfldsjflkt.xt:1416243644
 Documents/minddump/lsdkfjlskdjfsdoiuwerlkjdfsousdflkjweroulkjdfs.txt:1355290132
 Documents/minddump/lsdkfjlskdjfsodufsldkjfosduflsjkdfousdfsouerw.infinite.metaphors.lewl.txt:1392919237
 Documents/minddump/lsdkflsjdflkjdslfkdslfkjdsofusdlkfjsdouflkjwerousdlkf.txt:1404566020
@@ -1727,6 +1733,7 @@ Documents/minddump/sdalfjsdaofiulkjweroiusafuioasdpfu.txt:1331347277
 Documents/minddump/sdalfjsladkjfsdouflkjweroulksjdfousdflkjsdfoulkwejrousdlfkjsdfoiulk.txt:1371773262
 Documents/minddump/sdalfkjasdofuijwlrjaosfiusdalkfjsadofiwerlksfadoasiudflk.txt:1348973779
 Documents/minddump/sdalfkjdslfkjsodulwjeroiuslfkjf.txt:1355653593
+Documents/minddump/sdalfkjlsdjflksdjfkjsdlkfjsdlkfjslkdjflskdjflksdjf.txt:1416326110
 Documents/minddump/sdalfkjlsdkjfsldajflksdjfosuflkjsdf.txt:1361423161
 Documents/minddump/sdalfkjsalkdfjsoaduflasdjfouasdfljkasdfouoiuewr.txt:1384486819
 Documents/minddump/sdalfkjsdlkjfksldjfouwelrjousdfljksdfoujouiwerlkj.txt:1393907019
@@ -2143,6 +2150,7 @@ Documents/minddump/shtooooped.asdfjlaskjflkjsdfousdfal.txt:1398894205
 Documents/minddump/sjdfjsdfjskdljflksdjfklsdjflksdjflksdjfowiuerlkjdfljsdflkjsdfkl.txt:1404646085
 Documents/minddump/sjfljsdfljsdlfjldksjflksjdflkjsdkfouwelrjlkjfdsjdflsdfuouwelrk.txt:1398081618
 Documents/minddump/sjfljsdlfkjslkdjflksjdflkjsdfkjsdfouljweroulsjfdsf.txt:1398556585
+Documents/minddump/sjkdflksjdflkjsdklfjslkjflksjflskdjflksjdfoiusdlfkjsdfousdlfkjsdfl.txt:1416244586
 Documents/minddump/skdjflhsdlfjsdlkfjsldhflksdjflksdjfouewlkrlkdsflj.txt:1401827921
 Documents/minddump/skdjflskdjflskjdfouwlerkjofsdfhsfsggsiusflkjsdfouisdlfkjoiuwerljsadf.txt:1382449951
 Documents/minddump/skdjfsjflskdjfsdjfouwerjkjdsflkjsdfosuidflkjer.txt:1396823888
@@ -2518,7 +2526,7 @@ Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon3.svg:1348380863
 Pictures/2012-09 Tobey Family Tree Cartoon/screenshot.of.creating.it.png:1348376918
-Pictures/shirts/:1415262017
+Pictures/shirts/:1416325848
 Pictures/shirts/bitches.are.so.much.effort.and.yea.its.totally.worth.it.unless.you.value.your.time.hurrrr.txt:1408988398
 Pictures/shirts/candy.is.to.the.tongue.what.drugs.are.to.the.brain.lasdfjasofdu.txt:1414478783
 Pictures/shirts/diff.sociopathy.courtship.intent.txt:1383710633
@@ -2530,6 +2538,7 @@ Pictures/shirts/have.i.ever.told.you.how.much.i.love.drugs.asldfksdlfjslfjodfylw
 Pictures/shirts/i.have.considered.your.considerations.t.shirt.sdlfjsdlkfjwoerusdfljkdsf.txt:1358933174
 Pictures/shirts/i.headbang.while.coding.dslfjlksdjflkasjdflkjsdfkjsdflk.yea.i.sit.in.a.chair.way.too.much.txt:1415262017
 Pictures/shirts/i.r.codar.upsidedown.ofc.txt:1401813630
+Pictures/shirts/id.rather.be.in.a.k-hole.txt:1416325848
 Pictures/shirts/im.not.a.security.consultant.im.a.hacker.txt:1389320816
 Pictures/shirts/im.not.special.your.just.stupid.sdofiusaldfkjewor.txt:1382630347
 Pictures/shirts/implications.asldfjlsdjflsdkjfowuerlkjsfoiusdflkjsdflj.txt:1404642919
@@ -4992,7 +5001,7 @@ Solutions/Anonymous Bitcoin Computing 2/assets/:1415110445
 Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/:1415110488
 Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/all.usernames.with.at.least.one.ad.campaign.txt:1415254635
 Solutions/Anonymous Bitcoin Computing 2/assets/abc.logo.svg:1410248142
-Solutions/Anonymous Bitcoin Computing 2/design/:1415418403
+Solutions/Anonymous Bitcoin Computing 2/design/:1416245544
 Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.FINAL.with.recovery.cas.swap.to.get.a.key.with.uuids.for.refill.and.recovery.pseudocode.cpp:1392716033
 Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.FINAL.without.recovery.kiss.but.not.most.efficient.solution.i.am.lolling.so.hard.right.now.txt:1392170170
 Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.NOPE.design.not.using.way.too.complex.lold.when.i.thought.up.more.expensive.much.simpler.design.about.to.write.txt:1392170213
@@ -5006,6 +5015,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/core.math.for.ad.doubles.1.formul
 Solutions/Anonymous Bitcoin Computing 2/design/failed.attempt.at.core.json.docs.from.way.early.on.that.had.been.sitting.on.my.desktop.txt:1389958895
 Solutions/Anonymous Bitcoin Computing 2/design/initial.db.state.lol.need.to.make.a.one.off.app.to.populate.it.txt:1392699696
 Solutions/Anonymous Bitcoin Computing 2/design/login.throttling.pointless.if.db.is.public.lewl.txt:1390304771
+Solutions/Anonymous Bitcoin Computing 2/design/misc.dumb.notes.on.withdraw.funds.feature.sodfiusdlkfjsaldkfjsdlkfjsldkfjsdlkfjlksd.txt:1416245544
 Solutions/Anonymous Bitcoin Computing 2/design/on.payouts.to.the.public.should.i.allow.the.public.to.create.ad.campaigns.txt:1415111353
 Solutions/Anonymous Bitcoin Computing 2/design/optimization.math.to.determine.better.polling.rate.fuckit.for.now.txt:1391370323
 Solutions/Anonymous Bitcoin Computing 2/design/perfected.the.design.here.is.the.flow.or.pseudo.code.sdkfjlaskdjf.txt:1390952616
