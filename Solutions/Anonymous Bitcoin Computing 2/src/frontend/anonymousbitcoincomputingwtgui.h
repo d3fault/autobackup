@@ -237,6 +237,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     friend class AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget;
     friend class AdvertisingBuyAdSpaceAllAdCampaignsForUserWidget;
     friend class AddFundsAccountTabBody;
+    friend class WithdrawFundsAccountTabBody;
     friend class NewAdSlotFillerAccountTabBody;
     friend class ViewAllExistingAdSlotFillersAccountTabBody;
 

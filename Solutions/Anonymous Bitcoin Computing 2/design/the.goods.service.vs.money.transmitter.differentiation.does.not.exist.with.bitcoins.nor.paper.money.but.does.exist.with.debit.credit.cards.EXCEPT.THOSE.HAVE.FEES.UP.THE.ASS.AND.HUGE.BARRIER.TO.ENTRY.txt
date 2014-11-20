@@ -1,0 +1,18 @@
+Service vs. Transmit
+
+Any business that buys/sells good or services, whether digitally or physically, could be classified as a money transmitter (and therefore used to launder money).
+
+Is it solely INTENT that classifies you as a "goods servicer" vs. a "money transmitter"?
+
+I'm worrying about allowing users to sell ad space via Abc2, because I'm smart enough to see how my GOODS SERVICE can be exploited for money laundering. But I can also see how ANY goods service can be exploited for money laundering. A man buying and selling peanuts on the side of the road can be used as a laundry machine. Buy $100 worth of peanuts from him one day (with dirty money), sell the peanuts back to him a few days later (when the bills are different) for $97 or whatever he agrees to: is he now a money transmitter?
+
+Ultimately it boils down to the fact that our government is run by incompetent individuals, who think that by simply saying two things are different, they are.
+
+
+Back to "intent": if you market yourself as an "exchange", then yes you're easily 'labelled'/'identified' as a money transmitter. But ANY goods service, whether in person or online, and whether dealing with virtual or physical goods, can be used in the exact same way as an "exchange" (albeit sometimes with SLIGHTLY more effort).
+
+
+A buy/sell merchent website (physical goods) can be used as an exchange as follows: list item for sale under user0, buy it with dirty funds under user1. Since the merchent site ALMOST ALWAYS 'changes' the 'bills' (bitcoin keys, dollar bills, [... hmm but actually credit/debit cards ARE traceable... ] (((((so it boils down to the fact that bitcoin is inherently NOT traceable; that's what makes it unenforceable. they either need to make bitcoin illegal or adapt the laws accordingly))))).
+
+
+Hmm so I think I just need to keep records of who I receive bitcoin from and who I send them to and I'm good. Was planning on doing that anyways so...

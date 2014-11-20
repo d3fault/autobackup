@@ -5,6 +5,7 @@ using namespace Wt;
 
 #include "../frontend/anonymousbitcoincomputingwtgui.h"
 
+//should really be "query couchbase view by path request", but i cbf
 ViewQueryCouchbaseDocumentByKeyRequest::ViewQueryCouchbaseDocumentByKeyRequest(const std::string &wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, const std::string &viewPath, int pageNum_MustBeGreaterThanOrEqualToOne)
     : WtSessionId(wtSessionId)
     , PointerToAnonymousBitcoinComputingWtGUI(pointerToAnonymousBitcoinComputingWtGUI)

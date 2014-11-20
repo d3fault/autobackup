@@ -57,7 +57,8 @@ HEADERS += \
     frontend/pages/advertisingselladspacecreatenewadcampaignwidget.h \
     frontend2backendRequests/viewquerycouchbasedocumentbykeyrequest.h \
     frontend/pages/advertisingbuyadspacealluserswithatleastoneadcampaignwidget.h \
-    frontend/pages/advertisingbuyadspacealladcampaignsforuserwidget.h
+    frontend/pages/advertisingbuyadspacealladcampaignsforuserwidget.h \
+    frontend/accounttabs/withdrawfundsaccounttabbody.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -84,7 +85,8 @@ SOURCES += main.cpp \
     frontend/pages/advertisingselladspacecreatenewadcampaignwidget.cpp \
     frontend2backendRequests/viewquerycouchbasedocumentbykeyrequest.cpp \
     frontend/pages/advertisingbuyadspacealluserswithatleastoneadcampaignwidget.cpp \
-    frontend/pages/advertisingbuyadspacealladcampaignsforuserwidget.cpp
+    frontend/pages/advertisingbuyadspacealladcampaignsforuserwidget.cpp \
+    frontend/accounttabs/withdrawfundsaccounttabbody.cpp
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/

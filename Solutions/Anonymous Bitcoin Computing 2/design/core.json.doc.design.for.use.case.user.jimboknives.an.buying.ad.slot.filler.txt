@@ -206,3 +206,10 @@ adSpaceCampaignNextAvailableIndexCache_d3fault
 }
 
 //CampaignCache is just a shortcut/symbolic-link esq type doc. If it doesn't exist we can just walk the campaign indexes until we find one not existing
+
+withdrawFundsRequestNextAvailableIndex_d3fault
+{
+	"nextAvailableWithdrawFundsRequestIndex": "7"
+}
+
+//withdrawFundsRequestNextAvailableIndex is shortcut/symbolic-link esq type doc. It is created at profilec reation (pointing to 0) and is similar to 'next available ad space campaign index'. TODOreq: both ad space campaign index and this withdraw funds index need to be created at profile creation (but STILL able to deal with non-existent doc, which is 'fail' at profile create)
