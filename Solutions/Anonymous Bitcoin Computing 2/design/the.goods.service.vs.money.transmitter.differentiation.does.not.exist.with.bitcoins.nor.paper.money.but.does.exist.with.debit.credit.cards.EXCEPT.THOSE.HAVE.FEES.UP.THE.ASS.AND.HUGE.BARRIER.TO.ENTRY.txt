@@ -16,3 +16,8 @@ A buy/sell merchent website (physical goods) can be used as an exchange as follo
 
 
 Hmm so I think I just need to keep records of who I receive bitcoin from and who I send them to and I'm good. Was planning on doing that anyways so...
+
+
+
+
+I thought about doing "buy accounts" vs. "sell accounts", making the two mutually exlusive at time of sign up..... but that solves absolutely nothing. You can simply make one account of each.

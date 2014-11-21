@@ -66,7 +66,7 @@ const std::string adSpaceAllSlotFillersKey(const std::string &username);
 
 //user account
 #define COUCHBASE_USER_ACCOUNT_KEY_PREFIX "user"
-#define JSON_USER_ACCOUNT_BALANCE "balance"
+#define JSON_USER_ACCOUNT_BALANCE "balanceInSatoshis"
 #define JSON_USER_ACCOUNT_PASSWORD_HASH "passwordHash"
 #define JSON_USER_ACCOUNT_PASSWORD_SALT "passwordSalt"
 //user account LOCKED [filling slot]
@@ -143,10 +143,25 @@ const std::string adSpaceCampaignIndexCacheKey(const std::string &usernameOfCamp
 
 
 //campaign current slot CACHE
-#define COUCHBASE_AD_SPACE_CAMPAIGN_SLOT_CACHE_KEY_PREFIX "adSpaceCampaignSlotCache"
+#define COUCHBASE_AD_SPACE_CAMPAIGN_SLOT_CACHE_KEY_PREFIX "adSpaceCampaignCurrentSlotCache"
 #define JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT "currentSlot"
 
 const std::string adSpaceCampaignSlotCacheKey(const std::string &usernameOfCampaignOwner, const std::string &campaignIndex);
+
+
+//withdraw funds requests
+#define COUCHBASE_WITHDRAW_FUNDS_REQUESTS_PREFIX "withdrawFundsRequest"
+#define JSON_WITHDRAW_FUNDS_REQUESTED_AMOUNT "requestedWithdrawAmountInSatoshis"
+#define JSON_WITHDRAW_FUNDS_BITCOIN_PAYOUT_KEY "bitcoinKeyToWithdrawTo"
+
+const std::string withdrawFundsRequestKey(const std::string &username, const std::string &withdrawFundsRequestIndex);
+
+
+//withdraw funds requests current index (like 'CACHE')
+#define COUCHBASE_WITHDRAW_FUNDS_REQUESTS_NEXT_AVAILABLE_INDEX_PREFIX "withdrawFundsRequestNextAvailableIndex"
+#define JSON_WITHDRAW_FUNDS_REQUESTS_NEXT_AVAILABLE_INDEX "nextAvailableWithdrawFundsRequestIndex"
+
+const std::string withdrawFundsRequestsNextAvailableIndexKey(const std::string &username);
 
 
 //'get todays ad slot' json response

@@ -227,6 +227,7 @@ class AdvertisingBuyOwnersAdSpaceCampaignWithIndexWidget;
 class LettersNumbersOnlyRegExpValidatorAndInputFilter;
 class RegisterSuccessfulWidget;
 class AddFundsAccountTabBody;
+class WithdrawFundsAccountTabBody;
 class NewAdSlotFillerAccountTabBody;
 class ViewAllExistingAdSlotFillersAccountTabBody;
 
@@ -284,6 +285,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void handleAccountTabWidgetTabChanged();
     ActualLazyLoadedTabWidget *m_AccountTabWidget;
     AddFundsAccountTabBody *m_AddFundsAccountTab;
+    WithdrawFundsAccountTabBody *m_WithdrawFundsAccountTab;
     NewAdSlotFillerAccountTabBody *m_NewAdSlotFillerAccountTab;
     ViewAllExistingAdSlotFillersAccountTabBody *m_ViewAllExistingAdSlotFillersAccountTab;
     WScrollArea *m_AccountWidgetScrollArea;
@@ -426,7 +428,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         , ATTEMPTTOADDCAMPAIGNATINDEX
         , ADDCAMPAIGNINDEXCACHEIGNORINGRESPONSE
 #endif
-
+        , ATTEMPTTOADDWITHDRAWREQUESTATINDEX
+        , ADDWITHDRAWREQUESTINDEXIGNORINGRESPONSE
     };
     enum WhatTheStoreWithInputCasWasForEnum
     {
@@ -445,6 +448,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
         , CASSWAPCAMPAIGNINDEXCACHEIGNORINGRESPONSE
 #endif
+        , CASSWAPWITHDRAWREQUESTINDEXIGNORINGRESPONSE
     };
     enum WhatTheStoreWithInputCasSavingOutputCasWasForEnum
     {
@@ -462,7 +466,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         ENSURESLOTABOUTTOLOCKUSERACCOUNTTOWARDSATTEMPTINGTOPURCHASEDOESNTEXISTBECAUSEIFITDOESANDWEBOUGHTITSTATEWOULDBEFUCKED,
         GETALLADSLOTFILLERSDOCFORVIEWING,
         HACKYMULTIGETAPAGEWORTHOFADSLOTFILLERS,
-        ONLOGINACCOUNTLOCKEDRECOVERY_AND_SLOTPURCHASEBEATTOTHEPUNCH_DOESSLOTEXISTCHECK
+        ONLOGINACCOUNTLOCKEDRECOVERY_AND_SLOTPURCHASEBEATTOTHEPUNCH_DOESSLOTEXISTCHECK,
+        GETPROFILEBEFORESCHEDULINGWITHDRAWFUNDSREQUESTTOVERIFYTHEYHAVEENOUGHFUNDS
     };
     enum WhatTheGetSavingCasWasForEnum
     {
@@ -482,6 +487,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
         , GETADSPACECAMPAIGNINDEXCACHEEVENTHOUGHITMIGHTNOTEXIST
 #endif
+        , GETWITHDRAWREQUESTINDEXBECAUSEWEWANTTOSCHEDULEAWITHDRAWDUH
     };
     enum CurrentGetAndSubscribeMode
     {

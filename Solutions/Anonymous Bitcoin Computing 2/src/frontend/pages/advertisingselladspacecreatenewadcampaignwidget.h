@@ -24,7 +24,7 @@ private:
 
     void createNewAdCampaignButtonClicked();
     void useCacheToDetermineIndexForCreatingNewCampaignAtOrWalkThemUntilEmptyIndexFoundIfTheCacheDoesntExist(const std::string &couchbaseDocument, u_int64_t casForUpdatingTheCacheAfterWeCreateNewCampaign, bool lcbOpSuccess, bool dbError);
-    void attemptToCreateCampaign();
+    void attemptToLcbAddCampaign();
     void handleAttemptToAddCampaignAtIndexFinished(bool lcbOpSuccess, bool dbError);
 };
 

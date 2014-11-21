@@ -109,7 +109,7 @@ userJimboKnives
 {
   "passwordHash": "MRGFtZyvcZU/2HdEW1H57bVtwfrPfw==",
   "passwordSalt": "1964Y1AFICvu1XiQE9w0xsPhDE8=",
-  "balance": "50",
+  "balanceInSatoshis": "50",
   "slotToAttemptToFillAkaPurchase": "adSpaceSlotsd3fault0Slot1",
   "slotToAttemptToFillAkaPurchaseItWith" : "adSpaceSlotFillersJimboKnives0"
 }
@@ -206,6 +206,12 @@ adSpaceCampaignNextAvailableIndexCache_d3fault
 }
 
 //CampaignCache is just a shortcut/symbolic-link esq type doc. If it doesn't exist we can just walk the campaign indexes until we find one not existing
+
+withdrawFundsRequest_d3fault_0
+{
+	"requestedWithdrawAmountInSatoshis" : "amount-in-SATOSHIS",
+	"bitcoinKeyToWithdrawTo" : "sdlkfjdslkjflsdkjf"
+}
 
 withdrawFundsRequestNextAvailableIndex_d3fault
 {

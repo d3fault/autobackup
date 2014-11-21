@@ -12,6 +12,7 @@
 #include "validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h"
 #include "registersuccessfulwidget.h"
 #include "accounttabs/addfundsaccounttabbody.h"
+#include "accounttabs/withdrawfundsaccounttabbody.h"
 #include "accounttabs/newadslotfilleraccounttabbody.h"
 #include "accounttabs/viewallexistingadslotfillersaccounttabbody.h"
 
@@ -334,8 +335,7 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
         m_AccountTabWidget->myAddTab(m_NewAdSlotFillerAccountTab = new NewAdSlotFillerAccountTabBody(this), "New Advertisement");
         m_AccountTabWidget->myAddTab(m_ViewAllExistingAdSlotFillersAccountTab = new ViewAllExistingAdSlotFillersAccountTabBody(this), "Existing Advertisements");
         m_AccountTabWidget->myAddTab(m_AddFundsAccountTab = new AddFundsAccountTabBody(this), "Add Funds"); //was going to have this one be first tab, but i don't want a db hit unless they request it
-
-
+        m_AccountTabWidget->myAddTab(m_WithdrawFundsAccountTab = new WithdrawFundsAccountTabBody(this), "Withdraw Funds");
     }
     m_MainStack->setCurrentWidget(m_AccountTabWidget);
 }
@@ -1855,6 +1855,11 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std
         m_AdvertisingBuyAdSpaceD3faultWidget->readCampaignIndexCacheDocToFigureOutHowManyAdCampaignsTheCampaignOwnerHas(couchbaseDocument, lcbOpSuccess, dbError);
     }
         break;
+    case GETPROFILEBEFORESCHEDULINGWITHDRAWFUNDSREQUESTTOVERIFYTHEYHAVEENOUGHFUNDS:
+    {
+        m_WithdrawFundsAccountTab->verifyBalanceIsGreaterThanOrEqualToTheirRequestedWithdrawAmountAndThenContinueSchedulingWithdrawRequest(couchbaseDocument, lcbOpSuccess, dbError);
+    }
+        break;
     case INITIALINVALIDNULLGET:
     default:
         cerr << "got a couchbase 'get' response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl << "unexpected value: " << couchbaseDocument << endl;
@@ -1940,6 +1945,11 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasFinished(
     }
         break;
 #endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
+    case GETWITHDRAWREQUESTINDEXBECAUSEWEWANTTOSCHEDULEAWITHDRAWDUH:
+    {
+        m_WithdrawFundsAccountTab->useNextAvailableWithdrawRequestIndexToScheduleTheWithdrawRequest(couchbaseDocument, cas, lcbOpSuccess, dbError);
+    }
+        break;
     case INITIALINVALIDNULLGETSAVINGCAS:
     default:
         cerr << "got a couchbase 'get' (saving cas) response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl << "unexpected value: " << couchbaseDocument << endl << "unexpected cas: " << cas << endl;
@@ -2043,11 +2053,18 @@ void AnonymousBitcoinComputingWtGUI::storeWithoutInputCasCouchbaseDocumentByKeyF
     }
         break;
     case ADDCAMPAIGNINDEXCACHEIGNORINGRESPONSE:
+    case ADDWITHDRAWREQUESTINDEXIGNORINGRESPONSE:
     {
-        //do nothing (but we still need to catch it here so it doesn't go to the default case below)
+        //do nothing except resume rendering (but we still need to catch it here so it doesn't go to the default case below)
+        resumeRendering();
     }
         break;
 #endif
+    case ATTEMPTTOADDWITHDRAWREQUESTATINDEX:
+    {
+        m_WithdrawFundsAccountTab->handleAttemptToAddWithdrawRequestAtIndexFinished(lcbOpSuccess, dbError);
+    }
+        break;
     case INITIALINVALIDNULLSTOREWITHOUTINPUTCAS:
     default:
         cerr << "got a couchbase 'store without input cas' response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl;
@@ -2118,13 +2135,15 @@ void AnonymousBitcoinComputingWtGUI::storeCouchbaseDocumentByKeyWithInputCasFini
     {
         m_NewAdSlotFillerAccountTab->doneAttemptingToUpdateAllAdSlotFillersDocSinceWeJustCreatedANewAdSlotFiller(lcbOpSuccess, dbError);
     }
+        break;
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
     case CASSWAPCAMPAIGNINDEXCACHEIGNORINGRESPONSE:
-    {
-        //do nothing (but we still need to catch it here so it doesn't go to the default case below)
-    }
-        break;
 #endif
+    case CASSWAPWITHDRAWREQUESTINDEXIGNORINGRESPONSE:
+    {
+        //do nothing except resume rendering (but we still need to catch it here so it doesn't go to the default case below)
+        resumeRendering();
+    }
         break;
     case INITIALINVALIDNULLSTOREWITHCAS:
     default:

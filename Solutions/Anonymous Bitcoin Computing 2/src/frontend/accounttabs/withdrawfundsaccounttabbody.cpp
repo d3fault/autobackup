@@ -1,4 +1,8 @@
-#include "withdrawfundsaccounttabbody.h"
+﻿#include "withdrawfundsaccounttabbody.h"
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <Wt/WText>
 #include <Wt/WBreak>
@@ -8,8 +12,15 @@
 
 #include "../anonymousbitcoincomputingwtgui.h"
 #include "../validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h"
+#include "abc2couchbaseandjsonkeydefines.h"
 
-#define WithdrawFundsAccountTabBody_MIN_WITHDRAW_AMOUNT 0.00000001 /* TODOreq:whatever minimum bitcoin transaction is (either in Abc2 or on bitcoin network) */
+using namespace boost::property_tree;
+
+#define LJDFLSKJDFLKSJDFKLJSD(slkfjsdlkfj) #slkfjsdlkfj
+
+//TODOreq:whatever minimum bitcoin transaction is (either in Abc2 or on bitcoin network)
+#define WithdrawFundsAccountTabBody_MIN_WITHDRAW_AMOUNT 0.00000001
+#define WithdrawFundsAccountTabBody_MIN_WITHDRAW_AMOUNT_STR LJDFLSKJDFLKSJDFKLJSD(WithdrawFundsAccountTabBody_MIN_WITHDRAW_AMOUNT)
 
 //The flow goes like this:
 //In-Abc2: click request withdraw button, check balance is enough, get withdraw index, recursively try to lcb_add to index (+1'ing as appropriate), cas swap accepting fail withdraw index
@@ -39,7 +50,7 @@ void WithdrawFundsAccountTabBody::populateAndInitialize()
     new WBreak(this);
 
     new WText("Amount to Withdraw:", this);
-    m_AmountToWithdrawLineEdit = new WLineEdit(WithdrawFundsAccountTabBody_MIN_WITHDRAW_AMOUNT, this);
+    m_AmountToWithdrawLineEdit = new WLineEdit(WithdrawFundsAccountTabBody_MIN_WITHDRAW_AMOUNT_STR, this);
     WDoubleValidator *bitcoinAmountValidator = new WDoubleValidator(WithdrawFundsAccountTabBody_MIN_WITHDRAW_AMOUNT, 21000000 /* TODOoptional: use their balance instead of max bitcoins lol */, m_AmountToWithdrawLineEdit);
     bitcoinAmountValidator->setMandatory(true);
     m_AmountToWithdrawLineEdit->setValidator(bitcoinAmountValidator);
@@ -56,7 +67,7 @@ void WithdrawFundsAccountTabBody::populateAndInitialize()
 
     WPushButton *requestWithdrawalButton = new WPushButton("Request Withdrawal", this);
 
-    requestWithdrawalButton->clicked().connect(this, &WithdrawFundsAccountTabBody::handleRequestWithdrawalButtonClicked);
+    requestWithdrawalButton->clicked().connect(this, &WithdrawFundsAccountTabBody::handleRequestWithdrawalButtonClicked); //TODOoptional: maybe disable button after clicking as well, which means I need to enable it whenever we resume rendering etc
 }
 void WithdrawFundsAccountTabBody::handleRequestWithdrawalButtonClicked()
 {
@@ -77,9 +88,150 @@ void WithdrawFundsAccountTabBody::handleRequestWithdrawalButtonClicked()
         return;
     }
 
-    std::string amountToWithdrawString = m_AmountToWithdrawLineEdit->text().toUTF8(); //TODOreq: still dunno if it's >= their balance, but the final check for that is in the payout request processor app anyways. all other checks are just good UI
-    std::string payoutKey = m_BitcoinPayoutKeyLineEdit->text().toUTF8();
-
+    //get the user profile doc to verify sufficient funds
+    m_AbcApp->getCouchbaseDocumentByKeyBegin(userAccountKey(m_AbcApp->m_CurrentlyLoggedInUsername));
+    m_AbcApp->m_WhatTheGetWasFor = AnonymousBitcoinComputingWtGUI::GETPROFILEBEFORESCHEDULINGWITHDRAWFUNDSREQUESTTOVERIFYTHEYHAVEENOUGHFUNDS;
 
     m_AbcApp->deferRendering(); //TODOreq: resume rendering at all error paths etc
+}
+void WithdrawFundsAccountTabBody::verifyBalanceIsGreaterThanOrEqualToTheirRequestedWithdrawAmountAndThenContinueSchedulingWithdrawRequest(const string &userProfileDoc, bool lcbOpSuccess, bool dbError)
+{
+    if(dbError)
+    {
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
+        cerr << "verifyBalanceIsGreaterThanOrEqualToTheirRequestedWithdrawAmountAndThenContinueSchedulingWithdrawRequest db error" << endl;
+        m_AbcApp->resumeRendering();
+        return;
+    }
+    if(!lcbOpSuccess)
+    {
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
+        cerr << "TOTAL SYSTEM FAILURE: user profile did not exist for a logged in user, in: verifyBalanceIsGreaterThanOrEqualToTheirRequestedWithdrawAmountAndThenContinueSchedulingWithdrawRequest" << endl;
+        m_AbcApp->resumeRendering();
+        return;
+    }
+
+    //get here, user profile doc exists and was gotten
+    ptree pt;
+    std::istringstream is(userProfileDoc);
+    read_json(is, pt);
+
+    const std::string &userBalanceInSatoshisStr = pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE);
+    SatoshiInt userBalanceInSatoshis = boost::lexical_cast<SatoshiInt>(userBalanceInSatoshisStr);
+
+    std::string amountToWithdrawJsonString = m_AmountToWithdrawLineEdit->text().toUTF8();
+    SatoshiInt amountToWithdrawInSatoshis = jsonStringToSatoshiInt(amountToWithdrawJsonString);
+
+    if(userBalanceInSatoshis < amountToWithdrawInSatoshis)
+    {
+        new WBreak(this);
+        new WText("Insufficient Funds", this);
+        m_AbcApp->resumeRendering();
+        return;
+    }
+
+    //withdraw amount is >= their balance, but the final check for that is in the payout request processor app anyways. all other checks are just good UI
+
+    m_AbcApp->getCouchbaseDocumentByKeySavingCasBegin(withdrawFundsRequestsNextAvailableIndexKey(m_AbcApp->m_CurrentlyLoggedInUsername));
+    m_AbcApp->m_WhatTheGetSavingCasWasFor = AnonymousBitcoinComputingWtGUI::GETWITHDRAWREQUESTINDEXBECAUSEWEWANTTOSCHEDULEAWITHDRAWDUH;
+}
+void WithdrawFundsAccountTabBody::useNextAvailableWithdrawRequestIndexToScheduleTheWithdrawRequest(const string &withdrawRequestNextAvailalbeIndexDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError)
+{
+    if(dbError)
+    {
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
+        cerr << "useNextAvailableWithdrawRequestIndexToScheduleTheWithdrawRequest db error" << endl;
+        m_AbcApp->resumeRendering();
+        return;
+    }
+
+    m_WithdrawRequestIndexToTryLcbAddingAt = "0";
+    if(lcbOpSuccess)
+    {
+        //parse what the cache indicates is the next available index, but DO NOT RELY ON IT
+        ptree pt;
+        std::istringstream is(withdrawRequestNextAvailalbeIndexDoc);
+        read_json(is, pt);
+
+        m_WithdrawRequestIndexToTryLcbAddingAt = pt.get<std::string>(JSON_WITHDRAW_FUNDS_REQUESTS_NEXT_AVAILABLE_INDEX);
+        m_CasOfWithdrawRequestIndexDoc_OrZeroIfDocDoesNotExist = cas;
+    }
+    else
+    {
+        //it should always exist, but might not if there was a power fail right during/after creating a user. if it doesn't exist, we simply walk up the indexes until a spot is found
+        m_CasOfWithdrawRequestIndexDoc_OrZeroIfDocDoesNotExist = 0;
+    }
+
+    //create withdraw request doc
+    ptree pt;
+
+    pt.put(JSON_WITHDRAW_FUNDS_REQUESTED_AMOUNT, boost::lexical_cast<std::string>(jsonStringToSatoshiInt(m_AmountToWithdrawLineEdit->text().toUTF8())));
+    pt.put(JSON_WITHDRAW_FUNDS_BITCOIN_PAYOUT_KEY, m_BitcoinPayoutKeyLineEdit->text().toUTF8());
+
+    std::ostringstream withdrawRequestDocBuffer;
+    write_json(withdrawRequestDocBuffer, pt, false);
+
+    m_WithdrawRequestDocBeingCreated = withdrawRequestDocBuffer.str();
+
+    attemptToLcbAddWithdrawRequest();
+}
+void WithdrawFundsAccountTabBody::attemptToLcbAddWithdrawRequest()
+{
+    int rangeCheck = boost::lexical_cast<int>(m_WithdrawRequestIndexToTryLcbAddingAt);
+    if(rangeCheck == INT_MAX)
+    {
+        new WBreak(this);
+        new WText("You've reached the maximum amount of withdraw requests. Please contact the administrator.", this); //TODOreq: ulong ulong?
+        m_AbcApp->resumeRendering();
+        return;
+    }
+    m_AbcApp->store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(withdrawFundsRequestKey(m_AbcApp->m_CurrentlyLoggedInUsername, m_WithdrawRequestIndexToTryLcbAddingAt), m_WithdrawRequestDocBeingCreated);
+    m_AbcApp->m_WhatTheStoreWithoutInputCasWasFor = AnonymousBitcoinComputingWtGUI::ATTEMPTTOADDWITHDRAWREQUESTATINDEX;
+}
+void WithdrawFundsAccountTabBody::handleAttemptToAddWithdrawRequestAtIndexFinished(bool lcbOpSuccess, bool dbError)
+{
+    if(dbError)
+    {
+        new WBreak(this);
+        new WText(ABC_500_INTERNAL_SERVER_ERROR_MESSAGE, this);
+        cerr << "handleAttemptToAddWithdrawRequestAtIndexFinished db error" << endl;
+        m_AbcApp->resumeRendering();
+        return;
+    }
+
+    if(!lcbOpSuccess)
+    {
+        //+1 the index and try again
+        m_WithdrawRequestIndexToTryLcbAddingAt = boost::lexical_cast<std::string>((boost::lexical_cast<int>(m_WithdrawRequestIndexToTryLcbAddingAt)+1));
+        attemptToLcbAddWithdrawRequest();
+        return;
+    }
+
+    //getting here means the withdraw request was created/lcb-added, so now we update the next available withdraw request index to point to +1 whatever we just got
+    //TODOreq: if cas is 0, do lcb_add [ignoring fail]. else, do lcb_set with cas [ignoring fail]
+    std::string nextAvailableIndexToPutInNextAvailableIndex = boost::lexical_cast<std::string>((boost::lexical_cast<int>(m_WithdrawRequestIndexToTryLcbAddingAt)+1));
+
+    ptree pt;
+    pt.put(JSON_WITHDRAW_FUNDS_REQUESTS_NEXT_AVAILABLE_INDEX, nextAvailableIndexToPutInNextAvailableIndex);
+
+    std::ostringstream nextAvailableWithdrawRequestIndexDocBuffer;
+    write_json(nextAvailableWithdrawRequestIndexDocBuffer, pt, false);
+
+    const std::string &nextAvailableWithdrawFundsRequestIndexKey = withdrawFundsRequestsNextAvailableIndexKey(m_AbcApp->m_CurrentlyLoggedInUsername);
+    if(m_CasOfWithdrawRequestIndexDoc_OrZeroIfDocDoesNotExist == 0)
+    {
+        m_AbcApp->store_ADDbyDefault_WithoutInputCasCouchbaseDocumentByKeyBegin(nextAvailableWithdrawFundsRequestIndexKey, nextAvailableWithdrawRequestIndexDocBuffer.str());
+        m_AbcApp->m_WhatTheStoreWithoutInputCasWasFor = AnonymousBitcoinComputingWtGUI::ADDWITHDRAWREQUESTINDEXIGNORINGRESPONSE;
+    }
+    else
+    {
+        m_AbcApp->store_SETonly_CouchbaseDocumentByKeyWithInputCasBegin(nextAvailableWithdrawFundsRequestIndexKey, nextAvailableWithdrawRequestIndexDocBuffer.str(), m_CasOfWithdrawRequestIndexDoc_OrZeroIfDocDoesNotExist, StoreCouchbaseDocumentByKeyRequest::DiscardOuputCasMode);
+        m_AbcApp->m_WhatTheStoreWithInputCasWasFor = AnonymousBitcoinComputingWtGUI::CASSWAPWITHDRAWREQUESTINDEXIGNORINGRESPONSE;
+    }
+
+    new WBreak(this);
+    new WText("Your withdraw request #" + m_WithdrawRequestIndexToTryLcbAddingAt + " has been scheduled. If you schedule any additional withdraw requests, it is up to you to ensure that the total amount for all pending withdraw requests does not exceed your account's balance. Withdraw requests are processed in the order they are receieved, and any withdraw request for an amount greater than your balance will simply be rejected.", this);
 }

@@ -98,7 +98,7 @@ void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::useCacheToDetermineIndexFo
     m_CampaignIndexToTryLcbAddingAt = "0";
     if(lcbOpSuccess)
     {
-        //parse what the cache indicates is the next available index, but DO NOT RELY ON IT TODOreq
+        //parse what the cache indicates is the next available index, but DO NOT RELY ON IT
         ptree pt;
         std::istringstream is(couchbaseDocument);
         read_json(is, pt);
@@ -124,9 +124,9 @@ void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::useCacheToDetermineIndexFo
 
     m_CampaignDocForCampaignBeingCreated = campaignDocBuffer.str();
 
-    attemptToCreateCampaign();
+    attemptToLcbAddCampaign();
 }
-void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::attemptToCreateCampaign()
+void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::attemptToLcbAddCampaign()
 {
     int rangeCheck = boost::lexical_cast<int>(m_CampaignIndexToTryLcbAddingAt);
     if(rangeCheck == INT_MAX)
@@ -155,13 +155,13 @@ void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::handleAttemptToAddCampaign
     {
         //+1 the index and try again
         m_CampaignIndexToTryLcbAddingAt = boost::lexical_cast<std::string>((boost::lexical_cast<int>(m_CampaignIndexToTryLcbAddingAt)+1));
-        attemptToCreateCampaign();
+        attemptToLcbAddCampaign();
         return;
     }
 
     //getting here means the campaign was created, so now we update the cache to point to +1 whatever we just got
     //TODOreq: if cas of cache is 0, do lcb_add [ignoring fail]. else, do lcb_set with cas [ignoring fail]
-    std::string nextAvailableIndexToPutInCacheDoc = boost::lexical_cast<std::string>((boost::lexical_cast<int>(m_CampaignIndexToTryLcbAddingAt)+1));;
+    std::string nextAvailableIndexToPutInCacheDoc = boost::lexical_cast<std::string>((boost::lexical_cast<int>(m_CampaignIndexToTryLcbAddingAt)+1));
 
     ptree pt;
     pt.put(JSON_AD_SPACE_CAMPAIGN_NEXT_AVAILABLE_INDEX_CACHE, nextAvailableIndexToPutInCacheDoc);
@@ -183,7 +183,7 @@ void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::handleAttemptToAddCampaign
 
     new WBreak(this);
     new WText("Campaign at index #" + m_CampaignIndexToTryLcbAddingAt + " was successfully created", this);
-    //hmm actually might as well leave whatever they entered... m_MinPriceLineEdit. if there was a human readable line edit though, we'd want to clear that one
+    //hmm actually might as well leave whatever they entered... m_MinPriceLineEdit. if there was a human readable name/description line edit though, we'd want to clear that one
     m_CreateNewAdCampaignButton->enable();
-    m_AnonymousBitcoinComputingWtGUI->resumeRendering();
+    //we resume rendering in either of those two ignored index cache updates (add or cas swap), since doing it here/now would mean that the user could start another request/process and... that would lead to undefined results: m_AnonymousBitcoinComputingWtGUI->resumeRendering();
 }
