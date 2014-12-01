@@ -59,6 +59,8 @@ beautifulmath
 
 inforepo, info-repo -- information repository. wiki style (desktop/web dht/central) etc etc, license filters to hide things from view. all non-dpl (and non-gpl (gpl is a mode)) is categorized as "illegal" and contains limited information. title, maybe a summary if that isn't itself illegal. dpl by default. all/any [uncited] information is allowed, every edit remembered, no deletes except cp and copyright infringement (the underlying item for anything copyright infringe-ABLE is (before or after) marked "illegal"). i'm just starting to think it's impossible to censor without having a list of what must be censored. marking ILLEGAL (red) (dpl or whatever mode you select is green) is sufficient and gets the point across. a slider (or set or radios (sameshit)) for licenses, incl of course bsd/cc0. you always see things "more permissive"/compatible-with, but never "more restrictive". (unless you activate "show hidden content (red)" mode (checkbox/bool), in which case everything is shown but color coded to your selection.
 
+queerd / qweird (both) - Home of the homophobe-phobe. It's a word I used on accident once while talking to garrison. Queer and Weird both meant the same thing originally. The description/html-title (home of the ho-) is intentionally wordy, "home" is in it twice, so is "phobe". "I am only afraid of the fear of others" (I don't think that's what that one president meant when he said "there is nothing to fear but fear itself" (I think he meant that paranoia can/does drive you crazy), but it fits!).
+
 
 mb, just thought up now:
 dercom -- deriveable community
