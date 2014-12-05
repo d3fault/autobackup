@@ -20,7 +20,7 @@ AddFundsAccountTabBody::AddFundsAccountTabBody(AnonymousBitcoinComputingWtGUI *a
 { }
 void AddFundsAccountTabBody::populateAndInitialize()
 {
-    new WText("Fund Your Account via Bitcoin", this);
+    new WText("<b>Fund Your Account via Bitcoin</b>", this);
     new WBreak(this);
     new WBreak(this); //gap before any responses
 

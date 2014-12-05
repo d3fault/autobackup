@@ -1,9 +1,5 @@
 #include "abc2couchbaseandjsonkeydefines.h"
 
-#ifndef D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR
-#define D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR "_"
-#endif
-
 const std::string adSpaceCampaignKey(const std::string &usernameOfCampaignOwner, const std::string &campaignIndex)
 {
     //ex: adSpaceCampaign_d3fault_0
@@ -73,7 +69,7 @@ const std::string adSpaceCampaignSlotCacheKey(const std::string &usernameOfCampa
 const std::string withdrawFundsRequestKey(const std::string &username, const std::string &withdrawFundsRequestIndex)
 {
     return COUCHBASE_WITHDRAW_FUNDS_REQUESTS_PREFIX
-            D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR + username + COUCHBASE_WITHDRAW_FUNDS_REQUESTS_PREFIX + withdrawFundsRequestIndex;
+            D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR + username + D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR + withdrawFundsRequestIndex;
 }
 const std::string withdrawFundsRequestsNextAvailableIndexKey(const std::string &username)
 {

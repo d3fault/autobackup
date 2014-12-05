@@ -22,7 +22,7 @@ void NewAdSlotFillerAccountTabBody::populateAndInitialize()
     newAdSlotFillerScrollArea->setWidget(newAdSlotFillerContainerWidget);
     m_AdSlotFillersVLayout = new WVBoxLayout(newAdSlotFillerContainerWidget);
 
-    m_AdSlotFillersVLayout->addWidget(new WText("Upload Advertisements (For use in buying ad space)"), 0, Wt::AlignTop | Wt::AlignLeft); //TODOoptimization: perhaps a captcha must be solved before every upload, thwarting it's potential as a DDOS point (but it would take a specific app to take advantage of it (but Wt's element id randomization protects me zilch against screen based automation clickers (i could hack me)))
+    m_AdSlotFillersVLayout->addWidget(new WText("<b>Create New Advertisement (For use in buying ad space)</b>"), 0, Wt::AlignTop | Wt::AlignLeft); //TODOoptimization: perhaps a captcha must be solved before every upload, thwarting it's potential as a DDOS point (but it would take a specific app to take advantage of it (but Wt's element id randomization protects me zilch against screen based automation clickers (i could hack me)))
     m_AdSlotFillersVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
     m_AdSlotFillersVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
     m_AdSlotFillersVLayout->addWidget(new WText("Note: For the time being, the maximum number of advertisements you can upload is ten thousand. If you need more (wtf?), create a new account (or bitch at me to fix/raise this limit)"), 0, Wt::AlignTop | Wt::AlignLeft);

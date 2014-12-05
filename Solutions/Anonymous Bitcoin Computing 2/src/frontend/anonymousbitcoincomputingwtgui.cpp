@@ -332,7 +332,7 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
     {
         m_AccountTabWidget = new ActualLazyLoadedTabWidget(m_MainStack);
         //I'm pretty sure LazyLoading doesn't quite mean what I think it does/should. I think it means that the html etc isn't sent until request... whereas it real lazy loading would leave the object pointer set to zero until the tab is switched. The docs/api don't appear to work that way, but I could be wrong. Also feel like I've fumbled around with this before... but adding my own lazy loading by listening to currentTabChanged signal won't be hard...
-        m_AccountTabWidget->myAddTab(m_NewAdSlotFillerAccountTab = new NewAdSlotFillerAccountTabBody(this), "New Advertisement");
+        m_AccountTabWidget->myAddTab(m_NewAdSlotFillerAccountTab = new NewAdSlotFillerAccountTabBody(this), "Create New Advertisement");
         m_AccountTabWidget->myAddTab(m_ViewAllExistingAdSlotFillersAccountTab = new ViewAllExistingAdSlotFillersAccountTabBody(this), "Existing Advertisements");
         m_AccountTabWidget->myAddTab(m_AddFundsAccountTab = new AddFundsAccountTabBody(this), "Add Funds"); //was going to have this one be first tab, but i don't want a db hit unless they request it
         m_AccountTabWidget->myAddTab(m_WithdrawFundsAccountTab = new WithdrawFundsAccountTabBody(this), "Withdraw Funds");

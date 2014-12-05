@@ -28,7 +28,7 @@ void ViewAllExistingAdSlotFillersAccountTabBody::populateAndInitialize()
 
     //TODOoptimization: re-organize other methods all throughout app so that the db hit is scheduled/in-progress before doing any other stuff (that the db hit doesn't depend on obviously), like for example the below object instantiations and call to deferRendering...
     m_AbcApp->deferRendering();
-    new WText("View all your previously uploaded advertisements", this);
+    new WText("<b>View all your previously uploaded advertisements</b>", this);
     new WBreak(this);
     //TODOoptional: refresh buttan to pull in new uploads during the same session (low priority, since they already have a preview after upload..), OR uploading one can 'push' it directly over to us (after checking we aren't NULL or something). That pushing over strategy wouldn't work if they have two tabs/sessions open, but oh well
 }

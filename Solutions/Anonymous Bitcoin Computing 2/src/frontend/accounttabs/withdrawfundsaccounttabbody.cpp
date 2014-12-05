@@ -16,16 +16,16 @@
 
 using namespace boost::property_tree;
 
-#define LJDFLSKJDFLKSJDFKLJSD(slkfjsdlkfj) #slkfjsdlkfj
-
 //TODOreq:whatever minimum bitcoin transaction is (either in Abc2 or on bitcoin network)
-#define WithdrawFundsAccountTabBody_MIN_WITHDRAW_AMOUNT 0.00000001
-#define WithdrawFundsAccountTabBody_MIN_WITHDRAW_AMOUNT_STR LJDFLSKJDFLKSJDFKLJSD(WithdrawFundsAccountTabBody_MIN_WITHDRAW_AMOUNT)
+#define WithdrawFundsAccountTabBody_MIN_WITHDRAW_AMOUNT 0.00000001 /*if changing this, change below string too*/
+#define WithdrawFundsAccountTabBody_MIN_WITHDRAW_AMOUNT_STR "0.00000001"
 
 //The flow goes like this:
 //In-Abc2: click request withdraw button, check balance is enough, get withdraw index, recursively try to lcb_add to index (+1'ing as appropriate), cas swap accepting fail withdraw index
-//In-payout-processor: query a view to get all [stale=false] payout requests with state=unprocessed, iterate them. Here's one payout request flow: check balance is enough, if not set state=insufficientfunds and done. else (sufficient funds), cas swap lock profile account requiring success (fail means they are buying an ad slot or adding funds or something similar, so try again later (leave state as is, continue to next request. mb say it in stdout tho)), cas swap requiring success the payout request state to 'processing' (mb with durability poll of 3 as well but guh mb not since it isn't an lcb_add). finding a payout request in state 'processing' that we didn't JUST set to that means there was previously a fail. these are dangerous as fuck because we might pay them out twice. check bitcoin logs or idfk what and do manual ass shit to see wtf is going on. see if we paid them or what (this is why i want it to be manual). do bitcoin payout and check it's response etc (spit out errors). cas swap set payout request state to 'processed, profile needs balance deducting/unlocking". deduct amount from profile balance and unlock it. TODOreq: the profile should lock TO the specific payout request (just like buy ad slots are), which will allow us to recover somehow (can't put my finger on it, but yea. I also think it helps us safeguard against a double payout [during recovery]...). then set payout request state to 'processed and done'.
+//In-payout-processor: query a view to get all [stale=false] payout requests with state=unprocessed, iterate them. Here's one payout request flow: check balance is enough, if not set state=insufficientfunds and done. else (sufficient funds), cas swap lock profile account requiring success (fail means they are buying an ad slot or adding funds or something similar, so try again later (leave state as is, continue to next request. mb say it in stdout tho)), cas swap requiring success the payout request state to 'processing' (mb with durability poll of 3 as well but guh mb not since it isn't an lcb_add). finding a payout request in state 'processing' that we didn't JUST set to that means there was previously a fail. these are dangerous as fuck because we might pay them out twice (as in, when we find a payout request in state 'processing' that we didn't just set ourselves, it may or may not have already been processed! processing AGAIN (a la recovery) would be a double pay). check bitcoin logs or idfk what and do manual ass shit to see wtf is going on. see if we paid them or what (this is why i want it to be manual). do bitcoin payout and check it's response etc (spit out errors). cas swap set payout request state to 'processed, profile needs balance deducting/unlocking". deduct amount from profile balance and unlock it. TODOreq: the profile should lock TO the specific payout request (just like buy ad slots are), which will allow us to recover somehow (can't put my finger on it, but yea. I also think it helps us safeguard against a double payout [during recovery]...). then set payout request state to 'processed and done'.
 //^^so we can also query a view making sure there are no payout requests in any 'intermediate' states (indicating failure): intermediate states are processing and processed-profile-needs-blanace-deducting.
+//In-payout-processor STATES: unprocessed,insufficientFundsDone,processing,processedButProfileNeedsDeductingAndUnlocking,processedDone
+//^maybe it's a good idea to store the bitcoin key we are attempting to send money to (and the amount, and MAYBE even the datetime) in the withdraw request when the state is "processing" (and maybe processedButProfileNeedsDeductingAndUnlocking+processedDone), so that if we do find a withdraw request in state "processing" (indicating a previous fail), we have at least SOMETHING to go by to check [manually, for now] whether the payout was sent (as in, whether the bitcoin command was issued/succeeded). The key/amount/datetime will be MORE OR LESS differentiable from one to the next, but it is not perfect: carefully crafted withdraw requests (same balance, same key) that are processed 'manually but in an automated fashion' might just have the same datetime and in that case then we'd NOT deduct the amount from their balance (thus 'giving them' more money)!!! TODOreq
 
 //TODOoptional: some kind of "notify me via email when the funds are sent" functionality...
 //TODOreq: OT as fuck, but: I myself have no need to use the "withdraw" functionality. What this does mean however is that my "abc2" account will have assloads of unused funds, and will not accurately reflect how much I really have (since I will have spent them). If I ever want to buy an ad slot, I need to somehow actually make sure I can afford it (otherwise there will be trouble when that person requests a payout). One way to solve this is to use a different account for buying, and to never use the 'receive' funds account (dog food, etc) for buying ads
@@ -34,17 +34,17 @@ WithdrawFundsAccountTabBody::WithdrawFundsAccountTabBody(AnonymousBitcoinComputi
 { }
 void WithdrawFundsAccountTabBody::populateAndInitialize()
 {
-    new WText("Withdraw Funds to Bitcoin", this);
+    new WText("<b>Withdraw Funds to Bitcoin</b>", this);
 
     new WBreak(this);
     new WBreak(this);
 
-    new WText("Use this page to request a withdrawal of funds. Requests are be processed manually, and usually within 24 hours. Automated withdrawals might come eventually, but as you might imagine it is dangerous functionality to implement.", this);
+    new WText("Use this page to request a withdrawal of funds. Requests are processed manually, and usually within 24 hours. Automated withdrawals might come eventually, but as you might imagine it's dangerous functionality to implement.", this);
 
     new WBreak(this);
     new WBreak(this);
 
-    new WText("There is a 3% fee to withdraw funds", this); //TODOoptional: if js is enabled, show them as they type in the line edit just how much they will get after the 3% fee is applied
+    new WText("<i>There is a 3% fee to withdraw funds.</i>", this); //TODOoptional: if js is enabled, show them as they type in the line edit just how much they will get after the 3% fee is applied
 
     new WBreak(this);
     new WBreak(this);
@@ -59,7 +59,7 @@ void WithdrawFundsAccountTabBody::populateAndInitialize()
 
     new WText("Bitcoin Key To Withdraw Funds To:", this);
     m_BitcoinPayoutKeyLineEdit = new WLineEdit(this);
-    LettersNumbersOnlyRegExpValidatorAndInputFilter *bitcoinKeyValidator = new LettersNumbersOnlyRegExpValidatorAndInputFilter("35", m_BitcoinPayoutKeyLineEdit); //TODOreq: base58 check encoding filter instead, including minimum length (right now I only have max len)
+    LettersNumbersOnlyRegExpValidatorAndInputFilter *bitcoinKeyValidator = new LettersNumbersOnlyRegExpValidatorAndInputFilter("35", m_BitcoinPayoutKeyLineEdit); //TODOreq: proper bitcoin key validity (had:base58 check encoding) filter instead, including minimum length (right now I only have max len)
     bitcoinAmountValidator->setMandatory(true);
     m_BitcoinPayoutKeyLineEdit->setValidator(bitcoinKeyValidator);
 
@@ -170,6 +170,7 @@ void WithdrawFundsAccountTabBody::useNextAvailableWithdrawRequestIndexToSchedule
 
     pt.put(JSON_WITHDRAW_FUNDS_REQUESTED_AMOUNT, boost::lexical_cast<std::string>(jsonStringToSatoshiInt(m_AmountToWithdrawLineEdit->text().toUTF8())));
     pt.put(JSON_WITHDRAW_FUNDS_BITCOIN_PAYOUT_KEY, m_BitcoinPayoutKeyLineEdit->text().toUTF8());
+    pt.put(JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY, JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_UNPROCESSED);
 
     std::ostringstream withdrawRequestDocBuffer;
     write_json(withdrawRequestDocBuffer, pt, false);
@@ -234,4 +235,6 @@ void WithdrawFundsAccountTabBody::handleAttemptToAddWithdrawRequestAtIndexFinish
 
     new WBreak(this);
     new WText("Your withdraw request #" + m_WithdrawRequestIndexToTryLcbAddingAt + " has been scheduled. If you schedule any additional withdraw requests, it is up to you to ensure that the total amount for all pending withdraw requests does not exceed your account's balance. Withdraw requests are processed in the order they are receieved, and any withdraw request for an amount greater than your balance will simply be rejected.", this);
+    m_AmountToWithdrawLineEdit->setText(WithdrawFundsAccountTabBody_MIN_WITHDRAW_AMOUNT_STR);
+    m_BitcoinPayoutKeyLineEdit->setText(""); //NOPE: could also clear the bitcoin key, but chances are DECENT that they'll use it again for the next request (WHY? nvm clearing fuckit)
 }

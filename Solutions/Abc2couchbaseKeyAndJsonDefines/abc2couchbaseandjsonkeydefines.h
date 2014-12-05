@@ -17,8 +17,12 @@ inline std::string satoshiStringToJsonString(const std::string &inputSatoshiStri
 inline SatoshiInt jsonStringToSatoshiInt(const std::string &inputJsonString) { return jsonDoubleToSatoshiIntIncludingRounding(boost::lexical_cast<double>(inputJsonString)); }
 inline std::string satoshiIntToJsonString(SatoshiInt inputSatoshiInt) { return jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(satoshiIntToJsonDouble(inputSatoshiInt)); }
 
+#ifndef D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR
+#define D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR "_"
+#endif
+
 //campaign
-#define COUCHBASE_AD_SPACE_CAMPAIGN_KEY_PREFIX "adSpaceCampaign"
+#define COUCHBASE_AD_SPACE_CAMPAIGN_KEY_PREFIX "adSpaceCampaign" //if changing, change "all users with at least one ad space campaign" view (and possibly others). aka: don't change.
 #define JSON_AD_SPACE_CAMPAIGN_MIN_PRICE "minPrice"
 #define JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS "slotLengthHours"
 //campaign-OPTIONAL-last-slot-filled
@@ -153,6 +157,14 @@ const std::string adSpaceCampaignSlotCacheKey(const std::string &usernameOfCampa
 #define COUCHBASE_WITHDRAW_FUNDS_REQUESTS_PREFIX "withdrawFundsRequest"
 #define JSON_WITHDRAW_FUNDS_REQUESTED_AMOUNT "requestedWithdrawAmountInSatoshis"
 #define JSON_WITHDRAW_FUNDS_BITCOIN_PAYOUT_KEY "bitcoinKeyToWithdrawTo"
+//withdraw funds requests state key
+#define JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY "withdrawFundsRequestState" //if changing, change "all withdrawal requests with state of unprocessed" view (and possibly others). aka: don't change.
+//withdraw funds requests state values (states)
+#define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_UNPROCESSED "unprocessed" //if changing, change "all withdrawal requests with state of unprocessed" view (and possibly others). aka: don't change.
+#define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_INSUFFICIENTFUNDS "insufficientFundsDone"
+#define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_PROCESSING "processing"
+#define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_PROCESSEDBUTPROFILENEEDSDEDUCTINGANDUNLOCKING "processedButProfileNeedsDeductingAndUnlocking"
+#define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_PROCESSEDDONE "processedDone"
 
 const std::string withdrawFundsRequestKey(const std::string &username, const std::string &withdrawFundsRequestIndex);
 
@@ -160,6 +172,8 @@ const std::string withdrawFundsRequestKey(const std::string &username, const std
 //withdraw funds requests current index (like 'CACHE')
 #define COUCHBASE_WITHDRAW_FUNDS_REQUESTS_NEXT_AVAILABLE_INDEX_PREFIX "withdrawFundsRequestNextAvailableIndex"
 #define JSON_WITHDRAW_FUNDS_REQUESTS_NEXT_AVAILABLE_INDEX "nextAvailableWithdrawFundsRequestIndex"
+
+
 
 const std::string withdrawFundsRequestsNextAvailableIndexKey(const std::string &username);
 
