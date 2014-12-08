@@ -4,6 +4,7 @@
 
 #include "d3faultscouchbaseshared.h"
 
+//"Client" fits better than "User" in the class name
 ISynchronousLibCouchbaseUser::ISynchronousLibCouchbaseUser()
     : m_CouchbaseCreated(false)
     , m_Connected(false) //i think my initializer/page-adder forgot to set this to false, so this refactor caught a potentially large bug

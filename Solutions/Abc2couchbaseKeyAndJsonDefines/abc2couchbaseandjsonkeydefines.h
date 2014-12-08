@@ -2,7 +2,13 @@
 #define ABC2_COUCHBASE_AND_JSON_KEY_DEFINES_H
 
 #include <string>
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 #include <boost/lexical_cast.hpp> //bitcoin util
+
+using namespace std;
+using namespace boost::property_tree;
 
 //sort of belongs here, but would more appropriately go into a bitcoin util file
 typedef long long int SatoshiInt;
@@ -20,6 +26,25 @@ inline std::string satoshiIntToJsonString(SatoshiInt inputSatoshiInt) { return j
 #ifndef D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR
 #define D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR "_"
 #endif
+
+class Abc2CouchbaseAndJsonKeyDefines //TODOoptional: move all global functions below into this class as static methods
+{
+private:
+    Abc2CouchbaseAndJsonKeyDefines() { }
+    Abc2CouchbaseAndJsonKeyDefines(const Abc2CouchbaseAndJsonKeyDefines &other) { }
+public:
+    //TODOoptional: static void createDefaultProfileDoc(ptree &emptyPtreeToPopulateWithDefaults); //etc
+
+    static bool profileIsLocked(const ptree &profile);
+    //static bool profileIsLocked(const std::string &profile);
+
+    inline std::string propertyTreeToJsonString(ptree propertyTree)
+    {
+        std::ostringstream outputStringStream;
+        write_json(propertyTree, outputStringStream, false);
+        return outputStringStream.str();
+    }
+};
 
 //campaign
 #define COUCHBASE_AD_SPACE_CAMPAIGN_KEY_PREFIX "adSpaceCampaign" //if changing, change "all users with at least one ad space campaign" view (and possibly others). aka: don't change.
@@ -68,7 +93,7 @@ const std::string adSpaceSlotFillerKey(const std::string &username, const std::s
 const std::string adSpaceAllSlotFillersKey(const std::string &username);
 
 
-//user account
+//user account/profile
 #define COUCHBASE_USER_ACCOUNT_KEY_PREFIX "user"
 #define JSON_USER_ACCOUNT_BALANCE "balanceInSatoshis"
 #define JSON_USER_ACCOUNT_PASSWORD_HASH "passwordHash"
@@ -76,6 +101,8 @@ const std::string adSpaceAllSlotFillersKey(const std::string &username);
 //user account LOCKED [filling slot]
 #define JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL "slotToAttemptToFillAkaPurchase"
 #define JSON_USER_ACCOUNT_SLOT_TO_ATTEMPT_TO_FILL_IT_WITH "slotToAttemptToFillAkaPurchaseItWith"
+//user account LOCKED [withdrawing funds]
+#define JSON_USER_ACCOUNT_LOCKED_WITHDRAWING_FUNDS "lockedWithdrawingFunds"
 //bitcoin state
 #define JSON_USER_ACCOUNT_BITCOIN_STATE "bitcoinState"
 #define JSON_USER_ACCOUNT_BITCOIN_STATE_NO_KEY "NoKey"
@@ -158,9 +185,9 @@ const std::string adSpaceCampaignSlotCacheKey(const std::string &usernameOfCampa
 #define JSON_WITHDRAW_FUNDS_REQUESTED_AMOUNT "requestedWithdrawAmountInSatoshis"
 #define JSON_WITHDRAW_FUNDS_BITCOIN_PAYOUT_KEY "bitcoinKeyToWithdrawTo"
 //withdraw funds requests state key
-#define JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY "withdrawFundsRequestState" //if changing, change "all withdrawal requests with state of unprocessed" view (and possibly others). aka: don't change.
+#define JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY "withdrawFundsRequestState" //if changing, change "all withdrawal requests with state of unprocessed" view (and possibly others). aka: don't change
 //withdraw funds requests state values (states)
-#define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_UNPROCESSED "unprocessed" //if changing, change "all withdrawal requests with state of unprocessed" view (and possibly others). aka: don't change.
+#define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_UNPROCESSED "unprocessed" //if changing, change "all withdrawal requests with state of unprocessed" view (and possibly others). aka: don't change
 #define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_INSUFFICIENTFUNDS "insufficientFundsDone"
 #define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_PROCESSING "processing"
 #define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_PROCESSEDBUTPROFILENEEDSDEDUCTINGANDUNLOCKING "processedButProfileNeedsDeductingAndUnlocking"

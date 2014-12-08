@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1417401931
+Documents/minddump/:1418032273
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1417736543
+Documents/minddump/dreams/:1418025027
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -172,6 +172,7 @@ Documents/minddump/dreams/sdfkjslfkjslkdfjsoduflsdjfouewrljksdfouisfkl.txt:13918
 Documents/minddump/dreams/sdfljlsdakjfshdfljsldfjsdlkfhsldjflsdkjfyljouwerdf.txt:1401720984
 Documents/minddump/dreams/sdfljsldkjfsdofusldjfosudfljsdfoudfjsflksjdfsfodusldfj.txt:1392023070
 Documents/minddump/dreams/sdflkjasdflkjsadlkfjsdalkfjsdfuwoeurlkjsdfousdlfkjsdfouldfskjdfsouilk.txt:1377938455
+Documents/minddump/dreams/sdflkjsdlfkjsdlkfjsdlkjflskdjflksdjflksdjflkjsdlfkjsdlfkjsldkfj.txt:1418025027
 Documents/minddump/dreams/sdflkjsdlkfjsdlkjflsdjflksdhfuoewijrlksjdfklshdflkjsdflkjsdfouiwrlkjdosfsdlf.txt:1409062176
 Documents/minddump/dreams/sdflkjslfkjskljfsdofusdlfkjouwelrkjosufsldfj.txt:1392528781
 Documents/minddump/dreams/sdflksdflkjsdfoiuwerlkjdfouisdlfkjoiurfjk.txt:1355127688
@@ -211,6 +212,7 @@ Documents/minddump/dreams/sldjfklasjdkfsaoduflsajfosudfljsdfousdlfk.txt:13855556
 Documents/minddump/dreams/sldjkfkldsjflkdsjflkdjsflkjsdflkjsdlkfjlsdkjflksdjflksjdflksjdflkjsd.txt:1415864391
 Documents/minddump/dreams/sldkfjlkasdjflksajdfsadofulkwejroulkdjfoasudflaksdfjosdfulsdkfjouwekrjoiusdflkjsdf.txt:1379234828
 Documents/minddump/dreams/sldkfjskldjfklsdjfousdlfkjouwerlkjoufsdklfjsdljk.txt:1413299112
+Documents/minddump/dreams/sldkjflsdjfdlskjfldskjflksdjflsdkjflksdjflkjsdflkjsdflk.txt:1417933376
 Documents/minddump/dreams/sldkjflskdjflksdjflksjdlfkjsdfjoweurlksdjfosduflkdsjflksdjf.txt:1415787073
 Documents/minddump/dreams/sldkjflskjdflkjsdlfjsdkljfjewrjlkjdflkjsldfjoiwer.txt:1394211103
 Documents/minddump/dreams/slfkjalskjflksjdflsjdflkjsdlkfjouwerlkjosudflksjdfousdfl.easy.metaphore.for.uhh.economy.and.lots.others.txt:1397896994
@@ -2032,6 +2034,7 @@ Documents/minddump/sdlfjsakdjfskldjfklsjfdouwelkrjousdfjsdfjsldkf.txt:1394698488
 Documents/minddump/sdlfjsdfhlsdjflkjdfglksdhfsdufdsjfowuerlkjsdfsdkf.txt:1402009419
 Documents/minddump/sdlfjsdfkjsdkjfldskjflksdjfwueorulkdsfjsodfulsdfjsdlkfjsdlkf.txt:1406928946
 Documents/minddump/sdlfjsdflkjsdlfkjdsfljsdfoduflkjwourlksjdflksdjf.txt:1404639556
+Documents/minddump/sdlfjsdlkfjlskdjflksdjflksdjfhsdlfkhoweurlkhdfljsdflksjdflkjsdf.txt:1418025070
 Documents/minddump/sdlfjsfkjsdlfkjsdfousdjlfksdfuosdifulkjdsfousdlfkjsdofuwerlkjsdfou.txt:1380139952
 Documents/minddump/sdlfjsldfjlsdkjflksdjflksdjfodsuflsjdfousdflweorusdflk.txt:1393516876
 Documents/minddump/sdlfjsldfjsldjfdslkjflsdkjflsdjflwurousdlfjsodfusdlfkjsldf.txt:1379127231
@@ -2163,6 +2166,7 @@ Documents/minddump/shame.alfjsadfouwarlkjsfdosudfaaksldjfwaeruol.txt:1344286354
 Documents/minddump/shitty.backup.operative.but.i.really.really.need.an.offsite.backup.plox.txt:1324576937
 Documents/minddump/shtooooped.asdfjlaskjflkjsdfousdfal.txt:1398894205
 Documents/minddump/sjdfjsdfjskdljflksdjfklsdjflksdjflksdjfowiuerlkjdfljsdflkjsdfkl.txt:1404646085
+Documents/minddump/sjdflkjsdfjdlskfjlksdjflkdjfkljsdfkjsdfkjsdklfjsdlkjflksdjf.txt:1418032273
 Documents/minddump/sjfljsdfljsdlfjldksjflksjdflkjsdkfouwelrjlkjfdsjdflsdfuouwelrk.txt:1398081618
 Documents/minddump/sjfljsdlfkjslkdjflksjdflkjsdfkjsdfouljweroulsjfdsf.txt:1398556585
 Documents/minddump/sjkdflksjdflkjsdklfjslkjflksjflskdjflksjdfoiusdlfkjsdfousdlfkjsdfl.txt:1416244586
@@ -2219,6 +2223,7 @@ Documents/minddump/sldfkjalskjdflksjdflkjsldkfjlskjflaskjdflskjdfouwerl.txt:1399
 Documents/minddump/sldfkjasdofuwlrkjsafdihsdfkajoruwerlksjdfourl.txt:1345058845
 Documents/minddump/sldfkjasljfsalkjdflskdjflksdjflskjdflskdjfouwelrkjosufdlksjdfosuidfl.txt:1381338846
 Documents/minddump/sldfkjlsdkfjsldkjfouwerljksodfulsdfjoufsdlkjweorulsjfd.txt:1381327973
+Documents/minddump/sldfkjsadfkljsdlkfjsdklfjlskdjflskdjfouwerlkjsdklfjsdlfkj.txt:1417754027
 Documents/minddump/sldfkjsadlfkjsdlkfjsdofusdlfjsdofu.txt:1389502853
 Documents/minddump/sldfkjsdlhflasjdflksdjflkjsdlfkjsdlfkjsdhflsdfjldsk.txt:1401636747
 Documents/minddump/sldfkjsdlkfjdslfsdfoiufkjjlkafsjoiuwerkjlouisfhfdoiusdfkjwreousdflk.txt:1368517274
@@ -2332,6 +2337,7 @@ Documents/minddump/then.than.sldkfjsadlkjfoweuralkjfsdfjsdlkfssssdf.txt:13371109
 Documents/minddump/there.are.no.places.on.earth.in.2014.where.i.can.be.free.txt:1397712194
 Documents/minddump/there.is.a.tangent.in.here.that.i.intended.to.finish.but.you.can.figure.it.out.txt:1323589274
 Documents/minddump/there.is.no.currency.except.time.and.we.trade.it.txt:1321758475
+Documents/minddump/theres.probably.more.but.i.forget.sdlfjasldfjlskjfsdjflksadjflkjsadf.txt:1418025050
 Documents/minddump/they.do.lol.steve.meme.and.music.and.omfg.im.losin.it.txt:1321758527
 Documents/minddump/this.documenting.also.counts.as.recording.fuck.you.devbox.dsfouldsfjsldkfjlkjwerousdlfkjsdlfkjsd.txt:1405235411
 Documents/minddump/this.is.the.funniest.joke.in.the.world.from.monty.python.be.careful.dont.read.txt:1391287051
@@ -2452,9 +2458,9 @@ GloballySharedClasses/architecture/ibusinessobject.h:1399319929
 GloballySharedClasses/cli/:1397707910
 GloballySharedClasses/cli/standardinputnotifier.cpp:1397707910
 GloballySharedClasses/cli/standardinputnotifier.h:1397707898
-GloballySharedClasses/distributeddatabase/:1415360299
+GloballySharedClasses/distributeddatabase/:1417749369
 GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h:1400918587
-GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp:1415360299
+GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp:1417749369
 GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.h:1415249534
 GloballySharedClasses/filesystem/:1401628130
 GloballySharedClasses/filesystem/easytree.cpp:1387286577
@@ -2728,7 +2734,7 @@ Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.cpp:1
 Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.h:1409507797
 Projects/CopyFileContentsToClipboard/src/main.cpp:1409508222
 Projects/DesignEqualsImplementation2/:1412596378
-Projects/DesignEqualsImplementation2/design/:1414618544
+Projects/DesignEqualsImplementation2/design/:1418076875
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/:1411932839
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/0004_SingleSignalMultipleSlots/:1411934573
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/0004_SingleSignalMultipleSlots/design/:1411934133
@@ -2755,6 +2761,7 @@ Projects/DesignEqualsImplementation2/design/cant.use.libclang.types.directly.bec
 Projects/DesignEqualsImplementation2/design/classes.are.all.or.nothing.AND.iterating.use.cases.cant.generate.class.constructor.initialize.or.connect.code.it.must.have.been.made.sooner.somehow.txt:1405964014
 Projects/DesignEqualsImplementation2/design/cpp11.now.required.to.compile.damn.i.mean.unless.a.cpp98.app.can.link.to.a.cpp11.lib.but.idk.and.doubt.it.txt:1408603536
 Projects/DesignEqualsImplementation2/design/delayed.instancing.and.other.rambling.asdfljslfkjsdofuwerlkjsdflkjsdflskd.txt:1406702932
+Projects/DesignEqualsImplementation2/design/design.equals.implementation.2.todo.left.off.txt:1418076875
 Projects/DesignEqualsImplementation2/design/dfjsldfjsdjflsdkjflksdjflkjsdflkjsdfowuerlkjsdofusdfkjsdlfk.txt:1405506032
 Projects/DesignEqualsImplementation2/design/dflkjsdlfkjsdlkfjsdklfjweourlkjdfosdfkjsdfls.txt:1405423408
 Projects/DesignEqualsImplementation2/design/differentiating.internally.designed.classes.from.defined.elsewhere.classes.txt:1408447061
@@ -3531,7 +3538,7 @@ Projects/Osios/src/OsiosGui.pro:1404008961
 Projects/Osios/src/osios.cpp:1404010898
 Projects/Osios/src/osios.h:1403729701
 Projects/Osios2/:1414341370
-Projects/Osios2/design/:1415177778
+Projects/Osios2/design/:1418076677
 Projects/Osios2/design/app.state.empty.json.doc.analogy.notes.but.stopped.to.go.play.with.state.machine.examples.txt:1414629578
 Projects/Osios2/design/at.least.sharding.in.the.forwarding.sense.could.at.least.save.on.bandwidth.when.used.with.pki.txt:1414785003
 Projects/Osios2/design/copycat.ONLY.mode.should.be.implemented.later.nob.txt:1414998857
@@ -3541,6 +3548,7 @@ Projects/Osios2/design/feature.to.retrieve.replica.rendered.data.under.desparate
 Projects/Osios2/design/i.probably.can.beef.up.the.protocol.as.much.as.my.heart.desires.so.long.as.im.not.wasteful.txt:1414743755
 Projects/Osios2/design/osios.dht.hello.catch.up.old.timeline.nodes.protocol.txt:1414557256
 Projects/Osios2/design/osios2.initial.idea.txt:1414311199
+Projects/Osios2/design/osios2.todo.left.off.txt:1418076677
 Projects/Osios2/design/public.access.should.only.ever.be.through.interop.layer.but.core.app.security.requires.private.dht.txt:1414798376
 Projects/Osios2/design/sdlkfjsladkfjksldjfklsdjfklsjdflksjdflkjsdlkfjsldkf.txt:1414570379
 Projects/Osios2/design/sldjflkasdjfklajsdlfkjsadfouwelrkjsdfsdofjsldkfjsd.txt:1414439351
@@ -4846,17 +4854,19 @@ Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/Abc2PessimisticStateMonito
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/abc2pessimisticstatemonitorandrecoverer.cpp:1413102508
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/abc2pessimisticstatemonitorandrecoverer.h:1413102432
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/main.cpp:1413102367
-Solutions/Abc2WithdrawRequestProcessor/:1417422186
-Solutions/Abc2WithdrawRequestProcessor/src/:1417428390
+Solutions/Abc2WithdrawRequestProcessor/:1417933542
+Solutions/Abc2WithdrawRequestProcessor/design/:1417933562
+Solutions/Abc2WithdrawRequestProcessor/design/two.modes.calculate.only.and.execute.txt:1417933571
+Solutions/Abc2WithdrawRequestProcessor/src/:1417754703
 Solutions/Abc2WithdrawRequestProcessor/src/Abc2WithdrawRequestProcessorCli.pro:1417413922
-Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessor.cpp:1417428388
-Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessor.h:1417424091
+Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessor.cpp:1417754640
+Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessor.h:1417751860
 Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessorcli.cpp:1417423503
 Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessorcli.h:1417422390
 Solutions/Abc2WithdrawRequestProcessor/src/main.cpp:1417412693
-Solutions/Abc2couchbaseKeyAndJsonDefines/:1417427047
-Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp:1417427047
-Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h:1417427047
+Solutions/Abc2couchbaseKeyAndJsonDefines/:1417754597
+Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp:1417750925
+Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h:1417754597
 Solutions/Abc2dbInitializer/:1393907655
 Solutions/Abc2dbInitializer/src/:1393920575
 Solutions/Abc2dbInitializer/src/cli/:1417414669
@@ -5040,7 +5050,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/core.math.for.ad.doubles.0.worthl
 Solutions/Anonymous Bitcoin Computing 2/design/core.math.for.ad.doubles.1.formulas.and.eventual.success.woot.txt:1390325417
 Solutions/Anonymous Bitcoin Computing 2/design/failed.attempt.at.core.json.docs.from.way.early.on.that.had.been.sitting.on.my.desktop.txt:1389958895
 Solutions/Anonymous Bitcoin Computing 2/design/initial.db.state.lol.need.to.make.a.one.off.app.to.populate.it.txt:1392699696
-Solutions/Anonymous Bitcoin Computing 2/design/locking.profile.for.withdraw.apparently.necessary.dslfjsdlkfjsdlkjf.txt:1417408222
+Solutions/Anonymous Bitcoin Computing 2/design/locking.profile.for.withdraw.apparently.necessary.dslfjsdlkfjsdlkjf.txt:1417750197
 Solutions/Anonymous Bitcoin Computing 2/design/login.throttling.pointless.if.db.is.public.lewl.txt:1390304771
 Solutions/Anonymous Bitcoin Computing 2/design/misc.dumb.notes.on.withdraw.funds.feature.sodfiusdlkfjsaldkfjsdlkfjsldkfjsdlkfjlksd.txt:1416245544
 Solutions/Anonymous Bitcoin Computing 2/design/on.payouts.to.the.public.should.i.allow.the.public.to.create.ad.campaigns.txt:1415111353
@@ -5053,7 +5063,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guara
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/the.goods.service.vs.money.transmitter.differentiation.does.not.exist.with.bitcoins.nor.paper.money.but.does.exist.with.debit.credit.cards.EXCEPT.THOSE.HAVE.FEES.UP.THE.ASS.AND.HUGE.BARRIER.TO.ENTRY.txt:1416508764
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1417415095
+Solutions/Anonymous Bitcoin Computing 2/src/:1417754701
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1417415056
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477

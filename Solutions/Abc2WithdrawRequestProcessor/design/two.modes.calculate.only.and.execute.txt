@@ -1,0 +1,6 @@
+--calculate-only
+--execute
+
+pretty self explainatory. they share as much code as possible (same app after all) and calculate-only is basically used to determine how much to transfer to the payout wallet. after that amount is transferred to the payout wallet, the app is run again in execute mode and well yea then the funds are actually paid out
+
+ommitting the mode flag prints usage and exits

@@ -76,3 +76,25 @@ const std::string withdrawFundsRequestsNextAvailableIndexKey(const std::string &
     return COUCHBASE_WITHDRAW_FUNDS_REQUESTS_NEXT_AVAILABLE_INDEX_PREFIX
             D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR + username;
 }
+bool Abc2CouchbaseAndJsonKeyDefines::profileIsLocked(const ptree &profile) //TODOreq: migrate all locked checks to this! TODOoptional: genericize the locking to be a single json key in the account
+{
+    string lockedCheck = profile.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n");
+    if(lockedCheck != "n")
+    {
+        return true;
+    }
+
+    lockedCheck = profile.get<std::string>(JSON_USER_ACCOUNT_LOCKED_WITHDRAWING_FUNDS, "n");
+    if(lockedCheck != "n")
+    {
+        return true;
+    }
+
+    return false;
+}
+/*
+bool Abc2CouchbaseAndJsonKeyDefines::profileIsLocked(const std::string &profile) -- if the string only needs to be checked for locked (we don't use the ptree for anythign else)
+{
+    TODO OPTIONAL
+}
+*/
