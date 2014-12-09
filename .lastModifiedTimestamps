@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1418032273
+Documents/minddump/:1418086808
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -2034,6 +2034,7 @@ Documents/minddump/sdlfjsakdjfskldjfklsjfdouwelkrjousdfjsdfjsldkf.txt:1394698488
 Documents/minddump/sdlfjsdfhlsdjflkjdfglksdhfsdufdsjfowuerlkjsdfsdkf.txt:1402009419
 Documents/minddump/sdlfjsdfkjsdkjfldskjflksdjfwueorulkdsfjsodfulsdfjsdlkfjsdlkf.txt:1406928946
 Documents/minddump/sdlfjsdflkjsdlfkjdsfljsdfoduflkjwourlksjdflksdjf.txt:1404639556
+Documents/minddump/sdlfjsdlfjsldkfjsldkjfsldkjfouiwerlkjsdfoudsflkjsdfsdflkjsdflkjsdfoiuwerlk.txt:1418086808
 Documents/minddump/sdlfjsdlkfjlskdjflksdjflksdjfhsdlfkhoweurlkhdfljsdflksjdflkjsdf.txt:1418025070
 Documents/minddump/sdlfjsfkjsdlfkjsdfousdjlfksdfuosdifulkjdsfousdlfkjsdofuwerlkjsdfou.txt:1380139952
 Documents/minddump/sdlfjsldfjlsdkjflksdjflksdjfodsuflsjdfousdflweorusdflk.txt:1393516876
@@ -2458,10 +2459,10 @@ GloballySharedClasses/architecture/ibusinessobject.h:1399319929
 GloballySharedClasses/cli/:1397707910
 GloballySharedClasses/cli/standardinputnotifier.cpp:1397707910
 GloballySharedClasses/cli/standardinputnotifier.h:1397707898
-GloballySharedClasses/distributeddatabase/:1417749369
+GloballySharedClasses/distributeddatabase/:1418092316
 GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h:1400918587
-GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp:1417749369
-GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.h:1415249534
+GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp:1418092316
+GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.h:1418092284
 GloballySharedClasses/filesystem/:1401628130
 GloballySharedClasses/filesystem/easytree.cpp:1387286577
 GloballySharedClasses/filesystem/easytree.h:1387286619
@@ -2482,7 +2483,7 @@ GloballySharedClasses/gui/labellineeditbrowsebutton.cpp:1409509734
 GloballySharedClasses/gui/labellineeditbrowsebutton.h:1409508309
 GloballySharedClasses/image/:1394443296
 GloballySharedClasses/image/nonanimatedimagheaderchecker.h:1394443296
-GloballySharedClasses/network/:1370998417
+GloballySharedClasses/network/:1418082372
 GloballySharedClasses/network/ssl/:1370686848
 GloballySharedClasses/network/ssl/testcerts/:1344899950
 GloballySharedClasses/network/ssl/testcerts/bothCAs/:1344900037
@@ -2734,7 +2735,7 @@ Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.cpp:1
 Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.h:1409507797
 Projects/CopyFileContentsToClipboard/src/main.cpp:1409508222
 Projects/DesignEqualsImplementation2/:1412596378
-Projects/DesignEqualsImplementation2/design/:1418076875
+Projects/DesignEqualsImplementation2/design/:1418094927
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/:1411932839
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/0004_SingleSignalMultipleSlots/:1411934573
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/0004_SingleSignalMultipleSlots/design/:1411934133
@@ -2756,6 +2757,7 @@ Projects/DesignEqualsImplementation2/design/a.question.about.how.to.do.slot.refe
 Projects/DesignEqualsImplementation2/design/all.type.usages.simply.mark.the.underlying.type.as.required.which.isnt.difficult.but.still.requires.some.thinking.for.private.hasA.members.refactoring.txt:1408695344
 Projects/DesignEqualsImplementation2/design/arrows.saldfjsldfjlsjfwoeurljsdfosduflsdkjfosdfsldfjsldf.txt:1405420969
 Projects/DesignEqualsImplementation2/design/asdlfkjskdlfjslkdjfklsdjfosdufsdjfouwelkrjlksjdf.txt:1409764149
+Projects/DesignEqualsImplementation2/design/async.while.loop.im.not.sure.if.this.is.a.good.idea.or.not.txt:1418094927
 Projects/DesignEqualsImplementation2/design/both.of.these.appear.to.be.fixed.and.or.implemented.so.sdfljsldfjaslkdjfslkdjfousdflksdjfklsdjf.txt:1407764134
 Projects/DesignEqualsImplementation2/design/cant.use.libclang.types.directly.because.idfk.how.to.instantiate.most.of.them.and.sure.as.shit.dont.care.to.learn.how.txt:1408646255
 Projects/DesignEqualsImplementation2/design/classes.are.all.or.nothing.AND.iterating.use.cases.cant.generate.class.constructor.initialize.or.connect.code.it.must.have.been.made.sooner.somehow.txt:1405964014
@@ -4857,16 +4859,16 @@ Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/main.cpp:1413102367
 Solutions/Abc2WithdrawRequestProcessor/:1417933542
 Solutions/Abc2WithdrawRequestProcessor/design/:1417933562
 Solutions/Abc2WithdrawRequestProcessor/design/two.modes.calculate.only.and.execute.txt:1417933571
-Solutions/Abc2WithdrawRequestProcessor/src/:1417754703
-Solutions/Abc2WithdrawRequestProcessor/src/Abc2WithdrawRequestProcessorCli.pro:1417413922
-Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessor.cpp:1417754640
-Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessor.h:1417751860
+Solutions/Abc2WithdrawRequestProcessor/src/:1418096397
+Solutions/Abc2WithdrawRequestProcessor/src/Abc2WithdrawRequestProcessorCli.pro:1418096286
+Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessor.cpp:1418096258
+Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessor.h:1418096011
 Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessorcli.cpp:1417423503
 Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessorcli.h:1417422390
 Solutions/Abc2WithdrawRequestProcessor/src/main.cpp:1417412693
-Solutions/Abc2couchbaseKeyAndJsonDefines/:1417754597
+Solutions/Abc2couchbaseKeyAndJsonDefines/:1418096108
 Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp:1417750925
-Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h:1417754597
+Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h:1418096108
 Solutions/Abc2dbInitializer/:1393907655
 Solutions/Abc2dbInitializer/src/:1393920575
 Solutions/Abc2dbInitializer/src/cli/:1417414669
@@ -5063,7 +5065,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guara
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/the.goods.service.vs.money.transmitter.differentiation.does.not.exist.with.bitcoins.nor.paper.money.but.does.exist.with.debit.credit.cards.EXCEPT.THOSE.HAVE.FEES.UP.THE.ASS.AND.HUGE.BARRIER.TO.ENTRY.txt:1416508764
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1417754701
+Solutions/Anonymous Bitcoin Computing 2/src/:1418096400
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1417415056
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
@@ -5077,7 +5079,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcou
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.cpp:1413219024
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1413240036
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1417403476
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1417413089
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1418093106
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.cpp:1399670151
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.h:1399671286
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/addfundsaccounttabbody.cpp:1417404673
@@ -5092,7 +5094,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/singleuseselfde
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/stupidmimefromextensionutil.h:1394152357
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/viewallexistingadslotfillersaccounttabbody.cpp:1417404730
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/viewallexistingadslotfillersaccounttabbody.h:1399665798
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/withdrawfundsaccounttabbody.cpp:1417413089
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/withdrawfundsaccounttabbody.cpp:1418093106
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/withdrawfundsaccounttabbody.h:1416597095
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/:1416598588
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/pages/advertisingbuyadspacealladcampaignsforuserwidget.cpp:1415986388

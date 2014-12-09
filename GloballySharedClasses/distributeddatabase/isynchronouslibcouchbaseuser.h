@@ -18,6 +18,7 @@ protected:
     lcb_error_t m_LastOpStatus;
     std::string m_LastDocGetted;
     lcb_cas_t m_LastGetCas;
+    lcb_cas_t m_LastSetCas;
 
     //be sure to call base implementation if overriding xD, though really i can't even imagine any cases where i would override to begin with...
     virtual void errorCallback(lcb_error_t error, const char *errinfo);

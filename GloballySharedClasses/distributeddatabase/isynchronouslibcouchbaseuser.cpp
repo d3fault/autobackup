@@ -41,6 +41,10 @@ void ISynchronousLibCouchbaseUser::storeCallback(const void *cookie, lcb_storage
     (void)operation;
     (void)resp;
     m_LastOpStatus = error;
+    if(error == LCB_SUCCESS)
+    {
+        m_LastSetCas = resp->v.v0.cas; //I added this way later after the first version of this class was coded. Was tempted to just use m_LastGetCas (psbly changing the variable name), but there MIGHT be source compatibility conflicts (there definitely would be if I changed the variable name) if for example I did a get, a store, and then did something (another store most likely) relying on m_LastGetCas -- if they shared variables, the second store would now be using a different cas and would fuck shit up
+    }
 }
 bool ISynchronousLibCouchbaseUser::connectToCouchbase()
 {

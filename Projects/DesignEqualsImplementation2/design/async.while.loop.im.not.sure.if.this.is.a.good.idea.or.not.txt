@@ -1,0 +1,1 @@
+"async while loop" design concept in DesignEqualsImplementation. It appears like a synchronous/scoped while loop in the design, but transparently implemented using async concepts (scattered callbacks, etc)

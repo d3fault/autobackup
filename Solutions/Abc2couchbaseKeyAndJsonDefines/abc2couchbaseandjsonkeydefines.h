@@ -31,17 +31,18 @@ class Abc2CouchbaseAndJsonKeyDefines //TODOoptional: move all global functions b
 {
 private:
     Abc2CouchbaseAndJsonKeyDefines() { }
-    Abc2CouchbaseAndJsonKeyDefines(const Abc2CouchbaseAndJsonKeyDefines &other) { }
+    Abc2CouchbaseAndJsonKeyDefines(const Abc2CouchbaseAndJsonKeyDefines &other) { (void)other; }
+    virtual ~Abc2CouchbaseAndJsonKeyDefines() { }
 public:
     //TODOoptional: static void createDefaultProfileDoc(ptree &emptyPtreeToPopulateWithDefaults); //etc
 
     static bool profileIsLocked(const ptree &profile);
     //static bool profileIsLocked(const std::string &profile);
 
-    inline std::string propertyTreeToJsonString(ptree propertyTree)
+    static inline std::string propertyTreeToJsonString(ptree propertyTree)
     {
         std::ostringstream outputStringStream;
-        write_json(propertyTree, outputStringStream, false);
+        write_json(outputStringStream, propertyTree, false);
         return outputStringStream.str();
     }
 };
@@ -184,6 +185,7 @@ const std::string adSpaceCampaignSlotCacheKey(const std::string &usernameOfCampa
 #define COUCHBASE_WITHDRAW_FUNDS_REQUESTS_PREFIX "withdrawFundsRequest"
 #define JSON_WITHDRAW_FUNDS_REQUESTED_AMOUNT "requestedWithdrawAmountInSatoshis"
 #define JSON_WITHDRAW_FUNDS_BITCOIN_PAYOUT_KEY "bitcoinKeyToWithdrawTo"
+#define JSON_WITHDRAW_FUNDS_TXID "bitcoinTxId" //only appears when state is either processedButProfileNeedsDeductingAndUnlocking or processedDone
 //withdraw funds requests state key
 #define JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY "withdrawFundsRequestState" //if changing, change "all withdrawal requests with state of unprocessed" view (and possibly others). aka: don't change
 //withdraw funds requests state values (states)
