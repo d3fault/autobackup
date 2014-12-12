@@ -83,6 +83,8 @@
 //TODOoptional: campaign "human readable name", instead of just the owner's name and an index
 //TODOoptional: buy step 1 should clicking fail when insufficient funds, not buy step 2 (that's certainly not to say buy step 2 shouldn't also do the check)
 
+//TODOoptional: "buy slot using ad slot filler X if/when the price reaches Y" (explain that it may NEVER reach that price if it's a popular ad campaign). it could be implemented purely in custom javascript (requiring javascript) if i don't care about race conditions. if i want it to work without javascript enabled and to plug the "nvm" (if it's a checkbox, unchecking it) race condition. i am fine with the race condition existing and requiring javascript, since it also keeps the server from having to deal with it. the differences in complexity in implementing it in javascript vs. server-side is an order of magnitude. implementing it in javascript would be extremely cheap/easy and provide some pretty sweet functionality with very little effort. on the other hand, a server side solution could allow them shutdown their comp and still keep the buy order open
+
 AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv)
     : WApplication(myEnv),
       m_BodyHLayout(new WHBoxLayout()),

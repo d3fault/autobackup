@@ -13,6 +13,7 @@ private:
     friend class AnonymousBitcoinComputingWtGUI;
 
     WLineEdit *m_AmountToWithdrawLineEdit;
+    WLineEdit *m_TotalWithdrawAmountVisualOnlyLineEdit;
     WLineEdit *m_BitcoinPayoutKeyLineEdit;
 
     std::string m_WithdrawRequestIndexToTryLcbAddingAt;
@@ -20,6 +21,7 @@ private:
     std::string m_WithdrawRequestDocBeingCreated;
 
     void populateAndInitialize();
+    void calculateTotalAmountWithdrawnAfterFeeForVisual();
     void handleRequestWithdrawalButtonClicked();
     void verifyBalanceIsGreaterThanOrEqualToTheirRequestedWithdrawAmountAndThenContinueSchedulingWithdrawRequest(const std::string &userProfileDoc, bool lcbOpSuccess, bool dbError);
     void useNextAvailableWithdrawRequestIndexToScheduleTheWithdrawRequest(const std::string &withdrawRequestNextAvailalbeIndexDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError);

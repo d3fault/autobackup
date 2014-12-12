@@ -29,6 +29,7 @@ using namespace boost::property_tree;
 
 //TODOoptional: some kind of "notify me via email when the funds are sent" functionality... TODOoptimization: combine all such notifications for a single user into a single email
 //TODOreq: OT as fuck, but: I myself have no need to use the "withdraw" functionality. What this does mean however is that my "abc2" account will have assloads of unused funds, and will not accurately reflect how much I really have (since I will have spent them). If I ever want to buy an ad slot, I need to somehow actually make sure I can afford it (otherwise there will be trouble when that person requests a payout). One way to solve this is to use a different account for buying, and to never use the 'receive' funds account (dog food, etc) for buying ads
+//TODOreq: given their balance, pre-calculate in a read-only line edit (for copy/pasting easier (TODOoptional: 'use this amount' button -- or perhaps it is the default value in the withdraw amount line edit (but that might cause a tad bit of confusion...))) how much the maximum they can withdraw is -- after the 3% fee is applied
 WithdrawFundsAccountTabBody::WithdrawFundsAccountTabBody(AnonymousBitcoinComputingWtGUI *abcApp)
     : IAccountTabWidgetTabBody(abcApp)
 { }
@@ -44,17 +45,43 @@ void WithdrawFundsAccountTabBody::populateAndInitialize()
     new WBreak(this);
     new WBreak(this);
 
-    new WText("<i>There is a 3% fee to withdraw funds.</i>", this); //TODOoptional: if js is enabled, show them as they type in the line edit just how much they will get after the 3% fee is applied
+    new WText("<i>There is a " ABC2_WITHDRAWAL_FEE_PERCENT_STR "% fee to withdraw funds.</i>", this); //TODOoptional: if js is enabled, show them as they type in the line edit just how much they will get after the 3% fee is applied
 
     new WBreak(this);
     new WBreak(this);
 
-    new WText("Amount to Withdraw:", this);
+    new WText("Desired Amount to Withdraw: ", this);
     m_AmountToWithdrawLineEdit = new WLineEdit(WithdrawFundsAccountTabBody_MIN_WITHDRAW_AMOUNT_STR, this);
     WDoubleValidator *bitcoinAmountValidator = new WDoubleValidator(WithdrawFundsAccountTabBody_MIN_WITHDRAW_AMOUNT, 21000000 /* TODOoptional: use their balance instead of max bitcoins lol */, m_AmountToWithdrawLineEdit);
     bitcoinAmountValidator->setMandatory(true);
     m_AmountToWithdrawLineEdit->setValidator(bitcoinAmountValidator);
 
+    new WBreak(this);
+
+    new WText("+ Withdrawal Fee: ", this);
+    WLineEdit *withdrawalFeeLineEdit = new WLineEdit(ABC2_WITHDRAWAL_FEE_PERCENT_STR "%", this);
+    withdrawalFeeLineEdit->setDisabled(true); //visual only derp
+
+    new WBreak(this);
+
+    new WText("= Total Amount Withdrawn (after " ABC2_WITHDRAWAL_FEE_PERCENT_STR "% fee): ", this);
+    m_TotalWithdrawAmountVisualOnlyLineEdit = new WLineEdit(this); //TODOoptional: typing in this one populates "Amount to Withdraw" (with 3% taken out (how much they'll GET)), typing in "Amount To Withdraw" populates this one (with 3% fee factored in (how much their account's balance will be REDUCED). For now just read-only...
+    m_TotalWithdrawAmountVisualOnlyLineEdit->setDisabled(true);
+
+    if(!m_AbcApp->environment().ajax())
+    {
+        //no-js requires 'calculate' button
+        new WText(" ", this);
+        WPushButton *calculateTotalAmountPushButton = new WPushButton("Calculate Total Amount Withdrawn (after " ABC2_WITHDRAWAL_FEE_PERCENT_STR "% fee)", this);
+        calculateTotalAmountPushButton->clicked().connect(this, &WithdrawFundsAccountTabBody::calculateTotalAmountWithdrawnAfterFeeForVisual);
+    }
+    else
+    {
+        //js calculates on key presses (TODOoptimization: make client side only, perhaps those stateless slot things would do it but idfk. custom js wouldn't be too hard either)
+        m_AmountToWithdrawLineEdit->keyWentUp().connect(this, &WithdrawFundsAccountTabBody::calculateTotalAmountWithdrawnAfterFeeForVisual); //keypressed() signal is too soon
+    }
+
+    new WBreak(this);
     new WBreak(this);
 
     new WText("Bitcoin Key To Withdraw Funds To:", this);
@@ -64,10 +91,26 @@ void WithdrawFundsAccountTabBody::populateAndInitialize()
     m_BitcoinPayoutKeyLineEdit->setValidator(bitcoinKeyValidator);
 
     new WBreak(this);
+    new WBreak(this);
 
     WPushButton *requestWithdrawalButton = new WPushButton("Request Withdrawal", this);
 
     requestWithdrawalButton->clicked().connect(this, &WithdrawFundsAccountTabBody::handleRequestWithdrawalButtonClicked); //TODOoptional: maybe disable button after clicking as well, which means I need to enable it whenever we resume rendering etc
+}
+void WithdrawFundsAccountTabBody::calculateTotalAmountWithdrawnAfterFeeForVisual()
+{
+    if(m_AmountToWithdrawLineEdit->validate() != WValidator::Valid)
+    {
+        m_TotalWithdrawAmountVisualOnlyLineEdit->setText("");
+        return;
+    }
+    double amountToWithdraw = boost::lexical_cast<double>(m_AmountToWithdrawLineEdit->text().toUTF8());
+    double totalAmountToWithdrawAfterFeeApplied =
+            amountToWithdraw
+            *
+            static_cast<double>(static_cast<double>(1) + (static_cast<double>(ABC2_WITHDRAWAL_FEE_PERCENT) / static_cast<double>(100)) /*gives me "1.03" , and I'm pretty damn sure it's a double ;-P*/);
+    m_TotalWithdrawAmountVisualOnlyLineEdit->setText(jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(totalAmountToWithdrawAfterFeeApplied)); //TODOreq: even though this is visual only, it still is the amount we need to verify they have in their balance before accepting the withdraw request. Whether or not we store this amount in the withdrawal request is irrelevant and depends on what withdraw request processor expects (can simply reapply the fee)
+    //TODOreq: should i convert to satoshis before applying the fee?
 }
 void WithdrawFundsAccountTabBody::handleRequestWithdrawalButtonClicked()
 {
@@ -84,7 +127,7 @@ void WithdrawFundsAccountTabBody::handleRequestWithdrawalButtonClicked()
     if(m_BitcoinPayoutKeyLineEdit->validate() != WValidator::Valid)
     {
         new WBreak(this);
-        WText("Invalid Bitcoin Key", this);
+        new WText("Invalid Bitcoin Key", this);
         return;
     }
 

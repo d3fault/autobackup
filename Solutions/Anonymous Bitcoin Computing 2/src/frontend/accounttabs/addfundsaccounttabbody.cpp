@@ -7,6 +7,7 @@
 
 using namespace boost::random;
 
+//TODOoptional: qr code next to bitcoin key
 AddFundsAccountTabBody::AddFundsAccountTabBody(AnonymousBitcoinComputingWtGUI *abcApp)
     : IAccountTabWidgetTabBody(abcApp),
       m_BitcoinAddressBalancePollerPollingPendingBalance(true),

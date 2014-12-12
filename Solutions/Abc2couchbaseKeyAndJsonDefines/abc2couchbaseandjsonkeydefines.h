@@ -47,6 +47,9 @@ public:
     }
 };
 
+#define ABC2_WITHDRAWAL_FEE_PERCENT 3 /*if changing this, change below string*/
+#define ABC2_WITHDRAWAL_FEE_PERCENT_STR "3"
+
 //campaign
 #define COUCHBASE_AD_SPACE_CAMPAIGN_KEY_PREFIX "adSpaceCampaign" //if changing, change "all users with at least one ad space campaign" view (and possibly others). aka: don't change.
 #define JSON_AD_SPACE_CAMPAIGN_MIN_PRICE "minPrice"
