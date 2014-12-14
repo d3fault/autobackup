@@ -10,13 +10,15 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 
-//TODOreq: 3% fee. Implementing it is pretty easy, but I need to understand and decide on what to do with rounding errors. My "minimum withdrawal amount" might influence rounding (unsure). Basically I need to make sure that when I calculate how much I've earned by "3% of the offline wallet's total balance", that it REALLY IS EQUAL TO the 3% fee applied in this here app (so I'm not accidentally spending money that isn't mine). If I have to decide whether to round "toward me" or "toward the customers", I should round toward me.... because Superman 3. I shouldn't/won't lie about it, but still those satoshis (had:pennies) really do add up (and the customers don't miss them because they are insignificant when viewed individually)
-//TODOreq: user profile balance deduction includes 3% fee, amount sent to bitcoind does not include 3% fee obviously (ALL MINE MUAHAHAHA). It almost sounds backwards written that way, so put it differently: the 3% fee is taken out (via math) before the bitcoind call
+//TO DOnereq: 3% fee. Implementing it is pretty easy, but I need to understand and decide on what to do with rounding errors. My "minimum withdrawal amount" might influence rounding (unsure). Basically I need to make sure that when I calculate how much I've earned by "3% of the offline wallet's total balance", that it REALLY IS EQUAL TO the 3% fee applied in this here app (so I'm not accidentally spending money that isn't mine). If I have to decide whether to round "toward me" or "toward the customers", I should round toward me.... because Superman 3. I shouldn't/won't lie about it, but still those satoshis (had:pennies) really do add up (and the customers don't miss them because they are insignificant when viewed individually)
+//TO DOnereq: user profile balance deduction includes 3% fee, amount sent to bitcoind does not include 3% fee obviously (ALL MINE MUAHAHAHA). It almost sounds backwards written that way, so put it differently: the 3% fee is taken out (via math) before the bitcoind call
 //TODOreq: I'm first going to code the "query view for all unprocessed" typical non-error case, BUT in order of program execution, the checking for previously failed "processing" (and possibly 'processedStillNeedToDeduct') states needs to come before that. I should definitely spit out that there are previosuly failed withdraw requests, and NOT continue onto querying view for all unprocessed states (until those fails are handled or ignored or whatever). I think even before THAT, I should check for profiles 'locked in withdraw' mode and do error recovery -- still that should never happen since I'd be watching the app run and see it's errors be spit out (and then manually fix)
 //TODOreq: for now I'm just going to "process" the requests, but unless I have some kind of "this is how much I'm about to deduct: XXX. Does this make sense?" (and then I manually make sure that that much in bitcoins have been received)... followed by "press Y or N to continue or not"... then this app may as well be completely automated...
 //TODOreq: abc2 and this app both need to account for the new locking mode, AND SO DOES the pessimistic recovery app. I have no idea what the implications of that are. OT: I'm scared as fuck to modify this locking code, and yet it's pretty much the only thing standing in the way of completion (aside from some polish etc)
 //TODOoptional: another way to use this app without really changing any of the code, juse using it differently than how I originally plan, is to run it hourly/etc on a cron-job and to have it send me periodic emails telling me how much more funds the payout wallet needs. Basically, automating payouts completely will likely amount to tying together this app with cron, and having a trusted/openbsd/local 'amount verifier' (it receives those 'emails' saying how much is needed, and checks that the offline receive wallet actually received that much). With math I could even extrapolate how much is predicted to be needed on a daily basis, so I can just fund "one day in advance" (assuming I like the numbers. they aren't too big and i'm leik omgwtfz) and we'd have more or less (less, by est. 1 day) the same amount of security but now fully automated/instant payouts. -- TO START OFF, i will be running this app manually because there might be errors etc that require manual intervention
 //TODOreq: at app startup we should ask the bitcoin payout wallet how much it has, and keep track of how much has been paid out. even if calculate-only mode is run before execute mode is run, we still might not have enough funds in the payout wallet by the time execute mode engages (more withdrawal requests filed since then). Whenever we encounter a withdrawal request that our payout wallet cannot process, we should skip that withdrawal request, and add that withdrawal request's amount to a rolling "adjusted calculation during execution", the grand total of which is spit out at the end of execution (and then you fund the payout wallet with that amount and run execute mode again). it's worth putting in it's own sentence: not having sufficient funds in the payout wallet (not to be confused with the user profile not having sufficient funds ofc) is not a fatal error -- still might be smarter (optimization-wise) to stop then and there, but eh since we'd then run calculate-only mode, it's the same (and perhaps MORE efficient) if we just continued and tallied up how much we didn't have enough to pay out
+//TODOreq: I might need another state "invalid key", but that depends on how much sanitizing I do in the front-end. Really though that state would be ANY bitcoind error. Although actually maybe not, because I want to spit out the errors, exit the app, and leave the withdrawal request in INVALID state. Still as of now I am not sanitizing the bitcoin keys nearly enough to be confident that bitcoind SHOULDN'T give me errors.
+//TODOreq: i think i already wrote this somewhere, but eh i need to update the 'islocked' logic in the pessimistic recoverer
 Abc2WithdrawRequestProcessor::Abc2WithdrawRequestProcessor(QObject *parent)
     : QObject(parent)
     , ISynchronousLibCouchbaseUser()
@@ -137,9 +139,13 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
     m_CurrentUserBalanceInSatoshis = boost::lexical_cast<SatoshiInt>(userBalanceInSatoshisStr);
 
     std::string amountToWithdrawInSatoshisStr = m_CurrentWithdrawalRequestPropertyTree.get<std::string>(JSON_WITHDRAW_FUNDS_REQUESTED_AMOUNT);
-    m_CurrentWithdrawRequestAmountToWithdrawInSatoshis = boost::lexical_cast<SatoshiInt>(amountToWithdrawInSatoshisStr);
+    m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis = boost::lexical_cast<SatoshiInt>(amountToWithdrawInSatoshisStr);
+    double desiredWithdrawRequestAmountAsJsonDouble = satoshiIntToJsonDouble(m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis);
+    double withdrawalFeeJsonDouble = withdrawalFeeForWithdrawalAmount(desiredWithdrawRequestAmountAsJsonDouble);
+    SatoshiInt withdrawalFeeInSatoshis = jsonDoubleToSatoshiIntIncludingRounding(withdrawalFeeJsonDouble); //the rounding, it does nothing (we already 'rounded up') ;-P!
+    m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFee = m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis + withdrawalFeeInSatoshis;
 
-    if(m_CurrentUserBalanceInSatoshis < m_CurrentWithdrawRequestAmountToWithdrawInSatoshis)
+    if(m_CurrentUserBalanceInSatoshis < m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFee)
     {
         //insufficient funds. not fatal error, they might have simply spent the funds on an ad slot filler after filing the withdrawal request. set the withdrawal request state to insiffucient funds done and return true;
         m_CurrentWithdrawalRequestPropertyTree.put(JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY, JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_INSUFFICIENTFUNDS);
@@ -181,9 +187,9 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
     request.setHeader(QNetworkRequest::ContentTypeHeader, "text/plain");
     const std::string &keyToWithdrawTo = m_CurrentWithdrawalRequestPropertyTree.get<std::string>(JSON_WITHDRAW_FUNDS_BITCOIN_PAYOUT_KEY);
     QString keyToWIthdrawToQString = QString::fromStdString(keyToWithdrawTo);
-    std::string withdrawAmountAsJsonString = satoshiIntToJsonString(m_CurrentWithdrawRequestAmountToWithdrawInSatoshis);
-    QString withdrawAmountAsJsonQString = QString::fromStdString(withdrawAmountAsJsonString);
-    m_CurrentBitcoinCommand = "{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"sendtoaddress\", \"params\": [\"" + keyToWIthdrawToQString + "\", " + withdrawAmountAsJsonQString + "] }";
+    std::string desiredWithdrawAmountAsJsonString = satoshiIntToJsonString(m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis);
+    QString desiredWithdrawAmountAsJsonQString = QString::fromStdString(desiredWithdrawAmountAsJsonString);
+    m_CurrentBitcoinCommand = "{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"sendtoaddress\", \"params\": [\"" + keyToWIthdrawToQString + "\", " + desiredWithdrawAmountAsJsonQString + "] }";
     QByteArray payload = m_CurrentBitcoinCommand.toUtf8();
     m_NetworkAccessManager->post(request, payload); //TODOreq: separate bitcoin daemons on separate ports for payout/receive? or maybe use the "accounts" feature? i know for sure they need to be different wallets, so perhaps separate processes. (nope:the payout wallet daemon doesn't need to be running 24/7. in fact, this app can/should start/stop it on demand) since we want to stay in sync with the block chain, it does need to be running 24/7. there might be a way to make them share the blocks they receive to lessen bandwidth requirements, or maybe there is a way to do multiple wallets for one process, idfk
 }
@@ -288,10 +294,10 @@ void Abc2WithdrawRequestProcessor::handleNetworkReplyFinished(QNetworkReply *rep
 
     //deduct amount from profile balance and cas swap unlock it
     SatoshiInt originalBalance = m_CurrentUserBalanceInSatoshis;
-    m_CurrentUserBalanceInSatoshis -= m_CurrentWithdrawRequestAmountToWithdrawInSatoshis;
+    m_CurrentUserBalanceInSatoshis -= m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFee;
     m_CurrentUserProfilePropertyTree.put(JSON_USER_ACCOUNT_BALANCE, m_CurrentUserBalanceInSatoshis);
     m_CurrentUserProfilePropertyTree.erase(JSON_USER_ACCOUNT_LOCKED_WITHDRAWING_FUNDS);
-    if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(userAccountKey(m_CurrentUserRequestingWithdrawal), Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(m_CurrentUserProfilePropertyTree), LCB_SET, m_CurrentUserProfileInLockedWithdrawingStateCas, "debitting+unlocking user profile '" + m_CurrentUserRequestingWithdrawal + "' with amount: (OLD: " + satoshiIntToJsonString(originalBalance) + ", NEW: " + satoshiIntToJsonString(m_CurrentUserBalanceInSatoshis) + ", DIFF: -" + satoshiIntToJsonString(m_CurrentWithdrawRequestAmountToWithdrawInSatoshis) + ")"))
+    if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(userAccountKey(m_CurrentUserRequestingWithdrawal), Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(m_CurrentUserProfilePropertyTree), LCB_SET, m_CurrentUserProfileInLockedWithdrawingStateCas, "debitting+unlocking user profile '" + m_CurrentUserRequestingWithdrawal + "' with amount: (OLD: " + satoshiIntToJsonString(originalBalance) + ", NEW: " + satoshiIntToJsonString(m_CurrentUserBalanceInSatoshis) + ", DIFF: -" + satoshiIntToJsonString(m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFee) + ")"))
     {
         //error debitting+unlocking user profile
         emit withdrawalRequestProcessingFinished(false);

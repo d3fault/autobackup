@@ -402,7 +402,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     void handleLoginButtonClicked();
     std::string m_AccountLockedRecoveryWhatTheUserWasTryingToFillTheSlotWithHack;
     WText *m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel;
-    std::string m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly;
+    std::string m_CurrentlyLoggedInUsersBalanceSatoshiStringForDisplayingOnly;
     void loginIfInputHashedEqualsDbInfo(const std::string &userProfileCouchbaseDocAsJson, u_int64_t casOnlyUsedWhenDoingRecoveryAtLogin, bool lcbOpSuccess, bool dbError);
     void unlockUserAccountWithoutDebittingIfSlotDeclaredAttemptingToPurchaseIsPurchasedBySomeoneElse(const std::string &slotLockedUserAccountIsDeclaredAttemptingToFill, const std::string &slotFillerLockedUserAccountIsDeclaredAttemptingToFillSlotWith, const std::string &lockedUserAccountJson, u_int64_t casOfLockedUserAccount);
     void usernameOrPasswordYouProvidedIsIncorrect();

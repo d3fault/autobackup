@@ -138,7 +138,7 @@ void Abc2dbInitializer::initializeAbc2db(const QString &filenameOfLineSeparatedE
 
     //d3fault campaign 0 doc
     pt.clear();
-    pt.put(JSON_AD_SPACE_CAMPAIGN_MIN_PRICE, "1");
+    pt.put(JSON_AD_SPACE_CAMPAIGN_MIN_PRICE, "300000"); //.003 btc, which is roughly $1 USD at time of writing. I wanted to use 1 penny as the starting point, but it turns out gavin (main bitcoin dev) explicitly recommends against such low transaction amounts
     pt.put(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS, "24");
     std::ostringstream campaign0docBuffer;
     write_json(campaign0docBuffer, pt, false);

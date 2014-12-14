@@ -1485,7 +1485,8 @@ void AnonymousBitcoinComputingWtGUI::transactionDocCreatedSoCasSwapUnlockAccepti
     SatoshiInt userBalance = satoshiStringToSatoshiInt(pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE));
     userBalance -= m_CurrentPriceInSatoshisToUseForBuying;
     std::string balanceString = satoshiIntToSatoshiString(userBalance);
-    m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel->setText(satoshiStringToJsonString(balanceString)); //TODOoptional: jumping the gun by setting it here before even finishing the cas-swap of their user-account doc, BUT the transaction doc and slot fill/add are already complete at this point so we KNOW it will 'become' accurate soon (if we fail, recovery possy will do it)... so seeing as this is visual ONLY, it's acceptable. Unlike account creditting ("done with this key"), which waits until the cas swap succeeds before updating the label, we KNOW that if we get here that it will work (and if we were to wait for the cas swap and the cas swap FAILED, the balance label would never be updated (because recovery possy is different app (i guess i could... (*shoots self in face*)))
+    m_CurrentlyLoggedInUsersBalanceSatoshiStringForDisplayingOnly = balanceString;
+    m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel->setText(satoshiStringToJsonString(m_CurrentlyLoggedInUsersBalanceSatoshiStringForDisplayingOnly)); //TODOoptional: jumping the gun by setting it here before even finishing the cas-swap of their user-account doc, BUT the transaction doc and slot fill/add are already complete at this point so we KNOW it will 'become' accurate soon (if we fail, recovery possy will do it)... so seeing as this is visual ONLY, it's acceptable. Unlike account creditting ("done with this key"), which waits until the cas swap succeeds before updating the label, we KNOW that if we get here that it will work (and if we were to wait for the cas swap and the cas swap FAILED, the balance label would never be updated (because recovery possy is different app (i guess i could... (*shoots self in face*)))
     pt.put(JSON_USER_ACCOUNT_BALANCE, balanceString);
     //now convert the json doc back to string for couchbase
     std::ostringstream jsonDocWithBalanceDeducted;
@@ -2464,7 +2465,7 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
         m_LoginPasswordLineEdit->setText("");
 
         //we save a copy of it here, but we don't display it until doLoginTasks is called, or recovery completes (which also calls that)
-        m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly = pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE);
+        m_CurrentlyLoggedInUsersBalanceSatoshiStringForDisplayingOnly = pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE);
 
         std::string slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST = pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n");
         if(slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST == "n")
@@ -2540,7 +2541,7 @@ void AnonymousBitcoinComputingWtGUI::doLoginTasks()
     logoutButton->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::handleLogoutButtonClicked);
     new WBreak(m_LogoutWidget);
     new WText("Balance: BTC ", m_LogoutWidget);
-    m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel = new WText(satoshiStringToJsonString(m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly), m_LogoutWidget);
+    m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel = new WText(satoshiStringToJsonString(m_CurrentlyLoggedInUsersBalanceSatoshiStringForDisplayingOnly), m_LogoutWidget);
     new WBreak(m_LogoutWidget);
     m_LinkToAccount = new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ACCOUNT), ABC_ANCHOR_TEXTS_ACCOUNT, m_LogoutWidget);
     m_LinkToAccount->decorationStyle().setForegroundColor(WColor(0, 255, 0));

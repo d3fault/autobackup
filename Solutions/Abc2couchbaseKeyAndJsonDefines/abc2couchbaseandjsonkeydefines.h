@@ -1,6 +1,7 @@
 #ifndef ABC2_COUCHBASE_AND_JSON_KEY_DEFINES_H
 #define ABC2_COUCHBASE_AND_JSON_KEY_DEFINES_H
 
+#include <cmath>
 #include <string>
 
 #include <boost/property_tree/ptree.hpp>
@@ -18,10 +19,26 @@ inline double satoshiIntToJsonDouble(SatoshiInt inputSatoshiInt) { return (doubl
 inline std::string satoshiIntToSatoshiString(SatoshiInt inputSatoshiInt) { return boost::lexical_cast<std::string>(inputSatoshiInt); /*char buf[20]; snprintf(buf, 20, "%d", inputSatoshiInt); std::string ret(buf, strlen(buf)); return ret;*/ }
 //inline std::string jsonDoubleToJsonString(double inputDouble) { char buf[20]; snprintf(buf, 20, "%.8f", inputDouble); std::string ret(buf, strlen(buf)); return ret; }
 //^shouldn't use because must convert to satoshi first to do proper rounding
-inline std::string jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(double inputDouble) { double rounded = satoshiIntToJsonDouble(jsonDoubleToSatoshiIntIncludingRounding(inputDouble)); char buf[20]; snprintf(buf, 20, "%.8f", rounded); std::string ret(buf, strlen(buf)); return ret; }
+inline std::string formatDoubleAs8decimalPlacesString(double inputDouble) { char buf[20]; snprintf(buf, 20, "%.8f", inputDouble); std::string ret(buf, strlen(buf)); return ret; }
+inline std::string jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(double inputDouble) { double rounded = satoshiIntToJsonDouble(jsonDoubleToSatoshiIntIncludingRounding(inputDouble)); return formatDoubleAs8decimalPlacesString(rounded); }
 inline std::string satoshiStringToJsonString(const std::string &inputSatoshiString) { std::string ret = jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(satoshiIntToJsonDouble(satoshiStringToSatoshiInt(inputSatoshiString))); return ret; }
+inline double satoshiStringToJsonDouble(const std::string &inputSatoshiString) { SatoshiInt inputAsASatoshiInt = satoshiStringToSatoshiInt(inputSatoshiString); return satoshiIntToJsonDouble(inputAsASatoshiInt); }
 inline SatoshiInt jsonStringToSatoshiInt(const std::string &inputJsonString) { return jsonDoubleToSatoshiIntIncludingRounding(boost::lexical_cast<double>(inputJsonString)); }
 inline std::string satoshiIntToJsonString(SatoshiInt inputSatoshiInt) { return jsonDoubleToJsonStringAfterProperlyRoundingJsonDouble(satoshiIntToJsonDouble(inputSatoshiInt)); }
+
+#define ABC2_WITHDRAWAL_FEE_PERCENT 3 /*if changing this, change below string*/
+#define ABC2_WITHDRAWAL_FEE_PERCENT_STR "3"
+inline double roundUpJsonDoubleToNearestSatoshi(double inputExactJsonDouble) { double withdrawalFeeInSatoshisAkaReadyForCeil = inputExactJsonDouble * 1e8; double withdrawalInSatoshisRoundedUp = ceil(withdrawalFeeInSatoshisAkaReadyForCeil); double withdrawalFeeRoundedUp = (double)withdrawalInSatoshisRoundedUp / 1e8; return withdrawalFeeRoundedUp; }
+//this function requires a positive withdrawalAmount and withdrawalFeePercent. it always rounds up [to nearest satoshi], does not to "proper" rounding.
+inline double withdrawalFeeForWithdrawalAmount(double withdrawalAmount) { double withdrawalFeeExact = withdrawalAmount * (ABC2_WITHDRAWAL_FEE_PERCENT / static_cast<double>(100)); return roundUpJsonDoubleToNearestSatoshi(withdrawalFeeExact); }
+
+//Abc2 has a $1 USD (at time of writing it's ~.003 btc) minimum for various activities
+#define ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT 0.00300000 /*if changing this, change below string too*/
+#define ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT_STR "0.00300000"
+
+#define ABC2_MIN_WITHDRAW_AMOUNT 0.00300000 /*if changing this, change below string too*/
+#define ABC2_MIN_WITHDRAW_AMOUNT_STR "0.00300000"
+
 
 #ifndef D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR
 #define D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR "_"
@@ -46,9 +63,6 @@ public:
         return outputStringStream.str();
     }
 };
-
-#define ABC2_WITHDRAWAL_FEE_PERCENT 3 /*if changing this, change below string*/
-#define ABC2_WITHDRAWAL_FEE_PERCENT_STR "3"
 
 //campaign
 #define COUCHBASE_AD_SPACE_CAMPAIGN_KEY_PREFIX "adSpaceCampaign" //if changing, change "all users with at least one ad space campaign" view (and possibly others). aka: don't change.
@@ -186,7 +200,7 @@ const std::string adSpaceCampaignSlotCacheKey(const std::string &usernameOfCampa
 
 //withdraw funds requests
 #define COUCHBASE_WITHDRAW_FUNDS_REQUESTS_PREFIX "withdrawFundsRequest"
-#define JSON_WITHDRAW_FUNDS_REQUESTED_AMOUNT "requestedWithdrawAmountInSatoshis"
+#define JSON_WITHDRAW_FUNDS_REQUESTED_AMOUNT "desiredWithdrawAmountInSatoshisNotIncorporatingWithdrawalFee"
 #define JSON_WITHDRAW_FUNDS_BITCOIN_PAYOUT_KEY "bitcoinKeyToWithdrawTo"
 #define JSON_WITHDRAW_FUNDS_TXID "bitcoinTxId" //only appears when state is either processedButProfileNeedsDeductingAndUnlocking or processedDone
 //withdraw funds requests state key

@@ -706,7 +706,7 @@ void AddFundsAccountTabBody::creditConfirmedBitcoinAmountAfterAnalyzingUserAccou
     userBalance += m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked;
 
     std::string userBalanceInSatoshisString = satoshiIntToSatoshiString(userBalance);
-    m_AbcApp->m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly = userBalanceInSatoshisString;
+    m_AbcApp->m_CurrentlyLoggedInUsersBalanceSatoshiStringForDisplayingOnly = userBalanceInSatoshisString;
 
     pt.put(JSON_USER_ACCOUNT_BALANCE, userBalanceInSatoshisString);
     pt.put(JSON_USER_ACCOUNT_BITCOIN_STATE, JSON_USER_ACCOUNT_BITCOIN_STATE_NO_KEY);
@@ -779,7 +779,7 @@ void AddFundsAccountTabBody::doneAttemptingCredittingConfirmedBitcoinBalanceForC
 
     new WBreak(this);
     new WText("Your account has been creditted: BTC " + satoshiIntToJsonString(m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked) + ". Do NOT send any more bitcoins to address: " + m_CurrentBitcoinKeyForPayments, this);
-    m_AbcApp->m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel->setText(satoshiStringToJsonString(m_AbcApp->m_CurrentlyLoggedInUsersBalanceStringForDisplayingOnly));
+    m_AbcApp->m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel->setText(satoshiStringToJsonString(m_AbcApp->m_CurrentlyLoggedInUsersBalanceSatoshiStringForDisplayingOnly));
 
     m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked = 0; //probably pointless, but will make me sleep better at night
     m_CurrentBitcoinKeyForPayments = ""; //ditto

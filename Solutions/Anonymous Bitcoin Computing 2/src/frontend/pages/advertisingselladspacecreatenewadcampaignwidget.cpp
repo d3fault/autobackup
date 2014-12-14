@@ -13,7 +13,7 @@ using namespace boost::property_tree;
 #include <Wt/WPushButton>
 
 #include "../anonymousbitcoincomputingwtgui.h"
-#include "../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h"
+#include "abc2couchbaseandjsonkeydefines.h"
 
 AdvertisingSellAdSpaceCreateNewAdCampaignWidget::AdvertisingSellAdSpaceCreateNewAdCampaignWidget(AnonymousBitcoinComputingWtGUI *anonymousBitcoinComputingWtGUI, WContainerWidget *parent)
     : WContainerWidget(parent)
@@ -21,7 +21,7 @@ AdvertisingSellAdSpaceCreateNewAdCampaignWidget::AdvertisingSellAdSpaceCreateNew
     , m_CasOfCampaignIndexCacheDoc_OrZeroIfCacheDocDoesNotExist(0)
     , m_CampaignIndexToTryLcbAddingAt("0")
 {
-    /*WText *algorithmExplainationLabel = */new WText("Selling ad space works like this: you choose a minimum price to sell your ad space for, in addition to the duration their ad will be shown on your site for. As soon as somebody purchases your ad space, the current price DOUBLES from what it was at (minimum price in the beginning), and then gradually (linearly) decreases back down to your minimum price over the course of whatever duration you choose. The math works out so that as soon as their ad expires, the price is right back at your minimum price. As if that wasn't confusing enough, the price doubles EACH AND EVERY TIME your ad space is purchased (and just like before, it always reaches your minimum price at the exact moment when the last queued ad expires). This algorithm allows you to choose a low minimum price (so that your ad space is almost always sold) while still raising the price each time it's sold so that you make a decent amount of money. It's dynamic and finds your sweet spot with zero effort on your part. The purchasers of your ad space end up competing with each other to buy your ad space. You don't have to lift a finger for 'negotiation', it's completely automated.", Wt::PlainText, this); //TODOreq: wordy. TODOoptional: perhaps hide behind a "CLICK HERE FOR HELP" thingo
+    /*WText *algorithmExplainationLabel = */new WText("Selling ad space works like this: you choose a minimum price to sell your ad space for, in addition to the duration their ad will be shown on your site for. As soon as somebody purchases your ad space, the current price DOUBLES from what it was at (minimum price in the beginning), and then gradually (linearly) descends back down to your minimum price over the course of whatever duration you choose. The math works out so that as soon as their ad expires, the price is right back at your minimum price. As if that wasn't confusing enough, the price doubles EACH AND EVERY TIME your ad space is purchased (and just like before, it always reaches your minimum price at the exact moment when the last queued ad expires). This algorithm allows you to choose a low minimum price (so that your ad space is almost always sold) while still raising the price each time it's sold in order to adjust for demand. It's dynamic and finds your sweet spot with zero effort on your part. The purchasers of your ad space end up competing with each other to buy your ad space.", Wt::PlainText, this); //TODOreq: wordy. TODOoptional: perhaps hide behind a "CLICK HERE FOR HELP" thingo
 
     new WBreak(this);
     new WBreak(this);
@@ -30,8 +30,8 @@ AdvertisingSellAdSpaceCreateNewAdCampaignWidget::AdvertisingSellAdSpaceCreateNew
     //TODOreq: minPrice and slot length hours (fill in with defaults (1 penny and 24 hours), and sanitize ofc (no lower than min bitcoin transaction amount, no lower than 1 hour)). it makes sense now to also include a url the ad will be shown on, and as mentioned earlier a human readable name...
     /*WText *minPriceLabel = */new WText("Minimum selling price, in Bitcoins:", Wt::PlainText, this);
     new WBreak(this);
-    m_MinPriceLineEdit = new WLineEdit("0.001", this); //TODOmb: wdoublespinbox?
-    WDoubleValidator *minPriceValidator = new WDoubleValidator(0.0001 /*TODOreq: what is current bitcoin minimum?*/, 21000000, m_MinPriceLineEdit);
+    m_MinPriceLineEdit = new WLineEdit(ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT_STR, this);
+    WDoubleValidator *minPriceValidator = new WDoubleValidator(ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT, 21000000, m_MinPriceLineEdit); //TODOreq: OT'ish: the "ad doubles" logic should have a hard max of 21million btc ofc... but shit how could a transaction of that size even take place xD? Maybe a better (user specifiable?) maximum? For now just gonna pray it never happens (because it very likely won't)
     minPriceValidator->setMandatory(true);
     m_MinPriceLineEdit->setValidator(minPriceValidator);
 

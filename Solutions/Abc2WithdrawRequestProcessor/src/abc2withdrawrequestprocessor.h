@@ -32,7 +32,8 @@ private:
     ptree m_CurrentWithdrawalRequestPropertyTree;
     ptree m_CurrentUserProfilePropertyTree;
     SatoshiInt m_CurrentUserBalanceInSatoshis;
-    SatoshiInt m_CurrentWithdrawRequestAmountToWithdrawInSatoshis;
+    SatoshiInt m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis;
+    SatoshiInt m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFee;
     lcb_cas_t m_CurrentUserProfileInLockedWithdrawingStateCas;
     lcb_cas_t m_CurrentWithdrawalRequestInProcessingStateCas;
     QString m_CurrentBitcoinCommand;
