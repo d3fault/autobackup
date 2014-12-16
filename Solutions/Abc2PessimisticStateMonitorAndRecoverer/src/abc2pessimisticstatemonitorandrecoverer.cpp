@@ -70,6 +70,7 @@ Abc2PessimisticStateMonitorAndRecoverer::Abc2PessimisticStateMonitorAndRecoverer
 }
 
 //TODOreq: If the driver's durability polling (replication) takes longer than one second, we'll get a lot of false positives here. Additionally, we should do a durability poll of our own for the "slot that just appeared" before we do the "100ms extra time" thing. Lastly, we should do durability polling for all of our recovery storings.
+//TODOreq: make scalable to multiple ad campaigns by making the 'monitor and recover' an event-triggered (pre ad slot purchase) "window", instead of constantly polling 24/7 like I am now
 int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRecovereringStateUntilToldToStop()
 {
     if(boost::filesystem::exists(ABC2_PESSIMISTIC_STATE_MONITOR_AND_RECOVERER_STOP_FILE))
@@ -235,6 +236,13 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                         //if transaction doc doesn't exist, we make sure the user account is locked and pointing at slot just filled (BUT it might not be because of a race condition)
                         if(!userAccountIsLockedPointingAtSlotJustFilled)
                         {
+                            if(Abc2CouchbaseAndJsonKeyDefines::profileIsLocked(pt6))
+                            {
+                                //user account is locked towards SOMETHING ELSE
+                                //TODOmb: cerr or cout? idfk
+                                continue; //we can only handle locks 'pointing at slot just filled' in this app, so just continue as if done (fixing that locked state is the job of abc2 withdrawal request processor (or other if/when I add more lock types))
+                            }
+
                             //12a.i
                             //there is one last race condition check to prove that total system failure didn't occur (whether transaction doc now exists)
                             if(!couchbaseGetRequestWithExponentialBackoff(transactionDocKey, "tx that must exist: (" + transactionDocKey + ")"))
@@ -298,6 +306,12 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                         {
                             //'unlock+debitting' the user-account
                             DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_USER_ACCOUNT_DEBIT_AND_UNLOCK
+                        }
+                        else if(Abc2CouchbaseAndJsonKeyDefines::profileIsLocked(pt6))
+                        {
+                            //user account is locked towards SOMETHING ELSE
+                            //TODOmb: cerr or cout? idfk
+                            continue; //we can only handle locks 'pointing at slot just filled' in this app, so just continue as if done (fixing that locked state is the job of abc2 withdrawal request processor (or other if/when I add more lock types))
                         }
                         //else, update campaign doc only (sharing code path)
 

@@ -76,7 +76,7 @@ const std::string withdrawFundsRequestsNextAvailableIndexKey(const std::string &
     return COUCHBASE_WITHDRAW_FUNDS_REQUESTS_NEXT_AVAILABLE_INDEX_PREFIX
             D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR + username;
 }
-bool Abc2CouchbaseAndJsonKeyDefines::profileIsLocked(const ptree &profile) //TODOreq: migrate all locked checks to this! TODOoptional: genericize the locking to be a single json key in the account
+bool Abc2CouchbaseAndJsonKeyDefines::profileIsLocked(const ptree &profile) //TO DOnereq(not all of them made sense to migrate to this, but each locked check has been updated accordingly): migrate locked checks to this! TODOoptional: genericize the locking to be a single json key in the account
 {
     string lockedCheck = profile.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n");
     if(lockedCheck != "n")

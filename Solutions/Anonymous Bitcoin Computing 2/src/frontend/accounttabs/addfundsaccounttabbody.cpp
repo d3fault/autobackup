@@ -7,6 +7,8 @@
 
 using namespace boost::random;
 
+#define AddFundsAccountTabBody_PROFILE_LOCKED_BITCOIN_KEY_ACTIVITY_DISABLED_MESSAGE "Your account is temporarily locked. It could be because you are attempting to purchase a slot, or it could be that we are processing one of your withdrawal requests. Bitcoin key activity is disabled until that finishes. If the problem persists for more than a few minutes, contact the administrator."
+
 //TODOoptional: qr code next to bitcoin key
 AddFundsAccountTabBody::AddFundsAccountTabBody(AnonymousBitcoinComputingWtGUI *abcApp)
     : IAccountTabWidgetTabBody(abcApp),
@@ -84,13 +86,12 @@ void AddFundsAccountTabBody::determineBitcoinStateButDontLetThemProceedForwardIf
     std::istringstream is(userAccountJsonDoc);
     read_json(is, pt);
 
-    string slotToAttemptToFillAkaPurchase_LOCKED_CHECK = pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n");
     string bitcoinState = pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_STATE);
     if(bitcoinState == JSON_USER_ACCOUNT_BITCOIN_STATE_HAVE_KEY)
     {
         changeToHaveBitcoinKeyMode(pt.get<std::string>(JSON_USER_ACCOUNT_BITCOIN_STATE_DATA));
     }
-    else if(slotToAttemptToFillAkaPurchase_LOCKED_CHECK == "n")
+    else if(!Abc2CouchbaseAndJsonKeyDefines::profileIsLocked(pt))
     {
         if(bitcoinState == JSON_USER_ACCOUNT_BITCOIN_STATE_NO_KEY)
         {
@@ -107,7 +108,7 @@ void AddFundsAccountTabBody::determineBitcoinStateButDontLetThemProceedForwardIf
     else
     {
         new WBreak(this);
-        new WText("You are attempting to purchase a slot, so bitcoin key activity is disabled until that finishes", this);
+        new WText(AddFundsAccountTabBody_PROFILE_LOCKED_BITCOIN_KEY_ACTIVITY_DISABLED_MESSAGE, this);
     }
     m_AbcApp->resumeRendering();
 }
@@ -154,11 +155,10 @@ void AddFundsAccountTabBody::checkNotAttemptingToFillAkaPurchaseSlotThenTransiti
     std::istringstream is(userAccountDoc);
     read_json(is, pt);
 
-    string slotToAttemptToFillAkaPurchase_LOCKED_CHECK = pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n");
-    if(slotToAttemptToFillAkaPurchase_LOCKED_CHECK != "n")
+    if(Abc2CouchbaseAndJsonKeyDefines::profileIsLocked(pt))
     {
         new WBreak(this);
-        new WText("It appears you are attempting to purchase a slot. Wait until that finishes and try again", this);
+        new WText(AddFundsAccountTabBody_PROFILE_LOCKED_BITCOIN_KEY_ACTIVITY_DISABLED_MESSAGE, this);
         m_AbcApp->resumeRendering();
         return;
     }
@@ -681,11 +681,10 @@ void AddFundsAccountTabBody::creditConfirmedBitcoinAmountAfterAnalyzingUserAccou
     ptree pt;
     read_json(is, pt);
 
-    string slotToAttemptToFillAkaPurchase_LOCKED_CHECK = pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n");
-    if(slotToAttemptToFillAkaPurchase_LOCKED_CHECK != "n")
+    if(Abc2CouchbaseAndJsonKeyDefines::profileIsLocked(pt))
     {
         new WBreak(m_HaveBitcoinKeyPlaceholder);
-        new WText("Try again after the ad space you're attempting to purchase finishes. Please only use one tab/window at at time", m_HaveBitcoinKeyPlaceholder);
+        new WText(AddFundsAccountTabBody_PROFILE_LOCKED_BITCOIN_KEY_ACTIVITY_DISABLED_MESSAGE, m_HaveBitcoinKeyPlaceholder);
         m_AbcApp->resumeRendering();
         return;
     }

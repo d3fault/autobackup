@@ -85,6 +85,9 @@
 
 //TODOoptional: "buy slot using ad slot filler X if/when the price reaches Y" (explain that it may NEVER reach that price if it's a popular ad campaign). it could be implemented purely in custom javascript (requiring javascript) if i don't care about race conditions. if i want it to work without javascript enabled and to plug the "nvm" (if it's a checkbox, unchecking it) race condition. i am fine with the race condition existing and requiring javascript, since it also keeps the server from having to deal with it. the differences in complexity in implementing it in javascript vs. server-side is an order of magnitude. implementing it in javascript would be extremely cheap/easy and provide some pretty sweet functionality with very little effort. on the other hand, a server side solution could allow them shutdown their comp and still keep the buy order open
 
+//TODOreq: purchasing an ad slot needs to give the ad campaign owner the amount it was purchased for. This app was originally only coded for 1 owner and 1 campaign, so I just didn't give a fuck about it being in the db and was going to rely on bitcoind 'getbalance' instead. Now that multi owners is introduced, I need to lock the campaign owner's account and credit him the amount the ad slot was purchased for. This adds all sorts of atomicity and error recovery complications and fffffffffffffffffffuck just when I thought I was close to being done, fml fml. The only thing implemented right now is 'purchases balance debitting' :(
+//TODOreq: add creation of use "d3fault" to abc2initializer, otherwise someone could make that username and then collect all mah funds (or more likely, the app crashes when it tries to credit a user account that does not exist). An alternative is to not create campaign 0 in the initializer ofc.
+
 AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv)
     : WApplication(myEnv),
       m_BodyHLayout(new WHBoxLayout()),
@@ -1228,6 +1231,15 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
     std::string ALREADY_LOCKED_CHECK_slotToAttemptToFillAkaPurchase = pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n");
     if(ALREADY_LOCKED_CHECK_slotToAttemptToFillAkaPurchase == "n")
     {
+        if(Abc2CouchbaseAndJsonKeyDefines::profileIsLocked(pt))
+        {
+            //locked towards something ELSE
+            new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+            new WText("Your account is temporarily locked, but should be unlocked momentarily. Slot purchasing activity is disabled until then. If the problem persists for more than a few minutes, contact the administrator.", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+            resumeRendering();
+            return;
+        }
+
         //not already locked
 
         //TO DOnereq: make sure the slot doesn't already exist before proceeding, because it might and if it does we will fuck shit up if we lock the user account AGAIN towards one we already purchased, which is a race condition that happens a lot when js is disabled
@@ -1253,6 +1265,7 @@ void AnonymousBitcoinComputingWtGUI::verifyUserHasSufficientFundsAndThatTheirAcc
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WText("Our records indicate you're currently trying to purchase some ad space. Either do only one purchase at a time, or perhaps you should try logging out and back in again to remedy the issue", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         resumeRendering();
+        return;
         //we probably want to allow them to continue with the buy even if the account is locked, so long as it's locked "to" the same one they're trying to buy now (buy failure recovery) -- TODOreq: this should go either in login recovery or here, but not both (since getting _here_ requires being logged in (ALTHOUGH ACTUALLY NVM, IT IS POSSIBLE TO GET HERE IF THE DB/node FAILS WHILE THEY ARE LOGGED IN LOOKING AT BUY PAGE FFFFFF))
         //Semi-outdated:
         //TO DOnereq(describes the roll-back hack): account already locked so error out of this buy. they're logged in elsewhere and trying to buy two things at once? etc. It jumps at me that it might be a place to do 'recovery' code, but I think for now I'm only going to do that during 'login' (TO DOnereq: maybe doing recovery at login isn't such a good idea (at least, the PROCEED WITH BUY kind isn't a good idea (rollback is DEFINITELY good idea (once we verify that they didn't get it(OMG RACE CONDITION HACKABLE TO DOnereq: they are on two machines they log in on a different one just after clicking "buy" and get lucky so that their account IS locked, but the separate-login-machine checks to see if they got the slot. When it sees they didn't, it rolls back their account. Meanwhile the original machine they clicked "buy" on is still trying to buy the slot (by LCB_ADD'ing the slot). The hack depends on the machine they press "buy" on being slower (more load, etc) than the alternate one they log in to (AND NOTE, BY MACHINE I MEAN WT SERVER, not end user machine). So wtf rolling back is dangerous? Wat do. It would also depend on the buying machine crashing immediately after the slot is purchased, because otherwise it would be all like 'hey wtf who unlocked that account motherfucker, I was still working on it' and at least error out TO DOnereq(can't think of a way to detect that scenario because recovery-possy can cas-swap-unlock+debitting also)))))
@@ -2467,14 +2480,14 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
         //we save a copy of it here, but we don't display it until doLoginTasks is called, or recovery completes (which also calls that)
         m_CurrentlyLoggedInUsersBalanceSatoshiStringForDisplayingOnly = pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE);
 
-        std::string slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST = pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n");
+        std::string slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST = pt.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n"); //we don't care if it's locked to 'withdrawing' mode. we still allow login (it's only ACTUAL ACTIVITY that needs to be guarded.. and 'logging in' isn't really anything at all)
         if(slotToAttemptToFillAkaPurchase_ACCOUNT_LOCKED_TEST == "n")
         {
             doLoginTasks();
         }
         else
         {
-            //account locked, so do recovery steps
+            //account locked trying to fill a slot, so do recovery steps
 
             //in the following, slotToAttemptToFillAkaPurchase == the slot itself, we've already determined that the FIELD in UserAccount exists...
 
