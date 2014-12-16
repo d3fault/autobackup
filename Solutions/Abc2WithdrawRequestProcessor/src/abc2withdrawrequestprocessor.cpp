@@ -143,9 +143,9 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
     double desiredWithdrawRequestAmountAsJsonDouble = satoshiIntToJsonDouble(m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis);
     double withdrawalFeeJsonDouble = withdrawalFeeForWithdrawalAmount(desiredWithdrawRequestAmountAsJsonDouble);
     SatoshiInt withdrawalFeeInSatoshis = jsonDoubleToSatoshiIntIncludingRounding(withdrawalFeeJsonDouble); //the rounding, it does nothing (we already 'rounded up') ;-P!
-    m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFee = m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis + withdrawalFeeInSatoshis;
+    m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis = m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis + withdrawalFeeInSatoshis;
 
-    if(m_CurrentUserBalanceInSatoshis < m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFee)
+    if(m_CurrentUserBalanceInSatoshis < m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis)
     {
         //insufficient funds. not fatal error, they might have simply spent the funds on an ad slot filler after filing the withdrawal request. set the withdrawal request state to insiffucient funds done and return true;
         m_CurrentWithdrawalRequestPropertyTree.put(JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY, JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_INSUFFICIENTFUNDS);
@@ -183,7 +183,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
     m_CurrentWithdrawalRequestInProcessingStateCas = m_LastSetCas;
 
     //withdrawal request state is 'processing', so PROCESS it by issuing the payout command to bitcoin!
-    QNetworkRequest request(QUrl("http://payoutwalletuser:payoutwalletpassword@127.0.0.1:19011/"));
+    QNetworkRequest request(QUrl("http://admin2:123@127.0.0.1:19011/")); //TODOreq: maybe qsettings 'profiles', but obviously some way to specify user/pw/ip/port (I lean against cli args [solely] because if I'm 'launched', I want to be able to show what's on my screen (but eh not a necessity initially, fuggit))
     request.setHeader(QNetworkRequest::ContentTypeHeader, "text/plain");
     const std::string &keyToWithdrawTo = m_CurrentWithdrawalRequestPropertyTree.get<std::string>(JSON_WITHDRAW_FUNDS_BITCOIN_PAYOUT_KEY);
     QString keyToWIthdrawToQString = QString::fromStdString(keyToWithdrawTo);
@@ -280,7 +280,7 @@ void Abc2WithdrawRequestProcessor::handleNetworkReplyFinished(QNetworkReply *rep
     //the bitcoin sendtoaddress command response had no errors
 
     //TO DOne optional: the ptree in scope contains a txid that we could store in the withdrawal request (when putting in the 'done' state) for book keeping and such. hell, i might [legally] have to! TODOreq: figure out if it's a legal requirement (i'm still curious even though i already implemented it). It might also help in error recovery, but I'm unsure
-    m_CurrentWithdrawalRequestPropertyTree.put(JSON_WITHDRAW_FUNDS_TXID, pt.get<std::string>("txid"));
+    m_CurrentWithdrawalRequestPropertyTree.put(JSON_WITHDRAW_FUNDS_TXID, pt.get<std::string>("result"));
 
     //cas swap set withdrawal request state to "processed, profile needs balance deducting/unlocking"
     m_CurrentWithdrawalRequestPropertyTree.put(JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY, JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_PROCESSEDBUTPROFILENEEDSDEDUCTINGANDUNLOCKING);
@@ -294,10 +294,10 @@ void Abc2WithdrawRequestProcessor::handleNetworkReplyFinished(QNetworkReply *rep
 
     //deduct amount from profile balance and cas swap unlock it
     SatoshiInt originalBalance = m_CurrentUserBalanceInSatoshis;
-    m_CurrentUserBalanceInSatoshis -= m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFee;
+    m_CurrentUserBalanceInSatoshis -= m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis;
     m_CurrentUserProfilePropertyTree.put(JSON_USER_ACCOUNT_BALANCE, m_CurrentUserBalanceInSatoshis);
     m_CurrentUserProfilePropertyTree.erase(JSON_USER_ACCOUNT_LOCKED_WITHDRAWING_FUNDS);
-    if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(userAccountKey(m_CurrentUserRequestingWithdrawal), Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(m_CurrentUserProfilePropertyTree), LCB_SET, m_CurrentUserProfileInLockedWithdrawingStateCas, "debitting+unlocking user profile '" + m_CurrentUserRequestingWithdrawal + "' with amount: (OLD: " + satoshiIntToJsonString(originalBalance) + ", NEW: " + satoshiIntToJsonString(m_CurrentUserBalanceInSatoshis) + ", DIFF: -" + satoshiIntToJsonString(m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFee) + ")"))
+    if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(userAccountKey(m_CurrentUserRequestingWithdrawal), Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(m_CurrentUserProfilePropertyTree), LCB_SET, m_CurrentUserProfileInLockedWithdrawingStateCas, "debitting+unlocking user profile '" + m_CurrentUserRequestingWithdrawal + "' with amount: (OLD: " + satoshiIntToJsonString(originalBalance) + ", NEW: " + satoshiIntToJsonString(m_CurrentUserBalanceInSatoshis) + ", DIFF: -" + satoshiIntToJsonString(m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis) + ")"))
     {
         //error debitting+unlocking user profile
         emit withdrawalRequestProcessingFinished(false);
