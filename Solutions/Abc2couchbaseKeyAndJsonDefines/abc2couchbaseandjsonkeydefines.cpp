@@ -90,6 +90,12 @@ bool Abc2CouchbaseAndJsonKeyDefines::profileIsLocked(const ptree &profile) //TO 
         return true;
     }
 
+    lockedCheck = profile.get<std::string>(JSON_USER_ACCOUNT_LOCKED_CREDITTING_TRANSACTION, "n"); //TODOreq: re-examine all locked checks to see if this new lock type effects them
+    if(lockedCheck != "n")
+    {
+        return true;
+    }
+
     return false;
 }
 /*

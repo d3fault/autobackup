@@ -121,6 +121,8 @@ const std::string adSpaceAllSlotFillersKey(const std::string &username);
 #define JSON_USER_ACCOUNT_SLOT_TO_ATTEMPT_TO_FILL_IT_WITH "slotToAttemptToFillAkaPurchaseItWith"
 //user account LOCKED [withdrawing funds]
 #define JSON_USER_ACCOUNT_LOCKED_WITHDRAWING_FUNDS "lockedWithdrawingFunds"
+//user account LOCKED [creditting transaction]
+#define JSON_USER_ACCOUNT_LOCKED_CREDITTING_TRANSACTION "lockedCredittingTransaction"
 //bitcoin state
 #define JSON_USER_ACCOUNT_BITCOIN_STATE "bitcoinState"
 #define JSON_USER_ACCOUNT_BITCOIN_STATE_NO_KEY "NoKey"
@@ -136,14 +138,16 @@ const std::string userAccountKey(const std::string &username);
 
 
 //transaction
-#define COUCHBASE_TRANSACTION_KEY_PREFIX "tx"
+#define COUCHBASE_TRANSACTION_KEY_PREFIX "tx" //if changing, change "all transactions with state of uncreditted" view (and possibly others). aka: don't change.
 #define JSON_TRANSACTION_BUYER "buyer"
 #define JSON_TRANSACTION_SELLER "seller"
-#define JSON_TRANSACTION_AMOUNT "amount"
+#define JSON_TRANSACTION_AMOUNT "amountInSatoshis"
 
 //transaction state (only used for [safely] creditting the seller for the amount)
-#define JSON_TRANSACTION_STATE_KEY "txCredittedState"
-#define JSON_TRANSACTION_STATE_VALUE_UNCREDITTED "txUncreditted"
+#define JSON_TRANSACTION_STATE_KEY "txCredittedState" //if changing, change "all transactions with state of uncreditted" view (and possibly others). aka: don't change.
+#define JSON_TRANSACTION_STATE_VALUE_UNCREDITTED "txUncreditted" //if changing, change "all transactions with state of uncreditted" view (and possibly others). aka: don't change.
+#define JSON_TRANSACTION_STATE_VALUE_CREDITTING "credittingTx"
+#define JSON_TRANSACTION_STATE_VALUE_CREDITTED "txCreditted"
 
 //ex: transactionKey("d3fault", "0", "1");
 const std::string transactionKey(const std::string &campaignOwnerUsername, const std::string &campaignIndex, const std::string &slotIndex);

@@ -1,0 +1,14 @@
+Map:
+
+function(doc, meta)
+{
+  if(meta.id.lastIndexOf("tx_",0) === 0)
+  {
+    if(doc.txCredittedState === "txUncreditted")
+    {
+      emit(null,null);
+    }
+  }
+}
+
+Reduce: None

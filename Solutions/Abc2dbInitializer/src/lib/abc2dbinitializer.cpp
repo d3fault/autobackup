@@ -136,6 +136,7 @@ void Abc2dbInitializer::initializeAbc2db(const QString &filenameOfLineSeparatedE
 
     emit d("done reading file, you should have seen 1000 sets created and at least one huge bitcoin key list page created (and one more for every 10k increment on top of that)");
 
+#if 0 //before the gui had the ability to create this stuff
     //d3fault campaign 0 doc
     pt.clear();
     pt.put(JSON_AD_SPACE_CAMPAIGN_MIN_PRICE, "300000"); //.003 btc, which is roughly $1 USD at time of writing. I wanted to use 1 penny as the starting point, but it turns out gavin (main bitcoin dev) explicitly recommends against such low transaction amounts
@@ -159,6 +160,7 @@ void Abc2dbInitializer::initializeAbc2db(const QString &filenameOfLineSeparatedE
     if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(adSpaceCampaignIndexCacheKey("d3fault"), campaignIndexCacheDoc, LCB_ADD, 0, outputMsg))
         return;
     emit d(QString::fromStdString(outputMsg));
+#endif
 
     emit d("done initializing");
     emit doneInitializingAbc2db();

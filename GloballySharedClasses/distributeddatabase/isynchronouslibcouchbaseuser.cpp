@@ -131,6 +131,7 @@ bool ISynchronousLibCouchbaseUser::couchbaseGetRequestWithExponentialBackoff(con
     }
     return true;
 }
+//better named "requring lcb op success"
 bool ISynchronousLibCouchbaseUser::couchbaseGetRequestWithExponentialBackoffRequiringSuccess(const string &key, const string &optionalDescriptionOfGet)
 {
     if(!couchbaseGetRequestWithExponentialBackoff(key, optionalDescriptionOfGet))
@@ -192,6 +193,7 @@ bool ISynchronousLibCouchbaseUser::couchbaseStoreRequestWithExponentialBackoff(c
     }
     return true;
 }
+//better named "requring lcb op success"
 bool ISynchronousLibCouchbaseUser::couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(const string &key, const string &value, lcb_storage_t storageType, lcb_cas_t cas, const string &optionalDescriptionOfStore)
 {
     if(!couchbaseStoreRequestWithExponentialBackoff(key, value, storageType, cas, optionalDescriptionOfStore))

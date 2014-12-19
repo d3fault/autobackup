@@ -4,7 +4,7 @@
 #include <QObject>
 #include "isynchronouslibcouchbaseuser.h"
 
-#include <QStringList>
+#include <QSet>
 
 #include <boost/property_tree/ptree.hpp>
 
@@ -18,14 +18,14 @@ public:
 private:
     bool m_ViewQueryHadError;
     ptree m_ViewQueryPropertyTree;
-    QStringList m_UsersWithProfilesFoundLocked;
+    QSet<QString> m_UsersWithProfilesFoundLocked; //TODOoptimization: withdrawal request processor shouldn't use QStringList either
 
     void errorOutput(const string &errorString);
 
     static void viewQueryCompleteCallbackStatic(lcb_http_request_t request, lcb_t instance, const void *cookie, lcb_error_t error, const lcb_http_resp_t *resp);
     void viewQueryCompleteCallback(lcb_error_t error, const lcb_http_resp_t *resp);
 
-    bool creditTransactionIfStateReallyIsUncredittedAndReturnFalseOnError(const std::string &keyToTransactionMaybeWithStateOfUncreditted);
+    bool creditTransactionIfStateReallyIsUncredittedAndReturnFalseIfWeShouldStopIteratingViewQueryResults(const std::string &keyToTransactionMaybeWithStateOfUncreditted);
 signals:
     void e(const QString &msg);
     void o(const QString &msg);

@@ -2471,9 +2471,9 @@ GloballySharedClasses/architecture/ibusinessobject.h:1399319929
 GloballySharedClasses/cli/:1397707910
 GloballySharedClasses/cli/standardinputnotifier.cpp:1397707910
 GloballySharedClasses/cli/standardinputnotifier.h:1397707898
-GloballySharedClasses/distributeddatabase/:1418092316
+GloballySharedClasses/distributeddatabase/:1418977134
 GloballySharedClasses/distributeddatabase/d3faultscouchbaseshared.h:1400918587
-GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp:1418092316
+GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp:1418977134
 GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.h:1418092284
 GloballySharedClasses/filesystem/:1401628130
 GloballySharedClasses/filesystem/easytree.cpp:1387286577
@@ -4885,18 +4885,18 @@ Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessor.h:141862
 Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessorcli.cpp:1417423503
 Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessorcli.h:1417422390
 Solutions/Abc2WithdrawRequestProcessor/src/main.cpp:1417412693
-Solutions/Abc2couchbaseKeyAndJsonDefines/:1418888890
-Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp:1418712687
-Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h:1418888890
+Solutions/Abc2couchbaseKeyAndJsonDefines/:1418979889
+Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp:1418976607
+Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h:1418979889
 Solutions/Abc2dbInitializer/:1393907655
 Solutions/Abc2dbInitializer/src/:1393920575
-Solutions/Abc2dbInitializer/src/cli/:1417414669
+Solutions/Abc2dbInitializer/src/cli/:1418980077
 Solutions/Abc2dbInitializer/src/cli/Abc2dbInitializercli.pro:1394267475
 Solutions/Abc2dbInitializer/src/cli/abc2dbinitializercli.cpp:1393921679
 Solutions/Abc2dbInitializer/src/cli/abc2dbinitializercli.h:1393913424
 Solutions/Abc2dbInitializer/src/cli/main.cpp:1393994374
-Solutions/Abc2dbInitializer/src/lib/:1415985676
-Solutions/Abc2dbInitializer/src/lib/abc2dbinitializer.cpp:1418549435
+Solutions/Abc2dbInitializer/src/lib/:1418980059
+Solutions/Abc2dbInitializer/src/lib/abc2dbinitializer.cpp:1418980059
 Solutions/Abc2dbInitializer/src/lib/abc2dbinitializer.h:1394267540
 Solutions/Abc2getTodaysAdSlot/:1394268588
 Solutions/Abc2getTodaysAdSlot/src/:1415258630
@@ -5054,7 +5054,8 @@ Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.cpp:1339499716
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.h:1339499197
 Solutions/Anonymous Bitcoin Computing 2/:1418885382
 Solutions/Anonymous Bitcoin Computing 2/assets/:1415110445
-Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/:1417417528
+Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/:1418979797
+Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/all.transactions.with.state.of.uncreditted.txt:1418979936
 Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/all.usernames.with.at.least.one.ad.campaign.txt:1415254635
 Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/all.withdrawal.requests.with.state.of.unprocessed.txt:1417418657
 Solutions/Anonymous Bitcoin Computing 2/assets/abc.logo.svg:1410248142
@@ -5084,7 +5085,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guara
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/the.goods.service.vs.money.transmitter.differentiation.does.not.exist.with.bitcoins.nor.paper.money.but.does.exist.with.debit.credit.cards.EXCEPT.THOSE.HAVE.FEES.UP.THE.ASS.AND.HUGE.BARRIER.TO.ENTRY.txt:1416508764
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1418713178
+Solutions/Anonymous Bitcoin Computing 2/src/:1418980129
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1417415056
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
@@ -5146,13 +5147,13 @@ Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:141025
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.h:1396216398
 Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1416417105
 Solutions/Anonymous Bitcoin Computing 2/tools/:1418885409
-Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/:1418886011
+Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/:1418979564
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/design/:1418886022
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/design/abc2.transaction.creditor.initial.idea.txt:1418886022
-Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/:1418890149
+Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/:1418980090
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/Abc2TransactionCreditor.pro:1418886397
-Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditor.cpp:1418890147
-Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditor.h:1418888217
+Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditor.cpp:1418979657
+Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditor.h:1418979590
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/main.cpp:1418886031
 Solutions/BlueBox/:1325623915
 Solutions/BlueBox/A Suitable Video Player/:1344096014
