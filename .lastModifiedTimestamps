@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1418885345
+Documents/minddump/:1418984078
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1847,6 +1847,7 @@ Documents/minddump/sdflkjasdfkljsdofulwerkjoulskdfjousdfjweorulkjdfousdfl.txt:13
 Documents/minddump/sdflkjasdflkjsadfousdlfjsdofusdlkfjsodufsldfu.txt:1388692171
 Documents/minddump/sdflkjasdklfjasdofusldkfjoertesudflksdjfousdflkjs.txt:1384667123
 Documents/minddump/sdflkjasdklfjowerweruwerlkjouisdfkljdsofuwlekjroudsflkjsadofuwerkj.txt:1371881386
+Documents/minddump/sdflkjasdklfjslkdjflksdjfkljsdflkjsdlkfjsdlkjflksdjflskdjflksdjfklsoiweurlksdjf.txt:1418984078
 Documents/minddump/sdflkjasdlkfjsdofulsdjfosduflsjdfousdfljsdfousdflkj.txt:1389696362
 Documents/minddump/sdflkjasfldjasdfjsdfoulsdfjosudflkjsdfousdflkjsdfousldkfjsodfuk.txt:1373440849
 Documents/minddump/sdflkjasldfkjalsfkdjasldfkjsadofusldkjfousdflkjsdfousldfkjsdfoulsfdk.txt:1379632312
@@ -5085,7 +5086,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guara
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/the.goods.service.vs.money.transmitter.differentiation.does.not.exist.with.bitcoins.nor.paper.money.but.does.exist.with.debit.credit.cards.EXCEPT.THOSE.HAVE.FEES.UP.THE.ASS.AND.HUGE.BARRIER.TO.ENTRY.txt:1416508764
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1418983082
+Solutions/Anonymous Bitcoin Computing 2/src/:1418984791
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1417415056
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
@@ -5150,9 +5151,9 @@ Solutions/Anonymous Bitcoin Computing 2/tools/:1418885409
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/:1418979564
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/design/:1418886022
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/design/abc2.transaction.creditor.initial.idea.txt:1418886022
-Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/:1418983614
+Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/:1418985275
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/Abc2TransactionCreditor.pro:1418981539
-Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditor.cpp:1418983499
+Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditor.cpp:1418985021
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditor.h:1418979590
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditorcli.cpp:1418981842
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditorcli.h:1418981671

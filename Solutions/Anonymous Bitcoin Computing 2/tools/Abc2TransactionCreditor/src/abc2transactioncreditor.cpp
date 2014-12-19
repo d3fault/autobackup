@@ -152,6 +152,7 @@ bool Abc2TransactionCreditor::creditTransactionIfStateReallyIsUncredittedAndRetu
     SatoshiInt userBalanceInSatoshis = boost::lexical_cast<SatoshiInt>(sellerAccountDoc.get<std::string>(JSON_USER_ACCOUNT_BALANCE));
     userBalanceInSatoshis += transactionAmountInSatoshis;
     sellerAccountDoc.put(JSON_USER_ACCOUNT_BALANCE, satoshiIntToSatoshiString(userBalanceInSatoshis));
+    sellerAccountDoc.erase(JSON_USER_ACCOUNT_LOCKED_CREDITTING_TRANSACTION);
     opDescription = "cas swap+credit+unlock the seller (" + transactionSeller + ") for transaction: " + keyToTransactionMaybeWithStateOfUncreditted;
     if(!couchbaseStoreRequestWithExponentialBackoff(userAccountKey(transactionSeller), Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(sellerAccountDoc), LCB_SET, sellerAccountLockedToCredittingTransactionCas, opDescription))
     {
@@ -176,7 +177,7 @@ bool Abc2TransactionCreditor::creditTransactionIfStateReallyIsUncredittedAndRetu
     //change transaction state from creditting to creditted
     transactionDoc.put(JSON_TRANSACTION_STATE_KEY, JSON_TRANSACTION_STATE_VALUE_CREDITTED);
     opDescription = "changing transaction state from creditting to creditted: " + keyToTransactionMaybeWithStateOfUncreditted;
-    if(couchbaseStoreRequestWithExponentialBackoff(keyToTransactionMaybeWithStateOfUncreditted, Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(transactionDoc), LCB_SET, transactionDocInStateCredittingCas, opDescription))
+    if(!couchbaseStoreRequestWithExponentialBackoff(keyToTransactionMaybeWithStateOfUncreditted, Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(transactionDoc), LCB_SET, transactionDocInStateCredittingCas, opDescription))
     {
         //db error
         return false;
