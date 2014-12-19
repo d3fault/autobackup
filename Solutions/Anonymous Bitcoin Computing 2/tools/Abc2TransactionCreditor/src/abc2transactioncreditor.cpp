@@ -248,5 +248,5 @@ void Abc2TransactionCreditor::creditTransactions()
         }
     }
 
-    //TODOreq: somwhere later: emit transactionCredittingFinished(true);
+    emit transactionCredittingFinished(true);
 }

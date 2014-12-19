@@ -76,6 +76,13 @@ const std::string withdrawFundsRequestsNextAvailableIndexKey(const std::string &
     return COUCHBASE_WITHDRAW_FUNDS_REQUESTS_NEXT_AVAILABLE_INDEX_PREFIX
             D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR + username;
 }
+void Abc2CouchbaseAndJsonKeyDefines::createTransactionDoc(ptree &emptyPtreeToPopulate, const string &seller, const string &buyer, const string &amountInSatoshis)
+{
+    emptyPtreeToPopulate.put(JSON_TRANSACTION_BUYER, buyer);
+    emptyPtreeToPopulate.put(JSON_TRANSACTION_SELLER, seller); //TODOoptional: implied/deducable from key name...
+    emptyPtreeToPopulate.put(JSON_TRANSACTION_AMOUNT, amountInSatoshis);
+    emptyPtreeToPopulate.put(JSON_TRANSACTION_STATE_KEY, JSON_TRANSACTION_STATE_VALUE_UNCREDITTED);
+}
 bool Abc2CouchbaseAndJsonKeyDefines::profileIsLocked(const ptree &profile) //TO DOnereq(not all of them made sense to migrate to this, but each locked check has been updated accordingly): migrate locked checks to this! TODOoptional: genericize the locking to be a single json key in the account
 {
     string lockedCheck = profile.get<std::string>(JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL, "n");

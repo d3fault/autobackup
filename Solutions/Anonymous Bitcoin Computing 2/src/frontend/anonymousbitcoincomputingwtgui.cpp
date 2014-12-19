@@ -1444,15 +1444,7 @@ void AnonymousBitcoinComputingWtGUI::slotFillAkaPurchaseAddAttemptFinished(bool 
 
     //create transaction doc using lcb_add accepting fail -- i can probably re-use this code later (merge into functions), for now KISS
     ptree pt;
-    pt.put(JSON_TRANSACTION_BUYER, m_CurrentlyLoggedInUsername);
-
-#ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
-    pt.put(JSON_TRANSACTION_SELLER, m_CampaignOwnerForPageBeingViewed); //TODOoptional: implied/deducable from key name...
-#else // not #def ABC_MULTI_CAMPAIGN_OWNER_MODE
-    pt.put(JSON_TRANSACTION_SELLER, "d3fault"); //TODOoptional: implied/deducable from key name...
-#endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
-
-    pt.put(JSON_TRANSACTION_AMOUNT, m_CurrentPriceInSatoshisToUseForBuyingString);
+    Abc2CouchbaseAndJsonKeyDefines::createTransactionDoc(pt, m_CampaignOwnerForPageBeingViewed, m_CurrentlyLoggedInUsername, m_CurrentPriceInSatoshisToUseForBuyingString);
     std::ostringstream transactionBuffer;
     write_json(transactionBuffer, pt, false);
 

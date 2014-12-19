@@ -2,6 +2,9 @@
 
 /*
 
+==1.0 BLOCKER==
+- Bitcoin keys for withdrawal requests MUST be verified valid before we accept them into the db, OR another withdrawal request state of 'error' needs to be introduced (psbly both?)
+
 ==1.1 Bugs==
 
 - C++11 makes cow in std::string illegal, so even gcc/clang won't have it anymore. I should use shared_ptr probably, now that I finally understand it

@@ -14,6 +14,8 @@
 using namespace std;
 using namespace boost::property_tree;
 
+//BLOCKER DO NOT RUN THIS APP UNTIL FIXING ALL OCCURANCES OF STRING "d3fault" (and sometimes an associated campaign index "0") hardcoded within. Should probably follow the "event driven monitor/reccovery" window triggering (see below)
+
 #define ABC2_PESSIMISTIC_STATE_MONITOR_AND_RECOVERER_STOP_FILE "/run/shm/stopPessimisticStateMonitorAndRecoverer" //have a better/portable way (my qt way is the shit :-P), i'm open to suggestions. tmpfs at least saves us a hdd hit (but so would hdd cache prolly xD)
 
 #define DO_COUCHBASE_CAS_SWAP_ACCEPTING_FAIL_OF_USER_ACCOUNT_DEBIT_AND_UNLOCK \
@@ -175,7 +177,7 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
                     lcb_cas_t campaignDocToUpdateCAS = m_LastGetCas; //save this for later...
 
                     //9 - check to see if transaction doc exists
-                    const std::string transactionDocKey = transactionKey("d3fault", "0", slotIndexForSlotThatShouldntExistButMightString);
+                    const std::string transactionDocKey = transactionKey("d3fault" /*TODOreq: this needs to be dynamic*/, "0", slotIndexForSlotThatShouldntExistButMightString);
                     if(!couchbaseGetRequestWithExponentialBackoff(transactionDocKey, "tx that might exist (" + transactionDocKey + "): "))
                         return 1;
 
@@ -262,9 +264,7 @@ int Abc2PessimisticStateMonitorAndRecoverer::startPessimisticallyMonitoringAndRe
 
                             //add-accepting-fail the transaction document itself
                             ptree pt7;
-                            pt7.put(JSON_TRANSACTION_BUYER, usernameOfBuyer);
-                            pt7.put(JSON_TRANSACTION_SELLER, "d3fault");
-                            pt7.put(JSON_TRANSACTION_AMOUNT, purchasePriceString);
+                            Abc2CouchbaseAndJsonKeyDefines::createTransactionDoc(pt7, "d3fault" /*TODOreq: this needs to be dynamic*/, usernameOfBuyer, purchasePriceString);
                             std::ostringstream transactionJsonBuffer;
                             write_json(transactionJsonBuffer, pt7, false);
                             std::string transactionJson = transactionJsonBuffer.str();

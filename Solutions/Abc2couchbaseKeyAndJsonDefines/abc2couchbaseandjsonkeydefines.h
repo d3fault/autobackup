@@ -52,6 +52,7 @@ private:
     virtual ~Abc2CouchbaseAndJsonKeyDefines() { }
 public:
     //TODOoptional: static void createDefaultProfileDoc(ptree &emptyPtreeToPopulateWithDefaults); //etc
+    static void createTransactionDoc(ptree &emptyPtreeToPopulate, const std::string &seller, const std::string &buyer, const std::string &amountInSatoshis);
 
     static bool profileIsLocked(const ptree &profile);
     //static bool profileIsLocked(const std::string &profile);

@@ -4870,9 +4870,9 @@ Solutions/Abc2PessimisticStateMonitorAndRecoverer/:1393096791
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/design/:1413188299
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/design/initial.idea.txt:1390932309
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/design/scaling.to.millions.of.monitored.docs.idea.attempt.txt:1413188708
-Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/:1418711242
+Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/:1418983475
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/Abc2PessimisticStateMonitorAndRecoverer.pro:1399666980
-Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/abc2pessimisticstatemonitorandrecoverer.cpp:1418711180
+Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/abc2pessimisticstatemonitorandrecoverer.cpp:1418983376
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/abc2pessimisticstatemonitorandrecoverer.h:1413102432
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/main.cpp:1413102367
 Solutions/Abc2WithdrawRequestProcessor/:1417933542
@@ -4885,9 +4885,9 @@ Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessor.h:141862
 Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessorcli.cpp:1417423503
 Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessorcli.h:1417422390
 Solutions/Abc2WithdrawRequestProcessor/src/main.cpp:1417412693
-Solutions/Abc2couchbaseKeyAndJsonDefines/:1418979889
-Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp:1418976607
-Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h:1418979889
+Solutions/Abc2couchbaseKeyAndJsonDefines/:1418982912
+Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp:1418982912
+Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h:1418982728
 Solutions/Abc2dbInitializer/:1393907655
 Solutions/Abc2dbInitializer/src/:1393920575
 Solutions/Abc2dbInitializer/src/cli/:1418980077
@@ -5085,7 +5085,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guara
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/the.goods.service.vs.money.transmitter.differentiation.does.not.exist.with.bitcoins.nor.paper.money.but.does.exist.with.debit.credit.cards.EXCEPT.THOSE.HAVE.FEES.UP.THE.ASS.AND.HUGE.BARRIER.TO.ENTRY.txt:1416508764
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1418980129
+Solutions/Anonymous Bitcoin Computing 2/src/:1418983082
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1417415056
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
@@ -5098,7 +5098,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcou
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1415988045
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.cpp:1413219024
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1413240036
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1418713056
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1418982843
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1418711915
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.cpp:1399670151
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.h:1399671286
@@ -5130,7 +5130,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/l
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h:1416420577
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.cpp:1393160674
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.h:1393161161
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1418713056
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1418982843
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1418540994
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/registersuccessfulwidget.cpp:1393117307
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/registersuccessfulwidget.h:1393117244
@@ -5145,16 +5145,18 @@ Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:141641
 Solutions/Anonymous Bitcoin Computing 2/src/abc2common.h:1415897570
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:1410253778
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.h:1396216398
-Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1416417105
+Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1418982100
 Solutions/Anonymous Bitcoin Computing 2/tools/:1418885409
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/:1418979564
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/design/:1418886022
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/design/abc2.transaction.creditor.initial.idea.txt:1418886022
-Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/:1418980090
-Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/Abc2TransactionCreditor.pro:1418886397
-Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditor.cpp:1418979657
+Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/:1418983614
+Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/Abc2TransactionCreditor.pro:1418981539
+Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditor.cpp:1418983499
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditor.h:1418979590
-Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/main.cpp:1418886031
+Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditorcli.cpp:1418981842
+Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditorcli.h:1418981671
+Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/main.cpp:1418981577
 Solutions/BlueBox/:1325623915
 Solutions/BlueBox/A Suitable Video Player/:1344096014
 Solutions/BlueBox/A Suitable Video Player/touched.txt:1344096021

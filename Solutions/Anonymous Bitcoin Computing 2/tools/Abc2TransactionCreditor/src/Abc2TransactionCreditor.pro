@@ -16,12 +16,14 @@ TEMPLATE = app
 HEADERS += \
     ../../../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h \
     ../../../../../GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.h \
-    abc2transactioncreditor.h
+    abc2transactioncreditor.h \
+    abc2transactioncreditorcli.h
 
 SOURCES += main.cpp \
     ../../../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp \
     ../../../../../GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp \
-    abc2transactioncreditor.cpp
+    abc2transactioncreditor.cpp \
+    abc2transactioncreditorcli.cpp
 
 INCLUDEPATH += ../../../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../../../GloballySharedClasses/distributeddatabase/
