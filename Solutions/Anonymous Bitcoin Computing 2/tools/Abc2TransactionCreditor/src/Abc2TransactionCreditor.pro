@@ -13,4 +13,17 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-SOURCES += main.cpp
+HEADERS += \
+    ../../../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h \
+    ../../../../../GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.h \
+    abc2transactioncreditor.h
+
+SOURCES += main.cpp \
+    ../../../../Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp \
+    ../../../../../GloballySharedClasses/distributeddatabase/isynchronouslibcouchbaseuser.cpp \
+    abc2transactioncreditor.cpp
+
+INCLUDEPATH += ../../../../Abc2couchbaseKeyAndJsonDefines/
+INCLUDEPATH += ../../../../../GloballySharedClasses/distributeddatabase/
+
+LIBS += -lcouchbase

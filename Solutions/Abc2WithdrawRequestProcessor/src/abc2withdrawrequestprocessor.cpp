@@ -47,7 +47,7 @@ void Abc2WithdrawRequestProcessor::viewQueryCompleteCallback(lcb_error_t error, 
         return;
     }
 
-    //TODOreq: don't trust the view query. we still must get the doc (and we have to anyways to get the CAS in order to fuck with it. so that being said, i now know i can emit(null,null) (which gives us only the key) in the view that's a WIP-in-mah-brain) and check AGAIN then that the state is 'unprocessed'. hence the name of the variable:
+    //TO DOnereq: don't trust the view query. we still must get the doc (and we have to anyways to get the CAS in order to fuck with it. so that being said, i now know i can emit(null,null) (which gives us only the key) in the view that's a WIP-in-mah-brain) and check AGAIN then that the state is 'unprocessed'. hence the name of the variable:
     //QList<QString> listOfKeysWhereViewQuerySaidTheStateIsUnprocessedButHeyMaybeThatWasStaleInfo;
 
     QByteArray jsonResultByteArray(static_cast<const char*>(resp->v.v0.bytes), resp->v.v0.nbytes);
@@ -85,7 +85,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
 
     //check state is really unprocessed
     m_CurrentKeyToMaybeUnprocessedWithdrawalRequest = currentKeyToMaybeUnprocessedWithdrawalRequest.toStdString();
-    std::string getDescription = "the withdrawal request in state unprocessed for the first step of processing: " + m_CurrentKeyToMaybeUnprocessedWithdrawalRequest;
+    std::string getDescription = "the withdrawal request for verifying in state unprocessed for the first step of processing: " + m_CurrentKeyToMaybeUnprocessedWithdrawalRequest;
     if(!couchbaseGetRequestWithExponentialBackoffRequiringSuccess(m_CurrentKeyToMaybeUnprocessedWithdrawalRequest, getDescription))
     {
         emit withdrawalRequestProcessingFinished(false);
@@ -95,7 +95,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
     m_CurrentWithdrawalRequestPropertyTree.clear();
     std::istringstream withdrawalRequestIs(m_LastDocGetted);
     read_json(withdrawalRequestIs, m_CurrentWithdrawalRequestPropertyTree);
-    std::string withdrawFundsRequestState = m_CurrentWithdrawalRequestPropertyTree.get<std::string>(JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY);
+    const std::string &withdrawFundsRequestState = m_CurrentWithdrawalRequestPropertyTree.get<std::string>(JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY);
     if(withdrawFundsRequestState != JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_UNPROCESSED)
     {
         //the view query was stale (despite stale=false) and the state was not in fact unprocessed... so we just return true and continue onto the next one ('processing' and other error states are handled at a different point (before app even does it's normal thing))
@@ -202,17 +202,17 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequests()
     lcb_set_http_complete_callback(m_Couchbase, Abc2WithdrawRequestProcessor::viewQueryCompleteCallbackStatic);
 
     std::string viewPath = "_design/dev_AllWithdrawalRequestsWithStateOfUnprocessed/_view/AllWithdrawalRequestsWithStateOfUnprocessed?stale=false"; //TODOmb: perhaps if this app is run on the webserver, we should use some form of pagination so that all the requests don't have to be in ram. for now KISS. Another way to solve it is to run this app on a server other than the webserver
-    lcb_http_cmd_t queryPageOfViewCmd;
-    queryPageOfViewCmd.version = 0;
-    queryPageOfViewCmd.v.v0.path = viewPath.c_str();
-    queryPageOfViewCmd.v.v0.npath = viewPath.length();
-    queryPageOfViewCmd.v.v0.body = NULL;
-    queryPageOfViewCmd.v.v0.nbody = 0;
-    queryPageOfViewCmd.v.v0.method = LCB_HTTP_METHOD_GET;
-    queryPageOfViewCmd.v.v0.chunked = 0;
-    queryPageOfViewCmd.v.v0.content_type = "application/json";
+    lcb_http_cmd_t viewQueryCmd;
+    viewQueryCmd.version = 0;
+    viewQueryCmd.v.v0.path = viewPath.c_str();
+    viewQueryCmd.v.v0.npath = viewPath.length();
+    viewQueryCmd.v.v0.body = NULL;
+    viewQueryCmd.v.v0.nbody = 0;
+    viewQueryCmd.v.v0.method = LCB_HTTP_METHOD_GET;
+    viewQueryCmd.v.v0.chunked = 0;
+    viewQueryCmd.v.v0.content_type = "application/json";
     m_ViewQueryHadError = true; //prove to me that there wasn't an error ;-P
-    lcb_error_t error = lcb_make_http_request(m_Couchbase, this, LCB_HTTP_TYPE_VIEW, &queryPageOfViewCmd, NULL);
+    lcb_error_t error = lcb_make_http_request(m_Couchbase, this, LCB_HTTP_TYPE_VIEW, &viewQueryCmd, NULL);
     if (error != LCB_SUCCESS)
     {
         emit e("Failed to query view " + QString::fromStdString(lcb_strerror(m_Couchbase, error)));

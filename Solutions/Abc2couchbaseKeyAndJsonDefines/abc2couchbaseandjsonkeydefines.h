@@ -141,6 +141,10 @@ const std::string userAccountKey(const std::string &username);
 #define JSON_TRANSACTION_SELLER "seller"
 #define JSON_TRANSACTION_AMOUNT "amount"
 
+//transaction state (only used for [safely] creditting the seller for the amount)
+#define JSON_TRANSACTION_STATE_KEY "txCredittedState"
+#define JSON_TRANSACTION_STATE_VALUE_UNCREDITTED "txUncreditted"
+
 //ex: transactionKey("d3fault", "0", "1");
 const std::string transactionKey(const std::string &campaignOwnerUsername, const std::string &campaignIndex, const std::string &slotIndex);
 
