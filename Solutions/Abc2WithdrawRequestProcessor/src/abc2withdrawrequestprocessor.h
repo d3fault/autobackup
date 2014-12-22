@@ -20,6 +20,13 @@ class Abc2WithdrawRequestProcessor : public QObject, public ISynchronousLibCouch
 {
     Q_OBJECT
 public:
+    enum WayToHandleBitcoindCommunicationsErrorEnum
+    {
+          RevertWithdrawalRequestStateToUnprocessedAndContinueProcessingWithdrawalRequests = 0
+        , RevertWithdrawalRequestStateToUnprocessedAndStopProcessingWithdrawalRequests = 1
+        , SetWithdrawalRequestStateToBitcoindReturnedErrorAndContinueProcessingWithdrawalRequests = 2
+        , SetWithdrawalRequestStateToBitcoindReturnedErrorAndStopProcessingWithdrawalRequests = 3
+    };
     explicit Abc2WithdrawRequestProcessor(QObject *parent = 0);
 private:
     bool m_ViewQueryHadError;
@@ -49,19 +56,23 @@ private:
     void processNextWithdrawalRequestOrEmitFinishedIfNoMore();
     void processWithdrawalRequest(const QString &currentKeyToNotDoneWithdrawalRequest);
     void readInUserBalanceAndCalculateWithdrawalFeesEtc();
-    void setCurrentWithdrawalRequestToStateBitcoindReturnedError_Done__AndUnlockWithoutDebittingUserProfile(const QString &bitcoinDcommunicationsErrorToStoreInDb);
+    bool revertCurrentWithdrawalRequestStateToUnprocessed__AndUnlockWithoutDebittingUserProfile();
+    bool setCurrentWithdrawalRequestToStateBitcoindReturnedError_Done__AndUnlockWithoutDebittingUserProfile(const QString &bitcoinDcommunicationsErrorToStoreInDb);
+    bool unlockUserProfileWithoutDebitting();
     //careful changing any body of methods below this point, see the "NOTE:" in the source file
     void continueAt_deductAmountFromCurrentUserProfileBalanceAndCasSwapUnlockIt_StageOfWithdrawRequestProcessor();
-    //bool deductAmountFromCurrentUserProfileBalanceAndCasSwapUnlockIt(SatoshiInt currentUserBalanceInSatoshis, SatoshiInt currentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis, lcb_cas_t currentUserProfileInLockedWithdrawingStateCas);
     void continueAt_setWithdrawalRequestStateToProcessedAndDone_StageOfWithdrawRequestProcessor();
 signals:
     void e(const QString &msg);
     void o(const QString &msg);
+    void bitcoindCommunicationsErrorDetectedSoWeNeedToAskTheUserHowToProceed(const QString &sourceOfError, const QString &theErrorItself);
     void withdrawalRequestProcessingFinished(bool success);
 public slots:
     void processWithdrawalRequests();
+    void userWantsUsToHandleTheBitcoindCommunicationsErrorThisWay(Abc2WithdrawRequestProcessor::WayToHandleBitcoindCommunicationsErrorEnum userSelectedWayToHandleBitcoindCommunicationsError, const QString &errorStringToStoreInDb);
 private slots:
     void handleNetworkReplyFinished(QNetworkReply *reply);
 };
+Q_DECLARE_METATYPE(Abc2WithdrawRequestProcessor::WayToHandleBitcoindCommunicationsErrorEnum)
 
 #endif // ABC2WITHDRAWREQUESTPROCESSOR_H

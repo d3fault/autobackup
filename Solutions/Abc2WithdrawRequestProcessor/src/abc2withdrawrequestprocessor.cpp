@@ -40,7 +40,7 @@ Handling the ERROR/previous-fail cases:
  - I'm leaning towards beefing up the current view/map to also gather the error conditions, instead of having a separate view/map for them. The beefed up view/map could either 'exclude processedInsufficientFundsDone and processedDone', or 'include unprocessed, processing, and processedButProfileNeedsDeductingAndUnlocking' -- hardly a difference except future-proofing if I add more states
 */
 
-//TODOoptional: if the bitcoind command responds with an error set, we could ask via the UI whether to "put withdrawal state back to unprocessed and unlock profile [without debitting]", or to "put withdrawal state in bitcoinJsonErrorDone and unlock profile [without debitting]". I could then decide based on the errors on screen. It would also be a good idea to ask whether or not I should continue iterating the withdrawal requests (so 2 variants of those options just described, giving me 4 options total)
+//TO DOneoptional: if the bitcoind command responds with an error set, we could ask via the UI whether to "put withdrawal state back to unprocessed and unlock profile [without debitting]", or to "put withdrawal state in bitcoindCommandReturnedError_Done and unlock profile [without debitting]". I could then decide based on the errors on screen. It would also be a good idea to ask whether or not I should continue iterating the withdrawal requests (so 2 variants of those options just described, giving me 4 options total)
 
 //TO DOnereq: 3% fee. Implementing it is pretty easy, but I need to understand and decide on what to do with rounding errors. My "minimum withdrawal amount" might influence rounding (unsure). Basically I need to make sure that when I calculate how much I've earned by "3% of the offline wallet's total balance", that it REALLY IS EQUAL TO the 3% fee applied in this here app (so I'm not accidentally spending money that isn't mine). If I have to decide whether to round "toward me" or "toward the customers", I should round toward me.... because Superman 3. I shouldn't/won't lie about it, but still those satoshis (had:pennies) really do add up (and the customers don't miss them because they are insignificant when viewed individually)
 //TO DOnereq: user profile balance deduction includes 3% fee, amount sent to bitcoind does not include 3% fee obviously (ALL MINE MUAHAHAHA). It almost sounds backwards written that way, so put it differently: the 3% fee is taken out (via math) before the bitcoind call
@@ -57,6 +57,7 @@ Abc2WithdrawRequestProcessor::Abc2WithdrawRequestProcessor(QObject *parent)
     , ISynchronousLibCouchbaseUser()
     , m_NetworkAccessManager(new QNetworkAccessManager(this))
 {
+    qRegisterMetaType<Abc2WithdrawRequestProcessor::WayToHandleBitcoindCommunicationsErrorEnum>("Abc2WithdrawRequestProcessor::WayToHandleBitcoindCommunicationsErrorEnum");
     connect(m_NetworkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleNetworkReplyFinished(QNetworkReply*)));
 }
 void Abc2WithdrawRequestProcessor::errorOutput(const string &errorString)
@@ -116,7 +117,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
 {
     //"maybe" unprocessed because we don't trust the view query. it may have given us stale data
 
-    //check state is really unprocessed
+    //check state is really not done
     m_CurrentKeyToNotDoneWithdrawalRequest = currentKeyToNotDoneWithdrawalRequest.toStdString();
     std::string getDescription = "the withdrawal request for verifying in state not done for the first step of processing: " + m_CurrentKeyToNotDoneWithdrawalRequest;
     if(!couchbaseGetRequestWithExponentialBackoffRequiringSuccess(m_CurrentKeyToNotDoneWithdrawalRequest, getDescription))
@@ -140,7 +141,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
 
     //state is "not done"
 
-    //check profile not locked attempting to fill slot (or locked withdrawing)-- TODOreq: "slot attempting to fill" and "add funds" code needs to check that profile isn't locked in this new "withdraw funds" lock mode
+    //check profile not locked attempting to fill slot (or locked withdrawing)
     QStringList keyParts = currentKeyToNotDoneWithdrawalRequest.split(D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR);
     const QString &userRequestingWithdrawal = keyParts.at(1);
     if(m_UsersWithProfilesFoundLocked.contains(userRequestingWithdrawal))
@@ -177,7 +178,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
 
         //profile is locked towards the withdrawal request
 
-        emit o("Encountered a withdrawal request in state 'processing' (it will not be processed, nor will any other withdrawal requests for that user): " + currentKeyToNotDoneWithdrawalRequest);
+        emit e("Encountered a withdrawal request in state 'processing' (it will not be processed, nor will any other withdrawal requests for that user): " + currentKeyToNotDoneWithdrawalRequest);
         //for now just going to do nothing (the users account will be seen as 'locked' and none of the rest of the user's withdrawal requests will even be attempted), but once I add SOMETHING here TODOreq (such as asking whether to continue or whatever, but honestly idfk what to do...), I should uncomment the below two statements:
 
         //processNextWithdrawalRequestOrEmitFinishedIfNoMore();
@@ -221,23 +222,6 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
 
             continueAt_setWithdrawalRequestStateToProcessedAndDone_StageOfWithdrawRequestProcessor();
         }
-
-/* OLD-failed-attempt:
-            if(!deductAmountFromCurrentUserProfileBalanceAndCasSwapUnlockIt())
-            {
-                return;
-            }
-            //Bump state to processingDone like normal
-        }
-        //else
-        //{
-            //profile is NOT locked towards the withdrawal request
-
-            //Bump state to processingDone like normal
-        //}
-
-        processNextWithdrawalRequestOrEmitFinishedIfNoMore();
-*/
 
         return; //don't continue on as if the withdrawal request state was 'unprocessed'
     }
@@ -329,7 +313,19 @@ void Abc2WithdrawRequestProcessor::readInUserBalanceAndCalculateWithdrawalFeesEt
     SatoshiInt withdrawalFeeInSatoshis = jsonDoubleToSatoshiIntIncludingRounding(withdrawalFeeJsonDouble); //the rounding, it does nothing (we already 'rounded up') ;-P!
     m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis = m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis + withdrawalFeeInSatoshis;
 }
-void Abc2WithdrawRequestProcessor::setCurrentWithdrawalRequestToStateBitcoindReturnedError_Done__AndUnlockWithoutDebittingUserProfile(const QString &bitcoinDcommunicationsErrorToStoreInDb)
+bool Abc2WithdrawRequestProcessor::revertCurrentWithdrawalRequestStateToUnprocessed__AndUnlockWithoutDebittingUserProfile()
+{
+    //revertCurrentWithdrawalRequestStateToUnprocessed
+    m_CurrentWithdrawalRequestPropertyTree.put(JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY, JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_UNPROCESSED);
+    if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(m_CurrentKeyToNotDoneWithdrawalRequest, Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(m_CurrentWithdrawalRequestPropertyTree), LCB_SET, m_CurrentWithdrawalRequestInProcessingStateCas, "reverting withdrawal request to state 'unprocessed'"))
+    {
+        emit withdrawalRequestProcessingFinished(false); //yea fuck it, emitting twice doesn't hurt =o
+        return false;
+    }
+
+    return unlockUserProfileWithoutDebitting();
+}
+bool Abc2WithdrawRequestProcessor::setCurrentWithdrawalRequestToStateBitcoindReturnedError_Done__AndUnlockWithoutDebittingUserProfile(const QString &bitcoinDcommunicationsErrorToStoreInDb)
 {
     QByteArray bitcoinDcommunicationsErrorToStoreInDbBA = bitcoinDcommunicationsErrorToStoreInDb.toUtf8();
     QByteArray bitcoinDcommunicationsErrorToStoreInDbBase64BA = bitcoinDcommunicationsErrorToStoreInDbBA.toBase64();
@@ -342,18 +338,23 @@ void Abc2WithdrawRequestProcessor::setCurrentWithdrawalRequestToStateBitcoindRet
     m_CurrentWithdrawalRequestPropertyTree.put(JSON_WITHDRAW_FUNDS_REQUEST_BITCOINDERRORIFAPPLICABLE, bitcoinDcommunicationsErrorToStoreInDbBase64StdString);
     if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(m_CurrentKeyToNotDoneWithdrawalRequest, Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(m_CurrentWithdrawalRequestPropertyTree), LCB_SET, m_CurrentWithdrawalRequestInProcessingStateCas, "setting withdrawal request to state 'bitcoindCommandReturnedError_Done': " + bitcoinDcommunicationsErrorToStoreInDbStdString))
     {
-        //as of writing, we're already emitting 'withdrawalRequestProcessingFinished(false)' after the call to this method returns, but maybe in the future i would want to emit it here
+        //as of writing, we're already emitting 'withdrawalRequestProcessingFinished(false)' after the call to this method returns, but maybe in the future i would want to emit it here <- no idea if this still holds true xd
         emit withdrawalRequestProcessingFinished(false); //yea fuck it, emitting twice doesn't hurt =o
-        return;
+        return false;
     }
 
     //UnlockWithoutDebittingUserProfile
+    return unlockUserProfileWithoutDebitting();
+}
+bool Abc2WithdrawRequestProcessor::unlockUserProfileWithoutDebitting()
+{
     m_CurrentUserProfilePropertyTree.erase(JSON_USER_ACCOUNT_LOCKED_WITHDRAWING_FUNDS);
-    if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(userAccountKey(m_CurrentUserRequestingWithdrawal), Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(m_CurrentUserProfilePropertyTree), LCB_SET, m_CurrentUserProfileInLockedWithdrawingStateCas, "unlocking without debitting user profile because bitcoind returned error: " + bitcoinDcommunicationsErrorToStoreInDbStdString))
+    if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(userAccountKey(m_CurrentUserRequestingWithdrawal), Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(m_CurrentUserProfilePropertyTree), LCB_SET, m_CurrentUserProfileInLockedWithdrawingStateCas, "unlocking without debitting user profile"))
     {
         emit withdrawalRequestProcessingFinished(false); //yea fuck it, emitting twice doesn't hurt =o
-        return;
+        return false;
     }
+    return true;
 }
 void Abc2WithdrawRequestProcessor::continueAt_deductAmountFromCurrentUserProfileBalanceAndCasSwapUnlockIt_StageOfWithdrawRequestProcessor()
 {
@@ -369,22 +370,6 @@ void Abc2WithdrawRequestProcessor::continueAt_deductAmountFromCurrentUserProfile
     }
     continueAt_setWithdrawalRequestStateToProcessedAndDone_StageOfWithdrawRequestProcessor();
 }
-#if 0
-bool Abc2WithdrawRequestProcessor::deductAmountFromCurrentUserProfileBalanceAndCasSwapUnlockIt(SatoshiInt currentUserBalanceInSatoshis, SatoshiInt currentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis, lcb_cas_t currentUserProfileInLockedWithdrawingStateCas)
-{
-    SatoshiInt originalBalance = currentUserBalanceInSatoshis;
-    currentUserBalanceInSatoshis -= currentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis;
-    m_CurrentUserProfilePropertyTree.put(JSON_USER_ACCOUNT_BALANCE, currentUserBalanceInSatoshis);
-    m_CurrentUserProfilePropertyTree.erase(JSON_USER_ACCOUNT_LOCKED_WITHDRAWING_FUNDS);
-    if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(userAccountKey(m_CurrentUserRequestingWithdrawal), Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(m_CurrentUserProfilePropertyTree), LCB_SET, currentUserProfileInLockedWithdrawingStateCas, "debitting+unlocking user profile '" + m_CurrentUserRequestingWithdrawal + "' with amount: (OLD: " + satoshiIntToJsonString(originalBalance) + ", NEW: " + satoshiIntToJsonString(currentUserBalanceInSatoshis) + ", DIFF: -" + satoshiIntToJsonString(currentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis) + ")"))
-    {
-        //error debitting+unlocking user profile
-        emit withdrawalRequestProcessingFinished(false);
-        return false;
-    }
-    return true;
-}
-#endif
 void Abc2WithdrawRequestProcessor::continueAt_setWithdrawalRequestStateToProcessedAndDone_StageOfWithdrawRequestProcessor()
 {
     //set withdrawal request state to "processed and done"
@@ -448,6 +433,54 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequests()
     m_ViewQueryResultsStringListSize = m_ViewQueryResultsAsStringListBecauseEasierForMeToIterate.size();
     processNextWithdrawalRequestOrEmitFinishedIfNoMore();
 }
+void Abc2WithdrawRequestProcessor::userWantsUsToHandleTheBitcoindCommunicationsErrorThisWay(Abc2WithdrawRequestProcessor::WayToHandleBitcoindCommunicationsErrorEnum userSelectedWayToHandleBitcoindCommunicationsError, const QString &errorStringToStoreInDb)
+{
+    //the action itself
+    switch(userSelectedWayToHandleBitcoindCommunicationsError)
+    {
+        case RevertWithdrawalRequestStateToUnprocessedAndContinueProcessingWithdrawalRequests:
+        case RevertWithdrawalRequestStateToUnprocessedAndStopProcessingWithdrawalRequests:
+        {
+            //revert
+            if(!revertCurrentWithdrawalRequestStateToUnprocessed__AndUnlockWithoutDebittingUserProfile())
+            {
+                //db error, so don't continue no matter what the user requested
+                return;
+            }
+        }
+            break;
+        case SetWithdrawalRequestStateToBitcoindReturnedErrorAndContinueProcessingWithdrawalRequests:
+        case SetWithdrawalRequestStateToBitcoindReturnedErrorAndStopProcessingWithdrawalRequests:
+        {
+            //set error state to bitcoind returned error
+            if(!setCurrentWithdrawalRequestToStateBitcoindReturnedError_Done__AndUnlockWithoutDebittingUserProfile(errorStringToStoreInDb))
+            {
+                //db error, so don't continue no matter what the user requested
+                return;
+            }
+        }
+            break;
+    }
+
+    //whether to continue processing withdrawal requests or to stop
+    switch(userSelectedWayToHandleBitcoindCommunicationsError)
+    {
+        case RevertWithdrawalRequestStateToUnprocessedAndContinueProcessingWithdrawalRequests:
+        case SetWithdrawalRequestStateToBitcoindReturnedErrorAndContinueProcessingWithdrawalRequests:
+        {
+            //continue
+            processNextWithdrawalRequestOrEmitFinishedIfNoMore();
+        }
+            break;
+        case RevertWithdrawalRequestStateToUnprocessedAndStopProcessingWithdrawalRequests:
+        case SetWithdrawalRequestStateToBitcoindReturnedErrorAndStopProcessingWithdrawalRequests:
+        {
+            //stop
+            emit withdrawalRequestProcessingFinished(true); //they asked to stop, but it was on account of seeing an error. does that count as success? blah~
+        }
+            break;
+    }
+}
 void Abc2WithdrawRequestProcessor::handleNetworkReplyFinished(QNetworkReply *reply)
 {
     QScopedPointer<QNetworkReply, QScopedPointerObjectDeleteLater<QNetworkReply> > replyDeleter(reply);
@@ -455,24 +488,16 @@ void Abc2WithdrawRequestProcessor::handleNetworkReplyFinished(QNetworkReply *rep
     if(reply->error() != QNetworkReply::NoError)
     {
         QString networkReplyError = "QNetworkReply has error: " + reply->errorString();
-        emit e(networkReplyError);
         QString bitcoinCommandCausingErrorString = "the bitcoin request causing the error: " + m_CurrentBitcoinCommand;
-        emit e(bitcoinCommandCausingErrorString);
-        QString errorToStoreInDb = networkReplyError + " -- " + bitcoinCommandCausingErrorString;
-        setCurrentWithdrawalRequestToStateBitcoindReturnedError_Done__AndUnlockWithoutDebittingUserProfile(errorToStoreInDb);
-        emit withdrawalRequestProcessingFinished(false);
+        emit bitcoindCommunicationsErrorDetectedSoWeNeedToAskTheUserHowToProceed(bitcoinCommandCausingErrorString, networkReplyError);
         return;
     }
     QVariant responseCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
     if((!responseCode.isValid()) || (responseCode.toInt() != 200))
     {
         QString statusCodeError = "QNetworkReply did not return status code of 200. status code: " + QString::number(responseCode.toInt());
-        emit e(statusCodeError);
         QString bitcoinCommandCausingErrorString = "the bitcoin request causing the error: " + m_CurrentBitcoinCommand;
-        emit e(bitcoinCommandCausingErrorString);
-        QString errorToStoreInDb = statusCodeError + " -- " + bitcoinCommandCausingErrorString;
-        setCurrentWithdrawalRequestToStateBitcoindReturnedError_Done__AndUnlockWithoutDebittingUserProfile(errorToStoreInDb);
-        emit withdrawalRequestProcessingFinished(false);
+        emit bitcoindCommunicationsErrorDetectedSoWeNeedToAskTheUserHowToProceed(bitcoinCommandCausingErrorString, statusCodeError);
         return;
     }
     //check for json error
@@ -486,12 +511,8 @@ void Abc2WithdrawRequestProcessor::handleNetworkReplyFinished(QNetworkReply *rep
     if(jsonErrorMaybe != "null") //certain kinds of errors, such as "invalid bitcoin key", don't require user interaction to ask what should happen next. we should just set the withdrawal request state to bitcoindCommandReturnedError_Done and continue without stopping
     {
         QString bitcoindJsonError = "bitcoind reply had json error set: " + QString::fromStdString(jsonErrorMaybe);
-        emit e(bitcoindJsonError);
         QString bitcoinCommandCausingErrorString = "the bitcoin request causing the error: " + m_CurrentBitcoinCommand;
-        emit e(bitcoinCommandCausingErrorString);
-        QString errorToStoreInDb = bitcoindJsonError + " -- " + bitcoinCommandCausingErrorString;
-        setCurrentWithdrawalRequestToStateBitcoindReturnedError_Done__AndUnlockWithoutDebittingUserProfile(errorToStoreInDb);
-        emit withdrawalRequestProcessingFinished(false);
+        emit bitcoindCommunicationsErrorDetectedSoWeNeedToAskTheUserHowToProceed(bitcoinCommandCausingErrorString, bitcoindJsonError);
         return;
     }
 
@@ -511,7 +532,7 @@ void Abc2WithdrawRequestProcessor::handleNetworkReplyFinished(QNetworkReply *rep
     m_WithdrawRequestInProcessedButProfileNeedsDeductingAndUnlockingCas = m_LastSetCas;
 
 
-    //NOTE: IF CHANGING ANY CODE BENEATH THIS POINT (INCLUDING ALL [SUB-]FUNCTIONS] IN A WAY THAT MAKES THE CODE UTILIZE MORE (or different) MEMBER (m_) VARIABLES, THOSE MEMBER VARIABLES NEED TO BE POPULATED CORRECTLY BEFORE THE ERROR CONDITIONS 'PROCESSED' AND 'PROCESSEDNEEDTODEBITANDUNLOCKPROFILE' _ALSO_ CONTINUE ONTO THEM
+    //NOTE: IF CHANGING ANY CODE BENEATH THIS POINT (INCLUDING ALL [SUB-]FUNCTIONS] IN A WAY THAT MAKES THE CODE UTILIZE MORE (or different) MEMBER (m_) VARIABLES, THOSE MEMBER VARIABLES NEED TO BE POPULATED CORRECTLY BEFORE THE ERROR CONDITIONS 'PROCESSED' AND 'PROCESSEDNEEDTODEBITANDUNLOCKPROFILE' _ALSO_ CONTINUE TO THE BELOW STAGES
 
 
     //deduct amount from profile balance and cas swap unlock it

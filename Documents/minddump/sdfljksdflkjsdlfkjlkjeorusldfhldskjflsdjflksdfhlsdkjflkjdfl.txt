@@ -1,0 +1,1 @@
+Since error is not standard, shouldn't it be errout instead of stderr? Fucking idiots.
