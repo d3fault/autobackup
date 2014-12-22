@@ -46,8 +46,8 @@ private:
     void viewQueryCompleteCallback(lcb_error_t error, const lcb_http_resp_t *resp);
 
     void processNextWithdrawalRequestOrEmitFinishedIfNoMore();
-
     void processWithdrawalRequest(const QString &currentKeyToMaybeUnprocessedWithdrawalRequest);
+    void setCurrentWithdrawalRequestToStateBitcoindReturnedError_Done__AndUnlockWithoutDebittingUserProfile(const QString &bitcoinDcommunicationsErrorToStoreInDb);
 signals:
     void e(const QString &msg);
     void o(const QString &msg);

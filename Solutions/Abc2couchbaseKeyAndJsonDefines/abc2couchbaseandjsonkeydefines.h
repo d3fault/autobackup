@@ -216,10 +216,13 @@ const std::string adSpaceCampaignSlotCacheKey(const std::string &usernameOfCampa
 #define JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY "withdrawFundsRequestState" //if changing, change "all withdrawal requests with state of unprocessed" view (and possibly others). aka: don't change
 //withdraw funds requests state values (states)
 #define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_UNPROCESSED "unprocessed" //if changing, change "all withdrawal requests with state of unprocessed" view (and possibly others). aka: don't change
-#define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_INSUFFICIENTFUNDS "insufficientFundsDone"
+#define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_INSUFFICIENTFUNDS "insufficientFunds_Done"
 #define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_PROCESSING "processing"
+#define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_BITCOINDCOMMANDRETURNEDERROR "bitcoindCommandReturnedError_Done"
 #define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_PROCESSEDBUTPROFILENEEDSDEDUCTINGANDUNLOCKING "processedButProfileNeedsDeductingAndUnlocking"
-#define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_PROCESSEDDONE "processedDone"
+#define JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_PROCESSEDDONE "processed_Done"
+
+#define JSON_WITHDRAW_FUNDS_REQUEST_BITCOINDERRORIFAPPLICABLE "bitcoindCommandErrorBase64" //only when bitcoindCommandReturnedError_Done
 
 const std::string withdrawFundsRequestKey(const std::string &username, const std::string &withdrawFundsRequestIndex);
 

@@ -1,0 +1,15 @@
+Map:
+
+function(doc, meta)
+{
+  if(meta.id.lastIndexOf("withdrawFundsRequest_",0) === 0)
+  {
+    var doneSuffix = "_Done";
+    if(doc.withdrawFundsRequestState.indexOf(doneSuffix, doc.withdrawFundsRequestState.length - doneSuffix.length) === -1)
+    {
+      emit(null,null);
+    }
+  }
+}
+
+Reduce: None

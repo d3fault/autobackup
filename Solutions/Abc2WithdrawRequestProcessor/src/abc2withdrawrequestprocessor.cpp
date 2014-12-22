@@ -15,7 +15,7 @@
 //In-Abc2: click request withdraw button, check balance is enough, get withdraw index, recursively try to lcb_add to index (+1'ing as appropriate), cas swap accepting fail withdraw index
 //In-payout-processor: query a view to get all [stale=false] payout requests with state=unprocessed, iterate them. Here's one payout request flow: check balance is enough, if not set state=insufficientfunds and done. else (sufficient funds), cas swap lock profile account requiring success (fail means they are buying an ad slot or adding funds or something similar, so try again later (leave state as is, continue to next request. mb say it in stdout tho)), cas swap requiring success the payout request state to 'processing' (mb with durability poll of 3 as well but guh mb not since it isn't an lcb_add). finding a payout request in state 'processing' that we didn't JUST set to that means there was previously a fail. these are dangerous as fuck because we might pay them out twice (as in, when we find a payout request in state 'processing' that we didn't just set ourselves, it may or may not have already been processed! processing AGAIN (a la recovery) would be a double pay). check bitcoin logs or idfk what and do manual ass shit to see wtf is going on. see if we paid them or what (this is why i want it to be manual). do bitcoin payout and check it's response etc (spit out errors). cas swap set payout request state to "processed, profile needs balance deducting/unlocking". deduct amount from profile balance and unlock it. TODOreq: the profile should lock TO the specific payout request (just like buy ad slots are), which will allow us to recover somehow (can't put my finger on it, but yea. I also think it helps us safeguard against a double payout [during recovery]...). then set payout request state to 'processed and done'.
 //^^so we can also query a view making sure there are no payout requests in any 'intermediate' states (indicating failure): intermediate states are processing and processed-profile-needs-blanace-deducting.
-//In-payout-processor STATES: unprocessed,insufficientFundsDone,processing,processedButProfileNeedsDeductingAndUnlocking,processedDone
+//In-payout-processor STATES: unprocessed,insufficientFunds_Done,processing,bitcoindCommandReturnedError_Done,processedButProfileNeedsDeductingAndUnlocking,processed_Done
 //^maybe it's a good idea to store the bitcoin key we are attempting to send money to (and the amount, and MAYBE even the datetime) in the withdraw request when the state is "processing" (and maybe processedButProfileNeedsDeductingAndUnlocking+processedDone), so that if we do find a withdraw request in state "processing" (indicating a previous fail), we have at least SOMETHING to go by to check [manually, for now] whether the payout was sent (as in, whether the bitcoin command was issued/succeeded). The key/amount/datetime will be MORE OR LESS differentiable from one to the next, but it is not perfect: carefully crafted withdraw requests (same balance, same key) that are processed 'manually but in an automated fashion' might just have the same datetime and in that case then we'd NOT deduct the amount from their balance (thus 'giving them' more money)!!! TODOreq
 
 /*
@@ -50,7 +50,7 @@ Handling the ERROR/previous-fail cases:
 //TODOoptional: another way to use this app without really changing any of the code, juse using it differently than how I originally plan, is to run it hourly/etc on a cron-job and to have it send me periodic emails telling me how much more funds the payout wallet needs. Basically, automating payouts completely will likely amount to tying together this app with cron, and having a trusted/openbsd/local 'amount verifier' (it receives those 'emails' saying how much is needed, and checks that the offline receive wallet actually received that much). With math I could even extrapolate how much is predicted to be needed on a daily basis, so I can just fund "one day in advance" (assuming I like the numbers. they aren't too big and i'm leik omgwtfz) and we'd have more or less (less, by est. 1 day) the same amount of security but now fully automated/instant payouts. -- TO START OFF, i will be running this app manually because there might be errors etc that require manual intervention
 //TODOreq: at app startup we should ask the bitcoin payout wallet how much it has, and keep track of how much has been paid out. even if calculate-only mode is run before execute mode is run, we still might not have enough funds in the payout wallet by the time execute mode engages (more withdrawal requests filed since then). Whenever we encounter a withdrawal request that our payout wallet cannot process, we should skip that withdrawal request, and add that withdrawal request's amount to a rolling "adjusted calculation during execution", the grand total of which is spit out at the end of execution (and then you fund the payout wallet with that amount and run execute mode again). it's worth putting in it's own sentence: not having sufficient funds in the payout wallet (not to be confused with the user profile not having sufficient funds ofc) is not a fatal error -- still might be smarter (optimization-wise) to stop then and there, but eh since we'd then run calculate-only mode, it's the same (and perhaps MORE efficient) if we just continued and tallied up how much we didn't have enough to pay out
 //TODOreq: I might need another state "invalid key", but that depends on how much sanitizing I do in the front-end. Really though that state would be ANY bitcoind error. Although actually maybe not, because I want to spit out the errors, exit the app, and leave the withdrawal request in INVALID state. Still as of now I am not sanitizing the bitcoin keys nearly enough to be confident that bitcoind SHOULDN'T give me errors.
-//TODOreq: i think i already wrote this somewhere, but eh i need to update the 'islocked' logic in the pessimistic recoverer
+//TODOreq: bitcoindCommandReturnedError_Done, I should base64+store the error in the withdrawal request... for later analyzing
 Abc2WithdrawRequestProcessor::Abc2WithdrawRequestProcessor(QObject *parent)
     : QObject(parent)
     , ISynchronousLibCouchbaseUser()
@@ -206,7 +206,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
         if(m_LastOpStatus == LCB_KEY_EEXISTS) //cas-swap fail
         {
             //cas swap fail means their account is active, purchasing a slot, or other shit. it's not a fatal error, but we don't attempt any of their other withdrawal requests
-            m_UsersWithProfilesFoundLocked.insert(m_CurrentUserRequestingWithdrawal);
+            m_UsersWithProfilesFoundLocked.insert(userRequestingWithdrawal);
             processNextWithdrawalRequestOrEmitFinishedIfNoMore();
             return;
         }
@@ -240,6 +240,32 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
     QByteArray payload = m_CurrentBitcoinCommand.toUtf8();
     m_NetworkAccessManager->post(request, payload); //TODOreq: separate bitcoin daemons on separate ports for payout/receive? or maybe use the "accounts" feature? i know for sure they need to be different wallets, so perhaps separate processes. (nope:the payout wallet daemon doesn't need to be running 24/7. in fact, this app can/should start/stop it on demand) since we want to stay in sync with the block chain, it does need to be running 24/7. there might be a way to make them share the blocks they receive to lessen bandwidth requirements, or maybe there is a way to do multiple wallets for one process, idfk
 }
+void Abc2WithdrawRequestProcessor::setCurrentWithdrawalRequestToStateBitcoindReturnedError_Done__AndUnlockWithoutDebittingUserProfile(const QString &bitcoinDcommunicationsErrorToStoreInDb)
+{
+    QByteArray bitcoinDcommunicationsErrorToStoreInDbBA = bitcoinDcommunicationsErrorToStoreInDb.toUtf8();
+    QByteArray bitcoinDcommunicationsErrorToStoreInDbBase64BA = bitcoinDcommunicationsErrorToStoreInDbBA.toBase64();
+    QString bitcoinDcommunicationsErrorToStoreInDbBase64QString(bitcoinDcommunicationsErrorToStoreInDbBase64BA);
+    std::string bitcoinDcommunicationsErrorToStoreInDbBase64StdString = bitcoinDcommunicationsErrorToStoreInDbBase64QString.toStdString();
+    std::string bitcoinDcommunicationsErrorToStoreInDbStdString = bitcoinDcommunicationsErrorToStoreInDb.toStdString();
+
+    //setCurrentWithdrawalRequestToStateBitcoindReturnedError_Done
+    m_CurrentWithdrawalRequestPropertyTree.put(JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY, JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_BITCOINDCOMMANDRETURNEDERROR);
+    m_CurrentWithdrawalRequestPropertyTree.put(JSON_WITHDRAW_FUNDS_REQUEST_BITCOINDERRORIFAPPLICABLE, bitcoinDcommunicationsErrorToStoreInDbBase64StdString);
+    if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(m_CurrentKeyToMaybeUnprocessedWithdrawalRequest, Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(m_CurrentWithdrawalRequestPropertyTree), LCB_SET, m_CurrentWithdrawalRequestInProcessingStateCas, "setting withdrawal request to state 'bitcoindCommandReturnedError_Done': " + bitcoinDcommunicationsErrorToStoreInDbStdString))
+    {
+        //as of writing, we're already emitting 'withdrawalRequestProcessingFinished(false)' after the call to this method returns, but maybe in the future i would want to emit it here
+        emit withdrawalRequestProcessingFinished(false); //yea fuck it, emitting twice doesn't hurt =o
+        return;
+    }
+
+    //UnlockWithoutDebittingUserProfile
+    m_CurrentUserProfilePropertyTree.erase(JSON_USER_ACCOUNT_LOCKED_WITHDRAWING_FUNDS);
+    if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(userAccountKey(m_CurrentUserRequestingWithdrawal), Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(m_CurrentUserProfilePropertyTree), LCB_SET, m_CurrentUserProfileInLockedWithdrawingStateCas, "unlocking without debitting user profile because bitcoind returned error: " + bitcoinDcommunicationsErrorToStoreInDbStdString))
+    {
+        emit withdrawalRequestProcessingFinished(false); //yea fuck it, emitting twice doesn't hurt =o
+        return;
+    }
+}
 void Abc2WithdrawRequestProcessor::processWithdrawalRequests()
 {
     if(!connectToCouchbase())
@@ -248,7 +274,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequests()
 
     lcb_set_http_complete_callback(m_Couchbase, Abc2WithdrawRequestProcessor::viewQueryCompleteCallbackStatic);
 
-    std::string viewPath = "_design/dev_AllWithdrawalRequestsWithStateOfUnprocessed/_view/AllWithdrawalRequestsWithStateOfUnprocessed?stale=false"; //TODOmb: perhaps if this app is run on the webserver, we should use some form of pagination so that all the requests don't have to be in ram. for now KISS. Another way to solve it is to run this app on a server other than the webserver
+    std::string viewPath = "_design/dev_AllWithdrawalRequestsWithStateOfNotDone/_view/AllWithdrawalRequestsWithStateOfNotDone?stale=false"; //TODOmb: perhaps if this app is run on the webserver, we should use some form of pagination so that all the requests don't have to be in ram. for now KISS. Another way to solve it is to run this app on a server other than the webserver
     lcb_http_cmd_t viewQueryCmd;
     viewQueryCmd.version = 0;
     viewQueryCmd.v.v0.path = viewPath.c_str();
@@ -295,16 +321,24 @@ void Abc2WithdrawRequestProcessor::handleNetworkReplyFinished(QNetworkReply *rep
     Q_UNUSED(replyDeleter)
     if(reply->error() != QNetworkReply::NoError)
     {
-        emit e("network reply has error: " + reply->errorString());
-        emit e("the bitcoin request causing the error: " + m_CurrentBitcoinCommand);
+        QString networkReplyError = "QNetworkReply has error: " + reply->errorString();
+        emit e(networkReplyError);
+        QString bitcoinCommandCausingErrorString = "the bitcoin request causing the error: " + m_CurrentBitcoinCommand;
+        emit e(bitcoinCommandCausingErrorString);
+        QString errorToStoreInDb = networkReplyError + " -- " + bitcoinCommandCausingErrorString;
+        setCurrentWithdrawalRequestToStateBitcoindReturnedError_Done__AndUnlockWithoutDebittingUserProfile(errorToStoreInDb);
         emit withdrawalRequestProcessingFinished(false);
         return;
     }
     QVariant responseCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
     if((!responseCode.isValid()) || (responseCode.toInt() != 200))
     {
-        emit e("network reply did not return status code of 200. status code: " + QString::number(responseCode.toInt()));
-        emit e("the bitcoin request causing the error: " + m_CurrentBitcoinCommand);
+        QString statusCodeError = "QNetworkReply did not return status code of 200. status code: " + QString::number(responseCode.toInt());
+        emit e(statusCodeError);
+        QString bitcoinCommandCausingErrorString = "the bitcoin request causing the error: " + m_CurrentBitcoinCommand;
+        emit e(bitcoinCommandCausingErrorString);
+        QString errorToStoreInDb = statusCodeError + " -- " + bitcoinCommandCausingErrorString;
+        setCurrentWithdrawalRequestToStateBitcoindReturnedError_Done__AndUnlockWithoutDebittingUserProfile(errorToStoreInDb);
         emit withdrawalRequestProcessingFinished(false);
         return;
     }
@@ -316,10 +350,14 @@ void Abc2WithdrawRequestProcessor::handleNetworkReplyFinished(QNetworkReply *rep
     ptree pt;
     read_json(is, pt);
     std::string jsonErrorMaybe = pt.get<std::string>("error");
-    if(jsonErrorMaybe != "null")
+    if(jsonErrorMaybe != "null") //certain kinds of errors, such as "invalid bitcoin key", don't require user interaction to ask what should happen next. we should just set the withdrawal request state to bitcoindCommandReturnedError_Done and continue without stopping
     {
-        emit e("network reply had json error set: " + QString::fromStdString(jsonErrorMaybe));
-        emit e("the bitcoin request causing the error: " + m_CurrentBitcoinCommand);
+        QString bitcoindJsonError = "bitcoind reply had json error set: " + QString::fromStdString(jsonErrorMaybe);
+        emit e(bitcoindJsonError);
+        QString bitcoinCommandCausingErrorString = "the bitcoin request causing the error: " + m_CurrentBitcoinCommand;
+        emit e(bitcoinCommandCausingErrorString);
+        QString errorToStoreInDb = bitcoindJsonError + " -- " + bitcoinCommandCausingErrorString;
+        setCurrentWithdrawalRequestToStateBitcoindReturnedError_Done__AndUnlockWithoutDebittingUserProfile(errorToStoreInDb);
         emit withdrawalRequestProcessingFinished(false);
         return;
     }
