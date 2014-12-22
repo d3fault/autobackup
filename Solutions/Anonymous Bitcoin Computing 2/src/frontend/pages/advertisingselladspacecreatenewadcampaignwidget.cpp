@@ -25,6 +25,10 @@ AdvertisingSellAdSpaceCreateNewAdCampaignWidget::AdvertisingSellAdSpaceCreateNew
 
     new WBreak(this);
     new WBreak(this);
+
+    new WText("When someone purchases your ad space, it takes a few minutes before the purchase amount is reflected in your balance (and the funds are available for withdrawal).", Wt::PlainText);
+
+    new WBreak(this);
     new WBreak(this);
 
     //TODOreq: minPrice and slot length hours (fill in with defaults (1 penny and 24 hours), and sanitize ofc (no lower than min bitcoin transaction amount, no lower than 1 hour)). it makes sense now to also include a url the ad will be shown on, and as mentioned earlier a human readable name...

@@ -7,6 +7,7 @@
 #include <boost/property_tree/ptree.hpp>
 
 #include <QStringList>
+#include <QSet>
 
 #include "abc2couchbaseandjsonkeydefines.h"
 
@@ -26,7 +27,7 @@ private:
     QStringList m_ViewQueryResultsAsStringListBecauseEasierForMeToIterate;
     int m_CurrentIndexIntoViewQueryResultsStringList;
     int m_ViewQueryResultsStringListSize;
-    QStringList m_UsersWithProfilesFoundLocked;
+    QSet<QString> m_UsersWithProfilesFoundLocked;
     std::string m_CurrentKeyToMaybeUnprocessedWithdrawalRequest;
     std::string m_CurrentUserRequestingWithdrawal;
     ptree m_CurrentWithdrawalRequestPropertyTree;

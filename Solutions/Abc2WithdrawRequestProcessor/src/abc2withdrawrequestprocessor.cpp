@@ -10,6 +10,38 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 
+
+//The TYPICAL (non-error) flow goes like this:
+//In-Abc2: click request withdraw button, check balance is enough, get withdraw index, recursively try to lcb_add to index (+1'ing as appropriate), cas swap accepting fail withdraw index
+//In-payout-processor: query a view to get all [stale=false] payout requests with state=unprocessed, iterate them. Here's one payout request flow: check balance is enough, if not set state=insufficientfunds and done. else (sufficient funds), cas swap lock profile account requiring success (fail means they are buying an ad slot or adding funds or something similar, so try again later (leave state as is, continue to next request. mb say it in stdout tho)), cas swap requiring success the payout request state to 'processing' (mb with durability poll of 3 as well but guh mb not since it isn't an lcb_add). finding a payout request in state 'processing' that we didn't JUST set to that means there was previously a fail. these are dangerous as fuck because we might pay them out twice (as in, when we find a payout request in state 'processing' that we didn't just set ourselves, it may or may not have already been processed! processing AGAIN (a la recovery) would be a double pay). check bitcoin logs or idfk what and do manual ass shit to see wtf is going on. see if we paid them or what (this is why i want it to be manual). do bitcoin payout and check it's response etc (spit out errors). cas swap set payout request state to "processed, profile needs balance deducting/unlocking". deduct amount from profile balance and unlock it. TODOreq: the profile should lock TO the specific payout request (just like buy ad slots are), which will allow us to recover somehow (can't put my finger on it, but yea. I also think it helps us safeguard against a double payout [during recovery]...). then set payout request state to 'processed and done'.
+//^^so we can also query a view making sure there are no payout requests in any 'intermediate' states (indicating failure): intermediate states are processing and processed-profile-needs-blanace-deducting.
+//In-payout-processor STATES: unprocessed,insufficientFundsDone,processing,processedButProfileNeedsDeductingAndUnlocking,processedDone
+//^maybe it's a good idea to store the bitcoin key we are attempting to send money to (and the amount, and MAYBE even the datetime) in the withdraw request when the state is "processing" (and maybe processedButProfileNeedsDeductingAndUnlocking+processedDone), so that if we do find a withdraw request in state "processing" (indicating a previous fail), we have at least SOMETHING to go by to check [manually, for now] whether the payout was sent (as in, whether the bitcoin command was issued/succeeded). The key/amount/datetime will be MORE OR LESS differentiable from one to the next, but it is not perfect: carefully crafted withdraw requests (same balance, same key) that are processed 'manually but in an automated fashion' might just have the same datetime and in that case then we'd NOT deduct the amount from their balance (thus 'giving them' more money)!!! TODOreq
+
+/*
+The ERROR/previous-fail cases:
+ 0) Encountering a withdrawal request in state 'processing'
+ 1) Encountering a withdrawal request in state 'processedButProfileNeedsDeductingAndUnlocking' (profile still locked)
+ 2) Encountering a withdrawal request in state 'processedButProfileNeedsDeductingAndUnlocking' (profile not locked)
+ 3) Finding a profile locked for withdrawing, where the corresponding withdrawal request is in one of these states: (unprocessed, insufficientFundsDone, processedDone) = TOTAL SYSTEM FAILURE. This is pretty unlikely and is probably just paranoid (overchecking. it's like checking a true value isn't false) programming~
+
+Handling the ERROR/previous-fail cases:
+ 0) Encountering a withdrawal request in state 'processing'
+  a) If profile isn't locked towards the withdrawal request: TOTAL SYSTEM FAILURE
+  b) Profile is locked towards the withdrawal request: (NOPE:"Process" and continue like normal). You should have seen this very app fail during a previous run, so you should follow your intuition AT THAT POINT (based on errors spat out) to solve the problem. In some cases (we definitely don't issue bitcoind command, or it definitely failed), we might be able to just 'process and continue like normal' (I was going to say "manually unlock the profile and set withdrawal request state back to unprocessed before re-running this app", but that's just dumb)
+ 1) Encountering a withdrawal request in state 'processedButProfileNeedsDeductingAndUnlocking' (profile still locked)
+  a) Continue like normal at the 'debit+unlock' stage (careful to make sure all m_Members are valid before 'jumping' TODOreq, guh)
+ 2) Encountering a withdrawal request in state 'processedButProfileNeedsDeductingAndUnlocking' (profile not locked)
+  a) Bump to processingDone like normal
+ 3) Go fuck yourself
+
+ NOTES:
+ - Error case (0) Is most dangerous because it means the bitcoind command to pay out funds was PROBABLY issued. It may not have been issued, it may have been issued and [also] failed, or in the worst case (yet still very probable) scenario it may have been issued and succeeded (but we ourselves failed before we could bump the state to 'processedButProfileNeedsDeductingAndUnlocking').
+ - I'm leaning towards beefing up the current view/map to also gather the error conditions, instead of having a separate view/map for them. The beefed up view/map could either 'exclude processedInsufficientFundsDone and processedDone', or 'include unprocessed, processing, and processedButProfileNeedsDeductingAndUnlocking' -- hardly a difference except future-proofing if I add more states
+*/
+
+//TODOoptional: if the bitcoind command responds with an error set, we could ask via the UI whether to "put withdrawal state back to unprocessed and unlock profile [without debitting]", or to "put withdrawal state in bitcoinJsonErrorDone and unlock profile [without debitting]". I could then decide based on the errors on screen. It would also be a good idea to ask whether or not I should continue iterating the withdrawal requests (so 2 variants of those options just described, giving me 4 options total)
+
 //TO DOnereq: 3% fee. Implementing it is pretty easy, but I need to understand and decide on what to do with rounding errors. My "minimum withdrawal amount" might influence rounding (unsure). Basically I need to make sure that when I calculate how much I've earned by "3% of the offline wallet's total balance", that it REALLY IS EQUAL TO the 3% fee applied in this here app (so I'm not accidentally spending money that isn't mine). If I have to decide whether to round "toward me" or "toward the customers", I should round toward me.... because Superman 3. I shouldn't/won't lie about it, but still those satoshis (had:pennies) really do add up (and the customers don't miss them because they are insignificant when viewed individually)
 //TO DOnereq: user profile balance deduction includes 3% fee, amount sent to bitcoind does not include 3% fee obviously (ALL MINE MUAHAHAHA). It almost sounds backwards written that way, so put it differently: the 3% fee is taken out (via math) before the bitcoind call
 //TODOreq: I'm first going to code the "query view for all unprocessed" typical non-error case, BUT in order of program execution, the checking for previously failed "processing" (and possibly 'processedStillNeedToDeduct') states needs to come before that. I should definitely spit out that there are previosuly failed withdraw requests, and NOT continue onto querying view for all unprocessed states (until those fails are handled or ignored or whatever). I think even before THAT, I should check for profiles 'locked in withdraw' mode and do error recovery -- still that should never happen since I'd be watching the app run and see it's errors be spit out (and then manually fix)
@@ -128,7 +160,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
 
     if(Abc2CouchbaseAndJsonKeyDefines::profileIsLocked(m_CurrentUserProfilePropertyTree))
     {
-        m_UsersWithProfilesFoundLocked.append(userRequestingWithdrawal);
+        m_UsersWithProfilesFoundLocked.insert(userRequestingWithdrawal);
         emit o("user profile '" + userRequestingWithdrawal + "' is locked, continuing onto next. no more of this user's withdrawal requests will be processed and you must run this app again after fixing the locked account problem manually"); //TO DOne req: append to list of locked profiles, so we don't check again later for all their other withdrawal requests (especially since that would break ordering for processing of withdrawal requests. now changing from optimization to req)
         processNextWithdrawalRequestOrEmitFinishedIfNoMore();
         return; //just continue onto next for now. the above output is kind of like a "warning". it's not fatal, but we do need to intervene...
@@ -163,9 +195,23 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
     m_CurrentUserProfilePropertyTree.put(JSON_USER_ACCOUNT_LOCKED_WITHDRAWING_FUNDS, m_CurrentKeyToMaybeUnprocessedWithdrawalRequest);
     std::ostringstream userProfileLockedForWithdrawingOs;
     write_json(userProfileLockedForWithdrawingOs, m_CurrentUserProfilePropertyTree, false);
-    if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(userAccountKey(m_CurrentUserRequestingWithdrawal), userProfileLockedForWithdrawingOs.str(), LCB_SET, userProfileCas, "locking user profile '" + m_CurrentUserRequestingWithdrawal + "' for withdrawal of funds request '" +  m_CurrentKeyToMaybeUnprocessedWithdrawalRequest + "'"))
+    if(!couchbaseStoreRequestWithExponentialBackoff(userAccountKey(m_CurrentUserRequestingWithdrawal), userProfileLockedForWithdrawingOs.str(), LCB_SET, userProfileCas, "locking user profile '" + m_CurrentUserRequestingWithdrawal + "' for withdrawal of funds request '" +  m_CurrentKeyToMaybeUnprocessedWithdrawalRequest + "'"))
     {
-        //error locking profile doc. TODOreq: it may be a non-fatal error in that the cas swap simply failed (they are attempting to purchase a slot and the profile was locked? (or even they are adding funds or shit changing their password. tons of reasons this could fail) nothing wrong with that). right now we have 'return false', which indicates a fatal error. m_LastOpStatus is your friend here, and maybe i shouldn't use the "requiring success" method, idfk
+        //db error locking profile doc. TO DOnereq: it may be a non-fatal error in that the cas swap simply failed (they are attempting to purchase a slot and the profile was locked? (or even they are adding funds or shit changing their password. tons of reasons this could fail) nothing wrong with that). right now we have 'return false', which indicates a fatal error. m_LastOpStatus is your friend here, and maybe i shouldn't use the "requiring success" method, idfk
+        emit withdrawalRequestProcessingFinished(false);
+        return;
+    }
+    if(m_LastOpStatus != LCB_SUCCESS)
+    {
+        if(m_LastOpStatus == LCB_KEY_EEXISTS) //cas-swap fail
+        {
+            //cas swap fail means their account is active, purchasing a slot, or other shit. it's not a fatal error, but we don't attempt any of their other withdrawal requests
+            m_UsersWithProfilesFoundLocked.insert(m_CurrentUserRequestingWithdrawal);
+            processNextWithdrawalRequestOrEmitFinishedIfNoMore();
+            return;
+        }
+
+        //db error
         emit withdrawalRequestProcessingFinished(false);
         return;
     }
@@ -183,6 +229,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
     m_CurrentWithdrawalRequestInProcessingStateCas = m_LastSetCas;
 
     //withdrawal request state is 'processing', so PROCESS it by issuing the payout command to bitcoin!
+
     QNetworkRequest request(QUrl("http://admin2:123@127.0.0.1:19011/")); //TODOreq: maybe qsettings 'profiles', but obviously some way to specify user/pw/ip/port (I lean against cli args [solely] because if I'm 'launched', I want to be able to show what's on my screen (but eh not a necessity initially, fuggit))
     request.setHeader(QNetworkRequest::ContentTypeHeader, "text/plain");
     const std::string &keyToWithdrawTo = m_CurrentWithdrawalRequestPropertyTree.get<std::string>(JSON_WITHDRAW_FUNDS_BITCOIN_PAYOUT_KEY);
