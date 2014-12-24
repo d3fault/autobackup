@@ -109,8 +109,18 @@ void Abc2WithdrawRequestProcessor::processNextWithdrawalRequestOrEmitFinishedIfN
     }
     else
     {
-        emit o("Withdrawal Request Processing Finished Successfully");
-        emit withdrawalRequestProcessingFinished(true);
+        if(m_Mode == CalculateMode) //calculate iteration just ended
+        {
+            //Pause for user input (TO DOnereq: also allow them to quit, TODOoptional: allow them to write the buffered withdrawal requests list out to file, then quit)
+            std::string runningCalculatedTotalJsonString = satoshiIntToJsonString(m_RunningTotalOfAllWithdrawalRequestsInSatoshis);
+            QString runningCalculatedTotalJsonQString = QString::fromStdString(runningCalculatedTotalJsonString);
+            emit calculationIterationComplete_SoWaitForUserInputBeforeContinuingOntoExecutionIteration(runningCalculatedTotalJsonQString);
+        }
+        else //execution iteration just ended
+        {
+            emit o("Withdrawal Request Processing Finished Successfully");
+            emit withdrawalRequestProcessingFinished(true);
+        }
     }
 }
 void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &currentKeyToNotDoneWithdrawalRequest)
@@ -134,7 +144,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
     //if(withdrawFundsRequestState != JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_UNPROCESSED)
     if(withdrawFundsRequestStateQString.endsWith("_Done"))
     {
-        //the view query was stale (despite stale=false) and the state was not in fact done... so we just continue onto the next one
+        //the view query was stale (despite stale=false) and the state was not in fact not done... so we just continue onto the next one
         processNextWithdrawalRequestOrEmitFinishedIfNoMore();
         return;
     }
@@ -179,7 +189,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
         //profile is locked towards the withdrawal request
 
         emit e("Encountered a withdrawal request in state 'processing' (it will not be processed, nor will any other withdrawal requests for that user): " + currentKeyToNotDoneWithdrawalRequest);
-        //for now just going to do nothing (the users account will be seen as 'locked' and none of the rest of the user's withdrawal requests will even be attempted), but once I add SOMETHING here TODOreq (such as asking whether to continue or whatever, but honestly idfk what to do...), I should uncomment the below two statements:
+        //for now just going to do nothing (the users account will be seen as 'locked' and none of the rest of the user's withdrawal requests will even be attempted), but once I add SOMETHING here TODOreq (such as asking whether to continue or whatever, but honestly idfk what to do. One thing I could try is to check my wallet balance to see if I'm "missing" the amount specified in the withdrawal request, indicating I did pay it out (but "many" of such failed withdrawal requests would make the balanace missing higher/not-match-exactly)), I should uncomment the below two statements:
 
         //processNextWithdrawalRequestOrEmitFinishedIfNoMore();
         //return;
@@ -240,7 +250,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
 
     if(m_CurrentUserBalanceInSatoshis < m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis)
     {
-        //insufficient funds. not fatal error, they might have simply spent the funds on an ad slot filler after filing the withdrawal request. set the withdrawal request state to insiffucient funds done and return true;
+        //insufficient funds. not fatal error, they might have simply spent the funds on an ad slot filler after filing the withdrawal request. set the withdrawal request state to insufficient funds done and return true;
         m_CurrentWithdrawalRequestPropertyTree.put(JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY, JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_INSUFFICIENTFUNDS);
         std::string insufficientFundsWithdrawalRequest = Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(m_CurrentWithdrawalRequestPropertyTree);
         if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(m_CurrentKeyToNotDoneWithdrawalRequest, insufficientFundsWithdrawalRequest, LCB_SET, withdrawalRequestCas, "setting withdrawal request '" + m_CurrentKeyToNotDoneWithdrawalRequest + "' to insufficient funds"))
@@ -252,7 +262,18 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
         return;
     }
 
-    //profile not locked and there are sufficient funds. lock profile.
+    //profile not locked and there are sufficient funds
+
+    if(m_Mode == CalculateMode)
+    {
+        //we intercept the code path here because we don't need to do any of the rest of it. we just add up what WOULD HAVE been done and proceed to next
+        //nope: m_RunningTotalOfAllWithdrawalRequests += m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis;
+        m_RunningTotalOfAllWithdrawalRequestsInSatoshis += m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis;
+        processNextWithdrawalRequestOrEmitFinishedIfNoMore();
+        return;
+    }
+
+    //lock profile towards the withdrawal request
     m_CurrentUserProfilePropertyTree.put(JSON_USER_ACCOUNT_LOCKED_WITHDRAWING_FUNDS, m_CurrentKeyToNotDoneWithdrawalRequest);
     std::ostringstream userProfileLockedForWithdrawingOs;
     write_json(userProfileLockedForWithdrawingOs, m_CurrentUserProfilePropertyTree, false);
@@ -431,6 +452,15 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequests()
 
     m_CurrentIndexIntoViewQueryResultsStringList = -1;
     m_ViewQueryResultsStringListSize = m_ViewQueryResultsAsStringListBecauseEasierForMeToIterate.size();
+    m_Mode = CalculateMode;
+    m_RunningTotalOfAllWithdrawalRequestsInSatoshis = 0;
+    processNextWithdrawalRequestOrEmitFinishedIfNoMore();
+}
+void Abc2WithdrawRequestProcessor::proceedOntoExecutionIteration()
+{
+    //reset iteration, change mode to execute, and start over :)
+    m_CurrentIndexIntoViewQueryResultsStringList = -1;
+    m_Mode = ExecuteMode;
     processNextWithdrawalRequestOrEmitFinishedIfNoMore();
 }
 void Abc2WithdrawRequestProcessor::userWantsUsToHandleTheBitcoindCommunicationsErrorThisWay(Abc2WithdrawRequestProcessor::WayToHandleBitcoindCommunicationsErrorEnum userSelectedWayToHandleBitcoindCommunicationsError, const QString &errorStringToStoreInDb)

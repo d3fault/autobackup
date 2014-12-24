@@ -13,6 +13,7 @@ class Abc2WithdrawRequestProcessorCli : public QObject
 public:
     explicit Abc2WithdrawRequestProcessorCli(QObject *parent = 0);
 private:
+    Abc2WithdrawRequestProcessor *m_WithdrawalRequestProcessor;
     QTextStream m_StdErr;
     QTextStream m_StdOut;
     QTextStream m_StdIn;
@@ -21,6 +22,7 @@ signals:
 private slots:
     void handleE(const QString &msg);
     void handleO(const QString &msg);
+    void handleCalculationIterationComplete_SoWaitForUserInputBeforeContinuingOntoExecutionIteration(const QString &calculatedAmount);
     void handleBitcoindCommunicationsErrorDetectedSoWeNeedToAskTheUserHowToProceed(const QString &sourceOfError, const QString &theErrorItself);
 };
 

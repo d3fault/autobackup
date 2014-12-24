@@ -20,6 +20,11 @@ class Abc2WithdrawRequestProcessor : public QObject, public ISynchronousLibCouch
 {
     Q_OBJECT
 public:
+    enum Abc2WithdrawRequestProcessorModeEnum
+    {
+          CalculateMode = 0
+        , ExecuteMode = 1
+    };
     enum WayToHandleBitcoindCommunicationsErrorEnum
     {
           RevertWithdrawalRequestStateToUnprocessedAndContinueProcessingWithdrawalRequests = 1
@@ -29,6 +34,11 @@ public:
     };
     explicit Abc2WithdrawRequestProcessor(QObject *parent = 0);
 private:
+    Abc2WithdrawRequestProcessorModeEnum m_Mode;
+
+    //CALCULATE mode members
+    SatoshiInt m_RunningTotalOfAllWithdrawalRequestsInSatoshis;
+
     bool m_ViewQueryHadError;
     ptree m_ViewQueryPropertyTree;
     QStringList m_ViewQueryResultsAsStringListBecauseEasierForMeToIterate;
@@ -65,10 +75,12 @@ private:
 signals:
     void e(const QString &msg);
     void o(const QString &msg);
+    void calculationIterationComplete_SoWaitForUserInputBeforeContinuingOntoExecutionIteration(const QString &calcuatedAmount);
     void bitcoindCommunicationsErrorDetectedSoWeNeedToAskTheUserHowToProceed(const QString &sourceOfError, const QString &theErrorItself);
     void withdrawalRequestProcessingFinished(bool success);
 public slots:
     void processWithdrawalRequests();
+    void proceedOntoExecutionIteration();
     void userWantsUsToHandleTheBitcoindCommunicationsErrorThisWay(Abc2WithdrawRequestProcessor::WayToHandleBitcoindCommunicationsErrorEnum userSelectedWayToHandleBitcoindCommunicationsError, const QString &errorStringToStoreInDb);
 private slots:
     void handleNetworkReplyFinished(QNetworkReply *reply);
