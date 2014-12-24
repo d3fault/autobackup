@@ -22,10 +22,10 @@ class Abc2WithdrawRequestProcessor : public QObject, public ISynchronousLibCouch
 public:
     enum WayToHandleBitcoindCommunicationsErrorEnum
     {
-          RevertWithdrawalRequestStateToUnprocessedAndContinueProcessingWithdrawalRequests = 0
-        , RevertWithdrawalRequestStateToUnprocessedAndStopProcessingWithdrawalRequests = 1
-        , SetWithdrawalRequestStateToBitcoindReturnedErrorAndContinueProcessingWithdrawalRequests = 2
-        , SetWithdrawalRequestStateToBitcoindReturnedErrorAndStopProcessingWithdrawalRequests = 3
+          RevertWithdrawalRequestStateToUnprocessedAndContinueProcessingWithdrawalRequests = 1
+        , RevertWithdrawalRequestStateToUnprocessedAndStopProcessingWithdrawalRequests = 2
+        , SetWithdrawalRequestStateToBitcoindReturnedErrorAndContinueProcessingWithdrawalRequests = 3
+        , SetWithdrawalRequestStateToBitcoindReturnedErrorAndStopProcessingWithdrawalRequests = 4
     };
     explicit Abc2WithdrawRequestProcessor(QObject *parent = 0);
 private:
