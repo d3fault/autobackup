@@ -36,8 +36,11 @@ public:
 private:
     Abc2WithdrawRequestProcessorModeEnum m_Mode;
 
-    //CALCULATE mode members
+    //CALCULATE mode members begin
     SatoshiInt m_RunningTotalOfAllWithdrawalRequestsInSatoshis;
+    QHash<QString /*username*/, SatoshiInt /*rolling debitting balance*/> m_UserBalancesInSatoshisDuringCalculationMode;
+    bool debitCurrentWithdrawalRequestFromUsersCalculatedRollingBalance_AndReturnTrueIfWeHaveCalculatedTheyHaveSufficientFundsForThisWithdrawalRequest();
+    //CALCULATE mode members end
 
     bool m_ViewQueryHadError;
     ptree m_ViewQueryPropertyTree;

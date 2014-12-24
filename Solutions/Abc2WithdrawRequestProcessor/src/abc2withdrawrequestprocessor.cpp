@@ -60,6 +60,25 @@ Abc2WithdrawRequestProcessor::Abc2WithdrawRequestProcessor(QObject *parent)
     qRegisterMetaType<Abc2WithdrawRequestProcessor::WayToHandleBitcoindCommunicationsErrorEnum>("Abc2WithdrawRequestProcessor::WayToHandleBitcoindCommunicationsErrorEnum");
     connect(m_NetworkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleNetworkReplyFinished(QNetworkReply*)));
 }
+bool Abc2WithdrawRequestProcessor::debitCurrentWithdrawalRequestFromUsersCalculatedRollingBalance_AndReturnTrueIfWeHaveCalculatedTheyHaveSufficientFundsForThisWithdrawalRequest()
+{
+    SatoshiInt rollingUserBalance = m_CurrentUserBalanceInSatoshis; //if it's our first time seeing this user, we use the value from their profile as our starting point
+    QString userRequestingWithdrawal = QString::fromStdString(m_CurrentUserRequestingWithdrawal);
+    if(m_UserBalancesInSatoshisDuringCalculationMode.contains(userRequestingWithdrawal))
+    {
+        //we've seen this user before, so we already have a balance that has been debitted some, so debit THAT one some more
+        rollingUserBalance = m_UserBalancesInSatoshisDuringCalculationMode.value(userRequestingWithdrawal);
+    }
+    rollingUserBalance -= m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis;
+    if(rollingUserBalance < 0) //our "calculate mode" insufficient funds checking
+    {
+        //for 'calculate mode' insufficient funds, we don't debit the amount from the user's calculated balance, nor do we add the amount to our running total. we just move onto the next withdrawal request
+        //processNextWithdrawalRequestOrEmitFinishedIfNoMore
+        return false;
+    }
+    m_UserBalancesInSatoshisDuringCalculationMode.insert(userRequestingWithdrawal, rollingUserBalance); //inserts new or overwrites/updates old
+    return true;
+}
 void Abc2WithdrawRequestProcessor::errorOutput(const string &errorString)
 {
     QString errorQString = QString::fromStdString(errorString);
@@ -241,34 +260,48 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
     if(Abc2CouchbaseAndJsonKeyDefines::profileIsLocked(m_CurrentUserProfilePropertyTree))
     {
         m_UsersWithProfilesFoundLocked.insert(userRequestingWithdrawal);
-        emit o("user profile '" + userRequestingWithdrawal + "' is locked, continuing onto next. no more of this user's withdrawal requests will be processed and you must run this app again after fixing the locked account problem manually"); //TO DOne req: append to list of locked profiles, so we don't check again later for all their other withdrawal requests (especially since that would break ordering for processing of withdrawal requests. now changing from optimization to req)
+        emit o("user profile '" + userRequestingWithdrawal + "' is locked, continuing onto next. no more of this user's withdrawal requests will be processed and you must run this app again after fixing the locked account problem manually (or maybe it will fix itself)"); //TO DOne req: append to list of locked profiles, so we don't check again later for all their other withdrawal requests (especially since that would break ordering for processing of withdrawal requests. now changing from optimization to req)
         processNextWithdrawalRequestOrEmitFinishedIfNoMore();
         return; //just continue onto next for now. the above output is kind of like a "warning". it's not fatal, but we do need to intervene...
     }
 
     readInUserBalanceAndCalculateWithdrawalFeesEtc();
 
-    if(m_CurrentUserBalanceInSatoshis < m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis)
+    if(m_Mode == ExecuteMode)
     {
-        //insufficient funds. not fatal error, they might have simply spent the funds on an ad slot filler after filing the withdrawal request. set the withdrawal request state to insufficient funds done and return true;
-        m_CurrentWithdrawalRequestPropertyTree.put(JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY, JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_INSUFFICIENTFUNDS);
-        std::string insufficientFundsWithdrawalRequest = Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(m_CurrentWithdrawalRequestPropertyTree);
-        if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(m_CurrentKeyToNotDoneWithdrawalRequest, insufficientFundsWithdrawalRequest, LCB_SET, withdrawalRequestCas, "setting withdrawal request '" + m_CurrentKeyToNotDoneWithdrawalRequest + "' to insufficient funds"))
+        if(m_CurrentUserBalanceInSatoshis < m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis)
         {
-            emit withdrawalRequestProcessingFinished(false);
-            return; //on the other hand, failing to set the withdrawal funds request to insufficient funds IS fatal error
+            //insufficient funds. not fatal error, they might have simply spent the funds on an ad slot filler after filing the withdrawal request. set the withdrawal request state to insufficient funds done and return true;
+            m_CurrentWithdrawalRequestPropertyTree.put(JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY, JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_INSUFFICIENTFUNDS);
+            std::string insufficientFundsWithdrawalRequest = Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(m_CurrentWithdrawalRequestPropertyTree);
+            if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(m_CurrentKeyToNotDoneWithdrawalRequest, insufficientFundsWithdrawalRequest, LCB_SET, withdrawalRequestCas, "setting withdrawal request '" + m_CurrentKeyToNotDoneWithdrawalRequest + "' to insufficient funds"))
+            {
+                emit withdrawalRequestProcessingFinished(false);
+                return; //on the other hand, failing to set the withdrawal funds request to insufficient funds IS fatal error
+            }
+            processNextWithdrawalRequestOrEmitFinishedIfNoMore();
+            return;
         }
-        processNextWithdrawalRequestOrEmitFinishedIfNoMore();
-        return;
     }
 
     //profile not locked and there are sufficient funds
 
     if(m_Mode == CalculateMode)
     {
+        //TO DOnereq: individual user balances need to rolling debit -- the "set insufficient funds" code (just above) must be changed, because it affects it. perhaps i should just not do it during calculate mode? idfk
+
         //we intercept the code path here because we don't need to do any of the rest of it. we just add up what WOULD HAVE been done and proceed to next
+
+        //update the 'calculated balance'
+        if(!debitCurrentWithdrawalRequestFromUsersCalculatedRollingBalance_AndReturnTrueIfWeHaveCalculatedTheyHaveSufficientFundsForThisWithdrawalRequest())
+        {
+            processNextWithdrawalRequestOrEmitFinishedIfNoMore(); //'insufficient funds' (see the method body of debitCurrentWithdrawalRequestFromUsersCalculatedRollingBalance_AndReturnTrueIfWeHaveCalculatedTheyHaveSufficientFundsForThisWithdrawalRequest for details)
+            return;
+        }
+
         //nope: m_RunningTotalOfAllWithdrawalRequests += m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis;
         m_RunningTotalOfAllWithdrawalRequestsInSatoshis += m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis;
+
         processNextWithdrawalRequestOrEmitFinishedIfNoMore();
         return;
     }
@@ -379,6 +412,18 @@ bool Abc2WithdrawRequestProcessor::unlockUserProfileWithoutDebitting()
 }
 void Abc2WithdrawRequestProcessor::continueAt_deductAmountFromCurrentUserProfileBalanceAndCasSwapUnlockIt_StageOfWithdrawRequestProcessor()
 {
+    if(m_Mode == CalculateMode)
+    {
+        //special hack for the error condition that can jump here, we need to deduct the amount from the user's calculated rolling balance
+        //TO DOnereq: our error case processing can throw off the rolling calculated balance of a user, if the error case where we debit+unlock is seen. it would make the rolling debit amount we have in memory be invalid. On the other hand, if we don't process that error case then their balance will appear to be higher than what it will be during execution mode... which means some of their withdrawal requests that should have been considered insufficient funds might not have been, which may cause me to send more than needed to the payout wallet (not a HUGE deal, since the execution mode will still handle it fine, but I prefer accuracy)
+        if(!debitCurrentWithdrawalRequestFromUsersCalculatedRollingBalance_AndReturnTrueIfWeHaveCalculatedTheyHaveSufficientFundsForThisWithdrawalRequest()) //we can ignore the return value of this because it's more or less guaranteed to have sufficient funds, SINCE THE PAYOUT WAS ALREADY ISSUED IT HAD BETTER!! but eh let's handle it and call it total system failure
+        {
+            emit e("TOTAL SYSTEM FAILURE: it's hard to explain so search for this in the source sdfoasdfsfldjdfkjsdflkjdfsodfusdfoui");
+            emit withdrawalRequestProcessingFinished(false);
+            return; //the 'return' here is actually doing something, because otherwise we'd be calling processNextWithdrawalRequestOrEmitFinishedIfNoMore twice when we should only be calling it once. but shit actually since we want to stop, it shouldn't even be calling it once. uhh, shit TO DOneoptional rare ass critical bug
+        }
+    }
+
     SatoshiInt originalBalance = m_CurrentUserBalanceInSatoshis;
     m_CurrentUserBalanceInSatoshis -= m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis;
     m_CurrentUserProfilePropertyTree.put(JSON_USER_ACCOUNT_BALANCE, m_CurrentUserBalanceInSatoshis);
@@ -454,6 +499,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequests()
     m_ViewQueryResultsStringListSize = m_ViewQueryResultsAsStringListBecauseEasierForMeToIterate.size();
     m_Mode = CalculateMode;
     m_RunningTotalOfAllWithdrawalRequestsInSatoshis = 0;
+    m_UserBalancesInSatoshisDuringCalculationMode.clear();
     processNextWithdrawalRequestOrEmitFinishedIfNoMore();
 }
 void Abc2WithdrawRequestProcessor::proceedOntoExecutionIteration()
