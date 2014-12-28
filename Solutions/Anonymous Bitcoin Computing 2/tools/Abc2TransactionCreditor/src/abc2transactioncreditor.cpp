@@ -13,7 +13,7 @@
 The TYPICAL [non-error] flow goes like this:
     0) Query a view to get all transactions with state=uncreditted, iterate them. Here's one transaction flow:
         a) Verify state is uncreditted (state of creditted means the view gave stale results, but POSSIBLY error/previous-fail (recoverable) condition)
-        b) Lock seller profile towards the transaction (cas swap fail means they are doing other stuff (add user to list of locked profiles), cas swap fail that then reveals locked towards the very same transaction = neighbor/ourself is on it, so back off rest of view query)
+        b) Lock seller profile towards the transaction (cas swap fail means they are doing other stuff (add user to list of locked profiles), cas swap fail that then reveals locked towards ANY (had:the very same) transaction = neighbor/ourself is on it, so back off rest of view query)
         c) Cas swap transaction state from uncreditted to creditted (cas swap fail means neighbor is on it)
         d) Cas swap unlock+credit profile with the transaction amount (cas swap fail means neighbor is on it)
 
@@ -21,26 +21,8 @@ The ERROR/previous-fail cases:
     0) Finding a profile locked towards a transaction (with the transaction in state 'creditted') -- but only after we wait a few hundred ms, and the profile is STILL locked towards that same transaction (it's very typical for it to have been unlocked within those few hundred ms)
 
 Handling the ERROR/previous-fail cases:
-    0) The only way I can find all of these is with a view/map that emits when it sees "locked towards transaction". I can find some of them by iterating the transactions list (by sheer luck, the seller had another transaction that we are 'later' trying to credit... and we see it locked to some other transaction and then I guess try to do recovery). COME TO THINK OF IT, I don't need to wait a few hundred ms to do the recovery, BUT I SHOULD because otherwise I'd be stopping "transaction creditors" dead in their tracks (until their next cron timeout). Since I am recovery, I won't be "their neighbor" (yet, since recovery runs first?) -- ahh well since I said "yet", then in fact I don't need to wait a few hundred ms. My head hurts
+    0) The only way I can find all of these is with a view/map that emits when it sees "locked towards transaction". I can find some of them by iterating the transactions list (by sheer luck, the seller had another transaction that we are 'later' trying to credit... and we see it locked to some other transaction and then I guess try to do recovery). COME TO THINK OF IT, I don't need to wait a few hundred ms to do the recovery, BUT I SHOULD because otherwise I'd be stopping "transaction creditors" dead in their tracks (until their next cron timeout). Since I am recovery, I won't be "their neighbor" (yet, since recovery runs first?) -- ahh well since I said "yet", then in fact I don't need to wait a few hundred ms. My head hurts <<-- Another way to do this is to add the transaction the profile is locked towards to the top of the regular view query (and let it 'recover' that way (means I have to be ok with finding a profile locked towards a transaction I haven't started attempting to credit TODOreq (one of the two methods))
 */
-
-#if 0
-//FAIL-ATTEMPT: The TYPICAL [non-error] flow goes like this: query a view to get all transactions with state=uncreditted, iterate them. Here's one transaction flow: verify state is uncreditted (view may have been stale. a state of 'creditting' means we are done (neighbor on it), a state of 'creditted' just means skip that transaction). cas swap lock the transaction seller's 'profile' semi-requiring success (fail means they are doing other stuff. not fatal but we don't try to credit any more of that user's transactions during this 'run')  into "credittingTransaction: txKey" mode. cas swap requiring success the transaction from state 'uncreditted' to 'creditting' (cas swap fail means 'neighbor'/us is doing it so we back off ON ALL THE REST OF THE VIEW QUERY TODOreq. we are basically done completely). cas swap+credit+unlock the profile for the full amount specified in the transaction (fail means a neighbor/'us' is on it and so we are done with rest of view query). cas swap the transaction from state creditting to creditted (fail means neighbor is on it (semi-recovery (false positive, the recovery STOLE the execution lewl -- fugtit (<- cool typo))) [...])
-
-/*
-FAIL-ATTEMPT: The ERROR/previous-fail cases:
- 00) Encounting a profile locked to 'creditting a transaction' (transaction it points to is in state 'uncreditted')
- 0) Encountering a transaction in state 'creditting' (profile still locked)
- 1) Encountering a transaction in state 'creditting' (profile not locked)
-
-
-FAIL-ATTEMPT: Handling the ERROR/previous-fail cases:
- 0) Encountering a transaction in state 'creditting' (profile still locked)
-  a) Continue like normal at the 'credit+unlock' stage (careful to make sure all m_Members are valid before 'jumping' TODOreq, guh)
- 1) Encountering a transaction in state 'creditting' (profile not locked)
-  a) TOTAL SYSTEM FAILURE -- TODOreq: or it could mean we failed right after creditting+unlocking profile, ffffffuck
-*/
-#endif
 
 //TODOreq: abc2 needs a message somewhere telling campaign owners about the delayed creditting mechanism. the campaign creation page seems like a good spot
 //TODOreq: finding a transaction in state "creditting" where the seller doesn't have the profile locked means we failed after unlocking+creditting the profile. As error recovery, we simply change the state from creditting to creditted (ofc if the profile is locked, we know where to resume as well)
@@ -122,28 +104,6 @@ bool Abc2TransactionCreditor::creditTransactionIfStateReallyIsUncredittedAndRetu
     std::istringstream sellerAccountDocIs(m_LastDocGetted);
     read_json(sellerAccountDocIs, sellerAccountDoc);
 
-#if 0
-    if(transactionState == JSON_TRANSACTION_STATE_VALUE_CREDITTING)
-    {
-        //error recovery from state 'creditting'
-
-        //If profile isn't locked towards the transaction: TOTAL SYSTEM FAILURE
-        const std::string &transactionLockedToHopefully = sellerAccountDoc.get<std::string>(JSON_USER_ACCOUNT_LOCKED_CREDITTING_TRANSACTION, "n");
-        if(transactionLockedToHopefully != keyToTransactionMaybeWithStateOfUncreditted)
-        {
-            emit e("TOTAL SYSTEM FAILURE: found a transaction in state 'creditting' (" + QString::fromStdString(keyToTransactionMaybeWithStateOfUncreditted) + "), but the associated seller profile (" + QString::fromStdString(transactionSeller) + ") was not locked towards the transaction!");
-            return false;
-        }
-
-        //seller's profile is locked towards the transaction
-
-        //Continue like normal at the 'credit+unlock' stage (careful to make sure all m_Members are valid before 'jumping' TODOreq, guh)
-
-
-        return true; //don't continue on as if the transaction state was 'uncreditted'
-    }
-#endif
-
     //state is 'uncreditted'
 
      //check seller profile to see if locked (if unlocked, lock)
@@ -167,6 +127,21 @@ bool Abc2TransactionCreditor::creditTransactionIfStateReallyIsUncredittedAndRetu
         if(m_LastOpStatus == LCB_KEY_EEXISTS) //cas-swap fail
         {
             //we "require success", but we don't want to stop the entire app when we don't see it... we just want to not fuck with that user's profile for the rest of this run (hence return TRUE)
+
+            //but first we dig deeper to see if a neighbor/ourself locked the account into creditting ANY transaction, in which case we back off by returning false
+            if(!couchbaseGetRequestWithExponentialBackoffRequiringSuccess(userAccountKey(transactionSeller), "getting user profile that just cas swap failed, to see if a neighbor is creditting transactions which means we should back off"))
+            {
+                return false; //db error
+            }
+            ptree profileThatJustCasSwapFailed; //yea, it may have UNLOCKED by now rofl, but whatever~
+            std::istringstream profileThatJustCasSwapFailedIs;
+            read_json(profileThatJustCasSwapFailedIs, profileThatJustCasSwapFailed);
+            const std::string &profileLockedCredittingTransactionTEST = profileThatJustCasSwapFailed.get<std::string>(JSON_USER_ACCOUNT_LOCKED_CREDITTING_TRANSACTION, "n");
+            if(profileLockedCredittingTransactionTEST != "n")
+            {
+                return false; //backoff to neighbor
+            }
+
             m_UsersWithProfilesFoundLocked.insert(transactionSellerQString);
             return true;
         }
@@ -179,9 +154,9 @@ bool Abc2TransactionCreditor::creditTransactionIfStateReallyIsUncredittedAndRetu
 
     //profile locked to 'creditting transaction'
 
-    //change transaction state from 'uncreddited' to 'creditting'
-    transactionDoc.put(JSON_TRANSACTION_STATE_KEY, JSON_TRANSACTION_STATE_VALUE_CREDITTING);
-    opDescription = "changing transaction state from uncreditted to creditting: " + keyToTransactionMaybeWithStateOfUncreditted;
+    //change transaction state from 'uncreddited' to 'creditted'
+    transactionDoc.put(JSON_TRANSACTION_STATE_KEY, JSON_TRANSACTION_STATE_VALUE_CREDITTED);
+    opDescription = "changing transaction state from uncreditted to creditted: " + keyToTransactionMaybeWithStateOfUncreditted;
     if(!couchbaseStoreRequestWithExponentialBackoff(keyToTransactionMaybeWithStateOfUncreditted, Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(transactionDoc), LCB_SET, transactionDocCas, opDescription))
     {
         //db error
@@ -201,7 +176,7 @@ bool Abc2TransactionCreditor::creditTransactionIfStateReallyIsUncredittedAndRetu
     }
     lcb_cas_t transactionDocInStateCredittingCas = m_LastSetCas;
 
-    //transaction doc in state 'creditting'
+    //transaction doc in state 'creditted'
 
     //cas swap+credit+unlock the profile
     SatoshiInt transactionAmountInSatoshis = boost::lexical_cast<SatoshiInt>(transactionDoc.get<std::string>(JSON_TRANSACTION_AMOUNT));
@@ -229,27 +204,6 @@ bool Abc2TransactionCreditor::creditTransactionIfStateReallyIsUncredittedAndRetu
     }
 
     //cas swap+credit+unlock the profile SUCCESS!
-
-    //change transaction state from creditting to creditted
-    transactionDoc.put(JSON_TRANSACTION_STATE_KEY, JSON_TRANSACTION_STATE_VALUE_CREDITTED);
-    opDescription = "changing transaction state from creditting to creditted: " + keyToTransactionMaybeWithStateOfUncreditted;
-    if(!couchbaseStoreRequestWithExponentialBackoff(keyToTransactionMaybeWithStateOfUncreditted, Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(transactionDoc), LCB_SET, transactionDocInStateCredittingCas, opDescription))
-    {
-        //db error
-        return false;
-    }
-    if(m_LastOpStatus != LCB_SUCCESS)
-    {
-        if(m_LastOpStatus == LCB_KEY_EEXISTS) //cas-swap fail
-        {
-            //back off to neighbor/self
-            return false;
-        }
-
-        //error other than cas swap fail = db error, so spit out what we were doing and return false (which stops us)
-        errorOutput("failed while: " + opDescription);
-        return false;
-    }
 
     return true;
 }

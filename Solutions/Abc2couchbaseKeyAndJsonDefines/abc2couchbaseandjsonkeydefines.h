@@ -147,7 +147,6 @@ const std::string userAccountKey(const std::string &username);
 //transaction state (only used for [safely] creditting the seller for the amount)
 #define JSON_TRANSACTION_STATE_KEY "txCredittedState" //if changing, change "all transactions with state of uncreditted" view (and possibly others). aka: don't change.
 #define JSON_TRANSACTION_STATE_VALUE_UNCREDITTED "txUncreditted" //if changing, change "all transactions with state of uncreditted" view (and possibly others). aka: don't change.
-#define JSON_TRANSACTION_STATE_VALUE_CREDITTING "credittingTx" //if changing, change "all transactions with state of uncreditted" view (and possibly others). aka: don't change.
 #define JSON_TRANSACTION_STATE_VALUE_CREDITTED "txCreditted"
 
 //ex: transactionKey("d3fault", "0", "1");
