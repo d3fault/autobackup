@@ -21,7 +21,7 @@ The ERROR/previous-fail cases:
     0) Finding a profile locked towards a transaction (with the transaction in state 'creditted') -- but only after we wait a few hundred ms, and the profile is STILL locked towards that same transaction (it's very typical for it to have been unlocked within those few hundred ms)
 
 Handling the ERROR/previous-fail cases:
-    0) The only way I can find all of these is with a view/map that emits when it sees "locked towards transaction". I can find some of them by iterating the transactions list (by sheer luck, the seller had another transaction that we are 'later' trying to credit... and we see it locked to some other transaction and then I guess try to do recovery). COME TO THINK OF IT, I don't need to wait a few hundred ms to do the recovery, BUT I SHOULD because otherwise I'd be stopping "transaction creditors" dead in their tracks (until their next cron timeout). Since I am recovery, I won't be "their neighbor" (yet, since recovery runs first?) -- ahh well since I said "yet", then in fact I don't need to wait a few hundred ms. My head hurts <<-- Another way to do this is to add the transaction the profile is locked towards to the top of the regular view query (and let it 'recover' that way (means I have to be ok with finding a profile locked towards a transaction I haven't started attempting to credit TODOreq (one of the two methods))
+    0) TODOreq (decided to launch instead) The only way I can find all of these is with a view/map that emits when it sees "locked towards transaction". I can find some of them by iterating the transactions list (by sheer luck, the seller had another transaction that we are 'later' trying to credit... and we see it locked to some other transaction and then I guess try to do recovery). COME TO THINK OF IT, I don't need to wait a few hundred ms to do the recovery, BUT I SHOULD because otherwise I'd be stopping "transaction creditors" dead in their tracks (until their next cron timeout). Since I am recovery, I won't be "their neighbor" (yet, since recovery runs first?) -- ahh well since I said "yet", then in fact I don't need to wait a few hundred ms. My head hurts <<-- Another way to do this is to add the transaction the profile is locked towards to the top of the regular view query (and let it 'recover' that way (means I have to be ok with finding a profile locked towards a transaction I haven't started attempting to credit TODOreq (one of the two methods))
 */
 
 //TODOreq: abc2 needs a message somewhere telling campaign owners about the delayed creditting mechanism. the campaign creation page seems like a good spot
@@ -174,7 +174,6 @@ bool Abc2TransactionCreditor::creditTransactionIfStateReallyIsUncredittedAndRetu
         errorOutput("failed while: " + opDescription);
         return false;
     }
-    lcb_cas_t transactionDocInStateCredittingCas = m_LastSetCas;
 
     //transaction doc in state 'creditted'
 

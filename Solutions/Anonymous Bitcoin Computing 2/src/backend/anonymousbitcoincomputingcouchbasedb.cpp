@@ -308,7 +308,7 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     //couchbase
     struct lcb_create_st copts;
     memset(&copts, 0, sizeof(copts));
-    copts.v.v0.host = "192.168.56.10:8091"; //TODOreq: supply lots of hosts, separated by semicolon. Also there's an option somewhere to tell couchbase to try the hosts in a random order
+    copts.v.v0.host = "192.168.56.10:8091;192.168.57.10:8091;192.168.58.10:8091"; //TODOreq: supply lots of hosts, separated by semicolon
     copts.v.v0.io = CouchbaseIoOpsScopedDeleterInstance.CouchbaseIoOps;
     if((error = lcb_create(&m_Couchbase, &copts)) != LCB_SUCCESS)
     {

@@ -140,6 +140,11 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
     //m_CurrentStoreMessageQueueIndex = rawUniqueId() % ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store;
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_WT_PER_QUEUE_SET_UNIFORM_INT_DISTRIBUTION_CONSTRUCTOR_INITIALIZATION_MACRO)
 
+    if(myEnv.urlScheme() != "https")
+    {
+        redirect("https://" + myEnv.hostName() + url());
+        return;
+    }
     buildGui(); //everything that is NOT dependent on the internal path
 
     internalPathChanged().connect(this, &AnonymousBitcoinComputingWtGUI::handleInternalPathChanged);
