@@ -3,7 +3,8 @@
 /*
 
 ==1.0 BLOCKER==
-- Bitcoin keys for withdrawal requests MUST be verified valid before we accept them into the db, OR another withdrawal request state of 'error' needs to be introduced (psbly both?)
+- Ad Campaigns should properly 404. Semi-OT: does changing ad campaigns from one to another subscribe-unsubscribe-resubscribe (all in "one" step) work?
+- When the "add funds" cas swap fails (since it does not "lock" the profile, it might fail), we need to be sure to re-parse the balance from the new profile (with new cas. the reason we failed) before adding the amount and then trying to store it. I might already do this, but I really can't remember. Actually come to think of it, I think I force the user to re-press "done with key", which is ugly but fine. Still worth double checking
 
 ==1.1 Bugs==
 
@@ -18,6 +19,7 @@
 - find a more optimal max message size queue for StoreLarge. right now it's larger than it needs to be, but i'm too lazy to calculate the exact max
 - find way to accept png/gif/webp when no animation used. svg will probably never be added because scripting (but really, i don't know what context the js/etc runs in (still the problem of animation EVEN IF the scripting is 'safe'))...
 - move the fuck away from std::string for cross thread comm, since string might use COW (implementation dependent), and COW means internal reference count, and that means it isn't thread-safe (since it doesn't declare itself as such). I should just copy the bytes and pass a void pointer like a real man (no std::string should cross thread boundaries (not even the key input! TODOreq)). I think I've just been getting really lucky so far xD. Actually fuck it, since both GCC and Clang (the only two relevant compilers in existence) use atomic reference counting and are more or less thread safe, I'll just leave it because I'm a lazy bastard. Also worth noting that if I'm NOT using lockfree::queue, this isn't an issue [since I'm making deep copies during serialization]
+- change password functionality
 
 ==68.9999 Optimizations==
 

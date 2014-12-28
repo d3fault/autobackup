@@ -20,6 +20,7 @@
 
 /*
 The ERROR/previous-fail cases:
+ 00) Encountering a profile locked towards a withdrawal request (withdrawal request it points to in state "unprocessed") -- currently undetected, but easily resumeable TODOreq (perhaps a run not-so-periodically (1 time per hour or maybe 1 time per day) view query of any profile in locked state, at the very least to print out diagnostics for me to manually solve (but optimally, solving automatically xD). it should build a list of "eh these kinds of locks may fix themselves mementarily" (buying ad slot, among other things), then re-check those in a minute or so)
  0) Encountering a withdrawal request in state 'processing'
  1) Encountering a withdrawal request in state 'processedButProfileNeedsDeductingAndUnlocking' (profile still locked)
  2) Encountering a withdrawal request in state 'processedButProfileNeedsDeductingAndUnlocking' (profile not locked)

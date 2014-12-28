@@ -4,7 +4,7 @@ function(doc, meta)
 {
   if(meta.id.lastIndexOf("tx_",0) === 0)
   {
-    if(doc.txCredittedState === "txUncreditted")
+    if(doc.txCredittedState === "txUncreditted" || doc.txCredittedState === "credittingTx")
     {
       emit(null,null);
     }
