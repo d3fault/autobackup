@@ -1,0 +1,3 @@
+Care is quantifiable, but what is it's unit of measure?
+
+We can say "I don't care", "I care very little", "I care a lot", etc.. but we've sidestepped having to define it's unit of measure.

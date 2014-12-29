@@ -30,24 +30,26 @@
 #define HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_DOWNLOAD \
     HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/Download"
 
-#define HVBS_VIEW_MYBRAIN_STRING "View My [Archived] Brain On A Platter"
+#define HVBS_WEB_CLEAN_URL_TO_STORE HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/Store"
+
+#define HVBS_VIEW_MYBRAIN_STRING "Archive"
 
 #define HVBS_TIMELINE_MY_BRAIN_STRING "Timeline" "(Random point in time)"
 #define HVBS_BROWSE_MY_BRAIN_STRING "Browse"
 #define HVBS_DOWNLOAD_MY_BRAIN_STRING "Full download for offline viewing"
 
-#define HVBS_VIEW_MYBRAIN_TOOLTIP "Point at it and laugh: \"Haha, faggot!\""
+#define HVBS_VIEW_MYBRAIN_TOOLTIP "The shit..."
 
 #define HVBS_TIMELINE_MYBRAIN_TOOLTIP "In the beginning, there was d3fault..."
 #define HVBS_BROWSE_MYBRAIN_TOOLTIP "Traditional directory heirarchy"
-#define HVBS_DOWNLOAD_MYBRAIN_TOOLTIP "My brain becomes your brain" // s/becomes/mingles-with/
+#define HVBS_DOWNLOAD_MYBRAIN_TOOLTIP "My brain mingles with your brain" // s/becomes/mingles-with/
 
 #define HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL "https://anonymousbitcoincomputing.com/advertising/buy-ad-space/d3fault/0"
 
 #define HVBS_ABC2_AD_IMAGE_WIDTH 576
 #define HVBS_ABC2_AD_IMAGE_HEIGHT 96
 
-#define HVBS_ABC2_PLACEHOLDER_ALT_AND_HOVER "Buy this ad space for BTC 0.00001"
+#define HVBS_ABC2_PLACEHOLDER_ALT_AND_HOVER "Buy this ad space for BTC 0.003"
 
 //segfault if server is started before assigning these that are pointers :-P (fuck yea performance)
 AdImageGetAndSubscribeManager* HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = 0;
@@ -164,16 +166,16 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     linksContainer->setContentAlignment(Wt::AlignLeft | Wt::AlignTop);
     topHBoxLayout->addWidget(linksContainer, 1, Wt::AlignLeft | Wt::AlignTop);
 
-    WAnchor *storeAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER "/Store"), "Store / Donate", linksContainer);
-    storeAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
-    storeAnchor->setToolTip("Buying is basically donating, since everything is already freely available...");
-    new WBreak(linksContainer);
     WAnchor *viewMyBrainAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_VIEW_MYBRAIN_ON_PLATTER), HVBS_VIEW_MYBRAIN_STRING, linksContainer);
     viewMyBrainAnchor->setToolTip(HVBS_VIEW_MYBRAIN_TOOLTIP);
     viewMyBrainAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
     //viewMyBrainAnchor->decorationStyle().setBorder(WBorder(WBorder::Solid, WBorder::Thin, WColor(255, 255, 255)), Wt::Bottom);
     //browseMyBrainAnchor->setTarget(TargetNewWindow);
     //olo: browseEverythingAnchor->decorationStyle().setTextDecoration(WCssDecorationStyle::Blink);
+    new WBreak(linksContainer);
+    WAnchor *storeAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_TO_STORE), "Store / Donate", linksContainer);
+    storeAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
+    storeAnchor->setToolTip("Buying is basically donating, since everything is already freely available...");   
     new WBreak(linksContainer);
     WAnchor *yourAdHereAnchor = new WAnchor(WLink(WLink::Url, HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL), "Your Ad Here", linksContainer);
     yourAdHereAnchor->decorationStyle().setForegroundColor(WColor(255,0,0)); //I like my [necessary] evils to be clearly marked as such
@@ -328,7 +330,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
     {
         deleteTimelineAndDirectoryBrowsingStackIfNeeded();
 
-        //TODOreq: host and link to the torrent files (tpb is good enough placeholder for now, fuck it)
+        //TODOreq: host and link to the torrent files (tpb is dead also so this needs to be done soon)
         WContainerWidget *downloadContainer = new WContainerWidget();
         new WText("Download in full:", Wt::XHTMLUnsafeText, downloadContainer);
         new WBreak(downloadContainer);
@@ -347,17 +349,28 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         return;
     }
 
-    if(newInternalPath == "/licenses" || newInternalPath == "/licenses")
+    if(newInternalPath == "/licenses")
     {
         deleteTimelineAndDirectoryBrowsingStackIfNeeded();
 
         WContainerWidget *licensesContainer = new WContainerWidget();
-        new WText("Current version of d3fault public license: 3");
+        new WText("Current version of d3fault public license: 3", licensesContainer);
         new WBreak(licensesContainer);
         new WText("Link: ", licensesContainer);
         new WAnchor(WLink(WLink::InternalPath, "/autobackupLatest/license.dpl.txt"), "d3fault public license - version 3", licensesContainer);
 
         setMainContent(licensesContainer);
+        return;
+    }
+
+    if(newInternalPath == HVBS_WEB_CLEAN_URL_TO_STORE)
+    {
+        deleteTimelineAndDirectoryBrowsingStackIfNeeded();
+
+        WContainerWidget *storeContainer = new WContainerWidget();
+        new WText("Check back soon. The book form should be available shortly.", storeContainer);
+
+        setMainContent(storeContainer);
         return;
     }
 

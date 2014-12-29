@@ -53,7 +53,7 @@ ln -s $autobackupWebSrcTemp/autobackupCurrentSymlink/download $hvbsDownload/auto
 
 #configure hvbs as non-propagating node
 mkdir -p $hvbs/incomingVideoScratch/upload
-mkdir $hvbs/incomingVideoScratch/watched
+mkdir -p $hvbs/incomingVideoScratch/watched
 mkdir -p $hvbs/incomingVideoScratch/yearDayFolderSetup
 mkdir -p $hvbs/web/view/AirborneVideos
 mkdir -p $hvbsConfigDir
