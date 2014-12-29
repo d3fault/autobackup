@@ -8,10 +8,11 @@
 #include "synchronoustodaysadslotgetter.h"
 
 mutex GetTodaysAdSlotWResource::m_TodaysAdSlotMutex;
-string GetTodaysAdSlotWResource::m_TodaysAdSlotJson;
+string GetTodaysAdSlotWResource::m_TodaysAdSlotJson = JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_NO_AD_PLACEHOLDER;
 long long GetTodaysAdSlotWResource::m_TodaysAdSlotExpirationDate = 0;
 
 //TODOreq: does not scale to multiple campaign owners. i am unable to get other campaign owners/indexes, and also it is extremely inefficient (dropping+reconnecting couchbase connections with each request). Perhaps to make it async I should mimic abc2 (or maybe merge into it?), but instead of defer/resume rendering to accomplish async, I would be using response continuations. I also want to have some kind of enforcement on the "get ad only when it changes, i am not your bandwidth provider" rule (an "app key" is usually what people use). I could make the "serve your own ad images" a desireable feature (no cross site requests) instead of a requirement, seeing as most people will probably be too noob to do anything OTHER THAN link an <img> (but if I return raw img bytes, where would I be able to return "slot expire length" like I do currently? it's a big refactor, and psly deserves it's own app instead (this one stays as is mostly but is tweaked for people who would rather have cron grab the image once (but come to think of it, the slot length is not dynamic or anything, so hardcoding it into the cron job itself makes perfect sense (and since they are ad slot owner, they clearly know what it is)))) -- TODOoptimization if I am serving up images to end-users, I can/should use an expiration date that is exact (since the url won't be changing)
+//TODOoptimization: Polling (current design) sucks, because tons of ad campaigns with no purchases means checking every 5 minutes. When there ARE purchases, polling works fine because the clients know when to re-check. Pushing of course has it's own set of problems, namely security.
 GetTodaysAdSlotWResource::GetTodaysAdSlotWResource(WObject *parent)
     : WResource(parent)
 { }

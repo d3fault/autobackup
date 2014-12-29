@@ -20,8 +20,8 @@ const struct timeval AnonymousBitcoinComputingCouchbaseDB::m_OneHundredMilliseco
 //TODOoptimization: I think maybe the 100ms polling should increase as there are more items in the get and subscribe cache. Like if there's only 1 item we are at 100ms, but maybe a couple thousand should be like 5 seconds (and everything linearly in between ofc). 100ms polling just sounds like too much if there are tons of items, but eh I'm not sure that's correct since there's sharding/distribution of load going on for those thousands already. For now I'm just going to do 100ms for all. Thought about doing a time per key (cache item) and then having only the ones with lots of subscribers at 100ms (few subscribers = 1-5 seconds), but I like the first strategy mentioned better
 //TODOoptimization: it might be wise to use nagle's algorithm, at, say, 5ms. the couchbase "get/store" commands can be batched together with ease (but figuring out which responses go with what might not be as simple)
 
-#define AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE 2 /* when changing, change the string below too. TODOreq: 10 or 20 or something, 2 is just for testing*/
-#define AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE_STRING "2" /* just saves us from having to lexical_cast the above int on every request */
+#define AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE 10 /* when changing, change the string below too */
+#define AnonymousBitcoinComputingCouchbaseDB_VIEWS_AKA_MAPS__ITEMS_PER_PAGE_STRING "10" /* just saves us from having to lexical_cast the above int on every request */
 
 #define ABC_SCHEDULE_COUCHBASE_REQUEST_USING_NEW_OR_RECYCLED_AUTO_RETRYING_WITH_EXPONENTIAL_BACKOFF(GetOrStore) \
 AutoRetryingWithExponentialBackoffCouchbase##GetOrStore##Request *newOrRecycledExponentialBackoffTimerAndCallback; \
@@ -637,11 +637,11 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
             {
                 if(originalRequest->SaveCAS)
                 {
-                    GetCouchbaseDocumentByKeyRequest::respondWithCAS(originalRequest, "", 0, false, true);
+                    originalRequest->respondWithCAS("", 0, false, true);
                 }
                 else
                 {
-                    GetCouchbaseDocumentByKeyRequest::respond(originalRequest, "", false, true);
+                    originalRequest->respond("", false, true);
                 }
                 m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache.push_back(autoRetryingWithExponentialBackoffCouchbaseGetRequest);
                 delete originalRequest;
@@ -652,11 +652,11 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
         //LCB_KEY_ENOENT (key does not exist)
         if(originalRequest->SaveCAS)
         {
-            GetCouchbaseDocumentByKeyRequest::respondWithCAS(originalRequest, "", 0, false, false);
+            originalRequest->respondWithCAS("", 0, false, false);
         }
         else
         {
-            GetCouchbaseDocumentByKeyRequest::respond(originalRequest, "", false, false);
+            originalRequest->respond("", false, false);
         }
         m_AutoRetryingWithExponentialBackoffCouchbaseGetRequestCache.push_back(autoRetryingWithExponentialBackoffCouchbaseGetRequest);
 
@@ -773,7 +773,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
             {
                 if(static_cast<GetCouchbaseDocumentByKeyRequest*>(v.second)->GetAndSubscribe != 4)
                 {
-                    GetCouchbaseDocumentByKeyRequest::respondWithCAS(static_cast<GetCouchbaseDocumentByKeyRequest*>(v.second), possiblyNewValueDependingOnCas, casToTellUsIfTheDocChangedOrNot, true, false);
+                    static_cast<GetCouchbaseDocumentByKeyRequest*>(v.second)->respondWithCAS(possiblyNewValueDependingOnCas, casToTellUsIfTheDocChangedOrNot, true, false);
                 }
             }
 
@@ -786,7 +786,7 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
 
                 BOOST_FOREACH(SubscribersType::value_type &v, cacheItem->Subscribers)
                 {
-                    GetCouchbaseDocumentByKeyRequest::respondWithCAS(static_cast<GetCouchbaseDocumentByKeyRequest*>(v.second), possiblyNewValueDependingOnCas, casToTellUsIfTheDocChangedOrNot, true, false);
+                    static_cast<GetCouchbaseDocumentByKeyRequest*>(v.second)->respondWithCAS(possiblyNewValueDependingOnCas, casToTellUsIfTheDocChangedOrNot, true, false);
                 }
             }
 
@@ -842,11 +842,11 @@ void AnonymousBitcoinComputingCouchbaseDB::getCallback(const void *cookie, lcb_e
 
     if(originalRequest->SaveCAS) //TODOoptimization: __unlikely or whatever i can find in boost
     {
-        GetCouchbaseDocumentByKeyRequest::respondWithCAS(originalRequest, std::string(static_cast<const char*>(resp->v.v0.bytes), resp->v.v0.nbytes), resp->v.v0.cas, true, false);
+        originalRequest->respondWithCAS(std::string(static_cast<const char*>(resp->v.v0.bytes), resp->v.v0.nbytes), resp->v.v0.cas, true, false);
     }
     else
     {
-        GetCouchbaseDocumentByKeyRequest::respond(originalRequest, std::string(static_cast<const char*>(resp->v.v0.bytes), resp->v.v0.nbytes), true, false);
+        originalRequest->respond(std::string(static_cast<const char*>(resp->v.v0.bytes), resp->v.v0.nbytes), true, false);
     }
 
     delete originalRequest;
@@ -1093,11 +1093,11 @@ void AnonymousBitcoinComputingCouchbaseDB::scheduleGetRequest(AutoRetryingWithEx
         cerr << "Failed to setup get request: " << lcb_strerror(m_Couchbase, error) << endl;
         if(originalRequest->SaveCAS)
         {
-            GetCouchbaseDocumentByKeyRequest::respondWithCAS(originalRequest, "", 0, false, true);
+            originalRequest->respondWithCAS("", 0, false, true);
         }
         else
         {
-            GetCouchbaseDocumentByKeyRequest::respond(originalRequest, "", false, true);
+            originalRequest->respond("", false, true);
         }
         delete originalRequest;
         return;
@@ -1232,7 +1232,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
             if(!keyValueCacheItem->CurrentlyFetchingPossiblyNew)
             {
                 //the cache item has a value, so we return the new subscriber the value now as an optimization and add him to the old subscribers
-                GetCouchbaseDocumentByKeyRequest::respondWithCAS(originalRequest, keyValueCacheItem->Document, keyValueCacheItem->DocumentCAS, true, false);
+                originalRequest->respondWithCAS(keyValueCacheItem->Document, keyValueCacheItem->DocumentCAS, true, false);
                 keyValueCacheItem->Subscribers[originalRequest->AnonymousBitcoinComputingWtGUIPointerForCallback] = originalRequest;
             }
             else

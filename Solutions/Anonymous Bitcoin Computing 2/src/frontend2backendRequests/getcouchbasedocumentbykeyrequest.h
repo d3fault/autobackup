@@ -32,7 +32,7 @@ public:
         JustGetDontSubscribeMode,
         GetAndSubscribeMode,
 
-        //in both of these modes, the backend does not respond and the frontend always assumes it works (TODOoptimization: expect response in frontend using timeout or some such. blah probably a dumb idea because if the backend doesn't do it, shit is ALREADY fucked)
+        //in both of these next two modes, the backend does not respond and the frontend always assumes it works (TODOoptimization: expect response in frontend using timeout or some such. blah probably a dumb idea because if the backend doesn't do it, shit is ALREADY fucked)
         GetAndSubscribeChangeSessionIdMode,
         GetAndSubscribeUnsubscribeMode,
         GetAndSubscribeJustKiddingNoJavascriptHereSoIjustWantONEsubscriptionUpdateValOrAHardGetIfNeedBeKthx,
@@ -52,8 +52,8 @@ public:
     bool SaveCAS;
     unsigned char GetAndSubscribe;
 
-    static void respond(GetCouchbaseDocumentByKeyRequest *originalRequest, std::string couchbaseDocument, bool lcbOpSuccess, bool dbError);
-    static void respondWithCAS(GetCouchbaseDocumentByKeyRequest *originalRequest,  std::string couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError);
+    void respond(std::string couchbaseDocument, bool lcbOpSuccess, bool dbError);
+    void respondWithCAS(std::string couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError);
 private:
 #ifndef ABC_USE_BOOST_LOCKFREE_QUEUE
     friend class boost::serialization::access;

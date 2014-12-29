@@ -4,7 +4,7 @@
 
 ==1.1 Bugs==
 
-- Ad Campaigns should properly 404. Semi-OT: does changing ad campaigns from one to another subscribe-unsubscribe-resubscribe (all in "one" step) work? Javascript-less 404 should leave rendering deferred, if my calculations are correct
+- Ad Campaigns should properly 404, be careful not to delete/clear anything that might cause segfault (zero the pointer out if deleting (but just don't, since there are tons of children doing the same thing xD fml))
 - C++11 makes cow in std::string illegal, so even gcc/clang won't have it anymore. I should use shared_ptr probably, now that I finally understand it
 - A lot of my error messages (not logged in, 500 internal server error, etc -- but also even things like "you successfully bought" too. but come to think of it, if it doesn't work without javascript, fuck that -- it should work without js soon, it's a pending wt bug report) should be in a messagebox instead of just added to the current page. I wasn't aware of Wt's message box functionality until recently
 - the all ad slot fillers pages hypothetical ddos where tons of images are still in memory and never requested. a stupid but effective way to solve this is to use wfileresource instead of a memory resource. stupid because ddb -> hdd -> serve -> delete hdd copy, but effective because don't have to worry about running out of hdd space (well, still do, but not nearly as fast as memory). other options include timeouts for keeping the resource in memory (few seconds), etc. another weird solution would be to block the resource request and to get the ddb doc on demand, though this seems grossly inefficient (i wonder, but doubt, if request continuations would help here)

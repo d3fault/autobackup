@@ -7,6 +7,8 @@
 using namespace boost::property_tree;
 using namespace boost::property_tree::json_parser;
 
+#define SynchronousTodaysAdSlotGetter_FIRST_NO_CACHE_YET_SLOT_INDEX "0"
+
 SynchronousTodaysAdSlotGetter::SynchronousTodaysAdSlotGetter()
     : ISynchronousLibCouchbaseUser(), m_TodaysAdSlotJson(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_NO_AD_PLACEHOLDER), m_TodaysAdSlotExpirationDate(0)
 { }
@@ -19,9 +21,10 @@ bool SynchronousTodaysAdSlotGetter::tryToGetTodaysAdSlot(const string &campaignO
     if(!couchbaseGetRequestWithExponentialBackoff(adSpaceCampaignSlotCacheKey(campaignOwnerUsername, campaignIndex), "campaign slot index cache"))
         return false; //TODOreq: some default return such as the "no ads" placeholder? 'return' doesn't mean anything just yet so ima hold off until i figure out how the SUCCESS result will be handled
 
-    string slotIndexToTry = "0"; //as int, cast to string. as string, cast to int. NO WINNING AAAAAAAHHH xD
+    string firstSlotIndexToTry = SynchronousTodaysAdSlotGetter_FIRST_NO_CACHE_YET_SLOT_INDEX; //as int, cast to string. as string, cast to int. NO WINNING AAAAAAAHHH xD
 
-    if(m_LastOpStatus != LCB_SUCCESS)
+    bool foundCacheDoc = (m_LastOpStatus == LCB_SUCCESS);
+    if(!foundCacheDoc)
     {
         //we can handle the campaign slot index cache not existing (LCB_KEY_ENOENT), but nothing else
         if(m_LastOpStatus != LCB_KEY_ENOENT)
@@ -30,14 +33,15 @@ bool SynchronousTodaysAdSlotGetter::tryToGetTodaysAdSlot(const string &campaignO
             return false;
         }
     }
-    else //LCB_SUCCESS, the campaign slot index cache exists
+    else //the campaign slot index cache exists
     {
         ptree pt;
         std::istringstream is(m_LastDocGetted);
         read_json(is, pt);
 
-        slotIndexToTry = pt.get<string>(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT);
+        firstSlotIndexToTry = pt.get<string>(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT);
     }
+    string slotIndexToTry = firstSlotIndexToTry;
 
     //pseudo:
     /*
@@ -95,12 +99,15 @@ bool SynchronousTodaysAdSlotGetter::tryToGetTodaysAdSlot(const string &campaignO
             //TODOreq: DO SOMETHING WITH IT/THEM (and don't forget to send expired time too)
 
             //store the this+1 in the cache so tomorrow will be uber fast
-            ptree pt3;
-            //pt3.put(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT, boost::lexical_cast<string>(boost::lexical_cast<int>(slotIndexToTry)+1));
-            pt3.put(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT, slotIndexToTry); //^if we only request once per day then it makes sense to set the cache to "tomorrow" (+1), but if we request it multiple times per day then it makes sense to set it to "today" (no +1). leaving as "today" since it's safer and I still haven't finalized this shit
-            std::ostringstream newCacheJsonBuffer;
-            write_json(newCacheJsonBuffer, pt3, false);
-            couchbaseStoreRequestWithExponentialBackoff(adSpaceCampaignSlotCacheKey(campaignOwnerUsername, campaignIndex), newCacheJsonBuffer.str(), LCB_SET, 0, "cache index updating"); //we don't care if the cache index updating fails, because [see this doc to understand why]
+            if(slotIndexToTry != firstSlotIndexToTry || (slotIndexToTry == SynchronousTodaysAdSlotGetter_FIRST_NO_CACHE_YET_SLOT_INDEX && !foundCacheDoc)) //only update the cache if it needs to be updated...
+            {
+                ptree pt3;
+                //pt3.put(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT, boost::lexical_cast<string>(boost::lexical_cast<int>(slotIndexToTry)+1));
+                pt3.put(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT, slotIndexToTry); //^if we only request once per day then it makes sense to set the cache to "tomorrow" (+1), but if we request it multiple times per day then it makes sense to set it to "today" (no +1). leaving as "today" since it's safer and I still haven't finalized this shit
+                std::ostringstream newCacheJsonBuffer;
+                write_json(newCacheJsonBuffer, pt3, false);
+                couchbaseStoreRequestWithExponentialBackoff(adSpaceCampaignSlotCacheKey(campaignOwnerUsername, campaignIndex), newCacheJsonBuffer.str(), LCB_SET, 0, "cache index updating"); //we don't care if the cache index updating fails, because [see this doc to understand why]
+            }
 
 
             return true;
