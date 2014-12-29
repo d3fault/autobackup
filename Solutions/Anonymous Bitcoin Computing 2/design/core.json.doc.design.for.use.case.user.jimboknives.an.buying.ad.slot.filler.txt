@@ -154,6 +154,7 @@ txd3fault0Slot1 // corresponding to adSpaceSlotsd3fault0Slot1 of course
 adSpaceSlotsd3fault0currentSlotCache
 {
 	currentSlotIndex: "3"
+	slotLengthHours : "24"
 }
 
 //SlotCache is just a shortcut/symbolic-link esq type doc. If it doesn't exist we can jump using math to what is about the right spot, or just walk the slots until we find one not existing. I may put the "slotFiller" in this cache as well, and possibly even "expiration" date... but for now KISS and just declaring it here to get it out of the campaign doc

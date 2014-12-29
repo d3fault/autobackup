@@ -9,11 +9,16 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    WServer serverWithOnlyGlobalResourcesOneForEachAdSlotOrSomethingAlongThoseLinesHi(argv[0]);
+    WServer serverWithOnlyGlobalResourcesOneForEachAdSlotOrSomethingAlongThoseLinesHi(argv[0]); //I don't think two WServers can be active at once (even if different processes) when they are both binding to the same port! I need to merge this synchronous pos into Abc2 itself :( -- either that or I use a different port, which isn't such a bad option (I think my ssl cert works on other ports? idfk)
     serverWithOnlyGlobalResourcesOneForEachAdSlotOrSomethingAlongThoseLinesHi.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
 
     GetTodaysAdSlotWResource getTodaysAdSlotResource;
-    serverWithOnlyGlobalResourcesOneForEachAdSlotOrSomethingAlongThoseLinesHi.addResource(&getTodaysAdSlotResource, "/getTodaysAdSlot"); //proper? does server take ownership? if not, scope will take care of it :)
+    if(!getTodaysAdSlotResource.initialize())
+    {
+        cerr << "GetTodaysAdSlotWResource failed to initialize" << endl;
+        return 1;
+    }
+    serverWithOnlyGlobalResourcesOneForEachAdSlotOrSomethingAlongThoseLinesHi.addResource(&getTodaysAdSlotResource, "/todays-ad.json"); //proper? does server take ownership? if not, scope will take care of it :)
 
     int ret = 0;
     if(serverWithOnlyGlobalResourcesOneForEachAdSlotOrSomethingAlongThoseLinesHi.start())

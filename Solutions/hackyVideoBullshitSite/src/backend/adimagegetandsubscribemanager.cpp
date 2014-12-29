@@ -17,7 +17,7 @@
 using namespace Wt;
 using namespace boost::property_tree;
 
-//class originally intended to only be for ad image backend, now transform[ing|ed] into video segment 'pusher' (perhaps i should push that functionality into an object that this class hasA. still, even in that case it would be proper'er to rename this class to just HackyVideoBullshitBackend. maybe even should push  the ad image get and subscribe functionality into an object, for modularity reasons
+//class originally intended to only be for ad image backend, now transform[ing|ed] into video segment 'pusher' (perhaps i should push that functionality into an object that this class hasA. still, even in that case it would be proper'er to rename this class to just HackyVideoBullshitBackend. maybe even should push  the ad image get and subscribe functionality into an object, for modularity reasons (especially since I want to publish an "Abc2 client" under BSD license for abc ad campaign owners to use)
 AdImageGetAndSubscribeManager::AdImageGetAndSubscribeManager(QObject *parent)
     : QObject(parent), m_CurrentAdImage(0), m_YesterdaysAdImage(0), m_CurrentAdUrl("n"), m_CurrentAdExpirationDateTime(0), m_Stopping(false), m_CurrentlyShowingNoAdPlaceholder(true), m_NetworkAccessManager(0), m_UpdateSubscribersHashIterator(0)
 {
@@ -79,7 +79,7 @@ AdImageGetAndSubscribeManager::~AdImageGetAndSubscribeManager()
 }
 void AdImageGetAndSubscribeManager::startHttpRequestForNextAdSlot()
 {
-    m_NetworkAccessManager->get(QNetworkRequest(QUrl("http://anonymousbitcoincomputing.com/getTodaysAdSlot"))); //TODOreq: maybe a shared secret url or special 'token', and definitely want SSL so no MITM lawl (even self signed cert is better than none)
+    m_NetworkAccessManager->get(QNetworkRequest(QUrl("https://anonymousbitcoincomputing.com/todays-ad.json?user=d3fault&index=0"))); //TODOreq: maybe a shared secret url or special 'token', and definitely want SSL so no MITM lawl (even self signed cert is better than none)
 }
 void AdImageGetAndSubscribeManager::getAndSubscribe(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier *adImageSubscriberIdentifier, std::string sessionId, GetAndSubscriptionUpdateCallbackType getAndSubscriptionUpdateCallback)
 {

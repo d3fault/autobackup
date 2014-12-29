@@ -93,6 +93,9 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     wtServer.addResource(&abcLogoImageResource, "/abc.logo.svg");
     //END ABC LOGO
 
+    //GetTodaysAdSlotResource getTodaysAdSlotResource;
+    //wtServer.addResource(&getTodaysAdSlotResource, "/todays-ad.json");
+
     wtServer.addEntryPoint(Application, &AnonymousBitcoinComputing::createAnonymousBitcoinComputingWtGUI);
 
     int ret = 0;

@@ -10,18 +10,25 @@ using namespace boost::property_tree::json_parser;
 #define SynchronousTodaysAdSlotGetter_FIRST_NO_CACHE_YET_SLOT_INDEX "0"
 
 SynchronousTodaysAdSlotGetter::SynchronousTodaysAdSlotGetter()
-    : ISynchronousLibCouchbaseUser(), m_TodaysAdSlotJson(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_NO_AD_PLACEHOLDER), m_TodaysAdSlotExpirationDate(0)
+    : ISynchronousLibCouchbaseUser()
+    , m_TodaysAdSlotJson(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_NO_AD_PLACEHOLDER)
+    //, m_TodaysAdSlotExpirationDate(0)
 { }
-bool SynchronousTodaysAdSlotGetter::tryToGetTodaysAdSlot(const string &campaignOwnerUsername, const string &campaignIndex, long long currentDateTime)
+bool SynchronousTodaysAdSlotGetter::initialize()
 {
     if(!connectToCouchbase())
         return false;
-
+    return true;
+}
+//must call initialize() first and it must return true ofc
+bool SynchronousTodaysAdSlotGetter::tryToGetTodaysAdSlot(const string &campaignOwnerUsername, const string &campaignIndex, long long currentDateTime)
+{
     //find the campaign slot index in the cache if it exists
     if(!couchbaseGetRequestWithExponentialBackoff(adSpaceCampaignSlotCacheKey(campaignOwnerUsername, campaignIndex), "campaign slot index cache"))
         return false; //TODOreq: some default return such as the "no ads" placeholder? 'return' doesn't mean anything just yet so ima hold off until i figure out how the SUCCESS result will be handled
 
     string firstSlotIndexToTry = SynchronousTodaysAdSlotGetter_FIRST_NO_CACHE_YET_SLOT_INDEX; //as int, cast to string. as string, cast to int. NO WINNING AAAAAAAHHH xD
+    int slotLengthHours;
 
     bool foundCacheDoc = (m_LastOpStatus == LCB_SUCCESS);
     if(!foundCacheDoc)
@@ -32,6 +39,19 @@ bool SynchronousTodaysAdSlotGetter::tryToGetTodaysAdSlot(const string &campaignO
             errorOutput("db error while looking for campaign slot index cache: " + lastErrorString());
             return false;
         }
+
+        //get the campaign doc itself, JUST for slotLengthHours (from then on we store it in the cache doc)
+        if(!couchbaseGetRequestWithExponentialBackoff(adSpaceCampaignKey(campaignOwnerUsername, campaignIndex), "campaign doc to retrieve slotLengthHours"))
+            return false;
+
+        if(m_LastOpStatus != LCB_SUCCESS)
+            return false; //maybe the campaign doc didn't exist, such as if they provide an invalid index param
+
+        ptree pt;
+        std::istringstream is(m_LastDocGetted);
+        read_json(is, pt);
+
+        slotLengthHours = pt.get<int>(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS);
     }
     else //the campaign slot index cache exists
     {
@@ -40,8 +60,9 @@ bool SynchronousTodaysAdSlotGetter::tryToGetTodaysAdSlot(const string &campaignO
         read_json(is, pt);
 
         firstSlotIndexToTry = pt.get<string>(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT);
+        slotLengthHours = pt.get<int>(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS);
     }
-    string slotIndexToTry = firstSlotIndexToTry;
+    string currentSlotIndexToTry = firstSlotIndexToTry;
 
     //pseudo:
     /*
@@ -52,10 +73,10 @@ bool SynchronousTodaysAdSlotGetter::tryToGetTodaysAdSlot(const string &campaignO
     }while(slot at that index is expired || slot at that index doesn't exist)
     */
 
-    while(true) //ok so much for that pseudo :-P
+    for(;;) //ok so much for that pseudo :-P
     {
         //try to get slot
-        if(!couchbaseGetRequestWithExponentialBackoff(adSpaceCampaignSlotKey(campaignOwnerUsername, campaignIndex, slotIndexToTry), "slot checking if it's todays"))
+        if(!couchbaseGetRequestWithExponentialBackoff(adSpaceCampaignSlotKey(campaignOwnerUsername, campaignIndex, currentSlotIndexToTry), "slot checking if it's todays"))
             return false;
 
         if(m_LastOpStatus != LCB_SUCCESS)
@@ -69,14 +90,17 @@ bool SynchronousTodaysAdSlotGetter::tryToGetTodaysAdSlot(const string &campaignO
         read_json(is, pt);
 
         //my dick is long long
-        long long startDateTime = boost::lexical_cast<long long>(pt.get<string>(JSON_AD_SPACE_CAMPAIGN_SLOT_START_TIMESTAMP)); //TODOreq: we want to return the expire date time along with the ad itself
-        long long expireDateTime = (startDateTime+(3600*24));
-        if(currentDateTime >= startDateTime && (currentDateTime < expireDateTime)) //TODOreq: dynamic 24, perhaps a campaign get just once on first app launch. hardcoding fine for now
+        long long startDateTime = boost::lexical_cast<long long>(pt.get<string>(JSON_AD_SPACE_CAMPAIGN_SLOT_START_TIMESTAMP));
+        long long expireDateTime = (startDateTime+(3600*slotLengthHours)); //TO DOnereq: dynamic 24 (slotLengthHours)
+        if(currentDateTime >= startDateTime && (currentDateTime < expireDateTime))
         {
             //woot, found todays slot :)
 
             //now we look up the ad slot filler to get the hover/url/image
-            if(!couchbaseGetRequestWithExponentialBackoffRequiringSuccess(pt.get<string>(JSON_AD_SPACE_CAMPAIGN_SLOT_FILLED_WITH), "todays ad slot filler"))
+            if(!couchbaseGetRequestWithExponentialBackoff(pt.get<string>(JSON_AD_SPACE_CAMPAIGN_SLOT_FILLED_WITH), "todays ad slot filler"))
+                return false;
+
+            if(m_LastOpStatus != LCB_SUCCESS)
                 return false;
 
             //have ad slot filler
@@ -93,17 +117,16 @@ bool SynchronousTodaysAdSlotGetter::tryToGetTodaysAdSlot(const string &campaignO
             std::ostringstream todaysAdSlotJsonBuffer;
             write_json(todaysAdSlotJsonBuffer, todaysAdSlot, false);
             m_TodaysAdSlotJson = todaysAdSlotJsonBuffer.str();
-            m_TodaysAdSlotExpirationDate = expireDateTime; //it's in the json, but we use it locally as well...
+            //m_TodaysAdSlotExpirationDate = expireDateTime; //it's in the json, but we use it locally as well...
             //ez p.z., now back to the higher level design shiz...
 
-            //TODOreq: DO SOMETHING WITH IT/THEM (and don't forget to send expired time too)
-
             //store the this+1 in the cache so tomorrow will be uber fast
-            if(slotIndexToTry != firstSlotIndexToTry || (slotIndexToTry == SynchronousTodaysAdSlotGetter_FIRST_NO_CACHE_YET_SLOT_INDEX && !foundCacheDoc)) //only update the cache if it needs to be updated...
+            if(currentSlotIndexToTry != firstSlotIndexToTry || (currentSlotIndexToTry == SynchronousTodaysAdSlotGetter_FIRST_NO_CACHE_YET_SLOT_INDEX && !foundCacheDoc)) //only update the cache if it needs to be updated...
             {
                 ptree pt3;
                 //pt3.put(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT, boost::lexical_cast<string>(boost::lexical_cast<int>(slotIndexToTry)+1));
-                pt3.put(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT, slotIndexToTry); //^if we only request once per day then it makes sense to set the cache to "tomorrow" (+1), but if we request it multiple times per day then it makes sense to set it to "today" (no +1). leaving as "today" since it's safer and I still haven't finalized this shit
+                pt3.put(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT, currentSlotIndexToTry); //^if we only request once per day then it makes sense to set the cache to "tomorrow" (+1), but if we request it multiple times per day then it makes sense to set it to "today" (no +1). leaving as "today" since it's safer and I still haven't finalized this shit
+                pt3.put(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS, boost::lexical_cast<std::string>(slotLengthHours));
                 std::ostringstream newCacheJsonBuffer;
                 write_json(newCacheJsonBuffer, pt3, false);
                 couchbaseStoreRequestWithExponentialBackoff(adSpaceCampaignSlotCacheKey(campaignOwnerUsername, campaignIndex), newCacheJsonBuffer.str(), LCB_SET, 0, "cache index updating"); //we don't care if the cache index updating fails, because [see this doc to understand why]
@@ -117,7 +140,7 @@ bool SynchronousTodaysAdSlotGetter::tryToGetTodaysAdSlot(const string &campaignO
             //not valid time range, either expired or ... actually yea it will only ever be expired because we have to go THROUGH todays in order to get to the hypothetical "tomorrows", and we will stop when we get to today so yea. I guess that means the "less than expired start time" above is not necessary... BUT SHIT MAN I ALREADY WROTE IT SO....
 
             //expired, +1 slot index and let the while(true) loop do it's magic :)
-            slotIndexToTry = boost::lexical_cast<string>(boost::lexical_cast<int>(slotIndexToTry)+1); //my favorite and also WWWWWWWWWRRRRRRRRYYYYYYYYYY (but sure beats a typeless / weakly typed language ANY FUCKING DAY (i complain no matter what (so just ignore me (i can amuse myself (fap fap fap)))))
+            currentSlotIndexToTry = boost::lexical_cast<string>(boost::lexical_cast<int>(currentSlotIndexToTry)+1); //my favorite and also WWWWWWWWWRRRRRRRRYYYYYYYYYY (but sure beats a typeless / weakly typed language ANY FUCKING DAY (i complain no matter what (so just ignore me (i can amuse myself (fap fap fap)))))
         }
     }
 }
@@ -125,10 +148,12 @@ string SynchronousTodaysAdSlotGetter::todaysAdSlotJson()
 {
     return m_TodaysAdSlotJson;
 }
+#if 0
 long long SynchronousTodaysAdSlotGetter::todaysAdSlotExpirationDate()
 {
     return m_TodaysAdSlotExpirationDate;
 }
+#endif
 void SynchronousTodaysAdSlotGetter::errorOutput(const string &errorString)
 {
     cerr << errorString << endl;

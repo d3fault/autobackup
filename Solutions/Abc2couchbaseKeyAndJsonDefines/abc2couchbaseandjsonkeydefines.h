@@ -68,7 +68,7 @@ public:
 //campaign
 #define COUCHBASE_AD_SPACE_CAMPAIGN_KEY_PREFIX "adSpaceCampaign" //if changing, change "all users with at least one ad space campaign" view (and possibly others). aka: don't change.
 #define JSON_AD_SPACE_CAMPAIGN_MIN_PRICE "minPrice"
-#define JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS "slotLengthHours"
+#define JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS "slotLengthHours" /*also used in current slot cache doc*/
 //campaign-OPTIONAL-last-slot-filled
 #define JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED "lastSlotFilledAkaPurchased"
 #define JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_INDEX "slotIndex"
