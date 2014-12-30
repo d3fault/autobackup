@@ -88,6 +88,8 @@
 //TODOreq: purchasing an ad slot needs to give the ad campaign owner the amount it was purchased for. This app was originally only coded for 1 owner and 1 campaign, so I just didn't give a fuck about it being in the db and was going to rely on bitcoind 'getbalance' instead. Now that multi owners is introduced, I need to lock the campaign owner's account and credit him the amount the ad slot was purchased for. This adds all sorts of atomicity and error recovery complications and fffffffffffffffffffuck just when I thought I was close to being done, fml fml. The only thing implemented right now is 'purchases balance debitting' :(
 //TODOreq: add creation of use "d3fault" to abc2initializer, otherwise someone could make that username and then collect all mah funds (or more likely, the app crashes when it tries to credit a user account that does not exist). An alternative is to not create campaign 0 in the initializer ofc.
 
+AbcGuiGetCouchbaseDocumentByKeyRequestResponder AnonymousBitcoinComputingWtGUI::s_Responder;
+
 AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv)
     : WApplication(myEnv),
       m_BodyHLayout(new WHBoxLayout()),
@@ -1703,7 +1705,7 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyBegin(const std::s
 {
     deferRendering();
 #ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
-    GetCouchbaseDocumentByKeyRequest *couchbaseRequest = new GetCouchbaseDocumentByKeyRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::DiscardCASMode);
+    GetCouchbaseDocumentByKeyRequest *couchbaseRequest = new GetCouchbaseDocumentByKeyRequest(&s_Responder, sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::DiscardCASMode);
 #else
     GetCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::DiscardCASMode);
 #endif
@@ -1713,7 +1715,7 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasBegin(con
 {
     deferRendering();
 #ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
-    GetCouchbaseDocumentByKeyRequest *couchbaseRequest = new GetCouchbaseDocumentByKeyRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode);
+    GetCouchbaseDocumentByKeyRequest *couchbaseRequest = new GetCouchbaseDocumentByKeyRequest(&s_Responder, sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode);
 #else
     GetCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode);
 #endif
@@ -1722,7 +1724,7 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeySavingCasBegin(con
 void AnonymousBitcoinComputingWtGUI::getAndSubscribeCouchbaseDocumentByKeySavingCas(const string &keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::GetAndSubscribeEnum subscribeMode)
 {
 #ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
-    GetCouchbaseDocumentByKeyRequest *couchbaseRequest = new GetCouchbaseDocumentByKeyRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode, subscribeMode);
+    GetCouchbaseDocumentByKeyRequest *couchbaseRequest = new GetCouchbaseDocumentByKeyRequest(&s_Responder, sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode, subscribeMode);
 #else
     GetCouchbaseDocumentByKeyRequest couchbaseRequest(sessionId(), this, keyToCouchbaseDocument, GetCouchbaseDocumentByKeyRequest::SaveCASMode, subscribeMode);
 #endif

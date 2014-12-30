@@ -17,6 +17,7 @@
 #include <boost/serialization/split_member.hpp>
 #endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
+class IGetCouchbaseDocumentByKeyRequestResponder;
 class AnonymousBitcoinComputingWtGUI;
 
 class GetCouchbaseDocumentByKeyRequest
@@ -41,13 +42,13 @@ public:
         //TO DOnereq: maybe this is where the js special 'get-FROM-subscription-but-dont-subscribe-unless-there-isnt-one-in-which-case-do-a-full-get-fuck-it-if-its-costly-ish' (tm)
     };
     //save constructor
-    GetCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string couchbaseGetKeyInput, CasMode casMode = DiscardCASMode, GetAndSubscribeEnum subscribeMode = JustGetDontSubscribeMode);
+    GetCouchbaseDocumentByKeyRequest(IGetCouchbaseDocumentByKeyRequestResponder *responder, std::string wtSessionId, void *pointerToAnonymousBitcoinComputingWtGUI, std::string couchbaseGetKeyInput, CasMode casMode = DiscardCASMode, GetAndSubscribeEnum subscribeMode = JustGetDontSubscribeMode);
     //load constructor
-    GetCouchbaseDocumentByKeyRequest();
+    //GetCouchbaseDocumentByKeyRequest();
 
     std::string WtSessionId;
-    AnonymousBitcoinComputingWtGUI *AnonymousBitcoinComputingWtGUIPointerForCallback;
-    static const unsigned char LengthOfAddressToAnonymousBitcoinComputingWtGUI = sizeof(AnonymousBitcoinComputingWtGUI*) + 1;
+    void *AnonymousBitcoinComputingWtGUIPointerForCallback;
+    static const unsigned char LengthOfAddressToAnonymousBitcoinComputingWtGUI = sizeof(void*) + 1;
     std::string CouchbaseGetKeyInput;
     bool SaveCAS;
     unsigned char GetAndSubscribe;
@@ -55,6 +56,7 @@ public:
     void respond(std::string couchbaseDocument, bool lcbOpSuccess, bool dbError);
     void respondWithCAS(std::string couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError);
 private:
+    IGetCouchbaseDocumentByKeyRequestResponder *m_Responder;
 #ifndef ABC_USE_BOOST_LOCKFREE_QUEUE
     friend class boost::serialization::access;
     template<class Archive>

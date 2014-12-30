@@ -12,13 +12,16 @@
 #5) Turn on auto-failover
 #5) cd into wtAppHere and `ln -s /usr/local/share/Wt/resources/ resources`
 #                                   ^or just /usr/share/Wt if using Wt from debian repository
-#6) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 7777
+#6a) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 7777
+#6b) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 80 --ssl-certificate=server.pem --ssl-private-key=server.key --ssl-tmp-dh=dh512.pem --https-address 0.0.0.0 --https-port 443 --api-port 444
 
 TARGET = AnonymousBitcoinComputing
 TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
-CONFIG -= qt
+#CONFIG -= qt
+QT += core network
+QT -= gui
 
 #QMAKE_CXXFLAGS += -save-temps
 
@@ -59,7 +62,12 @@ HEADERS += \
     frontend/pages/advertisingbuyadspacealluserswithatleastoneadcampaignwidget.h \
     frontend/pages/advertisingbuyadspacealladcampaignsforuserwidget.h \
     frontend/accounttabs/withdrawfundsaccounttabbody.h \
-    frontend/gettodaysadslotresource.h
+    frontend/gettodaysadslotresource.h \
+    frontend/gettodaysadslotserver.h \
+    frontend/gettodaysadslotserverclientconnection.h \
+    frontend2backendRequests/igetcouchbasedocumentbykeyrequestresponder.h \
+    frontend2backendRequests/abcguigetcouchbasedocumentbykeyrequestresponder.h \
+    frontend2backendRequests/abcapigetcouchbasedocumentbykeyrequestresponder.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -88,7 +96,11 @@ SOURCES += main.cpp \
     frontend/pages/advertisingbuyadspacealluserswithatleastoneadcampaignwidget.cpp \
     frontend/pages/advertisingbuyadspacealladcampaignsforuserwidget.cpp \
     frontend/accounttabs/withdrawfundsaccounttabbody.cpp \
-    frontend/gettodaysadslotresource.cpp
+    frontend/gettodaysadslotresource.cpp \
+    frontend/gettodaysadslotserver.cpp \
+    frontend/gettodaysadslotserverclientconnection.cpp \
+    frontend2backendRequests/abcguigetcouchbasedocumentbykeyrequestresponder.cpp \
+    frontend2backendRequests/abcapigetcouchbasedocumentbykeyrequestresponder.cpp
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/

@@ -26,20 +26,23 @@ void QtHttpClient::handleReadyRead()
             if(getLineParts.size() >= 2)
             {
                 QString encodedUrl = getLineParts.at(1);
-                QUrl theUrl = QUrl::fromUserInput("http://dummydomain.com" + encodedUrl);
-                if(theUrl.isValid())
+                if(encodedUrl.startsWith("/"))
                 {
-                    response.append("Your url, decoded: " + theUrl.path() + "<br />\n");
-
-                    QUrlQuery theUrlQuery(theUrl);
-                    QString xStr = theUrlQuery.queryItemValue("x");
-                    if(!xStr.isEmpty())
+                    QUrl theUrl = QUrl::fromUserInput("http://dummydomain.com" + encodedUrl);
+                    if(theUrl.isValid())
                     {
-                        bool parseSuccess = false;
-                        int x = xStr.toInt(&parseSuccess);
-                        if(parseSuccess)
+                        response.append("Your url, decoded: " + theUrl.path() + "<br />\n");
+
+                        QUrlQuery theUrlQuery(theUrl);
+                        QString xStr = theUrlQuery.queryItemValue("x");
+                        if(!xStr.isEmpty())
                         {
-                            response.append("The value of x: " + QString::number(x) + "<br />\n");
+                            bool parseSuccess = false;
+                            int x = xStr.toInt(&parseSuccess);
+                            if(parseSuccess)
+                            {
+                                response.append("The value of x: " + QString::number(x) + "<br />\n");
+                            }
                         }
                     }
                 }
@@ -49,6 +52,6 @@ void QtHttpClient::handleReadyRead()
     response.append("</body></html>");
     m_ClientStream << "HTTP/1.0 200 OK\r\nContent-Type: text/html; charset=\"utf-8\"\r\nConnection: close\r\nContent-Length: " << QString::number(response.length()) << "\r\n"
                       "\r\n"
-                       << response;
+                   << response;
     m_ClientStream.device()->close();
 }

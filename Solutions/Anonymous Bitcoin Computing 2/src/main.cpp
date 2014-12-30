@@ -1,3 +1,6 @@
+#include <Wt/WServer>
+#include <QCoreApplication>
+
 #include "anonymousbitcoincomputing.h"
 
 /*
@@ -31,6 +34,7 @@
 //TODOoptional: any time I create a document (as opposed to modifying one), whether in this app or in recovery possy etc, I should use some method that returns a ptree with the document's defaults. This allows me to add fields without having to change code in lots of supporting places. I'm scared to add fields now because I'd have to search for all the places where the same doc is created (and then add the field)
 int main(int argc, char *argv[])
 {
+    QCoreApplication a(argc, argv);
     AnonymousBitcoinComputing abc;
     return abc.startAbcAndWaitForFinished(argc, argv);
 }

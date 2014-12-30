@@ -125,7 +125,7 @@ m_##text##WtMessageQueue##n = NULL;
 
 #ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
 #define ABC_NEW_AND_CREATE_MY_MESSAGE_QUEUES_MACRO(z, n, text) \
-    m_##text##WtMessageQueue##n = new queue<text##CouchbaseDocumentByKeyRequest*>(100); /* didn't think capacity was necessary, but a runtime assert failed without it. OLD:TODOreq: should i specify a capacity? err not even sure that's what the example means, but guessing yes. capacity probably not necessary, but if i want memory usage to stay constant[-ER(because 'variable amount of connections make that impossibru)] i should set one... */
+    m_##text##WtMessageQueue##n = new queue<text##CouchbaseDocumentByKeyRequest*>(256); /* didn't think capacity was necessary, but a runtime assert failed without it. OLD:TODOreq: should i specify a capacity? err not even sure that's what the example means, but guessing yes. capacity probably not necessary, but if i want memory usage to stay constant[-ER(because 'variable amount of connections make that impossibru)] i should set one... */
 #else
 #define ABC_NEW_AND_CREATE_MY_MESSAGE_QUEUES_MACRO(z, n, text) \
     m_##text##WtMessageQueue##n = new message_queue(create_only, ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME \
@@ -269,9 +269,11 @@ public:
 
     //queue<StoreCouchbaseDocumentByKeyRequest*> *getStoreLockFreeQueueForWt0();
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LOCKFREE_QUEUE_GETTER_MEMBER_DECLARATIONS_MACRO)
+    queue<GetCouchbaseDocumentByKeyRequest*> *getGetLockFreeQueueForApi();
 
     //struct event *getStoreEventCallbackForWt0();
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_GETTER_MEMBER_DECLARATIONS_MACRO)
+    struct event *getGetEventCallbackForApi();
 private:
     friend class GetAndSubscribeCacheItem;
     friend class AutoRetryingWithExponentialBackoffCouchbaseGetRequest;
@@ -368,20 +370,26 @@ private:
 
     //message_queue *m_StoreWtMessageQueue0;
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_MESSAGE_QUEUE_DECLARATIONS_MACRO)
+    queue<GetCouchbaseDocumentByKeyRequest*> *m_GetApiWtMessageQueue;
 
     //void *m_StoreMessageQueue0CurrentMessageBuffer;
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DECLARATION_MACRO)
+    GetCouchbaseDocumentByKeyRequest *m_GetApiMessageQueuesCurrentMessageBuffer;
 
     //struct event *m_StoreEventCallbackForWt0;
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_MEMBER_DECLARATIONS_MACRO)
+    struct event *m_GetEventCallbackForApi;
 
     //static void eventSlotForWtStore0Static(evutil_socket_t unusedSocket, short events, void *userData);
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_SLOTS_STATIC_METHOD_DECLARATIONS_MACRO)
+    static void eventSlotForApiGetStatic(evutil_socket_t unusedSocket, short events, void *userData);
 
     void scheduleGetRequest(AutoRetryingWithExponentialBackoffCouchbaseGetRequest *autoRetryingWithExponentialBackoffCouchbaseGetRequest);
     void scheduleStoreRequest(AutoRetryingWithExponentialBackoffCouchbaseStoreRequest *autoRetryingWithExponentialBackoffCouchbaseStoreRequest);
     //void eventSlotForWtStore0();
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_SLOTS_METHOD_DECLARATIONS_MACRO)
+    void eventSlotForApiGet();
+    void eventSlotForApiGetActual();
 
     //the static methods catch parameters (evutil_socket_t unusedSocket, short events), but we don't use them currently
     //void eventSlotForWtStore();

@@ -90,8 +90,10 @@ AnonymousBitcoinComputingCouchbaseDB::AnonymousBitcoinComputingCouchbaseDB()
     , m_FinalCleanUpAndJoinEvent(NULL)
     //, m_StoreWtMessageQueue0(NULL)
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_MESSAGE_QUEUE_NULL_INITIALIZATION_MACRO)
+    , m_GetApiWtMessageQueue(NULL)
     //, m_StoreMessageQueuesCurrentMessageBuffer(NULL);
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DEFINITION_MACRO)
+    , m_GetApiMessageQueuesCurrentMessageBuffer(NULL)
     //, m_StoreEventCallbackForWt0(NULL)
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_MEMBER_DEFINITIONS_MACRO)
 {
@@ -350,6 +352,7 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
 
     //m_StoreEventCallbackForWt0 = event_new(LibEventBaseScopedDeleterInstance.LibEventBase, -1, EV_READ, eventSlotForWtStore0Static, this);
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_SETUP_WT_TO_COUCHBASE_CALLBACKS_VIA_EVENT_NEW_MACRO)
+    m_GetEventCallbackForApi = event_new(LibEventBaseScopedDeleterInstance.LibEventBase, -1, EV_READ, eventSlotForApiGetStatic, this);
 
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
     GetAndSubscribeCacheItem::setAnonymousBitcoinComputingCouchbaseDB(this);
@@ -395,9 +398,12 @@ void AnonymousBitcoinComputingCouchbaseDB::threadEntryPoint()
     {
         //free(m_StoreMessageQueuesCurrentMessageBuffer); m_StoreMessageQueuesCurrentMessageBuffer = NULL;
         BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_FREE_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO)
+        m_GetApiMessageQueuesCurrentMessageBuffer = NULL;
 
         //delete m_StoreWtMessageQueue0; m_StoreWtMessageQueue0 = NULL;
         BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_CLOSE_AND_DELETE_ALL_NEWD_COUCHBASE_MESSAGE_QUEUES_MACRO)
+        delete m_GetApiWtMessageQueue;
+        m_GetApiWtMessageQueue = NULL;
     }
 
     //message_queue::remove(ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME + "Store0");
@@ -457,6 +463,7 @@ void AnonymousBitcoinComputingCouchbaseDB::configurationCallback(lcb_configurati
 
             //m_StoreWtMessageQueue0 = new message_queue(create_only, "BlahBaseNameStore0", 200x, 100kb);
             BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_NEW_AND_CREATE_MY_MESSAGE_QUEUES_MACRO)
+            m_GetApiWtMessageQueue = new queue<GetCouchbaseDocumentByKeyRequest*>(1024);
 
             //m_StoreMessageQueuesCurrentMessageBuffer = malloc(ABC_SIZE_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_MESSAGES_FOR_Store);
             BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_MALLOC_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_MACRO)
@@ -1146,6 +1153,30 @@ void AnonymousBitcoinComputingCouchbaseDB::scheduleStoreRequest(AutoRetryingWith
     }
     ++m_PendingStoreCount;
 }
+void AnonymousBitcoinComputingCouchbaseDB::eventSlotForApiGet()
+{
+    //BEGIN ABC_COUCHBASE_LIBEVENTS_SLOT_METHOD_DEFINITIONS_MACRO
+    unsigned char currentReadsBeforeGivingOtherQueuesAchance = 0;
+    bool receiveSuccess;
+    do
+    {
+        if(!(receiveSuccess = m_GetApiWtMessageQueue->pop(m_GetApiMessageQueuesCurrentMessageBuffer)))
+        {
+            return;
+        }
+        eventSlotForApiGetActual();
+    }while(++currentReadsBeforeGivingOtherQueuesAchance < NUMBER_OF_MESSAGES_TO_READ_FROM_QUEUE_BEFORE_GIVING_A_DIFFERENT_QUEUE_A_CHANCE);
+    event_active(m_GetEventCallbackForApi, EV_READ|EV_WRITE, 0);
+    //END ABC_COUCHBASE_LIBEVENTS_SLOT_METHOD_DEFINITIONS_MACRO
+}
+void AnonymousBitcoinComputingCouchbaseDB::eventSlotForApiGetActual()
+{
+    if(m_NoMoreAllowedMuahahaha)
+        return;
+
+    GetCouchbaseDocumentByKeyRequest *originalRequest = m_GetApiMessageQueuesCurrentMessageBuffer;
+    ABC_SCHEDULE_COUCHBASE_REQUEST_USING_NEW_OR_RECYCLED_AUTO_RETRYING_WITH_EXPONENTIAL_BACKOFF(Get)
+}
 void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtStore()
 {
     ABC_READ_STORE_REQUEST_FROM_APPROPRIATE_MESSAGE_BUFFER(Store)
@@ -1164,6 +1195,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtGet()
     {
         return;
         //TODOoptional: post() a response, BUT really that doesn't matter too much because i mean the server's about to go down regardless... (unless i'm taking db down ONLY and wt is staying up (lol wut?))
+        //TODoreq: i might be leaking memory during a common (common during high load, but unlikely to see during testing) shutdown race condition, because the requests are never responded to nor deleted... they are simply ignored. proper solution involves boost::shared_ptr ofc
     }
 
 #ifdef ABC_USE_BOOST_LOCKFREE_QUEUE
@@ -1426,12 +1458,20 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtViewQuery()
 //    return m_StoreWtMessageQueue0;
 //}
 BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LOCKFREE_QUEUE_GETTER_MEMBER_DEFINITIONS_MACRO)
+queue<GetCouchbaseDocumentByKeyRequest*> *AnonymousBitcoinComputingCouchbaseDB::getGetLockFreeQueueForApi()
+{
+    return m_GetApiWtMessageQueue;
+}
 
 //struct event *AnonymousBitcoinComputingCouchbaseDB::getStoreEventCallbackForWt0()
 //{
 //    return m_StoreEventCallbackForWt0;
 //}
 BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_GETTER_MEMBER_DEFINITIONS_MACRO)
+event *AnonymousBitcoinComputingCouchbaseDB::getGetEventCallbackForApi()
+{
+    return m_GetEventCallbackForApi;
+}
 
 //void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtStore0Static(evutil_socket_t unusedSocket, short events, void *userData)
 //{
@@ -1440,6 +1480,12 @@ BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUC
 //    static_cast<AnonymousBitcoinComputingCouchbaseDB*>(userData)->eventSlotStore0();
 //}
 BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_SLOT_STATIC_METHOD_DEFINITIONS_MACRO)
+void AnonymousBitcoinComputingCouchbaseDB::eventSlotForApiGetStatic(evutil_socket_t unusedSocket, short events, void *userData)
+{
+    (void)unusedSocket;
+    (void)events;
+    static_cast<AnonymousBitcoinComputingCouchbaseDB*>(userData)->eventSlotForApiGet();
+}
 
 //void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWtStore0()
 //{

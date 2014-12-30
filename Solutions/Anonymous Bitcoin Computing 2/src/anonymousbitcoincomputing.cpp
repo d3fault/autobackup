@@ -2,9 +2,14 @@
 
 #include <boost/preprocessor/repeat.hpp>
 
+#include <QCoreApplication>
+#include <QStringList>
+#include <QThread>
+
 #include "abc2common.h"
 #include "nonexpiringstringwresource.h"
 #include "frontend/anonymousbitcoincomputingwtgui.h"
+#include "frontend/gettodaysadslotserver.h"
 #include "backend/anonymousbitcoincomputingcouchbasedb.h"
 
 /////////////////////////////////////////////////////BEGIN MACRO HELL///////////////////////////////////////////////
@@ -21,8 +26,25 @@ AnonymousBitcoinComputingWtGUI::m_##text##EventCallbacksForWt[n] = couchbaseDb.g
 
 /////////////////////////////////////////////////////END MACRO HELL/////////////////////////////////////////////////
 
+#define AnonymousBitcoinComputing_API_PORT_CLI_ARG "--api-port"
+
 int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
 {
+    QStringList argz = QCoreApplication::arguments();
+    int indexOfApiPortArg = argz.indexOf(AnonymousBitcoinComputing_API_PORT_CLI_ARG);
+    if(indexOfApiPortArg < 0 || ((indexOfApiPortArg+1) >= argz.size()))
+    {
+        cerr << "You must specify an API port via: " AnonymousBitcoinComputing_API_PORT_CLI_ARG << endl;
+        return 1;
+    }
+    bool parseSuccess = false;
+    quint16 apiPort = argz.at(indexOfApiPortArg+1).toUShort(&parseSuccess);
+    if(!parseSuccess)
+    {
+        cerr << "Invalid API port" << endl;
+        return 1;
+    }
+
     //start couchbase and wait for it to finish connecting/initializing
     AnonymousBitcoinComputingCouchbaseDB couchbaseDb;
     //TODOoptional: the AnonymousBitcoinComputingCouchbaseDB object should be both instantiated and destructed ON the couchbase thread. However I'm not experiencing any bugs here so fuck it for now
@@ -98,6 +120,26 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
 
     wtServer.addEntryPoint(Application, &AnonymousBitcoinComputing::createAnonymousBitcoinComputingWtGUI);
 
+    //BEGIN GetTodaysAdSlotServer
+    GetTodaysAdSlotServer getTodaysAdSlotServer;
+    GetTodaysAdSlotServer::setBackendQueue(couchbaseDb.getGetLockFreeQueueForApi());
+    GetTodaysAdSlotServer::setBackendQueueEvent(couchbaseDb.getGetEventCallbackForApi());
+    QThread getTodaysAdSlotServerThread;
+    getTodaysAdSlotServerThread.start();
+    getTodaysAdSlotServer.moveToThread(&getTodaysAdSlotServerThread);
+    bool getTodaysAdSlotServerInitializedAndStartedSuccessfully = false;
+    QMetaObject::invokeMethod(&getTodaysAdSlotServer, "initializeAndStart", Qt::BlockingQueuedConnection, Q_RETURN_ARG(bool, getTodaysAdSlotServerInitializedAndStartedSuccessfully), Q_ARG(quint16, apiPort));
+    if(!getTodaysAdSlotServerInitializedAndStartedSuccessfully)
+    {
+        getTodaysAdSlotServer.deleteLater();
+        beginStoppingCouchbase(&couchbaseDb);
+        finalStopCouchbaseAndWaitForItsThreadToJoin(&couchbaseDb);
+        cerr << "failed to initialize and start GetTodaysAdSlotServer, quitting" << endl;
+        return 1;
+    }
+    //END GetTodaysAdSlotServer
+
+
     int ret = 0;
     if(wtServer.start())
     {
@@ -114,6 +156,13 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
 
     //telling them to FINISH [current requests] != JOIN [and cleanup]. finish sets flags to not do any more operations, and lets current operations finish cleanly and then raises a wait condition when all current are done. It does NOT however delete/free any of the event callbacks, SINCE THE WT SERVER IS STILL RUNNING (and therefore using them (even though when it does use one, it gets instantly rejected because of the bool flags))
     beginStoppingCouchbase(&couchbaseDb);
+
+    //BEGIN GetTodaysAdSlotServer
+    QMetaObject::invokeMethod(&getTodaysAdSlotServer, "stopAndDestroy", Qt::BlockingQueuedConnection);
+    getTodaysAdSlotServer.deleteLater();
+    getTodaysAdSlotServerThread.quit();
+    getTodaysAdSlotServerThread.wait();
+    //END //BEGIN GetTodaysAdSlotServer
 
     //then:
     wtServer.stop(); //TODOoptional: start may have returned false and it might not be good to call this (bah)

@@ -50,6 +50,7 @@ using namespace boost::interprocess;
 
 #include "../frontend2backendRequests/storecouchbasedocumentbykeyrequest.h"
 #include "../frontend2backendRequests/getcouchbasedocumentbykeyrequest.h"
+#include "../frontend2backendRequests/abcguigetcouchbasedocumentbykeyrequestresponder.h"
 #include "../frontend2backendRequests/viewquerycouchbasedocumentbykeyrequest.h"
 
 #include "abc2couchbaseandjsonkeydefines.h"
@@ -243,8 +244,10 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     friend class ViewAllExistingAdSlotFillersAccountTabBody;
 
     friend class StoreCouchbaseDocumentByKeyRequest;
-    friend class GetCouchbaseDocumentByKeyRequest;
+    friend class AbcGuiGetCouchbaseDocumentByKeyRequestResponder;
     friend class ViewQueryCouchbaseDocumentByKeyRequest;
+
+    static AbcGuiGetCouchbaseDocumentByKeyRequestResponder s_Responder;
 
     void buildGui();
     WHBoxLayout *m_BodyHLayout;
