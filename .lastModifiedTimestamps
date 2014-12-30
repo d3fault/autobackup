@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1419810420
+Documents/minddump/:1419895331
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1401,6 +1401,7 @@ Documents/minddump/lkjsadflkjsdfousdlfjsdfuwlkjerousdlkfjosudfslkdjfouewrljsdfou
 Documents/minddump/lkjsafouasdlfjsoudflsdkjfosudflskjdfoiusdflkjuewroiuodsfsaldkjf.txt:1384774009
 Documents/minddump/lkjsdfkjsdlkfjlskdjflksdjflksjdflkjsdflkjsdflkjsdfhlkdsjflksdjf.txt:1418885345
 Documents/minddump/lkjsdfljksdlfkjsdofusladfjkosudfljsdofusdljkfouewrlkjousdflkjsdf.txt:1383192202
+Documents/minddump/lkjsdfljsdlfkjsdlkfjsldkjflskdjflksdjflksdjflkjsdflkjsdlfkjsoyewrlkjd.txt:1419895331
 Documents/minddump/lkjsdflkjasdkjfsdkljfsdofusldkjfosduflkwejroulksdfjosduifl.txt:1396463682
 Documents/minddump/lkjsdflkjsadfousadflkjsadfousadlfkjsdofuislkdfjsoifdusdflkjweroulksjdfousdflk.txt:1376216585
 Documents/minddump/lkjsdflkjsadlfkjsdflkjsdlfkjsdflkjsdfllk.txt:1360771354
@@ -3653,7 +3654,7 @@ Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge
 Projects/ProjectGoOutside/i.could.use.this.as.a.name.of.my.stream.channel.show.or.whatever.its.called.txt:1355727455
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
 Projects/ProjectGoOutside/wasdf.com.home.for.fingers.software.and.setup.but.also.for.controlling.windows.linux.etc.TITLE.FOR.DOMAIN.txt:1341829441
-Projects/Prototypes/:1418369026
+Projects/Prototypes/:1419897040
 Projects/Prototypes/AdDoublesRawMathLaunchSim/:1390331620
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/:1390584039
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/AdDoublesRawMathLaunchSim.pro:1390329374
@@ -3941,6 +3942,16 @@ Projects/Prototypes/QtBroadcastServerWtClient/src/qtbroadcastservernumberwatcher
 Projects/Prototypes/QtBroadcastServerWtClient/src/qtbroadcastservernumberwatcher.h:1333037578
 Projects/Prototypes/QtBroadcastServerWtClient/src/wtnumberwatchingwidget.cpp:1389499082
 Projects/Prototypes/QtBroadcastServerWtClient/src/wtnumberwatchingwidget.h:1333040708
+Projects/Prototypes/QtHttpServer/:1419899209
+Projects/Prototypes/QtHttpServer/src/:1419899253
+Projects/Prototypes/QtHttpServer/src/QtHttpServerCli.pro:1419899226
+Projects/Prototypes/QtHttpServer/src/main.cpp:1419899203
+Projects/Prototypes/QtHttpServer/src/qthttpclient.cpp:1419898397
+Projects/Prototypes/QtHttpServer/src/qthttpclient.h:1419898041
+Projects/Prototypes/QtHttpServer/src/qthttpserver.cpp:1419899092
+Projects/Prototypes/QtHttpServer/src/qthttpserver.h:1419899055
+Projects/Prototypes/QtHttpServer/src/qthttpservercli.cpp:1419899165
+Projects/Prototypes/QtHttpServer/src/qthttpservercli.h:1419898839
 Projects/Prototypes/RemoteBankManagementTest/:1330551098
 Projects/Prototypes/RemoteBankManagementTest/src/:1331378216
 Projects/Prototypes/RemoteBankManagementTest/src/BitcoinCommunicatingServer/:1342625716
