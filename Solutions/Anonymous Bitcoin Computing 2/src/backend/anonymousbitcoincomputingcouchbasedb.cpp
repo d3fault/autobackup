@@ -45,7 +45,7 @@ void AnonymousBitcoinComputingCouchbaseDB::eventSlotForWt##GetOrStore##Api() \
     bool receiveSuccess; \
     do \
     { \
-        if(!(receiveSuccess = m_##GetOrStore##ApiWtMessageQueue->pop(m_##GetOrStore##MessageQueuesCurrentMessageBuffer))) \
+        if(!(receiveSuccess = m_##GetOrStore##ApiWtMessageQueue->pop(m_##GetOrStore##ApiMessageQueuesCurrentMessageBuffer))) \
         { \
             return; \
         } \

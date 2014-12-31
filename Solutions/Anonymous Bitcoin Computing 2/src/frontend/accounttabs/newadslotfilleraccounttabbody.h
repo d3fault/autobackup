@@ -25,9 +25,12 @@ private:
     friend class AnonymousBitcoinComputingWtGUI;
 
     WLineEdit *m_UploadNewSlotFiller_NICKNAME;
+    std::string m_Validated_NewAdSlotFiller_NICKNAME;
     std::string m_UploadNewSlotFiller_NICKNAME_B64;
     WLineEdit *m_UploadNewSlotFiller_HOVERTEXT;
+    std::string m_Validated_NewAdSlotFiller_HOVERTEXT;
     WLineEdit *m_UploadNewSlotFiller_URL;
+    std::string m_Validated_NewAdSlotFiller_URL;
     WContainerWidget *m_AdImageUploaderPlaceholder;
     WFileUpload *m_AdImageUploader;
     WPushButton *m_AdImageUploadButton;

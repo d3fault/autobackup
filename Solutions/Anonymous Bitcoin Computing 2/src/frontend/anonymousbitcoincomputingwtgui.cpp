@@ -2390,11 +2390,11 @@ void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
     //make salt
     std::string salt = sha1(username + uniqueId() /*TODOreq: uniqueId and sessionId are seen by user, which means they could be intercepted by man in the middle. use some server side rand instead*/ + "saltplx739384sdfjghej9593859dffoiueoru584758958394fowuer732487587292" + WDateTime::currentDateTime().toString().toUTF8());
     //base64 salt for storage in json/couchbase
-    std::string base64Salt = base64Encode(salt);
+    std::string base64Salt = base64Encode(salt, false);
     //hash password using base64'd salt
     std::string passwordSaltHashed = sha1(passwordPlainText + base64Salt);
     //base64 hash for storage in json/couchbase
-    std::string base64PasswordSaltHashed = base64Encode(passwordSaltHashed);
+    std::string base64PasswordSaltHashed = base64Encode(passwordSaltHashed, false);
     //json'ify
     ptree jsonDoc;
     jsonDoc.put(JSON_USER_ACCOUNT_BALANCE, "0");
@@ -2452,10 +2452,10 @@ void AnonymousBitcoinComputingWtGUI::loginIfInputHashedEqualsDbInfo(const std::s
     std::string passwordSaltInBase64FromDb = pt.get<std::string>(JSON_USER_ACCOUNT_PASSWORD_SALT);
 
     std::string passwordFromUserInput = m_LoginPasswordLineEdit->text().toUTF8();
-    std::string passwordHashFromUserInput = sha1(passwordFromUserInput + passwordSaltInBase64FromDb);
+    std::string passwordHashFromUserInput = sha1(passwordFromUserInput + passwordSaltInBase64FromDb); //TODOmb: rounds?
 
     //hmm i COULD use base64decode but it doesn't matter which of the two converts to the other's format
-    std::string passwordHashBase64FromUserInput = base64Encode(passwordHashFromUserInput);
+    std::string passwordHashBase64FromUserInput = base64Encode(passwordHashFromUserInput, false);
 
     if(passwordHashBase64FromUserInput == passwordHashInBase64FromDb)
     {

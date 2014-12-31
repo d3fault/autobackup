@@ -149,7 +149,7 @@ void AdImageGetAndSubscribeManager::handleNetworkRequestRepliedTo(QNetworkReply 
         istringstream is(replyStdString);
         read_json(is, pt);
         const string error = pt.get<string>(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_ERROR_KEY);
-        someError = (error == JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_ERROR_YESERROR_VALUE);
+        someError = (error != JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_ERROR_NOERROR_VALUE);
     }
 
     if(someError) //errors, such as timeout, use "no ad" placeholder and of course schedule a retry in a little

@@ -51,10 +51,7 @@ GetTodaysAdSlotServerClientConnection::GetTodaysAdSlotServerClientConnection(QTc
     m_ClientStream.setAutoDetectUnicode(true);
     connect(clientSocket, SIGNAL(readyRead()), this, SLOT(handleClientReadyRead()));
     connect(clientSocket, SIGNAL(disconnected()), this, SLOT(deleteLaterIfNoBackendRequestPendingOrWhenThatBackendRequestFinishes()));
-}
-GetTodaysAdSlotServerClientConnection::~GetTodaysAdSlotServerClientConnection()
-{
-    m_ClientStream.device()->deleteLater();
+    connect(clientSocket, SIGNAL(destroyed()), this, SLOT(deleteLater())); //hack because when setting the tcp socket as parent of 'this', it won't compile... complains it isn't a qobject. wtf? i tested in a barebones app and it compiled just fine...
 }
 void GetTodaysAdSlotServerClientConnection::beginDbGet(const string &keyToGet, GetTodaysAdSlotServerClientConnection::GetTodaysAdSlotServerClientConnectionStageEnum stageToSet)
 {
@@ -110,9 +107,14 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
 }
 void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGetAdCampaign(const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError)
 {
-    if(dbError || !lcbOpSuccess)
+    if(dbError)
     {
         sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_NO_AD_PLACEHOLDER);
+        return;
+    }
+    if(!lcbOpSuccess)
+    {
+        sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("There is no ad campaign at that index, or that is an invalid user"));
         return;
     }
 
@@ -135,9 +137,14 @@ void GetTodaysAdSlotServerClientConnection::tryToGetCurrentSlotIndex()
 }
 void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGetAdCampaignSlot(const string &couchbaseDocument, bool lcbOpSuccess, bool dbError)
 {
-    if(dbError || !lcbOpSuccess)
+    if(dbError)
     {
         sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_NO_AD_PLACEHOLDER);
+        return;
+    }
+    if(!lcbOpSuccess)
+    {
+        sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Todays ad slot was not purchased")); //TODOoptional: other similar more descriptive error
         return;
     }
 
@@ -171,7 +178,7 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
 }
 void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGetAdCampaignSlotFiller(const string &couchbaseDocument, bool lcbOpSuccess, bool dbError)
 {
-    if(dbError || !lcbOpSuccess)
+    if(dbError || !lcbOpSuccess) //TODOoptional: lcb op fail is TOTAL SYSTEM FAILURE, ad slot filler should always exist
     {
         sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_NO_AD_PLACEHOLDER);
         return;
@@ -189,6 +196,7 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
     todaysFilledAdSlot.put(JSON_SLOT_FILLER_IMAGEB64, pt.get<string>(JSON_SLOT_FILLER_IMAGEB64));
     todaysFilledAdSlot.put(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_EXPIRATION_DATETIME, boost::lexical_cast<string>(m_CurrentAdSlotExpireDateTime));
     todaysFilledAdSlot.put(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_ERROR_KEY, JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_ERROR_NOERROR_VALUE);
+    todaysFilledAdSlot.put(JSON_SLOT_FILLER_IMAGE_GUESSED_EXTENSION, pt.get<string>(JSON_SLOT_FILLER_IMAGE_GUESSED_EXTENSION));
     std::ostringstream todaysAdSlotJsonBuffer;
     write_json(todaysAdSlotJsonBuffer, todaysFilledAdSlot, false);
     const std::string &todaysAdSlotJsonStdStr = todaysAdSlotJsonBuffer.str();
@@ -213,7 +221,7 @@ void GetTodaysAdSlotServerClientConnection::backendDbGetCallback(std::string cou
     m_BackendRequestPending = false;
     if(m_WantsToBeDeletedLater) //they disconnected before our async db hit returned
     {
-        deleteLater(); //double delete later doesn't matter
+        m_ClientStream.device()->deleteLater(); //double delete later doesn't matter
         return;
     }
 
@@ -244,7 +252,7 @@ void GetTodaysAdSlotServerClientConnection::backendDbStoreCallback(bool lcbOpSuc
     m_BackendRequestPending = false;
     if(m_WantsToBeDeletedLater) //they disconnected before our async db hit returned
     {
-        deleteLater(); //double delete later doesn't matter
+        m_ClientStream.device()->deleteLater(); //double delete later doesn't matter
         return;
     }
 
@@ -264,7 +272,7 @@ void GetTodaysAdSlotServerClientConnection::handleClientReadyRead()
 {
     if(m_WantsToBeDeletedLater && !m_BackendRequestPending)
     {
-        deleteLater();
+        m_ClientStream.device()->deleteLater();
         return;
     }
     if(m_BackendRequestPending)
@@ -307,13 +315,54 @@ void GetTodaysAdSlotServerClientConnection::handleClientReadyRead()
                                         beginDbGet(adSpaceCampaignSlotCacheKey(m_CampaignOwnerRequested, m_CampaignIndexRequested), GetAdCampaignCurrentSlotCacheIfExists);
                                         disconnect(m_ClientStream.device(), SIGNAL(readyRead()), this, SLOT(handleClientReadyRead())); //we got what we wanted
                                     }
+                                    else
+                                    {
+                                        sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Invalid HTTP GET URL Parameter 'user'"));
+                                        return;
+                                    }
+                                }
+                                else
+                                {
+                                    sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Invalid HTTP GET URL Parameter 'index'"));
+                                    return;
                                 }
                             }
+                            else
+                            {
+                                sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Missing HTTP GET URL Parameters ('user' and/or 'index')"));
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Invalid HTTP GET URL. Did you mean '/todays-ad.json'?"));
+                            return;
                         }
                     }
+                    else
+                    {
+                        sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Invalid HTTP GET URL"));
+                        return;
+                    }
+                }
+                else
+                {
+                    sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Invalid HTTP GET URL"));
+                    return;
                 }
             }
+            else
+            {
+                sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Invalid HTTP Method Parameters"));
+                return;
+            }
         }
+        else
+        {
+            sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Invalid HTTP Method"));
+            return;
+        }
+
         if(m_ClientStream.device()->bytesAvailable() > 0)
         {
             m_ClientStream.device()->readAll();  //we only deal with one line, so anything else just gets read and ignored
@@ -327,6 +376,6 @@ void GetTodaysAdSlotServerClientConnection::deleteLaterIfNoBackendRequestPending
     m_WantsToBeDeletedLater = true;
     if(!m_BackendRequestPending)
     {
-        deleteLater();
+        m_ClientStream.device()->deleteLater();
     }
 }

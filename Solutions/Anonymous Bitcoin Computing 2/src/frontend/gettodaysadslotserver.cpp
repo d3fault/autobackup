@@ -41,5 +41,5 @@ void GetTodaysAdSlotServer::stopAndDestroy()
 }
 void GetTodaysAdSlotServer::handleNewConnection()
 {
-    new GetTodaysAdSlotServerClientConnection(m_Server->nextPendingConnection(), this);
+    new GetTodaysAdSlotServerClientConnection(m_Server->nextPendingConnection());
 }

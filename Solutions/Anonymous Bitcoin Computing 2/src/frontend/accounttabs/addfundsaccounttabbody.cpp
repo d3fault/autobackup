@@ -194,7 +194,7 @@ void AddFundsAccountTabBody::checkNotAttemptingToFillAkaPurchaseSlotThenTransiti
         m_BitcoinKeySetIndex_aka_setN = boost::lexical_cast<std::string>(zeroThrough999(rng));
         //generate uuid-per-request (could be done later, but needs to not overwrite recovery one set above, so best to do it here/now)
         string uuidSeed = m_AbcApp->m_CurrentlyLoggedInUsername + uniqueId() + WDateTime::currentDateTime().toString().toUTF8() + boost::lexical_cast<std::string>(m_BitcoinKeySetIndex_aka_setN);
-        m_PerGetBitcoinKeyUUID = base64Encode(sha1(uuidSeed)); //after one look at boost::uuid, looks shit
+        m_PerGetBitcoinKeyUUID = base64Encode(sha1(uuidSeed), false); //after one look at boost::uuid, looks shit
 
         //get the page that that set is currently on
         m_BitcoinKeySetPage_aka_PageY = ""; //hack to tell us we aren't in recovery code (recovery code already has page, _AND_ recovery can't use 'most recent' because it needs to check 'old' pages for the UUID).

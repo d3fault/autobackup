@@ -13,7 +13,7 @@
 #5) cd into wtAppHere and `ln -s /usr/local/share/Wt/resources/ resources`
 #                                   ^or just /usr/share/Wt if using Wt from debian repository
 #6a) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 7777
-#6b) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 80 --ssl-certificate=server.pem --ssl-private-key=server.key --ssl-tmp-dh=dh512.pem --https-address 0.0.0.0 --https-port 443 --api-port 444
+#6b) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 80 --ssl-certificate=server.pem --ssl-private-key=server.key --ssl-tmp-dh=dh512.pem --https-address 0.0.0.0 --https-port 443
 
 TARGET = AnonymousBitcoinComputing
 TEMPLATE = app

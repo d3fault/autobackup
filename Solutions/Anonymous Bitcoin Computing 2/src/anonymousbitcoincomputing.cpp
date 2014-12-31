@@ -5,6 +5,7 @@
 #include <QCoreApplication>
 #include <QStringList>
 #include <QThread>
+#include <QScopedPointer>
 
 #include "abc2common.h"
 #include "nonexpiringstringwresource.h"
@@ -121,20 +122,20 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     wtServer.addEntryPoint(Application, &AnonymousBitcoinComputing::createAnonymousBitcoinComputingWtGUI);
 
     //BEGIN GetTodaysAdSlotServer
-    GetTodaysAdSlotServer getTodaysAdSlotServer;
     GetTodaysAdSlotServer::setBackendGetQueue(couchbaseDb.getGetApiLockFreeQueue());
     GetTodaysAdSlotServer::setBackendStoreQueue(couchbaseDb.getStoreApiLockFreeQueue());
     GetTodaysAdSlotServer::setBackendGetQueueEvent(couchbaseDb.getGetApiEventCallbackForWt());
     GetTodaysAdSlotServer::setBackendStoreQueueEvent(couchbaseDb.getStoreApiEventCallbackForWt());
+    QScopedPointer<GetTodaysAdSlotServer, QScopedPointerDeleteLater> getTodaysAdSlotServer(new GetTodaysAdSlotServer());
     QThread getTodaysAdSlotServerThread;
     getTodaysAdSlotServerThread.start();
-    getTodaysAdSlotServer.moveToThread(&getTodaysAdSlotServerThread);
+    getTodaysAdSlotServer->moveToThread(&getTodaysAdSlotServerThread);
     bool getTodaysAdSlotServerInitializedAndStartedSuccessfully = false;
-    QMetaObject::invokeMethod(&getTodaysAdSlotServer, "initializeAndStart", Qt::BlockingQueuedConnection, Q_RETURN_ARG(bool, getTodaysAdSlotServerInitializedAndStartedSuccessfully), Q_ARG(quint16, apiPort));
+    QMetaObject::invokeMethod(getTodaysAdSlotServer.data(), "initializeAndStart", Qt::BlockingQueuedConnection, Q_RETURN_ARG(bool, getTodaysAdSlotServerInitializedAndStartedSuccessfully), Q_ARG(quint16, apiPort));
     if(!getTodaysAdSlotServerInitializedAndStartedSuccessfully)
     {
         beginStoppingCouchbase(&couchbaseDb);
-        getTodaysAdSlotServer.deleteLater();
+        getTodaysAdSlotServer.reset();
         getTodaysAdSlotServerThread.quit();
         getTodaysAdSlotServerThread.wait();
         finalStopCouchbaseAndWaitForItsThreadToJoin(&couchbaseDb);
@@ -162,8 +163,8 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     beginStoppingCouchbase(&couchbaseDb);
 
     //BEGIN GetTodaysAdSlotServer
-    QMetaObject::invokeMethod(&getTodaysAdSlotServer, "stopAndDestroy", Qt::BlockingQueuedConnection);
-    getTodaysAdSlotServer.deleteLater();
+    QMetaObject::invokeMethod(getTodaysAdSlotServer.data(), "stopAndDestroy", Qt::BlockingQueuedConnection);
+    getTodaysAdSlotServer.reset();
     getTodaysAdSlotServerThread.quit();
     getTodaysAdSlotServerThread.wait();
     //END //BEGIN GetTodaysAdSlotServer

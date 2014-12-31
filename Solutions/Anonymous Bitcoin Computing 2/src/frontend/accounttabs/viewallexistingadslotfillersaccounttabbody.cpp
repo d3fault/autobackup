@@ -198,13 +198,13 @@ void ViewAllExistingAdSlotFillersAccountTabBody::oneAdSlotFillerFromHackyMultiGe
     std::pair<string,string> guessedExtensionAndMimeType = StupidMimeFromExtensionUtil::guessExtensionAndMimeType(pt.get<std::string>(JSON_SLOT_FILLER_IMAGE_GUESSED_EXTENSION));
     //SingleUseSelfDeletingMemoryResource *adImageResource = new SingleUseSelfDeletingMemoryResource(base64Decode(pt.get<std::string>(JSON_SLOT_FILLER_IMAGEB64)), "image" + guessedExtensionAndMimeType.first, "image/" + guessedExtensionAndMimeType.second, WResource::Inline, adImageAnchorOrderingPlaceholderContainer);
 
-    const std::string &permaCacheFilenameOnly = Wt::Utils::base64Encode(keyToAdSlotFillerArriving);
+    const std::string &permaCacheFilenameOnly = Wt::Utils::base64Encode(keyToAdSlotFillerArriving, false);
     const std::string permaCacheFilePath = VIEW_ALL_AD_SLOT_FILLERS_PATH_TO_HDD_PERMACACHE_WITH_TRAILING_SLASH + permaCacheFilenameOnly;
 
     //JIT perma-cachify
     if(!boost::filesystem::exists(permaCacheFilePath))
     {
-        const std::string &tempFilenameSoNotClashingWithNeighborSessions_AndAlsoForExistenceAtomicity = VIEW_ALL_AD_SLOT_FILLERS_PATH_TO_HDD_PERMACACHE_WITH_TRAILING_SLASH  "TEMP_" + permaCacheFilenameOnly + "_" + Wt::Utils::base64Encode(m_AbcApp->sessionId());
+        const std::string &tempFilenameSoNotClashingWithNeighborSessions_AndAlsoForExistenceAtomicity = VIEW_ALL_AD_SLOT_FILLERS_PATH_TO_HDD_PERMACACHE_WITH_TRAILING_SLASH  "TEMP_" + permaCacheFilenameOnly + "_" + Wt::Utils::base64Encode(m_AbcApp->sessionId(), false);
         ofstream adSlotImageTempFile;
         adSlotImageTempFile.open(tempFilenameSoNotClashingWithNeighborSessions_AndAlsoForExistenceAtomicity.c_str());
         adSlotImageTempFile << base64Decode(pt.get<std::string>(JSON_SLOT_FILLER_IMAGEB64));

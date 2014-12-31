@@ -49,7 +49,7 @@ void NewAdSlotFillerAccountTabBody::populateAndInitialize()
     SafeTextValidatorAndInputFilter *hovertextSafeTextValidator = new SafeTextValidatorAndInputFilter("512", m_UploadNewSlotFiller_HOVERTEXT);
     m_UploadNewSlotFiller_HOVERTEXT->setValidator(hovertextSafeTextValidator);
     m_UploadNewSlotFiller_HOVERTEXT->setMaxLength(512); //for randall
-    m_UploadNewSlotFiller_HOVERTEXT->setTextSize(NewAdSlotFillerAccountTabBody_INPUT_FORMS_VISUAL_WIDTH_IN_CHARS);
+    m_UploadNewSlotFiller_HOVERTEXT->setTextSize(NewAdSlotFillerAccountTabBody_INPUT_FORMS_VISUAL_WIDTH_IN_CHARS); //visual only
 
     uploadNewSlotFillerGridLayout->addWidget(new WText("--- 3) URL:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
     m_UploadNewSlotFiller_URL = new WLineEdit("http://");
@@ -60,7 +60,7 @@ void NewAdSlotFillerAccountTabBody::populateAndInitialize()
     urlValidator->setNoMatchText("Invalid URL");
     m_UploadNewSlotFiller_URL->setValidator(urlValidator);
     m_UploadNewSlotFiller_URL->setMaxLength(2048);
-    m_UploadNewSlotFiller_URL->setTextSize(NewAdSlotFillerAccountTabBody_INPUT_FORMS_VISUAL_WIDTH_IN_CHARS);
+    m_UploadNewSlotFiller_URL->setTextSize(NewAdSlotFillerAccountTabBody_INPUT_FORMS_VISUAL_WIDTH_IN_CHARS); //visual only
 
     uploadNewSlotFillerGridLayout->addWidget(new WText("--- 4) Ad Image:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
 
@@ -82,11 +82,15 @@ void NewAdSlotFillerAccountTabBody::populateAndInitialize()
 }
 void NewAdSlotFillerAccountTabBody::handleAdImageUploadButtonClicked()
 {
-    //would be dumb to upload the image THEN sanitize, but we sanitize twice because they can change the fields while it's uploading
+    //OLD (post upload validation was intermittently failing. so now we capture them before the upload):would be dumb to upload the image THEN sanitize, but we sanitize twice because they can change the fields while it's uploading
     if(!userSuppliedAdSlotFillerFieldsAreValid())
     {
         return;
     }
+    m_Validated_NewAdSlotFiller_HOVERTEXT = m_UploadNewSlotFiller_HOVERTEXT->text().toUTF8();
+    m_Validated_NewAdSlotFiller_NICKNAME = m_UploadNewSlotFiller_NICKNAME->text().toUTF8();
+    m_Validated_NewAdSlotFiller_URL = m_UploadNewSlotFiller_URL->text().toUTF8();
+
     m_AdImageUploadButton->disable();
     m_AdImageUploader->upload();
 }
@@ -102,11 +106,13 @@ void NewAdSlotFillerAccountTabBody::handleAdSlotFillerImageUploadFinished()
 {
     //TO DOnereq(relying on the fact that wfileupload gets deleted on logout, but using a simple m_LoggedIn check below to protect against said hypothetical race condition describe herein (any username is better than no username ;-P)): since we can't deferRendering() before/during the upload (WHY!??!?), the user may have done something (namely logged out, but the possibilities extend to every possible op theoretically). If the user for example logged out while the upload was in progress, we obviously don't want to continue forward with adding the ad slot filler, especially if we were to rely on a now blanked username (or worse, a logout/login NEW username WTF TODOreq). However it's also worth noting that logout deletes the account widget, which deletes the file upload object itself. Wtf happens when you delete a file upload object when an upload is in progress? Even still, there's probably a race condition where the upload object sends the upload finished signal, gets deleted just after that, and we still process the upload object's finished signal here. Maybe I need to protect the log out functionality with a bool m_AnUploadIsInProgress and just refuse until it's false again (note do it for tooBigOfFile as well ofc).... I think checking m_LoggedIn here/now won't cut it because they could have logged out and back in again as a different user, so that bool would still be true (that's a ridiculously unlikely race condition and would probably require automation and luck to accomplish.... and ultimately there would be very little gain because it's not funds or anything, just an advertisement image/etc). Protecting the log out with 'uploadIsInProgress' plugs that race condition, BUT now am I supposed to check that uploadIsInProgress before doing _ANY_ app op? Blah I wish I could just deferRendering and this wouldn't even be a problem.
     //^^pretty sure the slot connected to upload finished (this one) WON'T get invoked if log out is pressed during upload (since log out deletes it). the signal emitter will not be exposed because it will be deleted, so the slot invocation will be discarded (i think/hope ;-P)
+#if 0 //this was intermittently failing, no idea why
     if(!userSuppliedAdSlotFillerFieldsAreValid())
     {
         resetAdSlotFillerImageUploadFieldsForAnotherUpload(); //TODOoptional: don't clear nickname/hover/url on this specific call (other calls to the method do want to)
         return;
     }
+#endif
     m_AbcApp->deferRendering();
 
     //TO DOnereqNOPE-ish (outdated, see below): maybe optional, idfk, but basically i want this store to just eh 'keep incrementing slot filler index until the LCB_ADD succeeds'. I'm just unsure whether or not the front-end or backend should be driving that. I think I have a choice here... and idk which is betterererer. Having the backend do it would probably be more efficient, but eh I think the front-end has to here/now/before-the-STORE-one-line-below determine the slot filler index to start trying to LCB_ADD at (else we'd be incredibly inefficient if we started at 0 and crawled up every damn time)... SO SINCE the front-end is already getting involved with it, maybe he should be the one directing the incrementing? It does seem "user specific" (user being frontend -> using backend), _BUT_ it also could be very easily genericized and used in tons of other apps... so long as we either use some "%N%" (no) in the key or make the number the very last part of the key (yes). I might even use this same thing with the bitcoin keys, but eh I haven't figured those out yet and don't want to yet (one problem at a time).
@@ -204,10 +210,10 @@ void NewAdSlotFillerAccountTabBody::tryToAddAdSlotFillerToCouchbase(const string
     pt.put(JSON_SLOT_FILLER_USERNAME, m_AbcApp->m_CurrentlyLoggedInUsername);
 
     //already sanitized, but we base64 these since we allow all kinds of crazy characters our json might not like
-    m_UploadNewSlotFiller_NICKNAME_B64 = base64Encode(m_UploadNewSlotFiller_NICKNAME->text().toUTF8());
+    m_UploadNewSlotFiller_NICKNAME_B64 = base64Encode(m_Validated_NewAdSlotFiller_NICKNAME, false);
     pt.put(JSON_SLOT_FILLER_NICKNAME, m_UploadNewSlotFiller_NICKNAME_B64);
-    pt.put(JSON_SLOT_FILLER_HOVERTEXT, base64Encode(m_UploadNewSlotFiller_HOVERTEXT->text().toUTF8()));
-    pt.put(JSON_SLOT_FILLER_URL, base64Encode(m_UploadNewSlotFiller_URL->text().toUTF8()));
+    pt.put(JSON_SLOT_FILLER_HOVERTEXT, base64Encode(m_Validated_NewAdSlotFiller_HOVERTEXT, false));
+    pt.put(JSON_SLOT_FILLER_URL, base64Encode(m_Validated_NewAdSlotFiller_URL, false));
 
     std::string adImageUploadFileLocation = m_AdImageUploader->spoolFileName();
     pair<string,string> guessedExtensionAndMimeType = StupidMimeFromExtensionUtil::guessExtensionAndMimeType(m_AdImageUploader->clientFileName().toUTF8());
@@ -255,7 +261,7 @@ void NewAdSlotFillerAccountTabBody::tryToAddAdSlotFillerToCouchbase(const string
     }
 
     std::string adImageString = std::string(adImageBuffer, fileSizeHack);
-    std::string adImageB64string = base64Encode(adImageString); //TODOreq(done i THINK. made 2.5mb queue max, but 164 kb wfileupload max): doesn't encoding in base64 make it larger, so don't i need to make my "StoreLarge" message size bigger? I know in theory it doesn't change the size, but it all depends on representation or some such idfk (i get con-
+    std::string adImageB64string = base64Encode(adImageString, false); //TODOreq(done i THINK. made 2.5mb queue max, but 164 kb wfileupload max): doesn't encoding in base64 make it larger, so don't i need to make my "StoreLarge" message size bigger? I know in theory it doesn't change the size, but it all depends on representation or some such idfk (i get con-
 
     pt.put(JSON_SLOT_FILLER_IMAGEB64, adImageB64string);
     pt.put(JSON_SLOT_FILLER_IMAGE_GUESSED_EXTENSION, guessedExtensionAndMimeType.first);
@@ -346,16 +352,16 @@ void NewAdSlotFillerAccountTabBody::doneAttemptingToUpdateAllAdSlotFillersDocSin
 
     //so now show them the image
 
-    WImage *adImagePreview = new WImage(m_MostRecentlyUploadedImageAsFileResource, m_UploadNewSlotFiller_HOVERTEXT->text());
+    WImage *adImagePreview = new WImage(m_MostRecentlyUploadedImageAsFileResource, m_Validated_NewAdSlotFiller_HOVERTEXT);
     adImagePreview->resize(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS, ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS);
-    WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, m_UploadNewSlotFiller_URL->text().toUTF8()), adImagePreview);
+    WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, m_Validated_NewAdSlotFiller_URL), adImagePreview);
     adImageAnchor->setTarget(TargetNewWindow);
 
     //difference between these two?
-    adImagePreview->setToolTip(m_UploadNewSlotFiller_HOVERTEXT->text());
-    adImageAnchor->setToolTip(m_UploadNewSlotFiller_HOVERTEXT->text());
+    adImagePreview->setToolTip(m_Validated_NewAdSlotFiller_HOVERTEXT);
+    adImageAnchor->setToolTip(m_Validated_NewAdSlotFiller_HOVERTEXT);
 
-    m_AdSlotFillersVLayout->addWidget(new WText("Preview of '" + m_UploadNewSlotFiller_NICKNAME->text() + "':"));
+    m_AdSlotFillersVLayout->addWidget(new WText("Preview of '" + m_Validated_NewAdSlotFiller_NICKNAME + "':"));
     m_AdSlotFillersVLayout->addWidget(adImageAnchor);
     m_AdSlotFillersVLayout->addWidget(new WBreak());
     m_AdSlotFillersVLayout->addWidget(new WBreak());

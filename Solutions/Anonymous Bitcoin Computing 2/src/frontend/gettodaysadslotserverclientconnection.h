@@ -26,7 +26,6 @@ public:
     static void setBackendStoreQueueEvent(struct event *backendQueueEvent);
 
     explicit GetTodaysAdSlotServerClientConnection(QTcpSocket *clientSocket, QObject *parent = 0);
-    ~GetTodaysAdSlotServerClientConnection();
 private:
     enum GetTodaysAdSlotServerClientConnectionStageEnum
     {
