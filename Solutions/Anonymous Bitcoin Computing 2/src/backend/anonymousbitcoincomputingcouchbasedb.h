@@ -269,11 +269,13 @@ public:
 
     //queue<StoreCouchbaseDocumentByKeyRequest*> *getStoreLockFreeQueueForWt0();
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LOCKFREE_QUEUE_GETTER_MEMBER_DECLARATIONS_MACRO)
-    queue<GetCouchbaseDocumentByKeyRequest*> *getGetLockFreeQueueForApi();
+    queue<GetCouchbaseDocumentByKeyRequest*> *getGetApiLockFreeQueue();
+    queue<StoreCouchbaseDocumentByKeyRequest*> *getStoreApiLockFreeQueue();
 
     //struct event *getStoreEventCallbackForWt0();
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_GETTER_MEMBER_DECLARATIONS_MACRO)
-    struct event *getGetEventCallbackForApi();
+    ABC_COUCHBASE_LIBEVENTS_GETTER_MEMBER_DECLARATIONS_MACRO(unused, , GetApi)
+    ABC_COUCHBASE_LIBEVENTS_GETTER_MEMBER_DECLARATIONS_MACRO(unused, , StoreApi)
 private:
     friend class GetAndSubscribeCacheItem;
     friend class AutoRetryingWithExponentialBackoffCouchbaseGetRequest;
@@ -371,25 +373,31 @@ private:
     //message_queue *m_StoreWtMessageQueue0;
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_MESSAGE_QUEUE_DECLARATIONS_MACRO)
     queue<GetCouchbaseDocumentByKeyRequest*> *m_GetApiWtMessageQueue;
+    queue<StoreCouchbaseDocumentByKeyRequest*> *m_StoreApiWtMessageQueue;
 
     //void *m_StoreMessageQueue0CurrentMessageBuffer;
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_COUCHBASE_MESSAGE_QUEUES_CURRENT_MESSAGE_BUFFER_DECLARATION_MACRO)
     GetCouchbaseDocumentByKeyRequest *m_GetApiMessageQueuesCurrentMessageBuffer;
+    StoreCouchbaseDocumentByKeyRequest *m_StoreApiMessageQueuesCurrentMessageBuffer;
 
     //struct event *m_StoreEventCallbackForWt0;
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_MEMBER_DECLARATIONS_MACRO)
-    struct event *m_GetEventCallbackForApi;
+    ABC_COUCHBASE_LIBEVENTS_MEMBER_DECLARATIONS_MACRO(unused, , GetApi)
+    ABC_COUCHBASE_LIBEVENTS_MEMBER_DECLARATIONS_MACRO(unused, , StoreApi)
 
     //static void eventSlotForWtStore0Static(evutil_socket_t unusedSocket, short events, void *userData);
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_SLOTS_STATIC_METHOD_DECLARATIONS_MACRO)
-    static void eventSlotForApiGetStatic(evutil_socket_t unusedSocket, short events, void *userData);
+    ABC_COUCHBASE_LIBEVENTS_SLOTS_STATIC_METHOD_DECLARATIONS_MACRO(unused, , GetApi)
+    ABC_COUCHBASE_LIBEVENTS_SLOTS_STATIC_METHOD_DECLARATIONS_MACRO(unused, , StoreApi)
 
     void scheduleGetRequest(AutoRetryingWithExponentialBackoffCouchbaseGetRequest *autoRetryingWithExponentialBackoffCouchbaseGetRequest);
     void scheduleStoreRequest(AutoRetryingWithExponentialBackoffCouchbaseStoreRequest *autoRetryingWithExponentialBackoffCouchbaseStoreRequest);
     //void eventSlotForWtStore0();
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_BOOST_PP_REPEAT_AGAIN_MACRO, ABC_COUCHBASE_LIBEVENTS_SLOTS_METHOD_DECLARATIONS_MACRO)
-    void eventSlotForApiGet();
-    void eventSlotForApiGetActual();
+    void eventSlotForWtGetApi();
+    void eventSlotForWtStoreApi();
+    void eventSlotForGetApiActual();
+    void eventSlotForStoreApiActual();
 
     //the static methods catch parameters (evutil_socket_t unusedSocket, short events), but we don't use them currently
     //void eventSlotForWtStore();

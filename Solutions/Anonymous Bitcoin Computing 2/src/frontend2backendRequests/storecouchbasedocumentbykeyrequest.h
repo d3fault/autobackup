@@ -17,7 +17,7 @@
 #include <boost/serialization/split_member.hpp>
 #endif // ABC_USE_BOOST_LOCKFREE_QUEUE
 
-class AnonymousBitcoinComputingWtGUI;
+class IStoreCouchbaseDocumentByKeyRequestResponder;
 
 class StoreCouchbaseDocumentByKeyRequest
 {
@@ -34,15 +34,15 @@ public:
         SaveOutputCasMode
     };
     //serialize constructor no cas input overload
-    StoreCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string couchbaseStoreKeyInput, std::string couchbaseStoreDocumentInput, LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum lcbStoreMode = AddMode, WhatToDoWithOutputCasEnum whatToDoWithOutputCas = DiscardOuputCasMode);
+    StoreCouchbaseDocumentByKeyRequest(IStoreCouchbaseDocumentByKeyRequestResponder *responder, std::string wtSessionId, void *pointerToAnonymousBitcoinComputingWtGUI, std::string couchbaseStoreKeyInput, std::string couchbaseStoreDocumentInput, LcbStoreMode_AndWhetherOrNotThereIsInputCasEnum lcbStoreMode = AddMode, WhatToDoWithOutputCasEnum whatToDoWithOutputCas = DiscardOuputCasMode);
     //serialize constructor cas input overload
-    StoreCouchbaseDocumentByKeyRequest(std::string wtSessionId, AnonymousBitcoinComputingWtGUI *pointerToAnonymousBitcoinComputingWtGUI, std::string couchbaseStoreKeyInput, std::string couchbaseStoreDocumentInput, u_int64_t cas, WhatToDoWithOutputCasEnum whatToDoWithOutputCas = DiscardOuputCasMode);
+    StoreCouchbaseDocumentByKeyRequest(IStoreCouchbaseDocumentByKeyRequestResponder *responder, std::string wtSessionId, void *pointerToAnonymousBitcoinComputingWtGUI, std::string couchbaseStoreKeyInput, std::string couchbaseStoreDocumentInput, u_int64_t cas, WhatToDoWithOutputCasEnum whatToDoWithOutputCas = DiscardOuputCasMode);
     //deserialize constructor
-    StoreCouchbaseDocumentByKeyRequest();
+    //StoreCouchbaseDocumentByKeyRequest();
 
     std::string WtSessionId;
-    AnonymousBitcoinComputingWtGUI *AnonymousBitcoinComputingWtGUIPointerForCallback;
-    static const unsigned char LengthOfAddressToAnonymousBitcoinComputingWtGUI = sizeof(AnonymousBitcoinComputingWtGUI*) + 1;
+    void *AnonymousBitcoinComputingWtGUIPointerForCallback;
+    static const unsigned char LengthOfAddressToAnonymousBitcoinComputingWtGUI = sizeof(void*) + 1;
     std::string CouchbaseStoreKeyInput;
     std::string CouchbaseStoreDocumentInput;
     bool LcbStoreModeIsAdd; //LCB_ADD vs. LCB_SET
@@ -50,9 +50,10 @@ public:
     u_int64_t CasInput;
     bool SaveCasOutput;
 
-    static void respond(StoreCouchbaseDocumentByKeyRequest *originalRequest, bool lcbOpSuccess, bool dbError);
-    static void respondWithCas(StoreCouchbaseDocumentByKeyRequest *originalRequest, u_int64_t casOutput, bool lcbOpSuccess, bool dbError);
+    void respond(bool lcbOpSuccess, bool dbError);
+    void respondWithCas(u_int64_t casOutput, bool lcbOpSuccess, bool dbError);
 private:
+    IStoreCouchbaseDocumentByKeyRequestResponder *m_Responder;
 #ifndef ABC_USE_BOOST_LOCKFREE_QUEUE
     friend class boost::serialization::access;
     template<class Archive>

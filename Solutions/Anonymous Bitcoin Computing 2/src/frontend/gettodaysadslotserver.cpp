@@ -6,13 +6,21 @@
 
 //TODOreq: https (use same cert/key passed to wt via args)
 //single threaded (or two threads if you count the db thread), yea, but ASYNC woooot
-void GetTodaysAdSlotServer::setBackendQueue(boost::lockfree::queue<GetCouchbaseDocumentByKeyRequest *> *backendQueue)
+void GetTodaysAdSlotServer::setBackendGetQueue(boost::lockfree::queue<GetCouchbaseDocumentByKeyRequest *> *backendQueue)
 {
-    GetTodaysAdSlotServerClientConnection::setBackendQueue(backendQueue);
+    GetTodaysAdSlotServerClientConnection::setBackendGetQueue(backendQueue);
 }
-void GetTodaysAdSlotServer::setBackendQueueEvent(struct event *backendQueueEvent)
+void GetTodaysAdSlotServer::setBackendStoreQueue(boost::lockfree::queue<StoreCouchbaseDocumentByKeyRequest *> *backendQueue)
 {
-    GetTodaysAdSlotServerClientConnection::setBackendQueueEvent(backendQueueEvent);
+    GetTodaysAdSlotServerClientConnection::setBackendStoreQueue(backendQueue);
+}
+void GetTodaysAdSlotServer::setBackendGetQueueEvent(struct event *backendQueueEvent)
+{
+    GetTodaysAdSlotServerClientConnection::setBackendGetQueueEvent(backendQueueEvent);
+}
+void GetTodaysAdSlotServer::setBackendStoreQueueEvent(struct event *backendQueueEvent)
+{
+    GetTodaysAdSlotServerClientConnection::setBackendStoreQueueEvent(backendQueueEvent);
 }
 GetTodaysAdSlotServer::GetTodaysAdSlotServer(QObject *parent)
     : QObject(parent)

@@ -4,7 +4,7 @@
 #include <string>
 #include <sys/types.h>
 
-class IGetCouchbaseDocumentByKeyRequestResponder //TODOoptimization: i only need once instance of these derived classes per TYPE, not per REQUEST/RESPONSE. they are "thread safe" ish (because all relevant data is a method param)
+class IGetCouchbaseDocumentByKeyRequestResponder
 {
 public:
     virtual void respond(const std::string &wtSessionId, void *anonymousBitcoinComputingWtGUIPointerForCallback, const std::string &couchbaseGetKeyInput, const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError)=0;

@@ -10,5 +10,6 @@ void AbcApiGetCouchbaseDocumentByKeyRequestResponder::respond(const std::string 
 void AbcApiGetCouchbaseDocumentByKeyRequestResponder::respondWithCAS(unsigned char getAndSubscribe_UNUSED, const std::string &wtSessionId_UNUSED, void *GetTodaysAdSlotServerClientConnection, const std::string &couchbaseGetKeyInput, const std::string &couchbaseDocument, u_int64_t cas, bool lcbOpSuccess, bool dbError)
 {
     //TODOoptional: API doesn't use cas atm, so fuck it
+    qFatal("AbcApiGetCouchbaseDocumentByKeyRequestResponder::respondWithCAS not implemented");
 }
 

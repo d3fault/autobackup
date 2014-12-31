@@ -11,23 +11,35 @@
 #include "abc2couchbaseandjsonkeydefines.h"
 #include "validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h"
 #include "../frontend2backendRequests/getcouchbasedocumentbykeyrequest.h"
+#include "../frontend2backendRequests/storecouchbasedocumentbykeyrequest.h"
 
 #define GetTodaysAdSlotServerClientConnection_FIRST_NO_CACHE_YET_SLOT_INDEX "0"
 #define GetTodaysAdSlotServerClientConnection_SECONDS_BEFORE_ACTUAL_EXPIRE_DATETIME_TO_SERVE_THE_NEXT_AD_SLOT 30
 
 using namespace boost::property_tree;
 
-AbcApiGetCouchbaseDocumentByKeyRequestResponder GetTodaysAdSlotServerClientConnection::s_Responder;
-queue<GetCouchbaseDocumentByKeyRequest*> *GetTodaysAdSlotServerClientConnection::s_BackendQueue = NULL;
-struct event *GetTodaysAdSlotServerClientConnection::s_BackendQueueEvent = NULL;
+AbcApiGetCouchbaseDocumentByKeyRequestResponder GetTodaysAdSlotServerClientConnection::s_GetResponder;
+AbcApiStoreCouchbaseDocumentByKeyRequestResponder GetTodaysAdSlotServerClientConnection::s_StoreResponder;
+queue<GetCouchbaseDocumentByKeyRequest*> *GetTodaysAdSlotServerClientConnection::s_BackendGetQueue = NULL;
+queue<StoreCouchbaseDocumentByKeyRequest*> *GetTodaysAdSlotServerClientConnection::s_BackendStoreQueue = NULL;
+struct event *GetTodaysAdSlotServerClientConnection::s_BackendGetQueueEvent = NULL;
+struct event *GetTodaysAdSlotServerClientConnection::s_BackendStoreQueueEvent = NULL;
 
-void GetTodaysAdSlotServerClientConnection::setBackendQueue(queue<GetCouchbaseDocumentByKeyRequest *> *backendQueue)
+void GetTodaysAdSlotServerClientConnection::setBackendGetQueue(queue<GetCouchbaseDocumentByKeyRequest *> *backendQueue)
 {
-    s_BackendQueue = backendQueue;
+    s_BackendGetQueue = backendQueue;
 }
-void GetTodaysAdSlotServerClientConnection::setBackendQueueEvent(struct event *backendQueueEvent)
+void GetTodaysAdSlotServerClientConnection::setBackendStoreQueue(queue<StoreCouchbaseDocumentByKeyRequest *> *backendQueue)
 {
-    s_BackendQueueEvent = backendQueueEvent;
+    s_BackendStoreQueue = backendQueue;
+}
+void GetTodaysAdSlotServerClientConnection::setBackendGetQueueEvent(struct event *backendQueueEvent)
+{
+    s_BackendGetQueueEvent = backendQueueEvent;
+}
+void GetTodaysAdSlotServerClientConnection::setBackendStoreQueueEvent(struct event *backendQueueEvent)
+{
+    s_BackendStoreQueueEvent = backendQueueEvent;
 }
 GetTodaysAdSlotServerClientConnection::GetTodaysAdSlotServerClientConnection(QTcpSocket *clientSocket, QObject *parent)
     : QObject(parent)
@@ -44,11 +56,19 @@ GetTodaysAdSlotServerClientConnection::~GetTodaysAdSlotServerClientConnection()
 {
     m_ClientStream.device()->deleteLater();
 }
-void GetTodaysAdSlotServerClientConnection::beginDbCall(const string &keyToGet, GetTodaysAdSlotServerClientConnection::GetTodaysAdSlotServerClientConnectionStageEnum stageToSet)
+void GetTodaysAdSlotServerClientConnection::beginDbGet(const string &keyToGet, GetTodaysAdSlotServerClientConnection::GetTodaysAdSlotServerClientConnectionStageEnum stageToSet)
 {
-    GetCouchbaseDocumentByKeyRequest *campaignCurrentSlotCacheDocRequest = new GetCouchbaseDocumentByKeyRequest(&s_Responder, "", this, keyToGet);
-    while(!s_BackendQueue->push(campaignCurrentSlotCacheDocRequest)) ;
-    event_active(s_BackendQueueEvent, EV_READ|EV_WRITE, 0);
+    GetCouchbaseDocumentByKeyRequest *getCouchbaseRequest = new GetCouchbaseDocumentByKeyRequest(&s_GetResponder, "", this, keyToGet);
+    while(!s_BackendGetQueue->push(getCouchbaseRequest)) ;
+    event_active(s_BackendGetQueueEvent, EV_READ|EV_WRITE, 0);
+    m_BackendRequestPending = true;
+    m_Stage = stageToSet;
+}
+void GetTodaysAdSlotServerClientConnection::beginDbStore(const string &keyToStore, const string &documentToStore, GetTodaysAdSlotServerClientConnection::GetTodaysAdSlotServerClientConnectionStageEnum stageToSet)
+{
+    StoreCouchbaseDocumentByKeyRequest *storeCouchbaseRequest = new StoreCouchbaseDocumentByKeyRequest(&s_StoreResponder, "", this, keyToStore, documentToStore, StoreCouchbaseDocumentByKeyRequest::SetNoCasMode);
+    while(!s_BackendStoreQueue->push(storeCouchbaseRequest)) ;
+    event_active(s_BackendStoreQueueEvent, EV_READ|EV_WRITE, 0);
     m_BackendRequestPending = true;
     m_Stage = stageToSet;
 }
@@ -72,7 +92,7 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
     if(!lcbOpSuccess)
     {
          //the campaign slot index cache does not exist. get the campaign doc itself, JUST for slotLengthHours (from then on we store it in the cache doc)
-        beginDbCall(adSpaceCampaignKey(m_CampaignOwnerRequested, m_CampaignIndexRequested), GetAdCampaignDocItselfJustToGetSlotLengthHours);
+        beginDbGet(adSpaceCampaignKey(m_CampaignOwnerRequested, m_CampaignIndexRequested), GetAdCampaignDocItselfJustToGetSlotLengthHours);
         return;
     }
     else
@@ -111,7 +131,7 @@ void GetTodaysAdSlotServerClientConnection::haveSlotLengthHoursAndKnowFirstSlotI
 }
 void GetTodaysAdSlotServerClientConnection::tryToGetCurrentSlotIndex()
 {
-    beginDbCall(adSpaceCampaignSlotKey(m_CampaignOwnerRequested, m_CampaignIndexRequested, m_CurrentSlotIndexToTry), GetAdCampaignSlot);
+    beginDbGet(adSpaceCampaignSlotKey(m_CampaignOwnerRequested, m_CampaignIndexRequested, m_CurrentSlotIndexToTry), GetAdCampaignSlot);
 }
 void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGetAdCampaignSlot(const string &couchbaseDocument, bool lcbOpSuccess, bool dbError)
 {
@@ -137,7 +157,7 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
         //woot, found todays slot :)
 
         //now we look up the ad slot filler to get the hover/url/image
-        beginDbCall(pt.get<string>(JSON_AD_SPACE_CAMPAIGN_SLOT_FILLED_WITH), GetAdCampaignSlotFiller);
+        beginDbGet(pt.get<string>(JSON_AD_SPACE_CAMPAIGN_SLOT_FILLED_WITH), GetAdCampaignSlotFiller);
         return;
     }
     else
@@ -185,8 +205,7 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
         pt2.put(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS, boost::lexical_cast<std::string>(m_SlotLengthHours));
         std::ostringstream newCacheJsonBuffer;
         write_json(newCacheJsonBuffer, pt2, false);
-        //TODO LEFT OFF: beginDbCall( , CreateOrUpdateAdCampaignCurrentSlotCache);
-        //OLD: couchbaseStoreRequestWithExponentialBackoff(adSpaceCampaignSlotCacheKey(campaignOwnerUsername, campaignIndex), newCacheJsonBuffer.str(), LCB_SET, 0, "cache index updating"); //we don't care if the cache index updating fails, because [see this doc to understand why]
+        beginDbStore(adSpaceCampaignSlotCacheKey(m_CampaignOwnerRequested, m_CampaignIndexRequested), newCacheJsonBuffer.str(), CreateOrUpdateAdCampaignCurrentSlotCache);
     }
 }
 void GetTodaysAdSlotServerClientConnection::backendDbGetCallback(std::string couchbaseDocument, bool lcbOpSuccess, bool dbError)
@@ -218,8 +237,10 @@ void GetTodaysAdSlotServerClientConnection::backendDbGetCallback(std::string cou
         break;
     }
 }
-void GetTodaysAdSlotServerClientConnection::backendDbStoreCallback(string couchbaseDocument, bool lcbOpSuccess, bool dbError)
+void GetTodaysAdSlotServerClientConnection::backendDbStoreCallback(bool lcbOpSuccess, bool dbError)
 {
+    (void)lcbOpSuccess;
+    (void)dbError;
     m_BackendRequestPending = false;
     if(m_WantsToBeDeletedLater) //they disconnected before our async db hit returned
     {
@@ -283,7 +304,7 @@ void GetTodaysAdSlotServerClientConnection::handleClientReadyRead()
                                     if(usernameValidator.validate(m_CampaignOwnerRequested).state() == LettersNumbersOnlyRegExpValidatorAndInputFilter::Valid)
                                     {
                                         //schedule backend request
-                                        beginDbCall(adSpaceCampaignSlotCacheKey(m_CampaignOwnerRequested, m_CampaignIndexRequested), GetAdCampaignCurrentSlotCacheIfExists);
+                                        beginDbGet(adSpaceCampaignSlotCacheKey(m_CampaignOwnerRequested, m_CampaignIndexRequested), GetAdCampaignCurrentSlotCacheIfExists);
                                         disconnect(m_ClientStream.device(), SIGNAL(readyRead()), this, SLOT(handleClientReadyRead())); //we got what we wanted
                                     }
                                 }

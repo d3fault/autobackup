@@ -122,8 +122,10 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
 
     //BEGIN GetTodaysAdSlotServer
     GetTodaysAdSlotServer getTodaysAdSlotServer;
-    GetTodaysAdSlotServer::setBackendQueue(couchbaseDb.getGetLockFreeQueueForApi());
-    GetTodaysAdSlotServer::setBackendQueueEvent(couchbaseDb.getGetEventCallbackForApi());
+    GetTodaysAdSlotServer::setBackendGetQueue(couchbaseDb.getGetApiLockFreeQueue());
+    GetTodaysAdSlotServer::setBackendStoreQueue(couchbaseDb.getStoreApiLockFreeQueue());
+    GetTodaysAdSlotServer::setBackendGetQueueEvent(couchbaseDb.getGetApiEventCallbackForWt());
+    GetTodaysAdSlotServer::setBackendStoreQueueEvent(couchbaseDb.getStoreApiEventCallbackForWt());
     QThread getTodaysAdSlotServerThread;
     getTodaysAdSlotServerThread.start();
     getTodaysAdSlotServer.moveToThread(&getTodaysAdSlotServerThread);
@@ -131,8 +133,10 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     QMetaObject::invokeMethod(&getTodaysAdSlotServer, "initializeAndStart", Qt::BlockingQueuedConnection, Q_RETURN_ARG(bool, getTodaysAdSlotServerInitializedAndStartedSuccessfully), Q_ARG(quint16, apiPort));
     if(!getTodaysAdSlotServerInitializedAndStartedSuccessfully)
     {
-        getTodaysAdSlotServer.deleteLater();
         beginStoppingCouchbase(&couchbaseDb);
+        getTodaysAdSlotServer.deleteLater();
+        getTodaysAdSlotServerThread.quit();
+        getTodaysAdSlotServerThread.wait();
         finalStopCouchbaseAndWaitForItsThreadToJoin(&couchbaseDb);
         cerr << "failed to initialize and start GetTodaysAdSlotServer, quitting" << endl;
         return 1;

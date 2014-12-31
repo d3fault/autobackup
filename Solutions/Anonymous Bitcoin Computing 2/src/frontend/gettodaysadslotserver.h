@@ -8,13 +8,16 @@
 class QTcpServer;
 
 class GetCouchbaseDocumentByKeyRequest;
+class StoreCouchbaseDocumentByKeyRequest;
 
 class GetTodaysAdSlotServer : public QObject
 {
     Q_OBJECT
 public:
-    static void setBackendQueue(boost::lockfree::queue<GetCouchbaseDocumentByKeyRequest*> *backendQueue);
-    static void setBackendQueueEvent(struct event *backendQueueEvent);
+    static void setBackendGetQueue(boost::lockfree::queue<GetCouchbaseDocumentByKeyRequest*> *backendQueue);
+    static void setBackendStoreQueue(boost::lockfree::queue<StoreCouchbaseDocumentByKeyRequest*> *backendQueue);
+    static void setBackendGetQueueEvent(struct event *backendQueueEvent);
+    static void setBackendStoreQueueEvent(struct event *backendQueueEvent);
 
     explicit GetTodaysAdSlotServer(QObject *parent = 0);
 private:

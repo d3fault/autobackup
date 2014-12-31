@@ -67,7 +67,10 @@ HEADERS += \
     frontend/gettodaysadslotserverclientconnection.h \
     frontend2backendRequests/igetcouchbasedocumentbykeyrequestresponder.h \
     frontend2backendRequests/abcguigetcouchbasedocumentbykeyrequestresponder.h \
-    frontend2backendRequests/abcapigetcouchbasedocumentbykeyrequestresponder.h
+    frontend2backendRequests/abcapigetcouchbasedocumentbykeyrequestresponder.h \
+    frontend2backendRequests/abcguistorecouchbasedocumentbykeyrequestresponder.h \
+    frontend2backendRequests/istorecouchbasedocumentbykeyrequestresponder.h \
+    frontend2backendRequests/abcapistorecouchbasedocumentbykeyrequestresponder.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -100,7 +103,9 @@ SOURCES += main.cpp \
     frontend/gettodaysadslotserver.cpp \
     frontend/gettodaysadslotserverclientconnection.cpp \
     frontend2backendRequests/abcguigetcouchbasedocumentbykeyrequestresponder.cpp \
-    frontend2backendRequests/abcapigetcouchbasedocumentbykeyrequestresponder.cpp
+    frontend2backendRequests/abcapigetcouchbasedocumentbykeyrequestresponder.cpp \
+    frontend2backendRequests/abcguistorecouchbasedocumentbykeyrequestresponder.cpp \
+    frontend2backendRequests/abcapistorecouchbasedocumentbykeyrequestresponder.cpp
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/

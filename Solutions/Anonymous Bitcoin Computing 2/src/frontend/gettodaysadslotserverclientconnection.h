@@ -10,16 +10,20 @@
 using namespace boost::lockfree;
 
 #include "../frontend2backendRequests/abcapigetcouchbasedocumentbykeyrequestresponder.h"
+#include "../frontend2backendRequests/abcapistorecouchbasedocumentbykeyrequestresponder.h"
 
 class QTcpSocket;
 class GetCouchbaseDocumentByKeyRequest;
+class StoreCouchbaseDocumentByKeyRequest;
 
 class GetTodaysAdSlotServerClientConnection : public QObject
 {
     Q_OBJECT
 public:
-    static void setBackendQueue(queue<GetCouchbaseDocumentByKeyRequest*> *backendQueue);
-    static void setBackendQueueEvent(struct event *backendQueueEvent);
+    static void setBackendGetQueue(queue<GetCouchbaseDocumentByKeyRequest*> *backendQueue);
+    static void setBackendStoreQueue(queue<StoreCouchbaseDocumentByKeyRequest*> *backendQueue);
+    static void setBackendGetQueueEvent(struct event *backendQueueEvent);
+    static void setBackendStoreQueueEvent(struct event *backendQueueEvent);
 
     explicit GetTodaysAdSlotServerClientConnection(QTcpSocket *clientSocket, QObject *parent = 0);
     ~GetTodaysAdSlotServerClientConnection();
@@ -32,9 +36,12 @@ private:
         , GetAdCampaignSlotFiller = 3
         , CreateOrUpdateAdCampaignCurrentSlotCache = 4
     };
-    static AbcApiGetCouchbaseDocumentByKeyRequestResponder s_Responder;
-    static queue<GetCouchbaseDocumentByKeyRequest*> *s_BackendQueue;
-    static struct event *s_BackendQueueEvent;
+    static AbcApiGetCouchbaseDocumentByKeyRequestResponder s_GetResponder;
+    static AbcApiStoreCouchbaseDocumentByKeyRequestResponder s_StoreResponder;
+    static queue<GetCouchbaseDocumentByKeyRequest*> *s_BackendGetQueue;
+    static queue<StoreCouchbaseDocumentByKeyRequest*> *s_BackendStoreQueue;
+    static struct event *s_BackendGetQueueEvent;
+    static struct event *s_BackendStoreQueueEvent;
 
     QTextStream m_ClientStream;
 
@@ -50,7 +57,8 @@ private:
     bool m_BackendRequestPending;
     bool m_WantsToBeDeletedLater;
 
-    void beginDbCall(const std::string &keyToGet, GetTodaysAdSlotServerClientConnectionStageEnum stageToSet);
+    void beginDbGet(const std::string &keyToGet, GetTodaysAdSlotServerClientConnectionStageEnum stageToSet);
+    void beginDbStore(const std::string &keyToStore, const std::string &documentToStore, GetTodaysAdSlotServerClientConnectionStageEnum stageToSet);
     void sendResponseAndCloseSocket(const QString &response);
 
     void continueAtJustFinishedAttemptingToGetAdCampaignCurrentSlotCache(const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError);
@@ -61,7 +69,7 @@ private:
     void continueAtJustFinishedAttemptingToGetAdCampaignSlotFiller(const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError);
 public slots:
     void backendDbGetCallback(std::string couchbaseDocument, bool lcbOpSuccess, bool dbError);
-    void backendDbStoreCallback(std::string couchbaseDocument, bool lcbOpSuccess, bool dbError);
+    void backendDbStoreCallback(bool lcbOpSuccess, bool dbError);
 private slots:
     void handleClientReadyRead();
     void deleteLaterIfNoBackendRequestPendingOrWhenThatBackendRequestFinishes();

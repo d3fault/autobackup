@@ -49,6 +49,7 @@ using namespace boost::interprocess;
 #include "accounttabs/actuallazyloadedtabwidget.h"
 
 #include "../frontend2backendRequests/storecouchbasedocumentbykeyrequest.h"
+#include "../frontend2backendRequests/abcguistorecouchbasedocumentbykeyrequestresponder.h"
 #include "../frontend2backendRequests/getcouchbasedocumentbykeyrequest.h"
 #include "../frontend2backendRequests/abcguigetcouchbasedocumentbykeyrequestresponder.h"
 #include "../frontend2backendRequests/viewquerycouchbasedocumentbykeyrequest.h"
@@ -243,11 +244,12 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     friend class NewAdSlotFillerAccountTabBody;
     friend class ViewAllExistingAdSlotFillersAccountTabBody;
 
-    friend class StoreCouchbaseDocumentByKeyRequest;
+    friend class AbcGuiStoreCouchbaseDocumentByKeyRequestResponder;
     friend class AbcGuiGetCouchbaseDocumentByKeyRequestResponder;
     friend class ViewQueryCouchbaseDocumentByKeyRequest;
 
-    static AbcGuiGetCouchbaseDocumentByKeyRequestResponder s_Responder;
+    static AbcGuiGetCouchbaseDocumentByKeyRequestResponder s_GetResponder;
+    static AbcGuiStoreCouchbaseDocumentByKeyRequestResponder s_StoreResponder;
 
     void buildGui();
     WHBoxLayout *m_BodyHLayout;
