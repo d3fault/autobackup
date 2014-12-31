@@ -13,6 +13,7 @@
 #include "../anonymousbitcoincomputingwtgui.h"
 #include "../validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h"
 #include "abc2couchbaseandjsonkeydefines.h"
+#include "../../abc2common.h"
 
 using namespace boost::property_tree;
 
@@ -52,18 +53,21 @@ void WithdrawFundsAccountTabBody::populateAndInitialize()
     WDoubleValidator *bitcoinAmountValidator = new WDoubleValidator(ABC2_MIN_WITHDRAW_AMOUNT, 21000000 /* TODOoptional: use their balance instead of max bitcoins lol */, m_DesiredAmountToWithdrawLineEdit);
     bitcoinAmountValidator->setMandatory(true);
     m_DesiredAmountToWithdrawLineEdit->setValidator(bitcoinAmountValidator);
+    m_DesiredAmountToWithdrawLineEdit->setTextSize(ABC2_BITCOIN_AMOUNT_VISUAL_INPUT_FORM_WIDTH); //visual only
 
     new WBreak(this);
 
     new WText("+ Withdrawal Fee (" ABC2_WITHDRAWAL_FEE_PERCENT_STR "%): ", this);
     m_WithdrawalFeeLineEdit = new WLineEdit(formatDoubleAs8decimalPlacesString(withdrawalFeeForWithdrawalAmount(ABC2_MIN_WITHDRAW_AMOUNT)), this);
     m_WithdrawalFeeLineEdit->setDisabled(true); //visual only derp
+    m_WithdrawalFeeLineEdit->setTextSize(ABC2_BITCOIN_AMOUNT_VISUAL_INPUT_FORM_WIDTH); //visual only
 
     new WBreak(this);
 
     new WText("= Total Amount Withdrawn (after " ABC2_WITHDRAWAL_FEE_PERCENT_STR "% fee): ", this);
     m_TotalWithdrawAmountVisualOnlyLineEdit = new WLineEdit(this); //TODOoptional: typing in this one populates "Amount to Withdraw" (with 3% taken out (how much they'll GET)), typing in "Amount To Withdraw" populates this one (with 3% fee factored in (how much their account's balance will be REDUCED). For now just read-only...
     m_TotalWithdrawAmountVisualOnlyLineEdit->setDisabled(true);
+    m_TotalWithdrawAmountVisualOnlyLineEdit->setTextSize(ABC2_BITCOIN_AMOUNT_VISUAL_INPUT_FORM_WIDTH); //visual only
 
     if(!m_AbcApp->environment().ajax())
     {
@@ -86,6 +90,7 @@ void WithdrawFundsAccountTabBody::populateAndInitialize()
     LettersNumbersOnlyRegExpValidatorAndInputFilter *bitcoinKeyValidator = new LettersNumbersOnlyRegExpValidatorAndInputFilter("35", m_BitcoinPayoutKeyLineEdit); //TODOreq: proper bitcoin key validity (had:base58 check encoding) filter instead, including minimum length (right now I only have max len)
     bitcoinAmountValidator->setMandatory(true);
     m_BitcoinPayoutKeyLineEdit->setValidator(bitcoinKeyValidator);
+    m_BitcoinPayoutKeyLineEdit->setTextSize(35 /*bitcoin addresses are 35 chars max*/); //visual only
 
     new WBreak(this);
     new WBreak(this);

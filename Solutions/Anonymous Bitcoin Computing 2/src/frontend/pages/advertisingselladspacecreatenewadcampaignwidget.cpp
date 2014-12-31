@@ -14,6 +14,7 @@ using namespace boost::property_tree;
 
 #include "../anonymousbitcoincomputingwtgui.h"
 #include "abc2couchbaseandjsonkeydefines.h"
+#include "../../abc2common.h"
 
 AdvertisingSellAdSpaceCreateNewAdCampaignWidget::AdvertisingSellAdSpaceCreateNewAdCampaignWidget(AnonymousBitcoinComputingWtGUI *anonymousBitcoinComputingWtGUI, WContainerWidget *parent)
     : WContainerWidget(parent)
@@ -38,11 +39,12 @@ AdvertisingSellAdSpaceCreateNewAdCampaignWidget::AdvertisingSellAdSpaceCreateNew
     WDoubleValidator *minPriceValidator = new WDoubleValidator(ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT, 21000000, m_MinPriceLineEdit); //TODOreq: OT'ish: the "ad doubles" logic should have a hard max of 21million btc ofc... but shit how could a transaction of that size even take place xD? Maybe a better (user specifiable?) maximum? For now just gonna pray it never happens (because it very likely won't)
     minPriceValidator->setMandatory(true);
     m_MinPriceLineEdit->setValidator(minPriceValidator);
+    m_MinPriceLineEdit->setTextSize(ABC2_BITCOIN_AMOUNT_VISUAL_INPUT_FORM_WIDTH); //visual only
 
     new WBreak(this);
     new WBreak(this);
 
-    /*WText *slotLengthHoursLabel = */new WText("Duration of advertisement placement, in hours:", this);
+    /*WText *slotLengthHoursLabel = */new WText("Duration of one advertisement placement, in hours (this is NOT duration your ad campaign will run for):", this);
     new WBreak(this);
     m_SlotLengthHoursLineEdit = new WLineEdit("24", this); //TODOmb: wintspinbox?
     WIntValidator *slotLengthHoursValidator = new WIntValidator(1, INT_MAX, m_SlotLengthHoursLineEdit); //TODOoptional: we could probably go higher than INT_MAX, since it's stored and a string and we use doubles for the math :-P. But wtf seriously, 245146 years is plenty. Maybe I should even lower this limit?
@@ -71,7 +73,7 @@ void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::createNewAdCampaignButtonC
     if(m_SlotLengthHoursLineEdit->validate() != WIntValidator::Valid)
     {
         new WBreak(this);
-        new WText("Invalid advertisement duration", this);
+        new WText("Invalid advertisement placement duration", this);
         m_CreateNewAdCampaignButton->enable();
         return;
     }
@@ -136,7 +138,7 @@ void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::attemptToLcbAddCampaign()
     if(rangeCheck == INT_MAX)
     {
         new WBreak(this);
-        new WText("You've reached the maximum amount of campaigns. You can always create another user.", this);
+        new WText("You've reached the maximum amount of ad campaigns. You can always create another user.", this);
         m_AnonymousBitcoinComputingWtGUI->resumeRendering();
         return;
     }
@@ -186,7 +188,7 @@ void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::handleAttemptToAddCampaign
     }
 
     new WBreak(this);
-    new WText("Campaign at index #" + m_CampaignIndexToTryLcbAddingAt + " was successfully created", this);
+    new WText("Ad Campaign at index #" + m_CampaignIndexToTryLcbAddingAt + " was successfully created", this);
     //hmm actually might as well leave whatever they entered... m_MinPriceLineEdit. if there was a human readable name/description line edit though, we'd want to clear that one
     m_CreateNewAdCampaignButton->enable();
     //we resume rendering in either of those two ignored index cache updates (add or cas swap), since doing it here/now would mean that the user could start another request/process and... that would lead to undefined results: m_AnonymousBitcoinComputingWtGUI->resumeRendering();

@@ -125,7 +125,7 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
 
     //is it the current datetime range? could be expired, in which case we +1 slot index and try again
     ptree pt;
-    std::istringstream is(m_LastDocGetted);
+    std::istringstream is(couchbaseDocument);
     read_json(is, pt);
 
     //my dick is long long
@@ -173,6 +173,7 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
     write_json(todaysAdSlotJsonBuffer, todaysFilledAdSlot, false);
     const std::string &todaysAdSlotJsonStdStr = todaysAdSlotJsonBuffer.str();
     QString todaysAdSlotJson = QString::fromStdString(todaysAdSlotJsonStdStr);
+
     sendResponseAndCloseSocket(todaysAdSlotJson);
 
     //store the this+1 in the cache so tomorrow will be uber fast
@@ -184,12 +185,9 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
         pt2.put(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS, boost::lexical_cast<std::string>(m_SlotLengthHours));
         std::ostringstream newCacheJsonBuffer;
         write_json(newCacheJsonBuffer, pt2, false);
-        beginDbCall( , CreateOrUpdateAdCampaignCurrentSlotCache);
-        couchbaseStoreRequestWithExponentialBackoff(adSpaceCampaignSlotCacheKey(campaignOwnerUsername, campaignIndex), newCacheJsonBuffer.str(), LCB_SET, 0, "cache index updating"); //we don't care if the cache index updating fails, because [see this doc to understand why]
+        //TODO LEFT OFF: beginDbCall( , CreateOrUpdateAdCampaignCurrentSlotCache);
+        //OLD: couchbaseStoreRequestWithExponentialBackoff(adSpaceCampaignSlotCacheKey(campaignOwnerUsername, campaignIndex), newCacheJsonBuffer.str(), LCB_SET, 0, "cache index updating"); //we don't care if the cache index updating fails, because [see this doc to understand why]
     }
-
-
-    return true;
 }
 void GetTodaysAdSlotServerClientConnection::backendDbGetCallback(std::string couchbaseDocument, bool lcbOpSuccess, bool dbError)
 {
@@ -217,7 +215,7 @@ void GetTodaysAdSlotServerClientConnection::backendDbGetCallback(std::string cou
         break;
     default:
     //case CreateOrUpdateAdCampaignCurrentSlotCache:
-        //break;
+        break;
     }
 }
 void GetTodaysAdSlotServerClientConnection::backendDbStoreCallback(string couchbaseDocument, bool lcbOpSuccess, bool dbError)
@@ -238,6 +236,7 @@ void GetTodaysAdSlotServerClientConnection::backendDbStoreCallback(string couchb
         deleteLaterIfNoBackendRequestPendingOrWhenThatBackendRequestFinishes();
         break;
     default:
+        break;
     }
 }
 void GetTodaysAdSlotServerClientConnection::handleClientReadyRead()
@@ -281,7 +280,7 @@ void GetTodaysAdSlotServerClientConnection::handleClientReadyRead()
                                     LettersNumbersOnlyRegExpValidatorAndInputFilter usernameValidator;
                                     m_CampaignOwnerRequested = userStr.toStdString(); //sure we might be setting these to values that are 'illegal', but unless they both validate, we never even get to a place where we use them
                                     m_CampaignIndexRequested = indexStr.toStdString();
-                                    if(usernameValidator.validate(userStdString).state() == LettersNumbersOnlyRegExpValidatorAndInputFilter::Valid)
+                                    if(usernameValidator.validate(m_CampaignOwnerRequested).state() == LettersNumbersOnlyRegExpValidatorAndInputFilter::Valid)
                                     {
                                         //schedule backend request
                                         beginDbCall(adSpaceCampaignSlotCacheKey(m_CampaignOwnerRequested, m_CampaignIndexRequested), GetAdCampaignCurrentSlotCacheIfExists);

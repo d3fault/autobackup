@@ -9,6 +9,7 @@
 //accepts jpg/bmp only via magic header whitelist. OLD (fucking png/webp suck too): primitive gif detection/removal (safely reading first few bytes/header)? maybe i should change to jpg/png/webp only, but don't png/webp support animations anyways? my fellow engineers are fucking noobs. there's a word for animated image: it's called video
 
 #define ABC_AD_SLOT_FILLERS_ACCEPT_IMAGE_FORMATS_MESSAGE "Accepted image formats: jpeg/bmp"
+#define NewAdSlotFillerAccountTabBody_INPUT_FORMS_VISUAL_WIDTH_IN_CHARS 32
 
 NewAdSlotFillerAccountTabBody::NewAdSlotFillerAccountTabBody(AnonymousBitcoinComputingWtGUI *abcApp)
     : IAccountTabWidgetTabBody(abcApp),
@@ -22,7 +23,7 @@ void NewAdSlotFillerAccountTabBody::populateAndInitialize()
     newAdSlotFillerScrollArea->setWidget(newAdSlotFillerContainerWidget);
     m_AdSlotFillersVLayout = new WVBoxLayout(newAdSlotFillerContainerWidget);
 
-    m_AdSlotFillersVLayout->addWidget(new WText("<b>Create New Advertisement (For use in buying ad space)</b>"), 0, Wt::AlignTop | Wt::AlignLeft); //TODOoptimization: perhaps a captcha must be solved before every upload, thwarting it's potential as a DDOS point (but it would take a specific app to take advantage of it (but Wt's element id randomization protects me zilch against screen based automation clickers (i could hack me)))
+    m_AdSlotFillersVLayout->addWidget(new WText("<b>Upload New Advertisement (For use in buying ad space)</b>"), 0, Wt::AlignTop | Wt::AlignLeft); //TODOoptimization: perhaps a captcha must be solved before every upload, thwarting it's potential as a DDOS point (but it would take a specific app to take advantage of it (but Wt's element id randomization protects me zilch against screen based automation clickers (i could hack me)))
     m_AdSlotFillersVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
     m_AdSlotFillersVLayout->addWidget(new WBreak(), 0, Wt::AlignTop | Wt::AlignLeft);
     m_AdSlotFillersVLayout->addWidget(new WText("Note: For the time being, the maximum number of advertisements you can upload is ten thousand. If you need more (wtf?), create a new account (or bitch at me to fix/raise this limit)"), 0, Wt::AlignTop | Wt::AlignLeft);
@@ -38,6 +39,7 @@ void NewAdSlotFillerAccountTabBody::populateAndInitialize()
     SafeTextValidatorAndInputFilter *nicknameSafeTextValidator = new SafeTextValidatorAndInputFilter("64", m_UploadNewSlotFiller_NICKNAME);
     m_UploadNewSlotFiller_NICKNAME->setMaxLength(64);
     m_UploadNewSlotFiller_NICKNAME->setValidator(nicknameSafeTextValidator);
+    m_UploadNewSlotFiller_NICKNAME->setTextSize(NewAdSlotFillerAccountTabBody_INPUT_FORMS_VISUAL_WIDTH_IN_CHARS); //visual only
 
     //these more lenient validators (allowing characters and spaces) go through b64encode before being stored in db, otherwise they're vulnerable like an sql injection (except json injection)
 
@@ -47,6 +49,7 @@ void NewAdSlotFillerAccountTabBody::populateAndInitialize()
     SafeTextValidatorAndInputFilter *hovertextSafeTextValidator = new SafeTextValidatorAndInputFilter("512", m_UploadNewSlotFiller_HOVERTEXT);
     m_UploadNewSlotFiller_HOVERTEXT->setValidator(hovertextSafeTextValidator);
     m_UploadNewSlotFiller_HOVERTEXT->setMaxLength(512); //for randall
+    m_UploadNewSlotFiller_HOVERTEXT->setTextSize(NewAdSlotFillerAccountTabBody_INPUT_FORMS_VISUAL_WIDTH_IN_CHARS);
 
     uploadNewSlotFillerGridLayout->addWidget(new WText("--- 3) URL:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
     m_UploadNewSlotFiller_URL = new WLineEdit("http://");
@@ -57,6 +60,7 @@ void NewAdSlotFillerAccountTabBody::populateAndInitialize()
     urlValidator->setNoMatchText("Invalid URL");
     m_UploadNewSlotFiller_URL->setValidator(urlValidator);
     m_UploadNewSlotFiller_URL->setMaxLength(2048);
+    m_UploadNewSlotFiller_URL->setTextSize(NewAdSlotFillerAccountTabBody_INPUT_FORMS_VISUAL_WIDTH_IN_CHARS);
 
     uploadNewSlotFillerGridLayout->addWidget(new WText("--- 4) Ad Image:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
 

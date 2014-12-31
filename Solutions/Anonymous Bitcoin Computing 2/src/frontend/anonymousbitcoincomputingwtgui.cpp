@@ -344,8 +344,8 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
     {
         m_AccountTabWidget = new ActualLazyLoadedTabWidget(m_MainStack);
         //I'm pretty sure LazyLoading doesn't quite mean what I think it does/should. I think it means that the html etc isn't sent until request... whereas it real lazy loading would leave the object pointer set to zero until the tab is switched. The docs/api don't appear to work that way, but I could be wrong. Also feel like I've fumbled around with this before... but adding my own lazy loading by listening to currentTabChanged signal won't be hard...
-        m_AccountTabWidget->myAddTab(m_NewAdSlotFillerAccountTab = new NewAdSlotFillerAccountTabBody(this), "Create New Advertisement");
-        m_AccountTabWidget->myAddTab(m_ViewAllExistingAdSlotFillersAccountTab = new ViewAllExistingAdSlotFillersAccountTabBody(this), "Existing Advertisements");
+        m_AccountTabWidget->myAddTab(m_NewAdSlotFillerAccountTab = new NewAdSlotFillerAccountTabBody(this), "Upload New Advertisement (For use in buying ad space)");
+        m_AccountTabWidget->myAddTab(m_ViewAllExistingAdSlotFillersAccountTab = new ViewAllExistingAdSlotFillersAccountTabBody(this), "Existing Advertisements (For use in buying ad space)");
         m_AccountTabWidget->myAddTab(m_AddFundsAccountTab = new AddFundsAccountTabBody(this), "Add Funds"); //was going to have this one be first tab, but i don't want a db hit unless they request it
         m_AccountTabWidget->myAddTab(m_WithdrawFundsAccountTab = new WithdrawFundsAccountTabBody(this), "Withdraw Funds");
     }
@@ -376,6 +376,7 @@ void AnonymousBitcoinComputingWtGUI::showRegisterWidget()
         m_RegisterUsernameLineEdit->enterPressed().connect(this, &AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked); //was tempted to not put this here because if they press enter in username then they probably aren't done, BUT that 'implicit form submission' bullshit would submit it anyways. might as well make sure it's pointing at the right form...
         m_RegisterUsernameLineEdit->setMaxLength(ABC_MAXIMUM_USERNAME_AND_PASSWORD_LENGTH);
         m_RegisterUsernameLineEdit->setValidator(m_LettersNumbersOnlyValidatorAndInputFilter);
+        m_RegisterUsernameLineEdit->setTextSize(ABC_MAXIMUM_USERNAME_AND_PASSWORD_LENGTH/2); //visual only
 
         registerGridLayout->addWidget(new WText("Password:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
         m_RegisterPasswordLineEdit = new WLineEdit();
@@ -384,6 +385,7 @@ void AnonymousBitcoinComputingWtGUI::showRegisterWidget()
         m_RegisterPasswordLineEdit->enterPressed().connect(this, &AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked);
         m_RegisterPasswordLineEdit->setMaxLength(ABC_MAXIMUM_USERNAME_AND_PASSWORD_LENGTH);
         m_RegisterPasswordLineEdit->setValidator(m_LettersNumbersOnlyValidatorAndInputFilter);
+        m_RegisterPasswordLineEdit->setTextSize(ABC_MAXIMUM_USERNAME_AND_PASSWORD_LENGTH/2); //visual only
 
         registerGridLayout->addWidget(new WText("WARNING: DO NOT LOSE/FORGET YOUR PASSWORD! THERE IS NO PASSWORD RESET FEATURE!!!"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
 
@@ -931,7 +933,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotPopulateStep2d3faultCampaign0(const 
     if(!lcbOpSuccess) //allAds doc doesn't exist
     {
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-        new WText("You need to set up some advertisements before you can buy ad space: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("You need to upload an advertisement before you can buy ad space: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ACCOUNT), ABC_ANCHOR_TEXTS_ACCOUNT, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         //"roll back" to pre-step 1, but since we haven't set up anything yet we just re-enable step 1 buttan
         m_BuySlotFillerStep1Button->enable();
