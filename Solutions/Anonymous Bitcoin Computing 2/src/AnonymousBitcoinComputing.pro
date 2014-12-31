@@ -12,8 +12,8 @@
 #5) Turn on auto-failover
 #5) cd into wtAppHere and `ln -s /usr/local/share/Wt/resources/ resources`
 #                                   ^or just /usr/share/Wt if using Wt from debian repository
-#6a) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 7777
-#6b) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 80 --ssl-certificate=server.pem --ssl-private-key=server.key --ssl-tmp-dh=dh512.pem --https-address 0.0.0.0 --https-port 443
+#6a) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 7777 --api-port 8888
+#6b) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 80 --ssl-certificate=server.pem --ssl-private-key=server.key --ssl-tmp-dh=dh512.pem --https-address 0.0.0.0 --https-port 443 --api-port 420
 
 TARGET = AnonymousBitcoinComputing
 TEMPLATE = app

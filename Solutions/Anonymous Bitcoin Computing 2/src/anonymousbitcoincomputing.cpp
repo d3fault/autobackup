@@ -31,6 +31,7 @@ AnonymousBitcoinComputingWtGUI::m_##text##EventCallbacksForWt[n] = couchbaseDb.g
 
 int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
 {
+    (void)argc;
     QStringList argz = QCoreApplication::arguments();
     int indexOfApiPortArg = argz.indexOf(AnonymousBitcoinComputing_API_PORT_CLI_ARG);
     if(indexOfApiPortArg < 0 || ((indexOfApiPortArg+1) >= argz.size()))
@@ -44,6 +45,22 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     {
         cerr << "Invalid API port" << endl;
         return 1;
+    }
+    argz.removeAt(indexOfApiPortArg);
+    argz.removeAt(indexOfApiPortArg);
+
+    //rebuild argv/argc, because Wt is retarded and doesn't ignore extra args -_-
+    int newArgC = argz.size();
+    char *newArgV[newArgC];
+    int i = 0;
+    Q_FOREACH(const QString &currentArg, argz)
+    {
+        QByteArray currentArgLocal8Bit = currentArg.toLocal8Bit();
+        int currentArgLocal8BitSize = currentArgLocal8Bit.size();
+        newArgV[i] = new char[currentArgLocal8BitSize];
+        strcpy(newArgV[i], currentArgLocal8Bit.data());
+        //newArgV[currentArgLocal8BitSize] = '\0';
+        ++i;
     }
 
     //start couchbase and wait for it to finish connecting/initializing
@@ -88,7 +105,7 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     //start server, waitForShutdown(), event_active a couchbase event to let it finish current actions (also sets bool to not allow further), server.stop, tell couchbase to join, wait for couchbase to join
     WServer wtServer(argv[0]);
 
-    wtServer.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
+    wtServer.setServerConfiguration(newArgC, newArgV, WTHTTP_CONFIGURATION);
 
     //BEGIN ABC LOGO
     streampos fileSizeHack;
@@ -174,6 +191,11 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
 
     //tell couchbase to clean up and join (this is where we break the event loop)
     finalStopCouchbaseAndWaitForItsThreadToJoin(&couchbaseDb);
+
+    for(i = 0; i < newArgC; ++i) //TODOoptional: scoped deleter, because we'll leak the memory any time we 'return' above. honestly i can't figure out how to do it xD
+    {
+        delete newArgV[i];
+    }
 
     if(!couchbaseDb.threadExittedCleanly())
     {

@@ -191,12 +191,12 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
     read_json(is2, pt);
 
     ptree todaysFilledAdSlot;
-    todaysFilledAdSlot.put(JSON_SLOT_FILLER_HOVERTEXT, pt.get<string>(JSON_SLOT_FILLER_HOVERTEXT)); //TODOoptional: using json keys in two different docs, fuck it. same with slot length hours
-    todaysFilledAdSlot.put(JSON_SLOT_FILLER_URL, pt.get<string>(JSON_SLOT_FILLER_URL));
-    todaysFilledAdSlot.put(JSON_SLOT_FILLER_IMAGEB64, pt.get<string>(JSON_SLOT_FILLER_IMAGEB64));
-    todaysFilledAdSlot.put(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_EXPIRATION_DATETIME, boost::lexical_cast<string>(m_CurrentAdSlotExpireDateTime));
     todaysFilledAdSlot.put(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_ERROR_KEY, JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_ERROR_NOERROR_VALUE);
+    todaysFilledAdSlot.put(JSON_SLOT_FILLER_URL, pt.get<string>(JSON_SLOT_FILLER_URL));
+    todaysFilledAdSlot.put(JSON_SLOT_FILLER_HOVERTEXT, pt.get<string>(JSON_SLOT_FILLER_HOVERTEXT)); //TODOoptional: using json keys in two different docs, fuck it. same with slot length hours
+    todaysFilledAdSlot.put(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_EXPIRATION_DATETIME, boost::lexical_cast<string>(m_CurrentAdSlotExpireDateTime));
     todaysFilledAdSlot.put(JSON_SLOT_FILLER_IMAGE_GUESSED_EXTENSION, pt.get<string>(JSON_SLOT_FILLER_IMAGE_GUESSED_EXTENSION));
+    todaysFilledAdSlot.put(JSON_SLOT_FILLER_IMAGEB64, pt.get<string>(JSON_SLOT_FILLER_IMAGEB64));
     std::ostringstream todaysAdSlotJsonBuffer;
     write_json(todaysAdSlotJsonBuffer, todaysFilledAdSlot, false);
     const std::string &todaysAdSlotJsonStdStr = todaysAdSlotJsonBuffer.str();
