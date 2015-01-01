@@ -2529,7 +2529,7 @@ GloballySharedClasses/network/ssl/testcerts/server/ssltcpservertestcerts.qrc:134
 GloballySharedClasses/network/ssl/testcerts/password.for.both.client.and.server.private.keys.txt:1344899950
 GloballySharedClasses/network/ssl/ssltcpclient.cpp:1370564361
 GloballySharedClasses/network/ssl/ssltcpclient.h:1370564251
-GloballySharedClasses/network/ssl/ssltcpserver.cpp:1370686848
+GloballySharedClasses/network/ssl/ssltcpserver.cpp:1420083652
 GloballySharedClasses/network/ssl/ssltcpserver.h:1355917339
 GloballySharedClasses/network/abstractclientconnection.cpp:1370686809
 GloballySharedClasses/network/abstractclientconnection.h:1370668398
@@ -3656,7 +3656,7 @@ Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge
 Projects/ProjectGoOutside/i.could.use.this.as.a.name.of.my.stream.channel.show.or.whatever.its.called.txt:1355727455
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
 Projects/ProjectGoOutside/wasdf.com.home.for.fingers.software.and.setup.but.also.for.controlling.windows.linux.etc.TITLE.FOR.DOMAIN.txt:1341829441
-Projects/Prototypes/:1419897040
+Projects/Prototypes/:1420080840
 Projects/Prototypes/AdDoublesRawMathLaunchSim/:1390331620
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/:1390584039
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/AdDoublesRawMathLaunchSim.pro:1390329374
@@ -3944,7 +3944,7 @@ Projects/Prototypes/QtBroadcastServerWtClient/src/qtbroadcastservernumberwatcher
 Projects/Prototypes/QtBroadcastServerWtClient/src/qtbroadcastservernumberwatcher.h:1333037578
 Projects/Prototypes/QtBroadcastServerWtClient/src/wtnumberwatchingwidget.cpp:1389499082
 Projects/Prototypes/QtBroadcastServerWtClient/src/wtnumberwatchingwidget.h:1333040708
-Projects/Prototypes/QtHttpServer/:1419899209
+Projects/Prototypes/QtHttpServer/:1420080811
 Projects/Prototypes/QtHttpServer/src/:1419930516
 Projects/Prototypes/QtHttpServer/src/QtHttpServerCli.pro:1419899226
 Projects/Prototypes/QtHttpServer/src/main.cpp:1419899203
@@ -3954,6 +3954,16 @@ Projects/Prototypes/QtHttpServer/src/qthttpserver.cpp:1419899092
 Projects/Prototypes/QtHttpServer/src/qthttpserver.h:1419899055
 Projects/Prototypes/QtHttpServer/src/qthttpservercli.cpp:1419899165
 Projects/Prototypes/QtHttpServer/src/qthttpservercli.h:1419898839
+Projects/Prototypes/QtHttpsServer/:1420082214
+Projects/Prototypes/QtHttpsServer/src/:1420084319
+Projects/Prototypes/QtHttpsServer/src/QtHttpsServerCli.pro:1420080881
+Projects/Prototypes/QtHttpsServer/src/main.cpp:1420080997
+Projects/Prototypes/QtHttpsServer/src/qthttpsclient.cpp:1420082955
+Projects/Prototypes/QtHttpsServer/src/qthttpsclient.h:1420082940
+Projects/Prototypes/QtHttpsServer/src/qthttpsserver.cpp:1420084298
+Projects/Prototypes/QtHttpsServer/src/qthttpsserver.h:1420083896
+Projects/Prototypes/QtHttpsServer/src/qthttpsservercli.cpp:1420081008
+Projects/Prototypes/QtHttpsServer/src/qthttpsservercli.h:1420080998
 Projects/Prototypes/RemoteBankManagementTest/:1330551098
 Projects/Prototypes/RemoteBankManagementTest/src/:1331378216
 Projects/Prototypes/RemoteBankManagementTest/src/BitcoinCommunicatingServer/:1342625716

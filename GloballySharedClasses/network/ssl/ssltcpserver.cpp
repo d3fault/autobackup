@@ -82,7 +82,7 @@ void SslTcpServer::initialize(SslTcpServerArgs sslTcpServerArgs)
     QFile serverPrivateEncryptionKeyFileResource(sslTcpServerArgs.ServerPrivateEncryptionKeyFilename);
     serverPrivateEncryptionKeyFileResource.open(QFile::ReadOnly);
     QByteArray serverPrivateEncryptionKeyByteArray = serverPrivateEncryptionKeyFileResource.readAll();
-    serverCaFileResource.close();
+    serverPrivateEncryptionKeyFileResource.close();
 
     m_ServerPrivateEncryptionKey = new QSslKey(serverPrivateEncryptionKeyByteArray, QSsl::Rsa, QSsl::Pem, QSsl::PrivateKey, serverPrivateEncryptionKeyPassPhraseByteArray);
 
@@ -237,7 +237,7 @@ void SslTcpServer::handleConnectedAndEncrypted()
 
         //another solution is to just derive from qtcpsocket/qsslsocket/qlocalsocket AS WELL AS some interface with a pure virtual 'uniqueClientId', and just let each implement it however. But meh. IDK. Is that better? The same? Which is easier? Are their cons of it that I'm just not seeing?
 
-        //TODOreq: think about the possibility of an Rpc Service on a machine that can talk to all 3 of those kinds of sockets. Holy shit my brain just exploded. It's definitely plausible that you'd have a qlocalsocket/same-machine client, a tcp/LAN client, and an ssl/WAN client all at the same time. I guess I should choose the solution that accomodates for that crazy/awesome hypothetical use case. ROBUST AS FUCK YESPLZKTHXBAI (WHO CARES IF I LOSE MY SANITY AND OPTIMIZE MYSELF INTO NON-EXISTENCE)
+        //TODOreq: think about the possibility of an Rpc Service on a machine that can talk to all 3 of those kinds of sockets. Holy shit my brain just exploded. It's definitely plausible that you'd have a qlocalsocket/same-machine client, a tcp/LAN client, and an ssl/WAN client all at the same time. I guess I should choose the solution that accomodates for that crazy/awesome hypothetical use case. ROBUST AS FUCK YESPLZKTHXBAI (WHO CARES IF I LOSE MY SANITY AND OPTIMIZE MYSELF INTO NON-EXISTENCE (edit years later: uhm, I do O_o...))
 
 
         //ok my brain just asploded
@@ -257,7 +257,7 @@ void SslTcpServer::handleConnectedAndEncrypted()
         //currently I'm thinking the ClientId would be hardcoded, but the ClientId could also be like a fucking md5(mac+rand()+timestamp+salt) and generated on app startup....
         //TODOidfk: ^^relating to comment just above, perhaps a persistent-between-machine-reboot permaClientId would be valuable in letting the server know that "hey, that queue you are saving for me is way the fuck outdated so just get rid of it lol". BUT then I now run into the same problem of "same perma client id as some other client" ROOOOOFL my brain~)
 
-#ifdef ABC_CONNECTION_MANAGEMENT
+#ifdef ABC_CONNECTION_MANAGEMENT //the ifdef that ruined my life
         uint clientSerialNumber = secureSocket->peerCertificate().serialNumber().toUInt();
         if(m_EncryptedSocketsBySerialNumber.contains(clientSerialNumber))
         {
