@@ -21,6 +21,9 @@
 
 using namespace boost::property_tree;
 
+//TODOoptional: optional, but a damn good idea: provide a javascript snippet and a corresponding php script. The javascript snippet calls the php script, parses the json results, and embeds the image and hover etc. The php script itself is responsible for caching (it would be kinda inefficient because two simultaneous hits have the potential of triggering two API requests (I guess I'd rely on the atomicity of file creation -- but then wat do if the atomic open-for-writing (known temp filename) fails? there's no way to 'let me know when the api request finishes'. man php fucking blows)). The php script does the api request when needed (and can do LAZY (more efficient!) polling: only when a user visits the page the ad is displayed on (or when polling even matters: the ad is NOT displayed on xD)
+//^^ADDITIONALLY, cron job php/shell/etc that run a few seconds in advance (~10), and corresponding php to set up the <img><hover> -- this one is for php devs (since they'd be calling a php function), the above one is for website noobs (they embed the js (gl) and paste the php file)
+//^^^And for 1337 d00dz, I'll give a Qt impl (already have one in hvbs). If I'm bored enough, a boost impl...
 AbcApiGetCouchbaseDocumentByKeyRequestResponder GetTodaysAdSlotServerClientConnection::s_GetResponder;
 AbcApiStoreCouchbaseDocumentByKeyRequestResponder GetTodaysAdSlotServerClientConnection::s_StoreResponder;
 queue<GetCouchbaseDocumentByKeyRequest*> *GetTodaysAdSlotServerClientConnection::s_BackendGetQueue = NULL;
@@ -93,7 +96,7 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
     {
          //the campaign slot index cache does not exist. get the campaign doc itself, JUST for slotLengthHours (from then on we store it in the cache doc)
         m_NumApiRequestsForThisAdSlotSoFar = 1; //this will have been our first, which is what we want to store in the cache doc later
-        beginDbGet(adSpaceCampaignKey(m_CampaignOwnerRequested, m_CampaignIndexRequested), GetAdCampaignDocItselfToGetSlotLengthHoursAndApiKey);
+        beginDbGet(adSpaceCampaignKey(m_CampaignOwnerRequested, m_CampaignIndexRequested), GetAdCampaignDocItselfToGetSlotLengthHours);
         return;
     }
     else
@@ -136,6 +139,27 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
     std::istringstream is(couchbaseDocument);
     read_json(is, pt);
     m_SlotLengthHours = pt.get<int>(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS);
+
+    //oops, it's in profile not campaign doc xD. m_TheCorretApiKey = pt.get<string>(JSON_USER_ACCOUNT_API_KEY); //TODOoptional: _COULD_ store it in campaign, but too lazy to implement that
+    beginDbGet(userAccountKey(m_CampaignOwnerRequested), GetAdCampaignOwnersProfileJustToGetApiKey);
+    return;
+
+    //oops, no api key yet! haveSlotLengthHoursAndApiKeyAndKnowFirstSlotIndexToTrySoTry();
+}
+void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGetCampaignOwnersProfileDoc(const string &couchbaseDocument, bool lcbOpSuccess, bool dbError)
+{
+    if(dbError || !lcbOpSuccess) //TODOoptional: lcb op fail might mean total system failure, but it might just mean they requested a user that doesn't exist. idgaf atm
+    {
+        sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_NO_AD_PLACEHOLDER);
+        return;
+    }
+
+    //got seller's profile doc
+
+    ptree pt;
+    std::istringstream is(couchbaseDocument);
+    read_json(is, pt);
+
     m_TheCorretApiKey = pt.get<string>(JSON_USER_ACCOUNT_API_KEY);
     haveSlotLengthHoursAndApiKeyAndKnowFirstSlotIndexToTrySoTry(); //first slot index still at initialized value of "0"
 }
@@ -188,7 +212,7 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
             if(m_NumApiRequestsForThisAdSlotSoFar > GetTodaysAdSlotServerClientConnection_MAX_API_REQUESTS_PER_AD_SLOT_DURATION_EXCLUDING_NO_AD_RESPONSES_OFC)
             {
                 //all api requests exhausted
-                sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("You have used up all of your API requests for the current ad slot duration. Wait until the current ad expires and you'll get" GetTodaysAdSlotServerClientConnection_MAX_API_REQUESTS_PER_AD_SLOT_DURATION_EXCLUDING_NO_AD_RESPONSES_OFC_STR " more. You should have saved the results of the API Request. " ABC_HUMAN_READABLE_NAME_PLX " does not serve ads directly to end users (doing so is an invasion of your users' privacy)."));
+                sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("You have used up all of your API requests for the current ad slot duration. Wait until the current ad expires and you'll get " GetTodaysAdSlotServerClientConnection_MAX_API_REQUESTS_PER_AD_SLOT_DURATION_EXCLUDING_NO_AD_RESPONSES_OFC_STR " more. You should have saved the results of the API Request. " ABC_HUMAN_READABLE_NAME_PLX " does not serve ads directly to end users (doing so is an invasion of your users' privacy)."));
                 return;
             }
         }
@@ -239,6 +263,7 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
     if(m_CurrentSlotIndexToTry != m_FirstSlotIndexToTry || (m_CurrentSlotIndexToTry == GetTodaysAdSlotServerClientConnection_FIRST_NO_CACHE_YET_SLOT_INDEX && !m_FoundAdCampaignCurrentSlotCacheDoc)) //only update the cache if it needs to be updated...
     {
 #endif
+        //TODOoptimization: makes sense to put the expiration date time in the cache doc too, so we don't have to get it to check if it's expired
         ptree pt2;
         //pt3.put(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT, boost::lexical_cast<string>(boost::lexical_cast<int>(slotIndexToTry)+1));
         pt2.put(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT, m_CurrentSlotIndexToTry); //^if we only request once per day then it makes sense to set the cache to "tomorrow" (+1), but if we request it multiple times per day then it makes sense to set it to "today" (no +1). leaving as "today" since it's safer and I still haven't finalized this shit
@@ -267,8 +292,11 @@ void GetTodaysAdSlotServerClientConnection::backendDbGetCallback(std::string cou
     case GetAdCampaignCurrentSlotCacheIfExists:
         continueAtJustFinishedAttemptingToGetAdCampaignCurrentSlotCache(couchbaseDocument, lcbOpSuccess, dbError);
         break;
-    case GetAdCampaignDocItselfToGetSlotLengthHoursAndApiKey:
+    case GetAdCampaignDocItselfToGetSlotLengthHours:
         continueAtJustFinishedAttemptingToGetAdCampaign(couchbaseDocument, lcbOpSuccess, dbError);
+        break;
+    case GetAdCampaignOwnersProfileJustToGetApiKey:
+        continueAtJustFinishedAttemptingToGetCampaignOwnersProfileDoc(couchbaseDocument, lcbOpSuccess, dbError);
         break;
     case GetAdCampaignSlot:
         continueAtJustFinishedAttemptingToGetAdCampaignSlot(couchbaseDocument, lcbOpSuccess, dbError);

@@ -20,7 +20,7 @@ void Abc2dbInitializer::errorOutput(const string &errorString)
 {
     emit d(QString::fromStdString(errorString));
 }
-void Abc2dbInitializer::initializeAbc2db(const QString &filenameOfLineSeparatedEnormousBitcoinKeyListThatHasAtLeast_110k_keys_ButCanBeMoreIn_10k_key_increments)
+void Abc2dbInitializer::initializeAbc2dbActual(const QString &filenameOfLineSeparatedEnormousBitcoinKeyListThatHasAtLeast_110k_keys_ButCanBeMoreIn_10k_key_increments)
 {
     if(!connectToCouchbase())
         return;
@@ -163,5 +163,9 @@ void Abc2dbInitializer::initializeAbc2db(const QString &filenameOfLineSeparatedE
 #endif
 
     emit d("done initializing");
+}
+void Abc2dbInitializer::initializeAbc2db(const QString &filenameOfLineSeparatedEnormousBitcoinKeyListThatHasAtLeast_110k_keys_ButCanBeMoreIn_10k_key_increments)
+{
+    initializeAbc2dbActual(filenameOfLineSeparatedEnormousBitcoinKeyListThatHasAtLeast_110k_keys_ButCanBeMoreIn_10k_key_increments); //because i want my fail paths to still emit the below signal
     emit doneInitializingAbc2db();
 }

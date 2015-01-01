@@ -30,10 +30,11 @@ private:
     enum GetTodaysAdSlotServerClientConnectionStageEnum
     {
           GetAdCampaignCurrentSlotCacheIfExists = 0
-        , GetAdCampaignDocItselfToGetSlotLengthHoursAndApiKey = 1
-        , GetAdCampaignSlot = 2
-        , GetAdCampaignSlotFiller = 3
-        , CreateOrUpdateAdCampaignCurrentSlotCache = 4
+        , GetAdCampaignDocItselfToGetSlotLengthHours = 1
+        , GetAdCampaignOwnersProfileJustToGetApiKey = 2
+        , GetAdCampaignSlot = 3
+        , GetAdCampaignSlotFiller = 4
+        , CreateOrUpdateAdCampaignCurrentSlotCache = 5
     };
     static AbcApiGetCouchbaseDocumentByKeyRequestResponder s_GetResponder;
     static AbcApiStoreCouchbaseDocumentByKeyRequestResponder s_StoreResponder;
@@ -65,6 +66,7 @@ private:
 
     void continueAtJustFinishedAttemptingToGetAdCampaignCurrentSlotCache(const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError);
     void continueAtJustFinishedAttemptingToGetAdCampaign(const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError);
+    void continueAtJustFinishedAttemptingToGetCampaignOwnersProfileDoc(const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError);
     void haveSlotLengthHoursAndApiKeyAndKnowFirstSlotIndexToTrySoTry();
     void tryToGetCurrentSlotIndex();
     void continueAtJustFinishedAttemptingToGetAdCampaignSlot(const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError);

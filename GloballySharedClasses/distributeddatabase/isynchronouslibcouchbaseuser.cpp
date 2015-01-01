@@ -50,7 +50,8 @@ bool ISynchronousLibCouchbaseUser::connectToCouchbase()
 {
     struct lcb_create_st createOptions;
     memset(&createOptions, 0, sizeof(createOptions));
-    createOptions.v.v0.host = "192.168.56.10:8091;192.168.57.10:8091;192.168.58.10:8091"; //TODOreq: supply hosts/username/password through args
+    //createOptions.v.v0.host = "192.168.56.10:8091;192.168.57.10:8091;192.168.58.10:8091"; //TODOreq: supply hosts/username/password through args
+    createOptions.v.v0.host = "192.168.56.10:8091";
     lcb_error_t error;
     if((error = lcb_create(&m_Couchbase, &createOptions)) != LCB_SUCCESS)
     {

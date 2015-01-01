@@ -18,7 +18,7 @@ void Abc2dbInitializerCli::handleAbc2dbInitializerReadyForConnectioins()
     Abc2dbInitializer *abc2dbInitializer = m_BusinessThread.getObjectPointerForConnectionsOnly();
     connect(abc2dbInitializer, SIGNAL(d(QString)), this, SLOT(handleD(QString)));
     connect(this, SIGNAL(initializeAbc2dbRequested(QString)), abc2dbInitializer, SLOT(initializeAbc2db(QString)));
-    connect(abc2dbInitializer, SIGNAL(doneInitializingAbc2db()), QCoreApplication::instance(), SLOT(quit()));
+    connect(abc2dbInitializer, SIGNAL(doneInitializingAbc2db()), QCoreApplication::instance(), SLOT(quit()), Qt::QueuedConnection);
 
     //derp, qt cli needs some love. sure it works, but it isn't as clean/fun/smechzy as gui land
     QStringList tehArgs = QCoreApplication::arguments();

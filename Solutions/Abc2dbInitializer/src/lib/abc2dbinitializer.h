@@ -11,6 +11,7 @@ public:
     explicit Abc2dbInitializer(QObject *parent = 0);
 private:
     void errorOutput(const string &errorString);
+    void initializeAbc2dbActual(const QString &filenameOfLineSeparatedEnormousBitcoinKeyListThatHasAtLeast_110k_keys_ButCanBeMoreIn_10k_key_increments);
 signals:
     void d(const QString &);
     void doneInitializingAbc2db();
