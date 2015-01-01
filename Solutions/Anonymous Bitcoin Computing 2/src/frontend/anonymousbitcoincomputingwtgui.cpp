@@ -15,8 +15,7 @@
 #include "accounttabs/withdrawfundsaccounttabbody.h"
 #include "accounttabs/newadslotfilleraccounttabbody.h"
 #include "accounttabs/viewallexistingadslotfillersaccounttabbody.h"
-
-#define ABC_HUMAN_READABLE_NAME_PLX "Anonymous Bitcoin Computing"
+#include "accounttabs/apikeyaccounttabbody.h"
 
 //internal paths
 
@@ -349,6 +348,7 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
         m_AccountTabWidget->myAddTab(m_ViewAllExistingAdSlotFillersAccountTab = new ViewAllExistingAdSlotFillersAccountTabBody(this), "Existing Advertisements (For use in buying ad space)");
         m_AccountTabWidget->myAddTab(m_AddFundsAccountTab = new AddFundsAccountTabBody(this), "Add Funds"); //was going to have this one be first tab, but i don't want a db hit unless they request it
         m_AccountTabWidget->myAddTab(m_WithdrawFundsAccountTab = new WithdrawFundsAccountTabBody(this), "Withdraw Funds");
+        m_AccountTabWidget->myAddTab(m_ApiKeyAccountTab = new ApiKeyAccountTabBody(this), "API Key");
     }
     m_MainStack->setCurrentWidget(m_AccountTabWidget);
 }
@@ -1878,6 +1878,11 @@ void AnonymousBitcoinComputingWtGUI::getCouchbaseDocumentByKeyFinished(const std
         m_WithdrawFundsAccountTab->verifyBalanceIsGreaterThanOrEqualToTheirRequestedWithdrawAmountAndThenContinueSchedulingWithdrawRequest(couchbaseDocument, lcbOpSuccess, dbError);
     }
         break;
+    case GETPROFILEFORGETTINGAPIKEY:
+    {
+        m_ApiKeyAccountTab->displayApiKey(couchbaseDocument, lcbOpSuccess, dbError);
+    }
+        break;
     case INITIALINVALIDNULLGET:
     default:
         cerr << "got a couchbase 'get' response we weren't expecting:" << endl << "unexpected key: " << keyToCouchbaseDocument << endl << "unexpected value: " << couchbaseDocument << endl;
@@ -2388,18 +2393,21 @@ void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
     std::string passwordPlainText = m_RegisterPasswordLineEdit->text().toUTF8();
 
     //make salt
-    std::string salt = sha1(username + uniqueId() /*TODOreq: uniqueId and sessionId are seen by user, which means they could be intercepted by man in the middle. use some server side rand instead*/ + "saltplx739384sdfjghej9593859dffoiueoru584758958394fowuer732487587292" + WDateTime::currentDateTime().toString().toUTF8());
+    const std::string &currentDateTime = WDateTime::currentDateTime().toString().toUTF8();
+    std::string salt = sha1(username + uniqueId() /*TODOreq: uniqueId and sessionId are seen by user, which means they could be intercepted by man in the middle. use some server side rand instead*/ + sessionId() + "saltplx739384sdfjghej9593859dffoiueoru584758958394fowuer732487587292" + currentDateTime + passwordPlainText);
     //base64 salt for storage in json/couchbase
     std::string base64Salt = base64Encode(salt, false);
     //hash password using base64'd salt
     std::string passwordSaltHashed = sha1(passwordPlainText + base64Salt);
     //base64 hash for storage in json/couchbase
     std::string base64PasswordSaltHashed = base64Encode(passwordSaltHashed, false);
+    std::string apiKey = hexEncode(sha1(currentDateTime + "sdfk32432434243jdlskfjal75656daskdjfoweuroiweu834098239dfskjsdf" + uniqueId() + sessionId() + username));
     //json'ify
     ptree jsonDoc;
     jsonDoc.put(JSON_USER_ACCOUNT_BALANCE, "0");
     jsonDoc.put(JSON_USER_ACCOUNT_PASSWORD_HASH, base64PasswordSaltHashed);
     jsonDoc.put(JSON_USER_ACCOUNT_PASSWORD_SALT, base64Salt);
+    jsonDoc.put(JSON_USER_ACCOUNT_API_KEY, apiKey);
     jsonDoc.put(JSON_USER_ACCOUNT_BITCOIN_STATE, JSON_USER_ACCOUNT_BITCOIN_STATE_NO_KEY);
     //string'ify json
     std::ostringstream jsonDocBuffer;

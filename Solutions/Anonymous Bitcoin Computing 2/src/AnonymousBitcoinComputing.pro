@@ -70,7 +70,8 @@ HEADERS += \
     frontend2backendRequests/abcapigetcouchbasedocumentbykeyrequestresponder.h \
     frontend2backendRequests/abcguistorecouchbasedocumentbykeyrequestresponder.h \
     frontend2backendRequests/istorecouchbasedocumentbykeyrequestresponder.h \
-    frontend2backendRequests/abcapistorecouchbasedocumentbykeyrequestresponder.h
+    frontend2backendRequests/abcapistorecouchbasedocumentbykeyrequestresponder.h \
+    frontend/accounttabs/apikeyaccounttabbody.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -105,7 +106,8 @@ SOURCES += main.cpp \
     frontend2backendRequests/abcguigetcouchbasedocumentbykeyrequestresponder.cpp \
     frontend2backendRequests/abcapigetcouchbasedocumentbykeyrequestresponder.cpp \
     frontend2backendRequests/abcguistorecouchbasedocumentbykeyrequestresponder.cpp \
-    frontend2backendRequests/abcapistorecouchbasedocumentbykeyrequestresponder.cpp
+    frontend2backendRequests/abcapistorecouchbasedocumentbykeyrequestresponder.cpp \
+    frontend/accounttabs/apikeyaccounttabbody.cpp
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/

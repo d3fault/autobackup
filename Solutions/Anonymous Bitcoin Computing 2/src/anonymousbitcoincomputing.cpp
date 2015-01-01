@@ -52,16 +52,36 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     //rebuild argv/argc, because Wt is retarded and doesn't ignore extra args -_-
     int newArgC = argz.size();
     char *newArgV[newArgC];
+    //this won't work because wt doesn't want an array of scoped pointers :( -- QScopedPointer<char> newArgVs[newArgC];
     int i = 0;
     Q_FOREACH(const QString &currentArg, argz)
     {
         QByteArray currentArgLocal8Bit = currentArg.toLocal8Bit();
         int currentArgLocal8BitSize = currentArgLocal8Bit.size();
         newArgV[i] = new char[currentArgLocal8BitSize];
+        //newArgVs[i].reset(new char[currentArgLocal8BitSize]);
         strcpy(newArgV[i], currentArgLocal8Bit.data());
-        //newArgV[currentArgLocal8BitSize] = '\0';
+        //strcpy(newArgVs[i].data(), currentArgLocal8Bit.data());
         ++i;
     }
+    struct NewArgVscopedDeleter
+    {
+        int TheArgC;
+        char **TheArgV;
+        NewArgVscopedDeleter(int theArgC, char **theArgV)
+            : TheArgC(theArgC)
+            , TheArgV(theArgV)
+        { }
+        ~NewArgVscopedDeleter()
+        {
+            for(int j = 0; j < TheArgC; ++j) //TO DOneoptional(that was fun <- nope. written when i had the qscopedpointer impl. this struct shit is dumb): scoped deleter, because we'll leak the memory any time we 'return' above. honestly i can't figure out how to do it xD
+            {
+                delete TheArgV[j];
+            }
+        }
+    };
+    NewArgVscopedDeleter newArgVscopedDeleter(newArgC, newArgV);
+
 
     //start couchbase and wait for it to finish connecting/initializing
     AnonymousBitcoinComputingCouchbaseDB couchbaseDb;
@@ -191,11 +211,6 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
 
     //tell couchbase to clean up and join (this is where we break the event loop)
     finalStopCouchbaseAndWaitForItsThreadToJoin(&couchbaseDb);
-
-    for(i = 0; i < newArgC; ++i) //TODOoptional: scoped deleter, because we'll leak the memory any time we 'return' above. honestly i can't figure out how to do it xD
-    {
-        delete newArgV[i];
-    }
 
     if(!couchbaseDb.threadExittedCleanly())
     {

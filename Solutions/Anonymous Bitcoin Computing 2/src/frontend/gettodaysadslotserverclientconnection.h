@@ -30,7 +30,7 @@ private:
     enum GetTodaysAdSlotServerClientConnectionStageEnum
     {
           GetAdCampaignCurrentSlotCacheIfExists = 0
-        , GetAdCampaignDocItselfJustToGetSlotLengthHours = 1
+        , GetAdCampaignDocItselfToGetSlotLengthHoursAndApiKey = 1
         , GetAdCampaignSlot = 2
         , GetAdCampaignSlotFiller = 3
         , CreateOrUpdateAdCampaignCurrentSlotCache = 4
@@ -47,10 +47,13 @@ private:
     GetTodaysAdSlotServerClientConnectionStageEnum m_Stage;
     std::string m_CampaignOwnerRequested;
     std::string m_CampaignIndexRequested;
+    std::string m_ApiKeyRequested;
     bool m_FoundAdCampaignCurrentSlotCacheDoc;
+    int m_NumApiRequestsForThisAdSlotSoFar;
     std::string m_FirstSlotIndexToTry;
     std::string m_CurrentSlotIndexToTry;
     int m_SlotLengthHours;
+    std::string m_TheCorretApiKey;
     long long m_CurrentAdSlotExpireDateTime;
 
     bool m_BackendRequestPending;
@@ -62,7 +65,7 @@ private:
 
     void continueAtJustFinishedAttemptingToGetAdCampaignCurrentSlotCache(const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError);
     void continueAtJustFinishedAttemptingToGetAdCampaign(const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError);
-    void haveSlotLengthHoursAndKnowFirstSlotIndexToTrySoTry();
+    void haveSlotLengthHoursAndApiKeyAndKnowFirstSlotIndexToTrySoTry();
     void tryToGetCurrentSlotIndex();
     void continueAtJustFinishedAttemptingToGetAdCampaignSlot(const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError);
     void continueAtJustFinishedAttemptingToGetAdCampaignSlotFiller(const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError);

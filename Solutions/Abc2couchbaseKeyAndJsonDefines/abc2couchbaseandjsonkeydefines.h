@@ -117,6 +117,7 @@ const std::string adSpaceAllSlotFillersKey(const std::string &username);
 #define JSON_USER_ACCOUNT_BALANCE "balanceInSatoshis"
 #define JSON_USER_ACCOUNT_PASSWORD_HASH "passwordHash"
 #define JSON_USER_ACCOUNT_PASSWORD_SALT "passwordSalt"
+#define JSON_USER_ACCOUNT_API_KEY "apikey"
 //user account LOCKED [filling slot]
 #define JSON_USER_ACCOUNT_SLOT_ATTEMPTING_TO_FILL "slotToAttemptToFillAkaPurchase"
 #define JSON_USER_ACCOUNT_SLOT_TO_ATTEMPT_TO_FILL_IT_WITH "slotToAttemptToFillAkaPurchaseItWith"
@@ -202,6 +203,7 @@ const std::string adSpaceCampaignIndexCacheKey(const std::string &usernameOfCamp
 //campaign current slot CACHE
 #define COUCHBASE_AD_SPACE_CAMPAIGN_SLOT_CACHE_KEY_PREFIX "adSpaceCampaignCurrentSlotCache"
 #define JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT "currentSlot"
+#define JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_NUM_API_REQUESTS_FOR_CURRENT_SLOT "numApiRequestsForCurrentSlot"
 
 const std::string adSpaceCampaignSlotCacheKey(const std::string &usernameOfCampaignOwner, const std::string &campaignIndex);
 

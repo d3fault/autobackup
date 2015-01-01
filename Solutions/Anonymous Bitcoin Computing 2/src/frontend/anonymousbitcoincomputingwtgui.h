@@ -232,6 +232,7 @@ class AddFundsAccountTabBody;
 class WithdrawFundsAccountTabBody;
 class NewAdSlotFillerAccountTabBody;
 class ViewAllExistingAdSlotFillersAccountTabBody;
+class ApiKeyAccountTabBody;
 
 class AnonymousBitcoinComputingWtGUI : public WApplication
 {
@@ -243,6 +244,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     friend class WithdrawFundsAccountTabBody;
     friend class NewAdSlotFillerAccountTabBody;
     friend class ViewAllExistingAdSlotFillersAccountTabBody;
+    friend class ApiKeyAccountTabBody;
 
     friend class AbcGuiStoreCouchbaseDocumentByKeyRequestResponder;
     friend class AbcGuiGetCouchbaseDocumentByKeyRequestResponder;
@@ -293,6 +295,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     WithdrawFundsAccountTabBody *m_WithdrawFundsAccountTab;
     NewAdSlotFillerAccountTabBody *m_NewAdSlotFillerAccountTab;
     ViewAllExistingAdSlotFillersAccountTabBody *m_ViewAllExistingAdSlotFillersAccountTab;
+    ApiKeyAccountTabBody *m_ApiKeyAccountTab;
     WScrollArea *m_AccountWidgetScrollArea;
     WContainerWidget *m_AccountWidget;
 
@@ -472,7 +475,8 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
         GETALLADSLOTFILLERSDOCFORVIEWING,
         HACKYMULTIGETAPAGEWORTHOFADSLOTFILLERS,
         ONLOGINACCOUNTLOCKEDRECOVERY_AND_SLOTPURCHASEBEATTOTHEPUNCH_DOESSLOTEXISTCHECK,
-        GETPROFILEBEFORESCHEDULINGWITHDRAWFUNDSREQUESTTOVERIFYTHEYHAVEENOUGHFUNDS
+        GETPROFILEBEFORESCHEDULINGWITHDRAWFUNDSREQUESTTOVERIFYTHEYHAVEENOUGHFUNDS,
+        GETPROFILEFORGETTINGAPIKEY
     };
     enum WhatTheGetSavingCasWasForEnum
     {

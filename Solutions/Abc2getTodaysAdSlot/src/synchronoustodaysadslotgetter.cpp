@@ -9,6 +9,7 @@ using namespace boost::property_tree::json_parser;
 
 #define SynchronousTodaysAdSlotGetter_FIRST_NO_CACHE_YET_SLOT_INDEX "0"
 
+//TODOreq: if updating (WHY?!?!?), needs api key param stuff
 SynchronousTodaysAdSlotGetter::SynchronousTodaysAdSlotGetter()
     : ISynchronousLibCouchbaseUser()
     , m_TodaysAdSlotJson(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_NO_AD_PLACEHOLDER)

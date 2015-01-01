@@ -7,6 +7,7 @@
 #include <boost/version.hpp>
 #include <boost/shared_ptr.hpp> //ViewQueryPageContentsType
 
+#define ABC_HUMAN_READABLE_NAME_PLX "Anonymous Bitcoin Computing"
 #define ABC_500_INTERNAL_SERVER_ERROR_MESSAGE "500 Internal Server Error"
 #define ABC_WT_COUCHBASE_MESSAGE_QUEUES_BASE_NAME "AbcWtToCouchbaseMessageQueuesBaseName"
 #define ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS 576

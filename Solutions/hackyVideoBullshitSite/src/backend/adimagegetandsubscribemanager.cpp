@@ -79,7 +79,7 @@ AdImageGetAndSubscribeManager::~AdImageGetAndSubscribeManager()
 }
 void AdImageGetAndSubscribeManager::startHttpRequestForNextAdSlot()
 {
-    m_NetworkAccessManager->get(QNetworkRequest(QUrl("https://anonymousbitcoincomputing.com/todays-ad.json?user=d3fault&index=0"))); //TODOreq: maybe a shared secret url or special 'token', and definitely want SSL so no MITM lawl (even self signed cert is better than none)
+    m_NetworkAccessManager->get(QNetworkRequest(QUrl("https://anonymousbitcoincomputing.com/current-ad.json?user=d3fault&index=0"))); //TODOreq: maybe a shared secret url or special 'token', and definitely want SSL so no MITM lawl (even self signed cert is better than none)
 }
 void AdImageGetAndSubscribeManager::getAndSubscribe(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier *adImageSubscriberIdentifier, std::string sessionId, GetAndSubscriptionUpdateCallbackType getAndSubscriptionUpdateCallback)
 {

@@ -15,6 +15,9 @@
 
 #define GetTodaysAdSlotServerClientConnection_FIRST_NO_CACHE_YET_SLOT_INDEX "0"
 #define GetTodaysAdSlotServerClientConnection_SECONDS_BEFORE_ACTUAL_EXPIRE_DATETIME_TO_SERVE_THE_NEXT_AD_SLOT 30
+#define GetTodaysAdSlotServerClientConnection_INVALID_API_KEY_MESSAGE "Invalid API Key"
+#define GetTodaysAdSlotServerClientConnection_MAX_API_REQUESTS_PER_AD_SLOT_DURATION_EXCLUDING_NO_AD_RESPONSES_OFC 50 /* if changing, change below string as well. 50 seems ample: low enough so that it would trigger if the ad campaign owner was somehow hitting the API url on every one of their website visitors (and yet still parsing json? unlikely lolol), yet high enough that a developer dicking around with the API won't run out of test runs. TO DOnereq: exclude 'no ad' responses! there is no 'push' atm, so 5 min polling has to be used :( TODOoptimization: a user should be able to query the status of ALL their ad campaigns with a single api query (more efficient on both ends) */
+#define GetTodaysAdSlotServerClientConnection_MAX_API_REQUESTS_PER_AD_SLOT_DURATION_EXCLUDING_NO_AD_RESPONSES_OFC_STR "50"
 
 using namespace boost::property_tree;
 
@@ -89,7 +92,8 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
     if(!lcbOpSuccess)
     {
          //the campaign slot index cache does not exist. get the campaign doc itself, JUST for slotLengthHours (from then on we store it in the cache doc)
-        beginDbGet(adSpaceCampaignKey(m_CampaignOwnerRequested, m_CampaignIndexRequested), GetAdCampaignDocItselfJustToGetSlotLengthHours);
+        m_NumApiRequestsForThisAdSlotSoFar = 1; //this will have been our first, which is what we want to store in the cache doc later
+        beginDbGet(adSpaceCampaignKey(m_CampaignOwnerRequested, m_CampaignIndexRequested), GetAdCampaignDocItselfToGetSlotLengthHoursAndApiKey);
         return;
     }
     else
@@ -99,9 +103,17 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
         std::istringstream is(couchbaseDocument);
         read_json(is, pt);
 
+        m_NumApiRequestsForThisAdSlotSoFar = pt.get<int>(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_NUM_API_REQUESTS_FOR_CURRENT_SLOT);
+#if 0 //TO DOnereq: do this LATER. yes we have the num api requests value at this point, but we don't know whether the 'currentSlot' the cache points to is todays or not [yet]
+        int apiRequestsForThisAdSlotSoFar = pt.get<int>(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_NUM_API_REQUESTS_FOR_CURRENT_SLOT);
+        if(apiRequestsForThisAdSlotSoFar > GetTodaysAdSlotServerClientConnection_MAX_API_REQUESTS_PER_AD_SLOT_DURATION_EXCLUDING_NO_AD_RESPONSES_OFC)
+        { }
+#endif
+
         m_FirstSlotIndexToTry = pt.get<string>(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT);
         m_SlotLengthHours = pt.get<int>(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS);
-        haveSlotLengthHoursAndKnowFirstSlotIndexToTrySoTry();
+        m_TheCorretApiKey = pt.get<string>(JSON_USER_ACCOUNT_API_KEY);
+        haveSlotLengthHoursAndApiKeyAndKnowFirstSlotIndexToTrySoTry();
         return;
     }
 }
@@ -124,10 +136,16 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
     std::istringstream is(couchbaseDocument);
     read_json(is, pt);
     m_SlotLengthHours = pt.get<int>(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS);
-    haveSlotLengthHoursAndKnowFirstSlotIndexToTrySoTry(); //first slot index still at initialized value of "0"
+    m_TheCorretApiKey = pt.get<string>(JSON_USER_ACCOUNT_API_KEY);
+    haveSlotLengthHoursAndApiKeyAndKnowFirstSlotIndexToTrySoTry(); //first slot index still at initialized value of "0"
 }
-void GetTodaysAdSlotServerClientConnection::haveSlotLengthHoursAndKnowFirstSlotIndexToTrySoTry()
+void GetTodaysAdSlotServerClientConnection::haveSlotLengthHoursAndApiKeyAndKnowFirstSlotIndexToTrySoTry()
 {
+    if(m_ApiKeyRequested != m_TheCorretApiKey)
+    {
+        sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR(GetTodaysAdSlotServerClientConnection_INVALID_API_KEY_MESSAGE));
+        return;
+    }
     m_CurrentSlotIndexToTry = m_FirstSlotIndexToTry;
     tryToGetCurrentSlotIndex();
 }
@@ -162,6 +180,18 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
     if(currentDateTime >= startDateTime && (currentDateTime < m_CurrentAdSlotExpireDateTime))
     {
         //woot, found todays slot :)
+
+        //first, check they haven't used up all their api requests for the current slot
+        if(m_FoundAdCampaignCurrentSlotCacheDoc && (m_FirstSlotIndexToTry == m_CurrentSlotIndexToTry))
+        {
+            ++m_NumApiRequestsForThisAdSlotSoFar;
+            if(m_NumApiRequestsForThisAdSlotSoFar > GetTodaysAdSlotServerClientConnection_MAX_API_REQUESTS_PER_AD_SLOT_DURATION_EXCLUDING_NO_AD_RESPONSES_OFC)
+            {
+                //all api requests exhausted
+                sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("You have used up all of your API requests for the current ad slot duration. Wait until the current ad expires and you'll get" GetTodaysAdSlotServerClientConnection_MAX_API_REQUESTS_PER_AD_SLOT_DURATION_EXCLUDING_NO_AD_RESPONSES_OFC_STR " more. You should have saved the results of the API Request. " ABC_HUMAN_READABLE_NAME_PLX " does not serve ads directly to end users (doing so is an invasion of your users' privacy)."));
+                return;
+            }
+        }
 
         //now we look up the ad slot filler to get the hover/url/image
         beginDbGet(pt.get<string>(JSON_AD_SPACE_CAMPAIGN_SLOT_FILLED_WITH), GetAdCampaignSlotFiller);
@@ -198,23 +228,29 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
     todaysFilledAdSlot.put(JSON_SLOT_FILLER_IMAGE_GUESSED_EXTENSION, pt.get<string>(JSON_SLOT_FILLER_IMAGE_GUESSED_EXTENSION));
     todaysFilledAdSlot.put(JSON_SLOT_FILLER_IMAGEB64, pt.get<string>(JSON_SLOT_FILLER_IMAGEB64));
     std::ostringstream todaysAdSlotJsonBuffer;
-    write_json(todaysAdSlotJsonBuffer, todaysFilledAdSlot, false);
+    write_json(todaysAdSlotJsonBuffer, todaysFilledAdSlot, false); //TODOoptional: we could format it as xml if the user requests it in the query. ptree already has an xml output so it'd be really freakin' easy...
     const std::string &todaysAdSlotJsonStdStr = todaysAdSlotJsonBuffer.str();
     QString todaysAdSlotJson = QString::fromStdString(todaysAdSlotJsonStdStr);
 
     sendResponseAndCloseSocket(todaysAdSlotJson);
 
-    //store the this+1 in the cache so tomorrow will be uber fast
+    //store the current slot index in the cache so subsequent api requests, and also 'tomorrows' ad slot, will be uber fast
+#if 0 //OLD (now that there's an API key, we have to update the cache doc on every hit to keep track of their num api requests):
     if(m_CurrentSlotIndexToTry != m_FirstSlotIndexToTry || (m_CurrentSlotIndexToTry == GetTodaysAdSlotServerClientConnection_FIRST_NO_CACHE_YET_SLOT_INDEX && !m_FoundAdCampaignCurrentSlotCacheDoc)) //only update the cache if it needs to be updated...
     {
+#endif
         ptree pt2;
         //pt3.put(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT, boost::lexical_cast<string>(boost::lexical_cast<int>(slotIndexToTry)+1));
         pt2.put(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT, m_CurrentSlotIndexToTry); //^if we only request once per day then it makes sense to set the cache to "tomorrow" (+1), but if we request it multiple times per day then it makes sense to set it to "today" (no +1). leaving as "today" since it's safer and I still haven't finalized this shit
         pt2.put(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS, boost::lexical_cast<std::string>(m_SlotLengthHours));
+        pt2.put(JSON_USER_ACCOUNT_API_KEY, m_TheCorretApiKey);
+        pt2.put(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_NUM_API_REQUESTS_FOR_CURRENT_SLOT, boost::lexical_cast<std::string>(m_NumApiRequestsForThisAdSlotSoFar));
         std::ostringstream newCacheJsonBuffer;
         write_json(newCacheJsonBuffer, pt2, false);
         beginDbStore(adSpaceCampaignSlotCacheKey(m_CampaignOwnerRequested, m_CampaignIndexRequested), newCacheJsonBuffer.str(), CreateOrUpdateAdCampaignCurrentSlotCache);
+#if 0
     }
+#endif
 }
 void GetTodaysAdSlotServerClientConnection::backendDbGetCallback(std::string couchbaseDocument, bool lcbOpSuccess, bool dbError)
 {
@@ -231,7 +267,7 @@ void GetTodaysAdSlotServerClientConnection::backendDbGetCallback(std::string cou
     case GetAdCampaignCurrentSlotCacheIfExists:
         continueAtJustFinishedAttemptingToGetAdCampaignCurrentSlotCache(couchbaseDocument, lcbOpSuccess, dbError);
         break;
-    case GetAdCampaignDocItselfJustToGetSlotLengthHours:
+    case GetAdCampaignDocItselfToGetSlotLengthHoursAndApiKey:
         continueAtJustFinishedAttemptingToGetAdCampaign(couchbaseDocument, lcbOpSuccess, dbError);
         break;
     case GetAdCampaignSlot:
@@ -295,25 +331,35 @@ void GetTodaysAdSlotServerClientConnection::handleClientReadyRead()
                     QUrl theUrl = QUrl::fromUserInput("http://dummydomain.com" + encodedUrlPath);
                     if(theUrl.isValid())
                     {
-                        if(theUrl.path() == "/todays-ad.json")
+                        if(theUrl.path() == "/current-ad.json")
                         {
                             QUrlQuery theUrlQuery(theUrl);
                             QString userStr = theUrlQuery.queryItemValue("user");
                             QString indexStr = theUrlQuery.queryItemValue("index");
-                            if((!indexStr.isEmpty()) && (!userStr.isEmpty()))
+                            QString apiKeyStr = theUrlQuery.queryItemValue(JSON_USER_ACCOUNT_API_KEY);
+                            if((!indexStr.isEmpty()) && (!userStr.isEmpty()) && (!apiKeyStr.isEmpty()))
                             {
                                 bool parseSuccess = false;
                                 int x = indexStr.toInt(&parseSuccess);
                                 if(parseSuccess && x > -1)
                                 {
-                                    LettersNumbersOnlyRegExpValidatorAndInputFilter usernameValidator;
+                                    LettersNumbersOnlyRegExpValidatorAndInputFilter lettersNumbersOnlyValidator;
                                     m_CampaignOwnerRequested = userStr.toStdString(); //sure we might be setting these to values that are 'illegal', but unless they both validate, we never even get to a place where we use them
                                     m_CampaignIndexRequested = indexStr.toStdString();
-                                    if(usernameValidator.validate(m_CampaignOwnerRequested).state() == LettersNumbersOnlyRegExpValidatorAndInputFilter::Valid)
+                                    m_ApiKeyRequested = apiKeyStr.toStdString();
+                                    if(lettersNumbersOnlyValidator.validate(m_CampaignOwnerRequested).state() == LettersNumbersOnlyRegExpValidatorAndInputFilter::Valid)
                                     {
-                                        //schedule backend request
-                                        beginDbGet(adSpaceCampaignSlotCacheKey(m_CampaignOwnerRequested, m_CampaignIndexRequested), GetAdCampaignCurrentSlotCacheIfExists);
-                                        disconnect(m_ClientStream.device(), SIGNAL(readyRead()), this, SLOT(handleClientReadyRead())); //we got what we wanted
+                                        if(lettersNumbersOnlyValidator.validate(m_ApiKeyRequested).state() == LettersNumbersOnlyRegExpValidatorAndInputFilter::Valid)
+                                        {
+                                            //schedule backend request
+                                            beginDbGet(adSpaceCampaignSlotCacheKey(m_CampaignOwnerRequested, m_CampaignIndexRequested), GetAdCampaignCurrentSlotCacheIfExists);
+                                            disconnect(m_ClientStream.device(), SIGNAL(readyRead()), this, SLOT(handleClientReadyRead())); //we got what we wanted
+                                        }
+                                        else
+                                        {
+                                            sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR(GetTodaysAdSlotServerClientConnection_INVALID_API_KEY_MESSAGE));
+                                            return;
+                                        }
                                     }
                                     else
                                     {
@@ -329,13 +375,13 @@ void GetTodaysAdSlotServerClientConnection::handleClientReadyRead()
                             }
                             else
                             {
-                                sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Missing HTTP GET URL Parameters ('user' and/or 'index')"));
+                                sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Missing HTTP GET URL Parameters ('user' and/or 'index' and/or '" JSON_USER_ACCOUNT_API_KEY "')"));
                                 return;
                             }
                         }
                         else
                         {
-                            sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Invalid HTTP GET URL. Did you mean '/todays-ad.json'?"));
+                            sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Invalid HTTP GET URL. Did you mean '/current-ad.json'?"));
                             return;
                         }
                     }
