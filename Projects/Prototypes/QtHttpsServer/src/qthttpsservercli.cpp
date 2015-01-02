@@ -35,6 +35,7 @@ QtHttpsServerCli::QtHttpsServerCli(QObject *parent)
         handleQuitRequested();
         return;
     }
+    handleE("listening");
 
     StandardInputNotifier *sin = new StandardInputNotifier(this);
     connect(sin, SIGNAL(standardInputReceivedLine(QString)), this, SLOT(handleStandardInputLineReceived(QString)));

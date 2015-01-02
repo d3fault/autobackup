@@ -14,6 +14,7 @@ public:
     bool startQtHttpServer(quint16 port);
     ~QtHttpsServer();
 private:
+    QList<QSslCertificate> m_CAs;
     QSslKey *m_ServerPrivateEncryptionKey;
     QSslCertificate *m_ServerPublicLocalCertificate;
 protected:

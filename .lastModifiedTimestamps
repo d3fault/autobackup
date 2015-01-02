@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1420079236
+Documents/minddump/:1420086834
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1419878872
+Documents/minddump/dreams/:1420213647
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -187,6 +187,7 @@ Documents/minddump/dreams/sdflskdjflkjsdlfjslkdjflsjdflksjdflkjsdlkfjouwekrjousd
 Documents/minddump/dreams/sdhflsjdflkjsdfouwelkrjohsldfjksdfoweurkhgdysdfoi.txt:1403567611
 Documents/minddump/dreams/sdjflsjdflkjsdlkfjsdklfjsldkjfouwerkljsdfousdflkjsdf.txt:1412431712
 Documents/minddump/dreams/sdkfjlkasdjflksdjfklsjdflkjsdfoiuslkfjsoiuflskdjfsoduiflsdkfj.txt:1416243327
+Documents/minddump/dreams/sdkfjsdlkjflskjflkjwerouslkjflsdkjflskdjflskdjflksdjflksdjflksdjflk.txt:1420213647
 Documents/minddump/dreams/sdkfjslkdjflksdjfklsjdflkjdsfkljdsfjdofulskdjfosduflskdjflksdjflksjdfousdflkjsdf.txt:1408991548
 Documents/minddump/dreams/sdkjflsdkjflksdjflksdjflkjslfkjsdlkfjsldkfjlksdjflkjeworulksdjfousldkfjldskf.txt:1419070646
 Documents/minddump/dreams/sdkjflskjdflskjdfosudfljsdfousdfljsfdoulkjeroiusdlfkjsdofuo.txt:1391895285
@@ -1984,6 +1985,7 @@ Documents/minddump/sdfsdlkfjslkdjfsaoduflkwjoerulksdjfouasdflkjasfousdlfkjsodful
 Documents/minddump/sdfsfdsdflkjsdflksdoifuwerlkjdsfoudfljeroul.txt:1356094322
 Documents/minddump/sdfsflskfjslkdjfsdofusldfjosdufjsdouewroiusdf.txt:1392529056
 Documents/minddump/sdfsfsjdklfjslkdfjslkdjfswerrouiflskjdfoiusdflkj.txt:1393103430
+Documents/minddump/sdfskdjflksdjflksdsldfkjsdlkfjksdjfklsdjflksjdflksdjklfj.txt:1420086834
 Documents/minddump/sdfsldfkjsldkfjoiuwlerjousadlfkjosduflkjsdfoiulkjweroiulksfdjosduflk.txt:1370678732
 Documents/minddump/sdfsldkfjsdlfouwlrkjsdofusdlfkj.txt:1353779782
 Documents/minddump/sdfsldkjfouwelrkjouflkjsdofusdlkjfouiwerkjlksjdfosudflkjwoeurljsdofusdlfjk.txt:1370584649
@@ -3955,14 +3957,14 @@ Projects/Prototypes/QtHttpServer/src/qthttpserver.h:1419899055
 Projects/Prototypes/QtHttpServer/src/qthttpservercli.cpp:1419899165
 Projects/Prototypes/QtHttpServer/src/qthttpservercli.h:1419898839
 Projects/Prototypes/QtHttpsServer/:1420082214
-Projects/Prototypes/QtHttpsServer/src/:1420084319
+Projects/Prototypes/QtHttpsServer/src/:1420126187
 Projects/Prototypes/QtHttpsServer/src/QtHttpsServerCli.pro:1420080881
 Projects/Prototypes/QtHttpsServer/src/main.cpp:1420080997
-Projects/Prototypes/QtHttpsServer/src/qthttpsclient.cpp:1420082955
-Projects/Prototypes/QtHttpsServer/src/qthttpsclient.h:1420082940
-Projects/Prototypes/QtHttpsServer/src/qthttpsserver.cpp:1420084298
-Projects/Prototypes/QtHttpsServer/src/qthttpsserver.h:1420083896
-Projects/Prototypes/QtHttpsServer/src/qthttpsservercli.cpp:1420081008
+Projects/Prototypes/QtHttpsServer/src/qthttpsclient.cpp:1420085771
+Projects/Prototypes/QtHttpsServer/src/qthttpsclient.h:1420085771
+Projects/Prototypes/QtHttpsServer/src/qthttpsserver.cpp:1420123862
+Projects/Prototypes/QtHttpsServer/src/qthttpsserver.h:1420123248
+Projects/Prototypes/QtHttpsServer/src/qthttpsservercli.cpp:1420126185
 Projects/Prototypes/QtHttpsServer/src/qthttpsservercli.h:1420080998
 Projects/Prototypes/RemoteBankManagementTest/:1330551098
 Projects/Prototypes/RemoteBankManagementTest/src/:1331378216
@@ -5122,7 +5124,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/public.requires.contractual.guara
 Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or.else.who.knows.how.shit.will.fail.xD.txt:1392186832
 Solutions/Anonymous Bitcoin Computing 2/design/the.goods.service.vs.money.transmitter.differentiation.does.not.exist.with.bitcoins.nor.paper.money.but.does.exist.with.debit.credit.cards.EXCEPT.THOSE.HAVE.FEES.UP.THE.ASS.AND.HUGE.BARRIER.TO.ENTRY.txt:1416508764
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
-Solutions/Anonymous Bitcoin Computing 2/src/:1420080640
+Solutions/Anonymous Bitcoin Computing 2/src/:1420086882
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1420079402
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477

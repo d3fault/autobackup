@@ -1,17 +1,28 @@
 #include "qthttpsclient.h"
 
-#include <QtNetwork/QTcpSocket>
+#include <QtNetwork/QSslSocket>
 #include <QUrl>
 #include <QUrlQuery>
+#include <QDebug>
 
-QtHttpsClient::QtHttpsClient(QTcpSocket *clientSocket, QObject *parent)
+QtHttpsClient::QtHttpsClient(QSslSocket *clientSocket, QObject *parent)
     : QObject(parent)
     //, m_ClientSocket(clientSocket)
     , m_ClientStream(clientSocket)
 {
     m_ClientStream.setAutoDetectUnicode(true);
+    connect(clientSocket, SIGNAL(peerVerifyError(QSslError)), this, SLOT(handlePeerVerifyError(QSslError)));
+    connect(clientSocket, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(handleSslErrors(QList<QSslError>)));
     connect(clientSocket, SIGNAL(encrypted()), this, SLOT(handleClientSocketEncrypted()));
     connect(clientSocket, SIGNAL(disconnected()), clientSocket, SLOT(deleteLater()));
+}
+void QtHttpsClient::handlePeerVerifyError(QSslError sslError)
+{
+    qDebug() << sslError;
+}
+void QtHttpsClient::handleSslErrors(QList<QSslError> sslErrors)
+{
+    qDebug() << sslErrors;
 }
 void QtHttpsClient::handleClientSocketEncrypted()
 {

@@ -3,18 +3,23 @@
 
 #include <QObject>
 #include <QTextStream>
+#include <QtNetwork/QSslError>
 
-class QTcpSocket;
+class QSslSocket;
 
 class QtHttpsClient : public QObject
 {
     Q_OBJECT
 public:
-    explicit QtHttpsClient(QTcpSocket *clientSocket, QObject *parent = 0);
+    explicit QtHttpsClient(QSslSocket *clientSocket, QObject *parent = 0);
 private:
     //QTcpSocket *m_ClientSocket;
     QTextStream m_ClientStream;
+signals:
+    void e(const QString &msg);
 private slots:
+    void handlePeerVerifyError(QSslError sslError);
+    void handleSslErrors(QList<QSslError> sslErrors);
     void handleClientSocketEncrypted();
     void handleReadyRead();
 };

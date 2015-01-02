@@ -15,29 +15,52 @@ QtHttpsServer::QtHttpsServer(QObject *parent)
     , m_ServerPublicLocalCertificate(0)
 {
     //connect(this, SIGNAL(newConnection()), this, SLOT(handleNewConnection()));
+}
+bool QtHttpsServer::startQtHttpServer(quint16 port)
+{
+    QFile serverCaFileResource("/run/shm/demoCA/cacert.pem");
+    if(!serverCaFileResource.open(QFile::ReadOnly))
+    {
+        emit e("CA could not be opened");
+        return false;
+    }
+    QByteArray serverCaByteArray = serverCaFileResource.readAll();
+    QSslCertificate ca(serverCaByteArray);
+    if(ca.isNull())
+    {
+        emit e("CA is null");
+        return false;
+    }
+    if(ca.isBlacklisted())
+    {
+        emit e("CA is blacklisted");
+        return false;
+    }
+    m_CAs.append(ca);
 
     QFile serverPrivateEncryptionKeyFileResource("/run/shm/server.key");
     if(!serverPrivateEncryptionKeyFileResource.open(QFile::ReadOnly))
     {
-        emit e("server.key not found");
-        return;
+        emit e("server.key could not be opened");
+        return false;
     }
     QByteArray serverPrivateEncryptionKeyByteArray = serverPrivateEncryptionKeyFileResource.readAll();
 
-    m_ServerPrivateEncryptionKey = new QSslKey(serverPrivateEncryptionKeyByteArray, QSsl::Rsa, QSsl::Pem, QSsl::PrivateKey);
+    QByteArray privateKeyPassphraseBA("fuckyou");
+    m_ServerPrivateEncryptionKey = new QSslKey(serverPrivateEncryptionKeyByteArray, QSsl::Rsa, QSsl::Pem, QSsl::PrivateKey, privateKeyPassphraseBA);
 
     if(m_ServerPrivateEncryptionKey->isNull())
     {
         emit e("server private encryption key is null");
-        return;
+        return false;
     }
 
     //Server Public Local Certificate is the public decryption key that we send to our client
     QFile serverPublicLocalCertificateFileResource("/run/shm/server.pem");
     if(!serverPublicLocalCertificateFileResource.open(QFile::ReadOnly))
     {
-        emit e("server.pem not found");
-        return;
+        emit e("server.pem could not be opened");
+        return false;
     }
     QByteArray serverPublicLocalCertificateByteArray = serverPublicLocalCertificateFileResource.readAll();
 
@@ -45,16 +68,14 @@ QtHttpsServer::QtHttpsServer(QObject *parent)
     if(m_ServerPublicLocalCertificate->isNull())
     {
         emit e("server public local certificate is null");
-        return;
+        return false;
     }
     if(m_ServerPublicLocalCertificate->isBlacklisted())
     {
         emit e("server public local certificate is blacklisted");
-        return;
+        return false;
     }
-}
-bool QtHttpsServer::startQtHttpServer(quint16 port)
-{
+
     return listen(QHostAddress::Any, port);
 }
 QtHttpsServer::~QtHttpsServer()
@@ -73,9 +94,11 @@ void QtHttpsServer::incomingConnection(qintptr socketDescriptor)
     QSslSocket *clientSocket = new QSslSocket(this);
     if(clientSocket->setSocketDescriptor(socketDescriptor))
     {
+        clientSocket->setCaCertificates(m_CAs);
         clientSocket->setPrivateKey(*m_ServerPrivateEncryptionKey);
         clientSocket->setLocalCertificate(*m_ServerPublicLocalCertificate);
-        new QtHttpsClient(clientSocket, clientSocket);
+        QtHttpsClient *httpsClient = new QtHttpsClient(clientSocket, clientSocket);
+        connect(httpsClient, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
         clientSocket->startServerEncryption();
     }
     else
