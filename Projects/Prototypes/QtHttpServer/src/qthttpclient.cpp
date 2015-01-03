@@ -12,6 +12,7 @@ QtHttpClient::QtHttpClient(QTcpSocket *clientSocket, QObject *parent)
     m_ClientStream.setAutoDetectUnicode(true);
     connect(clientSocket, SIGNAL(readyRead()), this, SLOT(handleReadyRead()));
     connect(clientSocket, SIGNAL(disconnected()), clientSocket, SLOT(deleteLater()));
+    connect(clientSocket, SIGNAL(destroyed()), this, SLOT(deleteLater()));
 }
 void QtHttpClient::handleReadyRead()
 {

@@ -16,5 +16,5 @@ bool QtHttpServer::startQtHttpServer(quint16 port)
 }
 void QtHttpServer::handleNewConnection()
 {
-    new QtHttpClient(nextPendingConnection(), this);
+    new QtHttpClient(nextPendingConnection());
 }

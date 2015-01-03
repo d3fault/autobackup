@@ -8,7 +8,7 @@
 
 #include "qthttpsclient.h"
 
-//KISS one url http server, to test that it works, and that I can parse url params
+//KISS one url https server, to test that it works from the browser
 QtHttpsServer::QtHttpsServer(QObject *parent)
     : QTcpServer(parent)
     , m_ServerPrivateEncryptionKey(0)
@@ -18,6 +18,7 @@ QtHttpsServer::QtHttpsServer(QObject *parent)
 }
 bool QtHttpsServer::startQtHttpServer(quint16 port)
 {
+#if 0
     QFile serverCaFileResource("/run/shm/demoCA/cacert.pem");
     if(!serverCaFileResource.open(QFile::ReadOnly))
     {
@@ -37,6 +38,7 @@ bool QtHttpsServer::startQtHttpServer(quint16 port)
         return false;
     }
     m_CAs.append(ca);
+#endif
 
     QFile serverPrivateEncryptionKeyFileResource("/run/shm/server.key");
     if(!serverPrivateEncryptionKeyFileResource.open(QFile::ReadOnly))
@@ -94,10 +96,10 @@ void QtHttpsServer::incomingConnection(qintptr socketDescriptor)
     QSslSocket *clientSocket = new QSslSocket(this);
     if(clientSocket->setSocketDescriptor(socketDescriptor))
     {
-        clientSocket->setCaCertificates(m_CAs);
+        //clientSocket->setCaCertificates(m_CAs);
         clientSocket->setPrivateKey(*m_ServerPrivateEncryptionKey);
         clientSocket->setLocalCertificate(*m_ServerPublicLocalCertificate);
-        QtHttpsClient *httpsClient = new QtHttpsClient(clientSocket, clientSocket);
+        QtHttpsClient *httpsClient = new QtHttpsClient(clientSocket);
         connect(httpsClient, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
         clientSocket->startServerEncryption();
     }

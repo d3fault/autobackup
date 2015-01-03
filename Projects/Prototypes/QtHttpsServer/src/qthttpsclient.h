@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QTextStream>
 #include <QtNetwork/QSslError>
+#include <QtNetwork/QAbstractSocket>
 
 class QSslSocket;
 
@@ -18,6 +19,7 @@ private:
 signals:
     void e(const QString &msg);
 private slots:
+    void handleError(QAbstractSocket::SocketError socketError);
     void handlePeerVerifyError(QSslError sslError);
     void handleSslErrors(QList<QSslError> sslErrors);
     void handleClientSocketEncrypted();
