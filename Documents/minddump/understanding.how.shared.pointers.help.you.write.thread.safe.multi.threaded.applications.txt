@@ -1,0 +1,16 @@
+Understanding how "Shared Pointers" help you write proper (thread-safe) multi-threaded applications
+
+Neither QSharedPointer, std::shared_ptr, nor boost::shared_ptr are thread safe. Yet, they help tremendously in writing thread-safe code.
+
+It is worth pointing out that this document will only focus on thread-safety for READING an object from multiple threads simultaneously. If you want WRITE thread-safety, you either need a good Copy-On-Write implementation (see: Qt's doc on "Implicit Sharing") or you need to guard all read/write access with traditional mutexes.
+
+The main problem that occurs when multiple threads try to read an object simultenously is that one of the threads tries to deletes the object (after all, one of the threads instantiated the object... so it would be improper for that thread to not later try to destroy the object). If one thread destroys the object while others are still reading it, it's fails just like a single threaded application would for a typical dangling pointer: segfault. Shared pointers use reference counting to make sure that the object does not get deleted until there are no more objects pointing to it. It's not the shared pointer that's thread-safe (common misconception); it's the reference count itself (internal to a shared pointer) that is thread safe (through the use of atomics).
+
+If you pass a single shared pointer around to multiple threads, you are doing it wrong. You should instead make an extra shared pointer for each thread, passing in the first thread's shared pointer in as their constructor's argument. This increments the [shared] reference count each time. When each thread destroys it's respective shared pointer, the reference count gets decremented. When any one of the shared pointers decrements the reference count and sees that the reference count is now at zero, it then deletes the object.
+
+
+I think the main source of confusion stems from the following three statements found all over the web:
+
+1) "Shared Pointers are what you want if you want thread-safe [read] access" (true, but only once understood and used correctly)
+2) "Shared Pointers are not thread-safe" (doesn't this seem like a contradiction to (1)?)
+3) "The object being pointed to is not thread safe" (this is why we only achieve READ thread-safety when we use shared pointers)
