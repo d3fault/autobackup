@@ -667,7 +667,10 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
         if(!lcbOpSuccess)
         {
             new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+            new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
             new WText("The campaign for that user (or perhaps that user) does not exist", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget); //TODOoptional: 'click here to see all of the user's campaigns' (and to find out of the user even exists?). TO DOnereq: we are 'subscribed' and should not be! it segfaults on shutdown, but may even shutdown at runtime if the requested campaign is created later and then viewed normally and that triggers a 'subscription update' (but like I said, it's already deleted I think (but I'm not even sure of that))
+            new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+            new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE "/" + m_CampaignOwnerForPageBeingViewed), "Click here to see all ad campaigns for user: " + m_CampaignOwnerForPageBeingViewed, m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
             if(!environment().ajax())
                 resumeRendering();
             else if(m_FirstPopulate)
