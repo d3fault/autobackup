@@ -1,5 +1,7 @@
 #include "anonymousbitcoincomputingwtgui.h"
 
+#include <Wt/WRandom>
+
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
 #include <Wt/WIntValidator>
 
@@ -2393,15 +2395,14 @@ void AnonymousBitcoinComputingWtGUI::handleRegisterButtonClicked()
     std::string passwordPlainText = m_RegisterPasswordLineEdit->text().toUTF8();
 
     //make salt
-    const std::string &currentDateTime = WDateTime::currentDateTime().toString().toUTF8();
-    std::string salt = sha1(username + uniqueId() /*TODOreq: uniqueId and sessionId are seen by user, which means they could be intercepted by man in the middle. use some server side rand instead*/ + sessionId() + "saltplx739384sdfjghej9593859dffoiueoru584758958394fowuer732487587292" + currentDateTime + passwordPlainText);
+    std::string salt = sha1(WRandom::generateId(32));
     //base64 salt for storage in json/couchbase
     std::string base64Salt = base64Encode(salt, false);
     //hash password using base64'd salt
     std::string passwordSaltHashed = sha1(passwordPlainText + base64Salt);
     //base64 hash for storage in json/couchbase
     std::string base64PasswordSaltHashed = base64Encode(passwordSaltHashed, false);
-    std::string apiKey = hexEncode(sha1(currentDateTime + "sdfk32432434243jdlskfjal75656daskdjfoweuroiweu834098239dfskjsdf" + uniqueId() + sessionId() + username));
+    std::string apiKey = hexEncode(username + "_" + WRandom::generateId()); //is it a security issue to store their username in plaintext (hex encoded) as the firt part of their api key? imo might help with stuff later, finding a user by api key for example. I don't think it's a securtiy issue, but could be wrong
     //json'ify
     ptree jsonDoc;
     jsonDoc.put(JSON_USER_ACCOUNT_BALANCE, "0");
