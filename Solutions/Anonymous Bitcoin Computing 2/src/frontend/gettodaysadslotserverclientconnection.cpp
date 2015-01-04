@@ -361,57 +361,67 @@ void GetTodaysAdSlotServerClientConnection::handleClientReadyRead()
                     QUrl theUrl = QUrl::fromUserInput("http://dummydomain.com" + encodedUrlPath);
                     if(theUrl.isValid())
                     {
-                        if(theUrl.path() == "/current-ad.json")
+                        if(theUrl.path() == ABC2_API_HTTP_PATH)
                         {
                             QUrlQuery theUrlQuery(theUrl);
-                            QString userStr = theUrlQuery.queryItemValue("user");
-                            QString indexStr = theUrlQuery.queryItemValue("index");
-                            QString apiKeyStr = theUrlQuery.queryItemValue(JSON_USER_ACCOUNT_API_KEY);
-                            if((!indexStr.isEmpty()) && (!userStr.isEmpty()) && (!apiKeyStr.isEmpty()))
+                            QString actionStr = theUrlQuery.queryItemValue(ABC2_API_ACTION_HTTP_GET_PARAM);
+                            if(actionStr == ABC2_API_GET_CURRENT_AD_ACTION)
                             {
-                                bool parseSuccess = false;
-                                int x = indexStr.toInt(&parseSuccess);
-                                if(parseSuccess && x > -1)
+                                QString userStr = theUrlQuery.queryItemValue(ABC2_API_GET_CURRENT_AD_ACTION_USER_HTTP_GET_PARAM);
+                                QString indexStr = theUrlQuery.queryItemValue(ABC2_API_GET_CURRENT_AD_ACTION_INDEX_HTTP_GET_PARAM);
+                                QString apiKeyStr = theUrlQuery.queryItemValue(JSON_USER_ACCOUNT_API_KEY);
+                                if((!indexStr.isEmpty()) && (!userStr.isEmpty()) && (!apiKeyStr.isEmpty()))
                                 {
-                                    LettersNumbersOnlyRegExpValidatorAndInputFilter lettersNumbersOnlyValidator;
-                                    m_CampaignOwnerRequested = userStr.toStdString(); //sure we might be setting these to values that are 'illegal', but unless they both validate, we never even get to a place where we use them
-                                    m_CampaignIndexRequested = indexStr.toStdString();
-                                    m_ApiKeyRequested = apiKeyStr.toStdString();
-                                    if(lettersNumbersOnlyValidator.validate(m_CampaignOwnerRequested).state() == LettersNumbersOnlyRegExpValidatorAndInputFilter::Valid)
+                                    bool parseSuccess = false;
+                                    int x = indexStr.toInt(&parseSuccess);
+                                    if(parseSuccess && x > -1)
                                     {
-                                        if(lettersNumbersOnlyValidator.validate(m_ApiKeyRequested).state() == LettersNumbersOnlyRegExpValidatorAndInputFilter::Valid)
+                                        LettersNumbersOnlyRegExpValidatorAndInputFilter lettersNumbersOnlyValidator;
+                                        m_CampaignOwnerRequested = userStr.toStdString(); //sure we might be setting these to values that are 'illegal', but unless they both validate, we never even get to a place where we use them
+                                        m_CampaignIndexRequested = indexStr.toStdString();
+                                        m_ApiKeyRequested = apiKeyStr.toStdString();
+                                        if(lettersNumbersOnlyValidator.validate(m_CampaignOwnerRequested).state() == LettersNumbersOnlyRegExpValidatorAndInputFilter::Valid)
                                         {
-                                            //schedule backend request
-                                            beginDbGet(adSpaceCampaignSlotCacheKey(m_CampaignOwnerRequested, m_CampaignIndexRequested), GetAdCampaignCurrentSlotCacheIfExists);
-                                            disconnect(m_ClientStream.device(), SIGNAL(readyRead()), this, SLOT(handleClientReadyRead())); //we got what we wanted
+                                            if(lettersNumbersOnlyValidator.validate(m_ApiKeyRequested).state() == LettersNumbersOnlyRegExpValidatorAndInputFilter::Valid)
+                                            {
+                                                //schedule backend request
+                                                beginDbGet(adSpaceCampaignSlotCacheKey(m_CampaignOwnerRequested, m_CampaignIndexRequested), GetAdCampaignCurrentSlotCacheIfExists);
+                                                disconnect(m_ClientStream.device(), SIGNAL(readyRead()), this, SLOT(handleClientReadyRead())); //we got what we wanted
+                                            }
+                                            else
+                                            {
+                                                sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR(GetTodaysAdSlotServerClientConnection_INVALID_API_KEY_MESSAGE));
+                                                return;
+                                            }
                                         }
                                         else
                                         {
-                                            sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR(GetTodaysAdSlotServerClientConnection_INVALID_API_KEY_MESSAGE));
+                                            sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Invalid HTTP GET URL Parameter '" ABC2_API_GET_CURRENT_AD_ACTION_USER_HTTP_GET_PARAM "'"));
                                             return;
                                         }
                                     }
                                     else
                                     {
-                                        sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Invalid HTTP GET URL Parameter 'user'"));
+                                        sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Invalid HTTP GET URL Parameter '" ABC2_API_GET_CURRENT_AD_ACTION_INDEX_HTTP_GET_PARAM "'"));
                                         return;
                                     }
                                 }
                                 else
                                 {
-                                    sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Invalid HTTP GET URL Parameter 'index'"));
+                                    sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Missing HTTP GET URL Parameters ('" ABC2_API_GET_CURRENT_AD_ACTION_USER_HTTP_GET_PARAM "' and/or '" ABC2_API_GET_CURRENT_AD_ACTION_INDEX_HTTP_GET_PARAM "' and/or '" JSON_USER_ACCOUNT_API_KEY "')"));
                                     return;
                                 }
                             }
                             else
                             {
-                                sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Missing HTTP GET URL Parameters ('user' and/or 'index' and/or '" JSON_USER_ACCOUNT_API_KEY "')"));
+                                sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Invalid API Action. Did you mean '" ABC2_API_GET_CURRENT_AD_ACTION "'?"));
                                 return;
                             }
                         }
                         else
                         {
-                            sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Invalid HTTP GET URL. Did you mean '/current-ad.json'?"));
+                            //TODOoptional: 404 Not Found
+                            sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Invalid HTTP GET URL. Did you mean '" ABC2_API_HTTP_PATH "'?"));
                             return;
                         }
                     }
