@@ -2,6 +2,7 @@
 #define GETTODAYSADSLOTSERVER_H
 
 #include <QObject>
+#include <QTextStream>
 
 #include <boost/lockfree/queue.hpp>
 
@@ -22,11 +23,13 @@ public:
     explicit GetTodaysAdSlotServer(QObject *parent = 0);
 private:
     QTcpServer *m_Server;
+    QTextStream m_StdErr;
 public slots:
-    bool initializeAndStart(quint16 port);
+    bool initializeAndStart(quint16 port, const QString &sslCertFilePath, const QString &sslPrivkeyFilePath);
     void stopAndDestroy();
 private slots:
-    void handleNewConnection();
+    void handleE(const QString &msg);
+    //void handleNewConnection();
 };
 
 #endif // GETTODAYSADSLOTSERVER_H

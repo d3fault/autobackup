@@ -27,6 +27,8 @@ AnonymousBitcoinComputingWtGUI::m_##text##EventCallbacksForWt[n] = couchbaseDb.g
 
 /////////////////////////////////////////////////////END MACRO HELL/////////////////////////////////////////////////
 
+#define AnonymousBitcoinComputing_WT_AND_API_SSL_CERT_CLI_ARG "--ssl-certificate="
+#define AnonymousBitcoinComputing_WT_AND_API_SSL_PRIVKEY_CLI_ARG "--ssl-private-key="
 #define AnonymousBitcoinComputing_API_PORT_CLI_ARG "--api-port"
 
 int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
@@ -48,6 +50,27 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     }
     argz.removeAt(indexOfApiPortArg);
     argz.removeAt(indexOfApiPortArg);
+
+    //--ssl-certificate=
+    int indexOfSslCertArg = indexOfListItemThatStartsWith(argz, AnonymousBitcoinComputing_WT_AND_API_SSL_CERT_CLI_ARG);
+    if(indexOfSslCertArg < 0)
+    {
+        cerr << "You must provide an " AnonymousBitcoinComputing_WT_AND_API_SSL_CERT_CLI_ARG << endl; //TODOoptional: https OPTIONAL (either compile time or runtime switch)
+        return 1;
+    }
+    QString sslCertArg = argz.at(indexOfSslCertArg);
+    sslCertArg.remove(0, QString(AnonymousBitcoinComputing_WT_AND_API_SSL_CERT_CLI_ARG).length());
+
+    //--ssl-private-key=
+    int indexOfSslPrivkeyArg = indexOfListItemThatStartsWith(argz, AnonymousBitcoinComputing_WT_AND_API_SSL_PRIVKEY_CLI_ARG);
+    if(indexOfSslPrivkeyArg < 0)
+    {
+        cerr << "You must provide an " AnonymousBitcoinComputing_WT_AND_API_SSL_PRIVKEY_CLI_ARG << endl;
+        return 1;
+    }
+    QString sslPrivkeyArg = argz.at(indexOfSslPrivkeyArg);
+    sslPrivkeyArg.remove(0, QString(AnonymousBitcoinComputing_WT_AND_API_SSL_PRIVKEY_CLI_ARG).length());
+
 
     //rebuild argv/argc, because Wt is retarded and doesn't ignore extra args -_-
     int newArgC = argz.size();
@@ -168,7 +191,7 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     getTodaysAdSlotServerThread.start();
     getTodaysAdSlotServer->moveToThread(&getTodaysAdSlotServerThread);
     bool getTodaysAdSlotServerInitializedAndStartedSuccessfully = false;
-    QMetaObject::invokeMethod(getTodaysAdSlotServer.data(), "initializeAndStart", Qt::BlockingQueuedConnection, Q_RETURN_ARG(bool, getTodaysAdSlotServerInitializedAndStartedSuccessfully), Q_ARG(quint16, apiPort));
+    QMetaObject::invokeMethod(getTodaysAdSlotServer.data(), "initializeAndStart", Qt::BlockingQueuedConnection, Q_RETURN_ARG(bool, getTodaysAdSlotServerInitializedAndStartedSuccessfully), Q_ARG(quint16, apiPort), Q_ARG(QString, sslCertArg), Q_ARG(QString, sslPrivkeyArg));
     if(!getTodaysAdSlotServerInitializedAndStartedSuccessfully)
     {
         beginStoppingCouchbase(&couchbaseDb);

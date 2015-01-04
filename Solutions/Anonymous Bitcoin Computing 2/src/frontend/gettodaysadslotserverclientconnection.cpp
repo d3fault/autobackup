@@ -80,6 +80,8 @@ void GetTodaysAdSlotServerClientConnection::sendResponseAndCloseSocket(const QSt
     m_ClientStream << "HTTP/1.0 200 OK\r\nContent-Type: application/json\r\nConnection: close\r\nContent-Length: " << QString::number(response.length()) << "\r\n"
                       << "\r\n"
                       << response;
+    m_ClientStream.flush();
+    static_cast<QAbstractSocket*>(m_ClientStream.device())->flush();
     m_ClientStream.device()->close();
 }
 void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGetAdCampaignCurrentSlotCache(const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError)

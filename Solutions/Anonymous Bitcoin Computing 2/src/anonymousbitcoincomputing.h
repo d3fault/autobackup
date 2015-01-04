@@ -7,6 +7,8 @@ using namespace std;
 
 #include <boost/thread.hpp>
 
+#include <QStringList>
+
 class AnonymousBitcoinComputingCouchbaseDB;
 
 class AnonymousBitcoinComputing
@@ -17,6 +19,20 @@ private:
     static WApplication *createAnonymousBitcoinComputingWtGUI(const WEnvironment &env);
     void beginStoppingCouchbase(AnonymousBitcoinComputingCouchbaseDB *couchbaseDb);
     void finalStopCouchbaseAndWaitForItsThreadToJoin(AnonymousBitcoinComputingCouchbaseDB *couchbaseDb);
+
+    inline int indexOfListItemThatStartsWith(const QStringList &listToFindFirstIndexOfStringThatStartsWith, const QString &startsWithString)
+    {
+        int i = 0;
+        Q_FOREACH(const QString &currentListEntry, listToFindFirstIndexOfStringThatStartsWith)
+        {
+            if(currentListEntry.startsWith(startsWithString))
+            {
+                return i;
+            }
+            ++i;
+        }
+        return -1;
+    }
 };
 
 #endif // ANONYMOUSBITCOINCOMPUTING_H
