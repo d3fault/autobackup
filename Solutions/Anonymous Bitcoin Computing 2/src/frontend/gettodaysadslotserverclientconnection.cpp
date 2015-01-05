@@ -258,8 +258,6 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
     const std::string &todaysAdSlotJsonStdStr = todaysAdSlotJsonBuffer.str();
     QString todaysAdSlotJson = QString::fromStdString(todaysAdSlotJsonStdStr);
 
-    sendResponseAndCloseSocket(todaysAdSlotJson);
-
     //store the current slot index in the cache so subsequent api requests, and also 'tomorrows' ad slot, will be uber fast
 #if 0 //OLD (now that there's an API key, we have to update the cache doc on every hit to keep track of their num api requests):
     if(m_CurrentSlotIndexToTry != m_FirstSlotIndexToTry || (m_CurrentSlotIndexToTry == GetTodaysAdSlotServerClientConnection_FIRST_NO_CACHE_YET_SLOT_INDEX && !m_FoundAdCampaignCurrentSlotCacheDoc)) //only update the cache if it needs to be updated...
@@ -271,6 +269,12 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
         pt2.put(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_CURRENT_SLOT, m_CurrentSlotIndexToTry); //^if we only request once per day then it makes sense to set the cache to "tomorrow" (+1), but if we request it multiple times per day then it makes sense to set it to "today" (no +1). leaving as "today" since it's safer and I still haven't finalized this shit
         pt2.put(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS, boost::lexical_cast<std::string>(m_SlotLengthHours));
         pt2.put(JSON_USER_ACCOUNT_API_KEY, m_TheCorretApiKey);
+
+        if(m_CurrentSlotIndexToTry != m_FirstSlotIndexToTry) //reset api request counter when we change slot indexes
+        {
+            m_NumApiRequestsForThisAdSlotSoFar = 1;
+        }
+
         pt2.put(JSON_AD_SPACE_CAMPAIGN_SLOT_CACHE_NUM_API_REQUESTS_FOR_CURRENT_SLOT, boost::lexical_cast<std::string>(m_NumApiRequestsForThisAdSlotSoFar));
         std::ostringstream newCacheJsonBuffer;
         write_json(newCacheJsonBuffer, pt2, false);
@@ -278,6 +282,7 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
 #if 0
     }
 #endif
+    sendResponseAndCloseSocket(todaysAdSlotJson); //I used to send this before the cache doc update, but I think it was racy (closing->disconnecting->deleteLater (and then we segfault in the store callback), so long as m_BackendRequestPending is false. but doing the cache doc store makes it true which protects us from deletion) because I saw an intermittent segfault
 }
 void GetTodaysAdSlotServerClientConnection::backendDbGetCallback(std::string couchbaseDocument, bool lcbOpSuccess, bool dbError)
 {
