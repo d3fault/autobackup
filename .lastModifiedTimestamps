@@ -5109,8 +5109,10 @@ Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/all.usernames.wit
 Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/all.withdrawal.requests.with.state.of.not.done.txt:1419247563
 Solutions/Anonymous Bitcoin Computing 2/assets/abc.logo.svg:1410248142
 Solutions/Anonymous Bitcoin Computing 2/clients/:1420421685
-Solutions/Anonymous Bitcoin Computing 2/clients/php/:1420421725
-Solutions/Anonymous Bitcoin Computing 2/clients/php/failed.attempt.0.not.thought.out.php:1420426890
+Solutions/Anonymous Bitcoin Computing 2/clients/php/:1420430666
+Solutions/Anonymous Bitcoin Computing 2/clients/php/javascriptDependent/:1420430273
+Solutions/Anonymous Bitcoin Computing 2/clients/php/javascriptDependent/abc.api.generate.current.ad.html.php:1420430759
+Solutions/Anonymous Bitcoin Computing 2/clients/php/javascriptDependent/index.html:1420429902
 Solutions/Anonymous Bitcoin Computing 2/design/:1417408222
 Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.FINAL.with.recovery.cas.swap.to.get.a.key.with.uuids.for.refill.and.recovery.pseudocode.cpp:1392716033
 Solutions/Anonymous Bitcoin Computing 2/design/bitcoin.FINAL.without.recovery.kiss.but.not.most.efficient.solution.i.am.lolling.so.hard.right.now.txt:1392170170

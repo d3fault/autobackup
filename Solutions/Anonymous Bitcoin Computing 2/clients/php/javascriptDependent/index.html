@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <title>Example website with Anonymous Bitcoin Computing ad embedded using javascript/php</title>
+    </head>
+    <body>
+        <div id='abc-ad-div-placeholder'></div>
+        <script language="javascript" type="text/javascript">
+            var xmlhttp;
+            if(window.XMLHttpRequest)
+            {
+                xmlhttp = new XMLHttpRequest();
+            }
+            else
+            {
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange=function()
+            {
+                if(xmlhttp.readyState == 4 && xmlhttp.status == 200)
+                {
+                    //document.write(xmlhttp.responseText);
+                    document.getElementById('abc-ad-div-placeholder').innerHTML = xmlhttp.responseText;
+                }
+            }
+            xmlhttp.open('GET', 'abc.api.generate.current.ad.html.php', true);
+            xmlhttp.send();
+        </script>
+        <br /><br />
+        Hello, world!
+    </body>
+</html>
