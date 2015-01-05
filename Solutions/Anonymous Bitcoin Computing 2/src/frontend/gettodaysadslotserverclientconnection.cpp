@@ -188,7 +188,7 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
     }
     if(!lcbOpSuccess)
     {
-        sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("Todays ad slot was not purchased")); //TODOoptional: other similar more descriptive error
+        sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("The ad slot is not currently purchased")); //TODOoptional: other similar more descriptive error
         return;
     }
 

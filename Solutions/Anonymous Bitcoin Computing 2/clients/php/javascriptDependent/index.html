@@ -25,6 +25,7 @@
             xmlhttp.open('GET', 'abc.api.generate.current.ad.html.php', true);
             xmlhttp.send();
         </script>
+	<!-- We could fallback to iframes if javascript isn't supported. The php script would need a GET param to indicate it needs to generate html/head/body tags, no biggy -->
         <br /><br />
         Hello, world!
     </body>

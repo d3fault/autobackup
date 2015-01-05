@@ -5,6 +5,8 @@
 
 /*
 
+Do I need to urlencode the urls before embedding them in anchors in the clients? Tags and quotes (< and ") are 'legal' characters in urls, so if I'm not careful I might introduce XSS in the api clients (granted, you'd have to buy their ad space to do your XSS xD)
+
 ==1.1 Bugs==
 
 - Ad Campaigns should properly 404, be careful not to delete/clear anything that might cause segfault (zero the pointer out if deleting (but just don't, since there are tons of children doing the same thing xD fml))
