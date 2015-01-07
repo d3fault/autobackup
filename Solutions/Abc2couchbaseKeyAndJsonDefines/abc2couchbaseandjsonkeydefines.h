@@ -33,11 +33,11 @@ inline double roundUpJsonDoubleToNearestSatoshi(double inputExactJsonDouble) { d
 inline double withdrawalFeeForWithdrawalAmount(double withdrawalAmount) { double withdrawalFeeExact = withdrawalAmount * (ABC2_WITHDRAWAL_FEE_PERCENT / static_cast<double>(100)); return roundUpJsonDoubleToNearestSatoshi(withdrawalFeeExact); }
 
 //Abc2 has a $1 USD (at time of writing it's ~.003 btc) minimum for various activities
-#define ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT 0.00300000 /*if changing this, change below string too*/
-#define ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT_STR "0.00300000"
+#define ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT 0.00000001 /*if changing this, change below string too*/
+#define ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT_STR "0.00000001"
 
-#define ABC2_MIN_WITHDRAW_AMOUNT 0.00300000 /*if changing this, change below string too*/
-#define ABC2_MIN_WITHDRAW_AMOUNT_STR "0.00300000"
+#define ABC2_MIN_WITHDRAW_AMOUNT 0.03000000 /*if changing this, change below string too*/
+#define ABC2_MIN_WITHDRAW_AMOUNT_STR "0.03000000"
 
 
 #ifndef D3FAULTS_COUCHBASE_SHARED_KEY_SEPARATOR

@@ -1,0 +1,75 @@
+Outline before elaboration, because if you elaborate as you go, you won't remember what your second point is.
+
+0) Launch ABC-only at home, public. Launch HVBS when enough to move out
+1) Launch ABC-only at home, public. Do not launch HVBS when enough to move out
+2) Launch ABC-only at home, private. Do not launch HVBS [ever]
+3) Launch ABC-only at home, private. Launch ABC+HVBS publically when enough to move out
+4) Launch ABC+HVBS at home
+
+
+I can save the fucking world, but I can't face my dad.
+
+
+0) This I've been giving a decent amount of consideration to, because I don't want to have to face my parents because shit I don't have to. Fuck them. If I launched HVBS at home they'd have the ability to censor me and royally fuck me over. My launching only a business they would of course be fine (and probably impressed) with. It does make me MORE of a target for hacking: people wanting to find my ABC bitcoin keys just because of the money might stumble upon HVBS and lol at what they've found (indeed, my keys are much more hidden than my minddump). There's also the chance I might get too greedy/happy with the ABC profits and bitch out on launching HVBS :-/
+
+
+1) This one is basically the same as (0), but I'd upgrade the security of HVBS to be the same as my keys and basically just forget about it and just do bullshit serial entrepreneurship (and maybe select individual projects from HVBS to be released on their own, such as Osios2 and d=i etc -- some of the other 'private' options do include releasing osios/etc publically still). I haven't given this option very much consideration.
+
+
+2) This one is similar to (1) except that ABC would only ever be a tor hidden service. Lessens my my chances of HVBS being hacked dramatically. I need to speak publically or I'm never going be happy. I'm not happy. I'm depressed as fuck, it hit me like a sandbag to the face a few days ago (probably because I'm so damn close to launching ABC and must make fucking decisions. Fuck life: can't have your cake and eat it too).
+
+
+3) Ehh this one is weird and is like a hybrid mode. The purpose is because fuck giving my parents the ability to censor me, and fuck giving 'them' (not parents, the 'they', you know?) an easy opportunity to shut me down. I might have too much fun with with anonymity (oh how I'll miss the privacy (but not the insanity)) and the greed factor just like (0) and never go public.
+
+
+4) This is what I want to do most (and like: TOMORROW), but I'm just so hesitant about the above 4 options and my mind's racing and the depression's taking it's toll. I am really only certain of one thing: ABC is practically done and I'm going to turn it on pretty soon. It weirdly factors into everything else though. I recall even in the distant past that my plan was to launch ABC _BEFORE_ going public myself (was to raise funds for that very purpose)... but blah srsly man the implications of running that business weren't really ever factored in. I'm not worried at all about it being profitable (and fuck I'm so hungry), just the attention it will attract might fuck everything up (as if my current site hasn't already xD).
+
+
+This document hasn't helped. I already knew these problems. I thought maybe if I put them all next to each other I could decide on one. It maybe helped me organize my mind a tiny bit, but it still hasn't help in the slightest with deciding (after all, this shit has been on my subconscious for years now). Maybe I should just hook it up to a PRNG and be done with it (nahh, I couldn't live with myself if I did that. I have decide in order to use my will).
+
+
+Running a business might be like killing. It might be better to do it without anyone knowing (even if doing it is justified completely).
+
+I can't live private. I'll blow my fucking head off. I'm close already.
+
+
+It's weird how living in the wilderness alone, periodically logging in and processing withdrawal requests, sounds so fucking amazing. I'll miss the privacy.
+
+^The huge downside to that is that I would be in the wilderness in complete silence. Paranoid schizo here, the satellites are watching and listening too. Fuckers.
+
+I
+HAVE
+NO
+CHOICE
+BUT
+TO
+PUBLIC.
+
+Scared? Yea, life is fucking nuts. You have every reason to be. Fuck it, you're already dead.
+
+if(private)
+{
+	chance of happiness = false;
+}
+else
+{
+	CHANCE of happiness = true;
+}
+
+Fucking logic man, yea you hate people and are ashamed embarrased afraid, having crazy fucking nightmares left and right and I can't tell if it's my subconcsious warning me off or just preparing me (both? telling me the truth and letting me decide?). Fuck everything. Kill me god damnit. Fuck fuck fuck I am so pissed and yet I am sitting here STILL in the dark alone with a completely straight face on. My emotion is being poured into notepad and nothing else. Notepad doesn't comfort me. Is that what I want, to be comforted? Yea, but only by her. Fuck off man fuck you Steven. Blah.
+
+I want to off myself and then think about my family, "I could make their lives better"
+...
+followed up with
+"I could make their lives worse".
+
+Donny Darko up in this bitch, maybe I really am better off dead for the sake of my family. I certainly admit the possibility.
+
+But again, evil exists regardless of your existence.
+
+
+Decide for me 'HER', I want to consult her but she won't even talk to me :-P.
+
+It's weird how nothing's changed, I still want to consult her. I've got the ABC conjured into existence, yea, but no questions have been answered. I guess I relied on what I knew for the fucking past few YEARS: that ABC exists in both choices. ABC how I hate theee, but eh it's misplaced hate. I hate myself. I hate my peers. I hate myself. Humanity sucks (*snaps and kills everyone*). "Oh the humanity" is supposed to mean like "show some fucking compassion", but meh when you really think about it...... we humans are shit. There's still an idea though, I won't lie. There's an idea of good but we're all too fucking stupid to realize it. I don't mean realize it like "understand it", I mean realize it like make it happen.
+
+We've all got mild cases of stupidity, combined with hardened-into-rock habits. We're born innocent and moldable. And oh how we mold. Funny how mimicry is both an evolutionary advantage and long term psychiatric suicide.

@@ -12,15 +12,23 @@ define('ABC_PHP_CLIENT_NO_AD_PLACEHOLDER', 'no.ad.placeholder.jpg'); //When nobo
 define('ABC_PHP_CLIENT_AD_FILENAME_PREFIX', 'ad');
 define('ABC_PHP_CLIENT_NO_AD_HOVERTEXT', 'Click here to purchase this ad space'); 
 define('ABC_PHP_CLIENT_TEMPORARY_DIR', ''); //Leave blank to use the system temporary dir
-define('ABC_PHP_CLIENT_SETTINGS_FILE', 'abcphpclientsettings.json');
+define('ABC_PHP_CLIENT_AD_CACHE_DB_FILE', 'abc.ad.cache.db.json');
 
 //internal
-define('ABC_PHP_CLIENT_SETTINGS_FILE_TODAYS_AD_IMAGE_FILENAME_KEY', 'todaysAdImageFilename');
-define('ABC_PHP_CLIENT_UPDATE_LOCK_FILENAME', 'abc.api.php.client.update.lock');
+define('ABC_PHP_CLIENT_AD_CACHE_DB_FILE_TODAYS_AD_IMAGE_FILENAME_KEY', 'todaysAdImageFilename');
+define('ABC_PHP_CLIENT_AD_CACHE_DB_UPDATE_LOCK_FILE', 'abc.api.php.client.update.lock');
 
 function abcApiGenerateCurrentAdHtml($adImageFilename, $adUrl, $adHoverText)
 {
+	if($_GET['foriframe'] == '1')
+	{
+		echo '<html><head><body>';
+	}
 	echo '<a href="' . $adUrl . '"><img width="576" height="96" src="' . $adImageFilename . '" alt="' . $adHoverText . '" title="' . $adHoverText . '" /></a>';
+	if($_GET['foriframe'] == '1')
+	{
+		echo '</body></head></html>';
+	}
 }
 
 function abcApiReturnBuyAdSpaceUrl()
@@ -35,11 +43,16 @@ function abcApiGenerateNoAdHtml()
 
 function myTempDir()
 {
+	$ret = ABC_PHP_CLIENT_TEMPORARY_DIR;
 	if(ABC_PHP_CLIENT_TEMPORARY_DIR == '')
 	{
-        	return sys_get_temp_dir();
+        	$ret = sys_get_temp_dir();
 	}
-	return ABC_PHP_CLIENT_TEMPORARY_DIR;
+	if(substr($ret, -1) != '/')
+	{
+		$ret = $ret . '/';
+	}
+	return $ret;
 }
 
 function myTempFile()
@@ -47,12 +60,17 @@ function myTempFile()
 	return tempnam(myTempDir(), 'ABC');
 }
 
+function myAdCacheDbFile()
+{
+	return myTempDir() . ABC_PHP_CLIENT_AD_CACHE_DB_FILE;
+}
+
 function atomicallyCreateSettingsFileForNewAd($adImageFilename, $adUrl, $adHoverText, $adSlotExpireDateTime)
 {
 	$tempSettingsFile = myTempFile();
 	if($tempSettingsFile === FALSE)
 	{
-		//What can we do? Just exitting like this might cause API flooding. Maybe I should try to write the settings file in place as a desperate measure? TODOreq. A common source of this is permission errors. Maybe at the VERY BEGINNING of the script, I check that the temp dir we'll use is writeable, and then exit if it isn't (so no API query flood)
+		//What can we do? Just exitting like this might cause API flooding. Maybe I should try to write the settings file in place as a desperate measure? TODOreq. A common source of this is permission errors. Maybe at the VERY BEGINNING of the script, I check that the temp dir we'll use is writeable, and then exit if it isn't (so no API query flood) -- I do have this implemented, but not sure it covers everything to prevent accidental api flooding
 		return;
 	}
 	$tempSettingsFileHandle = fopen($tempSettingsFile, 'w');
@@ -61,11 +79,11 @@ function atomicallyCreateSettingsFileForNewAd($adImageFilename, $adUrl, $adHover
 		//Ditto above API flooding because of permissions
 		return;
 	}
-	$settingsArray = array(ABC_PHP_CLIENT_SETTINGS_FILE_TODAYS_AD_IMAGE_FILENAME_KEY => $adImageFilename, 'urlB64' => base64_encode($adUrl), 'hoverTextB64' => base64_encode($adHoverText), 'todaysAdSlotExpireDateTime' => $adSlotExpireDateTime);
+	$settingsArray = array(ABC_PHP_CLIENT_AD_CACHE_DB_FILE_TODAYS_AD_IMAGE_FILENAME_KEY => $adImageFilename, 'urlB64' => base64_encode($adUrl), 'hoverTextB64' => base64_encode($adHoverText), 'todaysAdSlotExpireDateTime' => $adSlotExpireDateTime);
 	fwrite($tempSettingsFileHandle, json_encode($settingsArray));
 	fflush($tempSettingsFileHandle);
 	fclose($tempSettingsFileHandle);
-	if(!rename($tempSettingsFile, ABC_PHP_CLIENT_SETTINGS_FILE))
+	if(!rename($tempSettingsFile, myAdCacheDbFile()))
 	{
 		//Ditto above API flooding because of permissions
 		return;
@@ -80,7 +98,7 @@ function createSettingsFileInNoAdMode()
 
 function queryAbcApi($adImageFilenameToShowIfWeFailToGetUpdateLock, $adUrlToUseIfWeFailToGetUpdateLock, $adHoverTextToUseIfWeFailToGetUpdateLock)
 {
-	$updateLockHandle = fopen(ABC_PHP_CLIENT_UPDATE_LOCK_FILENAME, 'c');
+	$updateLockHandle = fopen(myTempDir() . ABC_PHP_CLIENT_AD_CACHE_DB_UPDATE_LOCK_FILE, 'c');
 	if(!$updateLockHandle)
 	{
 		//Fatal error, should never happen
@@ -182,11 +200,17 @@ function queryAbcUsingNoAdPlaceholderAsFallback()
 
 
 //int main()
-if((!is_writable(myTempDir())) || (!is_writable(dirname(__FILENAME__))))
+if(!is_writable(myTempDir()))
 {
-	exit; //an error message would be displayed in the html lol? so just exit...
+	echo 'error. directory does not have write permissions: ' . myTempDir() . "\n";
+	exit;
 }
-$settingsFileContents = file_get_contents(ABC_PHP_CLIENT_SETTINGS_FILE);
+if(!is_writable(dirname(__FILENAME__)))
+{
+	echo 'error. directory does not have write permissions: ' . dirname(__FILENAME__) . "\n";
+	exit;
+}
+$settingsFileContents = file_get_contents(myAdCacheDbFile());
 if($settingsFileHandle === FALSE)
 {
 	//first script run, settings file doesn't exist, so we definitely have to query the abc api (which creates the settings file)
@@ -204,9 +228,9 @@ if(($settingsFileJson === NULL) || ($settingsFileJson === FALSE))
 if(time() >= $settingsFileJson->{'todaysAdSlotExpireDateTime'})
 {
 	//Expired. Try to get new, but if we fail to get the update lock, we'll still show the expired ad
-	queryAbcApi($settingsFileJson->{ABC_PHP_CLIENT_SETTINGS_FILE_TODAYS_AD_IMAGE_FILENAME_KEY}, base64_decode($settingsFileJson->{'urlB64'}), base64_decode($settingsFileJson->{'hoverTextB64'}));
+	queryAbcApi($settingsFileJson->{ABC_PHP_CLIENT_AD_CACHE_DB_FILE_TODAYS_AD_IMAGE_FILENAME_KEY}, base64_decode($settingsFileJson->{'urlB64'}), base64_decode($settingsFileJson->{'hoverTextB64'}));
         exit;
 }
-//Not expired (typical use case)
-abcApiGenerateCurrentAdHtml($settingsFileJson->{ABC_PHP_CLIENT_SETTINGS_FILE_TODAYS_AD_IMAGE_FILENAME_KEY}, base64_decode($settingsFileJson->{'urlB64'}), base64_decode($settingsFileJson->{'hoverTextB64'}));
+//Not expired (typical use case) -- cache hit
+abcApiGenerateCurrentAdHtml($settingsFileJson->{ABC_PHP_CLIENT_AD_CACHE_DB_FILE_TODAYS_AD_IMAGE_FILENAME_KEY}, base64_decode($settingsFileJson->{'urlB64'}), base64_decode($settingsFileJson->{'hoverTextB64'}));
 ?>

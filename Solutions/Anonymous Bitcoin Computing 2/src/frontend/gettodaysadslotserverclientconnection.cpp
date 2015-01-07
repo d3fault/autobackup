@@ -82,7 +82,7 @@ void GetTodaysAdSlotServerClientConnection::sendResponseAndCloseSocket(const QSt
                       << response;
     m_ClientStream.flush();
     static_cast<QAbstractSocket*>(m_ClientStream.device())->flush();
-    m_ClientStream.device()->close();
+    static_cast<QAbstractSocket*>(m_ClientStream.device())->disconnectFromHost();
 }
 void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGetAdCampaignCurrentSlotCache(const std::string &couchbaseDocument, bool lcbOpSuccess, bool dbError)
 {

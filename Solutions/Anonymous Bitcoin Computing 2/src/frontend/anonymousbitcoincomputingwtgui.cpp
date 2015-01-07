@@ -144,11 +144,14 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
     //m_CurrentStoreMessageQueueIndex = rawUniqueId() % ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store;
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_WT_PER_QUEUE_SET_UNIFORM_INT_DISTRIBUTION_CONSTRUCTOR_INITIALIZATION_MACRO)
 
+#if 0 //I wanted to force https, but since I want to have a tor hidden service using the same wt server, I can't because the https cert won't validate to a random .onion (I _COULD_ buy another one for the .onion, but fuck that in principle. completely unnecessary). if people want to be insecure, fuck it. lessens my load anyways. casual "viewers" of the site don't need https anyways. TODOoptional: if they try to login when it's http, we ask them if they're sure (but by then the login forms may have already been sent rofl (so i might have to do it in pure javascript... or use those stateless slot thingos?)) -- tor hidden service users would simply press "yes" there (and I could even explain to tor hidden service users to ignore it).. and ofc I could also give a link to do the redirect for them
     if(myEnv.urlScheme() != "https")
     {
         redirect("https://" + myEnv.hostName() + url());
         return;
     }
+#endif
+
     buildGui(); //everything that is NOT dependent on the internal path
 
     internalPathChanged().connect(this, &AnonymousBitcoinComputingWtGUI::handleInternalPathChanged);

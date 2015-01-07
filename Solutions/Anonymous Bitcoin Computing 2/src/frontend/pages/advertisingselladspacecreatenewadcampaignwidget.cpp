@@ -44,7 +44,7 @@ AdvertisingSellAdSpaceCreateNewAdCampaignWidget::AdvertisingSellAdSpaceCreateNew
     new WBreak(this);
     new WBreak(this);
 
-    /*WText *slotLengthHoursLabel = */new WText("Duration of one advertisement placement, in hours (this is NOT duration your ad campaign will run for):", this);
+    /*WText *slotLengthHoursLabel = */new WText("Duration of one advertisement placement, in hours (this is NOT the total duration your ad campaign will run for, but instead how long a single ad that someone purchased will be displayed for):", this);
     new WBreak(this);
     m_SlotLengthHoursLineEdit = new WLineEdit("24", this); //TODOmb: wintspinbox?
     WIntValidator *slotLengthHoursValidator = new WIntValidator(1, INT_MAX, m_SlotLengthHoursLineEdit); //TODOoptional: we could probably go higher than INT_MAX, since it's stored and a string and we use doubles for the math :-P. But wtf seriously, 245146 years is plenty. Maybe I should even lower this limit?

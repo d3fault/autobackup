@@ -75,7 +75,8 @@ HEADERS += \
     frontend2backendRequests/istorecouchbasedocumentbykeyrequestresponder.h \
     frontend2backendRequests/abcapistorecouchbasedocumentbykeyrequestresponder.h \
     frontend/accounttabs/apikeyaccounttabbody.h \
-    frontend/gettodaysadslothttpsserver.h
+    frontend/gettodaysadslothttpsserver.h \
+    frontend/torhiddenservicehttplocalhostonlyserver.h
 
 SOURCES += main.cpp \
     anonymousbitcoincomputing.cpp \
@@ -112,7 +113,8 @@ SOURCES += main.cpp \
     frontend2backendRequests/abcguistorecouchbasedocumentbykeyrequestresponder.cpp \
     frontend2backendRequests/abcapistorecouchbasedocumentbykeyrequestresponder.cpp \
     frontend/accounttabs/apikeyaccounttabbody.cpp \
-    frontend/gettodaysadslothttpsserver.cpp
+    frontend/gettodaysadslothttpsserver.cpp \
+    frontend/torhiddenservicehttplocalhostonlyserver.cpp
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/

@@ -30,6 +30,7 @@ AnonymousBitcoinComputingWtGUI::m_##text##EventCallbacksForWt[n] = couchbaseDb.g
 #define AnonymousBitcoinComputing_WT_AND_API_SSL_CERT_CLI_ARG "--ssl-certificate="
 #define AnonymousBitcoinComputing_WT_AND_API_SSL_PRIVKEY_CLI_ARG "--ssl-private-key="
 #define AnonymousBitcoinComputing_API_PORT_CLI_ARG "--api-port"
+#define AnonymousBitcoinComputing_OPTIONA_LOCALHOST_ONLY_HTTP_SERVER_FOR_TOR_HIDDEN_SERVICE_PORT "--tor-hidden-service-http-server-port" //TODOoptional: describe in --help
 
 int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
 {
@@ -50,6 +51,18 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     }
     argz.removeAt(indexOfApiPortArg);
     argz.removeAt(indexOfApiPortArg);
+
+    quint16 torHiddenServiceHttpServerPort_OrZeroIfNoneProvided = 0;
+    int indexOfTorHiddenServiceHttpServerPortArg = argz.indexOf(AnonymousBitcoinComputing_OPTIONA_LOCALHOST_ONLY_HTTP_SERVER_FOR_TOR_HIDDEN_SERVICE_PORT);
+    if((indexOfTorHiddenServiceHttpServerPortArg > -1) && ((indexOfTorHiddenServiceHttpServerPortArg+1) < argz.size()))
+    {
+        torHiddenServiceHttpServerPort_OrZeroIfNoneProvided = argz.at(indexOfTorHiddenServiceHttpServerPortArg+1).toUShort(&parseSuccess);
+        if(!parseSuccess)
+        {
+            cerr << "Invalid Tor Hidden Service HTTP Server Port" << endl;
+            return 1;
+        }
+    }
 
     //--ssl-certificate=
     int indexOfSslCertArg = indexOfListItemThatStartsWith(argz, AnonymousBitcoinComputing_WT_AND_API_SSL_CERT_CLI_ARG);
@@ -191,7 +204,7 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     getTodaysAdSlotServerThread.start();
     getTodaysAdSlotServer->moveToThread(&getTodaysAdSlotServerThread);
     bool getTodaysAdSlotServerInitializedAndStartedSuccessfully = false;
-    QMetaObject::invokeMethod(getTodaysAdSlotServer.data(), "initializeAndStart", Qt::BlockingQueuedConnection, Q_RETURN_ARG(bool, getTodaysAdSlotServerInitializedAndStartedSuccessfully), Q_ARG(quint16, apiPort), Q_ARG(QString, sslCertArg), Q_ARG(QString, sslPrivkeyArg));
+    QMetaObject::invokeMethod(getTodaysAdSlotServer.data(), "initializeAndStart", Qt::BlockingQueuedConnection, Q_RETURN_ARG(bool, getTodaysAdSlotServerInitializedAndStartedSuccessfully), Q_ARG(quint16, apiPort), Q_ARG(QString, sslCertArg), Q_ARG(QString, sslPrivkeyArg), Q_ARG(quint16, torHiddenServiceHttpServerPort_OrZeroIfNoneProvided));
     if(!getTodaysAdSlotServerInitializedAndStartedSuccessfully)
     {
         beginStoppingCouchbase(&couchbaseDb);

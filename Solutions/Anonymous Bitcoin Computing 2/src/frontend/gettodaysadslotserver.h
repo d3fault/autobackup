@@ -23,9 +23,10 @@ public:
     explicit GetTodaysAdSlotServer(QObject *parent = 0);
 private:
     QTcpServer *m_Server;
+    QTcpServer *m_TorHiddenServiceHttpLocalhostOnlyServer;
     QTextStream m_StdErr;
 public slots:
-    bool initializeAndStart(quint16 port, const QString &sslCertFilePath, const QString &sslPrivkeyFilePath);
+    bool initializeAndStart(quint16 port, const QString &sslCertFilePath, const QString &sslPrivkeyFilePath, quint16 optionalTorHiddenServiceHttpServerPort_OrZeroIfNotToStartIt);
     void stopAndDestroy();
 private slots:
     void handleE(const QString &msg);
