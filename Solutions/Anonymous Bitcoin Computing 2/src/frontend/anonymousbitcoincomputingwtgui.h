@@ -531,6 +531,7 @@ public:
     AnonymousBitcoinComputingWtGUI(const WEnvironment &myEnv);
     virtual void finalize();
 
+    static void setApiHttpsPort(const std::string &apiHttpsPort);
     static void newAndOpenAllWtMessageQueues();
     static void deleteAllWtMessageQueues();
 

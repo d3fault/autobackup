@@ -24,9 +24,6 @@
 #define ABC_INTERNAL_PATH_REGISTER "/register"
 #define ABC_ANCHOR_TEXTS_REGISTER "Register"
 
-#define ABC_INTERNAL_PATH_ACCOUNT "/account"
-#define ABC_ANCHOR_TEXTS_ACCOUNT "Account"
-
 #define ABC_INTERNAL_PATH_HOME "/home" //if home has any "sub" paths, then our hack to handle clean urls logic will break (should use internalPathMatches instead)
 
 
@@ -175,6 +172,10 @@ void AnonymousBitcoinComputingWtGUI::finalize()
         //no need to reset m_CurrentlySubscribedTo to because 'this' is about to be deleted...
     }
     WApplication::finalize();
+}
+void AnonymousBitcoinComputingWtGUI::setApiHttpsPort(const string &apiHttpsPort)
+{
+    ApiKeyAccountTabBody::setApiHttpsPort(apiHttpsPort);
 }
 void AnonymousBitcoinComputingWtGUI::buildGui()
 {
@@ -353,7 +354,7 @@ void AnonymousBitcoinComputingWtGUI::showAccountWidget()
         m_AccountTabWidget->myAddTab(m_ViewAllExistingAdSlotFillersAccountTab = new ViewAllExistingAdSlotFillersAccountTabBody(this), "Existing Advertisements (For use in buying ad space)");
         m_AccountTabWidget->myAddTab(m_AddFundsAccountTab = new AddFundsAccountTabBody(this), "Add Funds"); //was going to have this one be first tab, but i don't want a db hit unless they request it
         m_AccountTabWidget->myAddTab(m_WithdrawFundsAccountTab = new WithdrawFundsAccountTabBody(this), "Withdraw Funds");
-        m_AccountTabWidget->myAddTab(m_ApiKeyAccountTab = new ApiKeyAccountTabBody(this), "API Key");
+        m_AccountTabWidget->myAddTab(m_ApiKeyAccountTab = new ApiKeyAccountTabBody(this), "API");
     }
     m_MainStack->setCurrentWidget(m_AccountTabWidget);
 }

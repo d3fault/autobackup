@@ -79,7 +79,7 @@ AdImageGetAndSubscribeManager::~AdImageGetAndSubscribeManager()
 }
 void AdImageGetAndSubscribeManager::startHttpRequestForNextAdSlot()
 {
-    m_NetworkAccessManager->get(QNetworkRequest(QUrl("https://anonymousbitcoincomputing.com" ABC2_API_GET_CURRENT_AD_ACTION_FULL_PATH_MACRO("d3fault", "0", "apikeygoeshere")))); //TODOreq: fill in api key
+    m_NetworkAccessManager->get(QNetworkRequest(QUrl("https://anonymousbitcoincomputing.com:420" ABC2_API_GET_CURRENT_AD_ACTION_FULL_PATH_MACRO("d3fault", "0", "apikeygoeshere")))); //TODOreq: fill in api key
 }
 void AdImageGetAndSubscribeManager::getAndSubscribe(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier *adImageSubscriberIdentifier, std::string sessionId, GetAndSubscriptionUpdateCallbackType getAndSubscriptionUpdateCallback)
 {

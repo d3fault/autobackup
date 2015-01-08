@@ -30,7 +30,7 @@ AnonymousBitcoinComputingWtGUI::m_##text##EventCallbacksForWt[n] = couchbaseDb.g
 #define AnonymousBitcoinComputing_WT_AND_API_SSL_CERT_CLI_ARG "--ssl-certificate="
 #define AnonymousBitcoinComputing_WT_AND_API_SSL_PRIVKEY_CLI_ARG "--ssl-private-key="
 #define AnonymousBitcoinComputing_API_PORT_CLI_ARG "--api-port"
-#define AnonymousBitcoinComputing_OPTIONA_LOCALHOST_ONLY_HTTP_SERVER_FOR_TOR_HIDDEN_SERVICE_PORT "--tor-hidden-service-http-server-port" //TODOoptional: describe in --help
+#define AnonymousBitcoinComputing_OPTIONA_LOCALHOST_ONLY_HTTP_SERVER_FOR_TOR_HIDDEN_SERVICE_PORT "--tor-hidden-service-localhost-only-http-server-api-port" //TODOoptional: describe in --help
 
 int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
 {
@@ -43,7 +43,8 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
         return 1;
     }
     bool parseSuccess = false;
-    quint16 apiPort = argz.at(indexOfApiPortArg+1).toUShort(&parseSuccess);
+    QString apiPortQString = argz.at(indexOfApiPortArg+1);
+    quint16 apiPort = apiPortQString.toUShort(&parseSuccess);
     if(!parseSuccess)
     {
         cerr << "Invalid API port" << endl;
@@ -52,14 +53,14 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     argz.removeAt(indexOfApiPortArg);
     argz.removeAt(indexOfApiPortArg);
 
-    quint16 torHiddenServiceHttpServerPort_OrZeroIfNoneProvided = 0;
+    quint16 torHiddenServiceHttpServerApiPort_OrZeroIfNoneProvided = 0;
     int indexOfTorHiddenServiceHttpServerPortArg = argz.indexOf(AnonymousBitcoinComputing_OPTIONA_LOCALHOST_ONLY_HTTP_SERVER_FOR_TOR_HIDDEN_SERVICE_PORT);
     if((indexOfTorHiddenServiceHttpServerPortArg > -1) && ((indexOfTorHiddenServiceHttpServerPortArg+1) < argz.size()))
     {
-        torHiddenServiceHttpServerPort_OrZeroIfNoneProvided = argz.at(indexOfTorHiddenServiceHttpServerPortArg+1).toUShort(&parseSuccess);
+        torHiddenServiceHttpServerApiPort_OrZeroIfNoneProvided = argz.at(indexOfTorHiddenServiceHttpServerPortArg+1).toUShort(&parseSuccess);
         if(!parseSuccess)
         {
-            cerr << "Invalid Tor Hidden Service HTTP Server Port" << endl;
+            cerr << "Invalid Tor Hidden Service HTTP Server API Port" << endl;
             return 1;
         }
         argz.removeAt(indexOfTorHiddenServiceHttpServerPortArg);
@@ -140,6 +141,9 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     }
 
     //couchbase is done initializing/connecting, so now we set up Wt and then start the Wt server
+
+    const std::string &apiPortStdString = apiPortQString.toStdString();
+    AnonymousBitcoinComputingWtGUI::setApiHttpsPort(apiPortStdString);
 
     struct TellWtToNewAndOpenButEventuallyCloseAndDeleteMessageQueuesWeKnowItHasScopedDeleter
     {

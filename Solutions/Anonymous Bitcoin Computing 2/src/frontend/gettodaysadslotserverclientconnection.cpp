@@ -16,8 +16,6 @@
 #define GetTodaysAdSlotServerClientConnection_FIRST_NO_CACHE_YET_SLOT_INDEX "0"
 #define GetTodaysAdSlotServerClientConnection_SECONDS_BEFORE_ACTUAL_EXPIRE_DATETIME_TO_SERVE_THE_NEXT_AD_SLOT 30
 #define GetTodaysAdSlotServerClientConnection_INVALID_API_KEY_MESSAGE "Invalid API Key"
-#define GetTodaysAdSlotServerClientConnection_MAX_API_REQUESTS_PER_AD_SLOT_DURATION_EXCLUDING_NO_AD_RESPONSES_OFC 50 /* if changing, change below string as well. 50 seems ample: low enough so that it would trigger if the ad campaign owner was somehow hitting the API url on every one of their website visitors (and yet still parsing json? unlikely lolol), yet high enough that a developer dicking around with the API won't run out of test runs. TO DOnereq: exclude 'no ad' responses! there is no 'push' atm, so 5 min polling has to be used :( TODOoptimization: a user should be able to query the status of ALL their ad campaigns with a single api query (more efficient on both ends) */
-#define GetTodaysAdSlotServerClientConnection_MAX_API_REQUESTS_PER_AD_SLOT_DURATION_EXCLUDING_NO_AD_RESPONSES_OFC_STR "50"
 
 using namespace boost::property_tree;
 
@@ -188,7 +186,7 @@ void GetTodaysAdSlotServerClientConnection::continueAtJustFinishedAttemptingToGe
     }
     if(!lcbOpSuccess)
     {
-        sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR("The ad slot is not currently purchased")); //TODOoptional: other similar more descriptive error
+        sendResponseAndCloseSocket(JSON_TODAYS_AD_SPACE_SLOT_FILLER_RESPONSE_CUSTOM_ERROR(ABC2_API_AD_SLOT_NOT_PURCHASED_ERROR)); //TODOoptional: other similar more descriptive error
         return;
     }
 

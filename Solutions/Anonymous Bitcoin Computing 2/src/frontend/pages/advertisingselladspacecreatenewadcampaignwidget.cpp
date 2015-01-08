@@ -23,6 +23,7 @@ if(theCheckbox->isChecked()) \
     disallowedCategoriesArray.push_back(std::make_pair("", theCategory)); \
 }
 
+//TODOmb: optional url+description for the place the ad will be shown
 AdvertisingSellAdSpaceCreateNewAdCampaignWidget::AdvertisingSellAdSpaceCreateNewAdCampaignWidget(AnonymousBitcoinComputingWtGUI *anonymousBitcoinComputingWtGUI, WContainerWidget *parent)
     : WContainerWidget(parent)
     , m_AnonymousBitcoinComputingWtGUI(anonymousBitcoinComputingWtGUI)
@@ -39,8 +40,14 @@ AdvertisingSellAdSpaceCreateNewAdCampaignWidget::AdvertisingSellAdSpaceCreateNew
     new WBreak(this);
     new WBreak(this);
 
+    new WText("For instructions (including examples) on how to get a purchased ad slot displayed on your site, visit the \"API\" section of your ", this);
+    new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ACCOUNT), ABC_ANCHOR_TEXTS_ACCOUNT, this);
+
+    new WBreak(this);
+    new WBreak(this);
+
     //TODOreq: minPrice and slot length hours (fill in with defaults (1 penny and 24 hours), and sanitize ofc (no lower than min bitcoin transaction amount, no lower than 1 hour)). it makes sense now to also include a url the ad will be shown on, and as mentioned earlier a human readable name...
-    /*WText *minPriceLabel = */new WText("Minimum selling price, in Bitcoins:", Wt::PlainText, this);
+    /*WText *minPriceLabel = */new WText("Minimum selling price, in BTC:", Wt::PlainText, this);
     new WBreak(this);
     m_MinPriceLineEdit = new WLineEdit(ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT_STR, this);
     WDoubleValidator *minPriceValidator = new WDoubleValidator(ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT, 21000000, m_MinPriceLineEdit); //TODOreq: OT'ish: the "ad doubles" logic should have a hard max of 21million btc ofc... but shit how could a transaction of that size even take place xD? Maybe a better (user specifiable?) maximum? For now just gonna pray it never happens (because it very likely won't)
@@ -51,7 +58,7 @@ AdvertisingSellAdSpaceCreateNewAdCampaignWidget::AdvertisingSellAdSpaceCreateNew
     new WBreak(this);
     new WBreak(this);
 
-    /*WText *slotLengthHoursLabel = */new WText("Duration of one advertisement placement, in hours (this is NOT the total duration your ad campaign will run for, but instead how long a single ad that someone purchased will be displayed for):", this);
+    /*WText *slotLengthHoursLabel = */new WText("Duration of one advertisement placement, in hours (this is NOT the total duration your ad campaign will run for, but instead how long a single ad that someone purchases will be displayed for):", this);
     new WBreak(this);
     m_SlotLengthHoursLineEdit = new WLineEdit("24", this); //TODOmb: wintspinbox?
     WIntValidator *slotLengthHoursValidator = new WIntValidator(1, INT_MAX, m_SlotLengthHoursLineEdit); //TODOoptional: we could probably go higher than INT_MAX, since it's stored and a string and we use doubles for the math :-P. But wtf seriously, 245146 years is plenty. Maybe I should even lower this limit?
