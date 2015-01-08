@@ -62,6 +62,8 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
             cerr << "Invalid Tor Hidden Service HTTP Server Port" << endl;
             return 1;
         }
+        argz.removeAt(indexOfTorHiddenServiceHttpServerPortArg);
+        argz.removeAt(indexOfTorHiddenServiceHttpServerPortArg);
     }
 
     //--ssl-certificate=
@@ -117,6 +119,7 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
         }
     };
     NewArgVscopedDeleter newArgVscopedDeleter(newArgC, newArgV);
+    (void)newArgVscopedDeleter;
 
 
     //start couchbase and wait for it to finish connecting/initializing

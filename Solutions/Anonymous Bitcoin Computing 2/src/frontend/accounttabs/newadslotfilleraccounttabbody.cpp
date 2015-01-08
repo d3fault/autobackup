@@ -213,7 +213,7 @@ void NewAdSlotFillerAccountTabBody::tryToAddAdSlotFillerToCouchbase(const string
     m_UploadNewSlotFiller_NICKNAME_B64 = base64Encode(m_Validated_NewAdSlotFiller_NICKNAME, false);
     pt.put(JSON_SLOT_FILLER_NICKNAME, m_UploadNewSlotFiller_NICKNAME_B64);
     pt.put(JSON_SLOT_FILLER_HOVERTEXT, base64Encode(m_Validated_NewAdSlotFiller_HOVERTEXT, false));
-    pt.put(JSON_SLOT_FILLER_URL, base64Encode(m_Validated_NewAdSlotFiller_URL, false));
+    pt.put(JSON_SLOT_FILLER_URL, base64Encode(htmlEncode(m_Validated_NewAdSlotFiller_URL), false));
 
     std::string adImageUploadFileLocation = m_AdImageUploader->spoolFileName();
     pair<string,string> guessedExtensionAndMimeType = StupidMimeFromExtensionUtil::guessExtensionAndMimeType(m_AdImageUploader->clientFileName().toUTF8());

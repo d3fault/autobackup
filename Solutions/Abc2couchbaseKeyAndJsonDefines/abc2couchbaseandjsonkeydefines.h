@@ -69,6 +69,13 @@ public:
 #define COUCHBASE_AD_SPACE_CAMPAIGN_KEY_PREFIX "adSpaceCampaign" //if changing, change "all users with at least one ad space campaign" view (and possibly others). aka: don't change.
 #define JSON_AD_SPACE_CAMPAIGN_MIN_PRICE "minPrice"
 #define JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS "slotLengthHours" /*also used in current slot cache doc*/
+#define JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORIES_KEY "disallowedCategories"
+#define JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_PRONDIZZLE "Porn" //these categories are both json values and user displayed strings
+#define JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_GAMBLING "Gambling"
+#define JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_MEDICINE "Medicine"
+#define JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_ALCOHOL "Alcohol"
+#define JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_TOBACCO "Tobacco"
+#define JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_WEAPONS "Weapons"
 //campaign-OPTIONAL-last-slot-filled
 #define JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED "lastSlotFilledAkaPurchased"
 #define JSON_AD_SPACE_CAMPAIGN_LAST_SLOT_FILLED_INDEX "slotIndex"

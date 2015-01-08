@@ -144,13 +144,13 @@ AnonymousBitcoinComputingWtGUI::AnonymousBitcoinComputingWtGUI(const WEnvironmen
     //m_CurrentStoreMessageQueueIndex = rawUniqueId() % ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUES_IN_Store;
     BOOST_PP_REPEAT(ABC_NUMBER_OF_WT_TO_COUCHBASE_MESSAGE_QUEUE_SETS, ABC_WT_TO_COUCHBASE_MESSAGE_QUEUES_FOREACH_SET_MACRO, ABC_WT_PER_QUEUE_SET_UNIFORM_INT_DISTRIBUTION_CONSTRUCTOR_INITIALIZATION_MACRO)
 
-#if 0 //I wanted to force https, but since I want to have a tor hidden service using the same wt server, I can't because the https cert won't validate to a random .onion (I _COULD_ buy another one for the .onion, but fuck that in principle. completely unnecessary). if people want to be insecure, fuck it. lessens my load anyways. casual "viewers" of the site don't need https anyways. TODOoptional: if they try to login when it's http, we ask them if they're sure (but by then the login forms may have already been sent rofl (so i might have to do it in pure javascript... or use those stateless slot thingos?)) -- tor hidden service users would simply press "yes" there (and I could even explain to tor hidden service users to ignore it).. and ofc I could also give a link to do the redirect for them
-    if(myEnv.urlScheme() != "https")
+    const std::string &clientAddress = myEnv.clientAddress();
+    bool clientAddressIsLocalhost = ((clientAddress == "127.0.0.1") || (clientAddress == "localhost") || (clientAddress == "::1"));
+    if((!clientAddressIsLocalhost) && (myEnv.urlScheme() != "https"))
     {
-        redirect("https://" + myEnv.hostName() + url());
+        redirect("https://" + myEnv.hostName() + url()); //we force https, unless the connection is from localhost, which indicates it's a tor hidden service connection, in which case the connection is ALREADY encrypted (and our https cert wouldn't validate since it's a .onion domain instead of the abc domain
         return;
     }
-#endif
 
     buildGui(); //everything that is NOT dependent on the internal path
 
@@ -525,6 +525,10 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
         m_CampaignSlotCurrentlyForSaleStartDateTimeLabel = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("Disallowed Categories: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        m_DisallowedCategoriesLabel = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WText("Price: BTC ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         m_CurrentPriceLabel = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         m_CurrentPriceDomPath = m_CurrentPriceLabel->jsRef();
@@ -650,6 +654,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
         //eh playing it safe setting these values back to blank, idk if it's necessary
         m_CampaignLengthHoursLabel->setText("");
         m_CampaignSlotCurrentlyForSaleStartDateTimeLabel->setText("");
+        m_DisallowedCategoriesLabel->setText("");
         m_CurrentPriceLabel->setText("");
 
         if(dbError)
@@ -686,7 +691,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
     }
 #endif
 
-    //TODOoptional: a campaign could be 'inactive' (just a field in the json ofc) theoretically but there's lots of use cases I need to implement in order to support that (what happens when 5 days are purchased and the campaign is made inactive? those 5 days refunded or the 6th+ days unpurchasable?), so fuck it for now
+    //TODOoptional: a campaign could be 'inactive' (just a field in the json ofc) theoretically but there's lots of use cases I need to implement in order to support that (what happens when 5 days are purchased and the campaign is made inactive? those 5 days refunded or the 6th+ days unpurchasable? how could i even enforce it to ad campaign owners? but i guess the same weird "refund?" situation applies to plain old server downtime as well..), so fuck it for now
 
     //This is ALSO (but not always (first get)) what I have referred to as a "buy event", so if they have clicked "buy step 1" we need to roll back the GUI so they have to click buy step 1 again (various GUI object organizational changes to support this)
     //Goes without saying that the new 'slot index' that they will try to buy (which is locked in after clicking buy step 1) should be set in this method
@@ -797,6 +802,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
             m_FirstPopulate = false;
             resumeRendering();
             m_CampaignLengthHoursLabel->setText(m_HackedInD3faultCampaign0_SlotLengthHours);
+            populateDisallowedCategoriesLabel(pt);
             m_CurrentPriceLabel->doJavaScript
             (
                 m_CurrentPriceDomPath + ".z0bj.minPrice = " + m_HackedInD3faultCampaign0_MinPrice + ";" +
@@ -812,6 +818,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
     else //no-js
     {
         m_CampaignLengthHoursLabel->setText(m_HackedInD3faultCampaign0_SlotLengthHours);
+        populateDisallowedCategoriesLabel(pt);
     }
 
     if(!m_BuySlotFillerStep1Button)
@@ -821,6 +828,25 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
         m_BuySlotFillerStep1Button->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked);
         m_BuySlotFillerStep1Button->clicked().connect(m_BuySlotFillerStep1Button, &WPushButton::disable);
     }
+}
+void AnonymousBitcoinComputingWtGUI::populateDisallowedCategoriesLabel(const ptree &adCampaignDoc)
+{
+    std::string disallowedCategories = "None";
+    bool first = true;
+    BOOST_FOREACH(const ptree::value_type &currentDisallowedCategory, adCampaignDoc.get_child(JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORIES_KEY))
+    {
+        if(first)
+        {
+            disallowedCategories.clear();
+            first = false;
+        }
+        else
+        {
+            disallowedCategories += ", ";
+        }
+        disallowedCategories += currentDisallowedCategory.second.get_value<std::string>();
+    }
+    m_DisallowedCategoriesLabel->setText(disallowedCategories);
 }
 void AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked()
 {

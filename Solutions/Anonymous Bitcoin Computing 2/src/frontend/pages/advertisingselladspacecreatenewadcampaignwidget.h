@@ -16,6 +16,14 @@ private:
 
     WLineEdit *m_MinPriceLineEdit;
     WLineEdit *m_SlotLengthHoursLineEdit;
+
+    WCheckBox *m_DisallowPornCheckbox;
+    WCheckBox *m_DisallowGamblingCheckbox;
+    WCheckBox *m_DisallowMedicineCheckbox;
+    WCheckBox *m_DisallowAlcoholCheckbox;
+    WCheckBox *m_DisallowTobaccoCheckbox;
+    WCheckBox *m_DisallowWeaponsCheckbox;
+
     WPushButton *m_CreateNewAdCampaignButton;
 
     u_int64_t m_CasOfCampaignIndexCacheDoc_OrZeroIfCacheDocDoesNotExist;

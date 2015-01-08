@@ -5,7 +5,7 @@
 
 /*
 
-Do I need to urlencode the urls before embedding them in anchors in the clients? Tags and quotes (< and ") are 'legal' characters in urls, so if I'm not careful I might introduce XSS in the api clients (granted, you'd have to buy their ad space to do your XSS xD)
+Test the html encoding of urls
 
 ==1.1 Bugs==
 

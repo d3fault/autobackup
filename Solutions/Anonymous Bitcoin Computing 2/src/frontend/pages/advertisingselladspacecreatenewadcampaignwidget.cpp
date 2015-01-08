@@ -10,11 +10,18 @@ using namespace boost::property_tree;
 #include <Wt/WBreak>
 #include <Wt/WDoubleValidator>
 #include <Wt/WIntValidator>
+#include <Wt/WCheckBox>
 #include <Wt/WPushButton>
 
 #include "../anonymousbitcoincomputingwtgui.h"
 #include "abc2couchbaseandjsonkeydefines.h"
 #include "../../abc2common.h"
+
+#define AdvertisingSellAdSpaceCreateNewAdCampaignWidget_ADD_TO_DISALLOWED_ARRAY_IF_CHECKED(theCheckbox, theCategory) \
+if(theCheckbox->isChecked()) \
+{ \
+    disallowedCategoriesArray.push_back(std::make_pair("", theCategory)); \
+}
 
 AdvertisingSellAdSpaceCreateNewAdCampaignWidget::AdvertisingSellAdSpaceCreateNewAdCampaignWidget(AnonymousBitcoinComputingWtGUI *anonymousBitcoinComputingWtGUI, WContainerWidget *parent)
     : WContainerWidget(parent)
@@ -50,6 +57,23 @@ AdvertisingSellAdSpaceCreateNewAdCampaignWidget::AdvertisingSellAdSpaceCreateNew
     WIntValidator *slotLengthHoursValidator = new WIntValidator(1, INT_MAX, m_SlotLengthHoursLineEdit); //TODOoptional: we could probably go higher than INT_MAX, since it's stored and a string and we use doubles for the math :-P. But wtf seriously, 245146 years is plenty. Maybe I should even lower this limit?
     slotLengthHoursValidator->setMandatory(true);
     m_SlotLengthHoursLineEdit->setValidator(slotLengthHoursValidator);
+
+    new WBreak(this);
+    new WBreak(this);
+
+    m_DisallowPornCheckbox = new WCheckBox("Disallow " JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_PRONDIZZLE " ads", this);
+    new WBreak(this);
+    m_DisallowGamblingCheckbox = new WCheckBox("Disallow " JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_GAMBLING " ads", this);
+    new WBreak(this);
+    m_DisallowMedicineCheckbox = new WCheckBox("Disallow " JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_MEDICINE " ads", this);
+    new WBreak(this);
+    m_DisallowAlcoholCheckbox = new WCheckBox("Disallow " JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_ALCOHOL " ads", this);
+    new WBreak(this);
+    m_DisallowTobaccoCheckbox = new WCheckBox("Disallow " JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_TOBACCO " ads", this);
+    new WBreak(this);
+    m_DisallowWeaponsCheckbox = new WCheckBox("Disallow " JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_WEAPONS " ads", this);
+    new WBreak(this);
+    new WText("Note: It is your responsibility to filter out ads that you've indicated are not allowed. These filters serve only as a warning to potential ad slot buyers as to what content is not allowed in ads displayed on your site.", this); //TODOoptional: take on the responsibility. but how, without having an approval/categorization process for all ad slot fillers xD?
 
     new WBreak(this);
     new WBreak(this);
@@ -124,6 +148,24 @@ void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::useCacheToDetermineIndexFo
 
     pt.put(JSON_AD_SPACE_CAMPAIGN_MIN_PRICE, boost::lexical_cast<std::string>(jsonStringToSatoshiInt(m_MinPriceLineEdit->text().toUTF8())));
     pt.put(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS, m_SlotLengthHoursLineEdit->text().toUTF8());
+
+    ptree disallowedCategoriesArray;
+
+    ptree pornPt; pornPt.put("", JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_PRONDIZZLE);
+    ptree gamblingPt; gamblingPt.put("", JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_GAMBLING);
+    ptree medicinePt; medicinePt.put("", JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_MEDICINE);
+    ptree alcoholPt; alcoholPt.put("", JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_ALCOHOL);
+    ptree tobaccoPt; tobaccoPt.put("", JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_TOBACCO);
+    ptree weaponsPt; weaponsPt.put("", JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_WEAPONS);
+
+    AdvertisingSellAdSpaceCreateNewAdCampaignWidget_ADD_TO_DISALLOWED_ARRAY_IF_CHECKED(m_DisallowPornCheckbox, pornPt)
+    AdvertisingSellAdSpaceCreateNewAdCampaignWidget_ADD_TO_DISALLOWED_ARRAY_IF_CHECKED(m_DisallowGamblingCheckbox, gamblingPt)
+    AdvertisingSellAdSpaceCreateNewAdCampaignWidget_ADD_TO_DISALLOWED_ARRAY_IF_CHECKED(m_DisallowMedicineCheckbox, medicinePt)
+    AdvertisingSellAdSpaceCreateNewAdCampaignWidget_ADD_TO_DISALLOWED_ARRAY_IF_CHECKED(m_DisallowAlcoholCheckbox, alcoholPt)
+    AdvertisingSellAdSpaceCreateNewAdCampaignWidget_ADD_TO_DISALLOWED_ARRAY_IF_CHECKED(m_DisallowTobaccoCheckbox, tobaccoPt)
+    AdvertisingSellAdSpaceCreateNewAdCampaignWidget_ADD_TO_DISALLOWED_ARRAY_IF_CHECKED(m_DisallowWeaponsCheckbox, weaponsPt)
+
+    pt.add_child(JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORIES_KEY, disallowedCategoriesArray);
 
     std::ostringstream campaignDocBuffer;
     write_json(campaignDocBuffer, pt, false);

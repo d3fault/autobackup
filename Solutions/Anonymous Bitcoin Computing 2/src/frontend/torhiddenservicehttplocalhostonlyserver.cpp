@@ -4,7 +4,7 @@
 
 #include "gettodaysadslotserverclientconnection.h"
 
-//this is only for the API. the "web" hidden service uses the same "http server" as wt (so... i shouldn't redirect to https TODOreq fml?)
+//this is only for the API. the "web" hidden service uses the same "http server" as wt
 TorHiddenServiceHttpLocalhostOnlyServer::TorHiddenServiceHttpLocalhostOnlyServer(QObject *parent)
     : QTcpServer(parent)
 { }
@@ -14,7 +14,8 @@ void TorHiddenServiceHttpLocalhostOnlyServer::incomingConnection(qintptr socketD
     if(clientSocket->setSocketDescriptor(socketDescriptor))
     {
         const QHostAddress &peerAddress = clientSocket->peerAddress();
-        if(peerAddress != QHostAddress::LocalHost && peerAddress != QHostAddress::LocalHostIPv6)
+        bool peerAddressIsLocalhost = ((peerAddress == QHostAddress::LocalHost) || (peerAddress == QHostAddress::LocalHostIPv6));
+        if(!peerAddressIsLocalhost) //TODOoptional: !isLoopback() instead?
         {
             connect(clientSocket, SIGNAL(disconnected()), clientSocket, SLOT(deleteLater()));
             clientSocket->close();

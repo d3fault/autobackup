@@ -321,6 +321,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
     bool m_FirstPopulate;
     WText *m_CampaignLengthHoursLabel;
     WText *m_CampaignSlotCurrentlyForSaleStartDateTimeLabel;
+    WText *m_DisallowedCategoriesLabel;
     WText *m_CurrentPriceLabel;
     std::string m_CurrentPriceDomPath;
     WPushButton *m_BuySlotFillerStep1Button;
@@ -349,6 +350,7 @@ class AnonymousBitcoinComputingWtGUI : public WApplication
 #endif // ABC_MULTI_CAMPAIGN_OWNER_MODE
 
     void finishShowingAdvertisingBuyAdSpaceD3faultCampaign0Widget(const std::string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase, bool lcbOpSuccess, bool dbError);
+    void populateDisallowedCategoriesLabel(const ptree &adCampaignDoc);
     void buySlotStep1d3faultCampaign0ButtonClicked();
     void ehhGetLatestValuesFromCampaignDocForNoJsUserWhichMayNotHaveEvenChangedBecauseTheyJustClickedBuyStep1(const std::string &advertisingBuyAdSpaceD3faultCampaign0JsonDocument, u_int64_t casForSafelyUpdatingCampaignDocAfterSuccesfulPurchase, bool lcbOpSuccess, bool dbError);
     void buySlotPopulateStep2d3faultCampaign0(const string &allSlotFillersJsonDoc, bool lcbOpSuccess, bool dbError);
