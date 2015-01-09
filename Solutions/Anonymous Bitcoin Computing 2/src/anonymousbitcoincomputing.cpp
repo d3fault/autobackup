@@ -1,6 +1,9 @@
 #include "anonymousbitcoincomputing.h"
 
 #include <boost/preprocessor/repeat.hpp>
+#include <boost/filesystem.hpp>
+
+#include <Wt/WFileResource>
 
 #include <QCoreApplication>
 #include <QStringList>
@@ -196,6 +199,19 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     wtServer.addResource(&abcLogoImageResource, "/abc.logo.svg");
     //END ABC LOGO
 
+    //BEGIN SIMPLE PHP API CLIENT
+    if(!boost::filesystem::exists(ABC_API_SIMPLE_PHP_CLIENT_FILENAME))
+    {
+        beginStoppingCouchbase(&couchbaseDb);
+        finalStopCouchbaseAndWaitForItsThreadToJoin(&couchbaseDb);
+        cerr << ABC_API_SIMPLE_PHP_CLIENT_FILENAME " does not exist. quitting" << endl;
+        return 1;
+    }
+    WFileResource simplePhpApiClientFileResource(ABC_API_SIMPLE_PHP_CLIENT_MIME_TYPE, ABC_API_SIMPLE_PHP_CLIENT_FILENAME);
+    simplePhpApiClientFileResource.suggestFileName(ABC_API_SIMPLE_PHP_CLIENT_FILENAME);
+    wtServer.addResource(&simplePhpApiClientFileResource, ABC_API_SIMPLE_PHP_CLIENT_URL);
+    //END SIMPLE PHP API CLIENT
+
     //GetTodaysAdSlotResource getTodaysAdSlotResource;
     //wtServer.addResource(&getTodaysAdSlotResource, "/todays-ad.json");
 
@@ -211,7 +227,7 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     getTodaysAdSlotServerThread.start();
     getTodaysAdSlotServer->moveToThread(&getTodaysAdSlotServerThread);
     bool getTodaysAdSlotServerInitializedAndStartedSuccessfully = false;
-    QMetaObject::invokeMethod(getTodaysAdSlotServer.data(), "initializeAndStart", Qt::BlockingQueuedConnection, Q_RETURN_ARG(bool, getTodaysAdSlotServerInitializedAndStartedSuccessfully), Q_ARG(quint16, apiPort), Q_ARG(QString, sslCertArg), Q_ARG(QString, sslPrivkeyArg), Q_ARG(quint16, torHiddenServiceHttpServerPort_OrZeroIfNoneProvided));
+    QMetaObject::invokeMethod(getTodaysAdSlotServer.data(), "initializeAndStart", Qt::BlockingQueuedConnection, Q_RETURN_ARG(bool, getTodaysAdSlotServerInitializedAndStartedSuccessfully), Q_ARG(quint16, apiPort), Q_ARG(QString, sslCertArg), Q_ARG(QString, sslPrivkeyArg), Q_ARG(quint16, torHiddenServiceHttpServerApiPort_OrZeroIfNoneProvided));
     if(!getTodaysAdSlotServerInitializedAndStartedSuccessfully)
     {
         beginStoppingCouchbase(&couchbaseDb);

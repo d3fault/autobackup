@@ -532,6 +532,7 @@ public:
     virtual void finalize();
 
     static void setApiHttpsPort(const std::string &apiHttpsPort);
+    static void setSimplePhpApiClientResource(WResource *simplePhpApiClientResource);
     static void newAndOpenAllWtMessageQueues();
     static void deleteAllWtMessageQueues();
 

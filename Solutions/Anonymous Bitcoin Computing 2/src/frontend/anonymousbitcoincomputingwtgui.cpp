@@ -177,6 +177,10 @@ void AnonymousBitcoinComputingWtGUI::setApiHttpsPort(const string &apiHttpsPort)
 {
     ApiKeyAccountTabBody::setApiHttpsPort(apiHttpsPort);
 }
+void AnonymousBitcoinComputingWtGUI::setSimplePhpApiClientResource(WResource *simplePhpApiClientResource)
+{
+    ApiKeyAccountTabBody::setSimplePhpApiClientResource(simplePhpApiClientResource);
+}
 void AnonymousBitcoinComputingWtGUI::buildGui()
 {
     setTitle(ABC_HUMAN_READABLE_NAME_PLX);
@@ -216,7 +220,7 @@ void AnonymousBitcoinComputingWtGUI::buildGui()
     m_LoginLogoutStackWidget->setCurrentWidget(m_LoginWidget); //might not be necessary, since it's the only one added at this point (comment is not worth...)
 
     WHBoxLayout *titleHeaderHlayout = new WHBoxLayout();
-    WImage *abcLogoImage = new WImage(WLink(WLink::Url, "/abc.logo.svg"), ABC_HUMAN_READABLE_NAME_PLX " Logo");
+    WImage *abcLogoImage = new WImage(WLink(WLink::Url, "/abc.logo.svg"), ABC_HUMAN_READABLE_NAME_PLX);
     WAnchor *abcLogoAnchor = new WAnchor(WLink(WLink::InternalPath, "/"), abcLogoImage);
     abcLogoImage->setWidth(300);
     abcLogoImage->setHeight(100);

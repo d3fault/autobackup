@@ -175,10 +175,11 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     new WBreak(linksContainer);
     WAnchor *storeAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_TO_STORE), "Store / Donate", linksContainer);
     storeAnchor->decorationStyle().setForegroundColor(WColor(0, 255, 0));
-    storeAnchor->setToolTip("Buying is basically donating, since everything is already freely available...");   
+    storeAnchor->setToolTip("Buying is basically donating, since everything is already available for free...");
     new WBreak(linksContainer);
     WAnchor *yourAdHereAnchor = new WAnchor(WLink(WLink::Url, HVBS_ABC2_BUY_D3FAULT_CAMPAIGN_0_URL), "Your Ad Here", linksContainer);
     yourAdHereAnchor->decorationStyle().setForegroundColor(WColor(255,0,0)); //I like my [necessary] evils to be clearly marked as such
+    yourAdHereAnchor->setTarget(TargetNewWindow);
 
     menuContentsVLayout->addWidget(topContainer);
 
@@ -213,7 +214,8 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     //dplDropDown->decorationStyle().setCursor(PointingHandCursor);
 
     //new WBreak(blahRootRedirect()); eh weird indentation without this WBreak, BUT i'll take that over an entire wasted line!
-    new WAnchor(WLink(WLink::Url, "https://bitcoin.org/en/faq"), "Bitcoin", blahRootRedirect());
+    WAnchor *bitcoinFaqAnchor = new WAnchor(WLink(WLink::Url, "https://bitcoin.org/en/faq"), "Bitcoin", blahRootRedirect());
+    bitcoinFaqAnchor->setTarget(TargetNewWindow);
     new WText(" donation address: 1FwZENuqEHHNCAz4fiWbJWSknV4BhWLuYm", Wt::XHTMLUnsafeText, blahRootRedirect());
 
     new WBreak(blahRootRedirect());
@@ -330,7 +332,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
     {
         deleteTimelineAndDirectoryBrowsingStackIfNeeded();
 
-        //TODOreq: host and link to the torrent files (tpb is dead also so this needs to be done soon)
+        //TODOreq: host and link to the torrent files (tpb is dead also so this needs to be done soon). Maybe just a magnet URL instead?
         WContainerWidget *downloadContainer = new WContainerWidget();
         new WText("Download in full:", Wt::XHTMLUnsafeText, downloadContainer);
         new WBreak(downloadContainer);

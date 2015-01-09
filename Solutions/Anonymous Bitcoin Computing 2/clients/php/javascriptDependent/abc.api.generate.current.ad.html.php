@@ -3,20 +3,21 @@
 //Do not use this script on a Windows server. Windows is a piece of shit because Bill Gates is a noob.
 
 //MANDATORY CONFIG
-define('ABC_PHP_CLIENT_USER', 'Replace-With-Your-Username');
-define('ABC_PHP_CLIENT_AD_INDEX', 'Replace-With-Your-Ad-Index');
-define('ABC_PHP_CLIENT_APIKEY', 'Replace-With-Your-API-Key');
+define('ABC_PHP_CLIENT_USER', 'Replace-With-Your-Username'); //Your Anonymous Bitcoin Computing username
+define('ABC_PHP_CLIENT_AD_INDEX', 'Replace-With-Your-Ad-Index'); //Your ad index, probably '0' if this is your first ad space for sale
+define('ABC_PHP_CLIENT_APIKEY', 'Replace-With-Your-API-Key'); //Your API Key. Get this from the API section of your Account on the Anonymous Bitcoin Computing website
 define('ABC_PHP_CLIENT_NO_AD_PLACEHOLDER', 'no.ad.placeholder.jpg'); //When nobody has purchased the ad space, display this image instead
 
 //OPTIONAL CONFIG
 define('ABC_PHP_CLIENT_AD_FILENAME_PREFIX', 'ad');
 define('ABC_PHP_CLIENT_NO_AD_HOVERTEXT', 'Click here to purchase this ad space'); 
 define('ABC_PHP_CLIENT_TEMPORARY_DIR', ''); //Leave blank to use the system temporary dir
-define('ABC_PHP_CLIENT_AD_CACHE_DB_FILE', 'abc.ad.cache.db.json');
+define('ABC_PHP_CLIENT_AD_CACHE_DB_FILE_PREFIX', 'abc.ad.cache.db.for');
+define('ABC_PHP_CLIENT_AD_CACHE_DB_FILE_EXT', '.json');
 
 //internal
-define('ABC_PHP_CLIENT_AD_CACHE_DB_FILE_TODAYS_AD_IMAGE_FILENAME_KEY', 'todaysAdImageFilename');
-define('ABC_PHP_CLIENT_AD_CACHE_DB_UPDATE_LOCK_FILE', 'abc.api.php.client.update.lock');
+define('ABC_PHP_CLIENT_AD_CACHE_DB_FILE_TODAYS_AD_IMAGE_FILENAME_JSON_KEY', 'todaysAdImageFilename');
+define('ABC_PHP_CLIENT_AD_CACHE_DB_UPDATE_LOCK_FILE_PREFIX', 'abc.api.php.client.update.lock.for.');
 
 function abcApiGenerateCurrentAdHtml($adImageFilename, $adUrl, $adHoverText)
 {
@@ -62,7 +63,7 @@ function myTempFile()
 
 function myAdCacheDbFile()
 {
-	return myTempDir() . ABC_PHP_CLIENT_AD_CACHE_DB_FILE;
+        return myTempDir() . ABC_PHP_CLIENT_AD_CACHE_DB_FILE_PREFIX . '.' . ABC_PHP_CLIENT_USER . '.' . ABC_PHP_CLIENT_AD_INDEX . ABC_PHP_CLIENT_AD_CACHE_DB_FILE_EXT;
 }
 
 function atomicallyCreateSettingsFileForNewAd($adImageFilename, $adUrl, $adHoverText, $adSlotExpireDateTime)
@@ -70,7 +71,7 @@ function atomicallyCreateSettingsFileForNewAd($adImageFilename, $adUrl, $adHover
 	$tempSettingsFile = myTempFile();
 	if($tempSettingsFile === FALSE)
 	{
-		//What can we do? Just exitting like this might cause API flooding. Maybe I should try to write the settings file in place as a desperate measure? TODOreq. A common source of this is permission errors. Maybe at the VERY BEGINNING of the script, I check that the temp dir we'll use is writeable, and then exit if it isn't (so no API query flood) -- I do have this implemented, but not sure it covers everything to prevent accidental api flooding
+		//What can we do? Just exitting like this might cause API flooding. Maybe I should try to write the settings file in place as a desperate measure? A common source of this is permission errors. Maybe at the VERY BEGINNING of the script, I check that the temp dir we'll use is writeable, and then exit if it isn't (so no API query flood) -- I do have this implemented, but not sure it covers everything to prevent accidental api flooding
 		return;
 	}
 	$tempSettingsFileHandle = fopen($tempSettingsFile, 'w');
@@ -79,7 +80,7 @@ function atomicallyCreateSettingsFileForNewAd($adImageFilename, $adUrl, $adHover
 		//Ditto above API flooding because of permissions
 		return;
 	}
-	$settingsArray = array(ABC_PHP_CLIENT_AD_CACHE_DB_FILE_TODAYS_AD_IMAGE_FILENAME_KEY => $adImageFilename, 'urlB64' => base64_encode($adUrl), 'hoverTextB64' => base64_encode($adHoverText), 'todaysAdSlotExpireDateTime' => $adSlotExpireDateTime);
+	$settingsArray = array(ABC_PHP_CLIENT_AD_CACHE_DB_FILE_TODAYS_AD_IMAGE_FILENAME_JSON_KEY => $adImageFilename, 'urlB64' => base64_encode($adUrl), 'hoverTextB64' => base64_encode($adHoverText), 'todaysAdSlotExpireDateTime' => $adSlotExpireDateTime);
 	fwrite($tempSettingsFileHandle, json_encode($settingsArray));
 	fflush($tempSettingsFileHandle);
 	fclose($tempSettingsFileHandle);
@@ -92,13 +93,12 @@ function atomicallyCreateSettingsFileForNewAd($adImageFilename, $adUrl, $adHover
 
 function createSettingsFileInNoAdMode()
 {
-	//TO DOnereq: the settings file whenever the ad slot isn't purchased and we want to poll every 5 minutes. One way to do this is to simply have it the settings file not exist? Another is to fill in the fields correctly, but use 'no ad placeholder' image and set expiration date 5 mins in future. I think the latter is better, because it not existing would mean EVERY time the script runs, an API request would be made xD
 	atomicallyCreateSettingsFileForNewAd(ABC_PHP_CLIENT_NO_AD_PLACEHOLDER, abcApiReturnBuyAdSpaceUrl(), ABC_PHP_CLIENT_NO_AD_HOVERTEXT, (time() + 300));
 }
 
 function queryAbcApi($adImageFilenameToShowIfWeFailToGetUpdateLock, $adUrlToUseIfWeFailToGetUpdateLock, $adHoverTextToUseIfWeFailToGetUpdateLock)
 {
-	$updateLockHandle = fopen(myTempDir() . ABC_PHP_CLIENT_AD_CACHE_DB_UPDATE_LOCK_FILE, 'c');
+        $updateLockHandle = fopen(myTempDir() . ABC_PHP_CLIENT_AD_CACHE_DB_UPDATE_LOCK_FILE_PREFIX . ABC_PHP_CLIENT_USER . '.' . ABC_PHP_CLIENT_AD_INDEX, 'c');
 	if(!$updateLockHandle)
 	{
 		//Fatal error, should never happen
@@ -179,7 +179,7 @@ function queryAbcApi($adImageFilenameToShowIfWeFailToGetUpdateLock, $adUrlToUseI
 	}
 	fflush($tempFileHandle);
 	fclose($tempFileHandle);
-	$adImageFilename = ABC_PHP_CLIENT_AD_FILENAME_PREFIX . $apiResponseJson->{'adImageExt'};
+	$adImageFilename = ABC_PHP_CLIENT_AD_FILENAME_PREFIX . '.' . ABC_PHP_CLIENT_USER . '.' . ABC_PHP_CLIENT_AD_INDEX . $apiResponseJson->{'adImageExt'};
 	if(!rename($tempFile, $adImageFilename))
 	{
         	//Failed to rename, so use the no ad placeholder
@@ -228,9 +228,9 @@ if(($settingsFileJson === NULL) || ($settingsFileJson === FALSE))
 if(time() >= $settingsFileJson->{'todaysAdSlotExpireDateTime'})
 {
 	//Expired. Try to get new, but if we fail to get the update lock, we'll still show the expired ad
-	queryAbcApi($settingsFileJson->{ABC_PHP_CLIENT_AD_CACHE_DB_FILE_TODAYS_AD_IMAGE_FILENAME_KEY}, base64_decode($settingsFileJson->{'urlB64'}), base64_decode($settingsFileJson->{'hoverTextB64'}));
+	queryAbcApi($settingsFileJson->{ABC_PHP_CLIENT_AD_CACHE_DB_FILE_TODAYS_AD_IMAGE_FILENAME_JSON_KEY}, base64_decode($settingsFileJson->{'urlB64'}), base64_decode($settingsFileJson->{'hoverTextB64'}));
         exit;
 }
 //Not expired (typical use case) -- cache hit
-abcApiGenerateCurrentAdHtml($settingsFileJson->{ABC_PHP_CLIENT_AD_CACHE_DB_FILE_TODAYS_AD_IMAGE_FILENAME_KEY}, base64_decode($settingsFileJson->{'urlB64'}), base64_decode($settingsFileJson->{'hoverTextB64'}));
+abcApiGenerateCurrentAdHtml($settingsFileJson->{ABC_PHP_CLIENT_AD_CACHE_DB_FILE_TODAYS_AD_IMAGE_FILENAME_JSON_KEY}, base64_decode($settingsFileJson->{'urlB64'}), base64_decode($settingsFileJson->{'hoverTextB64'}));
 ?>

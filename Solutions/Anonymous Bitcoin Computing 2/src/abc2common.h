@@ -20,6 +20,10 @@
 #define GetTodaysAdSlotServerClientConnection_MAX_API_REQUESTS_PER_AD_SLOT_DURATION_EXCLUDING_NO_AD_RESPONSES_OFC 50 /* if changing, change below string as well. 50 seems ample: low enough so that it would trigger if the ad campaign owner was somehow hitting the API url on every one of their website visitors (and yet still parsing json? unlikely lolol), yet high enough that a developer dicking around with the API won't run out of test runs. TO DOnereq: exclude 'no ad' responses! there is no 'push' atm, so 5 min polling has to be used :( TODOoptimization: a user should be able to query the status of ALL their ad campaigns with a single api query (more efficient on both ends) */
 #define GetTodaysAdSlotServerClientConnection_MAX_API_REQUESTS_PER_AD_SLOT_DURATION_EXCLUDING_NO_AD_RESPONSES_OFC_STR "50"
 
+#define ABC_API_SIMPLE_PHP_CLIENT_FILENAME "abc.api.simple.php.client.zip"
+#define ABC_API_SIMPLE_PHP_CLIENT_URL "/" ABC_API_SIMPLE_PHP_CLIENT_FILENAME
+#define ABC_API_SIMPLE_PHP_CLIENT_MIME_TYPE "application/zip"
+
 #define ABC2_BITCOIN_AMOUNT_VISUAL_INPUT_FORM_WIDTH 17 /*16 digits +1 for decimal place*/
 
 #if (BOOST_VERSION >= 105300)

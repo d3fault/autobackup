@@ -6,8 +6,8 @@
 #include "torhiddenservicehttplocalhostonlyserver.h"
 #include "gettodaysadslotserverclientconnection.h"
 
-//TODOreq: https (use same cert/key passed to wt via args)
 //single threaded (or two threads if you count the db thread), yea, but ASYNC woooot
+//Better named: "ABC API Server" -- even though for now yea it is just 'current ad' ('today' implies they chose 24 hours)
 void GetTodaysAdSlotServer::setBackendGetQueue(boost::lockfree::queue<GetCouchbaseDocumentByKeyRequest *> *backendQueue)
 {
     GetTodaysAdSlotServerClientConnection::setBackendGetQueue(backendQueue);
@@ -74,7 +74,7 @@ void GetTodaysAdSlotServer::stopAndDestroy()
 }
 void GetTodaysAdSlotServer::handleE(const QString &msg)
 {
-    //thread unssafe access to cerr, but I only emit errors during init anyways TODOreq
+    //thread unsafe access to cerr, but I only emit errors during init anyways TODOreq
     m_StdErr << msg << endl;
 }
 #if 0
