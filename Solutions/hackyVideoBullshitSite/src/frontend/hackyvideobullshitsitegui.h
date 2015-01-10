@@ -43,6 +43,7 @@ private:
     WWidget *m_Contents;
     bool m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred;
 
+    std::string m_VideoSegmentFilePathCurrentlyBeingDisplayed; //used to find "next" video
     WContainerWidget *m_TimelineAndDirectoryLogicalContainer;
     WContainerWidget *m_CookieCrumbContainerWidget;
     WStackedWidget *m_TimelineAndDirectoryBrowsingStack;
@@ -51,6 +52,7 @@ private:
 
     void handleInternalPathChanged(const std::string &newInternalPath);
     void handleAdImageChanged(WResource *newAdImageResource, std::string newAdUrl, std::string newAdAltAndHover);
+    void displayVideoSegment(const std::string &videoSegmentFilePath);
     void handleLatestVideoSegmentEnded();
     void handleNextVideoClipButtonClicked();
     std::string determineLatestVideoSegmentPathOrUsePlaceholder();

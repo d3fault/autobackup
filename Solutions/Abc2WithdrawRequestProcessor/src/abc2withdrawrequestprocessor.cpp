@@ -459,7 +459,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequests()
 
     lcb_set_http_complete_callback(m_Couchbase, Abc2WithdrawRequestProcessor::viewQueryCompleteCallbackStatic);
 
-    std::string viewPath = "_design/dev_AllWithdrawalRequestsWithStateOfNotDone/_view/AllWithdrawalRequestsWithStateOfNotDone?stale=false"; //TODOmb: perhaps if this app is run on the webserver, we should use some form of pagination so that all the requests don't have to be in ram. for now KISS. Another way to solve it is to run this app on a server other than the webserver
+    std::string viewPath = "_design/dev_AllWithdrawalRequestsWithStateOfNotDone/_view/AllWithdrawalRequestsWithStateOfNotDone?stale=ok"; //TODOmb: perhaps if this app is run on the webserver, we should use some form of pagination so that all the requests don't have to be in ram. for now KISS. Another way to solve it is to run this app on a server other than the webserver
     lcb_http_cmd_t viewQueryCmd;
     viewQueryCmd.version = 0;
     viewQueryCmd.v.v0.path = viewPath.c_str();

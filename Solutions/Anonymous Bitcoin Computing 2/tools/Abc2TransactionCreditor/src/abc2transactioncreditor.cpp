@@ -24,7 +24,6 @@ Handling the ERROR/previous-fail cases:
     0) TODOreq (decided to launch instead) The only way I can find all of these is with a view/map that emits when it sees "locked towards transaction". I can find some of them by iterating the transactions list (by sheer luck, the seller had another transaction that we are 'later' trying to credit... and we see it locked to some other transaction and then I guess try to do recovery). COME TO THINK OF IT, I don't need to wait a few hundred ms to do the recovery, BUT I SHOULD because otherwise I'd be stopping "transaction creditors" dead in their tracks (until their next cron timeout). Since I am recovery, I won't be "their neighbor" (yet, since recovery runs first?) -- ahh well since I said "yet", then in fact I don't need to wait a few hundred ms. My head hurts <<-- Another way to do this is to add the transaction the profile is locked towards to the top of the regular view query (and let it 'recover' that way (means I have to be ok with finding a profile locked towards a transaction I haven't started attempting to credit TODOreq (one of the two methods))
 */
 
-//TODOreq: abc2 needs a message somewhere telling campaign owners about the delayed creditting mechanism. the campaign creation page seems like a good spot
 //TODOreq: finding a transaction in state "creditting" where the seller doesn't have the profile locked means we failed after unlocking+creditting the profile. As error recovery, we simply change the state from creditting to creditted (ofc if the profile is locked, we know where to resume as well)
 Abc2TransactionCreditor::Abc2TransactionCreditor(QObject *parent)
     : QObject(parent)
@@ -217,7 +216,7 @@ void Abc2TransactionCreditor::creditTransactions()
 
     lcb_set_http_complete_callback(m_Couchbase, Abc2TransactionCreditor::viewQueryCompleteCallbackStatic);
 
-    std::string viewPath = "_design/dev_AllTransactionsWithStateOfUncreditted/_view/AllTransactionsWithStateOfUncreditted?stale=false"; //TODOmb: perhaps if this app is run on the webserver, we should use some form of pagination so that all the uncreditted transactions don't have to be in ram. for now KISS. Another way to solve it is to run this app on a server other than the webserver
+    std::string viewPath = "_design/dev_AllTransactionsWithStateOfUncreditted/_view/AllTransactionsWithStateOfUncreditted?stale=ok"; //TODOmb: perhaps if this app is run on the webserver, we should use some form of pagination so that all the uncreditted transactions don't have to be in ram. for now KISS. Another way to solve it is to run this app on a server other than the webserver
     lcb_http_cmd_t viewQueryCmd;
     viewQueryCmd.version = 0;
     viewQueryCmd.v.v0.path = viewPath.c_str();

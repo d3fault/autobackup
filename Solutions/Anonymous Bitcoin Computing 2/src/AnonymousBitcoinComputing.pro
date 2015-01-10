@@ -12,11 +12,13 @@
 #5) Turn on auto-failover
 #5) cd into wtAppHere and `ln -s /usr/local/share/Wt/resources/ resources`
 #                                   ^or just /usr/share/Wt if using Wt from debian repository
+#6) Set view update interval of 5 mins (fill in user/pw): curl -X POST -v -d 'updateInterval=300000&updateMinChanges=1&replicaUpdateMinChanges=500' 'http://administrator:administrator@192.168.56.10:8091/settings/viewUpdateDaemon'
+#7) Promote design documents to production, change view paths in apps, removing _dev
 #HTTP
-#6a) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 7777 --api-port 8888
+#8a) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 7777 --api-port 8888
 #HTTPS
-#6bi) openssl dhparam -check -text -5 512 -out dh512.pem
-#6bii) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 80 --ssl-certificate=server.pem --ssl-private-key=server.key --ssl-tmp-dh=dh512.pem --https-address 0.0.0.0 --https-port 443 --api-port 420
+#8bi) openssl dhparam -check -text -5 512 -out dh512.pem
+#8bii) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 80 --ssl-certificate=server.pem --ssl-private-key=server.key --ssl-tmp-dh=dh512.pem --https-address 0.0.0.0 --https-port 443 --api-port 420 --tor-hidden-service-localhost-only-http-server-api-port 9730
 
 TARGET = AnonymousBitcoinComputing
 TEMPLATE = app

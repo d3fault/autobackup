@@ -49,7 +49,7 @@
 #define HVBS_ABC2_AD_IMAGE_WIDTH 576
 #define HVBS_ABC2_AD_IMAGE_HEIGHT 96
 
-#define HVBS_ABC2_PLACEHOLDER_ALT_AND_HOVER "Buy this ad space for BTC 0.003"
+#define HVBS_ABC2_PLACEHOLDER_ALT_AND_HOVER "Buy this ad space for BTC 0.00000001"
 
 //segfault if server is started before assigning these that are pointers :-P (fuck yea performance)
 AdImageGetAndSubscribeManager* HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = 0;
@@ -258,41 +258,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
     if(newInternalPath == "/" || newInternalPath == "" || newInternalPath == HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Latest")
     {
         deleteTimelineAndDirectoryBrowsingStackIfNeeded();
-        WContainerWidget *videoContainer = new WContainerWidget();
-
-        std::string latestVideoSegmentFilePath = determineLatestVideoSegmentPathOrUsePlaceholder();
-        //latestVideoSegmentFilePath is either set to most recent or to placeholder
-
-        WPushButton *downloadButton = new WPushButton(HVBS_DOWNLOAD_LOVE, videoContainer);
-        //TODOreq: "Link to this: ", needs to chop off base dir from absolute path to make clean url...
-        new WBreak(videoContainer);
-
-        //TODOreq: previous button
-        WPushButton *nextVideoClipPushButton = new WPushButton("Next Clip", videoContainer); //if next != current; aka if new-current != current-when-started-playing
-        new WText(" ", videoContainer);
-        //TODOreq: latest  button (perhaps disabled at first, noop if latest is what we're already at)
-        new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS), "Browse All Video Clips", videoContainer);
-        new WBreak(videoContainer);
-
-        nextVideoClipPushButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
-
-        WVideo *videoPlayer = new WVideo(videoContainer);
-        setMainContent(videoContainer);
-        WFileResource *latestVideoSegmentFileResource = new WFileResource("video/ogg", latestVideoSegmentFilePath, videoPlayer);
-        QFileInfo fileInfo(QString::fromStdString(latestVideoSegmentFilePath));
-        const std::string &filenameOnly = fileInfo.fileName().toStdString();
-        latestVideoSegmentFileResource->suggestFileName(filenameOnly, WResource::Attachment);
-        videoPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
-        videoPlayer->addSource(WLink(latestVideoSegmentFileResource), "video/ogg");
-        downloadButton->setResource(latestVideoSegmentFileResource);
-        //videoPlayer->resize(720, 480);
-        videoPlayer->resize(800, 600);
-        videoPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::XHTMLUnsafeText));
-        if(!environment().ajax())
-        {
-            return;
-        }
-        videoPlayer->ended().connect(this, &HackyVideoBullshitSiteGUI::handleLatestVideoSegmentEnded);
+        displayVideoSegment(determineLatestVideoSegmentPathOrUsePlaceholder());
         return;
     }
 
@@ -520,14 +486,98 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
     }
     triggerUpdate();
 }
+void HackyVideoBullshitSiteGUI::displayVideoSegment(const string &videoSegmentFilePath)
+{
+    m_VideoSegmentFilePathCurrentlyBeingDisplayed = videoSegmentFilePath;
+    WContainerWidget *videoSegmentContainer = new WContainerWidget();
+
+    WPushButton *videoSegmentDownloadButton = new WPushButton(HVBS_DOWNLOAD_LOVE, videoSegmentContainer);
+    //TODOreq: "Link to this: ", needs to chop off base dir from absolute path to make clean url...
+    new WBreak(videoSegmentContainer);
+
+    //TODOreq: previous button
+    WPushButton *nextVideoClipPushButton = new WPushButton("Next Clip", videoSegmentContainer); //if next != current; aka if new-current != current-when-started-playing
+    new WText(" ", videoSegmentContainer);
+    //TODOreq: latest  button (perhaps disabled at first, noop if latest is what we're already at)
+    new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS), "Browse All Video Clips", videoSegmentContainer);
+    new WBreak(videoSegmentContainer);
+
+    nextVideoClipPushButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
+    WVideo *videoSegmentPlayer = new WVideo(videoSegmentContainer);
+    if(environment().ajax())
+    {
+        videoSegmentPlayer->ended().connect(this, &HackyVideoBullshitSiteGUI::handleLatestVideoSegmentEnded);
+    }
+    videoSegmentPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
+    //videoPlayer->resize(720, 480);
+    videoSegmentPlayer->resize(800, 600);
+    videoSegmentPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::XHTMLUnsafeText));
+
+    WResource *videoSegmentResource = new WFileResource("video/ogg", videoSegmentFilePath, videoSegmentPlayer);
+    QFileInfo fileInfo(QString::fromStdString(videoSegmentFilePath));
+    const std::string &filenameOnly = fileInfo.fileName().toStdString();
+    videoSegmentResource->suggestFileName(filenameOnly, WResource::Attachment);
+    videoSegmentPlayer->addSource(WLink(videoSegmentResource), "video/ogg");
+    videoSegmentDownloadButton->setResource(videoSegmentResource);
+
+    setMainContent(videoSegmentContainer);
+}
 void HackyVideoBullshitSiteGUI::handleLatestVideoSegmentEnded()
 {
-    //TODOreq:
+    //TODOreq: auto-play next checkbox (except fuck, atm the checkbox itself would get deleted/re-new'd when the next video is played rofl.. so keeping the checked state becomes a pain)
 }
 void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
 {
+    if(m_Contents) //TODOoptimization: don't delete/new the video container/player/download button etc (it's very likely that m_Contents points to the video wcontainer widget created in displayVideoSegment(). right now i need to for safety/KISS reasons
+    {
+        delete m_Contents;
+        m_Contents = 0;
+    }
+    if(m_VideoSegmentFilePathCurrentlyBeingDisplayed == "" || m_VideoSegmentFilePathCurrentlyBeingDisplayed == HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER)
+    {
+        displayVideoSegment(determineLatestVideoSegmentPathOrUsePlaceholder());
+        return;
+    }
 
+    //figure out next video clip based on current video clip -- if there is no "next", i should... TODOreq??
+    QString videoSegmentFilePathCurrentlyBeingDisplayedQString = QString::fromStdString(m_VideoSegmentFilePathCurrentlyBeingDisplayed);
+    QFileInfo fileInfo(videoSegmentFilePathCurrentlyBeingDisplayedQString);
+    const QString &currentVideoSegmentFilenameOnly = fileInfo.fileName();
+    const QString &currentVideoSegmentFilenameMinusExt = currentVideoSegmentFilenameOnly.left(currentVideoSegmentFilenameOnly.lastIndexOf("."));
+    bool convertOk = false;
+    long long currentVideoSegmentFilenameMinusExtAsLong = currentVideoSegmentFilenameMinusExt.toLongLong(&convertOk);
+    if(!convertOk)
+    {
+        displayVideoSegment(HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER);
+        return;
+    }
+    const QDateTime &currentVideoSegmentFilenamesDateTime = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(currentVideoSegmentFilenameMinusExtAsLong)*1000).toUTC();
+    const int currentVideoSegmentFilenamesYear = currentVideoSegmentFilenamesDateTime.date().year();
+    const int currentVideoSegmentFilenamesDayOfYear = currentVideoSegmentFilenamesDateTime.date().dayOfYear();
+
+    //we know this year/day folder exists because we just played a video from it. we also know it isn't empty for the same reason
+    const QString &currentVideoSegmentYearFolder = m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended + QString::number(currentVideoSegmentFilenamesYear) + QDir::separator();
+    const QString &currentVideoSegmentDayFolder = currentVideoSegmentYearFolder + QString::number(currentVideoSegmentFilenamesDayOfYear) + QDir::separator();
+
+    //TODOreq: handle "day" and "year" shifts properly (current video was yesterday, 'next video' today)
+
+    QDir currentVideoSegmentDayDir(currentVideoSegmentDayFolder);
+    const QStringList all3MinuteSegmentsInDayFolder = currentVideoSegmentDayDir.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Name | QDir::Reversed));
+
+    if(all3MinuteSegmentsInDayFolder.first() == videoSegmentFilePathCurrentlyBeingDisplayedQString)
+    {
+        //possible day shift, or possibly current is LATEST. might be entry point for possible year shifts as well
+        //TODOreq: handle
+        return;
+    }
+
+    //since current wasn't 'first' (sorting in reverse), we know that there are videos 'after' it (cronologically)... so we simply find the index of current and subtract 1 in order to get the 'next' video
+    const QString &nextVideoFilenameOnly = all3MinuteSegmentsInDayFolder.at(all3MinuteSegmentsInDayFolder.indexOf(videoSegmentFilePathCurrentlyBeingDisplayedQString) - 1);
+    const QString &nextVideoFilePath = currentVideoSegmentDayFolder + nextVideoFilenameOnly;
+    const std::string &nextVideoFilePathStdString = nextVideoFilePath.toStdString();
+    displayVideoSegment(nextVideoFilePathStdString);
 }
+//returns either path to most recent or to placeholder video segment
 string HackyVideoBullshitSiteGUI::determineLatestVideoSegmentPathOrUsePlaceholder()
 {
 #if 0 //OTHER_SOLUTION_TO_SORTING_PROBLEM_MENTIONED_IN_COMMENTS_FOUND_LOL_WOOT
@@ -544,7 +594,7 @@ string HackyVideoBullshitSiteGUI::determineLatestVideoSegmentPathOrUsePlaceholde
         if(!yearFolderFound)
         {
             currentDate = currentDate.addYears(-1);
-            if(currentDate.year() == 2013) //can't time travel...
+            if(currentDate.year() == 2014) //can't time travel...
             {
                 return HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER;
             }
