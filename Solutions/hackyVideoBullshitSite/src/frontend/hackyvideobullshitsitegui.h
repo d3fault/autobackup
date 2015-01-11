@@ -54,6 +54,7 @@ private:
     void handleAdImageChanged(WResource *newAdImageResource, std::string newAdUrl, std::string newAdAltAndHover);
     void displayVideoSegment(const std::string &videoSegmentFilePath);
     void handleLatestVideoSegmentEnded();
+    QString getEarliestEntryInFolder(const QString &folderWithSlashAppended);
     void handleNextVideoClipButtonClicked();
     std::string determineLatestVideoSegmentPathOrUsePlaceholder();
 

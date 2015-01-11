@@ -526,6 +526,15 @@ void HackyVideoBullshitSiteGUI::handleLatestVideoSegmentEnded()
 {
     //TODOreq: auto-play next checkbox (except fuck, atm the checkbox itself would get deleted/re-new'd when the next video is played rofl.. so keeping the checked state becomes a pain)
 }
+//assumes there is at least one entry in the folder! will segfault otherwise xD!!
+QString HackyVideoBullshitSiteGUI::getEarliestEntryInFolder(const QString &folderWithSlashAppended)
+{
+    QDir folderDir(folderWithSlashAppended);
+    const QStringList folderEntries = folderDir.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Name | QDir::Reversed)); //we know this isn't empty because we move the folder into place with a file already in it
+    const QString &earliestEntryInFolder = folderEntries.last(); //last is 'first' (chronologically), since we sort reversed xD
+    QString ret = folderWithSlashAppended + earliestEntryInFolder;
+    return ret;
+}
 void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
 {
     if(m_Contents) //TODOoptimization: don't delete/new the video container/player/download button etc (it's very likely that m_Contents points to the video wcontainer widget created in displayVideoSegment(). right now i need to for safety/KISS reasons
@@ -567,7 +576,43 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
     if(all3MinuteSegmentsInDayFolder.first() == videoSegmentFilePathCurrentlyBeingDisplayedQString)
     {
         //possible day shift, or possibly current is LATEST. might be entry point for possible year shifts as well
-        //TODOreq: handle
+        //TO DOnereq: seeing if "tomorrow" is the "366th" day of the year is not a good way to detect year shifts, because of leap years xD
+        const QDateTime &dayAfterCurrentVideoSegment = currentVideoSegmentFilenamesDateTime.addDays(1); //doc says this adjusts for daylight savings, so I'm assuming it adjusts for leap years too xD. In Qt we Trust~
+        const int maybeYearAfterCurrentVideoSegment = dayAfterCurrentVideoSegment.date().year();
+        if(maybeYearAfterCurrentVideoSegment != currentVideoSegmentFilenamesDayOfYear)
+        {
+            //year shift, or possibly current is LATEST
+            const QString &yearAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist = m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended + QString::number(maybeYearAfterCurrentVideoSegment) + QDir::separator();
+            if(QFile::exists(yearAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist))
+            {
+                //year shift. should i assume day 1 folder exists? it might not! i do know for a fact that _A_ day folder exists, but idk that it's day 1. This is mildly related to the TODOoptional below regarding going offline for 1+ days
+                QDir yearAfterCurrentVideoSegmentDir(yearAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist);
+                const QStringList allDayFoldersInYearAfterCurrentVideoSegmentFolder = yearAfterCurrentVideoSegmentDir.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Name | QDir::Reversed)); //we know this isn't empty because we move the year folder into place with a day folder (and a video file already in that!) already in it
+                const QString &earliestDayFolderInYearAfterCurrentVideoSegment = allDayFoldersInYearAfterCurrentVideoSegmentFolder.last(); //last is 'earliest' (chronologically). Not necessarily day 1, but probably is...
+                const QString &earliestDayFolderInYearAfterCurrentVideoSegmentPath = yearAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist + earliestDayFolderInYearAfterCurrentVideoSegment + QDir::separator();
+                const QString &earliestVideoInEarliestDayFolderInYearAfterCurrentVideoSegment = getEarliestEntryInFolder(earliestDayFolderInYearAfterCurrentVideoSegmentPath);
+                const std::string &earliestVideoInEarliestDayFolderInYearAfterCurrentVideoSegmentStdString = earliestVideoInEarliestDayFolderInYearAfterCurrentVideoSegment.toStdString();
+                displayVideoSegment(earliestVideoInEarliestDayFolderInYearAfterCurrentVideoSegmentStdString);
+            }
+            else
+            {
+                //current is LATEST. idfk, playing the same video seems dumb, playing the placholder seems, dumb.... maybe display a message? for now just gonna do nothing
+            }
+            return;
+        }
+        //we've ruled out year shift
+        const QString &dayAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist = currentVideoSegmentYearFolder + QString::number(dayAfterCurrentVideoSegment.date().dayOfYear()) + QDir::separator();
+        if(QFile::exists(dayAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist))
+        {
+            //day shift. we want the earliest one then. TODOoptional: make 'next' button work when we go offline for 1+ days (or hell, even 1+ years!!!). do that by listing all the day folders in the year folder and sorting them, then yea grabbing the next existing one... for now KISS fuck it
+            const QString &firstVideoInNextDayFolderFilePath = getEarliestEntryInFolder(dayAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist);
+            const std::string &firstVideoInNextDayFolderFilePathStdString = firstVideoInNextDayFolderFilePath.toStdString();
+            displayVideoSegment(firstVideoInNextDayFolderFilePathStdString);
+        }
+        else
+        {
+            //current is LATEST. idfk, playing the same video seems dumb, playing the placholder seems, dumb.... maybe display a message? for now just gonna do nothing
+        }
         return;
     }
 

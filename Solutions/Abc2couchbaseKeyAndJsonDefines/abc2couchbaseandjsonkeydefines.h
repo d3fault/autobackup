@@ -263,7 +263,5 @@ const std::string withdrawFundsRequestsNextAvailableIndexKey(const std::string &
 
 //ex: /api?action=getcurrentad&apikey=123&user=seller&index=0
 #define ABC2_API_GET_CURRENT_AD_ACTION_FULL_PATH_MACRO(user, index, apikey) ABC2_API_HTTP_PATH "?" ABC2_API_ACTION_HTTP_GET_PARAM "=" ABC2_API_GET_CURRENT_AD_ACTION "&" JSON_USER_ACCOUNT_API_KEY "=" + apikey + "&" ABC2_API_GET_CURRENT_AD_ACTION_USER_HTTP_GET_PARAM "=" + user + "&" ABC2_API_GET_CURRENT_AD_ACTION_INDEX_HTTP_GET_PARAM "=" + index
-#define ABC2_API_GET_CURRENT_AD_ACTION_FULL_PATH_MACRO_STRING_LITERAL_ARGS(user, index, apikey) ABC2_API_HTTP_PATH "?" ABC2_API_ACTION_HTTP_GET_PARAM "=" ABC2_API_GET_CURRENT_AD_ACTION "&" JSON_USER_ACCOUNT_API_KEY "=" apikey "&" ABC2_API_GET_CURRENT_AD_ACTION_USER_HTTP_GET_PARAM "=" user "&" ABC2_API_GET_CURRENT_AD_ACTION_INDEX_HTTP_GET_PARAM "=" index
-//^these two macros are identical, but one uses pluses for the args and the other does not (was having trouble getting it to compile accepting both a var as arg and a string literal as arg :(
 
 #endif // ABC2_COUCHBASE_AND_JSON_KEY_DEFINES_H

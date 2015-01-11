@@ -33,6 +33,12 @@ public:
     AdImageGetAndSubscribeManager(QObject *parent = 0);
     ~AdImageGetAndSubscribeManager();
 private:
+    static const QString s_ApiUrlProtocolHostAndPort_Aka_Prefix;
+    static const QString s_ApiUser;
+    static const QString s_ApiIndex;
+    static const QString s_ApiKey;
+    static const QString s_ApiUrlString;
+
     struct AdImageSubscriberSessionInfo
     {
         string SessionId;

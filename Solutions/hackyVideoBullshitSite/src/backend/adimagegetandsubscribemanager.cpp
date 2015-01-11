@@ -17,6 +17,15 @@
 using namespace Wt;
 using namespace boost::property_tree;
 
+
+const QString AdImageGetAndSubscribeManager::s_ApiUrlProtocolHostAndPort_Aka_Prefix = "https://anonymousbitcoincomputing.com:420";
+
+const QString AdImageGetAndSubscribeManager::s_ApiUser = "d3fault";
+const QString AdImageGetAndSubscribeManager::s_ApiIndex = "0";
+const QString AdImageGetAndSubscribeManager::s_ApiKey = "apikeygoeshere"; //TODOreq: fill in api key
+
+const QString AdImageGetAndSubscribeManager::s_ApiUrlString = s_ApiUrlProtocolHostAndPort_Aka_Prefix + ABC2_API_GET_CURRENT_AD_ACTION_FULL_PATH_MACRO(s_ApiUser, s_ApiIndex, s_ApiKey);
+
 //class originally intended to only be for ad image backend, now transform[ing|ed] into video segment 'pusher' (perhaps i should push that functionality into an object that this class hasA. still, even in that case it would be proper'er to rename this class to just HackyVideoBullshitBackend. maybe even should push  the ad image get and subscribe functionality into an object, for modularity reasons (especially since I want to publish an "Abc2 client" under BSD license for abc ad campaign owners to use)
 AdImageGetAndSubscribeManager::AdImageGetAndSubscribeManager(QObject *parent)
     : QObject(parent), m_CurrentAdImage(0), m_YesterdaysAdImage(0), m_CurrentAdUrl("n"), m_CurrentAdExpirationDateTime(0), m_Stopping(false), m_CurrentlyShowingNoAdPlaceholder(true), m_NetworkAccessManager(0), m_UpdateSubscribersHashIterator(0)
@@ -79,8 +88,7 @@ AdImageGetAndSubscribeManager::~AdImageGetAndSubscribeManager()
 }
 void AdImageGetAndSubscribeManager::startHttpRequestForNextAdSlot()
 {
-    QString apiUrlString = "https://anonymousbitcoincomputing.com:420" ABC2_API_GET_CURRENT_AD_ACTION_FULL_PATH_MACRO_STRING_LITERAL_ARGS("d3fault", "0", "apikeygoeshere");  //TODOreq: fill in api key
-    m_NetworkAccessManager->get(QNetworkRequest(QUrl(apiUrlString)));
+    m_NetworkAccessManager->get(QNetworkRequest(QUrl(s_ApiUrlString)));
 }
 void AdImageGetAndSubscribeManager::getAndSubscribe(AdImageGetAndSubscribeManager::AdImageSubscriberIdentifier *adImageSubscriberIdentifier, std::string sessionId, GetAndSubscriptionUpdateCallbackType getAndSubscriptionUpdateCallback)
 {
