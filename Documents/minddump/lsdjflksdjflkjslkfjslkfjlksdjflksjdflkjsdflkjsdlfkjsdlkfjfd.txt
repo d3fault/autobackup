@@ -1,0 +1,10 @@
+How am I supposed to help raise Caydon if I can't even speak? You saying I can speak and me feeling like I can speak are two different things.
+
+The above is literal and analogical (analytical? it's an analogy). You can swap Caydon for [younger-]peers in general, and you can swap "you" (which initially was directed at my parents and hell I guess even sister but not really since she doesn't censor me except for when she tells me I need to be good around/for caydon xD) for the general-public/govmnt/peers.
+
+
+Programming is just prioritizing optimizations. All software applications simply help humans achieve something they could have done manually (without said software application), but faster. They most (didn't have word 'most' at first) all fall under the category of optimizations (excluding "games"/etc, which are entertainment (there are probably other exceptions too)). Therefore, every aspect of a software application can be prioritized into a "list of optimizations" (including 'traditional' software optimizations (which are supposedly the root of all evil, but I'm currently proving that statement false)). Towards the top you have your basic "software requirements", and towards the bottom go the stupid optimizations that don't really do anything but are fun to code ;-).
+
+Initially, you are optimizating 0/null/etc. You whip up (conjure into existence, summon electrical atoms into specific formation to do thy bidding, etc) a turing machine that OPTIMIZES YOUR FINITE TIME ALIVE. Then you optimize that turing machine.
+
+OT-ish: Premature optimization is the root of all evil.... but it's MY source of entertainment, so it isn't [the root of all evil (in fact it's an incredibly large (dare I say infinite?) source of entertainment)].

@@ -44,6 +44,7 @@ private:
     bool m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred;
 
     std::string m_VideoSegmentFilePathCurrentlyBeingDisplayed; //used to find "next" video
+    bool m_AutoPlayNextVideoSegmentCheckboxChecked;
     WContainerWidget *m_TimelineAndDirectoryLogicalContainer;
     WContainerWidget *m_CookieCrumbContainerWidget;
     WStackedWidget *m_TimelineAndDirectoryBrowsingStack;
@@ -53,6 +54,8 @@ private:
     void handleInternalPathChanged(const std::string &newInternalPath);
     void handleAdImageChanged(WResource *newAdImageResource, std::string newAdUrl, std::string newAdAltAndHover);
     void displayVideoSegment(const std::string &videoSegmentFilePath);
+    void handleAutoPlayNextVideoSegmentCheckboxChecked();
+    void handleAutoPlayNextVideoSegmentCheckboxUnchecked();
     void handleLatestVideoSegmentEnded();
     QString getEarliestEntryInFolder(const QString &folderWithSlashAppended);
     void handleNextVideoClipButtonClicked();

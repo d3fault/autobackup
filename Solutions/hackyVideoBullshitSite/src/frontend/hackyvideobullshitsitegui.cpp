@@ -12,6 +12,7 @@
 #include <Wt/WCssStyleSheet>
 #include <Wt/WVBoxLayout>
 #include <Wt/WHBoxLayout>
+#include <Wt/WCheckBox>
 
 #include <QString>
 #include <QStringList>
@@ -91,6 +92,7 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     : WApplication(env)
     , m_Contents(0)
     , m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred(!env.ajax())
+    , m_AutoPlayNextVideoSegmentCheckboxChecked(false)
     , m_TimelineAndDirectoryLogicalContainer(0)
     , m_TimeLineMyBrainWidget(0)
     , m_BrowseMyBrainDirWidget(0)
@@ -497,7 +499,17 @@ void HackyVideoBullshitSiteGUI::displayVideoSegment(const string &videoSegmentFi
 
     //TODOreq: previous button
     WPushButton *nextVideoClipPushButton = new WPushButton("Next Clip", videoSegmentContainer); //if next != current; aka if new-current != current-when-started-playing
-    new WText(" ", videoSegmentContainer);
+    if(environment().ajax())
+    {
+        WCheckBox *autoPlayNextVideoSegmentCheckbox = new WCheckBox("Auto-Play Next ", videoSegmentContainer);
+        autoPlayNextVideoSegmentCheckbox->setChecked(m_AutoPlayNextVideoSegmentCheckboxChecked);
+        autoPlayNextVideoSegmentCheckbox->checked().connect(this, &HackyVideoBullshitSiteGUI::handleAutoPlayNextVideoSegmentCheckboxChecked);
+        autoPlayNextVideoSegmentCheckbox->unChecked().connect(this, &HackyVideoBullshitSiteGUI::handleAutoPlayNextVideoSegmentCheckboxUnchecked);
+    }
+    else
+    {
+        new WText(" ", videoSegmentContainer);
+    }
     //TODOreq: latest  button (perhaps disabled at first, noop if latest is what we're already at)
     new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS), "Browse All Video Clips", videoSegmentContainer);
     new WBreak(videoSegmentContainer);
@@ -522,9 +534,21 @@ void HackyVideoBullshitSiteGUI::displayVideoSegment(const string &videoSegmentFi
 
     setMainContent(videoSegmentContainer);
 }
+void HackyVideoBullshitSiteGUI::handleAutoPlayNextVideoSegmentCheckboxChecked()
+{
+    m_AutoPlayNextVideoSegmentCheckboxChecked = true;
+}
+void HackyVideoBullshitSiteGUI::handleAutoPlayNextVideoSegmentCheckboxUnchecked()
+{
+    m_AutoPlayNextVideoSegmentCheckboxChecked = false;
+}
 void HackyVideoBullshitSiteGUI::handleLatestVideoSegmentEnded()
 {
-    //TODOreq: auto-play next checkbox (except fuck, atm the checkbox itself would get deleted/re-new'd when the next video is played rofl.. so keeping the checked state becomes a pain)
+    if(m_AutoPlayNextVideoSegmentCheckboxChecked)
+    {
+        //TODOoptional: when it's checked, generate a random number so that there's a 1% (etc) chance we set it to unchecked and disable the auto-play next functionality. Eh a sort of bandwidth helper in case people walk away from comp... but mostly just troll functionality <3
+        handleNextVideoClipButtonClicked();
+    }
 }
 //assumes there is at least one entry in the folder! will segfault otherwise xD!!
 QString HackyVideoBullshitSiteGUI::getEarliestEntryInFolder(const QString &folderWithSlashAppended)
