@@ -30,11 +30,11 @@ inline std::string satoshiIntToJsonString(SatoshiInt inputSatoshiInt) { return j
 #define ABC2_WITHDRAWAL_FEE_PERCENT_STR "3"
 inline double roundUpJsonDoubleToNearestSatoshi(double inputExactJsonDouble) { double withdrawalFeeInSatoshisAkaReadyForCeil = inputExactJsonDouble * 1e8; double withdrawalInSatoshisRoundedUp = ceil(withdrawalFeeInSatoshisAkaReadyForCeil); double withdrawalFeeRoundedUp = (double)withdrawalInSatoshisRoundedUp / 1e8; return withdrawalFeeRoundedUp; }
 //this function requires a positive withdrawalAmount and withdrawalFeePercent. it always rounds up [to nearest satoshi], does not to "proper" rounding.
-inline double withdrawalFeeForWithdrawalAmount(double withdrawalAmount) { double withdrawalFeeExact = withdrawalAmount * (ABC2_WITHDRAWAL_FEE_PERCENT / static_cast<double>(100)); return roundUpJsonDoubleToNearestSatoshi(withdrawalFeeExact); }
+inline double transactionFeeForTransactionAmount(double withdrawalAmount) { double withdrawalFeeExact = withdrawalAmount * (ABC2_WITHDRAWAL_FEE_PERCENT / static_cast<double>(100)); return roundUpJsonDoubleToNearestSatoshi(withdrawalFeeExact); }
 
-//Abc2 has a $1 USD (at time of writing it's ~.003 btc) minimum for various activities
-#define ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT 0.00000001 /*if changing this, change below string too*/
-#define ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT_STR "0.00000001"
+//Abc2 has a $1 USD (at time of writing it's ~.003 btc) minimum for ad campaign slots, and $10 minimum for withdrawing
+#define ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT 0.00300000 /*if changing this, change below string too*/
+#define ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT_STR "0.00300000"
 
 #define ABC2_MIN_WITHDRAW_AMOUNT 0.03000000 /*if changing this, change below string too*/
 #define ABC2_MIN_WITHDRAW_AMOUNT_STR "0.03000000"

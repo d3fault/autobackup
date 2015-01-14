@@ -33,6 +33,7 @@ void WithdrawFundsAccountTabBody::populateAndInitialize()
 
     new WText("Use this page to request a withdrawal of funds. Requests are processed manually, and usually within 24 hours. Automated withdrawals might come eventually, but as you might imagine it's dangerous functionality to implement.", this);
 
+#if 0 //before moving fee from withdrawals to transactions
     new WBreak(this);
     new WBreak(this);
 
@@ -43,17 +44,20 @@ void WithdrawFundsAccountTabBody::populateAndInitialize()
     new WText("Given your balance of: " + satoshiStringToJsonString(m_AbcApp->m_CurrentlyLoggedInUsersBalanceSatoshiStringForDisplayingOnly) + ", the maximum amount (after the 3% fee has been applied) available for withdrawing is: " + maxWithdrawalAmountJsonDoubleIncorporatingFee + " ", this);
     WPushButton *useThisAmountButton = new WPushButton("Use This Amount", this);
     useThisAmountButton->clicked().connect(this, &WithdrawFundsAccountTabBody::handleUseMaxAmountButtonClicked);
+#endif
 
     new WBreak(this);
     new WBreak(this);
 
     //TODOoptional: grid or table layout (idfk the difference)
-    new WText("Desired Amount to Withdraw: ", this);
+    new WText("Amount to Withdraw: ", this);
     m_DesiredAmountToWithdrawLineEdit = new WLineEdit(ABC2_MIN_WITHDRAW_AMOUNT_STR, this);
     WDoubleValidator *bitcoinAmountValidator = new WDoubleValidator(ABC2_MIN_WITHDRAW_AMOUNT, 21000000 /* TODOoptional: use their balance instead of max bitcoins lol */, m_DesiredAmountToWithdrawLineEdit);
     bitcoinAmountValidator->setMandatory(true);
     m_DesiredAmountToWithdrawLineEdit->setValidator(bitcoinAmountValidator);
     m_DesiredAmountToWithdrawLineEdit->setTextSize(ABC2_BITCOIN_AMOUNT_VISUAL_INPUT_FORM_WIDTH); //visual only
+
+#if 0 //before moving fee from withdrawals to transactions
 
     new WBreak(this);
 
@@ -82,6 +86,8 @@ void WithdrawFundsAccountTabBody::populateAndInitialize()
         m_DesiredAmountToWithdrawLineEdit->keyWentUp().connect(this, &WithdrawFundsAccountTabBody::calculateTotalAmountWithdrawnAfterFeeForVisual); //keypressed() signal is too soon
     }
 
+#endif
+
     new WBreak(this);
     new WBreak(this);
 
@@ -99,6 +105,7 @@ void WithdrawFundsAccountTabBody::populateAndInitialize()
 
     requestWithdrawalButton->clicked().connect(this, &WithdrawFundsAccountTabBody::handleRequestWithdrawalButtonClicked); //TODOoptional: maybe disable button after clicking as well, which means I need to enable it whenever we resume rendering etc
 }
+#if 0 //before moving fee from withdrawals to transactions
 double WithdrawFundsAccountTabBody::maximumWithdrawalAmountIncorporatingFee()
 {
     //TODOreq: ceil() -- but maybe floor() instead since we're depreciating idfk (and my more accurate check comes later anyways, this would just be a UI bug invloving the "use maximum amount" button. it might give values slightly more than what we really accept). Elaborting: I think in the 'more final' code (that uses .03 instead of .97), we're rounding up ONLY the fee... whereas here/now we're rounding up "the balance after it's multiplied by .97" -- so yea, maybe there will be cases where the max value we provide isn't then accepted when they try to use it xD. Also just now came to mind, they might not even be able to withdrawal their entire balance since there might not be an even divide OR SOMETHING (TODOreq). It would only apply to small balances anyways, most large balances should be ok, but idfk
@@ -134,6 +141,7 @@ void WithdrawFundsAccountTabBody::calculateTotalAmountWithdrawnAfterFeeForVisual
     //TODOreq: should i convert to satoshis before applying the fee?
     //TODOreq: the validator should not validate if they put in 9 decimal places
 }
+#endif
 void WithdrawFundsAccountTabBody::handleRequestWithdrawalButtonClicked()
 {
     //TODOreq: sanitize fields (double for amount, bitcoin key could even rely on the bitcoin exe call that checks if valid (BUT DO PRE-SANTIZING TOO OFC BECAUSE SENDING A STRING TO A PROCESS IS DANGEROUS LOL)
@@ -188,13 +196,15 @@ void WithdrawFundsAccountTabBody::verifyBalanceIsGreaterThanOrEqualToTheirReques
 
     //std::string desiredAmountToWithdrawJsonString = m_DesiredAmountToWithdrawLineEdit->text().toUTF8();
     //SatoshiInt desiredAmountToWithdrawInSatoshis = jsonStringToSatoshiInt(desiredAmountToWithdrawJsonString);
-    double desiredAmountToWithdraw = boost::lexical_cast<double>(m_DesiredAmountToWithdrawLineEdit->text().toUTF8());
+    double desiredAmountToWithdrawInSatoshis = jsonDoubleToSatoshiIntIncludingRounding(boost::lexical_cast<double>(m_DesiredAmountToWithdrawLineEdit->text().toUTF8()));
+#if 0 //before moving fee from withdrawals to transactions
     double withdrawalFee = withdrawalFeeForWithdrawalAmount(desiredAmountToWithdraw);
     double totalAmountToWithdrawAfterFeeApplied = desiredAmountToWithdraw + withdrawalFee;
     SatoshiInt totalAmountInSatoshisToWithdrawAfterFeeApplied = jsonDoubleToSatoshiIntIncludingRounding(totalAmountToWithdrawAfterFeeApplied);
+#endif
 
-    //if(userBalanceInSatoshis < desiredAmountToWithdrawInSatoshis)
-    if(userBalanceInSatoshis < totalAmountInSatoshisToWithdrawAfterFeeApplied)
+    //if(userBalanceInSatoshis < totalAmountInSatoshisToWithdrawAfterFeeApplied)
+    if(userBalanceInSatoshis < desiredAmountToWithdrawInSatoshis)
     {
         new WBreak(this);
         new WText("Insufficient Funds", this);
@@ -304,7 +314,7 @@ void WithdrawFundsAccountTabBody::handleAttemptToAddWithdrawRequestAtIndexFinish
     }
 
     new WBreak(this);
-    new WText("Your withdrawal request #" + m_WithdrawRequestIndexToTryLcbAddingAt + " has been scheduled. If you schedule any additional withdrawal requests, it is up to you to ensure that the total amount for all pending withdrawal requests does not exceed your account's balance. Withdrawal requests are processed in the order they are receieved, and any withdrawal request for an amount greater than your balance will be rejected/skipped.", this);
+    new WText("Withdrawal request #" + m_WithdrawRequestIndexToTryLcbAddingAt + " has been scheduled. If you schedule any additional withdrawal requests, it is up to you to ensure that the total amount for all pending withdrawal requests does not exceed your account's balance. Withdrawal requests are processed in the order they are receieved, and any withdrawal request for an amount greater than your balance will be rejected/skipped.", this);
     m_DesiredAmountToWithdrawLineEdit->setText(ABC2_MIN_WITHDRAW_AMOUNT_STR);
     m_BitcoinPayoutKeyLineEdit->setText(""); //NOPE: could also clear the bitcoin key, but chances are DECENT that they'll use it again for the next request (WHY? wouldn't they have just added that amount to the withdrawal request we just accepted? nvm clearing fuckit)
 }

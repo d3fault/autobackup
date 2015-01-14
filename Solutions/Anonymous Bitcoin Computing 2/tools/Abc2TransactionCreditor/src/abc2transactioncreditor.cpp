@@ -178,8 +178,13 @@ bool Abc2TransactionCreditor::creditTransactionIfStateReallyIsUncredittedAndRetu
 
     //cas swap+credit+unlock the profile
     SatoshiInt transactionAmountInSatoshis = boost::lexical_cast<SatoshiInt>(transactionDoc.get<std::string>(JSON_TRANSACTION_AMOUNT));
+    double transactionAmountInJsonDouble = satoshiIntToJsonDouble(transactionAmountInSatoshis);
+    double transactionFeeAmountInJsonDouble = transactionFeeForTransactionAmount(transactionAmountInJsonDouble);
+    SatoshiInt transactionFeeInSatoshis = jsonDoubleToSatoshiIntIncludingRounding(transactionFeeAmountInJsonDouble); //the rounding, it does nothing
     SatoshiInt userBalanceInSatoshis = boost::lexical_cast<SatoshiInt>(sellerAccountDoc.get<std::string>(JSON_USER_ACCOUNT_BALANCE));
-    userBalanceInSatoshis += transactionAmountInSatoshis;
+    SatoshiInt transactionAmountAfterFeeInSatoshis = (transactionAmountInSatoshis - transactionFeeInSatoshis);
+    //userBalanceInSatoshis += transactionAmountInSatoshis;
+    userBalanceInSatoshis += transactionAmountAfterFeeInSatoshis;
     sellerAccountDoc.put(JSON_USER_ACCOUNT_BALANCE, satoshiIntToSatoshiString(userBalanceInSatoshis));
     sellerAccountDoc.erase(JSON_USER_ACCOUNT_LOCKED_CREDITTING_TRANSACTION);
     opDescription = "cas swap+credit+unlock the seller (" + transactionSeller + ") for transaction: " + keyToTransactionMaybeWithStateOfUncreditted;
