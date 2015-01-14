@@ -30,7 +30,7 @@ void StandardInputNotifier::constructor(int msecTimeoutForPollingStandardInput_W
 }
 void StandardInputNotifier::readStandardInAndEmitSignalIfNotEmpty()
 {
-    QString lineOfInput = m_StandardInputTextStream->readLine();
+    QString lineOfInput = m_StandardInputTextStream->readLine(); //TODOmb: check ->device().canReadLine() first? I'm not sure 'stdin' is a regular QIODevice. I mean really though this slot only ever gets invoked when there is a line to read... but maybe on windows I should use canReadLine? Somehow I got under the impression that readLine returns an empty string if there isn't a line to read (but there are just some characters). I'm not sure that's true. Testing would be easy, but I don't have a windows box atm :-P
     if(!lineOfInput.isEmpty())
     {
         emit standardInputReceivedLine(lineOfInput);

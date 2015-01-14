@@ -561,6 +561,15 @@ QString HackyVideoBullshitSiteGUI::getEarliestEntryInFolder(const QString &folde
 }
 void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
 {
+    /*
+     day/year (code can be reused with airbourne timeline) vs. live stream (with segments ONLY for archives)
+    I'm considering refactoring this code to account for day/year GAPS (make it proper), but then idk I think it might be a waste of time if I decide to use a live stream on the front page (instead of 3 minute segments ONLY)
+
+    segemnt pro, live con: disconnect/reconnect of my upload connection does not ever 'drop' seconds/minutes (for segments, it would make users be behind 'live (near live)' by however long the downtime was (but they don't miss a second of video)... with live they always catch up to live (even if that means they miss some seconds)
+
+    decisions decisions
+    */
+
     if(m_Contents) //TODOoptimization: don't delete/new the video container/player/download button etc (it's very likely that m_Contents points to the video wcontainer widget created in displayVideoSegment(). right now i need to for safety/KISS reasons
     {
         delete m_Contents;
