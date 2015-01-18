@@ -32,7 +32,7 @@ inline double roundUpJsonDoubleToNearestSatoshi(double inputExactJsonDouble) { d
 //this function requires a positive withdrawalAmount and withdrawalFeePercent. it always rounds up [to nearest satoshi], does not to "proper" rounding.
 inline double transactionFeeForTransactionAmount(double withdrawalAmount) { double withdrawalFeeExact = withdrawalAmount * (ABC2_WITHDRAWAL_FEE_PERCENT / static_cast<double>(100)); return roundUpJsonDoubleToNearestSatoshi(withdrawalFeeExact); }
 
-//Abc2 has a $1 USD (at time of writing it's ~.003 btc) minimum for ad campaign slots, and $10 minimum for withdrawing
+//Abc2 has a $1 USD (at time of writing it's ~.003 btc) minimum for ad campaign slots, and $10 minimum for withdrawing. TODOreq: Although I need to use a reasonably high min min to prevent bandwidth exploitation, that does not apply to MY OWN ad campaigns. I want to have MY OWN ad campaigns have a 1 satoshi min price. I know I'm not going to exploit myself xD. I should just go in through the couchbase admin panel and change my min price to 1 satoshi
 #define ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT 0.00300000 /*if changing this, change below string too*/
 #define ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT_STR "0.00300000"
 
