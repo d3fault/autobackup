@@ -1,0 +1,4 @@
+C++ metaphor: Maybe we're a sentient being "class/object", programmed for awesomeness, whose "memory" was accidentally never initialized. Maybe we were never supposed to experience this horror.
+
+
+Maybe I am the programmer in an infinite circular loop, and I'm responsible for the bug ;-P.
