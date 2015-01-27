@@ -6,9 +6,12 @@
 /*
 
 Test the html encoding of urls
+width/height (ad slot filler upload, ad campaign preview, ad campaign purchase/size-match-verification -- no need for api because they will 'know')
+optional description (512)
 
 ==1.1 Bugs==
 
+- API: user supplied push-url (http) triggers api pull (https) -- solves 'security' problem of push. could/should be incorporated into the php client example
 - Ad Campaigns should properly 404, be careful not to delete/clear anything that might cause segfault (zero the pointer out if deleting (but just don't, since there are tons of children doing the same thing xD fml))
 - C++11 makes cow in std::string illegal, so even gcc/clang won't have it anymore. I should use shared_ptr probably, now that I finally understand it
 - A lot of my error messages (not logged in, 500 internal server error, etc -- but also even things like "you successfully bought" too. but come to think of it, if it doesn't work without javascript, fuck that -- it should work without js soon, it's a pending wt bug report) should be in a messagebox instead of just added to the current page. I wasn't aware of Wt's message box functionality until recently
