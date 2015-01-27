@@ -31,6 +31,10 @@ private:
     std::string m_Validated_NewAdSlotFiller_HOVERTEXT;
     WLineEdit *m_UploadNewSlotFiller_URL;
     std::string m_Validated_NewAdSlotFiller_URL;
+    WLineEdit *m_UploadNewSlotFiller_WIDTH;
+    std::string m_Validated_UploadNewSlotFiller_WIDTH;
+    WLineEdit *m_UploadNewSlotFiller_HEIGHT;
+    std::string m_Validated_UploadNewSlotFiller_HEIGHT;
     WContainerWidget *m_AdImageUploaderPlaceholder;
     WFileUpload *m_AdImageUploader;
     WPushButton *m_AdImageUploadButton;

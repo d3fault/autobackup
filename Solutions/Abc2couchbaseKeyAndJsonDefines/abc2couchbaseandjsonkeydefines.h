@@ -104,6 +104,8 @@ const std::string adSpaceCampaignSlotKey(const std::string &usernameOfCampaignOw
 #define JSON_SLOT_FILLER_NICKNAME "nicknameB64"
 #define JSON_SLOT_FILLER_HOVERTEXT "hoverTextB64"
 #define JSON_SLOT_FILLER_URL "urlB64"
+#define JSON_SLOT_FILLER_WIDTH "adImageWidth"
+#define JSON_SLOT_FILLER_HEIGHT "adImageHeight"
 #define JSON_SLOT_FILLER_IMAGEB64 "adImageB64"
 #define JSON_SLOT_FILLER_IMAGE_GUESSED_EXTENSION "adImageExt"
 

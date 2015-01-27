@@ -68,6 +68,24 @@ AdvertisingSellAdSpaceCreateNewAdCampaignWidget::AdvertisingSellAdSpaceCreateNew
     new WBreak(this);
     new WBreak(this);
 
+    const std::string &minWidthAndHeightStr = boost::lexical_cast<std::string>(ABC_MIN_AD_SLOT_FILLER_IMAGE_WIDTH_AND_HEIGHT_PIXELS);
+    const std::string &maxWidthAndHeightStr = boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_AND_HEIGHT_PIXELS);
+    new WText("Ad Image Dimensions Min: " + minWidthAndHeightStr + "x" + minWidthAndHeightStr + " px, Max: " + maxWidthAndHeightStr + "x" + maxWidthAndHeightStr + "px", this);
+    new WBreak(this);
+    new WText("Ad Image Width:", this);
+    m_AdImageWidth = new WLineEdit(this);
+    new WText(" Ad Image Height:", this);
+    m_AdImageHeight = new WLineEdit(this);
+
+    WIntValidator *adImageWidthAndHeightValidator = new WIntValidator(m_AdImageWidth);
+    adImageWidthAndHeightValidator->setMandatory(true);
+    adImageWidthAndHeightValidator->setRange(ABC_MIN_AD_SLOT_FILLER_IMAGE_WIDTH_AND_HEIGHT_PIXELS, ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_AND_HEIGHT_PIXELS);
+    m_AdImageWidth->setValidator(adImageWidthAndHeightValidator);
+    m_AdImageHeight->setValidator(adImageWidthAndHeightValidator);
+
+    new WBreak(this);
+    new WBreak(this);
+
     m_DisallowPornCheckbox = new WCheckBox("Disallow " JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_PRONDIZZLE " ads", this);
     new WBreak(this);
     m_DisallowGamblingCheckbox = new WCheckBox("Disallow " JSON_AD_SPACE_CAMPAIGN_DISALLOWED_CATEGORY_GAMBLING " ads", this);
@@ -105,6 +123,20 @@ void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::createNewAdCampaignButtonC
     {
         new WBreak(this);
         new WText("Invalid advertisement placement duration", this);
+        m_CreateNewAdCampaignButton->enable();
+        return;
+    }
+    if(m_AdImageWidth->validate() != WIntValidator::Valid)
+    {
+        new WBreak(this);
+        new WText("Invalid ad image width", this);
+        m_CreateNewAdCampaignButton->enable();
+        return;
+    }
+    if(m_AdImageHeight->validate() != WIntValidator::Valid)
+    {
+        new WBreak(this);
+        new WText("Invalid ad image height", this);
         m_CreateNewAdCampaignButton->enable();
         return;
     }
@@ -155,6 +187,8 @@ void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::useCacheToDetermineIndexFo
 
     pt.put(JSON_AD_SPACE_CAMPAIGN_MIN_PRICE, boost::lexical_cast<std::string>(jsonStringToSatoshiInt(m_MinPriceLineEdit->text().toUTF8())));
     pt.put(JSON_AD_SPACE_CAMPAIGN_SLOT_LENGTH_HOURS, m_SlotLengthHoursLineEdit->text().toUTF8());
+    pt.put(JSON_SLOT_FILLER_WIDTH, m_AdImageWidth->text().toUTF8());
+    pt.put(JSON_SLOT_FILLER_HEIGHT, m_AdImageHeight->text().toUTF8());
 
     ptree disallowedCategoriesArray;
 
@@ -215,7 +249,7 @@ void AdvertisingSellAdSpaceCreateNewAdCampaignWidget::handleAttemptToAddCampaign
     }
 
     //getting here means the campaign was created, so now we update the cache to point to +1 whatever we just got
-    //TODOreq: if cas of cache is 0, do lcb_add [ignoring fail]. else, do lcb_set with cas [ignoring fail]
+    //TO DOnereq: if cas of cache is 0, do lcb_add [ignoring fail]. else, do lcb_set with cas [ignoring fail]
     std::string nextAvailableIndexToPutInCacheDoc = boost::lexical_cast<std::string>((boost::lexical_cast<int>(m_CampaignIndexToTryLcbAddingAt)+1));
 
     ptree pt;

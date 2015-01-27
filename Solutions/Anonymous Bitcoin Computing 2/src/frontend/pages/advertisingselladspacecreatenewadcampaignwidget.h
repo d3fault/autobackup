@@ -16,6 +16,8 @@ private:
 
     WLineEdit *m_MinPriceLineEdit;
     WLineEdit *m_SlotLengthHoursLineEdit;
+    WLineEdit *m_AdImageWidth;
+    WLineEdit *m_AdImageHeight;
 
     WCheckBox *m_DisallowPornCheckbox;
     WCheckBox *m_DisallowGamblingCheckbox;

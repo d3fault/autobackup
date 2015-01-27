@@ -1,5 +1,9 @@
 #include "anonymousbitcoincomputingwtgui.h"
 
+#include <boost/algorithm/string/iter_find.hpp>
+#include <boost/algorithm/string/finder.hpp>
+#include <boost/algorithm/string/split.hpp>
+
 #include <Wt/WRandom>
 
 #ifdef ABC_MULTI_CAMPAIGN_OWNER_MODE
@@ -530,6 +534,10 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
         m_CampaignSlotCurrentlyForSaleStartDateTimeLabel = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("Ad Image Dimensions: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        m_AdImageDimensionsLabel = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WText("Disallowed Categories: ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         m_DisallowedCategoriesLabel = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
@@ -659,6 +667,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
         //eh playing it safe setting these values back to blank, idk if it's necessary
         m_CampaignLengthHoursLabel->setText("");
         m_CampaignSlotCurrentlyForSaleStartDateTimeLabel->setText("");
+        m_AdImageDimensionsLabel->setText("");
         m_DisallowedCategoriesLabel->setText("");
         m_CurrentPriceLabel->setText("");
 
@@ -807,6 +816,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
             m_FirstPopulate = false;
             resumeRendering();
             m_CampaignLengthHoursLabel->setText(m_HackedInD3faultCampaign0_SlotLengthHours);
+            populateDimensionsLabel(pt);
             populateDisallowedCategoriesLabel(pt);
             m_CurrentPriceLabel->doJavaScript
             (
@@ -823,6 +833,7 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
     else //no-js
     {
         m_CampaignLengthHoursLabel->setText(m_HackedInD3faultCampaign0_SlotLengthHours);
+        populateDimensionsLabel(pt);
         populateDisallowedCategoriesLabel(pt);
     }
 
@@ -833,6 +844,12 @@ void AnonymousBitcoinComputingWtGUI::finishShowingAdvertisingBuyAdSpaceD3faultCa
         m_BuySlotFillerStep1Button->clicked().connect(this, &AnonymousBitcoinComputingWtGUI::buySlotStep1d3faultCampaign0ButtonClicked);
         m_BuySlotFillerStep1Button->clicked().connect(m_BuySlotFillerStep1Button, &WPushButton::disable);
     }
+}
+void AnonymousBitcoinComputingWtGUI::populateDimensionsLabel(const ptree &adCampaignDoc)
+{
+    m_CurrentAdCampaignImageWidth = adCampaignDoc.get<std::string>(JSON_SLOT_FILLER_WIDTH);
+    m_CurrentAdCampaignImageHeight = adCampaignDoc.get<std::string>(JSON_SLOT_FILLER_HEIGHT);
+    m_AdImageDimensionsLabel->setText(m_CurrentAdCampaignImageWidth + "x" + m_CurrentAdCampaignImageHeight + " px");
 }
 void AnonymousBitcoinComputingWtGUI::populateDisallowedCategoriesLabel(const ptree &adCampaignDoc)
 {
@@ -1187,7 +1204,37 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
         //user forged invalid range for combo box
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WText("Haha nice try forging dat combo box", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        rollBackToBeforeBuyStep1ifNeeded();
         return;
+    }
+
+    //SLDKJFLKDSJFOUEROIWER)*#@$034
+    bool dimensionsMatch = false;
+    const std::string &adSlotFillerNickname = m_AllSlotFillersComboBox->currentText().toUTF8();
+    vector<std::string> adSlotFillerNicknameSplitByDoubleDash;
+    boost::iter_split(adSlotFillerNicknameSplitByDoubleDash, adSlotFillerNickname, boost::first_finder(" -- "));
+    if(adSlotFillerNicknameSplitByDoubleDash.size() > 1)
+    {
+        const std::string &adSlotFillerDimensions = adSlotFillerNicknameSplitByDoubleDash.back();
+        vector<std::string> adSlotFillerDimensionsSplitByX;
+        boost::split(adSlotFillerDimensionsSplitByX, adSlotFillerDimensions, boost::is_any_of("x"));
+        if(adSlotFillerDimensionsSplitByX.size() == 2)
+        {
+            const std::string &adSlotFillerWidth = adSlotFillerDimensionsSplitByX.front();
+            const std::string &adSlotFillerHeight = adSlotFillerDimensionsSplitByX.back();
+            std::string m_CurrentAdCampaignImageWidth;
+            std::string m_CurrentAdCampaignImageHeight;
+            if((adSlotFillerWidth == m_CurrentAdCampaignImageWidth) && (adSlotFillerHeight == m_CurrentAdCampaignImageHeight))
+            {
+                dimensionsMatch = true;
+            }
+        }
+    }
+    if(!dimensionsMatch)
+    {
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WText("Ad image dimensions do not match!", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        rollBackToBeforeBuyStep1ifNeeded();
     }
 
     //handle two or more clicks perfectly timed that might be accidental, and additionally on the button we haven't yet rolled back (they want to buy another, it has to be after they click step 1 again)

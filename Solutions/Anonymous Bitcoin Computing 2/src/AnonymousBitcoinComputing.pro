@@ -6,7 +6,7 @@
 #1) Copy /usr/share/Wt/resources/ to the directory that "wtAppHere" is located in
 #2) In /etc/wt/wt_config.xml, set:
 #   2a) <ajax-puzzle>true</ajax-puzzle>
-#   2b) <max-request-size>175</max-request-size> .... 175 kb corresponding to 576x96 24-bit uncompressed BMP ad slot filler, which comes out to 163.x kb max, but I am not sure if that includes the http headers so 175 sounds fine...
+#   2b) <max-request-size>13000</max-request-size> .... 13mb corresponding to 2048x2048 24-bit uncompressed BMP ad slot filler, which comes out to 12mb max, but I am not sure if that includes the http headers so 13mb sounds fine...
 #3) Try uncommenting the WStackedWidget's animation code, because I think it needed a css file that (1)'s resource hack thing brings in
 #4) Uncomment DEPLOY VARIABLES below [and comment-out or delete TESTING VARIABLES]
 #5) Turn on auto-failover

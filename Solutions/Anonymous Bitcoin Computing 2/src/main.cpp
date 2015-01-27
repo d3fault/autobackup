@@ -6,7 +6,6 @@
 /*
 
 Test the html encoding of urls
-width/height (ad slot filler upload, ad campaign preview, ad campaign purchase/size-match-verification -- no need for api because they will 'know')
 optional description (512)
 
 ==1.1 Bugs==

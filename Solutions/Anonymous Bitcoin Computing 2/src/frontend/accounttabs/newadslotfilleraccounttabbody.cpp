@@ -1,5 +1,7 @@
 #include "newadslotfilleraccounttabbody.h"
 
+#include <Wt/WIntValidator>
+
 #include "../anonymousbitcoincomputingwtgui.h"
 #include "../validatorsandinputfilters/safetextvalidatorandinputfilter.h"
 #include "stupidmimefromextensionutil.h"
@@ -43,7 +45,7 @@ void NewAdSlotFillerAccountTabBody::populateAndInitialize()
 
     //these more lenient validators (allowing characters and spaces) go through b64encode before being stored in db, otherwise they're vulnerable like an sql injection (except json injection)
 
-    uploadNewSlotFillerGridLayout->addWidget(new WText("--- 2) Mouse Hover Text:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
+    uploadNewSlotFillerGridLayout->addWidget(new WText("--- 2) Mouse Hover Text and Image ALT:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
     m_UploadNewSlotFiller_HOVERTEXT = new WLineEdit();
     uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_HOVERTEXT, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
     SafeTextValidatorAndInputFilter *hovertextSafeTextValidator = new SafeTextValidatorAndInputFilter("512", m_UploadNewSlotFiller_HOVERTEXT);
@@ -62,12 +64,26 @@ void NewAdSlotFillerAccountTabBody::populateAndInitialize()
     m_UploadNewSlotFiller_URL->setMaxLength(2048);
     m_UploadNewSlotFiller_URL->setTextSize(NewAdSlotFillerAccountTabBody_INPUT_FORMS_VISUAL_WIDTH_IN_CHARS); //visual only
 
-    uploadNewSlotFillerGridLayout->addWidget(new WText("--- 4) Ad Image:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
+    uploadNewSlotFillerGridLayout->addWidget(new WText("--- 4) Ad Image Width:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
+    m_UploadNewSlotFiller_WIDTH = new WLineEdit();
+    uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_WIDTH, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
+
+    uploadNewSlotFillerGridLayout->addWidget(new WText("--- 5) Ad Image Height:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
+    m_UploadNewSlotFiller_HEIGHT = new WLineEdit();
+    uploadNewSlotFillerGridLayout->addWidget(m_UploadNewSlotFiller_HEIGHT, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
+
+    WIntValidator *adImageWidthAndHeightValidator = new WIntValidator(m_UploadNewSlotFiller_WIDTH);
+    adImageWidthAndHeightValidator->setMandatory(true);
+    adImageWidthAndHeightValidator->setRange(ABC_MIN_AD_SLOT_FILLER_IMAGE_WIDTH_AND_HEIGHT_PIXELS, ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_AND_HEIGHT_PIXELS);
+    m_UploadNewSlotFiller_WIDTH->setValidator(adImageWidthAndHeightValidator);
+    m_UploadNewSlotFiller_HEIGHT->setValidator(adImageWidthAndHeightValidator);
+
+    uploadNewSlotFillerGridLayout->addWidget(new WText("--- 6) Ad Image:"), ++rowIndex, 0, Wt::AlignTop | Wt::AlignLeft);
 
     m_AdImageUploaderPlaceholder = new WContainerWidget();
     uploadNewSlotFillerGridLayout->addWidget(m_AdImageUploaderPlaceholder, rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
 
-    uploadNewSlotFillerGridLayout->addWidget(new WText("==Image Maximums==  FileSize: 164 kb --- Width: " + boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS) + " px --- Height: " + boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS) + " px"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
+    uploadNewSlotFillerGridLayout->addWidget(new WText("==Ad Image Constraints==  Max FileSize: 12 mb --- Min Width and Height: " + boost::lexical_cast<std::string>(ABC_MIN_AD_SLOT_FILLER_IMAGE_WIDTH_AND_HEIGHT_PIXELS) + " px --- Max Width and Height: " + boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_AND_HEIGHT_PIXELS) + " px"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
     uploadNewSlotFillerGridLayout->addWidget(new WText(ABC_AD_SLOT_FILLERS_ACCEPT_IMAGE_FORMATS_MESSAGE), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
 
     m_AdImageUploadButton = new WPushButton("Submit");
@@ -76,7 +92,7 @@ void NewAdSlotFillerAccountTabBody::populateAndInitialize()
     uploadNewSlotFillerGridLayout->addWidget(m_AdImageUploadButton, ++rowIndex, 1, Wt::AlignTop | Wt::AlignLeft);
     //TODOoptional: progress bar would be nice (and not too hard), but eh these images aren't going to take long to upload so fuck it
 
-    uploadNewSlotFillerGridLayout->addWidget(new WText("WARNING: Ads can't be deleted or modified after uploading"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
+    uploadNewSlotFillerGridLayout->addWidget(new WText("WARNING: Ads can't be deleted or modified after uploading (for now)"), ++rowIndex, 0, 1, 2, Wt::AlignTop | Wt::AlignLeft);
 
     m_AdSlotFillersVLayout->addLayout(uploadNewSlotFillerGridLayout, 0, Wt::AlignTop | Wt::AlignLeft);
 }
@@ -88,8 +104,10 @@ void NewAdSlotFillerAccountTabBody::handleAdImageUploadButtonClicked()
         return;
     }
     m_Validated_NewAdSlotFiller_HOVERTEXT = m_UploadNewSlotFiller_HOVERTEXT->text().toUTF8();
-    m_Validated_NewAdSlotFiller_NICKNAME = m_UploadNewSlotFiller_NICKNAME->text().toUTF8();
-    m_Validated_NewAdSlotFiller_URL = m_UploadNewSlotFiller_URL->text().toUTF8();
+    m_Validated_UploadNewSlotFiller_WIDTH = m_UploadNewSlotFiller_WIDTH->text().toUTF8();
+    m_Validated_UploadNewSlotFiller_HEIGHT = m_UploadNewSlotFiller_HEIGHT->text().toUTF8();
+    m_Validated_NewAdSlotFiller_NICKNAME = m_UploadNewSlotFiller_NICKNAME->text().toUTF8() + " -- " + m_Validated_UploadNewSlotFiller_WIDTH + "x" + m_Validated_UploadNewSlotFiller_HEIGHT; //NOTE: do not change the " -- " separatator between nickname and dimensions or the "x" between width/height, since they are hackily used to parse/split the dimensions during the buy ad campaign slot stage (saves us a db hit). Search for the string SLDKJFLKDSJFOUEROIWER)*#@$034 to see where it's used
+    m_Validated_NewAdSlotFiller_URL = m_UploadNewSlotFiller_URL->text().toUTF8();    
 
     m_AdImageUploadButton->disable();
     m_AdImageUploader->upload();
@@ -132,7 +150,7 @@ void NewAdSlotFillerAccountTabBody::handleAdSlotFillerImageUploadFinished()
 }
 void NewAdSlotFillerAccountTabBody::handleAdImageUploadFailedFileTooLarge()
 {
-    m_AdSlotFillersVLayout->addWidget(new WText("Your ad's image exceeded the maximum file size of 164 kilobytes"));
+    m_AdSlotFillersVLayout->addWidget(new WText("Your ad's image exceeded the maximum file size of 12 megabytes"));
     resetAdSlotFillerImageUploadFieldsForAnotherUpload();
 }
 void NewAdSlotFillerAccountTabBody::resetAdSlotFillerImageUploadFieldsForAnotherUpload()
@@ -141,6 +159,8 @@ void NewAdSlotFillerAccountTabBody::resetAdSlotFillerImageUploadFieldsForAnother
     m_UploadNewSlotFiller_NICKNAME_B64 = "";
     m_UploadNewSlotFiller_HOVERTEXT->setText("");
     m_UploadNewSlotFiller_URL->setText("http://");
+    m_UploadNewSlotFiller_WIDTH->setText("");
+    m_UploadNewSlotFiller_HEIGHT->setText("");
     m_AdImageUploadButton->setEnabled(true);
     delete m_AdImageUploader;
     setUpAdImageUploaderAndPutItInPlaceholder();
@@ -214,6 +234,8 @@ void NewAdSlotFillerAccountTabBody::tryToAddAdSlotFillerToCouchbase(const string
     pt.put(JSON_SLOT_FILLER_NICKNAME, m_UploadNewSlotFiller_NICKNAME_B64);
     pt.put(JSON_SLOT_FILLER_HOVERTEXT, base64Encode(m_Validated_NewAdSlotFiller_HOVERTEXT, false));
     pt.put(JSON_SLOT_FILLER_URL, base64Encode(htmlEncode(m_Validated_NewAdSlotFiller_URL), false));
+    pt.put(JSON_SLOT_FILLER_WIDTH, m_Validated_UploadNewSlotFiller_WIDTH);
+    pt.put(JSON_SLOT_FILLER_HEIGHT, m_Validated_UploadNewSlotFiller_HEIGHT);
 
     std::string adImageUploadFileLocation = m_AdImageUploader->spoolFileName();
     pair<string,string> guessedExtensionAndMimeType = StupidMimeFromExtensionUtil::guessExtensionAndMimeType(m_AdImageUploader->clientFileName().toUTF8());
@@ -353,7 +375,7 @@ void NewAdSlotFillerAccountTabBody::doneAttemptingToUpdateAllAdSlotFillersDocSin
     //so now show them the image
 
     WImage *adImagePreview = new WImage(m_MostRecentlyUploadedImageAsFileResource, m_Validated_NewAdSlotFiller_HOVERTEXT);
-    adImagePreview->resize(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS, ABC_MAX_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS);
+    adImagePreview->resize(boost::lexical_cast<int>(m_Validated_UploadNewSlotFiller_WIDTH), boost::lexical_cast<int>(m_Validated_UploadNewSlotFiller_HEIGHT));
     WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, m_Validated_NewAdSlotFiller_URL), adImagePreview);
     adImageAnchor->setTarget(TargetNewWindow);
 
@@ -424,6 +446,16 @@ bool NewAdSlotFillerAccountTabBody::userSuppliedAdSlotFillerFieldsAreValid()
     if(m_UploadNewSlotFiller_URL->validate() != WValidator::Valid)
     {
         m_AdSlotFillersVLayout->addWidget(new WText("Invalid URL"));
+        return false;
+    }
+    if(m_UploadNewSlotFiller_WIDTH->validate() != WValidator::Valid)
+    {
+        m_AdSlotFillersVLayout->addWidget(new WText("Invalid Ad Image Width"));
+        return false;
+    }
+    if(m_UploadNewSlotFiller_HEIGHT->validate() != WValidator::Valid)
+    {
+        m_AdSlotFillersVLayout->addWidget(new WText("Invalid Ad Image Height"));
         return false;
     }
     return true;
