@@ -118,7 +118,7 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
         {
             for(int j = 0; j < TheArgC; ++j) //TO DOneoptional(that was fun <- nope. written when i had the qscopedpointer impl. this struct shit is dumb): scoped deleter, because we'll leak the memory any time we 'return' above. honestly i can't figure out how to do it xD
             {
-                delete TheArgV[j];
+                delete [] TheArgV[j];
             }
         }
     };

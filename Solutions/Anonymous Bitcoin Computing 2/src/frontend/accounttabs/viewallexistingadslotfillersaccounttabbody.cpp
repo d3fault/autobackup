@@ -218,7 +218,7 @@ void ViewAllExistingAdSlotFillersAccountTabBody::oneAdSlotFillerFromHackyMultiGe
     adImageResource->suggestFileName("image" + guessedExtensionAndMimeType.first, WResource::Inline);
     const std::string &adImageHoverText = base64Decode(pt.get<std::string>(JSON_SLOT_FILLER_HOVERTEXT));
     WImage *adImage = new WImage(adImageResource, adImageHoverText);
-    adImage->resize(ABC_DEFAULT_AD_SLOT_FILLER_IMAGE_WIDTH_PIXELS, ABC_DEFAULT_AD_SLOT_FILLER_IMAGE_HEIGHT_PIXELS);
+    adImage->resize(pt.get<int>(JSON_SLOT_FILLER_WIDTH), pt.get<int>(JSON_SLOT_FILLER_HEIGHT));
     WAnchor *adImageAnchor = new WAnchor(WLink(WLink::Url, base64Decode(pt.get<std::string>(JSON_SLOT_FILLER_URL))), adImage, adImageAnchorOrderingPlaceholderContainer);
     adImageAnchor->setTarget(TargetNewWindow);
     adImage->setToolTip(adImageHoverText);

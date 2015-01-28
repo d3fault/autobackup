@@ -23,6 +23,9 @@
 #include "accounttabs/viewallexistingadslotfillersaccounttabbody.h"
 #include "accounttabs/apikeyaccounttabbody.h"
 
+#define ABC_MY_WWW_HTTPS_URL "https://anonymousbitcoincomputing.com/"
+#define ABC_MY_WWW_TOR_HIDDEN_SERVICE_URL "http://abcwwwjfd3cojsu7.onion/"
+
 //internal paths
 
 #define ABC_INTERNAL_PATH_REGISTER "/register"
@@ -263,6 +266,13 @@ void AnonymousBitcoinComputingWtGUI::showHomeWidget()
         m_HomeWidget = new WContainerWidget(m_MainStack);
         new WText("Welcome to " ABC_HUMAN_READABLE_NAME_PLX, m_HomeWidget);
         //new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0, m_HomeWidget);
+
+        new WBreak(m_HomeWidget);
+        new WBreak(m_HomeWidget);
+
+        new WAnchor(WLink(WLink::Url, ABC_MY_WWW_HTTPS_URL), "HTTPS: " ABC_MY_WWW_HTTPS_URL, m_HomeWidget);
+        new WBreak(m_HomeWidget);
+        new WAnchor(WLink(WLink::Url, ABC_MY_WWW_TOR_HIDDEN_SERVICE_URL), "Tor Hidden Service: " ABC_MY_WWW_TOR_HIDDEN_SERVICE_URL, m_HomeWidget);
     }
     m_MainStack->setCurrentWidget(m_HomeWidget);
 }
@@ -1222,8 +1232,6 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
         {
             const std::string &adSlotFillerWidth = adSlotFillerDimensionsSplitByX.front();
             const std::string &adSlotFillerHeight = adSlotFillerDimensionsSplitByX.back();
-            std::string m_CurrentAdCampaignImageWidth;
-            std::string m_CurrentAdCampaignImageHeight;
             if((adSlotFillerWidth == m_CurrentAdCampaignImageWidth) && (adSlotFillerHeight == m_CurrentAdCampaignImageHeight))
             {
                 dimensionsMatch = true;
@@ -1235,6 +1243,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         new WText("Ad image dimensions do not match!", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         rollBackToBeforeBuyStep1ifNeeded();
+        return;
     }
 
     //handle two or more clicks perfectly timed that might be accidental, and additionally on the button we haven't yet rolled back (they want to buy another, it has to be after they click step 1 again)
@@ -1250,7 +1259,7 @@ void AnonymousBitcoinComputingWtGUI::buySlotStep2d3faultCampaign0ButtonClicked()
     //DO ACTUAL BUY (check balance + lock user account, then associate slot with slot filler, aka fill the slot)
 
     new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
-    new WText("Attempting to buy ad space with advertisement: '" + m_AllSlotFillersComboBox->currentText() + "'...", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+    new WText("Attempting to buy ad space with advertisement: '" + adSlotFillerNickname + "'...", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
     //TO DOnereq: change to 'sending them the time' [for use in js], because it not only solves the timezones/incorrect-system-time problem, but it also has the added benefit of GUARANTEEING that the price they see will be above the internal price (because of latency)... so much so that we don't need them to send it in anymore. the slot index would be enough. Also worth noting that the js should use an accurate timer to calculate the 'current time' (from the time we sent them and they saved). I doubt setInterval is a high precision timer. I was originally thinking they could delta the time we sent them against their system time, but then there'd be the problem of if they changed their system time while running then it'd fuck shit up (not a big deal though since it's a rare case. still if js has a high precision timer object ("time elapsed since x"), use that).
     //^that guarantee depends on all wt nodes being time sync'd like fuck, but that goes without saying

@@ -1,11 +1,13 @@
 <?php
 
-//Do not use this script on a Windows server. Windows is a piece of shit because Bill Gates is a noob.
+//Do not use this script on a Windows server. Windows is a piece of shit because Bill Gates is a noob. This script relies on atomic move/rename and non-blocking file lock aquisition
 
 //MANDATORY CONFIG
 define('ABC_PHP_CLIENT_USER', 'Replace-With-Your-Username'); //Your Anonymous Bitcoin Computing username
 define('ABC_PHP_CLIENT_AD_INDEX', 'Replace-With-Your-Ad-Index'); //Your ad index, probably '0' if this is your first ad space for sale
 define('ABC_PHP_CLIENT_APIKEY', 'Replace-With-Your-API-Key'); //Your API Key. Get this from the API section of your Account on the Anonymous Bitcoin Computing website
+define('ABC_PHP_CLIENT_AD_IMAGE_WIDTH', 'Replace-With-Your-Ad-Image-Width'); //Your ad image width
+define('ABC_PHP_CLIENT_AD_IMAGE_HEIGHT', 'Replace-With-Your-Ad-Image-Height'); //Your ad image height
 define('ABC_PHP_CLIENT_NO_AD_PLACEHOLDER', 'no.ad.placeholder.jpg'); //When nobody has purchased the ad space, display this image instead
 
 //OPTIONAL CONFIG
@@ -25,7 +27,7 @@ function abcApiGenerateCurrentAdHtml($adImageFilename, $adUrl, $adHoverText)
 	{
 		echo '<html><head><body>';
 	}
-	echo '<a href="' . $adUrl . '"><img width="576" height="96" src="' . $adImageFilename . '" alt="' . $adHoverText . '" title="' . $adHoverText . '" /></a>';
+	echo '<a href="' . $adUrl . '"><img width="' . ABC_PHP_CLIENT_AD_IMAGE_WIDTH . '" height="' . ABC_PHP_CLIENT_AD_IMAGE_HEIGHT . '" src="' . $adImageFilename . '" alt="' . $adHoverText . '" title="' . $adHoverText . '" /></a>';
 	if($_GET['foriframe'] == '1')
 	{
 		echo '</body></head></html>';
@@ -221,13 +223,12 @@ $settingsFileJson = json_decode($settingsFileContents);
 if(($settingsFileJson === NULL) || ($settingsFileJson === FALSE))
 {
         //Failed to parse settings json. This should never happen. We query the abc api so that the settings file gets recreated (properly)
-        //queryAbcApi(ABC_PHP_CLIENT_NO_AD_PLACEHOLDER);
 	queryAbcUsingNoAdPlaceholderAsFallback();
         exit;
 }
 if(time() >= $settingsFileJson->{'todaysAdSlotExpireDateTime'})
 {
-	//Expired. Try to get new, but if we fail to get the update lock, we'll still show the expired ad
+	//Expired. Try to get new, but if we fail to get the update lock, we'll still show the expired ad -- if there are any other errors aside from failing to get the update lock, we show the no ad placeholder
 	queryAbcApi($settingsFileJson->{ABC_PHP_CLIENT_AD_CACHE_DB_FILE_TODAYS_AD_IMAGE_FILENAME_JSON_KEY}, base64_decode($settingsFileJson->{'urlB64'}), base64_decode($settingsFileJson->{'hoverTextB64'}));
         exit;
 }

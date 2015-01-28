@@ -70,7 +70,7 @@ AdvertisingSellAdSpaceCreateNewAdCampaignWidget::AdvertisingSellAdSpaceCreateNew
 
     const std::string &minWidthAndHeightStr = boost::lexical_cast<std::string>(ABC_MIN_AD_SLOT_FILLER_IMAGE_WIDTH_AND_HEIGHT_PIXELS);
     const std::string &maxWidthAndHeightStr = boost::lexical_cast<std::string>(ABC_MAX_AD_SLOT_FILLER_IMAGE_WIDTH_AND_HEIGHT_PIXELS);
-    new WText("Ad Image Dimensions Min: " + minWidthAndHeightStr + "x" + minWidthAndHeightStr + " px, Max: " + maxWidthAndHeightStr + "x" + maxWidthAndHeightStr + "px", this);
+    new WText("Ad Image Dimensions Min: " + minWidthAndHeightStr + "x" + minWidthAndHeightStr + " px, Max: " + maxWidthAndHeightStr + "x" + maxWidthAndHeightStr + " px", this);
     new WBreak(this);
     new WText("Ad Image Width:", this);
     m_AdImageWidth = new WLineEdit(this);
