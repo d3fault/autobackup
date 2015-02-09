@@ -1,0 +1,6 @@
+s/lobbying/bribery
+define("the system", "The USA Economy aka 'Free Market' circa 2015");
+
+In order to fix the system, you have to have the power to fix the system. In order to get power, you have to use the system. You have to use the system by the same rules that they do (lobbying), otherwise you will fail at using the system (go out of business, etc). By using the system by the same rules that they do, you're making the system stronger and more difficult to fix.
+
+So how do you fix the system?
