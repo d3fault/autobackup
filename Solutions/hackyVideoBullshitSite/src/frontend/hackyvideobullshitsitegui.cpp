@@ -35,7 +35,7 @@
 
 #define HVBS_VIEW_MYBRAIN_STRING "Archive"
 
-#define HVBS_TIMELINE_MY_BRAIN_STRING "Timeline" "(Random point in time)"
+#define HVBS_TIMELINE_MY_BRAIN_STRING "Timeline (Random point in time)"
 #define HVBS_BROWSE_MY_BRAIN_STRING "Browse"
 #define HVBS_DOWNLOAD_MY_BRAIN_STRING "Full download for offline viewing"
 
@@ -338,7 +338,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         deleteTimelineAndDirectoryBrowsingStackIfNeeded();
 
         WContainerWidget *storeContainer = new WContainerWidget();
-        new WText("Check back soon. The book form should be available shortly.", storeContainer);
+        new WText("Check back soon. The book form should be available within 24 hours, or however long it takes to get 'approved'.", storeContainer);
 
         setMainContent(storeContainer);
         return;
@@ -581,7 +581,7 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
         return;
     }
 
-    //figure out next video clip based on current video clip -- if there is no "next", i should... TODOreq??
+    //figure out next video clip based on current video clip -- if there is no "next", i should... TODOreq?? maybe just say so, and maybe if the auto-play next button is checked, try again in like 10 mins? idfk
     QString videoSegmentFilePathCurrentlyBeingDisplayedQString = QString::fromStdString(m_VideoSegmentFilePathCurrentlyBeingDisplayed);
     QFileInfo fileInfo(videoSegmentFilePathCurrentlyBeingDisplayedQString);
     const QString &currentVideoSegmentFilenameOnly = fileInfo.fileName();
@@ -598,10 +598,8 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
     const int currentVideoSegmentFilenamesDayOfYear = currentVideoSegmentFilenamesDateTime.date().dayOfYear();
 
     //we know this year/day folder exists because we just played a video from it. we also know it isn't empty for the same reason
-    const QString &currentVideoSegmentYearFolder = m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended + QString::number(currentVideoSegmentFilenamesYear) + QDir::separator();
-    const QString &currentVideoSegmentDayFolder = currentVideoSegmentYearFolder + QString::number(currentVideoSegmentFilenamesDayOfYear) + QDir::separator();
-
-    //TODOreq: handle "day" and "year" shifts properly (current video was yesterday, 'next video' today)
+    const QString &currentVideoSegmentYearFolder_AbsoluteAndWithSlashAppended = m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended + QString::number(currentVideoSegmentFilenamesYear) + QDir::separator();
+    const QString &currentVideoSegmentDayFolder = currentVideoSegmentYearFolder_AbsoluteAndWithSlashAppended + QString::number(currentVideoSegmentFilenamesDayOfYear) + QDir::separator();
 
     QDir currentVideoSegmentDayDir(currentVideoSegmentDayFolder);
     const QStringList all3MinuteSegmentsInDayFolder = currentVideoSegmentDayDir.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Name | QDir::Reversed));
@@ -612,9 +610,38 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
         //TO DOnereq: seeing if "tomorrow" is the "366th" day of the year is not a good way to detect year shifts, because of leap years xD
         const QDateTime &dayAfterCurrentVideoSegment = currentVideoSegmentFilenamesDateTime.addDays(1); //doc says this adjusts for daylight savings, so I'm assuming it adjusts for leap years too xD. In Qt we Trust~
         const int maybeYearAfterCurrentVideoSegment = dayAfterCurrentVideoSegment.date().year();
-        if(maybeYearAfterCurrentVideoSegment != currentVideoSegmentFilenamesDayOfYear)
+        if(maybeYearAfterCurrentVideoSegment != currentVideoSegmentFilenamesYear)
         {
             //year shift, or possibly current is LATEST
+
+            //Get the next year folder that exists, we may have been offline for 1+ years
+            QDir rootVideoSegmentsDir(m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended);
+            const QStringList allYearFolders = rootVideoSegmentsDir.entryList((QDir::NoDotAndDotDot | QDir::Dirs), (QDir::Name | QDir::Reversed));
+            QString currentVideoSegmentYearString = QString::number(currentVideoSegmentFilenamesYear);
+            if(allYearFolders.first() == currentVideoSegmentYearString)
+            {
+                //CURRENT IS LATEST
+                return;
+            }
+
+            //Now get index into that list of the year that just ended, and subtract one from it... giving us the next year that a video was published
+            const int indexOfNextYearAtLeastOneVideoWasPublished = (allYearFolders.indexOf(currentVideoSegmentYearString) - 1); //Since it wasn't first, we know we can safely subtract 1 from that index
+            const QString &aYearFolderAfterYearThatJustEndedThatHasAtLeastOneVideoPublishedInIt = allYearFolders.at(indexOfNextYearAtLeastOneVideoWasPublished);
+            //now we just get it's entries (day folders), get the last() (which is first chronologically), and do the same inside there except for files
+            QString aYearFolderAfterYearThatJustEndedThatHasAtLeastOneVideoPublishedInIt_AbsoluteAndWithSlashAppended = m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended + aYearFolderAfterYearThatJustEndedThatHasAtLeastOneVideoPublishedInIt + QDir::separator();
+            QDir aYearFolderAfterYearThatJustEndedThatHasAtLeastOneVideoPublishedInIt_Dir(aYearFolderAfterYearThatJustEndedThatHasAtLeastOneVideoPublishedInIt_AbsoluteAndWithSlashAppended);
+            const QStringList allDayFoldersInThatYearFolder = aYearFolderAfterYearThatJustEndedThatHasAtLeastOneVideoPublishedInIt_Dir.entryList((QDir::NoDotAndDotDot | QDir::Dirs), (QDir::Name | QDir::Reversed));
+            const QString &firstDayFolderInThatYearFolder = allDayFoldersInThatYearFolder.last(); //last is 'first' (choronologically) becuase we sort in reverse (I probably could/should change this, but I'm used to it (and kinda afraid of switching NOW) so whatever)
+            QString firstDayFolderInThatYearFolder_AbsoluteAndWithSlashAppended = aYearFolderAfterYearThatJustEndedThatHasAtLeastOneVideoPublishedInIt_AbsoluteAndWithSlashAppended + firstDayFolderInThatYearFolder + QDir::separator();
+            QDir firstDayFolderInThatYearFolder_Dir(firstDayFolderInThatYearFolder_AbsoluteAndWithSlashAppended);
+            const QStringList allVideoSegmentsInThatDayFolder = firstDayFolderInThatYearFolder_Dir.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Name | QDir::Reversed));
+            const QString &nextExistingVideoSegmentFilename = allVideoSegmentsInThatDayFolder.last();
+            QString nextExistingVideoSegmentAbsoluteFilePath = firstDayFolderInThatYearFolder_AbsoluteAndWithSlashAppended + nextExistingVideoSegmentFilename;
+            std::string nextExistingVideoSegmentAbsoluteFilePath_StdString = nextExistingVideoSegmentAbsoluteFilePath.toStdString();
+            displayVideoSegment(nextExistingVideoSegmentAbsoluteFilePath_StdString);
+            return;
+
+#if 0  //OLD: before day/year gaps allowed
             const QString &yearAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist = m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended + QString::number(maybeYearAfterCurrentVideoSegment) + QDir::separator();
             if(QFile::exists(yearAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist))
             {
@@ -632,9 +659,30 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
                 //current is LATEST. idfk, playing the same video seems dumb, playing the placholder seems, dumb.... maybe display a message? for now just gonna do nothing
             }
             return;
+#endif
         }
-        //we've ruled out year shift
-        const QString &dayAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist = currentVideoSegmentYearFolder + QString::number(dayAfterCurrentVideoSegment.date().dayOfYear()) + QDir::separator();
+        //we've ruled out year shift. either day shift or current is latest
+        QDir currentVideoSegmentYearDir(currentVideoSegmentYearFolder_AbsoluteAndWithSlashAppended);
+        const QStringList allDayFoldersInCurrentYear = currentVideoSegmentYearDir.entryList((QDir::NoDotAndDotDot | QDir::Dirs), (QDir::Name | QDir::Reversed));
+        QString currentVideoSegmentFilenamesDayOfYearString = QString::number(currentVideoSegmentFilenamesDayOfYear);
+        if(allDayFoldersInCurrentYear.first() == currentVideoSegmentFilenamesDayOfYearString)
+        {
+            //CURRENT IS LATEST
+            return;
+        }
+        int indexOfNextExistingDayFolder = (allDayFoldersInCurrentYear.indexOf(currentVideoSegmentFilenamesDayOfYearString)-1); //safe because current isn't 'first()'
+        const QString &nextExistingDayFolder = allDayFoldersInCurrentYear.at(indexOfNextExistingDayFolder);
+        //now just get the 'last()' video segment in that day folder
+        QString nextExistingDayFolder_AbsoluteAndWithSlashAppended = currentVideoSegmentYearFolder_AbsoluteAndWithSlashAppended + nextExistingDayFolder + QDir::separator();
+        QDir nextExistingDayDir(nextExistingDayFolder_AbsoluteAndWithSlashAppended);
+        const QStringList allVideoSegementsInThatDayFolder = nextExistingDayDir.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Name | QDir::Reversed));
+        const QString &nextExistingVideoSegmentFilename = allVideoSegementsInThatDayFolder.last();
+        QString nextExistingVideoSegmentFilename_Absolute = nextExistingDayFolder_AbsoluteAndWithSlashAppended + nextExistingVideoSegmentFilename;
+        std::string nextExistingVideoSegmentFilename_Absolute_StdStr = nextExistingVideoSegmentFilename_Absolute.toStdString();
+        displayVideoSegment(nextExistingVideoSegmentFilename_Absolute_StdStr);
+        return;
+#if 0 //OLD: before day/year gaps allowed:
+        const QString &dayAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist = currentVideoSegmentYearFolder_AbsoluteAndWithSlashAppended + QString::number(dayAfterCurrentVideoSegment.date().dayOfYear()) + QDir::separator();
         if(QFile::exists(dayAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist))
         {
             //day shift. we want the earliest one then. TODOoptional: make 'next' button work when we go offline for 1+ days (or hell, even 1+ years!!!). do that by listing all the day folders in the year folder and sorting them, then yea grabbing the next existing one... for now KISS fuck it
@@ -647,6 +695,7 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
             //current is LATEST. idfk, playing the same video seems dumb, playing the placholder seems, dumb.... maybe display a message? for now just gonna do nothing
         }
         return;
+#endif
     }
 
     //since current wasn't 'first' (sorting in reverse), we know that there are videos 'after' it (cronologically)... so we simply find the index of current and subtract 1 in order to get the 'next' video
