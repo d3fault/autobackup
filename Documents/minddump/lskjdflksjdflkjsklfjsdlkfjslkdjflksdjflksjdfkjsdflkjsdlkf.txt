@@ -1,0 +1,12 @@
+The only way to solve a problem is to list your options and choose
+0) Ignore, tattoo now and add the [written down] pw to the db later once a kb solution is devised... chances are low you'll lose your shit
+1) Use a keyboard that may have a [wireless] keylogger embedded, fuck it
+2) Ignore but delay tattoo until the pw is added to the db, because chances are decent you'll need to recover your shit at some point, and knowing you have the right privkey is vital.
+3) (realized/written after this doc was completely written) Use virtual/onscreen keyboard to click the pw in using your mouse... it only assumes your mouse/monitor aren't logging as well. Sure that's less likely, and shit isn't life just a giant fucking probability game? Fffffff
+
+OT'ish: I guess I could add the _fingerprint_ to the privkey to my "launch" supplment shiz, so I could identify it later on with more accuracy (but really...).
+
+
+The problem is like fucking huger than I'm giving it credit: you have to TRUST the world in general in order to have any security whatsoever. I mean yea I got that foldable usb keyboard and I trusted nobody gave a shit to put a [wireless] keylogger in it. Now I have less confidence in that assumption, sure. But the assumption may have been false for every keyboard 10 years prior to my birth, what the fuck do I know?
+
+Again I feel the need to mention the feeling of futility in moving forward with a business plan that hinges on the integrity of a password [that you know MIGHT (had: MAY) be compromised]. I really wish I wasn't dealing with this problem right now. But eh lol of course even THAT sentence abstracts too: I wish I wasn't dealing with the problem of LIFE right now. Yea life has it's pros; it has it's cons too.

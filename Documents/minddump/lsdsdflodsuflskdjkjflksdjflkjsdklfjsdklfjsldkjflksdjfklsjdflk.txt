@@ -1,0 +1,2 @@
+definitely vs. maybe -- an example of traversing logic
+I will definitely regret it [for the rest of my life] if I don't launch. I will maybe regret it [for the rest of my life] if I do launch. Therefore, I will launch.

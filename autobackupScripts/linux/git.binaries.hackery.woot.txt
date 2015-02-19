@@ -1,3 +1,5 @@
+EDIT/IMPORTANT: if you do a git "shallow" clone, as this doc describes later on, you should name the folder that it's in accordingly. For example, "shallowBinarySupplement" vs. "binarySupplement". I did not encounter, but I got like 5% close to encountering (<3 redundancy), a case where i deleted a copy of a full git repo because I planned on cloning to recreate it (I ran out of room in a truecrypt volume, so I deleted it, created a bigger one, then tried to clone and facepalm.jpg'd when I was trying to clone from a shallow repo -- and then I realized that it COULD HAVE BEEN a serious problem)
+
 Binaries in git suck by default, but if you modify .gitattributes (have a binary-only repo, or add binary extensions to .gitattributes (i prefer a catch all approach (echo "* -delta -diff -text" > .gitattributes) and two separate repos)) to never do delta compression in addition to the following, you can use git AS FAST AS 'regular copying' while still having versioning and simple (well, complicated but scriptable!) "git push"-ing to initiate the backups. For my own needs right now I want the following:
 
 1x "file view" (no .git dir, BUT STILL USING GIT :-P)

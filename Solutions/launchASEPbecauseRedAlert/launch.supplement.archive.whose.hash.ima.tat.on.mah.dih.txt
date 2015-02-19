@@ -1,0 +1,17 @@
+tattoo on dick = base64(sha1sumOrInfoHash(MyBrain-2014-Supplement.7z));
+
+MyBrain-2014-Supplement.7z (no pw)
+{
+
+pubkey.pgp
+OneKeyToRuleThemAll/
+mbpwEncryptedBinarySupplementSnapshotExcludingGitDir.7z -- BUT FIRST ADD:
+	semiSecret/readme.txt -- explaining contents
+	semiSecret/semiPrivate.7z (pw stored in OneKeyToRuleThemAll) -- abc https keys, tor privkeys, abc bitcoin keys (plaintext + encrypted wallet), privkey.pgp
+	book covers
+mbpwEncryptedAutobackupFolderIncludingGitDir.7z
+
+}
+
+
+then, later after launch etc (no rush), sign the video of you tattooing it on your dick. what does this buy? idfk but it sounds good :)

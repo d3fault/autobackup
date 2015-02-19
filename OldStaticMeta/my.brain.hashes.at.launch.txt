@@ -1,0 +1,5 @@
+md5(MyBrain-PublicFiles.tc) == e8f413a7d81cb51a3da7cf1d63cf31cf
+md5(MyBrain-PrivateFiles.tc) == b29c366bdad175a0a89f18f117ff2c06
+latest git commit-id of "binarySupplment" == cf8e0b138f8f1d3afb6b9e0a2671f9210e882d5a
+
+is kinda a circular ref (which makes it worth... less?), but eh the _parent_ git commit-id of "autobackup" (in which this very document is being committed into) == 1fb2144aec83d0ff6775fae6662c7cf97f70be49
