@@ -42,7 +42,7 @@ private:
     std::string m_BitcoinKeyToGiveToUserOncePerKeyRequestUuidIsOnABitcoinKeySetPage;
     WText *m_PendingBitcoinBalanceLabel;
     WText *m_ConfirmedBitcoinBalanceLabel;
-    SatoshiInt m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked;
+    SatoshiInt m_ConfirmedBitcoinBalanceInSatoshisToBeCredittedWhenDoneButtonClicked;
     vector<string> m_BitcoinKeysVectorToUseForNextPageFillOncePerFillUuidIsSeenOnHugeBitcoinKeyList; //i think this might be the first time i've used an std::vector xD
     WContainerWidget *m_GetBitcoinKeyPlaceholder;
     WContainerWidget *m_HaveBitcoinKeyPlaceholder;

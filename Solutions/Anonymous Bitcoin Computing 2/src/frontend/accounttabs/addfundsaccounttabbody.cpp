@@ -16,7 +16,7 @@ AddFundsAccountTabBody::AddFundsAccountTabBody(AnonymousBitcoinComputingWtGUI *a
       m_BitcoinAddressBalancePoller(0),
       m_PendingBitcoinBalanceLabel(0),
       m_ConfirmedBitcoinBalanceLabel(0),
-      m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked(0)
+      m_ConfirmedBitcoinBalanceInSatoshisToBeCredittedWhenDoneButtonClicked(0)
       ,m_GetBitcoinKeyPlaceholder(0)
       ,m_HaveBitcoinKeyPlaceholder(0)
       ,m_BalancePollingThrottler_aka_TimeTofLastCheck(0)
@@ -24,8 +24,15 @@ AddFundsAccountTabBody::AddFundsAccountTabBody(AnonymousBitcoinComputingWtGUI *a
 void AddFundsAccountTabBody::populateAndInitialize()
 {
     new WText("<b>Fund Your Account via Bitcoin</b>", this);
+
+    new WBreak(this);
+    new WBreak(this);
+
+    new WText("Note: The minimum amount you may add for a single key is: " ABC_MIN_ADD_FUNDS_AMOUNT_IN_BITCOINS_STR "; there is no maximum amount.", this);
+
     new WBreak(this);
     new WBreak(this); //gap before any responses
+
 
     m_AbcApp->deferRendering();
     //even though we are already logged in, we still need to get the user-account doc because if we kept it in memory instead it might be stale or some shit. could be wrong here idfk, but fuck it
@@ -526,6 +533,13 @@ void AddFundsAccountTabBody::checkForConfirmedBitcoinBalanceButtonClicked()
 }
 void AddFundsAccountTabBody::doneSendingBitcoinsToCurrentAddressButtonClicked()
 {
+    if(m_ConfirmedBitcoinBalanceInSatoshisToBeCredittedWhenDoneButtonClicked < ABC_MIN_ADD_FUNDS_AMOUNT_IN_SATOSHIS)
+    {
+        new WBreak(m_HaveBitcoinKeyPlaceholder);
+        new WText("You did not add at least " ABC_MIN_ADD_FUNDS_AMOUNT_IN_BITCOINS_STR "; Add some more and try again.", m_HaveBitcoinKeyPlaceholder);
+        return;
+    }
+
     //cas-swap creditting user-account, but TODOreq: fail and say try again in a few moments _IF_ slotToAttemptToFill[...] is present (ie., the account is locked). Set bitcoinState back to NoKey during creditting cas-swap
 
     //TODOreq: (had:i am unsure if it makes sense to) first check that bitcoinState is even at "HaveKey" and that the key we have in the member variable is accurate. A tiny hunch (probably paranoia) tells me they could maybe credit the amount twice if we don't perform that verification... perhaps using two tabs or fuck I don't know (the cas swap should protect us from this, what am I on about (NO WAIT I AM RIGHT HAHA: two (or 'N' holy shit huuuuuge bug just squashed) sessions/tabs, walk both through pending->confirmed process, 'done' on first session, it completes, 'done' on respective sessions, they complete. We should DEFINITELY verify that bitcoinState is HaveKey and that the key is accurate!!! We should detect the double(N)-credit and laugh at them :-P. It is NOT a cas-swap-fail, but is an inaccurate bitcoinState or bitcoinStateData(key)))
@@ -559,7 +573,7 @@ void AddFundsAccountTabBody::sendRpcJsonBalanceRequestToBitcoinD()
     bitcoinJsonRpcMessage.addHeader("content-type", "text/plain");
     bitcoinJsonRpcMessage.addBodyText("{\"jsonrpc\": \"1.0\", \"id\":\"curltest\", \"method\": \"getreceivedbyaddress\", \"params\": [\"" + m_CurrentBitcoinKeyForPayments + "\", " + (m_BitcoinAddressBalancePollerPollingPendingBalance ? "0" : "1" ) + "] }");
 
-    if(m_BitcoinAddressBalancePoller->post("http://admin2:123@127.0.0.1:19011/", bitcoinJsonRpcMessage))
+    if(m_BitcoinAddressBalancePoller->post("http://offlinewalletrpcuser:offlinewalletrpcpassword@127.0.0.1:4839/", bitcoinJsonRpcMessage))
     {
         m_AbcApp->deferRendering();
     }
@@ -624,7 +638,7 @@ void AddFundsAccountTabBody::handleBitcoinAddressBalancePollerReceivedResponse(b
                     new WText("NOTE: Do not click 'Done With This Address' until all the funds you've sent to it are showing up as confirmed. You can not send more bitcoins to this address after clicking done. Doing so will result in lost bitcoins.", m_HaveBitcoinKeyPlaceholder);
                 }
                 //display confirmed balance
-                m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked = balance;
+                m_ConfirmedBitcoinBalanceInSatoshisToBeCredittedWhenDoneButtonClicked = balance;
                 m_ConfirmedBitcoinBalanceLabel->setText("Confirmed Bitcoins Received: " + balanceString);
             }
         }
@@ -702,7 +716,7 @@ void AddFundsAccountTabBody::creditConfirmedBitcoinAmountAfterAnalyzingUserAccou
     }
 
     SatoshiInt userBalance = satoshiStringToSatoshiInt(pt.get<std::string>(JSON_USER_ACCOUNT_BALANCE));
-    userBalance += m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked;
+    userBalance += m_ConfirmedBitcoinBalanceInSatoshisToBeCredittedWhenDoneButtonClicked;
 
     std::string userBalanceInSatoshisString = satoshiIntToSatoshiString(userBalance);
     m_AbcApp->m_CurrentlyLoggedInUsersBalanceSatoshiStringForDisplayingOnly = userBalanceInSatoshisString;
@@ -777,10 +791,10 @@ void AddFundsAccountTabBody::doneAttemptingCredittingConfirmedBitcoinBalanceForC
     //successful credit of user-account balance && changing of bitcoinState back to "NoKey" :-D
 
     new WBreak(this);
-    new WText("Your account has been creditted: BTC " + satoshiIntToJsonString(m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked) + ". Do NOT send any more bitcoins to address: " + m_CurrentBitcoinKeyForPayments, this);
+    new WText("Your account has been creditted: BTC " + satoshiIntToJsonString(m_ConfirmedBitcoinBalanceInSatoshisToBeCredittedWhenDoneButtonClicked) + ". Do NOT send any more bitcoins to address: " + m_CurrentBitcoinKeyForPayments, this);
     m_AbcApp->m_CurrentlyLoggedInUsersBalanceForDisplayOnlyLabel->setText(satoshiStringToJsonString(m_AbcApp->m_CurrentlyLoggedInUsersBalanceSatoshiStringForDisplayingOnly));
 
-    m_ConfirmedBitcoinBalanceToBeCredittedWhenDoneButtonClicked = 0; //probably pointless, but will make me sleep better at night
+    m_ConfirmedBitcoinBalanceInSatoshisToBeCredittedWhenDoneButtonClicked = 0; //probably pointless, but will make me sleep better at night
     m_CurrentBitcoinKeyForPayments = ""; //ditto
 
     m_AbcApp->resumeRendering();

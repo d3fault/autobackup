@@ -346,7 +346,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
 
     //withdrawal request state is 'processing', so PROCESS it by issuing the payout command to bitcoin!
 
-    QNetworkRequest request(QUrl("http://admin2:123@127.0.0.1:19011/")); //TODOreq: maybe qsettings 'profiles', but obviously some way to specify user/pw/ip/port (I lean against cli args [solely] because if I'm 'launched', I want to be able to show what's on my screen (but eh not a necessity initially, fuggit))
+    QNetworkRequest request(QUrl("http://rpcpayoutuser:rpcpayoutpassword@127.0.0.1:8889/")); //TODOreq: maybe qsettings 'profiles', but obviously some way to specify user/pw/ip/port (I lean against cli args [solely] because if I'm 'launched', I want to be able to show what's on my screen (but eh not a necessity initially, fuggit))
     request.setHeader(QNetworkRequest::ContentTypeHeader, "text/plain");
     const std::string &keyToWithdrawTo = m_CurrentWithdrawalRequestPropertyTree.get<std::string>(JSON_WITHDRAW_FUNDS_BITCOIN_PAYOUT_KEY);
     QString keyToWIthdrawToQString = QString::fromStdString(keyToWithdrawTo);

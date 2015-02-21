@@ -37,8 +37,11 @@ inline double transactionFeeForTransactionAmount(double transactionAmount) { dou
 inline double withdrawalFeeForWithdrawalAmount(double withdrawalAmount) { double withdrawalFeeExact = withdrawalAmount * (ABC2_WITHDRAWAL_FEE_PERCENT / static_cast<double>(100)); return roundUpJsonDoubleToNearestSatoshi(withdrawalFeeExact); }
 
 //Abc2 has a $1 USD (at time of writing it's ~.003 btc) minimum for ad campaign slots, and $10 minimum for withdrawing. TODOreq: Although I need to use a reasonably high min min to prevent bandwidth exploitation, that does not apply to MY OWN ad campaigns. I want to have MY OWN ad campaigns have a 1 satoshi min price. I know I'm not going to exploit myself xD. I should just go in through the couchbase admin panel and change my min price to 1 satoshi
-#define ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT 0.00300000 /*if changing this, change below string too*/
+#define ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT 0.00300000 /*if changing this, change below string too, and you'll probably want the min add funds define below it as well */
 #define ABC2_MIN_MIN_PRICE_OF_AD_CAMPAIGN_SLOT_STR "0.00300000"
+
+#define ABC_MIN_ADD_FUNDS_AMOUNT_IN_SATOSHIS 300000 /*if changing this, change below string too*/
+#define ABC_MIN_ADD_FUNDS_AMOUNT_IN_BITCOINS_STR "0.00300000"
 
 #define ABC2_MIN_WITHDRAW_AMOUNT 0.03000000 /*if changing this, change below string too*/
 #define ABC2_MIN_WITHDRAW_AMOUNT_STR "0.03000000"
