@@ -310,7 +310,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
 
         new WText("Download in full:", Wt::XHTMLUnsafeText, downloadContainer);
         new WBreak(downloadContainer);
-        WAnchor *tpbMyBrainPublicFilesAnchor = new WAnchor(WLink(WLink::Url, "https://thepiratebay.se/torrent/9754200/My_Brain_-_Public_Files"), "My Brain - Public Files", downloadContainer);
+        WAnchor *tpbMyBrainPublicFilesAnchor = new WAnchor(WLink(WLink::Url, "https://thepiratebay.se/torrent/10403868/My_Brain_-_Public_Files_-_Uncompressed"), "My Brain - Public Files", downloadContainer);
         tpbMyBrainPublicFilesAnchor->setTarget(TargetNewWindow);
 
         new WBreak(downloadContainer);
@@ -327,7 +327,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
 
         new WText("Hold onto this for me plz:", Wt::XHTMLUnsafeText, downloadContainer);
         new WBreak(downloadContainer);
-        WAnchor *tpbMyBrainPrivateFilesAnchor = new WAnchor(WLink(WLink::Url, "https://thepiratebay.se/torrent/9754217/My_Brain_-_Private_Files"), "My Brain - Private Files", downloadContainer);
+        WAnchor *tpbMyBrainPrivateFilesAnchor = new WAnchor(WLink(WLink::Url, "https://thepiratebay.se/torrent/10451069/My_Brain_-_Private_Files_-_Uncompressed"), "My Brain - Private Files", downloadContainer);
         tpbMyBrainPrivateFilesAnchor->setTarget(TargetNewWindow);
 
         setMainContent(downloadContainer);

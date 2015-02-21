@@ -221,7 +221,7 @@ void Abc2TransactionCreditor::creditTransactions()
 
     lcb_set_http_complete_callback(m_Couchbase, Abc2TransactionCreditor::viewQueryCompleteCallbackStatic);
 
-    std::string viewPath = "_design/dev_AllTransactionsWithStateOfUncreditted/_view/AllTransactionsWithStateOfUncreditted?stale=ok"; //TODOmb: perhaps if this app is run on the webserver, we should use some form of pagination so that all the uncreditted transactions don't have to be in ram. for now KISS. Another way to solve it is to run this app on a server other than the webserver
+    std::string viewPath = "_design/AllTransactionsWithStateOfUncreditted/_view/AllTransactionsWithStateOfUncreditted?stale=ok"; //TODOmb: perhaps if this app is run on the webserver, we should use some form of pagination so that all the uncreditted transactions don't have to be in ram. for now KISS. Another way to solve it is to run this app on a server other than the webserver
     lcb_http_cmd_t viewQueryCmd;
     viewQueryCmd.version = 0;
     viewQueryCmd.v.v0.path = viewPath.c_str();

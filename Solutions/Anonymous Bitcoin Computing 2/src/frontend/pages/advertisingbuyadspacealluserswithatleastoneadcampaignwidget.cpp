@@ -70,7 +70,7 @@ void AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget::setTotalPages(
 void AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget::beginGettingPage(int pageNum)
 {
     m_CurrentPage = max(1, pageNum); //lol lazy sanitizing ftw (backend can't handle < 1). TODOoptional: should wait until backend confirms that the page exists, but fuck it lewl lazy
-    m_AnonymousBitcoinComputingWtGUI->queryCouchbaseViewBegin("_design/dev_AllUsersWithAtLeastOneAdCampaign/_view/AllUsersWithAtLeastOneAdCampaign", pageNum);
+    m_AnonymousBitcoinComputingWtGUI->queryCouchbaseViewBegin("_design/AllUsersWithAtLeastOneAdCampaign/_view/AllUsersWithAtLeastOneAdCampaign", pageNum);
     m_AnonymousBitcoinComputingWtGUI->m_WhatTheQueryCouchbaseViewWasFor = AnonymousBitcoinComputingWtGUI::ALLUSERSWITHATLEASTONEADCAMPAIGNQUERYCOUCHBASEVIEW;
 }
 void AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget::showPageOfUsersWithAtLeastOneAdCampaign(const ViewQueryPageContentsType &pageContents, int totalPages, bool internalServerErrorOrJsonError)
