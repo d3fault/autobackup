@@ -35,7 +35,7 @@ AdvertisingSellAdSpaceCreateNewAdCampaignWidget::AdvertisingSellAdSpaceCreateNew
     new WBreak(this);
     new WBreak(this);
 
-    new WText("When someone purchases your ad space, it takes a few minutes before the purchase amount is reflected in your balance (and the funds are available for withdrawal). Also, there is a " ABC2_WITHDRAWAL_FEE_PERCENT_STR "% transaction fee.", Wt::PlainText);
+    new WText("When someone purchases your ad space, it takes a few minutes before the purchase amount is reflected in your balance (and the funds are available for withdrawal). Also, there is a " ABC2_TRANSACTION_FEE_PERCENT_STR "% transaction fee.", Wt::PlainText);
 
     new WBreak(this);
     new WBreak(this);

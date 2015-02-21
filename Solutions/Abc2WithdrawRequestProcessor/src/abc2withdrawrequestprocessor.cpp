@@ -70,8 +70,7 @@ bool Abc2WithdrawRequestProcessor::debitCurrentWithdrawalRequestFromUsersCalcula
         //we've seen this user before, so we already have a balance that has been debitted some, so debit THAT one some more
         rollingUserBalance = m_UserBalancesInSatoshisDuringCalculationMode.value(userRequestingWithdrawal);
     }
-    //rollingUserBalance -= m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis;
-    rollingUserBalance -= m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis;
+    rollingUserBalance -= m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis;
     if(rollingUserBalance < 0) //our "calculate mode" insufficient funds checking
     {
         //for 'calculate mode' insufficient funds, we don't debit the amount from the user's calculated balance, nor do we add the amount to our running total. we just move onto the next withdrawal request
@@ -271,8 +270,7 @@ void Abc2WithdrawRequestProcessor::processWithdrawalRequest(const QString &curre
 
     if(m_Mode == ExecuteMode)
     {
-        //if(m_CurrentUserBalanceInSatoshis < m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis)
-        if(m_CurrentUserBalanceInSatoshis < m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis)
+        if(m_CurrentUserBalanceInSatoshis < m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis)
         {
             //insufficient funds. not fatal error, they might have simply spent the funds on an ad slot filler after filing the withdrawal request. set the withdrawal request state to insufficient funds done and return true;
             m_CurrentWithdrawalRequestPropertyTree.put(JSON_WITHDRAW_FUNDS_REQUEST_STATE_KEY, JSON_WITHDRAW_FUNDS_REQUEST_STATE_VALUE_INSUFFICIENTFUNDS);
@@ -365,12 +363,10 @@ void Abc2WithdrawRequestProcessor::readInUserBalanceAndCalculateWithdrawalFeesEt
 
     std::string amountToWithdrawInSatoshisStr = m_CurrentWithdrawalRequestPropertyTree.get<std::string>(JSON_WITHDRAW_FUNDS_REQUESTED_AMOUNT);
     m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis = boost::lexical_cast<SatoshiInt>(amountToWithdrawInSatoshisStr);
-#if 0 //before moving fee from withdrawals to transactions
     double desiredWithdrawRequestAmountAsJsonDouble = satoshiIntToJsonDouble(m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis);
     double withdrawalFeeJsonDouble = withdrawalFeeForWithdrawalAmount(desiredWithdrawRequestAmountAsJsonDouble);
     SatoshiInt withdrawalFeeInSatoshis = jsonDoubleToSatoshiIntIncludingRounding(withdrawalFeeJsonDouble); //the rounding, it does nothing (we already 'rounded up') ;-P!
     m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis = m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis + withdrawalFeeInSatoshis;
-#endif
 }
 bool Abc2WithdrawRequestProcessor::revertCurrentWithdrawalRequestStateToUnprocessed__AndUnlockWithoutDebittingUserProfile()
 {
@@ -430,11 +426,10 @@ void Abc2WithdrawRequestProcessor::continueAt_deductAmountFromCurrentUserProfile
     }
 
     SatoshiInt originalBalance = m_CurrentUserBalanceInSatoshis;
-    //m_CurrentUserBalanceInSatoshis -= m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis;
-    m_CurrentUserBalanceInSatoshis -= m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis;
+    m_CurrentUserBalanceInSatoshis -= m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis;
     m_CurrentUserProfilePropertyTree.put(JSON_USER_ACCOUNT_BALANCE, m_CurrentUserBalanceInSatoshis);
     m_CurrentUserProfilePropertyTree.erase(JSON_USER_ACCOUNT_LOCKED_WITHDRAWING_FUNDS);
-    if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(userAccountKey(m_CurrentUserRequestingWithdrawal), Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(m_CurrentUserProfilePropertyTree), LCB_SET, m_CurrentUserProfileInLockedWithdrawingStateCas, "debitting+unlocking user profile '" + m_CurrentUserRequestingWithdrawal + "' with amount: (OLD: " + satoshiIntToJsonString(originalBalance) + ", NEW: " + satoshiIntToJsonString(m_CurrentUserBalanceInSatoshis) + ", DIFF: -" + satoshiIntToJsonString(m_CurrentWithdrawRequestDesiredAmountToWithdrawInSatoshis) + ")"))
+    if(!couchbaseStoreRequestWithExponentialBackoffRequiringSuccess(userAccountKey(m_CurrentUserRequestingWithdrawal), Abc2CouchbaseAndJsonKeyDefines::propertyTreeToJsonString(m_CurrentUserProfilePropertyTree), LCB_SET, m_CurrentUserProfileInLockedWithdrawingStateCas, "debitting+unlocking user profile '" + m_CurrentUserRequestingWithdrawal + "' with amount: (OLD: " + satoshiIntToJsonString(originalBalance) + ", NEW: " + satoshiIntToJsonString(m_CurrentUserBalanceInSatoshis) + ", DIFF: -" + satoshiIntToJsonString(m_CurrentWithdrawRequestTotalAmountToWithdrawIncludingWithdrawalFeeInSatoshis) + ")"))
     {
         //error debitting+unlocking user profile
         emit withdrawalRequestProcessingFinished(false);

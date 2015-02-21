@@ -22,9 +22,9 @@ private:
     std::string m_WithdrawRequestDocBeingCreated;
 
     void populateAndInitialize();
-    //double maximumWithdrawalAmountIncorporatingFee();
-    //void handleUseMaxAmountButtonClicked();
-    //void calculateTotalAmountWithdrawnAfterFeeForVisual();
+    double maximumWithdrawalAmountIncorporatingFee();
+    void handleUseMaxAmountButtonClicked();
+    void calculateTotalAmountWithdrawnAfterFeeForVisual();
     void handleRequestWithdrawalButtonClicked();
     void verifyBalanceIsGreaterThanOrEqualToTheirRequestedWithdrawAmountAndThenContinueSchedulingWithdrawRequest(const std::string &userProfileDoc, bool lcbOpSuccess, bool dbError);
     void useNextAvailableWithdrawRequestIndexToScheduleTheWithdrawRequest(const std::string &withdrawRequestNextAvailalbeIndexDoc, u_int64_t cas, bool lcbOpSuccess, bool dbError);
