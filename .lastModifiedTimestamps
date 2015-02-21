@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1424385813
+Documents/minddump/:1424480960
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1424340072
+Documents/minddump/dreams/:1424479793
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -95,6 +95,7 @@ Documents/minddump/dreams/flajflkjasdlfjsdofusldjfosudflsjdfouisdlfjoudslkfjasdo
 Documents/minddump/dreams/flat.horse.probably.one.of.the.trippiest.dreams.ive.ever.had.txt:1369395745
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
 Documents/minddump/dreams/freeway.buff.out.scrapes.though.i.impulsively.want.to.write.mistakes.right.here.txt.actually.that.makes.sense.given.my.current.state.of.mind.txt:1341457467
+Documents/minddump/dreams/fsdlfkjsdlkfjksldjfklsdjfkljsdlkfjsdlkfjsdklfjsdlkjflsdkjflks.txt:1424479793
 Documents/minddump/dreams/glenn.going.through.my.backpack.looking.at.my.black.notebooks.lololoolol.paranoia.txt:1390751969
 Documents/minddump/dreams/godfather.pt.2.dream.night.after.watching.txt:1344076505
 Documents/minddump/dreams/grassy.hill.snowboarding.elementary.school.classmates.txt:1344305969
@@ -843,7 +844,7 @@ Documents/minddump/dsflkjsdfkljsdfksdfouisdflkjsdfoeworul.txt:1358982708
 Documents/minddump/dsflkjsdflkjsdflkjoiusdlkjfsadouiflk.txt:1359542592
 Documents/minddump/dsflkjsdflkjsdflsdfouwerljsdoufdlkjsd.txt:1356168561
 Documents/minddump/dsflkjsdflkjsdlkfjljdflksjdflksjdflkjsdfkjsdflkjdsouwelrkjousdflksd.txt:1409162770
-Documents/minddump/dsflkjsdlfkjsdlfkjsdlfjsdlfkjsdlfkjsdlkfjouwelrkjsdofusdlfkjsdofu.txt:1381113317
+Documents/minddump/dsflkjsdlfkjsdlfkjsdlfjsdlfkjsdlfkjsdlkfjouwelrkjsdofusdlfkjsdofu.txt:1424480208
 Documents/minddump/dsflkjsdlkfjsdaofiusldjfosurweouwedsfk.txt:1359511318
 Documents/minddump/dsflkjwaerousflkjawieryasfweoriusdkfj.txt:1342605985
 Documents/minddump/dsflksdjfkljasdofiusdlfjosaudflkjsdfousldkfjousdflkjsdofuadflksdfu.txt:1384593775
@@ -1534,6 +1535,7 @@ Documents/minddump/lsdjflsdkjfklsdjfkjsdfkljsdlkfowuerlkjsdfhdskfjklsdjfsldkjf.t
 Documents/minddump/lsdjflsjadflkjskdlfjsdlkfjsdofusdlkfjsoduflsdjfljkewrousdf.txt:1393796085
 Documents/minddump/lsdjkflskajdfkjsdlfkjlwkejroulsdkjflksjdflksdfjouewlrkjousdfls.txt:1400127929
 Documents/minddump/lsdkfjlkasdjflksadjflkjsdofusldfjsoduflsdjfousdfldsjflkt.xt:1416243644
+Documents/minddump/lsdkfjlksdjfklsdjfklssdffdsdjfklsjdklfjsdlkfjslkdjflksdj.txt:1424480960
 Documents/minddump/lsdkfjlskdjfsdoiuwerlkjdfsousdflkjweroulkjdfs.txt:1355290132
 Documents/minddump/lsdkfjlskdjfsodufsldkjfosduflsjkdfousdfsouerw.infinite.metaphors.lewl.txt:1392919237
 Documents/minddump/lsdkflsjdflkjdslfkdslfkjdsofusdlkfjsdouflkjwerousdlkf.txt:1404566020
@@ -5387,7 +5389,7 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400803006
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1423505269
+Solutions/hackyVideoBullshitSite/src/:1424482195
 Solutions/hackyVideoBullshitSite/src/backend/:1420970672
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1420970672
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1420970631
@@ -5397,10 +5399,10 @@ Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.cpp:1401
 Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.h:1401264947
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1400919404
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1399509052
-Solutions/hackyVideoBullshitSite/src/frontend/:1423505199
+Solutions/hackyVideoBullshitSite/src/frontend/:1424479953
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.cpp:1398743229
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.h:1398743110
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1423505199
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1424479953
 Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1420974998
 Solutions/hackyVideoBullshitSite/src/frontend/hvbsshared.h:1400924041
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1401352804
@@ -5477,7 +5479,7 @@ Solutions/launchASEPbecauseRedAlert/todo.lol.asdflkjsdfousdfweroiu.txt:138717389
 Solutions/launchASEPbecauseRedAlert/video.bytestream.design.rofl.so.ghetto.and.pro.asdflhslfjsadflkj.txt:1402001107
 Solutions/standard.wt.deploy.arguments.to.get.clean.urls.working.properly.txt:1398266138
 autobackupScripts/:1349691249
-autobackupScripts/linux/:1424339012
+autobackupScripts/linux/:1424393985
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/:1338074874
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
@@ -5493,7 +5495,7 @@ autobackupScripts/linux/customLaunchers/dia.integrated.and.no.splash.sh:13504981
 autobackupScripts/linux/750x1:1321490944
 autobackupScripts/linux/750x2:1321489260
 autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1415361357
-autobackupScripts/linux/base64theMd5SumOfAFileProperly.sh:1385203690
+autobackupScripts/linux/base64theSha1SumOfAFileProperly.sh:1424394103
 autobackupScripts/linux/cleanAptEtc.sh:1350618598
 autobackupScripts/linux/debian.squeeze.dell.mini.9.post.install.instructions.txt:1368042665
 autobackupScripts/linux/dedicated.server.domain.name.associating.txt:1409246698

@@ -50,7 +50,7 @@
 #define HVBS_ABC2_AD_IMAGE_WIDTH 576
 #define HVBS_ABC2_AD_IMAGE_HEIGHT 96
 
-#define HVBS_ABC2_PLACEHOLDER_ALT_AND_HOVER "Buy this ad space for BTC 0.00000001"
+#define HVBS_ABC2_PLACEHOLDER_ALT_AND_HOVER "Buy this ad space for BTC 0.003"
 
 //segfault if server is started before assigning these that are pointers :-P (fuck yea performance)
 AdImageGetAndSubscribeManager* HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = 0;
@@ -218,7 +218,7 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     //new WBreak(blahRootRedirect()); eh weird indentation without this WBreak, BUT i'll take that over an entire wasted line!
     WAnchor *bitcoinFaqAnchor = new WAnchor(WLink(WLink::Url, "https://bitcoin.org/en/faq"), "Bitcoin", blahRootRedirect());
     bitcoinFaqAnchor->setTarget(TargetNewWindow);
-    new WText(" donation address: 1FwZENuqEHHNCAz4fiWbJWSknV4BhWLuYm", Wt::XHTMLUnsafeText, blahRootRedirect());
+    new WText(" donate address: 1FwZENuqEHHNCAz4fiWbJWSknV4BhWLuYm", Wt::XHTMLUnsafeText, blahRootRedirect());
 
     new WBreak(blahRootRedirect());
     new WBreak(blahRootRedirect());
@@ -302,17 +302,32 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
 
         //TODOreq: host and link to the torrent files (tpb is dead also so this needs to be done soon). Maybe just a magnet URL instead?
         WContainerWidget *downloadContainer = new WContainerWidget();
+
+        new WText("Password: L^_t^Cw!X)gvWD0;*;d*n-R+|nOjA1dO`CO^sZ9$zcN=kLL(zG9xHKP}bQQwH+~", downloadContainer);
+
+        new WBreak(downloadContainer);
+        new WBreak(downloadContainer);
+
         new WText("Download in full:", Wt::XHTMLUnsafeText, downloadContainer);
         new WBreak(downloadContainer);
-        WAnchor *tpbMyBrainPublicFilesAnchor = new WAnchor(WLink(WLink::Url, "http://thepiratebay.se/torrent/9754200/My_Brain_-_Public_Files"), "My Brain - Public Files", downloadContainer);
+        WAnchor *tpbMyBrainPublicFilesAnchor = new WAnchor(WLink(WLink::Url, "https://thepiratebay.se/torrent/9754200/My_Brain_-_Public_Files"), "My Brain - Public Files", downloadContainer);
         tpbMyBrainPublicFilesAnchor->setTarget(TargetNewWindow);
+
+        new WBreak(downloadContainer);
+        new WBreak(downloadContainer);
+
+        new WText("2014 Supplement:", Wt::XHTMLUnsafeText, downloadContainer);
+        new WBreak(downloadContainer);
+        WAnchor *tpbMyBrain2014supplementAnchor = new WAnchor(WLink(WLink::Url, "https://thepiratebay.se/torrent/11712945/My_Brain_-_2014_Supplement"), "My Brain - 2014 Supplement", downloadContainer);
+        tpbMyBrain2014supplementAnchor->setTarget(TargetNewWindow);
+
 
         new WBreak(downloadContainer);
         new WBreak(downloadContainer);
 
         new WText("Hold onto this for me plz:", Wt::XHTMLUnsafeText, downloadContainer);
         new WBreak(downloadContainer);
-        WAnchor *tpbMyBrainPrivateFilesAnchor = new WAnchor(WLink(WLink::Url, "http://thepiratebay.se/torrent/9754217/My_Brain_-_Private_Files"), "My Brain - Private Files", downloadContainer);
+        WAnchor *tpbMyBrainPrivateFilesAnchor = new WAnchor(WLink(WLink::Url, "https://thepiratebay.se/torrent/9754217/My_Brain_-_Private_Files"), "My Brain - Private Files", downloadContainer);
         tpbMyBrainPrivateFilesAnchor->setTarget(TargetNewWindow);
 
         setMainContent(downloadContainer);
