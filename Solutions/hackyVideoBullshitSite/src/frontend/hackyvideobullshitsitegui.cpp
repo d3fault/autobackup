@@ -355,23 +355,23 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         deleteTimelineAndDirectoryBrowsingStackIfNeeded();
 
         WContainerWidget *storeContainer = new WContainerWidget();
-        new WText("Book:", storeContainer);
+        new WText("<b>Book:</b>", storeContainer);
 
         new WBreak(storeContainer);
 
         new WText("Everything: ", storeContainer);
         WAnchor *bookPart1of5Anchor = new WAnchor(WLink(WLink::Url, "https://www.createspace.com/4973161"), "Part 1/5", storeContainer);
         bookPart1of5Anchor->setTarget(TargetNewWindow);
-        new WText(" - ");
+        new WText(" - ", storeContainer);
         WAnchor *bookPart2of5Anchor = new WAnchor(WLink(WLink::Url, "https://www.createspace.com/5329954"), "Part 2/5", storeContainer);
         bookPart2of5Anchor->setTarget(TargetNewWindow);
-        new WText(" - ");
+        new WText(" - ", storeContainer);
         WAnchor *bookPart3of5Anchor = new WAnchor(WLink(WLink::Url, "https://www.createspace.com/5329957"), "Part 3/5", storeContainer);
         bookPart3of5Anchor->setTarget(TargetNewWindow);
-        new WText(" - ");
+        new WText(" - ", storeContainer);
         WAnchor *bookPart4of5Anchor = new WAnchor(WLink(WLink::Url, "https://www.createspace.com/5329960"), "Part 4/5", storeContainer);
         bookPart4of5Anchor->setTarget(TargetNewWindow);
-        new WText(" - ");
+        new WText(" - ", storeContainer);
         WAnchor *bookPart5of5Anchor = new WAnchor(WLink(WLink::Url, "https://www.createspace.com/5329974"), "Part 5/5", storeContainer);
         bookPart5of5Anchor->setTarget(TargetNewWindow);
 
@@ -554,6 +554,12 @@ void HackyVideoBullshitSiteGUI::displayVideoSegment(const string &videoSegmentFi
     }
     //TODOreq: latest  button (perhaps disabled at first, noop if latest is what we're already at)
     new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS), "Browse All Video Clips", videoSegmentContainer);
+
+    new WText(" ", videoSegmentContainer);
+
+    WAnchor *randomFileAnchor = new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_HACK_TO_MYBRAIN_TIMELINE), "Random File", videoSegmentContainer);
+    randomFileAnchor->decorationStyle().setForegroundColor(WColor(0,255,0)); //bitches need visual cues because bitches is dumb as fuck n shit
+
     new WBreak(videoSegmentContainer);
 
     nextVideoClipPushButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);

@@ -11,16 +11,16 @@
 #include "backend/nonexpiringstringwresource.h"
 
 
-#define HVBS_CREATE_STATIC_PUBLIC_WT_FILE_RESOURCE(resourceStackVarPrefix, filename, staticPublicResourceUrl) \
+#define HVBS_CREATE_STATIC_PUBLIC_WT_FILE_RESOURCE(resourceVarName, filename, staticPublicResourceUrl) \
 if(!boost::filesystem::exists(filename)) \
 { \
     handleE(filename " does not exist. quitting"); \
     emit fatalErrorDetected(); \
     return; \
 } \
-WFileResource resourceStackVarPrefix##FileResource("application/x-bittorrent", filename); \
-resourceStackVarPrefix##FileResource.suggestFileName(filename); \
-m_WtServer->addResource(&resourceStackVarPrefix##FileResource, staticPublicResourceUrl);
+resourceVarName = new WFileResource("application/x-bittorrent", filename); \
+resourceVarName->suggestFileName(filename); \
+m_WtServer->addResource(resourceVarName, staticPublicResourceUrl);
 
 //this thread owns stdout because i can't (well...) tell wt to not write to stdout at any given moment...
 //i can't for the life of me figure out if this is a backend or frontend class :-P
@@ -45,6 +45,9 @@ WtControllerAndStdOutOwner::WtControllerAndStdOutOwner(QObject *parent)
     , m_WtServer(0) //still can't pass my objects on threads args guh :(
     , m_MySexyFaceLogoResource(0)
     , m_NoAdImagePlaceholderResource(0)
+    , m_MyBrainPublicFilesTorrentResource(0)
+    , m_MyBrain2014supplementTorrentResource(0)
+    , m_MyBrainPrivateFilesTorrentResource(0)
     , m_StdOut(stdout)
     , m_StdErr(stderr)
 { }
@@ -54,6 +57,12 @@ WtControllerAndStdOutOwner::~WtControllerAndStdOutOwner()
         delete m_MySexyFaceLogoResource;
     if(m_NoAdImagePlaceholderResource)
         delete m_NoAdImagePlaceholderResource;
+    if(m_MyBrainPublicFilesTorrentResource)
+        delete m_MyBrainPublicFilesTorrentResource;
+    if(m_MyBrain2014supplementTorrentResource)
+        delete m_MyBrain2014supplementTorrentResource;
+    if(m_MyBrainPrivateFilesTorrentResource)
+        delete m_MyBrainPrivateFilesTorrentResource;
     if(m_WtServer)
     {
         if(m_WtServer->isRunning())
@@ -133,9 +142,9 @@ void WtControllerAndStdOutOwner::initializeAndStart(int argc, char **argv)
     HackyVideoBullshitSiteGUI::setDplLicenseText(dplLicenseText);
 
     //BEGIN TORRENTS
-    HVBS_CREATE_STATIC_PUBLIC_WT_FILE_RESOURCE(myBrainPublicFilesTorrent, HVBS_MY_BRAIN_PUBLIC_FILES_TORRENT_FILENAME, HVBS_MY_BRAIN_PUBLIC_FILES_TORRENT_PUBLIC_RESOURCE)
-    HVBS_CREATE_STATIC_PUBLIC_WT_FILE_RESOURCE(myBrain2014supplementTorrent, HVBS_MY_BRAIN_2014_SUPPLEMENT_TORRENT_FILENAME, HVBS_MY_BRAIN_2014_SUPPLEMENT_TORRENT_PUBLIC_RESOURCE)
-    HVBS_CREATE_STATIC_PUBLIC_WT_FILE_RESOURCE(myBrainPrivateFilesTorrent, HVBS_MY_BRAIN_PRIVATE_FILES_TORRENT_FILENAME, HVBS_MY_BRAIN_PRIVATE_FILES_TORRENT_PUBLIC_RESOURCE)
+    HVBS_CREATE_STATIC_PUBLIC_WT_FILE_RESOURCE(m_MyBrainPublicFilesTorrentResource, HVBS_MY_BRAIN_PUBLIC_FILES_TORRENT_FILENAME, HVBS_MY_BRAIN_PUBLIC_FILES_TORRENT_PUBLIC_RESOURCE)
+    HVBS_CREATE_STATIC_PUBLIC_WT_FILE_RESOURCE(m_MyBrain2014supplementTorrentResource, HVBS_MY_BRAIN_2014_SUPPLEMENT_TORRENT_FILENAME, HVBS_MY_BRAIN_2014_SUPPLEMENT_TORRENT_PUBLIC_RESOURCE)
+    HVBS_CREATE_STATIC_PUBLIC_WT_FILE_RESOURCE(m_MyBrainPrivateFilesTorrentResource, HVBS_MY_BRAIN_PRIVATE_FILES_TORRENT_FILENAME, HVBS_MY_BRAIN_PRIVATE_FILES_TORRENT_PUBLIC_RESOURCE)
     //END TORRENTS
 
     if(!m_WtServer->start())

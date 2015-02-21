@@ -25,6 +25,10 @@ private:
     NonExpiringStringWResource *m_MySexyFaceLogoResource;
     NonExpiringStringWResource *m_NoAdImagePlaceholderResource;
 
+    WFileResource *m_MyBrainPublicFilesTorrentResource;
+    WFileResource *m_MyBrain2014supplementTorrentResource;
+    WFileResource *m_MyBrainPrivateFilesTorrentResource;
+
     QTextStream m_StdOut;
     QTextStream m_StdErr;
 
