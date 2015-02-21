@@ -249,6 +249,8 @@ void HackyVideoBullshitSiteGUI::finalize()
 }
 void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInternalPath)
 {
+    //TODOmb: remove trailing slash when considering what to display, so /MyBrain/ matches /MyBrain, etc
+
     //layout defaults (m_Contents pointing to zero)
     if(m_Contents)
     {
@@ -310,7 +312,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
 
         new WText("Download in full:", Wt::XHTMLUnsafeText, downloadContainer);
         new WBreak(downloadContainer);
-        WAnchor *tpbMyBrainPublicFilesAnchor = new WAnchor(WLink(WLink::Url, "https://thepiratebay.se/torrent/10403868/My_Brain_-_Public_Files_-_Uncompressed"), "My Brain - Public Files", downloadContainer);
+        WAnchor *tpbMyBrainPublicFilesAnchor = new WAnchor(WLink(WLink::Url, HVBS_MY_BRAIN_PUBLIC_FILES_TORRENT_PUBLIC_RESOURCE), "My Brain - Public Files", downloadContainer);
         tpbMyBrainPublicFilesAnchor->setTarget(TargetNewWindow);
 
         new WBreak(downloadContainer);
@@ -318,7 +320,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
 
         new WText("2014 Supplement:", Wt::XHTMLUnsafeText, downloadContainer);
         new WBreak(downloadContainer);
-        WAnchor *tpbMyBrain2014supplementAnchor = new WAnchor(WLink(WLink::Url, "https://thepiratebay.se/torrent/11712945/My_Brain_-_2014_Supplement"), "My Brain - 2014 Supplement", downloadContainer);
+        WAnchor *tpbMyBrain2014supplementAnchor = new WAnchor(WLink(WLink::Url, HVBS_MY_BRAIN_2014_SUPPLEMENT_TORRENT_PUBLIC_RESOURCE), "My Brain - 2014 Supplement", downloadContainer);
         tpbMyBrain2014supplementAnchor->setTarget(TargetNewWindow);
 
 
@@ -327,7 +329,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
 
         new WText("Hold onto this for me plz:", Wt::XHTMLUnsafeText, downloadContainer);
         new WBreak(downloadContainer);
-        WAnchor *tpbMyBrainPrivateFilesAnchor = new WAnchor(WLink(WLink::Url, "https://thepiratebay.se/torrent/10451069/My_Brain_-_Private_Files_-_Uncompressed"), "My Brain - Private Files", downloadContainer);
+        WAnchor *tpbMyBrainPrivateFilesAnchor = new WAnchor(WLink(WLink::Url, HVBS_MY_BRAIN_PRIVATE_FILES_TORRENT_PUBLIC_RESOURCE), "My Brain - Private Files", downloadContainer);
         tpbMyBrainPrivateFilesAnchor->setTarget(TargetNewWindow);
 
         setMainContent(downloadContainer);
@@ -353,7 +355,32 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         deleteTimelineAndDirectoryBrowsingStackIfNeeded();
 
         WContainerWidget *storeContainer = new WContainerWidget();
-        new WText("Check back soon. The book form should be available within 24 hours, or however long it takes to get 'approved'.", storeContainer);
+        new WText("Book:", storeContainer);
+
+        new WBreak(storeContainer);
+
+        new WText("Everything: ", storeContainer);
+        WAnchor *bookPart1of5Anchor = new WAnchor(WLink(WLink::Url, "https://www.createspace.com/4973161"), "Part 1/5", storeContainer);
+        bookPart1of5Anchor->setTarget(TargetNewWindow);
+        new WText(" - ");
+        WAnchor *bookPart2of5Anchor = new WAnchor(WLink(WLink::Url, "https://www.createspace.com/5329954"), "Part 2/5", storeContainer);
+        bookPart2of5Anchor->setTarget(TargetNewWindow);
+        new WText(" - ");
+        WAnchor *bookPart3of5Anchor = new WAnchor(WLink(WLink::Url, "https://www.createspace.com/5329957"), "Part 3/5", storeContainer);
+        bookPart3of5Anchor->setTarget(TargetNewWindow);
+        new WText(" - ");
+        WAnchor *bookPart4of5Anchor = new WAnchor(WLink(WLink::Url, "https://www.createspace.com/5329960"), "Part 4/5", storeContainer);
+        bookPart4of5Anchor->setTarget(TargetNewWindow);
+        new WText(" - ");
+        WAnchor *bookPart5of5Anchor = new WAnchor(WLink(WLink::Url, "https://www.createspace.com/5329974"), "Part 5/5", storeContainer);
+        bookPart5of5Anchor->setTarget(TargetNewWindow);
+
+        new WBreak(storeContainer);
+
+        new WText("A lot less: ", storeContainer);
+        WAnchor *bookDreamsExcerpts = new WAnchor(WLink(WLink::Url, "https://www.createspace.com/5330000"), "Dreams Excerpts", storeContainer);
+        bookDreamsExcerpts->setToolTip("d3fault's dream exceprts, for those who don't care to read code or ramblings.");
+        bookDreamsExcerpts->setTarget(TargetNewWindow);
 
         setMainContent(storeContainer);
         return;

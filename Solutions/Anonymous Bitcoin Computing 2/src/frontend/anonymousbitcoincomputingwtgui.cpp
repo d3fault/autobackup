@@ -270,9 +270,11 @@ void AnonymousBitcoinComputingWtGUI::showHomeWidget()
         new WBreak(m_HomeWidget);
         new WBreak(m_HomeWidget);
 
-        new WAnchor(WLink(WLink::Url, ABC_MY_WWW_HTTPS_URL), "HTTPS: " ABC_MY_WWW_HTTPS_URL, m_HomeWidget);
+        new WText("HTTPS: ", m_HomeWidget);
+        new WAnchor(WLink(WLink::Url, ABC_MY_WWW_HTTPS_URL), ABC_MY_WWW_HTTPS_URL, m_HomeWidget);
         new WBreak(m_HomeWidget);
-        new WAnchor(WLink(WLink::Url, ABC_MY_WWW_TOR_HIDDEN_SERVICE_URL), "Tor Hidden Service: " ABC_MY_WWW_TOR_HIDDEN_SERVICE_URL, m_HomeWidget);
+        new WText("Tor Hidden Service: ", m_HomeWidget);
+        new WAnchor(WLink(WLink::Url, ABC_MY_WWW_TOR_HIDDEN_SERVICE_URL), ABC_MY_WWW_TOR_HIDDEN_SERVICE_URL, m_HomeWidget);
     }
     m_MainStack->setCurrentWidget(m_HomeWidget);
 }
@@ -552,6 +554,8 @@ void AnonymousBitcoinComputingWtGUI::beginShowingAdvertisingBuyAdSpaceD3faultCam
         m_DisallowedCategoriesLabel = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
 
         new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+        new WBreak(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
+
         new WText("Price: BTC ", m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         m_CurrentPriceLabel = new WText(m_AdvertisingBuyAdSpaceD3faultCampaign0Widget);
         m_CurrentPriceDomPath = m_CurrentPriceLabel->jsRef();

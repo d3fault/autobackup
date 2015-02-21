@@ -46,7 +46,7 @@ INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/
 INCLUDEPATH += ../../../Projects/LastModifiedTimestampsSorter/src/lib/
 INCLUDEPATH += ../../../Projects/SftpUploaderAndRenamerQueue/src/lib/
 
-LIBS += -lwt -lwthttp -lboost_signals
+LIBS += -lwt -lwthttp -lboost_signals -lboost_filesystem
 
 include(../../../GloballySharedClasses/objectonthreadhelper.pri)
 include(../../../GloballySharedClasses/lastmodifiedtimestamp.pri)

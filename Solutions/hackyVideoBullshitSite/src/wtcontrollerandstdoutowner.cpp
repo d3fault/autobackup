@@ -1,10 +1,26 @@
 #include "wtcontrollerandstdoutowner.h"
 
+#include <boost/filesystem.hpp>
+
 #include <Wt/WMemoryResource>
+#include <Wt/WFileResource>
 
 #include <QFile>
 
+#include "frontend/hvbsshared.h"
 #include "backend/nonexpiringstringwresource.h"
+
+
+#define HVBS_CREATE_STATIC_PUBLIC_WT_FILE_RESOURCE(resourceStackVarPrefix, filename, staticPublicResourceUrl) \
+if(!boost::filesystem::exists(filename)) \
+{ \
+    handleE(filename " does not exist. quitting"); \
+    emit fatalErrorDetected(); \
+    return; \
+} \
+WFileResource resourceStackVarPrefix##FileResource("application/x-bittorrent", filename); \
+resourceStackVarPrefix##FileResource.suggestFileName(filename); \
+m_WtServer->addResource(&resourceStackVarPrefix##FileResource, staticPublicResourceUrl);
 
 //this thread owns stdout because i can't (well...) tell wt to not write to stdout at any given moment...
 //i can't for the life of me figure out if this is a backend or frontend class :-P
@@ -81,7 +97,6 @@ void WtControllerAndStdOutOwner::initializeAndStart(int argc, char **argv)
     m_WtServer->setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
     m_WtServer->addEntryPoint(Application, &HackyVideoBullshitSiteGUI::hackyVideoBullshitSiteGuiEntryPoint);
 
-    //sexy face and no ad bundles don't render.. DID NOT 404 though.... wtf?
     std::string mySexyFaceLogoString = readFileIntoString(":/my.sexy.face.logo.jpg");
     if(mySexyFaceLogoString == "")
     {
@@ -116,6 +131,12 @@ void WtControllerAndStdOutOwner::initializeAndStart(int argc, char **argv)
         return;
     }
     HackyVideoBullshitSiteGUI::setDplLicenseText(dplLicenseText);
+
+    //BEGIN TORRENTS
+    HVBS_CREATE_STATIC_PUBLIC_WT_FILE_RESOURCE(myBrainPublicFilesTorrent, HVBS_MY_BRAIN_PUBLIC_FILES_TORRENT_FILENAME, HVBS_MY_BRAIN_PUBLIC_FILES_TORRENT_PUBLIC_RESOURCE)
+    HVBS_CREATE_STATIC_PUBLIC_WT_FILE_RESOURCE(myBrain2014supplementTorrent, HVBS_MY_BRAIN_2014_SUPPLEMENT_TORRENT_FILENAME, HVBS_MY_BRAIN_2014_SUPPLEMENT_TORRENT_PUBLIC_RESOURCE)
+    HVBS_CREATE_STATIC_PUBLIC_WT_FILE_RESOURCE(myBrainPrivateFilesTorrent, HVBS_MY_BRAIN_PRIVATE_FILES_TORRENT_FILENAME, HVBS_MY_BRAIN_PRIVATE_FILES_TORRENT_PUBLIC_RESOURCE)
+    //END TORRENTS
 
     if(!m_WtServer->start())
     {

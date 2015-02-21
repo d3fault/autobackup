@@ -123,4 +123,4 @@ INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/
 INCLUDEPATH += ../../../GloballySharedClasses/image/
 INCLUDEPATH += ../../hackyVideoBullshitSite/src/backend/
 
-LIBS += -lcouchbase -levent -levent_pthreads -lwt -lwthttp -lboost_signals -lboost_system -lboost_thread
+LIBS += -lcouchbase -levent -levent_pthreads -lwt -lwthttp -lboost_signals -lboost_system -lboost_thread -lboost_filesystem
