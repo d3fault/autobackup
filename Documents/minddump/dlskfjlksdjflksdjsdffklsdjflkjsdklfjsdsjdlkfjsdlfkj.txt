@@ -1,0 +1,1 @@
+I was under the impression Firefox supported WebP forever ago. mfw it _still_ hasn't implemented it (which means most all of my pictures aren't showing for firefox users). Dear Mozilla: are you retarded? You implement vp8/9 but not WebP? l2logic
