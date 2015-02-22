@@ -9,7 +9,7 @@
 MouseOrMotionOrMySexyFaceViewMakerGui::MouseOrMotionOrMySexyFaceViewMakerGui(QObject *parent)
     : QObject(parent)
     , m_Gui(0)
-    , m_SystemTrayIconMenu(0)
+    //, m_SystemTrayIconMenu(0)
 {
     connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(handleAboutToQuit()));
     connect(&m_BusinessThread, SIGNAL(objectIsReadyForConnectionsOnly()), this, SLOT(handleMouseAndOrMotionViewMakerReadyForConnections()));
@@ -99,17 +99,19 @@ MouseOrMotionOrMySexyFaceViewMakerGui::~MouseOrMotionOrMySexyFaceViewMakerGui()
 {
     if(m_Gui)
         delete m_Gui;
-    if(m_SystemTrayIconMenu)
-        delete m_SystemTrayIconMenu;
+    /*if(m_SystemTrayIconMenu)
+        delete m_SystemTrayIconMenu;*/
 }
 void MouseOrMotionOrMySexyFaceViewMakerGui::handleMouseAndOrMotionViewMakerReadyForConnections()
 {
     MouseOrMotionOrMySexyFaceViewMaker *business = m_BusinessThread.getObjectPointerForConnectionsOnly();
     connect(business, SIGNAL(presentPixmapForViewingRequested(QPixmap)), m_Gui, SLOT(presentPixmapForViewing(QPixmap)));
+    connect(m_Gui, SIGNAL(setMouseOrMotionOrMySexyFaceViewModeRequested()), business, SLOT(setMouseOrMotionOrMySexyFaceViewMode()));
+    connect(m_Gui, SIGNAL(setMySexyFaceViewModeRequested()), business, SLOT(setMySexyFaceViewMode()));
 
     m_Gui->show();
 
-
+#if 0
     QIcon systemTrayIconGraphic(":/systemTrayIcon.svg");
     QSystemTrayIcon *systemTrayIcon = new QSystemTrayIcon(systemTrayIconGraphic, this);
     m_SystemTrayIconMenu = new QMenu();
@@ -136,8 +138,8 @@ void MouseOrMotionOrMySexyFaceViewMakerGui::handleMouseAndOrMotionViewMakerReady
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
     m_SystemTrayIconMenu->addAction(quitAction);
     systemTrayIcon->setContextMenu(m_SystemTrayIconMenu);
-    systemTrayIcon->show();
-
+    systemTrayIcon->setVisible(true);
+#endif
 
     QMetaObject::invokeMethod(business, "startMakingMouseOrMotionOrMySexyFaceViews", Qt::QueuedConnection, Q_ARG(QSize, m_ViewSize), Q_ARG(int, m_CaptureFps), Q_ARG(int, m_MotionDetectionFps), Q_ARG(int, m_BottomPixelRowsToIgnore), Q_ARG(QString, m_CameraDeviceName), Q_ARG(QSize, m_CameraResolution));
 }

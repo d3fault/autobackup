@@ -61,9 +61,9 @@ signals:
     void presentPixmapForViewingRequested(const QPixmap &);
 public slots:
     void startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int captureFps, int motionDetectionFps, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution);
-    void setMouseOrMotionOrMySexyFaceViewMode(bool enabled);
-    void setMouseOrLastMouseViewMode(bool enabled);
-    void setMySexyFaceViewMode(bool enabled);
+    void setMouseOrMotionOrMySexyFaceViewMode();
+    //void setMouseOrLastMouseViewMode();
+    void setMySexyFaceViewMode();
     void captureIntervalTimerTimedOut();
     void motionDetectionIntervalTimerTimedOut();
 private slots:

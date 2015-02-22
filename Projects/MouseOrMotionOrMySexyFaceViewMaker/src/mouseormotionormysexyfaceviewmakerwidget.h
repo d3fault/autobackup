@@ -12,10 +12,14 @@ class MouseOrMotionOrMySexyFaceViewMakerWidget : public QWidget
 public:
     MouseOrMotionOrMySexyFaceViewMakerWidget(const QSize &viewSize, QWidget *parent = 0);
     ~MouseOrMotionOrMySexyFaceViewMakerWidget();
+protected:
+    void mouseDoubleClickEvent(QMouseEvent *e);
 private:
     QLabel *m_ViewLabel;
 signals:
     void startMakingMouseAndOrMotionViewsRequested();
+    void setMouseOrMotionOrMySexyFaceViewModeRequested();
+    void setMySexyFaceViewModeRequested();
 public slots:
     void presentPixmapForViewing(const QPixmap &tehPixmap);
 };

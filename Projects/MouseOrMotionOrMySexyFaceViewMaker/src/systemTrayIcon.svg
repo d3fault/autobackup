@@ -25,72 +25,16 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
-  <g
-     transform="translate(0,-1020.3622)"
-     id="layer1">
-    <rect
-       width="32"
-       height="32"
-       x="0"
-       y="1020.3622"
-       id="rect3060"
-       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none" />
-    <text
-       x="-16.802834"
-       y="1025.2317"
-       id="text3024"
-       xml:space="preserve"
-       style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"><tspan
-         x="14.331932"
-         y="1035.2317"
-         id="tspan3032"
-         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;font-family:Sans;-inkscape-font-specification:Sans"><tspan
-           id="tspan3830"
-           style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#00ff00;font-family:Sans;-inkscape-font-specification:Sans"><tspan
-             x="9.8866196"
-             y="1025.2317"
-             dx="0 0 0 0 0 0"
-             id="tspan3028"
-             style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#00ff00;font-family:Sans;-inkscape-font-specification:Sans">Mouse</tspan></tspan><tspan
-           x="14.331932"
-           y="1030.2317"
-           dx="0 0 0"
-           id="tspan3034"
-           style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;font-family:Sans;-inkscape-font-specification:Sans">or</tspan></tspan><tspan
-         x="9.5975571"
-         y="1040.2317"
-         id="tspan3038"
-         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#00ffff;font-family:Sans;-inkscape-font-specification:Sans"><tspan
-           x="9.5975571"
-           y="1035.2317"
-           dx="0 0 0 0 0 0 0"
-           id="tspan3040"
-           style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#00ffff;font-family:Sans;-inkscape-font-specification:Sans">Motion</tspan></tspan><tspan
-         x="14.331932"
-         y="1045.2317"
-         id="tspan3044"
-         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;font-family:Sans;-inkscape-font-specification:Sans"><tspan
-           x="14.331932"
-           y="1040.2317"
-           dx="0 0 0"
-           id="tspan3046"
-           style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;font-family:Sans;-inkscape-font-specification:Sans">or</tspan></tspan><tspan
-         x="2.8358383"
-         y="1050.2317"
-         id="tspan3050"
-         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ffdd55;font-family:Sans;-inkscape-font-specification:Sans"><tspan
-           x="2.8358383"
-           y="1045.2317"
-           dx="0 0 0 0 0 0 0 0 0 0 0 0 0"
-           id="tspan3052"
-           style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ffdd55;font-family:Sans;-inkscape-font-specification:Sans">My Sexy Face</tspan></tspan><tspan
-         x="4.8983378"
-         y="1050.2317"
-         id="tspan3056"
-         style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#f4e3d7;font-family:Sans;-inkscape-font-specification:Sans"><tspan
-           x="4.8983378"
-           y="1050.2317"
-           id="tspan3058"
-           style="font-size:4px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#f4e3d7;font-family:Sans;-inkscape-font-specification:Sans">View Maker</tspan></tspan></text>
-  </g>
+  <rect
+     width="32"
+     height="32"
+     x="0"
+     y="0"
+     id="rect2997"
+     style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none" />
+  <path
+     d="m 16.135593,14.508474 c 0,0 1e-6,0 1e-6,0 3e-6,2e-6 0,7e-6 -2e-6,8e-6 -1.3e-5,1.5e-5 -3.6e-5,-2e-6 -4.5e-5,-1.3e-5 -3.9e-5,-5.6e-5 1.7e-5,-1.28e-4 6.6e-5,-1.53e-4 1.62e-4,-8.3e-5 3.36e-4,6.6e-5 3.93e-4,2.1e-4 1.48e-4,3.76e-4 -1.85e-4,7.44e-4 -5.25e-4,8.5e-4 -7.61e-4,2.38e-4 -0.0015,-4.24e-4 -0.0016,-0.0011 -3.52e-4,-0.0014 8.49e-4,-0.0026 0.0021,-0.0029 0.0024,-4.91e-4 0.0044,0.0015 0.0047,0.0037 6.51e-4,0.0038 -0.0026,0.0069 -0.0061,0.0074 -0.0058,8.28e-4 -0.01049,-0.0042 -0.01114,-0.0096 -0.001,-0.0085 0.0063,-0.01532 0.01434,-0.01612 0.01206,-0.0012 0.02171,0.0093 0.02267,0.02073 0.0014,0.01671 -0.01318,0.02997 -0.02912,0.03107 -0.02264,0.0016 -0.04046,-0.01823 -0.04168,-0.03989 -0.0017,-0.03005 0.02465,-0.05357 0.05348,-0.05487 0.0392,-0.0018 0.06971,0.03268 0.07104,0.07038 0.0018,0.05034 -0.04258,0.08934 -0.09109,0.09064 -0.06376,0.0017 -0.112975,-0.05462 -0.114138,-0.116194 -0.0015,-0.07978 0.06912,-0.141132 0.146292,-0.142046 0.09871,-0.0012 0.174387,0.08641 0.174908,0.182039 6.59e-4,0.120902 -0.106826,0.21335 -0.224134,0.213307 -0.146738,-5.4e-5 -0.258669,-0.130755 -0.257859,-0.273321 0.001,-0.176614 0.158593,-0.311038 0.330394,-0.309222 0.210945,0.0022 0.371182,0.190764 0.368087,0.396192 -0.0038,0.250177 -0.227719,0.439873 -0.471605,0.435185 -0.294776,-0.0057 -0.517921,-0.26993 -0.511285,-0.557568 0.008,-0.345232 0.317896,-0.606182 0.655069,-0.597196 0.402062,0.01071 0.705549,0.372143 0.693764,0.765144 -0.01397,0.465805 -0.433221,0.816961 -0.88888,0.801877 -0.537026,-0.01778 -0.941398,-0.501706 -0.922462,-1.027414 0.0222,-0.616315 0.578203,-1.079886 1.181937,-1.056488 0.704287,0.0273 1.233493,0.663342 1.204963,1.35369 -0.03313,0.801583 -0.757779,1.403332 -1.543968,1.368937 -0.908869,-0.03976 -1.59056,-0.8622 -1.549501,-1.754117 0.04727,-1.026839 0.977316,-1.796381 1.985537,-1.74779 1.156212,0.05572 2.022043,1.103866 1.964981,2.239685 -0.0652,1.297732 -1.242619,2.268839 -2.518068,2.202291 -1.452173,-0.07577 -2.538111,-1.39437 -2.460984,-2.822252 0.08752,-1.620332 1.559944,-2.831245 3.153856,-2.742365 1.803037,0.100542 3.149675,1.740195 3.047781,3.514555 -0.114916,2.001141 -1.936002,3.494883 -3.906078,3.378628 -2.215525,-0.130738 -3.868399,-2.148278 -3.736345,-4.330216 0.148102,-2.447098 2.377965,-4.2717977 4.788814,-4.1224105 2.696796,0.1671055 4.706706,2.6260285 4.538354,5.2837725 -0.187853,2.965584 -2.893472,5.174798 -5.817052,4.985747 -3.254457,-0.210446 -5.6777972,-3.181322 -5.46621,-6.39067 0.234997,-3.564434 3.49064,-6.2174757 7.006706,-5.9814058 3.896565,0.2616167 6.795654,3.8225148 6.533044,7.6672928 -0.290421,4.251931 -4.178067,7.414207 -8.374627,7.122882 C 10.502741,22.227922 7.0593258,17.991001 7.3816556,13.418487 7.7367161,8.3816617 12.346495,4.6383176 17.320269,4.9940669 22.788927,5.3852128 26.851846,10.392522 26.460137,15.794024 26.030224,21.722355 20.5996,26.125373 14.742711,25.695036 8.3256386,25.22354 3.5610971,19.342672 4.0328636,13.001516 4.5488952,6.0653806 10.908105,0.91696814 17.763659,1.4331029 25.250466,1.9967629 30.80604,8.8636102 30.242459,16.264975 29.627933,24.335377 22.222925,30.322371 14.243026,29.708121 8.0124246,29.228522 2.6009721,24.892654 0.59671225,19.001624"
+     transform="matrix(1.0435817,0,0,0.99925312,-0.01541729,0.55400506)"
+     id="path3767"
+     style="fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
 </svg>

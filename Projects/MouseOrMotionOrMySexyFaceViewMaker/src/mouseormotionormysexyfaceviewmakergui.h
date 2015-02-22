@@ -26,7 +26,7 @@ private:
     int m_BottomPixelRowsToIgnore;
     QString m_CameraDeviceName;
     QSize m_CameraResolution;
-    QMenu *m_SystemTrayIconMenu;
+    //QMenu *m_SystemTrayIconMenu;
 public slots:
     void handleMouseAndOrMotionViewMakerReadyForConnections();
     void handleAboutToQuit();

@@ -108,7 +108,7 @@ void MouseOrMotionOrMySexyFaceViewMaker::drawMySexyFace()
 {
     if(m_HaveFrameOfMySexyFace)
     {
-        if(!m_ShowingMySexyFace)
+        if(!m_ShowingMySexyFace && m_ViewMode != MySexyFaceViewMode)
         {
             if(!m_TogglingMinimumsTimerIsStarted)
             {
@@ -126,8 +126,8 @@ void MouseOrMotionOrMySexyFaceViewMaker::drawMySexyFace()
             {
                 //you might think the desktop should be redrawn before the my sexy face thumbnail is, but since nothing has changed that would be pointless
                 REDRAW_MY_FACE_THUMBNAIL_ON_CURRENTLY_PRESENTED_PIXMAP
-                        //not enough time elaspsed
-                        return;
+                //not enough time elaspsed
+                return;
             }
         }
 
@@ -168,28 +168,26 @@ void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceVie
 
     QStringList ffmpegArguments;
     ffmpegArguments << "-loglevel" << "warning" << "-f" << "video4linux2" << "-s" <<  (QString::number(cameraResolution.width()) + QString("x") + QString::number(cameraResolution.height()));
-    //need to upgrade my ffmpeg version: ffmpegArguments << "-aspect" << "3:2";
-    ffmpegArguments << "-channel" << "1" << "-i" << cameraDevice << "-vcodec" << "rawvideo" << "-an" << "-r" << "21" << "-map" << "0" /*<< "-vf" << "crop=720:452:0:17"*/ << "-f" << "rawvideo" << "-pix_fmt" << "rgb32" << "-"; //QCamera is shit, libav too hard to use directly (isuck (actually i'd argue that that means the api sucks. cli args and c/c++ api should map 1:1 imotbh)). fuck yea one liners...
+    //need to upgrade my ffmpeg version: ffmpegArguments << "-aspect" << "3:2";    
+
+    //no brightness double:
+    //ffmpegArguments << "-channel" << "1" << "-i" << cameraDevice << "-vcodec" << "rawvideo" << "-an" << "-r" << "21" << "-map" << "0" /*<< "-vf" << "crop=720:452:0:17"*/ << "-f" << "rawvideo" << "-pix_fmt" << "rgb32" << "-"; //QCamera is shit, libav too hard to use directly (isuck (actually i'd argue that that means the api sucks. cli args and c/c++ api should map 1:1 imotbh)). fuck yea one liners...
+    //brightness doubled:
+    ffmpegArguments << "-channel" << "1" << "-i" << cameraDevice << "-vcodec" << "rawvideo" << "-an" << "-r" << "21" << "-map" << "0" << "-vf" << /*"lutyuv=val*2"*/ "lutyuv='y=gammaval(0.55)'" << "-f" << "rawvideo" << "-pix_fmt" << "rgb32" << "-"; //QCamera is shit, libav too hard to use directly (isuck (actually i'd argue that that means the api sucks. cli args and c/c++ api should map 1:1 imotbh)). fuck yea one liners...
+
     m_FfMpegProcess.start("/usr/local/bin/ffmpeg", ffmpegArguments, QIODevice::ReadOnly);
 
     //m_BytesNeededForOneRawRGB32frame = cameraResolution.width() * cameraResolution.height() * 32; //TODOoptional: bpp should be any format QImage accepts, but really ffmpeg is pro as fuck at converting anything and everything into RGB32 :-D, so it's kind of a useless customization...
     m_BytesNeededForOneRawRGB32frame = cameraResolution.width() * cameraResolution.height() * 32;
     m_LastReadFrameOfMySexyFace.resize(m_BytesNeededForOneRawRGB32frame);
 }
-void MouseOrMotionOrMySexyFaceViewMaker::setMouseOrMotionOrMySexyFaceViewMode(bool enabled)
+void MouseOrMotionOrMySexyFaceViewMaker::setMouseOrMotionOrMySexyFaceViewMode()
 {
-    if(enabled)
-        m_ViewMode = MouseOrMotionOrMySexyFaceViewMode;
+    m_ViewMode = MouseOrMotionOrMySexyFaceViewMode;
 }
-void MouseOrMotionOrMySexyFaceViewMaker::setMouseOrLastMouseViewMode(bool enabled)
+void MouseOrMotionOrMySexyFaceViewMaker::setMySexyFaceViewMode()
 {
-    if(enabled)
-        m_ViewMode = LastMouseOrMotionViewMode;
-}
-void MouseOrMotionOrMySexyFaceViewMaker::setMySexyFaceViewMode(bool enabled)
-{
-    if(enabled)
-        m_ViewMode = MySexyFaceViewMode;
+    m_ViewMode = MySexyFaceViewMode;
 }
 void MouseOrMotionOrMySexyFaceViewMaker::captureIntervalTimerTimedOut()
 {
@@ -263,6 +261,9 @@ void MouseOrMotionOrMySexyFaceViewMaker::captureIntervalTimerTimedOut()
 }
 void MouseOrMotionOrMySexyFaceViewMaker::motionDetectionIntervalTimerTimedOut()
 {
+    if(m_ViewMode == MySexyFaceViewMode)
+        return;
+
     //see if there was motion
     const QImage currentImage = m_CurrentDesktopCap_AsPixmap_ForMotionDetection_ButAlsoForPresentingWhenNotCheckingForMotion.toImage(); //TODOoptimization: might be worth it to compose current over previous using the xor thingo
     if(!m_PreviousDesktopCap_AsImage_ForMotionDetection.isNull())

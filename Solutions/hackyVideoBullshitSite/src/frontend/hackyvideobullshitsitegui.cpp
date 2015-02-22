@@ -336,7 +336,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         return;
     }
 
-    if(newInternalPath == "/licenses")
+    if(newInternalPath == "/licenses" || newInternalPath == "/licenses/")
     {
         deleteTimelineAndDirectoryBrowsingStackIfNeeded();
 
@@ -569,8 +569,8 @@ void HackyVideoBullshitSiteGUI::displayVideoSegment(const string &videoSegmentFi
         videoSegmentPlayer->ended().connect(this, &HackyVideoBullshitSiteGUI::handleLatestVideoSegmentEnded);
     }
     videoSegmentPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
-    //videoPlayer->resize(720, 480);
-    videoSegmentPlayer->resize(800, 600);
+    videoPlayer->resize(720, 480);
+    //videoSegmentPlayer->resize(800, 600);
     videoSegmentPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::XHTMLUnsafeText));
 
     WResource *videoSegmentResource = new WFileResource("video/ogg", videoSegmentFilePath, videoSegmentPlayer);
