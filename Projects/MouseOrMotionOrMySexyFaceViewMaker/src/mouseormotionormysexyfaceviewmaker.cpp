@@ -28,6 +28,7 @@ emit presentPixmapForViewingRequested(m_CurrentPixmapBeingPresented);
 
 MouseOrMotionOrMySexyFaceViewMaker::MouseOrMotionOrMySexyFaceViewMaker(QObject *parent)
     : QObject(parent)
+    , m_ViewMode(MouseOrMotionOrMySexyFaceViewMode)
     , m_Initialized(false)
     , m_CaptureIntervalTimer(new QTimer(this))
     , m_MotionDetectionIntervalTimer(new QTimer(this))
@@ -103,6 +104,50 @@ QPoint MouseOrMotionOrMySexyFaceViewMaker::makeRectAroundPointStayingWithinResol
     }
     return ret;
 }
+void MouseOrMotionOrMySexyFaceViewMaker::drawMySexyFace()
+{
+    if(m_HaveFrameOfMySexyFace)
+    {
+        if(!m_ShowingMySexyFace)
+        {
+            if(!m_TogglingMinimumsTimerIsStarted)
+            {
+                m_TogglingMinimumsElapsedTimer.start();
+                m_TogglingMinimumsTimerIsStarted = true;
+                REDRAW_MY_FACE_THUMBNAIL_ON_CURRENTLY_PRESENTED_PIXMAP
+                        return;
+            }
+            if(m_TogglingMinimumsElapsedTimer.elapsed() >= MOUSE_OR_MOTION_OR_MY_SEXY_FACE_MINIMUM_TIME_MS_WITHOUT_MOTION_BEFORE_SHOWING_MY_FACE)
+            {
+                m_ShowingMySexyFace = true;
+                m_TogglingMinimumsTimerIsStarted = false; //not necessary since mouse/motion set to false...
+            }
+            else
+            {
+                //you might think the desktop should be redrawn before the my sexy face thumbnail is, but since nothing has changed that would be pointless
+                REDRAW_MY_FACE_THUMBNAIL_ON_CURRENTLY_PRESENTED_PIXMAP
+                        //not enough time elaspsed
+                        return;
+            }
+        }
+
+        //TODOoptimization: we re-convert the last read frame of my sexy face even if it hasn't changed (ie, our app's capture fps is higher than the capture CARD fps)
+
+        //present my sexy face. no desktop thumbnail for now, might change my mind on this later (pointless since it would be motionless and unreadable)
+        QImage mySexyFaceImage((const unsigned char*)(m_LastReadFrameOfMySexyFace.constData()), m_CameraResolution.width(), m_CameraResolution.height(), QImage::Format_RGB32);
+        QImage mySexyFaceImageMaybeScaled = mySexyFaceImage;
+
+        //COMMENT NEXT 3 LINES TO NOT SCALE 720x480 -> 800x600
+        if(m_CameraResolution.width() != m_ViewWidth || m_CameraResolution.height() != m_ViewHeight)
+        {
+            mySexyFaceImageMaybeScaled = mySexyFaceImage.scaled(m_ViewWidth, m_ViewHeight);
+        }
+
+        QPixmap mySexyFacePixmap = QPixmap::fromImage(mySexyFaceImageMaybeScaled);
+        emit presentPixmapForViewingRequested(mySexyFacePixmap);
+    }
+    //else: leave whatever is already drawn (TO DOnereq: app starts up and there is no motion. nothing is drawn (who cares tbh)?)
+}
 void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int captureFps, int motionDetectionFps, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution)
 {
     if(!m_Initialized)
@@ -131,8 +176,29 @@ void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceVie
     m_BytesNeededForOneRawRGB32frame = cameraResolution.width() * cameraResolution.height() * 32;
     m_LastReadFrameOfMySexyFace.resize(m_BytesNeededForOneRawRGB32frame);
 }
+void MouseOrMotionOrMySexyFaceViewMaker::setMouseOrMotionOrMySexyFaceViewMode(bool enabled)
+{
+    if(enabled)
+        m_ViewMode = MouseOrMotionOrMySexyFaceViewMode;
+}
+void MouseOrMotionOrMySexyFaceViewMaker::setMouseOrLastMouseViewMode(bool enabled)
+{
+    if(enabled)
+        m_ViewMode = LastMouseOrMotionViewMode;
+}
+void MouseOrMotionOrMySexyFaceViewMaker::setMySexyFaceViewMode(bool enabled)
+{
+    if(enabled)
+        m_ViewMode = MySexyFaceViewMode;
+}
 void MouseOrMotionOrMySexyFaceViewMaker::captureIntervalTimerTimedOut()
 {
+    if(m_ViewMode == MySexyFaceViewMode)
+    {
+        drawMySexyFace();
+        return;
+    }
+
     m_CurrentDesktopCap_AsPixmap_ForMotionDetection_ButAlsoForPresentingWhenNotCheckingForMotion = QPixmap(); //memory optimization apparently
 
     //see if mouse position changed as optimization
@@ -190,48 +256,10 @@ void MouseOrMotionOrMySexyFaceViewMaker::captureIntervalTimerTimedOut()
         }
         emit presentPixmapForViewingRequested(m_CurrentPixmapBeingPresented);
     }
-    else if(m_HaveFrameOfMySexyFace)
+    else
     {
-        //draw my sexy face
-        if(!m_ShowingMySexyFace)
-        {
-            if(!m_TogglingMinimumsTimerIsStarted)
-            {
-                m_TogglingMinimumsElapsedTimer.start();
-                m_TogglingMinimumsTimerIsStarted = true;
-                REDRAW_MY_FACE_THUMBNAIL_ON_CURRENTLY_PRESENTED_PIXMAP
-                return;
-            }
-            if(m_TogglingMinimumsElapsedTimer.elapsed() >= MOUSE_OR_MOTION_OR_MY_SEXY_FACE_MINIMUM_TIME_MS_WITHOUT_MOTION_BEFORE_SHOWING_MY_FACE)
-            {
-                m_ShowingMySexyFace = true;
-                m_TogglingMinimumsTimerIsStarted = false; //not necessary since mouse/motion set to false...
-            }
-            else
-            {
-                //you might think the desktop should be redrawn before the my sexy face thumbnail is, but since nothing has changed that would be pointless
-                REDRAW_MY_FACE_THUMBNAIL_ON_CURRENTLY_PRESENTED_PIXMAP
-                //not enough time elaspsed
-                return;
-            }
-        }
-
-        //TODOoptimization: we re-convert the last read frame of my sexy face even if it hasn't changed (ie, our app's capture fps is higher than the capture CARD fps)
-
-        //present my sexy face. no desktop thumbnail for now, might change my mind on this later (pointless since it would be motionless and unreadable)
-        QImage mySexyFaceImage((const unsigned char*)(m_LastReadFrameOfMySexyFace.constData()), m_CameraResolution.width(), m_CameraResolution.height(), QImage::Format_RGB32);
-        QImage mySexyFaceImageMaybeScaled = mySexyFaceImage;
-
-        //COMMENT NEXT 3 LINES TO NOT SCALE 720x480 -> 800x600
-        if(m_CameraResolution.width() != m_ViewWidth || m_CameraResolution.height() != m_ViewHeight)
-        {
-            mySexyFaceImageMaybeScaled = mySexyFaceImage.scaled(m_ViewWidth, m_ViewHeight);
-        }
-
-        QPixmap mySexyFacePixmap = QPixmap::fromImage(mySexyFaceImageMaybeScaled);
-        emit presentPixmapForViewingRequested(mySexyFacePixmap);
+        drawMySexyFace();
     }
-    //else: leave whatever is already drawn (TO DOnereq: app starts up and there is no motion. nothing is drawn (who cares tbh)?)
 }
 void MouseOrMotionOrMySexyFaceViewMaker::motionDetectionIntervalTimerTimedOut()
 {

@@ -9,6 +9,8 @@
 #include "mouseormotionormysexyfaceviewmaker.h"
 #include "mouseormotionormysexyfaceviewmakerwidget.h"
 
+class QMenu;
+
 class MouseOrMotionOrMySexyFaceViewMakerGui : public QObject
 {
     Q_OBJECT
@@ -24,6 +26,7 @@ private:
     int m_BottomPixelRowsToIgnore;
     QString m_CameraDeviceName;
     QSize m_CameraResolution;
+    QMenu *m_SystemTrayIconMenu;
 public slots:
     void handleMouseAndOrMotionViewMakerReadyForConnections();
     void handleAboutToQuit();

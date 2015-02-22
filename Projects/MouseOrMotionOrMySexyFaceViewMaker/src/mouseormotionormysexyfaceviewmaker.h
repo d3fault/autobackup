@@ -20,6 +20,13 @@ public:
     ~MouseOrMotionOrMySexyFaceViewMaker();
 private:
     //Mouse Or Motion members
+    enum ViewMode
+    {
+          MouseOrMotionOrMySexyFaceViewMode
+        , LastMouseOrMotionViewMode
+        , MySexyFaceViewMode
+    };
+    ViewMode m_ViewMode;
     bool m_Initialized;
     QTimer *m_CaptureIntervalTimer;
     QTimer *m_MotionDetectionIntervalTimer;
@@ -49,11 +56,14 @@ private:
 
     //Mouse Or Motion methods
     QPoint makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint);
-
+    void drawMySexyFace();
 signals:
     void presentPixmapForViewingRequested(const QPixmap &);
 public slots:
     void startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int captureFps, int motionDetectionFps, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution);
+    void setMouseOrMotionOrMySexyFaceViewMode(bool enabled);
+    void setMouseOrLastMouseViewMode(bool enabled);
+    void setMySexyFaceViewMode(bool enabled);
     void captureIntervalTimerTimedOut();
     void motionDetectionIntervalTimerTimedOut();
 private slots:

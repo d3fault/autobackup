@@ -9,7 +9,7 @@ wheezy non-free:
 p7zip-rar virtualbox-guest-additions
 
 wheezy-backports main:
-tmux iceweasel
+tmux
 
 jessie main:
 libclang-3.4-dev llvm-3.4-dev
