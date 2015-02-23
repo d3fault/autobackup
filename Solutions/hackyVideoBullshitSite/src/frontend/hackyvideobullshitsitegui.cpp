@@ -539,8 +539,10 @@ void HackyVideoBullshitSiteGUI::displayVideoSegment(const string &videoSegmentFi
     //TODOreq: "Link to this: ", needs to chop off base dir from absolute path to make clean url...
     new WBreak(videoSegmentContainer);
 
+#if 0
     //TODOreq: previous button
     WPushButton *nextVideoClipPushButton = new WPushButton("Next Clip", videoSegmentContainer); //if next != current; aka if new-current != current-when-started-playing
+    nextVideoClipPushButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
     if(environment().ajax())
     {
         WCheckBox *autoPlayNextVideoSegmentCheckbox = new WCheckBox("Auto-Play Next ", videoSegmentContainer);
@@ -549,9 +551,10 @@ void HackyVideoBullshitSiteGUI::displayVideoSegment(const string &videoSegmentFi
         autoPlayNextVideoSegmentCheckbox->unChecked().connect(this, &HackyVideoBullshitSiteGUI::handleAutoPlayNextVideoSegmentCheckboxUnchecked);
     }
     else
-    {
+#endif
+    //{
         new WText(" ", videoSegmentContainer);
-    }
+    //}
     //TODOreq: latest  button (perhaps disabled at first, noop if latest is what we're already at)
     new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS), "Browse All Video Clips", videoSegmentContainer);
 
@@ -562,14 +565,13 @@ void HackyVideoBullshitSiteGUI::displayVideoSegment(const string &videoSegmentFi
 
     new WBreak(videoSegmentContainer);
 
-    nextVideoClipPushButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
     WVideo *videoSegmentPlayer = new WVideo(videoSegmentContainer);
     if(environment().ajax())
     {
         videoSegmentPlayer->ended().connect(this, &HackyVideoBullshitSiteGUI::handleLatestVideoSegmentEnded);
     }
     videoSegmentPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
-    videoPlayer->resize(720, 480);
+    videoSegmentPlayer->resize(720, 480);
     //videoSegmentPlayer->resize(800, 600);
     videoSegmentPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::XHTMLUnsafeText));
 

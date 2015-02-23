@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1424647715
+Documents/minddump/:1424659527
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1568,6 +1568,7 @@ Documents/minddump/lsfjsofuwlrjasdfaiskfyhawiydkfuasfoulkerw.txt:1344077299
 Documents/minddump/lsjaflasjdflkjklsdjfsdouflsdjfouewlrkjousdflkjsdfou.txt:1398336159
 Documents/minddump/lsjdfjslfkjsdlkfjsdljflskdjflkjdsklfjsdlfjsdlkfjeworulsjkdflsdjflks.txt:1423398636
 Documents/minddump/lsjdfljsdkfjsldjfsdhflksdjflkjsdflkjsdfkl.txt:1401093508
+Documents/minddump/lsjdflkjsdfkjsdklfjsdklfjsdfsdfdflsdkjfklsdjflkjlk.txt:1424656260
 Documents/minddump/lsjdflkjsdflkjsdlkfjsldkjflksdjflkjsdlkfjsdlkfjlksdj.txt:1424341410
 Documents/minddump/lsjdflkjsldkjfkjwerousldfjosdufljdsfoulekrjsufsdl.txt:1397553381
 Documents/minddump/lsjdflksjdflkjsdfosduiflsdjfousdflolololjsdflksjdfosfolololsdjfksdjfkls.txt:1393170391
@@ -2375,6 +2376,7 @@ Documents/minddump/sldkjflskjflkasjfkljslkfjaslkjfsldkjflsdkweroiuf.txt:13994888
 Documents/minddump/sldkjfsdjfousldfkjouwelrjkouflkjasdfoiuerksdaflkj.txt:1366068707
 Documents/minddump/sldkjfsldkjflksdjflskdjfoweurlkjsdfousdflkjsdfosudflksdf.txt:1405613971
 Documents/minddump/sldkjfsldkjflksdjfsdkjsdfsdfsdlflsdjflkjsdflkjsdflkjsd.txt:1423507744
+Documents/minddump/sldkjfslkdjfkjsdklfjslkdjflksdjflkjsdlkfjsdklkljsdlkfjsdlkf.txt:1424650411
 Documents/minddump/slfdjlksdjflksdjfoiusldfkjfdsousldfjoulkjwerouisdflkj.txt:1367590872
 Documents/minddump/slfdjsljflsdkjflkjsdflkjsdlfkjsdfhjsldkfjdklfjsdflk.txt:1400835596
 Documents/minddump/slfdkjaslkdfjadslfjsodfulsdakjfosduflkajsdfousdlfkjasdfl.txt:1374412315
@@ -2390,6 +2392,7 @@ Documents/minddump/slkdfjlskdjfksdfklsjdfkljwerousdlkfjsdlfjlskdfjsdlkfjoeukdf.t
 Documents/minddump/slkdfjlskdjflsdkjflsdjfsjdfljsdlkfjdsfljsdlfkjsdfou.txt:1405835171
 Documents/minddump/slkdfjslkdjfskdjfkjsdfkljsdfkljsdkfljuwiokljsfsdfkl.txt:1362494365
 Documents/minddump/slkdjflksjdfkljdsfljsdfodsufljsdfoulewjrouslfjsdlfkj.txt:1393807789
+Documents/minddump/slkdjflksjfdlkjsdklfjsdklfjklsdjfklsdjfklsjdklflkjsdflk.txt:1424659527
 Documents/minddump/slkdjflskdjflkjsdfosdfuljkwerjkdfsoiusdelkj.txt:1360823579
 Documents/minddump/slkdjflskjdfsdoifuwlerkjsdafousdlfkjweroui.txt:1358069286
 Documents/minddump/slkfdjsdlkjfsdwerreouflkjweorulkjsdfoulkjelkjfsdlksfdjklsfd.txt:1364944514
@@ -2755,7 +2758,7 @@ Pictures/trying.to.visualize.google.filesystem.but.failing.to.understand.NoSql-K
 Pictures/unfinished.comic.kaylees.feramones.are.a.sort.of.drug.and.the.weirdest.thing.is.that.it.is.actually.true.svg:1361527419
 Pictures/works.legality.span.svg:1355298125
 Pictures/yet.another.tangent.explained.and.for.some.reason.always.below.zero.until.launch.makes.sense.in.my.head.svg:1360730935
-Projects/:1414294581
+Projects/:1424662766
 Projects/AdAgency/:1333471837
 Projects/AdAgency/design/:1333472910
 Projects/AdAgency/design/Add.Funds.Request.dia:1330206440
@@ -3219,11 +3222,11 @@ Projects/Hottee/:1395376892
 Projects/Hottee/design/:1395376928
 Projects/Hottee/design/initial.idea.txt:1395376928
 Projects/Hottee/src/:1396460993
-Projects/Hottee/src/cli/:1424645511
-Projects/Hottee/src/cli/HotteeCli.pro:1395740585
+Projects/Hottee/src/cli/:1424656468
+Projects/Hottee/src/cli/HotteeCli.pro:1424653922
 Projects/Hottee/src/cli/hotteecli.cpp:1402473245
 Projects/Hottee/src/cli/hotteecli.h:1402473036
-Projects/Hottee/src/cli/main.cpp:1402472001
+Projects/Hottee/src/cli/main.cpp:1424661472
 Projects/Hottee/src/lib/:1402473271
 Projects/Hottee/src/lib/hottee.cpp:1402473270
 Projects/Hottee/src/lib/hottee.h:1402473271
@@ -3621,7 +3624,7 @@ Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakergui.h:1396200558
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.cpp:1396112933
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.h:1396112897
 Projects/MouseOrMotionOrMySexyFaceViewMaker/:1396501297
-Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1424618609
+Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1424662097
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/MouseOrMotionOrMySexyFaceViewMaker.pro:1396499493
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/main.cpp:1424587792
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseCursor.qrc:1424585283
@@ -3632,6 +3635,13 @@ Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmak
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmakerwidget.cpp:1424598846
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmakerwidget.h:1424598395
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/systemTrayIcon.svg:1424596976
+Projects/MusicFingers/:1424662918
+Projects/MusicFingers/MusicFingersCli/:1424662998
+Projects/MusicFingers/MusicFingersCli/MusicFingersCli.pro:1424662938
+Projects/MusicFingers/MusicFingersCli/main.cpp:1424662783
+Projects/MusicFingers/lib/:1424663928
+Projects/MusicFingers/lib/musicfingers.cpp:1424663928
+Projects/MusicFingers/lib/musicfingers.h:1424663433
 Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/:1412762111
 Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/design/:1412752309
 Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/design/initial.idea.aldfjalsdjflasdkjfosduflsdakjfsdof.txt:1412752309
@@ -4996,7 +5006,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:13
 Projects/libAvGraphicsItem2/:1344095614
 Projects/libAvGraphicsItem2/design/:1386045282
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
-Projects/libAvGraphicsItem2/src/:1404447241
+Projects/libAvGraphicsItem2/src/:1424663552
 Projects/libAvGraphicsItem2/src/backend/:1324464673
 Projects/libAvGraphicsItem2/src/backend/audiovideosynchronizer.cpp:1324382622
 Projects/libAvGraphicsItem2/src/backend/audiovideosynchronizer.h:1324382612
@@ -5400,7 +5410,7 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400803006
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1424591273
+Solutions/hackyVideoBullshitSite/src/:1424664521
 Solutions/hackyVideoBullshitSite/src/backend/:1420970672
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1420970672
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1420970631
@@ -5410,10 +5420,10 @@ Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.cpp:1401
 Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.h:1401264947
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1400919404
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1399509052
-Solutions/hackyVideoBullshitSite/src/frontend/:1424591168
+Solutions/hackyVideoBullshitSite/src/frontend/:1424664404
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.cpp:1398743229
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.h:1398743110
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1424591168
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1424664404
 Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1420974998
 Solutions/hackyVideoBullshitSite/src/frontend/hvbsshared.h:1424550347
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1401352804

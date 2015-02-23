@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2014-03-20T21:37:43
+# Project created by QtCreator 2015-02-22T20:39:41
 #
 #-------------------------------------------------
 
@@ -8,18 +8,15 @@ QT       += core
 
 QT       -= gui
 
-TARGET = HotteeCli
+TARGET = MusicFingersCli
 CONFIG   += console
 CONFIG   -= app_bundle
 
 TEMPLATE = app
 
+
 SOURCES += main.cpp \
-    hotteecli.cpp \
-    ../lib/hottee.cpp
+    ../lib/musicfingers.cpp
 
 HEADERS += \
-    hotteecli.h \
-    ../lib/hottee.h
-
-LIBS += -lboost_filesystem -lboost_system
+    ../lib/musicfingers.h
