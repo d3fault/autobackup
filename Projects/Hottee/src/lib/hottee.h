@@ -46,6 +46,7 @@ private:
     }
     bool readInputProcessesStdOutAndWriteAccordingly();
     qint64 getPercentOf100mbChunkUsedPerMinute();
+    bool folderIsntEmpty(const QString &path);
 signals:
     void e(const QString &);
     void d(const QString &);

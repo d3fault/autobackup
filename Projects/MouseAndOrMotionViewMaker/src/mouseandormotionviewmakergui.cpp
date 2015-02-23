@@ -12,7 +12,7 @@ MouseAndOrMotionViewMakerGui::MouseAndOrMotionViewMakerGui(QObject *parent) :
     //optional arguments parsing
     QStringList arguments = QCoreApplication::arguments();
     bool convertOk;
-    m_ViewSize.setWidth(800);
+    m_ViewSize.setWidth(720);
     if(arguments.size() > 1)
     {
         int viewWidth = arguments.at(1).toInt(&convertOk);
@@ -21,7 +21,7 @@ MouseAndOrMotionViewMakerGui::MouseAndOrMotionViewMakerGui(QObject *parent) :
             m_ViewSize.setWidth(viewWidth);
         }
     }
-    m_ViewSize.setHeight(600);
+    m_ViewSize.setHeight(480);
     if(arguments.size() > 2)
     {
         int viewHeight = arguments.at(2).toInt(&convertOk);

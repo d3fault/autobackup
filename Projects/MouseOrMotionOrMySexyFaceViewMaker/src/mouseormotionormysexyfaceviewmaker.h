@@ -43,6 +43,7 @@ private:
     QPixmap m_MousePixmapToDraw;
     QPoint m_LastPointWithMotionSeen;
     bool m_ThereWasMotionRecently;
+    bool m_DrawMySexyFaceFullscreenAsSoonAsFramesAreRead;
 
     //ffmpeg members
     bool m_HaveFrameOfMySexyFace;

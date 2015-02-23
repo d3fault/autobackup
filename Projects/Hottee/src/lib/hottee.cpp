@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QCoreApplication>
 #include <QDateTime>
+#include <QDir>
 
 #include <boost/filesystem.hpp> //*shakes fist at Qt*
 
@@ -249,11 +250,30 @@ qint64 Hottee::getPercentOf100mbChunkUsedPerMinute()
     }
 #endif
 }
+bool Hottee::folderIsntEmpty(const QString &path)
+{
+    QDir dir(path);
+    QStringList entries = dir.entryList(QDir::AllEntries);
+    return (!entries.empty());
+}
 //tl;dr: inputProcess's stdout copied to outputProcess, and also either destinationDir 1 or 2 in 100mb chunks, notifying when size is about to, or has, run out (indicating human intervention necessary)
 void Hottee::startHotteeing(const QString &inputProcessPathAndArgs, const QString &destinationDir1, const QString &destinationDir2, const QString &outputProcessPathAndArgs, qint64 outputProcessFilenameOffsetJoinPoint)
 {    
     m_Destination1endingWithSlash = appendSlashIfNeeded(destinationDir1);
     m_Destination2endingWithSlash = appendSlashIfNeeded(destinationDir2);
+
+    if(folderIsntEmpty(m_Destination1endingWithSlash))
+    {
+        emit d("Folder not empty:" + m_Destination1endingWithSlash);
+        emit quitRequested();
+        return;
+    }
+    if(folderIsntEmpty(m_Destination2endingWithSlash))
+    {
+        emit d("Folder not empty:" + m_Destination2endingWithSlash);
+        emit quitRequested();
+        return;
+    }
 
     //NOTE: It is required that destinations are large enough so that when 80% boundary is crossed, there is at least another 100mb left... or else the app will segfault. The below >= 1gb check is my way of ensuring that. I calculated 500mb as the theoretical min, but made it 1gb instead because of the inexact nature of "crossing over" the 80% point
     if(eitherDestinationIsLessThan1gbCapacity())

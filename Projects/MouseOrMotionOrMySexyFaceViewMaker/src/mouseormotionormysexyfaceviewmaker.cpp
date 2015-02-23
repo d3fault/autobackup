@@ -34,6 +34,7 @@ MouseOrMotionOrMySexyFaceViewMaker::MouseOrMotionOrMySexyFaceViewMaker(QObject *
     , m_MotionDetectionIntervalTimer(new QTimer(this))
     , m_MousePixmapToDraw(":/mouseCursor.svg")
     , m_ThereWasMotionRecently(false)
+    , m_DrawMySexyFaceFullscreenAsSoonAsFramesAreRead(false)
     , m_HaveFrameOfMySexyFace(false)
     , m_ShowingMySexyFace(false) /*the worst default ever*/
     , m_TogglingMinimumsTimerIsStarted(false)
@@ -193,11 +194,12 @@ void MouseOrMotionOrMySexyFaceViewMaker::captureIntervalTimerTimedOut()
 {
     if(m_ViewMode == MySexyFaceViewMode)
     {
-        drawMySexyFace();
+        //drawMySexyFace();
         return;
     }
 
     m_CurrentDesktopCap_AsPixmap_ForMotionDetection_ButAlsoForPresentingWhenNotCheckingForMotion = QPixmap(); //memory optimization apparently
+    m_DrawMySexyFaceFullscreenAsSoonAsFramesAreRead = false;
 
     //see if mouse position changed as optimization
     QPoint currentCursorPosition = QCursor::pos();
@@ -256,7 +258,8 @@ void MouseOrMotionOrMySexyFaceViewMaker::captureIntervalTimerTimedOut()
     }
     else
     {
-        drawMySexyFace();
+        //drawMySexyFace();
+        m_DrawMySexyFaceFullscreenAsSoonAsFramesAreRead = true;
     }
 }
 void MouseOrMotionOrMySexyFaceViewMaker::motionDetectionIntervalTimerTimedOut()
@@ -304,20 +307,18 @@ void MouseOrMotionOrMySexyFaceViewMaker::motionDetectionIntervalTimerTimedOut()
 void MouseOrMotionOrMySexyFaceViewMaker::handleFfMpegStandardOutputReadyRead()
 {
     //QByteArray readImageBuffer(bytesNeededForOneRawRGB32frame);
-    bool atLeastOneRead = false;
     while(m_FfMpegProcess.bytesAvailable() >= m_BytesNeededForOneRawRGB32frame)
     {
         //read in all of them one frame at a time, even though we'll disregard all but the last
         qint64 amountRead = m_FfMpegProcess.read(m_LastReadFrameOfMySexyFace.data(), m_BytesNeededForOneRawRGB32frame);
         if(amountRead == m_BytesNeededForOneRawRGB32frame)
         {
-            atLeastOneRead = true;
+            m_HaveFrameOfMySexyFace = true; //we COULD set this to false after it's presented, so we could stay in desktop mode or something if face cap process crashes etc... fuggit
+            if(m_DrawMySexyFaceFullscreenAsSoonAsFramesAreRead || m_ViewMode == MySexyFaceViewMode)
+            {
+                drawMySexyFace();
+            }
         }
-    }
-    if(atLeastOneRead)
-    {
-        //m_LastReadFrameOfMySexyFace = readImageBuffer;
-        m_HaveFrameOfMySexyFace = true; //we COULD set this to false after it's presented, so we could stay in desktop mode or something if face cap process crashes etc... fuggit
     }
 }
 void MouseOrMotionOrMySexyFaceViewMaker::handleFfmpegProcessError()

@@ -8,6 +8,7 @@
 //^when current frame is deemed optimial for determining if change, compare against last frame deemed optimal, not "previous frame grabbed/presented". i was tempted to compare against previous frame grabbed/presented, but that would cause lots of motion (the typing of a single character, for example) to be missed
 //TODOoptional: blinking cursors should be ignored in motion detection, but i'm still theorizing a formula that is the perfect balance of flexible (lots of blinking cursors in lots of apps) and rigid (the characters l/I/|/etc should still be detected)
 //TODOoptional: iconify since will be open assloads
+//TODOoptional: every ~10 seconds or so, compare two frames of "my sexy face". I encountered a situation where the capture card failed -_-, and this could detect that. I should pop up a system tray notification or something when that happens
 
 //would be trivial to save the image instead of (or in addition to) presenting it, but since i don't need/want that functionality, i'm not going to code it...
 int main(int argc, char *argv[])
