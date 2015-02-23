@@ -484,6 +484,10 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         sourceFileTextStream << "}" << endl;
     }
 
+    //Source destructor
+    sourceFileTextStream    << currentClass->ClassName << "::~" << currentClass->ClassName << "()" << endl
+                            << "{ }" << endl;
+
     //Source properties getters and setters definitions
     Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
     {

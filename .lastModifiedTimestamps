@@ -2690,7 +2690,7 @@ OldStaticMeta/VariousTreeingsDuringHugeArchivePurge/Silver1tbCalvaryeBooksEasyTr
 OldStaticMeta/VariousTreeingsDuringHugeArchivePurge/externals.which.is.which.txt:1367597729
 OldStaticMeta/VariousTreeingsDuringHugeArchivePurge/k3.wpl:1264978231
 OldStaticMeta/my.brain.hashes.at.launch.txt:1424346028
-Pictures/:1421999898
+Pictures/:1424668283
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -2746,6 +2746,7 @@ Pictures/i.am.building.a.giant.metaphorical.toggle.switch.asdfoiuwerlkjfdousdfj.
 Pictures/kaylee.heidi.programming.etc.aldjfalsdjfals.svg:1352187513
 Pictures/launch.not.launch.comparison.saldfjsdlfkjowuerlkjsdf.svg:1390662501
 Pictures/lol.metaphor.then.and.now.rpc.generator.is.a.tractor.and.a.tangent.that.bores.me.to.death.and.is.time.consuming.BUT.will.save.time.too.svg:1364417816
+Pictures/masterpiece.svg:1424668283
 Pictures/perfect.desktop.2011.10.31.png:1320069650
 Pictures/proprietary.gpl.lgpl.thinking.out.loud.trying.to.pinpoint.fair.use.mb.which.is.impossibru.svg:1355706959
 Pictures/sdfkhjsldkfjlkdjsfoewurkldsfhlkjsdflkhsdf.svg:1402197729
@@ -2958,7 +2959,7 @@ Projects/DesignEqualsImplementation2/design/use.case.is.series.of.either.slot.de
 Projects/DesignEqualsImplementation2/design/use.cases.define.slot.bodies.at.runtime.but.only.resolve.where.connect.statements.go.at.source.generation.time.txt:1408252978
 Projects/DesignEqualsImplementation2/design/when.to.do.the.cross.thread.call.analysis.optimization.sdfljsdlfjsdl.txt:1410402949
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1414470870
+Projects/DesignEqualsImplementation2/src/:1424672351
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
@@ -3059,7 +3060,7 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationprivatemethod
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprivatemethodsynchronouscallstatement.h:1410401193
 Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.cpp:1410400943
 Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.h:1410417365
-Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.cpp:1413771901
+Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.cpp:1424669653
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.h:1412598628
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.cpp:1412600743
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.h:1409871198
@@ -3624,7 +3625,7 @@ Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakergui.h:1396200558
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.cpp:1396112933
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.h:1396112897
 Projects/MouseOrMotionOrMySexyFaceViewMaker/:1396501297
-Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1424662097
+Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1424673634
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/MouseOrMotionOrMySexyFaceViewMaker.pro:1396499493
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/main.cpp:1424587792
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseCursor.qrc:1424585283
@@ -3635,13 +3636,15 @@ Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmak
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmakerwidget.cpp:1424598846
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmakerwidget.h:1424598395
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/systemTrayIcon.svg:1424596976
-Projects/MusicFingers/:1424662918
-Projects/MusicFingers/MusicFingersCli/:1424662998
-Projects/MusicFingers/MusicFingersCli/MusicFingersCli.pro:1424662938
-Projects/MusicFingers/MusicFingersCli/main.cpp:1424662783
-Projects/MusicFingers/lib/:1424663928
-Projects/MusicFingers/lib/musicfingers.cpp:1424663928
-Projects/MusicFingers/lib/musicfingers.h:1424663433
+Projects/MusicFingers/:1424675926
+Projects/MusicFingers/src/:1424675941
+Projects/MusicFingers/src/cli/:1424674552
+Projects/MusicFingers/src/cli/MusicFingersCli.pro:1424662938
+Projects/MusicFingers/src/cli/main.cpp:1424662783
+Projects/MusicFingers/src/lib/:1424678371
+Projects/MusicFingers/src/lib/musicfingers.cpp:1424678333
+Projects/MusicFingers/src/lib/musicfingers.h:1424678371
+Projects/MusicFingers/src/musicfingers.pri:1424675972
 Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/:1412762111
 Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/design/:1412752309
 Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/design/initial.idea.aldfjalsdjflasdkjfosduflsdakjfsdof.txt:1412752309
@@ -3717,7 +3720,7 @@ Projects/Osios2/design/sldjflkasdjfklajsdlfkjsadfouwelrkjsdfsdofjsldkfjsd.txt:14
 Projects/Osios2/design/this.is.a.data.security.application.but.thats.probably.not.what.you.think.it.means.txt:1414798918
 Projects/Osios2/reverts/:1414326188
 Projects/Osios2/reverts/revertBackupIDontThinkINeedOrWantThisAnymoreForOsios2.diffOf5d375c768ac2c1f97e1bf2431693e4f4be2df01b:1414325772
-Projects/Osios2/src/:1415450326
+Projects/Osios2/src/:1424668100
 Projects/Osios2/src/mainmenuitems/:1415006573
 Projects/Osios2/src/mainmenuitems/writer/:1415092608
 Projects/Osios2/src/mainmenuitems/writer/eventemittingplaintextedit.cpp:1415092608
@@ -3784,7 +3787,7 @@ Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge
 Projects/ProjectGoOutside/i.could.use.this.as.a.name.of.my.stream.channel.show.or.whatever.its.called.txt:1355727455
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
 Projects/ProjectGoOutside/wasdf.com.home.for.fingers.software.and.setup.but.also.for.controlling.windows.linux.etc.TITLE.FOR.DOMAIN.txt:1341829441
-Projects/Prototypes/:1420080840
+Projects/Prototypes/:1424674647
 Projects/Prototypes/AdDoublesRawMathLaunchSim/:1390331620
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/:1390584039
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/AdDoublesRawMathLaunchSim.pro:1390329374
@@ -3956,6 +3959,14 @@ Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/multise
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/serverwidget.cpp:1353794064
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/serverwidget.h:1353793900
 Projects/Prototypes/MultiClientServerTypesHelloer/src/ServerClientShared/:1356102268
+Projects/Prototypes/MusicFingersBackendTesterGui/:1424678167
+Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/:1424678613
+Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui.pro:1424676076
+Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/main.cpp:1424675997
+Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/musicfingersbackendtestergui.cpp:1424678613
+Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/musicfingersbackendtestergui.h:1424676284
+Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/musicfingersbackendtesterwidget.cpp:1424678438
+Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/musicfingersbackendtesterwidget.h:1424678242
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/:1355485092
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/design/:1355485102
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/design/lmfao.asdfjsdlfjoiweurlkjsfdosudfl.txt:1355485102
@@ -4235,7 +4246,7 @@ Projects/Prototypes/easyTreeTest/src/main.cpp:1349007743
 Projects/Prototypes/easyTreeTest/src/mainwidget.cpp:1349020608
 Projects/Prototypes/easyTreeTest/src/mainwidget.h:1349020281
 Projects/Prototypes/libAvAudioPlayer/:1344095745
-Projects/Prototypes/libAvAudioPlayer/src/:1326544225
+Projects/Prototypes/libAvAudioPlayer/src/:1424665743
 Projects/Prototypes/libAvAudioPlayer/src/libAvAudioPlayer.pro:1324565742
 Projects/Prototypes/libAvAudioPlayer/src/libavaudioplayer.cpp:1326489296
 Projects/Prototypes/libAvAudioPlayer/src/libavaudioplayer.h:1324566886
@@ -5006,7 +5017,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:13
 Projects/libAvGraphicsItem2/:1344095614
 Projects/libAvGraphicsItem2/design/:1386045282
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
-Projects/libAvGraphicsItem2/src/:1424663552
+Projects/libAvGraphicsItem2/src/:1424665359
 Projects/libAvGraphicsItem2/src/backend/:1324464673
 Projects/libAvGraphicsItem2/src/backend/audiovideosynchronizer.cpp:1324382622
 Projects/libAvGraphicsItem2/src/backend/audiovideosynchronizer.h:1324382612
@@ -5433,7 +5444,7 @@ Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1401030303
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.h:1401030044
 Solutions/hackyVideoBullshitSite/src/hvbsresources.qrc:1401115865
 Solutions/hackyVideoBullshitSite/src/lastmodifiedtimestampsandpaths.h:1401009546
-Solutions/hackyVideoBullshitSite/src/main.cpp:1401172995
+Solutions/hackyVideoBullshitSite/src/main.cpp:1424665291
 Solutions/hackyVideoBullshitSite/src/wtcontrollerandstdoutowner.cpp:1424557701
 Solutions/hackyVideoBullshitSite/src/wtcontrollerandstdoutowner.h:1424557437
 Solutions/hackyVideoBullshitSite/tools/:1401400769
