@@ -262,13 +262,24 @@ void Hottee::startHotteeing(const QString &inputProcessPathAndArgs, const QStrin
     m_Destination1endingWithSlash = appendSlashIfNeeded(destinationDir1);
     m_Destination2endingWithSlash = appendSlashIfNeeded(destinationDir2);
 
-    if(folderIsntEmpty(m_Destination1endingWithSlash))
+    QDir dir1(m_Destination1endingWithSlash);
+    if(!dir1.exists())
+    {
+        dir1.mkpath(m_Destination1endingWithSlash);
+    }
+    else if(folderIsntEmpty(m_Destination1endingWithSlash))
     {
         emit d("Folder not empty:" + m_Destination1endingWithSlash);
         emit quitRequested();
         return;
     }
-    if(folderIsntEmpty(m_Destination2endingWithSlash))
+
+    QDir dir2(m_Destination2endingWithSlash);
+    if(!dir2.exists())
+    {
+        dir2.mkpath(m_Destination2endingWithSlash);
+    }
+    else if(folderIsntEmpty(m_Destination2endingWithSlash))
     {
         emit d("Folder not empty:" + m_Destination2endingWithSlash);
         emit quitRequested();

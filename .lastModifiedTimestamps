@@ -3226,13 +3226,13 @@ Projects/Hottee/:1395376892
 Projects/Hottee/design/:1395376928
 Projects/Hottee/design/initial.idea.txt:1395376928
 Projects/Hottee/src/:1396460993
-Projects/Hottee/src/cli/:1424756507
+Projects/Hottee/src/cli/:1424768021
 Projects/Hottee/src/cli/HotteeCli.pro:1424653922
 Projects/Hottee/src/cli/hotteecli.cpp:1402473245
 Projects/Hottee/src/cli/hotteecli.h:1402473036
 Projects/Hottee/src/cli/main.cpp:1424661472
-Projects/Hottee/src/lib/:1424734378
-Projects/Hottee/src/lib/hottee.cpp:1424734378
+Projects/Hottee/src/lib/:1424767969
+Projects/Hottee/src/lib/hottee.cpp:1424767969
 Projects/Hottee/src/lib/hottee.h:1424695401
 Projects/Ideas/:1423938843
 Projects/Ideas/QtSslRpc/:1341833104
