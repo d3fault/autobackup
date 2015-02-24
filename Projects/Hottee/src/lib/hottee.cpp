@@ -14,6 +14,7 @@
 #define EMIT_CHANGE_SOON_AT_PERCENT 80
 
 //TODOoptional: could also put each 100mb chunk through a hash for checksumming etc
+//TODOoptional: when "q" is used and the input process has stopped, it should quit? or maybe if WHENEVER the input process stops, it should quit? Right now I'm using "q" followed by a "qq", but idk if the first q makes any difference
 Hottee::Hottee(QObject *parent) :
     QObject(parent), m_InputProcess(0), m_OutputProcess(0), m_WriteToOutputProcess(false), m_CurrentOutputFile(0), m_Current100mbChunkWriteOffset(0), m_Dest2(false), m_CurrentlyWritingToEitherDestination(false), m_StopWritingAtEndOfThisChunk(false), m_StartWritingAtBeginningOfNextChunk(false), m_QuitAfterThisChunkFinishes(false), m_100mbChunkOffsetForFilename(0), m_DestinationStoragePercentUsedLastTime(0), m_LastTimestampOfSyncInMS(0), m_RestartOutputProcessOnNextChunkStart(false)
 { }

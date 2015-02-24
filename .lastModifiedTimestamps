@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1424749668
+Documents/minddump/:1424769746
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1613,6 +1613,7 @@ Documents/minddump/lskdjflskdjfosudflksjdfousdfljsdfuisfusofusdfljsfousdflk.txt:
 Documents/minddump/lskfdjalksjfdlkjsdkfljsjflksjdflkjasdlkfjslkfdjouwelkrjousdlkfjsodf.txt:1394615654
 Documents/minddump/lskfjasfopwieruslafkjsdfoiuwerkldsfjoiu.txt:1339487667
 Documents/minddump/lskfjslkfjskdljfoiuwerlkjsdfoukjlkwerj.txt:1354931147
+Documents/minddump/lskjdfkljsdfkjsdklfjskldjfklsjdfkljsdklfjlksdjflksdjflk.txt:1424769339
 Documents/minddump/lskjdfkljsdkfljsdfosudflkjdsofusdlkjfosduflskdjfousdflkjsdfou.txt:1393072979
 Documents/minddump/lskjdfkljslkfjsdfoudslkfjsdofuisdlfkjsdfouewrlkjsdf.txt:1359960295
 Documents/minddump/lskjdfljsldkjflksdjfouwerlkjsoduflsdjkfosudflskdjfouljweroulkjsdfsfdjkkljsdkf.txt:1394268960
@@ -1980,6 +1981,7 @@ Documents/minddump/sdflkjsflkjsadfoiudslfkjsdflkjfdsouewrljksdfoiul.txt:13599660
 Documents/minddump/sdflkjsflkjsdfouwelrjouslfkjsdofulsdjfouwlkrjouisdflkjsdoifjsdfu.txt:1371448699
 Documents/minddump/sdflkjsflkjsdlkjfosduflkjsdfouewrl.txt:1359416305
 Documents/minddump/sdflkjskdjwerflsjdflkjsdflkjweurousldfjsdofusldkfj.txt:1394155574
+Documents/minddump/sdflkjsldfjslkdjflskdjflkjsdflkjsdlkfjsldkjfsdjflsdkjflkdsjfl.txt:1424769746
 Documents/minddump/sdflkjsldfkjsdofusldfkjsodfulsdkjfosudfljgskjdfousdflkj.txt:1368559131
 Documents/minddump/sdflkjsldfkjskjdfksjdflksjdflksdfdofusdlfkjsdfoiu.txt:1393100353
 Documents/minddump/sdflkjsldkjflsakdjfosduflksjdfousdflkjsdfoiulksdofuiasldkfj.txt:1379627229
@@ -3232,7 +3234,7 @@ Projects/Hottee/src/cli/hotteecli.cpp:1402473245
 Projects/Hottee/src/cli/hotteecli.h:1402473036
 Projects/Hottee/src/cli/main.cpp:1424661472
 Projects/Hottee/src/lib/:1424767969
-Projects/Hottee/src/lib/hottee.cpp:1424767969
+Projects/Hottee/src/lib/hottee.cpp:1424771210
 Projects/Hottee/src/lib/hottee.h:1424695401
 Projects/Ideas/:1423938843
 Projects/Ideas/QtSslRpc/:1341833104
@@ -5466,14 +5468,14 @@ Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/atomicallyupdatesymlinktolatestgitcommit.h:1400562770
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/:1397023766
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1397080688
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1424752374
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1424769771
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/FfmpegSegmentUploaderCli.pro:1398993069
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.cpp:1399486271
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.h:1399348328
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/main.cpp:1399661422
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/:1424590499
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/:1424768367
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.cpp:1399693351
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.h:1424610430
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.h:1424768367
 Solutions/hackyVideoBullshitSite/tools/hvbsInstaller/:1401090612
 Solutions/hackyVideoBullshitSite/tools/hvbsInstaller/design/:1401090667
 Solutions/hackyVideoBullshitSite/tools/hvbsInstaller/design/hvbs.installer.initial.idea.basically.to.make.binary.drops.easier.without.polluting.my.git.repo.with.binaries.txt:1401090667
