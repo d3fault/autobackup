@@ -12,9 +12,11 @@ public:
 private:
     QTextStream m_StdErr;
     QTextStream m_StdOut;
+    bool m_Verbose;
 private slots:
     void handleE(const QString &msg);
     void handleO(const QString &msg);
+    void emitDoneAndQuit(bool success);
 };
 
 #endif // ABC2TRANSACTIONCREDITORCLI_H

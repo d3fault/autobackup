@@ -253,7 +253,7 @@ qint64 Hottee::getPercentOf100mbChunkUsedPerMinute()
 bool Hottee::folderIsntEmpty(const QString &path)
 {
     QDir dir(path);
-    QStringList entries = dir.entryList(QDir::AllEntries);
+    QStringList entries = dir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
     return (!entries.empty());
 }
 //tl;dr: inputProcess's stdout copied to outputProcess, and also either destinationDir 1 or 2 in 100mb chunks, notifying when size is about to, or has, run out (indicating human intervention necessary)

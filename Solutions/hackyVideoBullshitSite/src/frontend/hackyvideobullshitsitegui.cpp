@@ -332,6 +332,15 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
         WAnchor *tpbMyBrainPrivateFilesAnchor = new WAnchor(WLink(WLink::Url, HVBS_MY_BRAIN_PRIVATE_FILES_TORRENT_PUBLIC_RESOURCE), "My Brain - Private Files", downloadContainer);
         tpbMyBrainPrivateFilesAnchor->setTarget(TargetNewWindow);
 
+        new WBreak(downloadContainer);
+        new WBreak(downloadContainer);
+        new WBreak(downloadContainer);
+        new WBreak(downloadContainer);
+
+        new WText("Github (text only): git clone https://github.com/d3faultdotxbe/autobackup.git", downloadContainer);
+        new WBreak(downloadContainer);
+        new WText("Pull requests welcome/encouraged. Derive from me plx!", downloadContainer); //TODOreq: Gerrit
+
         setMainContent(downloadContainer);
         return;
     }

@@ -8,17 +8,22 @@
 
 #include <boost/property_tree/ptree.hpp>
 
+#include "abc2couchbaseandjsonkeydefines.h"
+
 using namespace boost::property_tree;
 
 class Abc2TransactionCreditor : public QObject, public ISynchronousLibCouchbaseUser
 {
     Q_OBJECT
 public:
-    explicit Abc2TransactionCreditor(QObject *parent = 0);
+    explicit Abc2TransactionCreditor(bool verbose = false, QObject *parent = 0);
 private:
     bool m_ViewQueryHadError;
     ptree m_ViewQueryPropertyTree;
     QSet<QString> m_UsersWithProfilesFoundLocked; //TODOoptimization: withdrawal request processor shouldn't use QStringList either
+    bool m_Verbose;
+    SatoshiInt m_TotalAmountCreditted;
+    SatoshiInt m_TotalAmountEarned;
 
     void errorOutput(const string &errorString);
 

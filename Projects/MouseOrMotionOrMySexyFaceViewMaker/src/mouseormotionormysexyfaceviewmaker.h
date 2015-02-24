@@ -43,7 +43,8 @@ private:
     QPixmap m_MousePixmapToDraw;
     QPoint m_LastPointWithMotionSeen;
     bool m_ThereWasMotionRecently;
-    bool m_DrawMySexyFaceFullscreenAsSoonAsFramesAreRead;
+    //bool m_DrawMySexyFaceFullscreenAsSoonAsFramesAreRead;
+    QImage m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks;
 
     //ffmpeg members
     bool m_HaveFrameOfMySexyFace;
@@ -58,6 +59,8 @@ private:
     //Mouse Or Motion methods
     QPoint makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint);
     void drawMySexyFace();
+    bool thereIsEnoughRoomToDrawQtCreatorBlinkingCursorInOrderToExcludeItFromFutureSearching(int verticalPositionOfMotionPoint, int horizontalPositionOfMotionPoint, int imageWidth);
+    void thereWasMotionAt(QPoint point);
 signals:
     void presentPixmapForViewingRequested(const QPixmap &);
 public slots:

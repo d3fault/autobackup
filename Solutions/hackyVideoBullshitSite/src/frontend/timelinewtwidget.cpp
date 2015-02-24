@@ -18,6 +18,7 @@
 #include <QFileInfo>
 #include <QTextStream>
 #include <QStringList>
+#include <QDateTime>
 
 #include "hvbsshared.h"
 
@@ -128,7 +129,7 @@ TimeLineWtWidget::TimeLineWtWidget(WContainerWidget *parent)
 void TimeLineWtWidget::redirectToRandomPointInTimeline()
 {
     LastModifiedTimestampsAndPaths *sortedLastModifiedTimestamps = myQt4and5AtomicPointerGet(); //pointer only guaranteed to be valid for minimum 5 minutes after the loadAquire (rofl so ugly hack but idgaf), so never keep it around, always load again <3
-    static unsigned int randomSeed = 0; //not thread safe and VERY likely to get weird undefined values, but actually it doesn't matter at all since it's just being used for a qsrand call (all undefined results would still fall within the range of the unsigned int, and hell i could even argue that the thread unsafety actually ADDS to the randomness muahahaha), fuck the police :). this is without a doubt my favorite hack i've ever done... so ugly and yet still "safe" in an awesome way. come to think of it, i don't even need the datetime or raw unique id shit anymore...
+    static unsigned int randomSeed = QDateTime::currentMSecsSinceEpoch(); //not thread safe and VERY likely to get weird undefined values, but actually it doesn't matter at all since it's just being used for a qsrand call (all undefined results would still fall within the range of the unsigned int, and hell i could even argue that the thread unsafety actually ADDS to the randomness muahahaha), fuck the police :). this is without a doubt my favorite hack i've ever done... so ugly and yet still "safe" in an awesome way. come to think of it, i don't even need the datetime or raw unique id shit anymore...
     WApplication *wApplication = WApplication::instance();
     qsrand(++randomSeed);
     //qsrand(wApplication->rawUniqueId() + static_cast<unsigned int>(WDateTime::currentDateTime().toTime_t()) + (++randomSeed)); //TODOoptimization: since q[s]rand are threadsafe, they probably use locking and so are a bottleneck. i wish i could store a boost rng in thread-specific-storage just like WApplication::instance() is. yea just decided it's worth asking on wt forums <3, would have tons of good uses aside from just this

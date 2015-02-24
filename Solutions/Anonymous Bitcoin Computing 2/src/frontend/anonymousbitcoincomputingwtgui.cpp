@@ -275,6 +275,14 @@ void AnonymousBitcoinComputingWtGUI::showHomeWidget()
         new WBreak(m_HomeWidget);
         new WText("Tor Hidden Service: ", m_HomeWidget);
         new WAnchor(WLink(WLink::Url, ABC_MY_WWW_TOR_HIDDEN_SERVICE_URL), ABC_MY_WWW_TOR_HIDDEN_SERVICE_URL, m_HomeWidget);
+
+        new WBreak(m_HomeWidget);
+        new WBreak(m_HomeWidget);
+
+        new WText("Github: ", m_HomeWidget);
+        const std::string githubUrl = "https://github.com/d3faultdotxbe/autobackup/tree/master/Solutions/Anonymous Bitcoin Computing 2";
+        WAnchor *githubAnchor = new WAnchor(WLink(WLink::Url, githubUrl), githubUrl, m_HomeWidget);
+        githubAnchor->setTarget(TargetNewWindow);
     }
     m_MainStack->setCurrentWidget(m_HomeWidget);
 }

@@ -3,6 +3,7 @@
 #include <QTextStream>
 #include <QTimer>
 #include <QFileInfo>
+#include <QDateTime>
 
 //TODOoptional: take out 5 second wait thing since it's stupid and does nothing anyways (no connection = still passes). really the only way i can find out if it's connected is by seeing if an upload/rename completes. HOWEVER this is only optional because it's only visual (i mean aside from the stupid 5 second wait itself) and doesn't break anything else
 
@@ -298,6 +299,7 @@ void SftpUploaderAndRenamerQueue::handleSftpProcessReadyReadStandardOut()
             {
                 m_SftpPutInProgressSoWatchForRenameCommandEcho = false;
                 m_SegmentsQueuedForUpload.dequeue();
+                emit o(QDateTime::currentDateTime().toString() + " -- segment upload success");
                 if(m_SegmentsQueuedForUpload.isEmpty() && m_SftpUploaderAndRenamerQueueState != SftpUploaderAndRenamerQueueState_Started) //TODOoptional: the last segment PROBABLY won't be segmentLengthSeconds long, so the timestamp we calculate when it's added to the segment entry list will be early and 'pointing to a time in the previous segment'. i could solve this by keeping track of time elapsed or whatever and then only using that for the very last segment added when quitting, but i'm too lazy for now :-P
                 {
                     emit o("FfmpegSegmentUploader now cleanly stopping since upload queue is empty...");

@@ -6,8 +6,6 @@
 
 #include <libcouchbase/http.h>
 
-#include "abc2couchbaseandjsonkeydefines.h"
-
 
 /*
 The TYPICAL [non-error] flow goes like this:
@@ -25,9 +23,12 @@ Handling the ERROR/previous-fail cases:
 */
 
 //TODOreq: finding a transaction in state "creditting" where the seller doesn't have the profile locked means we failed after unlocking+creditting the profile. As error recovery, we simply change the state from creditting to creditted (ofc if the profile is locked, we know where to resume as well)
-Abc2TransactionCreditor::Abc2TransactionCreditor(QObject *parent)
+Abc2TransactionCreditor::Abc2TransactionCreditor(bool verbose, QObject *parent)
     : QObject(parent)
     , ISynchronousLibCouchbaseUser()
+    , m_Verbose(verbose)
+    , m_TotalAmountCreditted(0)
+    , m_TotalAmountEarned(0)
 { }
 void Abc2TransactionCreditor::errorOutput(const string &errorString)
 {
@@ -42,7 +43,8 @@ void Abc2TransactionCreditor::viewQueryCompleteCallbackStatic(lcb_http_request_t
 }
 void Abc2TransactionCreditor::viewQueryCompleteCallback(lcb_error_t error, const lcb_http_resp_t *resp)
 {
-    emit o("viewQueryCompleteCallback called (good)");
+    if(m_Verbose)
+        emit o("viewQueryCompleteCallback called (good)");
     if(error != LCB_SUCCESS)
     {
         emit e("httpCompleteCallback has error");
@@ -181,10 +183,19 @@ bool Abc2TransactionCreditor::creditTransactionIfStateReallyIsUncredittedAndRetu
     double transactionAmountInJsonDouble = satoshiIntToJsonDouble(transactionAmountInSatoshis);
     double transactionFeeAmountInJsonDouble = transactionFeeForTransactionAmount(transactionAmountInJsonDouble);
     SatoshiInt transactionFeeInSatoshis = jsonDoubleToSatoshiIntIncludingRounding(transactionFeeAmountInJsonDouble); //the rounding, it does nothing
+    if(transactionSellerQString == "d3fault")
+    {
+        m_TotalAmountEarned += transactionAmountInSatoshis;
+    }
+    else
+    {
+        m_TotalAmountEarned += transactionFeeInSatoshis;
+    }
     SatoshiInt userBalanceInSatoshis = boost::lexical_cast<SatoshiInt>(sellerAccountDoc.get<std::string>(JSON_USER_ACCOUNT_BALANCE));
     SatoshiInt transactionAmountAfterFeeInSatoshis = (transactionAmountInSatoshis - transactionFeeInSatoshis);
     //userBalanceInSatoshis += transactionAmountInSatoshis;
     userBalanceInSatoshis += transactionAmountAfterFeeInSatoshis;
+    m_TotalAmountCreditted += transactionAmountAfterFeeInSatoshis;
     sellerAccountDoc.put(JSON_USER_ACCOUNT_BALANCE, satoshiIntToSatoshiString(userBalanceInSatoshis));
     sellerAccountDoc.erase(JSON_USER_ACCOUNT_LOCKED_CREDITTING_TRANSACTION);
     opDescription = "cas swap+credit+unlock the seller (" + transactionSeller + ") for transaction: " + keyToTransactionMaybeWithStateOfUncreditted;
@@ -217,7 +228,8 @@ void Abc2TransactionCreditor::creditTransactions()
         emit transactionCredittingFinished(false);
         return;
     }
-    emit o("Connected...");
+    if(m_Verbose)
+        emit o("Connected...");
 
     lcb_set_http_complete_callback(m_Couchbase, Abc2TransactionCreditor::viewQueryCompleteCallbackStatic);
 
@@ -262,5 +274,11 @@ void Abc2TransactionCreditor::creditTransactions()
         }
     }
 
+    if(m_TotalAmountCreditted > 0)
+    {
+        emit o("Amount creditted: " + QString::fromStdString(satoshiIntToJsonString(m_TotalAmountCreditted)));
+        emit o("Amount earned: " + QString::fromStdString(satoshiIntToJsonString(m_TotalAmountEarned)));
+    }
     emit transactionCredittingFinished(true);
+
 }

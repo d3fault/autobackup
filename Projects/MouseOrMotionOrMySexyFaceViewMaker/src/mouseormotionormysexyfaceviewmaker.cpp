@@ -34,7 +34,8 @@ MouseOrMotionOrMySexyFaceViewMaker::MouseOrMotionOrMySexyFaceViewMaker(QObject *
     , m_MotionDetectionIntervalTimer(new QTimer(this))
     , m_MousePixmapToDraw(":/mouseCursor.svg")
     , m_ThereWasMotionRecently(false)
-    , m_DrawMySexyFaceFullscreenAsSoonAsFramesAreRead(false)
+    //, m_DrawMySexyFaceFullscreenAsSoonAsFramesAreRead(false)
+    , m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks(":/qtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.png")
     , m_HaveFrameOfMySexyFace(false)
     , m_ShowingMySexyFace(false) /*the worst default ever*/
     , m_TogglingMinimumsTimerIsStarted(false)
@@ -49,6 +50,7 @@ MouseOrMotionOrMySexyFaceViewMaker::MouseOrMotionOrMySexyFaceViewMaker(QObject *
     m_Initialized = true;
 
     QSize screenResolution = m_Screen->size();
+    qDebug() << screenResolution; //TODOoptional: if(numScreens > 1 && screen resolution == capture resolution, give qmessagebox asking yes/no for whether to continue. when i don't do xrandr, the secondary screen (as 'primaryScreen()' above) is used which fucks up royally the motion detection
     m_ScreenResolutionX = screenResolution.width();
     m_ScreenResolutionY = screenResolution.height();
 
@@ -149,6 +151,26 @@ void MouseOrMotionOrMySexyFaceViewMaker::drawMySexyFace()
     }
     //else: leave whatever is already drawn (TO DOnereq: app starts up and there is no motion. nothing is drawn (who cares tbh)?)
 }
+//this method depends on scanning from bottom to top, left to right
+bool MouseOrMotionOrMySexyFaceViewMaker::thereIsEnoughRoomToDrawQtCreatorBlinkingCursorInOrderToExcludeItFromFutureSearching(int verticalPositionOfMotionPoint, int horizontalPositionOfMotionPoint, int imageWidth)
+{
+    if((verticalPositionOfMotionPoint - m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.height()) < 0)
+    {
+        return false;
+    }
+    if((horizontalPositionOfMotionPoint + m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.width()) > imageWidth)
+    {
+        return false;
+    }
+    return true;
+}
+void MouseOrMotionOrMySexyFaceViewMaker::thereWasMotionAt(QPoint point)
+{
+    m_LastPointWithMotionSeen = point;
+    m_ShowingMySexyFace = false;
+    m_TogglingMinimumsTimerIsStarted = false;
+    m_ThereWasMotionRecently = true;
+}
 void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int captureFps, int motionDetectionFps, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution)
 {
     if(!m_Initialized)
@@ -194,12 +216,12 @@ void MouseOrMotionOrMySexyFaceViewMaker::captureIntervalTimerTimedOut()
 {
     if(m_ViewMode == MySexyFaceViewMode)
     {
-        //drawMySexyFace();
+        drawMySexyFace();
         return;
     }
 
     m_CurrentDesktopCap_AsPixmap_ForMotionDetection_ButAlsoForPresentingWhenNotCheckingForMotion = QPixmap(); //memory optimization apparently
-    m_DrawMySexyFaceFullscreenAsSoonAsFramesAreRead = false;
+    //m_DrawMySexyFaceFullscreenAsSoonAsFramesAreRead = false;
 
     //see if mouse position changed as optimization
     QPoint currentCursorPosition = QCursor::pos();
@@ -232,7 +254,7 @@ void MouseOrMotionOrMySexyFaceViewMaker::captureIntervalTimerTimedOut()
             }
         }
         emit presentPixmapForViewingRequested(m_CurrentPixmapBeingPresented);
-        m_PreviousDesktopCap_AsImage_ForMotionDetection = QImage(); //motion detection requires two non-mouse-movement frames in a row. this makes our !isNull check fail
+        //m_PreviousDesktopCap_AsImage_ForMotionDetection = QImage(); //motion detection requires two non-mouse-movement frames in a row. this makes our !isNull check fail
         return;
     }
 
@@ -258,8 +280,8 @@ void MouseOrMotionOrMySexyFaceViewMaker::captureIntervalTimerTimedOut()
     }
     else
     {
-        //drawMySexyFace();
-        m_DrawMySexyFaceFullscreenAsSoonAsFramesAreRead = true;
+        drawMySexyFace();
+        //m_DrawMySexyFaceFullscreenAsSoonAsFramesAreRead = true;
     }
 }
 void MouseOrMotionOrMySexyFaceViewMaker::motionDetectionIntervalTimerTimedOut()
@@ -268,7 +290,8 @@ void MouseOrMotionOrMySexyFaceViewMaker::motionDetectionIntervalTimerTimedOut()
         return;
 
     //see if there was motion
-    const QImage currentImage = m_CurrentDesktopCap_AsPixmap_ForMotionDetection_ButAlsoForPresentingWhenNotCheckingForMotion.toImage(); //TODOoptimization: might be worth it to compose current over previous using the xor thingo
+    QImage currentImage = m_CurrentDesktopCap_AsPixmap_ForMotionDetection_ButAlsoForPresentingWhenNotCheckingForMotion.toImage(); //TODOoptimization: might be worth it to compose current over previous using the xor thingo
+    const QImage currentImageBeforeQtCreatorBlinkingCursorDrawnIn = currentImage;
     if(!m_PreviousDesktopCap_AsImage_ForMotionDetection.isNull())
     {
         if(currentImage.size() == m_PreviousDesktopCap_AsImage_ForMotionDetection.size()) //don't crash/etc on resolution changes, just do nothing for now
@@ -276,23 +299,55 @@ void MouseOrMotionOrMySexyFaceViewMaker::motionDetectionIntervalTimerTimedOut()
             const int currentImageWidth = currentImage.width();
             const int currentImageHeight = currentImage.height();
 
-            //scan left right top down until difference seen. TODOoptimization: would definitely be more efficient to just center on the first difference seen, though on "window moving" we'd then see the top-left corner of the window being moved [only]. still, for typing etc it would suffice and save cpu. damnit, mfw window moves will trigger mouse movement code path anyways -_-
+            //scan left right bottom to top (used to be top to bottom, isn't anymore) until difference seen. TODOoptimization: would definitely be more efficient to just center on the first difference seen, though on "window moving" we'd then see the top-left corner of the window being moved [only]. still, for typing etc it would suffice and save cpu. damnit, mfw window moves will trigger mouse movement code path anyways -_-
             m_ThereWasMotionRecently = false;
             //what's easier? patching+recompiling qtcreator so that it doesn't show the line/col numbers (motion) at the top right corner (move it to bottom, or hide it altogether)... OR just scanning for motion from the bottom -> top instead of top -> bottom? ;-P.
-            for(int j = ((currentImageHeight-1)-m_BottomPixelRowsToIgnore); j > -1; --j)
+            bool firstMotionDetected = false;
+            for(int y = ((currentImageHeight-1)-m_BottomPixelRowsToIgnore); y > -1; --y)
             {
-                const QRgb *currentPixelOfCurrentImage = (const QRgb*)(currentImage.constScanLine(j));
-                const QRgb *currentPixelOfPreviousImage = (const QRgb*)(m_PreviousDesktopCap_AsImage_ForMotionDetection.constScanLine(j));
-                for(int i = 0; i < currentImageWidth; ++i)
+                QRgb *currentPixelOfCurrentImage = (QRgb*)(currentImage.scanLine(y));
+                QRgb *currentPixelOfPreviousImage = (QRgb*)(m_PreviousDesktopCap_AsImage_ForMotionDetection.scanLine(y));
+                for(int x = 0; x < currentImageWidth; ++x)
                 {
                     if(*currentPixelOfCurrentImage != *currentPixelOfPreviousImage)
                     {
-                        m_LastPointWithMotionSeen = QPoint(i, j);
-                        m_ShowingMySexyFace = false;
-                        m_TogglingMinimumsTimerIsStarted = false;
-
-                        m_ThereWasMotionRecently = true;
-                        break;
+                        //static int count = 0;
+                        if(!firstMotionDetected)
+                        {
+                            //find first motion, draw cursor on top (make sure there is space above and to the right of it, don't go out of bounds (if it would have been out of bounds, the motion is valid)).... then continue onto finding motion. when a second motion is detected, we know it is NOT the cursor. if no more motion is seen, it was only the cursor
+                            firstMotionDetected = true;
+                            if(thereIsEnoughRoomToDrawQtCreatorBlinkingCursorInOrderToExcludeItFromFutureSearching(y, x, currentImageWidth))
+                            {
+                                //draw qt blinking cursor and keep checking for motion
+                                //m_PreviousDesktopCap_AsImage_ForMotionDetection.save("/run/shm/beforeCursorDrawnIn_Previous-" + QString::number(count) + ".png");
+                                //currentImage.save("/run/shm/beforeCursorDrawnIn_Current-" + QString::number(count) + ".png");
+#if 1
+                                {
+                                    QPainter qtCreatorBlinkingCursorCurrentImagePainter(&currentImage);
+                                    qtCreatorBlinkingCursorCurrentImagePainter.drawImage(x, (y-m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.height())+1, m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks); //TODOoptional: the +1 accounts for an off by one, which may also be present in thereIsEnoughRoomToDrawQtCreatorBlinkingCursorInOrderToExcludeItFromFutureSearching
+                                    //QImage previous2 = m_PreviousDesktopCap_AsImage_ForMotionDetection;
+                                    //QPainter p2(&previous2);
+                                    QPainter qtCreatorBlinkingCursorPreviousImagePainter(&m_PreviousDesktopCap_AsImage_ForMotionDetection);
+                                    qtCreatorBlinkingCursorPreviousImagePainter.drawImage(x, (y-m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.height())+1, m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks);
+                                }
+#endif
+                                //m_PreviousDesktopCap_AsImage_ForMotionDetection.save("/run/shm/afterCursorDrawnIn_Previous-" + QString::number(count) + ".png");
+                                //currentImage.save("/run/shm/afterCursorDrawnIn_Current-" + QString::number(count) + ".png");
+                                //++count;
+                            }
+                            else
+                            {
+                                //qDebug() << "diff at" << count;
+                                thereWasMotionAt(QPoint(x, y));
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            //qDebug() << "diff at" << count << "--" << x << y;
+                            thereWasMotionAt(QPoint(x, y));
+                            break;
+                        }
                     }
                     ++currentPixelOfCurrentImage;
                     ++currentPixelOfPreviousImage;
@@ -302,7 +357,7 @@ void MouseOrMotionOrMySexyFaceViewMaker::motionDetectionIntervalTimerTimedOut()
             }
         }
     }
-    m_PreviousDesktopCap_AsImage_ForMotionDetection = currentImage;
+    m_PreviousDesktopCap_AsImage_ForMotionDetection = currentImageBeforeQtCreatorBlinkingCursorDrawnIn;
 }
 void MouseOrMotionOrMySexyFaceViewMaker::handleFfMpegStandardOutputReadyRead()
 {
@@ -314,10 +369,10 @@ void MouseOrMotionOrMySexyFaceViewMaker::handleFfMpegStandardOutputReadyRead()
         if(amountRead == m_BytesNeededForOneRawRGB32frame)
         {
             m_HaveFrameOfMySexyFace = true; //we COULD set this to false after it's presented, so we could stay in desktop mode or something if face cap process crashes etc... fuggit
-            if(m_DrawMySexyFaceFullscreenAsSoonAsFramesAreRead || m_ViewMode == MySexyFaceViewMode)
+            /*if(m_DrawMySexyFaceFullscreenAsSoonAsFramesAreRead || m_ViewMode == MySexyFaceViewMode)
             {
                 drawMySexyFace();
-            }
+            }*/
         }
     }
 }
