@@ -2,3 +2,6 @@ when loading an avi, the audio sounds perfect
 when loading an mp3, the audio sounds fine at first but then slowly gets choppier and choppier until decode() returns a -1
 
 i don't really NEED mp3 capability atm, but it would still be nice to have
+
+
+edit: i think the reason might be because i'm using a 10ms timer instead of listening for notify(), just a hunch tho

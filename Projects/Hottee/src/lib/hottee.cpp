@@ -336,6 +336,7 @@ void Hottee::startHotteeing(const QString &inputProcessPathAndArgs, const QStrin
 void Hottee::queryChunkWriteOffsetAndStorageCapacityStuff()
 {
     //TODOreq: might as well say whether or not writing is active as well
+    //TODOoptional: say how many seconds have elapsed since last segment upload (and subtract that from 'seconds per segment' to get estimated next upload time)
     QString ret;
 
     {

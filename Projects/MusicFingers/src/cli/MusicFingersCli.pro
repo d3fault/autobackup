@@ -4,8 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core
-
+QT       += core multimedia
 QT       -= gui
 
 TARGET = MusicFingersCli
@@ -13,7 +12,6 @@ CONFIG   += console
 CONFIG   -= app_bundle
 
 TEMPLATE = app
-
 
 SOURCES += main.cpp \
     ../lib/musicfingers.cpp

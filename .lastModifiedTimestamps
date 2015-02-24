@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1424769746
+Documents/minddump/:1424785612
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -2277,6 +2277,7 @@ Documents/minddump/skdjflhsdlfjsdlkfjsldhflksdjflksdjfouewlkrlkdsflj.txt:1401827
 Documents/minddump/skdjflkjsdfkljsdkfjsdlkjflskdjflksdjflkjsdflkjsdflkjsdflkjsdlkf.txt:1423773546
 Documents/minddump/skdjflskdjflskjdfouwlerkjofsdfhsfsggsiusflkjsdfouisdlfkjoiuwerljsadf.txt:1382449951
 Documents/minddump/skdjfsjflskdjfsdjfouwerjkjdsflkjsdfosuidflkjer.txt:1396823888
+Documents/minddump/skdlfjlskdjflksdjflksdjflkjsdfsfsdfsdflkjsdflkjsdfljksdfkljsdf.txt:1424785612
 Documents/minddump/skdljflksjdflkjsdflkjasldkf.txt:1396677636
 Documents/minddump/skfjsldkjflsdkjfklsjdflkjwerolsjdfoudfjfousdflkj.txt:1397363322
 Documents/minddump/skjdflaksjdflkjsdlkfjasldkjfslkdjfoweurlkjsdfousdflkjsdf.txt:1411442922
@@ -3234,7 +3235,7 @@ Projects/Hottee/src/cli/hotteecli.cpp:1402473245
 Projects/Hottee/src/cli/hotteecli.h:1402473036
 Projects/Hottee/src/cli/main.cpp:1424661472
 Projects/Hottee/src/lib/:1424767969
-Projects/Hottee/src/lib/hottee.cpp:1424771210
+Projects/Hottee/src/lib/hottee.cpp:1424781388
 Projects/Hottee/src/lib/hottee.h:1424695401
 Projects/Ideas/:1423938843
 Projects/Ideas/QtSslRpc/:1341833104
@@ -3630,7 +3631,7 @@ Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakergui.h:1396200558
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.cpp:1424694544
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.h:1396112897
 Projects/MouseOrMotionOrMySexyFaceViewMaker/:1396501297
-Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1424766286
+Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1424793675
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/MouseOrMotionOrMySexyFaceViewMaker.pro:1396499493
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/main.cpp:1424682360
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseCursor.qrc:1424756197
@@ -3643,13 +3644,13 @@ Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmak
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/qtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.png:1424755814
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/systemTrayIcon.svg:1424596976
 Projects/MusicFingers/:1424675926
-Projects/MusicFingers/src/:1424675941
-Projects/MusicFingers/src/cli/:1424674552
-Projects/MusicFingers/src/cli/MusicFingersCli.pro:1424662938
+Projects/MusicFingers/src/:1424791155
+Projects/MusicFingers/src/cli/:1424791505
+Projects/MusicFingers/src/cli/MusicFingersCli.pro:1424791420
 Projects/MusicFingers/src/cli/main.cpp:1424662783
-Projects/MusicFingers/src/lib/:1424678371
-Projects/MusicFingers/src/lib/musicfingers.cpp:1424678333
-Projects/MusicFingers/src/lib/musicfingers.h:1424678371
+Projects/MusicFingers/src/lib/:1424793204
+Projects/MusicFingers/src/lib/musicfingers.cpp:1424793204
+Projects/MusicFingers/src/lib/musicfingers.h:1424791201
 Projects/MusicFingers/src/musicfingers.pri:1424675972
 Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/:1412762111
 Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/design/:1412752309
@@ -3966,10 +3967,10 @@ Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/serverw
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/serverwidget.h:1353793900
 Projects/Prototypes/MultiClientServerTypesHelloer/src/ServerClientShared/:1356102268
 Projects/Prototypes/MusicFingersBackendTesterGui/:1424678167
-Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/:1424760434
-Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui.pro:1424676076
+Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/:1424793449
+Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui.pro:1424791559
 Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/main.cpp:1424675997
-Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/musicfingersbackendtestergui.cpp:1424678613
+Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/musicfingersbackendtestergui.cpp:1424791633
 Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/musicfingersbackendtestergui.h:1424676284
 Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/musicfingersbackendtesterwidget.cpp:1424678438
 Projects/Prototypes/MusicFingersBackendTesterGui/MusicFingersBackendTesterGui/musicfingersbackendtesterwidget.h:1424678242
@@ -4252,7 +4253,7 @@ Projects/Prototypes/easyTreeTest/src/main.cpp:1349007743
 Projects/Prototypes/easyTreeTest/src/mainwidget.cpp:1349020608
 Projects/Prototypes/easyTreeTest/src/mainwidget.h:1349020281
 Projects/Prototypes/libAvAudioPlayer/:1344095745
-Projects/Prototypes/libAvAudioPlayer/src/:1424665743
+Projects/Prototypes/libAvAudioPlayer/src/:1424791480
 Projects/Prototypes/libAvAudioPlayer/src/libAvAudioPlayer.pro:1324565742
 Projects/Prototypes/libAvAudioPlayer/src/libavaudioplayer.cpp:1326489296
 Projects/Prototypes/libAvAudioPlayer/src/libavaudioplayer.h:1324566886
@@ -4263,7 +4264,7 @@ Projects/Prototypes/libAvAudioPlayer/src/qtaudioplayer.cpp:1326485493
 Projects/Prototypes/libAvAudioPlayer/src/qtaudioplayer.h:1324567910
 Projects/Prototypes/libAvAudioPlayer/src/threadsafequeuebymutex.cpp:1326484513
 Projects/Prototypes/libAvAudioPlayer/src/threadsafequeuebymutex.h:1324568777
-Projects/Prototypes/libAvAudioPlayer/final.notes.on.functionality.txt:1324915075
+Projects/Prototypes/libAvAudioPlayer/final.notes.on.functionality.txt:1424789661
 Projects/Prototypes/libAvAudioPlayer2/:1344095761
 Projects/Prototypes/libAvAudioPlayer2/design/:1324915532
 Projects/Prototypes/libAvAudioPlayer2/design/initial.spec.txt:1324915532
@@ -5023,7 +5024,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:13
 Projects/libAvGraphicsItem2/:1344095614
 Projects/libAvGraphicsItem2/design/:1386045282
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
-Projects/libAvGraphicsItem2/src/:1424665359
+Projects/libAvGraphicsItem2/src/:1424789501
 Projects/libAvGraphicsItem2/src/backend/:1324464673
 Projects/libAvGraphicsItem2/src/backend/audiovideosynchronizer.cpp:1324382622
 Projects/libAvGraphicsItem2/src/backend/audiovideosynchronizer.h:1324382612
@@ -5044,7 +5045,7 @@ Projects/libAvGraphicsItem3/:1344095628
 Projects/libAvGraphicsItem3/design/:1326545331
 Projects/libAvGraphicsItem3/design/Buffers.Overview.Push.To.Init.and.Pull.While.Progressing.wtf.both.dia:1326544897
 Projects/libAvGraphicsItem3/design/Class.Diagram.and.how.I.want.the.libraries.to.be.modularized.dia:1326545331
-Projects/libAvGraphicsItem3/src/:1396485061
+Projects/libAvGraphicsItem3/src/:1424787688
 Projects/libAvGraphicsItem3/src/backend/:1327006061
 Projects/libAvGraphicsItem3/src/backend/libavplayer.cpp:1327003992
 Projects/libAvGraphicsItem3/src/backend/libavplayer.h:1327006061

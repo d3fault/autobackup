@@ -15,6 +15,7 @@ MusicFingersBackendTesterGui::MusicFingersBackendTesterGui(QObject *parent)
 }
 void MusicFingersBackendTesterGui::handleMusicFingersReadyForConnections(QObject *musicFingersAsQObject)
 {
+    qDebug("handleMusicFingersReadyForConnections");
     MusicFingers *business = static_cast<MusicFingers*>(musicFingersAsQObject);
     MusicFingersBackendTesterWidget *gui = new MusicFingersBackendTesterWidget();
     connect(gui, SIGNAL(fingerMoved(Finger::FingerEnum,int)), business, SLOT(moveFinger(Finger::FingerEnum,int)));
