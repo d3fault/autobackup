@@ -13,6 +13,7 @@
 #define HOTTEE_ONE_GIGABYTE (1024*1024*1024)
 #define EMIT_CHANGE_SOON_AT_PERCENT 80
 
+//TODOreq: Hottee: dest folders should be able to be NOT empty if video segment does not start at 0 (however, we still shouldn't overwrite files EVER (dangerous code))
 //TODOoptional: could also put each 100mb chunk through a hash for checksumming etc
 //TODOoptional: when "q" is used and the input process has stopped, it should quit? or maybe if WHENEVER the input process stops, it should quit? Right now I'm using "q" followed by a "qq", but idk if the first q makes any difference
 Hottee::Hottee(QObject *parent) :

@@ -22,18 +22,35 @@ MusicFingers::MusicFingers(QObject *parent)
     m_Fingers.insert(Finger::RightRing7, FINGERS_INITIAL_POSITION);
     m_Fingers.insert(Finger::RightPinky8, FINGERS_INITIAL_POSITION);
 
-    QAudioDeviceInfo audioDeviceInfo;
-    QAudioFormat audioFormat = audioDeviceInfo.preferredFormat(); //TODOreq: synthesizer must also generate same size. TODOmb: 10 channels instead of 1 or 2? probably not, since we're "muxing" the 10 fingers into 1 audio stream... but hey I mean you can always experiment with 10 channels, idfk -- it would be like 10x surround sound speakers ish
+    //QAudioDeviceInfo audioDeviceInfo;
+    QAudioFormat audioFormat/* = audioDeviceInfo.preferredFormat()*/; //TODOreq: synthesizer must also generate same size. TODOmb: 10 channels instead of 1 or 2? probably not, since we're "muxing" the 10 fingers into 1 audio stream... but hey I mean you can always experiment with 10 channels, idfk -- it would be like 10x surround sound speakers ish
+    audioFormat.setByteOrder(QAudioFormat::BigEndian);
+    audioFormat.setChannelCount(1);
+    audioFormat.setSampleRate(48000);
+    audioFormat.setSampleSize(16);
+    audioFormat.setSampleType(QAudioFormat::Float);
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
-    if (!info.isFormatSupported(audioFormat))
+    qDebug() << "Using audio device: " << info.deviceName();
+    if(!info.isFormatSupported(audioFormat))
     {
-        qWarning() << "Raw audio format not supported by backend, cannot play audio.";
+        qWarning() << "Audio format not supported by backend, cannot play audio.";
+        qWarning() << "supportedByteOrders" << info.supportedByteOrders();
+        qWarning() << "supportedCodecs" << info.supportedCodecs();
+        qWarning() << "supportedSampleTypes" << info.supportedSampleTypes();
+        qWarning() << "supportedChannelCounts" << info.supportedChannelCounts();
+        qWarning() << "supportedSampleRates" << info.supportedSampleRates();
+        qWarning() << "supportedSampleSizes" << info.supportedSampleSizes();
         return;
     }
     m_AudioOutput = new QAudioOutput(audioFormat, this);
     connect(m_AudioOutput, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleAudioOutputStateChanged(QAudio::State)));
     connect(m_AudioOutput, SIGNAL(notify()), this, SLOT(handleAudioOutputNotifiedMeItWantsData()));
     m_AudioOutputIoDevice = m_AudioOutput->start();
+    QAudio::Error error = m_AudioOutput->error();
+    if(error != QAudio::NoError)
+    {
+        qWarning() << "Audio output has error:" << error;
+    }
 }
 QByteArray MusicFingers::synthesizeAudioUsingFingerPositions(int numBytesToSynthesize_aka_audioOutputPeriodSize)
 {
@@ -64,5 +81,6 @@ void MusicFingers::handleAudioOutputStateChanged(QAudio::State newState)
 }
 void MusicFingers::handleAudioOutputNotifiedMeItWantsData()
 {
+    qDebug() << "yolo";
     m_AudioOutputIoDevice->write(synthesizeAudioUsingFingerPositions(m_AudioOutput->periodSize()));
 }

@@ -106,6 +106,7 @@ void MouseOrMotionOrMySexyFaceViewMakerGui::handleMouseAndOrMotionViewMakerReady
 {
     MouseOrMotionOrMySexyFaceViewMaker *business = m_BusinessThread.getObjectPointerForConnectionsOnly();
     connect(business, SIGNAL(presentPixmapForViewingRequested(QPixmap)), m_Gui, SLOT(presentPixmapForViewing(QPixmap)));
+    connect(business, SIGNAL(detectedMySexyFaceStreamIsFrozen()), m_Gui, SLOT(handleMySexyFaceStreamIsFrozen()));
     connect(m_Gui, SIGNAL(setMouseOrMotionOrMySexyFaceViewModeRequested()), business, SLOT(setMouseOrMotionOrMySexyFaceViewMode()));
     connect(m_Gui, SIGNAL(setMySexyFaceViewModeRequested()), business, SLOT(setMySexyFaceViewMode()));
 

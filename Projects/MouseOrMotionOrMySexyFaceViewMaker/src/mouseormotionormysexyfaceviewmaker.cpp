@@ -39,6 +39,7 @@ MouseOrMotionOrMySexyFaceViewMaker::MouseOrMotionOrMySexyFaceViewMaker(QObject *
     , m_HaveFrameOfMySexyFace(false)
     , m_ShowingMySexyFace(false) /*the worst default ever*/
     , m_TogglingMinimumsTimerIsStarted(false)
+    , m_VerifyEvery10secondsMySexyFaceStreamIsntFrozen_Timer(new QTimer(this))
 {
     m_Screen = QGuiApplication::primaryScreen();
     if(!m_Screen || (m_Screen->grabWindow(0).toImage().format() != QImage::Format_RGB32))
@@ -71,6 +72,9 @@ MouseOrMotionOrMySexyFaceViewMaker::MouseOrMotionOrMySexyFaceViewMaker(QObject *
     ldLibraryPath = ldPathToMakeHighPriority + ldLibraryPath;
     ffmpegProcessEnvironenment.insert("LD_LIBRARY_PATH", ldLibraryPath);
     m_FfMpegProcess.setProcessEnvironment(ffmpegProcessEnvironenment);
+
+    connect(m_VerifyEvery10secondsMySexyFaceStreamIsntFrozen_Timer, SIGNAL(timeout()), this, SLOT(verifyMySexyFaceStreamIsntFrozen()));
+    m_VerifyEvery10secondsMySexyFaceStreamIsntFrozen_Timer->start(10*1000);
 }
 MouseOrMotionOrMySexyFaceViewMaker::~MouseOrMotionOrMySexyFaceViewMaker()
 {
@@ -380,5 +384,20 @@ void MouseOrMotionOrMySexyFaceViewMaker::handleFfmpegProcessError()
 {
     QByteArray allErrOut = m_FfMpegProcess.readAllStandardError();
     qDebug() << allErrOut;
+}
+void MouseOrMotionOrMySexyFaceViewMaker::verifyMySexyFaceStreamIsntFrozen()
+{
+    if(!m_HaveFrameOfMySexyFace)
+        return; //this would mean it never started showing at beginning, which is something I'd see
+
+    if(!m_FrameOfMySexyFaceRead10secondsAgo.isEmpty()) //empty on first pass
+    {
+        if(m_LastReadFrameOfMySexyFace == m_FrameOfMySexyFaceRead10secondsAgo)
+        {
+            emit detectedMySexyFaceStreamIsFrozen();
+            m_VerifyEvery10secondsMySexyFaceStreamIsntFrozen_Timer->stop();
+        }
+    }
+    m_FrameOfMySexyFaceRead10secondsAgo = m_LastReadFrameOfMySexyFace;
 }
 

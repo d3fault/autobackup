@@ -11,7 +11,6 @@ class MouseOrMotionOrMySexyFaceViewMakerWidget : public QWidget
     Q_OBJECT
 public:
     MouseOrMotionOrMySexyFaceViewMakerWidget(const QSize &viewSize, QWidget *parent = 0);
-    ~MouseOrMotionOrMySexyFaceViewMakerWidget();
 protected:
     void mouseDoubleClickEvent(QMouseEvent *e);
 private:
@@ -22,6 +21,7 @@ signals:
     void setMySexyFaceViewModeRequested();
 public slots:
     void presentPixmapForViewing(const QPixmap &tehPixmap);
+    void handleMySexyFaceStreamIsFrozen();
 };
 
 #endif // MOUSEORMOTIONORMYSEXYFACEVIEWMAKERWIDGET_H

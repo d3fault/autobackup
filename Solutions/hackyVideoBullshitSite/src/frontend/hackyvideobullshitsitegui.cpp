@@ -548,7 +548,6 @@ void HackyVideoBullshitSiteGUI::displayVideoSegment(const string &videoSegmentFi
     //TODOreq: "Link to this: ", needs to chop off base dir from absolute path to make clean url...
     new WBreak(videoSegmentContainer);
 
-#if 0
     //TODOreq: previous button
     WPushButton *nextVideoClipPushButton = new WPushButton("Next Clip", videoSegmentContainer); //if next != current; aka if new-current != current-when-started-playing
     nextVideoClipPushButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
@@ -560,10 +559,9 @@ void HackyVideoBullshitSiteGUI::displayVideoSegment(const string &videoSegmentFi
         autoPlayNextVideoSegmentCheckbox->unChecked().connect(this, &HackyVideoBullshitSiteGUI::handleAutoPlayNextVideoSegmentCheckboxUnchecked);
     }
     else
-#endif
-    //{
+    {
         new WText(" ", videoSegmentContainer);
-    //}
+    }
     //TODOreq: latest  button (perhaps disabled at first, noop if latest is what we're already at)
     new WAnchor(WLink(WLink::InternalPath, HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS), "Browse All Video Clips", videoSegmentContainer);
 
@@ -663,7 +661,7 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
     QDir currentVideoSegmentDayDir(currentVideoSegmentDayFolder);
     const QStringList all3MinuteSegmentsInDayFolder = currentVideoSegmentDayDir.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Name | QDir::Reversed));
 
-    if(all3MinuteSegmentsInDayFolder.first() == videoSegmentFilePathCurrentlyBeingDisplayedQString)
+    if(all3MinuteSegmentsInDayFolder.first() == currentVideoSegmentFilenameOnly)
     {
         //possible day shift, or possibly current is LATEST. might be entry point for possible year shifts as well
         //TO DOnereq: seeing if "tomorrow" is the "366th" day of the year is not a good way to detect year shifts, because of leap years xD
@@ -680,6 +678,7 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
             if(allYearFolders.first() == currentVideoSegmentYearString)
             {
                 //CURRENT IS LATEST
+                tellUserThatCurrentVideoSegmentIsLatest();
                 return;
             }
 
@@ -727,6 +726,7 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
         if(allDayFoldersInCurrentYear.first() == currentVideoSegmentFilenamesDayOfYearString)
         {
             //CURRENT IS LATEST
+            tellUserThatCurrentVideoSegmentIsLatest();
             return;
         }
         int indexOfNextExistingDayFolder = (allDayFoldersInCurrentYear.indexOf(currentVideoSegmentFilenamesDayOfYearString)-1); //safe because current isn't 'first()'
@@ -758,7 +758,7 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
     }
 
     //since current wasn't 'first' (sorting in reverse), we know that there are videos 'after' it (cronologically)... so we simply find the index of current and subtract 1 in order to get the 'next' video
-    const QString &nextVideoFilenameOnly = all3MinuteSegmentsInDayFolder.at(all3MinuteSegmentsInDayFolder.indexOf(videoSegmentFilePathCurrentlyBeingDisplayedQString) - 1);
+    const QString &nextVideoFilenameOnly = all3MinuteSegmentsInDayFolder.at(all3MinuteSegmentsInDayFolder.indexOf(currentVideoSegmentFilenameOnly) - 1);
     const QString &nextVideoFilePath = currentVideoSegmentDayFolder + nextVideoFilenameOnly;
     const std::string &nextVideoFilePathStdString = nextVideoFilePath.toStdString();
     displayVideoSegment(nextVideoFilePathStdString);
@@ -804,6 +804,15 @@ string HackyVideoBullshitSiteGUI::determineLatestVideoSegmentPathOrUsePlaceholde
     }
     //should never get here, but just in case and to make compiler stfu:
     return HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER;
+}
+void HackyVideoBullshitSiteGUI::tellUserThatCurrentVideoSegmentIsLatest()
+{
+    WContainerWidget *currentVideoSegmentIsLatestContainer = new WContainerWidget();
+    new WText("Sorry, the video you just watched is the latest one available. The next video will likely be uploaded within a few minutes or years, so try again sometime in between.", currentVideoSegmentIsLatestContainer);
+    new WBreak(currentVideoSegmentIsLatestContainer);
+    WPushButton *tryAgainButton = new WPushButton("Try Again", currentVideoSegmentIsLatestContainer);
+    tryAgainButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
+    setMainContent(currentVideoSegmentIsLatestContainer);
 }
 void HackyVideoBullshitSiteGUI::createCookieCrumbsFromPath(/*const string &internalPathInclFilename*/)
 {

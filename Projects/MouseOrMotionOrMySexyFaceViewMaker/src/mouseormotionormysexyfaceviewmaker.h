@@ -50,11 +50,13 @@ private:
     bool m_HaveFrameOfMySexyFace;
     QProcess m_FfMpegProcess;
     QByteArray m_LastReadFrameOfMySexyFace;
+    QByteArray m_FrameOfMySexyFaceRead10secondsAgo;
     QSize m_CameraResolution;
     qint64 m_BytesNeededForOneRawRGB32frame;
     bool m_ShowingMySexyFace;
     bool m_TogglingMinimumsTimerIsStarted;
     QTime m_TogglingMinimumsElapsedTimer;
+    QTimer *m_VerifyEvery10secondsMySexyFaceStreamIsntFrozen_Timer;
 
     //Mouse Or Motion methods
     QPoint makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint);
@@ -63,6 +65,7 @@ private:
     void thereWasMotionAt(QPoint point);
 signals:
     void presentPixmapForViewingRequested(const QPixmap &);
+    void detectedMySexyFaceStreamIsFrozen();
 public slots:
     void startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int captureFps, int motionDetectionFps, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution);
     void setMouseOrMotionOrMySexyFaceViewMode();
@@ -73,6 +76,7 @@ public slots:
 private slots:
     void handleFfMpegStandardOutputReadyRead();
     void handleFfmpegProcessError();
+    void verifyMySexyFaceStreamIsntFrozen();
 };
 
 #endif // MOUSEORMOTIONORMYSEXYFACEVIEWMAKER_H
