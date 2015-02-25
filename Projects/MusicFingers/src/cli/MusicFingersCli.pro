@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core multimedia
+QT       += core multimedia serialport
 QT       -= gui
 
 TARGET = MusicFingersCli
@@ -14,7 +14,9 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    ../lib/musicfingers.cpp
+    ../lib/musicfingers.cpp \
+    musicfingerscli.cpp
 
 HEADERS += \
-    ../lib/musicfingers.h
+    ../lib/musicfingers.h \
+    musicfingerscli.h

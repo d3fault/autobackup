@@ -40,6 +40,7 @@ void MusicFingersBackendTesterWidget::createSlider(QLayout *layoutToAddTo, Finge
     QSlider *slider = new QSlider(Qt::Vertical);
     slider->setMinimum(MUSIC_FINGERS_MIN_POSITION);
     slider->setMaximum(MUSIC_FINGERS_MAX_POSITION);
+    slider->setValue(FINGERS_INITIAL_POSITION);
     m_Fingers.insert(slider, theFinger);
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(handleSliderMoved(int)));
     layoutToAddTo->addWidget(slider);
