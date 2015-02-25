@@ -1,0 +1,10 @@
+root
+ menuContentsVLayout
+  m_MainContentsContainer
+   videoSegmentContainer
+    videoSegmentPlayer
+     videoSegmentResource
+
+After fucking hours of [failing at] debugging hvbs, it appears there's a regression in Wt 3.3.2 from 3.3.1 that was causing the segfault. NOT USER ERROR!?!?!? guh
+
+I knew it: I _AM_ 1337 8-D

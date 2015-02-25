@@ -38,7 +38,8 @@ HEADERS += \
     wtcontrollerandstdoutowner.h \
     frontend/hvbsshared.h \
     ../../../Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.h \
-    backend/nonexpiringstringwresource.h
+    backend/nonexpiringstringwresource.h \
+    backend/adimageapikey.h
 
 INCLUDEPATH += ../../Abc2couchbaseKeyAndJsonDefines/
 INCLUDEPATH += ../../../GloballySharedClasses/image/

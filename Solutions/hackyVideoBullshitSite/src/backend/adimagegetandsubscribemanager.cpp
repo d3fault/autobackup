@@ -13,6 +13,7 @@
 #include "abc2couchbaseandjsonkeydefines.h"
 #include "nonexpiringstringwresource.h"
 #include "nonanimatedimagheaderchecker.h"
+#include "adimageapikey.h"
 
 using namespace Wt;
 using namespace boost::property_tree;
@@ -22,7 +23,7 @@ const QString AdImageGetAndSubscribeManager::s_ApiUrlProtocolHostAndPort_Aka_Pre
 
 const QString AdImageGetAndSubscribeManager::s_ApiUser = "d3fault";
 const QString AdImageGetAndSubscribeManager::s_ApiIndex = "0";
-const QString AdImageGetAndSubscribeManager::s_ApiKey = "apikeygoeshere"; //TODOreq: fill in api key
+const QString AdImageGetAndSubscribeManager::s_ApiKey = HVBS_AD_IMAGE_ABC_API_KEY; //TODOreq: fill in api key
 
 const QString AdImageGetAndSubscribeManager::s_ApiUrlString = s_ApiUrlProtocolHostAndPort_Aka_Prefix + ABC2_API_GET_CURRENT_AD_ACTION_FULL_PATH_MACRO(s_ApiUser, s_ApiIndex, s_ApiKey);
 

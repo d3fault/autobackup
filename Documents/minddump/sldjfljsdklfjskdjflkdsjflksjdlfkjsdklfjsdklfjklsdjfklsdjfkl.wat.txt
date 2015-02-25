@@ -1,0 +1,5 @@
+On my VM, I can't get Hvbs to segfault even once. On the live/deployed site, it segfaults on almost every link xD...
+
+I finally have a debugger attached, and it's a messy web of pointers with a behind-the-scenes parenting/deletion scheme (that is to say, it's hard to find the places where things are assigned parents, or implicitly destructed). All are spread out.
+
+Considering re-coding it xD, KISS style, but then I start to think about how much code there already is and it almost seems easier to make a new WApplication and swap that into place... but I'm not even sure that the WApplication is the [only] problem, it might be the timeline widget (or maybe both are fine, but their interaction between one another is fucked)

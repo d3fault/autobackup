@@ -1,0 +1,9 @@
+deply:
+hottee -- create folder if not exist
+
+do:
+sexy face fps (aspect ratio also?) -- VALGRIND
+Hottee: folder is able to NOT be empty if video segment does not start at 0 (however, we still shouldn't overwrite EVER (dangerous code))
+mysexyface if "unchanged" from 10 seconds apart = warn/notify
+hvbs abcapi key (err, live site only...? ffff patch or something?)
+~24hr cronjob: make torrent of all 'yesterdays' (just ended day) video segments -- also same for weekly (later, bump that to monthly) -- hvbs download page builds links based on torrents it finds in a directory?
