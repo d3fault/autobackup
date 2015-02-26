@@ -5,16 +5,22 @@
 #include "math.h"
 #include <QDebug>
 #include <QTimer>
-#include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
 #define MusicFingers_NUM_PERIODS_TO_WRITE_PER_TIMEOUT 1
 
 MusicFingers::MusicFingers(QObject *parent)
     : QObject(parent)
-    , m_SerialPort(new QSerialPort(QSerialPortInfo::availablePorts().first(), this)) //TODOreq: dialog when more than one available port
     , m_TimeInBytesForMySineWave(-1.0) //TODOreq: every "sine wave 'period' (when the y value is the same, leik at the top or wherever really (traditionally the top))", I need to put this back at zero. Otherwise, when we run out of range in the integer, there might be a small popping sound
 {
+    QList<QSerialPortInfo> availPorts = QSerialPortInfo::availablePorts();
+    if(availPorts.isEmpty())
+    {
+        qWarning() << "No serial ports available";
+        return;
+    }
+
+    m_SerialPort.reset(new QSerialPort(availPorts.first(), this)); //TODOoptional: dialog/etc when more than one available port
     m_SerialPort->setBaudRate(QSerialPort::Baud9600);
     if(!m_SerialPort->open(QIODevice::ReadOnly))
     {
@@ -22,7 +28,7 @@ MusicFingers::MusicFingers(QObject *parent)
         emit quitRequested();
         return;
     }
-    connect(m_SerialPort, SIGNAL(readyRead()), this, SLOT(handleSerialPortReadyRead()));
+    connect(m_SerialPort.data(), SIGNAL(readyRead()), this, SLOT(handleSerialPortReadyRead()));
 
     m_Fingers.insert(Finger::LeftPinky_A0, FINGERS_INITIAL_POSITION);
     m_Fingers.insert(Finger::LeftRing_A1, FINGERS_INITIAL_POSITION);
@@ -73,61 +79,158 @@ MusicFingers::MusicFingers(QObject *parent)
     }
     writeAudioTimer->start(2);
 }
+bool MusicFingers::isValidFingerId(int fingerId)
+{
+    return (fingerId > -1 && fingerId < 10);
+}
 QByteArray MusicFingers::synthesizeAudioUsingFingerPositions(int numBytesToSynthesize_aka_audioOutputPeriodSize)
 {
     QByteArray ret; //TODOoptimization: maybe smart to re-use this buffer, maybe doesn't matter
     ret.reserve(numBytesToSynthesize_aka_audioOutputPeriodSize);
     static const int numberOfDoublesWeCanFitIntoRet = (numBytesToSynthesize_aka_audioOutputPeriodSize*sizeof(char)) / sizeof(double);
+    //for(int i = 0; i < (numberOfDoublesWeCanFitIntoRet/2); ++i)
     for(int i = 0; i < numberOfDoublesWeCanFitIntoRet; ++i)
     {
-        int fingerPos = m_Fingers.value(Finger::LeftPinky_A0);
+        int a0_fingerPos = m_Fingers.value(Finger::LeftPinky_A0);
+        int a1_fingerPos = m_Fingers.value(Finger::A1_LeftRing);
+
 
         //double y = sin(++m_TimeInBytesForMySineWave)*fingerPos;
 
         //mute
         //double y = pow(sin(++m_TimeInBytesForMySineWave), static_cast<double>(fingerPos));
 
-#if 1
-        //YES
-        double y = sin((++m_TimeInBytesForMySineWave)*fingerPos)*fingerPos;
-#endif
-
-        //mute
-        //double y = sin((++m_TimeInBytesForMySineWave)*fingerPos);
-
-        //mute
-        //double y = sin((++m_TimeInBytesForMySineWave)/fingerPos)/fingerPos;
-
-        //mute
-        //double y = pow(sin((++m_TimeInBytesForMySineWave)*fingerPos*fingerPos), fingerPos*fingerPos);
-
-        //mute
-        //double y = sin((++m_TimeInBytesForMySineWave)*fingerPos)*pow(fingerPos, fingerPos);
-
 #if 0
-        //seems the same as sin, but maybe "faster"
-        double y = tan((++m_TimeInBytesForMySineWave)*fingerPos)*fingerPos;
+        //YES
+        double y = sin((++m_TimeInBytesForMySineWave)*a0_fingerPos)*a0_fingerPos;
 #endif
 
         //mute
-        //double y = asin((++m_TimeInBytesForMySineWave)*fingerPos)*fingerPos;
+        //double y = sin((++m_TimeInBytesForMySineWave)*a0_fingerPos);
+
+        //mute
+        //double y = sin((++m_TimeInBytesForMySineWave)/a0_fingerPos)/a0_fingerPos;
+
+        //mute
+        //double y = pow(sin((++m_TimeInBytesForMySineWave)*a0_fingerPos*a0_fingerPos), a0_fingerPos*a0_fingerPos);
+
+        //mute
+        //double y = sin((++m_TimeInBytesForMySineWave)*a0_fingerPos)*pow(a0_fingerPos, a0_fingerPos);
+
+#if 1
+        //BETTER YES
+        //seems the same as sin, but "faster". has cool/unique (compared to rest) sound when position is at/near: 639
+        double y = tan((++m_TimeInBytesForMySineWave)*a0_fingerPos)*a0_fingerPos;
+#endif
+
+        //mute
+        //double y = asin((++m_TimeInBytesForMySineWave)*a0_fingerPos)*a0_fingerPos;
 
 #if 0
         //soft fuzzy sound only when moving finger
-        double y = asinh((++m_TimeInBytesForMySineWave)*fingerPos)*fingerPos;
+        double y = asinh((++m_TimeInBytesForMySineWave)*a0_fingerPos)*a0_fingerPos;
 #endif
 
+        //A1 added
 
+        //a1 has little effect
+        //double y = sin((++m_TimeInBytesForMySineWave)*a0_fingerPos)*a1_fingerPos;
 
-        ret.insert(i, y);
-        //qDebug() << y;
+        //white noise unless one of the sensors is near 1 (which makes it equivalent to my "YES" formula)
+        //double y_a0 = sin((++m_TimeInBytesForMySineWave)*a0_fingerPos)*a0_fingerPos;
+        //double y_a1 = sin((++m_TimeInBytesForMySineWave)*a1_fingerPos)*a1_fingerPos;
+        //double y = y_a0 * y_a1;
+
+        //ret.insert(i, y);
+
+        //a1 doesn't change anything, a0 behaves like "YES"
+        //double y0 = sin((++m_TimeInBytesForMySineWave)*a0_fingerPos)*a0_fingerPos;
+        //double y1 = sin((++m_TimeInBytesForMySineWave)*a1_fingerPos)*a1_fingerPos;
+        //ret.append(y0);
+        //ret.append(y1);
+
+        ret.append(y);
     }
     return ret;
+}
+void MusicFingers::processLineOfFingerMovementProtocol(const QString &lineOfFingerMovementProtocol)
+{
+    QStringList lineParts = lineOfFingerMovementProtocol.split(":");
+    if(lineParts.size() != 2)
+    {
+        emit e("processLineOfFingerMovementProtocol line parts did not split into 2. instead: " + lineParts.size());
+        emit e("line: " + lineOfFingerMovementProtocol);
+        return;
+    }
+
+    bool convertOk = false;
+    int fingerId = lineParts.at(0).toInt(&convertOk);
+    if(!convertOk)
+    {
+        emit e("failed to convert first part (left side of colon, the finger id) of the lineOfFingerMovementProtocol");
+        emit e("line: " + lineOfFingerMovementProtocol);
+        return;
+    }
+    if(!isValidFingerId(fingerId))
+    {
+        emit e("invalid finger id in first part (left side of colon) of the lineOfFingerMovementProtocol");
+        emit e("line: " + lineOfFingerMovementProtocol);
+        return;
+    }
+
+    convertOk = false;
+    int fingerPosition = lineParts.at(1).toInt(&convertOk);
+    if(!convertOk)
+    {
+        emit e("failed to convert second part (right side of colon, the finger position value) of the lineOfFingerMovementProtocol");
+        emit e("line: " + lineOfFingerMovementProtocol);
+        return;
+    }
+
+    if(fingerPosition < MUSIC_FINGERS_MIN_POSITION || fingerPosition > MUSIC_FINGERS_MAX_POSITION)
+    {
+        emit e("finger position was out of range: " + QString::number(fingerPosition));
+        emit e("line: " + lineOfFingerMovementProtocol);
+        return;
+    }
+    m_Fingers.insert(fingerIdToFingerEnum(fingerId), fingerPosition);
+}
+Finger::FingerEnum MusicFingers::fingerIdToFingerEnum(int fingerId)
+{
+    switch(fingerId)
+    {
+    case 0:
+        return Finger::A0_LeftPinky;
+    case 1:
+        return Finger::A1_LeftRing;
+    case 2:
+        return Finger::A2_LeftMiddle;
+    case 3:
+        return Finger::A3_LeftIndex;
+    case 4:
+        return Finger::A4_LeftThumb;
+    case 5:
+        return Finger::A5_RightThumb;
+    case 6:
+        return Finger::A6_RightIndex;
+    case 7:
+        return Finger::A7_RightMiddle;
+    case 8:
+        return Finger::A8_RightRing;
+    case 9:
+        return Finger::A9_RightPinky;
+    default:
+        return Finger::A0_LeftPinky; //should never happen, caller should (and does atm) sanitize before calling
+    }
 }
 void MusicFingers::moveFinger(Finger::FingerEnum fingerToMove, int newPosition)
 {
     //qDebug() << fingerToMove << newPosition;
     m_Fingers.insert(fingerToMove, newPosition);
+}
+void MusicFingers::queryMusicFingerPosition(int fingerIndex)
+{
+    emit o("Finger position: " + QString::number(m_Fingers.value(fingerIdToFingerEnum(fingerIndex))));
 }
 void MusicFingers::handleAudioOutputStateChanged(QAudio::State newState)
 {
@@ -139,19 +242,8 @@ void MusicFingers::writeBytesToAudioOutput()
 }
 void MusicFingers::handleSerialPortReadyRead()
 {
-    int latestValue = -1;
     while(m_SerialPort->canReadLine())
     {
-        QByteArray line = m_SerialPort->readLine();
-        bool convertOk = false;
-        int value = line.trimmed().toInt(&convertOk);
-        if(convertOk && value >= MUSIC_FINGERS_MIN_POSITION && value <= MUSIC_FINGERS_MAX_POSITION)
-        {
-            latestValue = value;
-        }
-    }
-    if(latestValue > -1)
-    {
-        m_Fingers.insert(Finger::LeftPinky_A0, latestValue);
+        processLineOfFingerMovementProtocol(m_SerialPort->readLine().trimmed());
     }
 }

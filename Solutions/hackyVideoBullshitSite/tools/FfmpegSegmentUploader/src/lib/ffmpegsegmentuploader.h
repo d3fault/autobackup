@@ -16,7 +16,7 @@
 
 //configure ffmpeg with: ./configure --enable-shared --disable-doc --disable-htmlpages --disable-podpages --enable-libopus --enable-libtheora --enable-libv4l2
 
-#define FfmpegSegmentUploader_VIDEO_BITRATE "200k"
+#define FfmpegSegmentUploader_VIDEO_BITRATE "350k"
 
 //AV (yellow/red/white) on tv wonder pro's purple dongle
 //#define DEFAULT_ANDOR_D3FAULT_FFMPEG_COMMAND_ZOMG_ROFL_PUN_OR_WAIT_NO_IDK_JUST_LOL_THO "/usr/local/bin/ffmpeg -loglevel warning -f alsa -i hw:0 -f video4linux2 -s 720x480 -channel 1 -i /dev/video0 -acodec opus -b:a 32k -ac 1 -b:v " FfmpegSegmentUploader_VIDEO_BITRATE " -vcodec theora -r 10 -map 0 -map 1 -vf crop=720:452:0:17 -f segment -segment_time " FfmpegSegmentUploader_FFMPEG_COMMAND_SEGMENT_LENGTH_STRING " -segment_list_size 999999999 -segment_wrap 999999999 -segment_list " FfmpegSegmentUploader_FFMPEG_COMMAND_SEGMENT_ENTRY_LIST_FILE_REPLACEMENT_STRING " -reset_timestamps 1 videoSegment-%d.ogg"

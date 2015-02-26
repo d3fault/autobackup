@@ -20,3 +20,5 @@ SOURCES += main.cpp \
 HEADERS += \
     ../lib/musicfingers.h \
     musicfingerscli.h
+
+include(../../../../GloballySharedClasses/standardinputnotifier.pri)
