@@ -24,16 +24,16 @@ MusicFingers::MusicFingers(QObject *parent)
     }
     connect(m_SerialPort, SIGNAL(readyRead()), this, SLOT(handleSerialPortReadyRead()));
 
-    m_Fingers.insert(Finger::LeftPinky0, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::LeftRing1, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::LeftMiddl2, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::LeftIndex3, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::LeftThumb4, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::RightThumb5, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::RightIndex6, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::RightMiddle, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::RightRing7, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::RightPinky8, FINGERS_INITIAL_POSITION);
+    m_Fingers.insert(Finger::LeftPinky_A0, FINGERS_INITIAL_POSITION);
+    m_Fingers.insert(Finger::LeftRing_A1, FINGERS_INITIAL_POSITION);
+    m_Fingers.insert(Finger::LeftMiddle_A2, FINGERS_INITIAL_POSITION);
+    m_Fingers.insert(Finger::LeftIndex_A3, FINGERS_INITIAL_POSITION);
+    m_Fingers.insert(Finger::LeftThumb_A4, FINGERS_INITIAL_POSITION);
+    m_Fingers.insert(Finger::RightThumb_A5, FINGERS_INITIAL_POSITION);
+    m_Fingers.insert(Finger::RightIndex_A6, FINGERS_INITIAL_POSITION);
+    m_Fingers.insert(Finger::RightMiddle_A7, FINGERS_INITIAL_POSITION);
+    m_Fingers.insert(Finger::RightRing_A8, FINGERS_INITIAL_POSITION);
+    m_Fingers.insert(Finger::RightPinky_A9, FINGERS_INITIAL_POSITION);
 
     //QAudioDeviceInfo audioDeviceInfo;
     QAudioFormat audioFormat/* = audioDeviceInfo.preferredFormat()*/; //TODOreq: synthesizer must also generate same size. TODOmb: 10 channels instead of 1 or 2? probably not, since we're "muxing" the 10 fingers into 1 audio stream... but hey I mean you can always experiment with 10 channels, idfk -- it would be like 10x surround sound speakers ish
@@ -80,8 +80,44 @@ QByteArray MusicFingers::synthesizeAudioUsingFingerPositions(int numBytesToSynth
     static const int numberOfDoublesWeCanFitIntoRet = (numBytesToSynthesize_aka_audioOutputPeriodSize*sizeof(char)) / sizeof(double);
     for(int i = 0; i < numberOfDoublesWeCanFitIntoRet; ++i)
     {
-        double y = sin(++m_TimeInBytesForMySineWave)*m_Fingers.value(Finger::LeftPinky0);
-        //double y = pow(sin(++m_TimeInBytesForMySineWave), static_cast<double>(m_Fingers.value(Finger::LeftPinky0)));
+        int fingerPos = m_Fingers.value(Finger::LeftPinky_A0);
+
+        //double y = sin(++m_TimeInBytesForMySineWave)*fingerPos;
+
+        //mute
+        //double y = pow(sin(++m_TimeInBytesForMySineWave), static_cast<double>(fingerPos));
+
+#if 1
+        //YES
+        double y = sin((++m_TimeInBytesForMySineWave)*fingerPos)*fingerPos;
+#endif
+
+        //mute
+        //double y = sin((++m_TimeInBytesForMySineWave)*fingerPos);
+
+        //mute
+        //double y = sin((++m_TimeInBytesForMySineWave)/fingerPos)/fingerPos;
+
+        //mute
+        //double y = pow(sin((++m_TimeInBytesForMySineWave)*fingerPos*fingerPos), fingerPos*fingerPos);
+
+        //mute
+        //double y = sin((++m_TimeInBytesForMySineWave)*fingerPos)*pow(fingerPos, fingerPos);
+
+#if 0
+        //seems the same as sin, but maybe "faster"
+        double y = tan((++m_TimeInBytesForMySineWave)*fingerPos)*fingerPos;
+#endif
+
+        //mute
+        //double y = asin((++m_TimeInBytesForMySineWave)*fingerPos)*fingerPos;
+
+#if 0
+        //soft fuzzy sound only when moving finger
+        double y = asinh((++m_TimeInBytesForMySineWave)*fingerPos)*fingerPos;
+#endif
+
+
 
         ret.insert(i, y);
         //qDebug() << y;
@@ -116,6 +152,6 @@ void MusicFingers::handleSerialPortReadyRead()
     }
     if(latestValue > -1)
     {
-        m_Fingers.insert(Finger::LeftPinky0, latestValue);
+        m_Fingers.insert(Finger::LeftPinky_A0, latestValue);
     }
 }
