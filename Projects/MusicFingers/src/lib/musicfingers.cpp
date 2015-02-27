@@ -8,6 +8,7 @@
 #include <QtSerialPort/QSerialPortInfo>
 
 #define MusicFingers_NUM_PERIODS_TO_WRITE_PER_TIMEOUT 1
+//#define MusicFingers_
 
 //TODOmb: if all of [5] (one hand) of the finger sensors move at the same time (and the same distance), it means the WRIST is moving, not [necessarily] the fingers.... so I can/should filter that wrist movement out. Differentiating between that and intentional movement of all 5 fingers would be difficult, if not impossible
 MusicFingers::MusicFingers(QObject *parent)

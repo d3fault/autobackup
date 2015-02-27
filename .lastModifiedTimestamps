@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1424953396
+Documents/minddump/:1425037866
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1856,6 +1856,7 @@ Documents/minddump/sdfjlsdjflkjsdfjsldkjfklsdjflksjdfjsdfhsdlkfjlks.txt:14012722
 Documents/minddump/sdfjlsdkjflksdjfkljsdlkfjslkflsdkf.launch.is.superior.tho.saldfjsldkfjsklad.txt:1408614937
 Documents/minddump/sdfjsdfhlsdjflksdjfkldsjflksdjfosduflksdjflsdkfjsdl.txt:1403684948
 Documents/minddump/sdfjsdfkjslkfjsdofusdljfosduflskdjfousdflkjsdflkj.txt:1392976687
+Documents/minddump/sdfjsdflkjsdlkfjskldjfklsjdlfsdfsdlfkjlskdfjklsdjfkljsdlf.txt:1425033540
 Documents/minddump/sdfjsjdfkjsdlfkjsdlkjflskdjflksjfouwelrjousdlfjksklfjsdf.txt:1393706954
 Documents/minddump/sdfjskdljfklsdjfouweljroudfsjdfouwelrjoudflsdjfou.txt:1392163356
 Documents/minddump/sdfjskfdjsldkfjsdkljflskjdflksdjfksldjfweuroujsdklfjsdlkfjdsf.txt:1404990538
@@ -1977,6 +1978,7 @@ Documents/minddump/sdflkjsdlkfjkldsjflksjdflkjsdflkrwerwerjsdfkljsdlfkjsd.txt:14
 Documents/minddump/sdflkjsdlkfjlsdkjflkjsdflkjweorulkjsflkjsf.txt:1397164814
 Documents/minddump/sdflkjsdlkfjouwerlkjosduflkjsdfouasdflkt.txt:1384429977
 Documents/minddump/sdflkjsdlkfjsdfjoiuwerlkjsdfoulkjrwerousdflk.txt:1358805363
+Documents/minddump/sdflkjsdlkfjskldjfklsdjfkljsdklfjskdljfklsdjfkljsdklfjlskdjf.txt:1425037866
 Documents/minddump/sdflkjsdlkfjsldfkjsdlkfjlsdkjfdofulskdjfousdlkfjsdfouwerjklsf.txt:1379395080
 Documents/minddump/sdflkjsfdkljsdfosduiflwkejrousdflkjdfs.txt:1358842872
 Documents/minddump/sdflkjsfkljsdfouwerlkjsdfosdufweljkr.txt:1356894182
@@ -2204,6 +2206,7 @@ Documents/minddump/sdlkfjdlkfjdskljflkdjfklsdjflksdjflksdjflksdjflks.txt:1415985
 Documents/minddump/sdlkfjklsjdfsodufljksdfouwoeursdlfkj.txt:1384341360
 Documents/minddump/sdlkfjlaksjdfosudflkjsadfousdlfjouwelrkjousdf.txt:1384490455
 Documents/minddump/sdlkfjlaskjdflkjslkdfjlkasjflkjsdflkjsdflkjsdfkj.whats.one.day.txt.oh.shit.so.what.about.releasing.files.then.i.mean.when.txt:1400311121
+Documents/minddump/sdlkfjlksdjfkljsdklfjkljsdklfjskldjfklsjdlkfjksd.txt:1425035296
 Documents/minddump/sdlkfjlksdjflskdjfouwerljsdlkfhlsdkjfsdlkjfsdofuoewurjfdlkjfsdflksjdfsduferkjsf.txt:1405074523
 Documents/minddump/sdlkfjlskdjflksjdflkjsdklfjlksdjflksjdflkjsdf.txt:1409512159
 Documents/minddump/sdlkfjlskjflkjsdfoiusdlfjsodfiulkdjfsokfoiuwelkrjsdfsdfoiuer.txt:1365218620
@@ -2352,6 +2355,7 @@ Documents/minddump/sldjflksjdlfkjlskdjfkljsdflkjsdflkjsdflkjsdlfjsdlkfj.txt:1399
 Documents/minddump/sldjflskadjfklsdjfoiuwelrkjousdflkjsdfouwerkjlkjsdfoudfslkjsdfoiulkr.txt:1381491907
 Documents/minddump/sldjflskjdflkjfthdjsadfoulwekjrousdlfkjsodfu.txt:1391380899
 Documents/minddump/sldjfsdjflsdkjflsdjkflsdkjfwerewrsdfouwerljousdflkjsdofusldf.txt:1381396095
+Documents/minddump/sldjkflksjdfkljsdklfjskldjfklsjdklfjsdkljfklsjdklfjsdkljfklsdjf.txt:1425035152
 Documents/minddump/sldjkfsadofiuoierulfjsdkfjsdk.txt:1353789547
 Documents/minddump/sldkfjalkjdflskjfsdofualsdfkjsodfulksdfjoausflkjsadfousfdlkjsdfo.txt:1379630527
 Documents/minddump/sldkfjaskdljfousdflkjwoewerrqwerwerfdsurljfodsuflkjsdfoul.txt:1370746128
@@ -3640,7 +3644,7 @@ Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakergui.h:1396200558
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.cpp:1424694544
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.h:1396112897
 Projects/MouseOrMotionOrMySexyFaceViewMaker/:1424873281
-Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1424873759
+Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1425022649
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/MouseOrMotionOrMySexyFaceViewMaker.pro:1396499493
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/main.cpp:1424682360
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseCursor.qrc:1424756197
@@ -3657,14 +3661,14 @@ Projects/MusicFingers/assets/:1424881312
 Projects/MusicFingers/assets/ArduinoWriteChangesOnA0toSerial/:1424926930
 Projects/MusicFingers/assets/ArduinoWriteChangesOnA0toSerial/ArduinoWriteChangesOnA0toSerial.ino:1424926930
 Projects/MusicFingers/src/:1424886815
-Projects/MusicFingers/src/cli/:1424967391
+Projects/MusicFingers/src/cli/:1425036339
 Projects/MusicFingers/src/cli/MusicFingersCli.pro:1424929230
 Projects/MusicFingers/src/cli/MusicFingersCli.pro.user.3.2-pre1:1424885783
 Projects/MusicFingers/src/cli/main.cpp:1424887225
 Projects/MusicFingers/src/cli/musicfingerscli.cpp:1424930080
 Projects/MusicFingers/src/cli/musicfingerscli.h:1424930067
-Projects/MusicFingers/src/lib/:1424935374
-Projects/MusicFingers/src/lib/musicfingers.cpp:1424935374
+Projects/MusicFingers/src/lib/:1425029613
+Projects/MusicFingers/src/lib/musicfingers.cpp:1425029613
 Projects/MusicFingers/src/lib/musicfingers.h:1424929870
 Projects/MusicFingers/src/musicfingers.pri:1424675972
 Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/:1412762111
@@ -5494,9 +5498,10 @@ Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/atomicallyupdatesymlinktolatestgitcommit.cpp:1400562807
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/atomicallyupdatesymlinktolatestgitcommit.h:1400562770
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/:1397023766
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1397080688
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1424769771
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1425035014
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1425036333
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/FfmpegSegmentUploaderCli.pro:1398993069
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/FfmpegSegmentUploaderCli.pro.user.3.2-pre1:1425034994
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.cpp:1399486271
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.h:1399348328
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/main.cpp:1399661422
@@ -5607,4 +5612,4 @@ licenses/license.dpl.txt:1388242176
 .gitignore:1387281701
 copyright.txt:1388203681
 license.dpl.txt:1388242176
-todo.txt:1425021422
+todo.txt:1425033930

@@ -1,0 +1,5 @@
+An extremely lenient (and fast as fuck) way to compare two directories on two different computers, seeing if they are "the same". Does not catch many cases where the directories are still different.
+
+find . -type f | sha1sum | base64
+
+run it on both computers and compare the results, they should be identical
