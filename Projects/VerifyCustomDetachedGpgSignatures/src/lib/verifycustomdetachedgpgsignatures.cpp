@@ -78,7 +78,8 @@ void VerifyCustomDetachedGpgSignatures::verifyFileSignatureAndThenContinueOntoNe
     gpgArgs << "--verify" << "-" << filePathToVerify;
     m_GpgProcess->start(GPG_DEFAULT_PATH, gpgArgs, QIODevice::ReadWrite);
     m_GpgProcessTextStream << fileSignature;
-    m_GpgProcessTextStream.flush(); //necessary? mb not, but fuck it
+    m_GpgProcessTextStream.flush(); //necessary? probably, but idk tbh
+    m_GpgProcess->closeWriteChannel();
 }
 void VerifyCustomDetachedGpgSignatures::spitOutGpgProcessOutput()
 {
@@ -105,6 +106,7 @@ void VerifyCustomDetachedGpgSignatures::verifyCustomDetachedGpgSignatures(const 
         return;
     }
     m_CustomDetachedSignaturesStream.setDevice(customDetachedSignaturesIoDevice);
+    m_GpgProcess->setWorkingDirectory(dir.absolutePath());
     verifyNextEntryOfCustomDetachedOrEmitFinishedIfNoMore(); //pseudo-recursive (async) -- first head call
 }
 void VerifyCustomDetachedGpgSignatures::handleGpgProcessError(QProcess::ProcessError processError)

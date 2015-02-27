@@ -2,5 +2,5 @@ deploy:
 hottee -- create folder if not exist
 
 do:
-~24hr cronjob: make torrent of all 'yesterdays' (just ended day) video segments -- also same for weekly (later, bump that to monthly) -- hvbs download page builds links based on torrents it finds in a directory?x
-cock cursor
+Hottee: "working dir(s)", on start create hotteeAt<timestamp> sub-folder (fail if it exists (UNLESS RESUMING))
+~24hr cronjob: make torrent of all 'yesterdays' (just ended day) video segments -- also same for weekly (later, bump that to monthly) -- hvbs download page builds links based on torrents it finds in a directory?
