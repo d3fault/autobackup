@@ -4,8 +4,11 @@ echo "$1"
 gpg --detach-sign --armor -o - "$1"
 
 Then:
-find . -type f -exec echoAndSign.sh '{}' \;
+find . -type f -exec ./echoAndSign.sh '{}' \;
 
 
 Or if you don't want to echo the filename to stdout, just do:
 find . -type f -execdir gpg --detach-sign --armor '{}' \;
+
+
+To recursively VERIFY the result, use: VerifyCustomDetachedGpgSignatures

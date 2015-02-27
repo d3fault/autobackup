@@ -9,6 +9,7 @@
 
 #define MusicFingers_NUM_PERIODS_TO_WRITE_PER_TIMEOUT 1
 
+//TODOmb: if all of [5] (one hand) of the finger sensors move at the same time (and the same distance), it means the WRIST is moving, not [necessarily] the fingers.... so I can/should filter that wrist movement out. Differentiating between that and intentional movement of all 5 fingers would be difficult, if not impossible
 MusicFingers::MusicFingers(QObject *parent)
     : QObject(parent)
     , m_TimeInBytesForMySineWave(-1.0) //TODOreq: every "sine wave 'period' (when the y value is the same, leik at the top or wherever really (traditionally the top))", I need to put this back at zero. Otherwise, when we run out of range in the integer, there might be a small popping sound
@@ -85,6 +86,8 @@ bool MusicFingers::isValidFingerId(int fingerId)
 }
 QByteArray MusicFingers::synthesizeAudioUsingFingerPositions(int numBytesToSynthesize_aka_audioOutputPeriodSize)
 {
+    //TODOoptional: runtime math formula random permuations (press space key = new random math formula (it tells you which ofc (and ideally all are recorded (and ideally rated based on how i like em))))
+
     QByteArray ret; //TODOoptimization: maybe smart to re-use this buffer, maybe doesn't matter
     ret.reserve(numBytesToSynthesize_aka_audioOutputPeriodSize);
     static const int numberOfDoublesWeCanFitIntoRet = (numBytesToSynthesize_aka_audioOutputPeriodSize*sizeof(char)) / sizeof(double);
@@ -148,6 +151,18 @@ QByteArray MusicFingers::synthesizeAudioUsingFingerPositions(int numBytesToSynth
         //double y1 = sin((++m_TimeInBytesForMySineWave)*a1_fingerPos)*a1_fingerPos;
         //ret.append(y0);
         //ret.append(y1);
+
+        //a1 has little effect
+        //double y = tan((++m_TimeInBytesForMySineWave)*a0_fingerPos)*a1_fingerPos;
+
+        //quiet af, movement has very little (if any) effect
+        //double y = tan((++m_TimeInBytesForMySineWave*a0_fingerPos))*sin(m_TimeInBytesForMySineWave*a1_fingerPos);
+
+        //white noise
+        //double y = (tan((++m_TimeInBytesForMySineWave*a0_fingerPos))*sin(m_TimeInBytesForMySineWave*a1_fingerPos)) * (a0_fingerPos*a1_fingerPos);
+
+        //quiet af, movement has very little (if any) effect
+        //double y = tan((++m_TimeInBytesForMySineWave*a0_fingerPos)) / sin(m_TimeInBytesForMySineWave*a1_fingerPos);
 
         ret.append(y);
     }
