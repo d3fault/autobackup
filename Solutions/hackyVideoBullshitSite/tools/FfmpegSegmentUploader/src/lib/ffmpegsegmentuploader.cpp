@@ -10,12 +10,14 @@
 #include <QDir>
 #include <QTimer>
 
+//QApplication::alert (dep gui) when a video segment has not been SEEN IN CHUNK FILE (had:uploaded) in 4 "(n+1)" minutes -- for now (cli) just ALL CAPS ALERT MESSAGE will do
 FfmpegSegmentUploader::FfmpegSegmentUploader(QObject *parent)
     : QObject(parent)
     , m_FfmpegSegmentsEntryListFile(0)
     , m_FfmpegSessionDirWatcherAutoTransormingIntoSegmentsEntryListFileWatcher(0)
     , m_FfmpegProcess(new QProcess(this))
     , m_FfmpegProcessKiller30secTimer(new QTimer(this))
+    , m_EnsureVideoSegmentUploadedAtLeastOnceEvery4minutesTimer(new QTimer(this))
     , m_SftpUploaderAndRenamerQueue(0)
     , m_HowToStopSftpUploaderAndRenamerQueueOnceFfmpegFinishes(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueState_StopWhenAllUploadsFinishSuccessfully)
 {
@@ -39,6 +41,9 @@ FfmpegSegmentUploader::FfmpegSegmentUploader(QObject *parent)
     m_FfmpegProcessKiller30secTimer->setSingleShot(true);
     m_FfmpegProcessKiller30secTimer->setInterval(29000 /*same length as waitForFinished, minus 1 that we actually give waitForFinished*/);
     connect(m_FfmpegProcessKiller30secTimer, SIGNAL(timeout()), this, SLOT(killFfmpegProcessIfStillRunning()));
+
+    m_EnsureVideoSegmentUploadedAtLeastOnceEvery4minutesTimer->setInterval(1000*60*4); //TODOoptional: allow 4 mins to be specified in args
+    connect(m_EnsureVideoSegmentUploadedAtLeastOnceEvery4minutesTimer, SIGNAL(timeout()), this, SLOT(handleEnsureVideoSegmentUploadedAtLeastOnceEvery4minutesTimerTimedOut()));
 }
 FfmpegSegmentUploader::~FfmpegSegmentUploader()
 {
@@ -106,6 +111,7 @@ void FfmpegSegmentUploader::startFfmpegSegmentUploader(qint64 segmentLengthSecon
     connect(m_SftpUploaderAndRenamerQueue, SIGNAL(o(QString)), this, SIGNAL(o(QString)));
     connect(m_SftpUploaderAndRenamerQueue, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
     connect(m_SftpUploaderAndRenamerQueue, SIGNAL(sftpUploaderAndRenamerQueueStarted()), this, SLOT(handleSftpUploaderAndRenamerQueueStarted()));
+    connect(m_SftpUploaderAndRenamerQueue, SIGNAL(fileUploadAndRenameSuccess(QString,QString)), this, SLOT(handleSftpFileUploadAndRenameSuccess(QString,QString)));
     connect(m_SftpUploaderAndRenamerQueue, SIGNAL(statusGenerated(QString)), this, SIGNAL(o(QString)));
     connect(this, SIGNAL(sftpUploaderAndRenamerQueueStateChangeRequested(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum)), m_SftpUploaderAndRenamerQueue, SLOT(changeSftpUploaderAndRenamerQueueState(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum)), Qt::QueuedConnection); //probably worthless that it's queued, but the hope is that it gives the ffmpeg process more time (or perhaps event loop cycles?) to flush the final segment filename to the segment list file
     connect(m_SftpUploaderAndRenamerQueue, SIGNAL(quitRequested()), this, SIGNAL(quitRequested())); //re: IBusinessObject: wondering if i need stopped signal since i have this, but eh quitRequested is as of right now intended more for fatal error type cases. BUT errors might still want to be ignored by the parent. stopped is like normal usage type shit... even though in this case they are both the same and are indirectly connected to qApp::quit!
@@ -139,9 +145,15 @@ void FfmpegSegmentUploader::handleSftpUploaderAndRenamerQueueStarted() //or i co
 {
     m_FfmpegProcess->start(m_FfmpegCommand, QIODevice::ReadOnly /*TODOoptimiztion: WriteOnly is most efficient, right? since only a 1-way channel needs to be opened? in this case i don't need write or read... aww shit nvm i need reading for reading stderr*/);
 }
+void FfmpegSegmentUploader::handleSftpFileUploadAndRenameSuccess(const QString &unixTimestamp, const QString &filename)
+{
+    m_EnsureVideoSegmentUploadedAtLeastOnceEvery4minutesTimer->start(); //[re-]start
+    emit o("segment upload success (Current time: " + QDateTime::currentDateTime().toString() + " -- Segment timestamp: " + unixTimestamp + " -- Segment filename: " + filename);
+}
 void FfmpegSegmentUploader::handleFfmpegProcessStarted()
 {
     emit o("ffmpeg has started capturing");
+    m_EnsureVideoSegmentUploadedAtLeastOnceEvery4minutesTimer->start();
 }
 void FfmpegSegmentUploader::handleFfmpegProecssStdOut()
 {
@@ -212,4 +224,8 @@ void FfmpegSegmentUploader::handleFfmpegProecssFinished(int exitCode, QProcess::
         return;
     }
     emit o("ffmpeg exitted cleanly");
+}
+void FfmpegSegmentUploader::handleEnsureVideoSegmentUploadedAtLeastOnceEvery4minutesTimerTimedOut()
+{
+    emit alertSegmentNotUploadedInCertainAmountOfTime(QDateTime::currentDateTime());
 }

@@ -29,6 +29,7 @@ private slots:
     void handleStandardInputReceived(const QString &standardInputLine);
     void handleO(const QString &msg);
     void handleE(const QString &msg);
+    void handleAlertSegmentNotUploadedInCertainAmountOfTime(const QDateTime &dateTimeOfAlert);
 };
 
 #endif // FFMPEGSEGMENTUPLOADERCLI_H

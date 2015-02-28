@@ -2,6 +2,7 @@
 
 #include <QCoreApplication>
 #include <QStringList>
+#include <QDateTime>
 
 FfmpegSegmentUploaderCli::FfmpegSegmentUploaderCli(QObject *parent)
     : QObject(parent)
@@ -18,6 +19,7 @@ FfmpegSegmentUploaderCli::FfmpegSegmentUploaderCli(QObject *parent)
     connect(this, SIGNAL(stopUploadingFfmpegSegmentsCleanlyRequested()), m_FfmpegSegmentUploader, SLOT(stopUploadingFfmpegSegmentsCleanly()));
     connect(this, SIGNAL(stopUploadingFfmpegSegmentsCleanlyUnlessDcRequested()), m_FfmpegSegmentUploader, SLOT(stopUploadingFfmpegSegmentsCleanlyUnlessDc()));
     connect(this, SIGNAL(stopUploadingFfmpegSegmentsNowRequested()), m_FfmpegSegmentUploader, SLOT(stopUploadingFfmpegSegmentsNow()));
+    connect(m_FfmpegSegmentUploader, SIGNAL(alertSegmentNotUploadedInCertainAmountOfTime(QDateTime)), this, SLOT(handleAlertSegmentNotUploadedInCertainAmountOfTime(QDateTime)));
     connect(m_FfmpegSegmentUploader, SIGNAL(quitRequested()), qApp, SLOT(quit()), Qt::QueuedConnection);
     connect(m_FfmpegSegmentUploader, SIGNAL(stoppedUploadingFfmpegSegments()), QCoreApplication::instance(), SLOT(quit()), Qt::QueuedConnection); //hmm i think a custom object with a QFutureSynchronizer and a handful of QFutures passed to it would solve the.... oh nvm i think i need QFutureWatchers with it too in order to not block
 
@@ -116,4 +118,8 @@ void FfmpegSegmentUploaderCli::handleO(const QString &msg)
 void FfmpegSegmentUploaderCli::handleE(const QString &msg)
 {
     m_StdErr << msg << endl;
+}
+void FfmpegSegmentUploaderCli::handleAlertSegmentNotUploadedInCertainAmountOfTime(const QDateTime &dateTimeOfAlert)
+{
+    handleE("\n==============ALERT, A VIDEO SEGMENT HASN'T BEEN UPLOADED IN 4 MINUTES (time now = " + dateTimeOfAlert.toString() + ")================\n");
 }

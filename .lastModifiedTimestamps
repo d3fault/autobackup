@@ -2905,7 +2905,7 @@ Projects/CopyFileContentsToClipboard/src/CopyFileContentsToClipboardGui.pro:1409
 Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.cpp:1409509743
 Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.h:1409507797
 Projects/CopyFileContentsToClipboard/src/main.cpp:1409508222
-Projects/DesignEqualsImplementation2/:1412596378
+Projects/DesignEqualsImplementation2/:1425101507
 Projects/DesignEqualsImplementation2/design/:1418094927
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/:1411932839
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/0004_SingleSignalMultipleSlots/:1411934573
@@ -2978,7 +2978,7 @@ Projects/DesignEqualsImplementation2/design/use.case.is.series.of.either.slot.de
 Projects/DesignEqualsImplementation2/design/use.cases.define.slot.bodies.at.runtime.but.only.resolve.where.connect.statements.go.at.source.generation.time.txt:1408252978
 Projects/DesignEqualsImplementation2/design/when.to.do.the.cross.thread.call.analysis.optimization.sdfljsdlfjsdl.txt:1410402949
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1424672351
+Projects/DesignEqualsImplementation2/src/:1425102887
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
@@ -4737,9 +4737,9 @@ Projects/RpcGenerator/design/use.case.ugly.disconnect.detected.on.server.through
 Projects/RpcGenerator/design/when.not.using.all.action.dispensers.opt.to.ignore.error.and.also.a.primitive.design.for.making.sure.all.broadcast.signals.are.being.listened.to.txt:1370575570
 Projects/SftpUploaderAndRenamerQueue/:1398991625
 Projects/SftpUploaderAndRenamerQueue/src/:1398991629
-Projects/SftpUploaderAndRenamerQueue/src/lib/:1424752255
-Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.cpp:1424752255
-Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.h:1400918972
+Projects/SftpUploaderAndRenamerQueue/src/lib/:1425103143
+Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.cpp:1425103143
+Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.h:1425103143
 Projects/SimpleNotepadAutosaveWithoutOverwriting/:1402138414
 Projects/SimpleNotepadAutosaveWithoutOverwriting/design/:1402137999
 Projects/SimpleNotepadAutosaveWithoutOverwriting/design/as.you.can.see.ive.been.trying.to.figure.this.out.for.a.while.txt.oh.yea.initiail.idea.COINCIDENTALLY.mb.txt:1402137999
@@ -5448,7 +5448,7 @@ Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrep
 Solutions/d3faultPublicLicense/chose.to.not.do.network.clause.but.eh.may.regret.it.later.txt:1387589098
 Solutions/d3faultPublicLicense/d3fault.public.license.v1.txt:1378374962
 Solutions/d3faultPublicLicense/header.prepend.dpl.v3.d3fault.launch.distribution.txt:1400664477
-Solutions/hackyVideoBullshitSite/:1409253029
+Solutions/hackyVideoBullshitSite/:1425100791
 Solutions/hackyVideoBullshitSite/design/:1400229918
 Solutions/hackyVideoBullshitSite/design/dont.use.atomics.for.synchronization.lol.overkill.just.rely.on.fs.buffer.cache.txt:1397469831
 Solutions/hackyVideoBullshitSite/design/hacky.no.embed.fail.optimization.solu.nvm.txt:1394173861
@@ -5457,7 +5457,7 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400803006
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1424862455
+Solutions/hackyVideoBullshitSite/src/:1425100784
 Solutions/hackyVideoBullshitSite/src/backend/:1424844244
 Solutions/hackyVideoBullshitSite/src/backend/adimageapikey.h:1424844210
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1424844244
@@ -5498,15 +5498,15 @@ Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/atomicallyupdatesymlinktolatestgitcommit.cpp:1400562807
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/atomicallyupdatesymlinktolatestgitcommit.h:1400562770
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/:1397023766
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1425035014
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1425055657
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1425100836
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1425106039
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/FfmpegSegmentUploaderCli.pro:1398993069
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.cpp:1399486271
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.h:1399348328
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.cpp:1425102286
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.h:1425101238
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/main.cpp:1399661422
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/:1424768367
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.cpp:1399693351
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.h:1424922117
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/:1425103842
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.cpp:1425103842
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/lib/ffmpegsegmentuploader.h:1425103454
 Solutions/hackyVideoBullshitSite/tools/hvbsInstaller/:1401090612
 Solutions/hackyVideoBullshitSite/tools/hvbsInstaller/design/:1401090667
 Solutions/hackyVideoBullshitSite/tools/hvbsInstaller/design/hvbs.installer.initial.idea.basically.to.make.binary.drops.easier.without.polluting.my.git.repo.with.binaries.txt:1401090667
@@ -5611,4 +5611,4 @@ licenses/license.dpl.txt:1388242176
 .gitignore:1425055833
 copyright.txt:1388203681
 license.dpl.txt:1388242176
-todo.txt:1425033930
+todo.txt:1425105986

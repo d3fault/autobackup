@@ -46,6 +46,7 @@ private:
     QProcess *m_FfmpegProcess;
     QString m_FfmpegSegmentUploaderSessionPath;
     QTimer *m_FfmpegProcessKiller30secTimer;
+    QTimer *m_EnsureVideoSegmentUploadedAtLeastOnceEvery4minutesTimer;
 
     SftpUploaderAndRenamerQueue *m_SftpUploaderAndRenamerQueue;
     SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum m_HowToStopSftpUploaderAndRenamerQueueOnceFfmpegFinishes;
@@ -72,6 +73,7 @@ signals:
     void o(const QString &);
     void e(const QString &);
     void sftpUploaderAndRenamerQueueStateChangeRequested(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum newSftpUploaderAndRenamerQueueState);
+    void alertSegmentNotUploadedInCertainAmountOfTime(const QDateTime &dateTimeOfAlert);
     void quitRequested();
     void stoppedUploadingFfmpegSegments();
 public slots:
@@ -82,6 +84,7 @@ public slots:
     void stopUploadingFfmpegSegmentsNow();
 private slots:
     void handleSftpUploaderAndRenamerQueueStarted();
+    void handleSftpFileUploadAndRenameSuccess(const QString &unixTimestamp, const QString &filename);
     void handleFfmpegProcessStarted();
     void handleFfmpegProecssStdOut();
     void handleFfmpegProecssStdErr();
@@ -89,6 +92,7 @@ private slots:
     void handleSegmentsEntryListFileModified();
     void killFfmpegProcessIfStillRunning();
     void handleFfmpegProecssFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    void handleEnsureVideoSegmentUploadedAtLeastOnceEvery4minutesTimerTimedOut();
 };
 
 #endif // FFMPEGSEGMENTUPLOADER_H

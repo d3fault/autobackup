@@ -1,8 +1,11 @@
 deploy:
 hottee -- create folder if not exist
+ffmpeg segment uploader (4 mins alert)
 
 do:
+git auto submodulization (solves binaries problem)
 page jump = segfault
-FFmpegSegmentUploader: QApplication::alert (dep gui) when a video segment has not been SEEN IN CHUNK FILE (had:uploaded) in 4 "(n+1)" minutes
+dirs sorted?
 Hottee: "working dir(s)", on start create hotteeAt<timestamp> sub-folder (fail if it exists (UNLESS RESUMING, in which case we need to know that hotteeAt<timestamp> sub-folder as an arg))
+Hottee: "q" -> we will quit when the input process closes, if the upload queue is [still] empty a few seconds after the input process closes
 ~24hr cronjob: make torrent of all 'yesterdays' (just ended day) video segments -- also same for weekly (later, bump that to monthly) -- hvbs download page builds links based on torrents it finds in a directory?

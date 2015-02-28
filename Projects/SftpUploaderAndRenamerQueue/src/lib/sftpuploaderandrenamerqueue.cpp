@@ -298,8 +298,8 @@ void SftpUploaderAndRenamerQueue::handleSftpProcessReadyReadStandardOut()
             if(m_SftpPutInProgressSoWatchForRenameCommandEcho && currentLine.startsWith("sftp> rename "))
             {
                 m_SftpPutInProgressSoWatchForRenameCommandEcho = false;
-                m_SegmentsQueuedForUpload.dequeue();
-                emit o(QDateTime::currentDateTime().toString() + " -- segment upload success");
+                SftpUploaderAndRenamerQueueTimestampAndFilenameType fileJustUploadedAndRenamed = m_SegmentsQueuedForUpload.dequeue();
+                emit fileUploadAndRenameSuccess(fileJustUploadedAndRenamed.first, fileJustUploadedAndRenamed.second);
                 if(m_SegmentsQueuedForUpload.isEmpty() && m_SftpUploaderAndRenamerQueueState != SftpUploaderAndRenamerQueueState_Started) //TODOoptional: the last segment PROBABLY won't be segmentLengthSeconds long, so the timestamp we calculate when it's added to the segment entry list will be early and 'pointing to a time in the previous segment'. i could solve this by keeping track of time elapsed or whatever and then only using that for the very last segment added when quitting, but i'm too lazy for now :-P
                 {
                     emit o("FfmpegSegmentUploader now cleanly stopping since upload queue is empty...");

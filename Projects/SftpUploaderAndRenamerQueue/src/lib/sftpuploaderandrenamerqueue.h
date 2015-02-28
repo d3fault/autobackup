@@ -59,6 +59,7 @@ signals:
     void o(const QString &);
     void e(const QString &);
     void sftpUploaderAndRenamerQueueStarted();
+    void fileUploadAndRenameSuccess(const QString &unixTimestamp, const QString &filename);
     void statusGenerated(const QString &);
     void quitRequested();
     void sftpUploaderAndRenamerQueueStopped();
