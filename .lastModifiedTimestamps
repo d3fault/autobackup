@@ -5499,9 +5499,8 @@ Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/atomicallyupdatesymlinktolatestgitcommit.h:1400562770
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/:1397023766
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1425035014
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1425036333
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1425055657
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/FfmpegSegmentUploaderCli.pro:1398993069
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/FfmpegSegmentUploaderCli.pro.user.3.2-pre1:1425034994
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.cpp:1399486271
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.h:1399348328
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/main.cpp:1399661422
@@ -5609,7 +5608,7 @@ autobackupScripts/win/zoom.cygwin.commands.sh:1320861500
 autobackupScripts/win/zoom.sync.with.3x.750gb.drives.bat:1320860540
 licenses/:1398086549
 licenses/license.dpl.txt:1388242176
-.gitignore:1387281701
+.gitignore:1425055833
 copyright.txt:1388203681
 license.dpl.txt:1388242176
 todo.txt:1425033930

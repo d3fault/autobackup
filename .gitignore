@@ -1,5 +1,5 @@
 *.[ao]
-*.pro.user
+*.pro.user*
 *~
 build-*-Debug/
 build-*-Release/
