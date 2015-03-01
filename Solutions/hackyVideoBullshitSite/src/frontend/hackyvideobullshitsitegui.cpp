@@ -92,7 +92,7 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
     : WApplication(env)
     , m_Contents(0)
     , m_NoJavascriptAndFirstAdImageChangeWhichMeansRenderingIsDeferred(!env.ajax())
-    , m_AutoPlayNextVideoSegmentCheckboxChecked(false)
+    , m_AutoPlayNextVideoSegmentCheckboxChecked(true)
     , m_TimelineAndDirectoryLogicalContainer(0)
     , m_TimeLineMyBrainWidget(0)
     , m_BrowseMyBrainDirWidget(0)
@@ -148,7 +148,9 @@ HackyVideoBullshitSiteGUI::HackyVideoBullshitSiteGUI(const WEnvironment &env)
 
     //My sexy face logo
     WImage *mySexyFaceLogoImage = new WImage(WLink(WLink::Url, "/my.sexy.face.logo.jpg"), "d3fault");
-    WAnchor *homeAnchor = new WAnchor(WLink(WLink::InternalPath, "/"), mySexyFaceLogoImage);
+    //we connect to the clicked signal and do this manually instead because clicking my sexy face doesn't "show the latest video segment" otherwise: WAnchor *homeAnchor = new WAnchor(WLink(WLink::InternalPath, "/"), mySexyFaceLogoImage);
+    WAnchor *homeAnchor = new WAnchor(WLink(), mySexyFaceLogoImage);
+    homeAnchor->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleHomeAnchorClickedSoShowLatestVideoSegmentEvenIfAlreadyHome);
     homeAnchor->setToolTip("d3fault");
     mySexyFaceLogoImage->setToolTip("d3fault");
     topHBoxLayout->addWidget(homeAnchor);
@@ -813,6 +815,10 @@ void HackyVideoBullshitSiteGUI::tellUserThatCurrentVideoSegmentIsLatest()
     WPushButton *tryAgainButton = new WPushButton("Try Again", currentVideoSegmentIsLatestContainer);
     tryAgainButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
     setMainContent(currentVideoSegmentIsLatestContainer);
+}
+void HackyVideoBullshitSiteGUI::handleHomeAnchorClickedSoShowLatestVideoSegmentEvenIfAlreadyHome()
+{
+   setInternalPath("/", true); //I'd imagine this is the same thing anchors do, but they optimizingly don't do it when the internal path hasn't changed. this, I think, forces it to go through my handleInternalPathChanged logic, which shows the latest video segment)
 }
 void HackyVideoBullshitSiteGUI::createCookieCrumbsFromPath(/*const string &internalPathInclFilename*/)
 {

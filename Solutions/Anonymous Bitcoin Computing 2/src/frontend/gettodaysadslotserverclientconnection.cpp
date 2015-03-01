@@ -19,6 +19,7 @@
 
 using namespace boost::property_tree;
 
+//TODOreq: ensure api keys are linked to their users (they can only query api calls for themselves). this might be implemented, i don't remember
 //TODOoptional: optional, but a damn good idea: provide a javascript snippet and a corresponding php script. The javascript snippet calls the php script, parses the json results, and embeds the image and hover etc. The php script itself is responsible for caching (it would be kinda inefficient because two simultaneous hits have the potential of triggering two API requests (I guess I'd rely on the atomicity of file creation -- but then wat do if the atomic open-for-writing (known temp filename) fails? there's no way to 'let me know when the api request finishes'. man php fucking blows)). The php script does the api request when needed (and can do LAZY (more efficient!) polling: only when a user visits the page the ad is displayed on (or when polling even matters: the ad is NOT displayed on xD)
 //^^ADDITIONALLY, cron job php/shell/etc that run a few seconds in advance (~10), and corresponding php to set up the <img><hover> -- this one is for php devs (since they'd be calling a php function), the above one is for website noobs (they embed the js (gl) and paste the php file)
 //^^^And for 1337 d00dz, I'll give a Qt impl (already have one in hvbs). If I'm bored enough, a boost impl...

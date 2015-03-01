@@ -17,7 +17,7 @@ AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget::AdvertisingBuyAdSpa
     , m_CurrentPage(1)
     , m_TotalPages(1) //we don't know the actual value until after the first page (first page requested, not necessarily "page 1") is retrieved
 {
-    new WText("All Users with Advertising Campaigns", this);
+    new WText("All Users with Ad Space For Sale", this);
     new WBreak(this);
     new WBreak(this);
 
@@ -28,6 +28,8 @@ AdvertisingBuyAdSpaceAllUsersWithAtLeastOneAdCampaignWidget::AdvertisingBuyAdSpa
     WPushButton *pageSpinBoxGoButton = new WPushButton("Go", this); //TODOoptional: enable/disable depending on if the value of the spinbox is within range. just saves us a trip to backend is all. only works with js enabled ofc
     m_NextPageButton = new WPushButton("Next Page", this);
     m_LastPageButton = new WPushButton("Last Page", this);
+
+    new WBreak(this);
     new WBreak(this);
 
     m_Contents = new WContainerWidget(this);

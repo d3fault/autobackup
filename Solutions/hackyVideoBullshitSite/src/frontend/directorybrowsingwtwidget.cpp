@@ -6,7 +6,7 @@
 #include <Wt/WStackedWidget> //should I build previous pages when jumping directly to a page, or should i allow the unoptimal delete/new'ing of the dir iterator? both options suck, which sucks less? i'm guessing that deleting/new'ing is more optimal memory-wise, but building pages might be more optimal spe- (yea fucking right, delete/new strategy it is! it's uncommon anyways)
 #include <Wt/WSpinBox>
 
-#include <QDirIterator>
+#include <QDirIterator> //TODOoptional: dir orders aren't being set up properly... i have to rebuild the inode list in proper order to fix this ("renames" are cheap'ish and might be sufficient)
 
 #include "hvbsshared.h"
 

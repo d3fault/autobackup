@@ -61,6 +61,7 @@ private:
     void handleNextVideoClipButtonClicked();
     std::string determineLatestVideoSegmentPathOrUsePlaceholder();
     void tellUserThatCurrentVideoSegmentIsLatest();
+    void handleHomeAnchorClickedSoShowLatestVideoSegmentEvenIfAlreadyHome();
 
     void createCookieCrumbsFromPath(/*const std::string &internalPathInclFilename*/);
     void newTimelineIfNeededAndBringToFront();
