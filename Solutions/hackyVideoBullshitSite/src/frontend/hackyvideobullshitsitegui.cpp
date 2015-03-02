@@ -50,7 +50,9 @@
 #define HVBS_ABC2_AD_IMAGE_WIDTH 576
 #define HVBS_ABC2_AD_IMAGE_HEIGHT 96
 
-#define HVBS_ABC2_PLACEHOLDER_ALT_AND_HOVER "Buy this ad space for BTC 0.003"
+#define HVBS_ABC2_PLACEHOLDER_ALT_AND_HOVER "Buy this ad space for BTC 0.00003"
+
+#define HVBS_VIDEO_SEGMENT_SPECIAL_PATH_TO_INDICATE_CURRENT_IS_LATEST "n"
 
 //segfault if server is started before assigning these that are pointers :-P (fuck yea performance)
 AdImageGetAndSubscribeManager* HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = 0;
@@ -543,7 +545,6 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
 }
 void HackyVideoBullshitSiteGUI::displayVideoSegment(const string &videoSegmentFilePath)
 {
-    m_VideoSegmentFilePathCurrentlyBeingDisplayed = videoSegmentFilePath;
     WContainerWidget *videoSegmentContainer = new WContainerWidget();
 
     WPushButton *videoSegmentDownloadButton = new WPushButton(HVBS_DOWNLOAD_LOVE, videoSegmentContainer);
@@ -574,22 +575,34 @@ void HackyVideoBullshitSiteGUI::displayVideoSegment(const string &videoSegmentFi
 
     new WBreak(videoSegmentContainer);
 
-    WVideo *videoSegmentPlayer = new WVideo(videoSegmentContainer);
-    if(environment().ajax())
+    if(videoSegmentFilePath != HVBS_VIDEO_SEGMENT_SPECIAL_PATH_TO_INDICATE_CURRENT_IS_LATEST)
     {
-        videoSegmentPlayer->ended().connect(this, &HackyVideoBullshitSiteGUI::handleLatestVideoSegmentEnded);
-    }
-    videoSegmentPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
-    videoSegmentPlayer->resize(720, 480);
-    //videoSegmentPlayer->resize(800, 600);
-    videoSegmentPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::XHTMLUnsafeText));
+        m_VideoSegmentFilePathCurrentlyBeingDisplayed = videoSegmentFilePath;
+        WVideo *videoSegmentPlayer = new WVideo(videoSegmentContainer);
+        if(environment().ajax())
+        {
+            videoSegmentPlayer->ended().connect(this, &HackyVideoBullshitSiteGUI::handleLatestVideoSegmentEnded);
+        }
+        videoSegmentPlayer->setOptions(WAbstractMedia::Autoplay | WAbstractMedia::Controls);
+        videoSegmentPlayer->resize(720, 480);
+        //videoSegmentPlayer->resize(800, 600);
+        videoSegmentPlayer->setAlternativeContent(new WText(HVBS_NO_HTML5_VIDEO_OR_ERROR, Wt::XHTMLUnsafeText));
 
-    WResource *videoSegmentResource = new WFileResource("video/ogg", videoSegmentFilePath, videoSegmentPlayer);
-    QFileInfo fileInfo(QString::fromStdString(videoSegmentFilePath));
-    const std::string &filenameOnly = fileInfo.fileName().toStdString();
-    videoSegmentResource->suggestFileName(filenameOnly, WResource::Attachment);
-    videoSegmentPlayer->addSource(WLink(videoSegmentResource), "video/ogg");
-    videoSegmentDownloadButton->setResource(videoSegmentResource);
+
+        WResource *videoSegmentResource = new WFileResource("video/ogg", videoSegmentFilePath, videoSegmentPlayer);
+        QFileInfo fileInfo(QString::fromStdString(videoSegmentFilePath));
+        const std::string &filenameOnly = fileInfo.fileName().toStdString();
+        videoSegmentResource->suggestFileName(filenameOnly, WResource::Attachment);
+        videoSegmentPlayer->addSource(WLink(videoSegmentResource), "video/ogg");
+        videoSegmentDownloadButton->setResource(videoSegmentResource);
+    }
+    else
+    {
+        new WText("Sorry, the video you just watched is the latest one available. The next video will likely be uploaded within a few minutes or years, so try again sometime in between.", videoSegmentContainer);
+        new WBreak(videoSegmentContainer);
+        WPushButton *tryAgainButton = new WPushButton("Try Again", videoSegmentContainer);
+        tryAgainButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
+    }
 
     setMainContent(videoSegmentContainer);
 }
@@ -680,7 +693,8 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
             if(allYearFolders.first() == currentVideoSegmentYearString)
             {
                 //CURRENT IS LATEST
-                tellUserThatCurrentVideoSegmentIsLatest();
+                //tellUserThatCurrentVideoSegmentIsLatest();
+                displayVideoSegment(HVBS_VIDEO_SEGMENT_SPECIAL_PATH_TO_INDICATE_CURRENT_IS_LATEST);
                 return;
             }
 
@@ -700,26 +714,6 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
             std::string nextExistingVideoSegmentAbsoluteFilePath_StdString = nextExistingVideoSegmentAbsoluteFilePath.toStdString();
             displayVideoSegment(nextExistingVideoSegmentAbsoluteFilePath_StdString);
             return;
-
-#if 0  //OLD: before day/year gaps allowed
-            const QString &yearAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist = m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended + QString::number(maybeYearAfterCurrentVideoSegment) + QDir::separator();
-            if(QFile::exists(yearAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist))
-            {
-                //year shift. should i assume day 1 folder exists? it might not! i do know for a fact that _A_ day folder exists, but idk that it's day 1. This is mildly related to the TODOoptional below regarding going offline for 1+ days
-                QDir yearAfterCurrentVideoSegmentDir(yearAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist);
-                const QStringList allDayFoldersInYearAfterCurrentVideoSegmentFolder = yearAfterCurrentVideoSegmentDir.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Name | QDir::Reversed)); //we know this isn't empty because we move the year folder into place with a day folder (and a video file already in that!) already in it
-                const QString &earliestDayFolderInYearAfterCurrentVideoSegment = allDayFoldersInYearAfterCurrentVideoSegmentFolder.last(); //last is 'earliest' (chronologically). Not necessarily day 1, but probably is...
-                const QString &earliestDayFolderInYearAfterCurrentVideoSegmentPath = yearAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist + earliestDayFolderInYearAfterCurrentVideoSegment + QDir::separator();
-                const QString &earliestVideoInEarliestDayFolderInYearAfterCurrentVideoSegment = getEarliestEntryInFolder(earliestDayFolderInYearAfterCurrentVideoSegmentPath);
-                const std::string &earliestVideoInEarliestDayFolderInYearAfterCurrentVideoSegmentStdString = earliestVideoInEarliestDayFolderInYearAfterCurrentVideoSegment.toStdString();
-                displayVideoSegment(earliestVideoInEarliestDayFolderInYearAfterCurrentVideoSegmentStdString);
-            }
-            else
-            {
-                //current is LATEST. idfk, playing the same video seems dumb, playing the placholder seems, dumb.... maybe display a message? for now just gonna do nothing
-            }
-            return;
-#endif
         }
         //we've ruled out year shift. either day shift or current is latest
         QDir currentVideoSegmentYearDir(currentVideoSegmentYearFolder_AbsoluteAndWithSlashAppended);
@@ -728,7 +722,8 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
         if(allDayFoldersInCurrentYear.first() == currentVideoSegmentFilenamesDayOfYearString)
         {
             //CURRENT IS LATEST
-            tellUserThatCurrentVideoSegmentIsLatest();
+            //tellUserThatCurrentVideoSegmentIsLatest();
+            displayVideoSegment(HVBS_VIDEO_SEGMENT_SPECIAL_PATH_TO_INDICATE_CURRENT_IS_LATEST);
             return;
         }
         int indexOfNextExistingDayFolder = (allDayFoldersInCurrentYear.indexOf(currentVideoSegmentFilenamesDayOfYearString)-1); //safe because current isn't 'first()'
@@ -742,21 +737,6 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
         std::string nextExistingVideoSegmentFilename_Absolute_StdStr = nextExistingVideoSegmentFilename_Absolute.toStdString();
         displayVideoSegment(nextExistingVideoSegmentFilename_Absolute_StdStr);
         return;
-#if 0 //OLD: before day/year gaps allowed:
-        const QString &dayAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist = currentVideoSegmentYearFolder_AbsoluteAndWithSlashAppended + QString::number(dayAfterCurrentVideoSegment.date().dayOfYear()) + QDir::separator();
-        if(QFile::exists(dayAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist))
-        {
-            //day shift. we want the earliest one then. TODOoptional: make 'next' button work when we go offline for 1+ days (or hell, even 1+ years!!!). do that by listing all the day folders in the year folder and sorting them, then yea grabbing the next existing one... for now KISS fuck it
-            const QString &firstVideoInNextDayFolderFilePath = getEarliestEntryInFolder(dayAfterCurrentVideoSegmentFolder_ThatMayOrMayNotExist);
-            const std::string &firstVideoInNextDayFolderFilePathStdString = firstVideoInNextDayFolderFilePath.toStdString();
-            displayVideoSegment(firstVideoInNextDayFolderFilePathStdString);
-        }
-        else
-        {
-            //current is LATEST. idfk, playing the same video seems dumb, playing the placholder seems, dumb.... maybe display a message? for now just gonna do nothing
-        }
-        return;
-#endif
     }
 
     //since current wasn't 'first' (sorting in reverse), we know that there are videos 'after' it (cronologically)... so we simply find the index of current and subtract 1 in order to get the 'next' video
@@ -806,15 +786,6 @@ string HackyVideoBullshitSiteGUI::determineLatestVideoSegmentPathOrUsePlaceholde
     }
     //should never get here, but just in case and to make compiler stfu:
     return HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER;
-}
-void HackyVideoBullshitSiteGUI::tellUserThatCurrentVideoSegmentIsLatest()
-{
-    WContainerWidget *currentVideoSegmentIsLatestContainer = new WContainerWidget();
-    new WText("Sorry, the video you just watched is the latest one available. The next video will likely be uploaded within a few minutes or years, so try again sometime in between.", currentVideoSegmentIsLatestContainer);
-    new WBreak(currentVideoSegmentIsLatestContainer);
-    WPushButton *tryAgainButton = new WPushButton("Try Again", currentVideoSegmentIsLatestContainer);
-    tryAgainButton->clicked().connect(this, &HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked);
-    setMainContent(currentVideoSegmentIsLatestContainer);
 }
 void HackyVideoBullshitSiteGUI::handleHomeAnchorClickedSoShowLatestVideoSegmentEvenIfAlreadyHome()
 {

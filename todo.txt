@@ -1,7 +1,5 @@
 deploy:
-ffmpeg segment uploader (4 mins alert)
-hvbs (binary, and no ad placeholder)
-abc
+hottee
 
 do:
 book

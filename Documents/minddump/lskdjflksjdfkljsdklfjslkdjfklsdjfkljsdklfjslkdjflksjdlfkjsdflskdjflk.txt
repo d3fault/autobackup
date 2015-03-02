@@ -1,0 +1,4 @@
+My time is torn between maintenance (copying/organizing files, uploading them, etc), bug fixing (endless stream of bugs it seems), and R&D. The only shit worth filming is R&D.
+
+
+I need to go outside LESS for the time being. Sure it is/was fun, but the way I'm saving the files is leading to more work (audio/video isn't sync'd (they are separate files entirely), for example). I need to PROPER the go outside impl. It should be realtime/live also. For now, I should stick with this chair/desktop-screencap setup, since at least it's automated/published in near-realtime with no effort on my part.

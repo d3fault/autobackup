@@ -60,7 +60,7 @@ private:
     QString getEarliestEntryInFolder(const QString &folderWithSlashAppended);
     void handleNextVideoClipButtonClicked();
     std::string determineLatestVideoSegmentPathOrUsePlaceholder();
-    void tellUserThatCurrentVideoSegmentIsLatest();
+    //void tellUserThatCurrentVideoSegmentIsLatest();
     void handleHomeAnchorClickedSoShowLatestVideoSegmentEvenIfAlreadyHome();
 
     void createCookieCrumbsFromPath(/*const std::string &internalPathInclFilename*/);

@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1425037866
+Documents/minddump/:1425280152
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1424733302
+Documents/minddump/dreams/:1425281666
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -142,6 +142,7 @@ Documents/minddump/dreams/lsdfjlkasjdfkjsdlkfjksdfjjdsfljsdlfkjlkjewroufdl.txt:1
 Documents/minddump/dreams/lsdhflsdjflkdsjfodsuflkjweofuslkdfjosidufsdlkf.txt:1402862755
 Documents/minddump/dreams/lsdjflsdjflkjsdflkjsdklfjlsdkjflksdjflksdjflkoiuewrlkjdsflk.txt:1418388861
 Documents/minddump/dreams/lsdkajflsdkjfoduwerljsdowererufalsdjfosuflsdfoiuew.txt:1391095454
+Documents/minddump/dreams/lsdkfjlksjdflkjslkfjskldjfklsjlkfjsdklfjslkdjfklsdflk.txt:1425281760
 Documents/minddump/dreams/lsdkfjlsdkjfouslkjreworuljfsoduflsdjfouwerl.txt:1366067544
 Documents/minddump/dreams/lsdkjflkjsdlfkjsdjfsdouflkwejrousldkfjdsofuldskfjsldfkj.txt:1413384095
 Documents/minddump/dreams/lsdkjflsdjflsdjfljsdlkfjslkdjflksdjflksjdlfkjslkdjflsdhflkjweoudflskjflksdjf.txt:1420691048
@@ -1530,6 +1531,7 @@ Documents/minddump/lsdfkjsldkfjsadoifulkjweroulskjfdosdufljsdfouwljreousldfkjsdo
 Documents/minddump/lsdflkdjflksdjflkjsdklfjsdklfjsdkljfkljasfkljsdfouwerlks.txt:1404662045
 Documents/minddump/lsdhflsjdflkjsdofusdlfhowuerlkjsdofulskdjfosduflsdf.if.we.were.smart.we.would.be.bored.txt:1403588243
 Documents/minddump/lsdjfaowuralsjfaworuaowruawfljsadlfkjsofuweorjwlkjsfdosaudfwjerlkj.txt:1343313151
+Documents/minddump/lsdjflkdsjflkjsdlkfjskdjfksjdlfjsdlkfjlskdjfkljsdflkj.txt:1425280152
 Documents/minddump/lsdjflkjsdflkewrulkjdsfldfjoulsdjfsdfuosd.txt:1398082376
 Documents/minddump/lsdjflkjsdflkjsdfoiuwljkfosdiuflsdkjfosidufl.gross.sdfsdfoulj.txt:1393157263
 Documents/minddump/lsdjflkjsdflkjsdfouilkjwerouslfkjsdfoulsdfkjouwerlkjsfdoiu.txt:1367587558
@@ -1607,6 +1609,7 @@ Documents/minddump/lskdjflkjsdfljdslkfjlsdkjflkjsdfkljsdfdsfsdklfjklsdjflkjdsflk
 Documents/minddump/lskdjflkjsdfousdfjsdfuweourlkjsdfousdflk.txt:1390926894
 Documents/minddump/lskdjflkjsdfouweiorousdfksdlfkjoiuwkerlkjsdfoiusdflk.txt:1364510243
 Documents/minddump/lskdjflksjdfkljsdklfjskdljfklsdjfskdljfsdouflkdjfls.txt:1407196962
+Documents/minddump/lskdjflksjdfkljsdklfjslkdjfklsdjfkljsdklfjslkdjflksjdlfkjsdflskdjflk.txt:1425280049
 Documents/minddump/lskdjflksjdflkjsdflkjsdkfhsdlkjfslkdjfsdklfjsdfjsldkfjowuierlkjsdfoiusdf.txt:1414289681
 Documents/minddump/lskdjflksjdflkjsdkljflsdjflsdjflksdjsdlkjfsdlkfjsdl.txt:1412714769
 Documents/minddump/lskdjflksjdflskjdfouwelkjroiusldkjfosduflksajdfouwelkjrousdflkjsdfou.txt:1383122839
@@ -2778,7 +2781,7 @@ Pictures/trying.to.visualize.google.filesystem.but.failing.to.understand.NoSql-K
 Pictures/unfinished.comic.kaylees.feramones.are.a.sort.of.drug.and.the.weirdest.thing.is.that.it.is.actually.true.svg:1361527419
 Pictures/works.legality.span.svg:1355298125
 Pictures/yet.another.tangent.explained.and.for.some.reason.always.below.zero.until.launch.makes.sense.in.my.head.svg:1360730935
-Projects/:1425108685
+Projects/:1425211321
 Projects/AdAgency/:1333471837
 Projects/AdAgency/design/:1333472910
 Projects/AdAgency/design/Add.Funds.Request.dia:1330206440
@@ -3104,14 +3107,14 @@ Projects/DesignEqualsImplementation2/src/ihavetypeandvariablenameandpreferredtex
 Projects/DesignEqualsImplementation2/src/libclangpch.h:1409068915
 Projects/DesignEqualsImplementation2/src/signalemissionorslotinvocationcontextvariables.cpp:1409796472
 Projects/DesignEqualsImplementation2/src/signalemissionorslotinvocationcontextvariables.h:1409796463
-Projects/DrumMachine/:1425108732
-Projects/DrumMachine/DrumMachineGui/:1425120853
-Projects/DrumMachine/DrumMachineGui/DrumMachineGui.pro:1425109664
-Projects/DrumMachine/DrumMachineGui/drummachine.cpp:1425120853
-Projects/DrumMachine/DrumMachineGui/drummachine.h:1425111092
-Projects/DrumMachine/DrumMachineGui/drummachinegui.cpp:1425109237
-Projects/DrumMachine/DrumMachineGui/drummachinegui.h:1425108974
-Projects/DrumMachine/DrumMachineGui/main.cpp:1425110570
+Projects/DrumMachine/:1425211329
+Projects/DrumMachine/src/:1425211333
+Projects/DrumMachine/src/DrumMachineGui.pro:1425109664
+Projects/DrumMachine/src/drummachine.cpp:1425120853
+Projects/DrumMachine/src/drummachine.h:1425111092
+Projects/DrumMachine/src/drummachinegui.cpp:1425109237
+Projects/DrumMachine/src/drummachinegui.h:1425108974
+Projects/DrumMachine/src/main.cpp:1425110570
 Projects/EasyTreeAndXmlTreeHeirarchyMolester/:1384071519
 Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/:1400219657
 Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/cli/:1400229155
@@ -5465,7 +5468,7 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400803006
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1425210910
+Solutions/hackyVideoBullshitSite/src/:1425281754
 Solutions/hackyVideoBullshitSite/src/backend/:1424844244
 Solutions/hackyVideoBullshitSite/src/backend/adimageapikey.h:1424844210
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1424844244
@@ -5476,11 +5479,11 @@ Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.cpp:1401
 Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.h:1401264947
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1400919404
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1399509052
-Solutions/hackyVideoBullshitSite/src/frontend/:1425202086
+Solutions/hackyVideoBullshitSite/src/frontend/:1425281719
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.cpp:1425106320
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.h:1398743110
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1425202086
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1425202032
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1425280844
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1425281719
 Solutions/hackyVideoBullshitSite/src/frontend/hvbsshared.h:1424550347
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1424751631
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.h:1401029359
@@ -5619,4 +5622,4 @@ licenses/license.dpl.txt:1388242176
 .gitignore:1425055833
 copyright.txt:1388203681
 license.dpl.txt:1388242176
-todo.txt:1425210655
+todo.txt:1425216981
