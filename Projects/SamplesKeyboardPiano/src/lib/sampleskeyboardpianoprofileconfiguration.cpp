@@ -1,0 +1,2 @@
+#include "sampleskeyboardpianoprofileconfiguration.h"
+

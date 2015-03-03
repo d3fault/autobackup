@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1425280152
+Documents/minddump/:1425320245
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -2226,6 +2226,7 @@ Documents/minddump/sdlkfsdljflskdjflksdjflksjdfkljsdklfjsdklfjslkdjfouwerlk.txt:
 Documents/minddump/sdlkjfasdofiuasdofjasdlfkjasdofuapr.txt:1328223293
 Documents/minddump/sdlkjflkjsdfosduflkjsdofulwejrouasldkfjosudflkjousdflksdfoiu.txt:1383806210
 Documents/minddump/sdlkjflksjfosudfkjweorulkjsfdoudfsljewroulksjdfousaldfjosduflkjweoru.txt:1368533844
+Documents/minddump/sdlkjflskdjfkljsdfkljsdklfjskldjfklsdjfkljsdklfjsdklfjlksjdflksjdf.txt:1425305137
 Documents/minddump/sdlkjflskdjflkjsdflkjsdlkfjsdlkfjsldkjflskdjfsdkjflksdf.txt:1415863408
 Documents/minddump/sdlkjflskdjflkjuoweurwersdfkjsdlfjsdlkfjsfoudlfkjsdlfk.txt:1410415236
 Documents/minddump/sdlkjfsdhflksjdflksdjfhsdflsdjfowelkhrlsdjkflsdhflsdkjfsdlkfj.fuck.yea.richard.stallman.txt:1403580890
@@ -2339,6 +2340,7 @@ Documents/minddump/sldfkjalskdjflksjdflksjdfosduflkwjerousdfjsdflkjreoi.txt:1396
 Documents/minddump/sldfkjalskjdflksjdflkjsldkfjlskjflaskjdflskjdfouwerl.txt:1399325635
 Documents/minddump/sldfkjasdofuwlrkjsafdihsdfkajoruwerlksjdfourl.txt:1345058845
 Documents/minddump/sldfkjasljfsalkjdflskdjflksdjflskjdflskdjfouwelrkjosufdlksjdfosuidfl.txt:1381338846
+Documents/minddump/sldfkjlksdjfklsdjfkljsdklfjklsdjfklsjdfkljsdlkfjsdlkfjklsdjflk.txt:1425320245
 Documents/minddump/sldfkjlsdjfljdlfjsldfjslkdjflskdjflksdjflkjsdflkjsdlkfjsldkjflksdjfouewlrk.txt:1423616587
 Documents/minddump/sldfkjlsdkfjsldkjfouwerljksodfulsdfjoufsdlkjweorulsjfd.txt:1381327973
 Documents/minddump/sldfkjsadfkljsdlkfjsdklfjlskdjflskdjfouwerlkjsdklfjsdlfkj.txt:1417754027
@@ -2402,6 +2404,7 @@ Documents/minddump/slfdjlksdjflksdjfoiusldfkjfdsousldfjoulkjwerouisdflkj.txt:136
 Documents/minddump/slfdjsljflsdkjflkjsdflkjsdlfkjsdfhjsldkfjdklfjsdflk.txt:1400835596
 Documents/minddump/slfdkjaslkdfjadslfjsodfulsdakjfosduflkajsdfousdlfkjasdfl.txt:1374412315
 Documents/minddump/slfjasjdfklsdjflksjdfsdlkfjoiuewrkjsdflkjdsflkhsfouer.txt:1397213297
+Documents/minddump/slfkdjsldfjlksdjflkjsfkjsdlfkjsdlfkjsdlkfjsdlkjflskd.txt:1425315233
 Documents/minddump/slfkjaslkfjaslfdjaslfdjksalfjksdofusldfjosduflsdjfousdflkjsflksdjf.txt:1373938250
 Documents/minddump/slfkjsadfousdlfjouwerlkjousdlfjousdfljouiwerljsf.txt:1370305833
 Documents/minddump/slfkjsalkfjlskjfsdofusadlfkjsodauflsdkjfouljourelskdfjlaskdfjasdlfk.txt:1374054252
@@ -2781,7 +2784,7 @@ Pictures/trying.to.visualize.google.filesystem.but.failing.to.understand.NoSql-K
 Pictures/unfinished.comic.kaylees.feramones.are.a.sort.of.drug.and.the.weirdest.thing.is.that.it.is.actually.true.svg:1361527419
 Pictures/works.legality.span.svg:1355298125
 Pictures/yet.another.tangent.explained.and.for.some.reason.always.below.zero.until.launch.makes.sense.in.my.head.svg:1360730935
-Projects/:1425211321
+Projects/:1425318480
 Projects/AdAgency/:1333471837
 Projects/AdAgency/design/:1333472910
 Projects/AdAgency/design/Add.Funds.Request.dia:1330206440
@@ -2881,9 +2884,8 @@ Projects/BulkFileTextPrepender/src/gui/main.cpp:1388234289
 Projects/BulkFileTextPrepender/src/lib/:1400841585
 Projects/BulkFileTextPrepender/src/lib/bulkfiletextprepender.cpp:1400841584
 Projects/BulkFileTextPrepender/src/lib/bulkfiletextprepender.h:1388239361
-Projects/ConcurrentLossyDirectoryCopier/:1396501263
-Projects/ConcurrentLossyDirectoryCopier/src/:1400667420
-Projects/ConcurrentLossyDirectoryCopier/src/ConcurrentLossyDirectoryCopier.pro:1387197904
+Projects/ConcurrentLossyDirectoryCopier/:1425329791
+Projects/ConcurrentLossyDirectoryCopier/src/:1425342109
 Projects/ConcurrentLossyDirectoryCopier/src/concurrentlossydirectorycopier.cpp:1387206600
 Projects/ConcurrentLossyDirectoryCopier/src/concurrentlossydirectorycopier.h:1387197927
 Projects/ConcurrentLossyDirectoryCopier/src/concurrentlossydirectorycopiergui.cpp:1387195209
@@ -2892,6 +2894,7 @@ Projects/ConcurrentLossyDirectoryCopier/src/concurrentlossydirectorycopierwidget
 Projects/ConcurrentLossyDirectoryCopier/src/concurrentlossydirectorycopierwidget.h:1387195887
 Projects/ConcurrentLossyDirectoryCopier/src/copyoperation.h:1387184200
 Projects/ConcurrentLossyDirectoryCopier/src/main.cpp:1387198702
+Projects/ConcurrentLossyDirectoryCopier/ConcurrentLossyDirectoryCopier.pro:1387197904
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/:1382111183
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/:1385305896
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles.pro:1379408611
@@ -3107,14 +3110,6 @@ Projects/DesignEqualsImplementation2/src/ihavetypeandvariablenameandpreferredtex
 Projects/DesignEqualsImplementation2/src/libclangpch.h:1409068915
 Projects/DesignEqualsImplementation2/src/signalemissionorslotinvocationcontextvariables.cpp:1409796472
 Projects/DesignEqualsImplementation2/src/signalemissionorslotinvocationcontextvariables.h:1409796463
-Projects/DrumMachine/:1425211329
-Projects/DrumMachine/src/:1425211333
-Projects/DrumMachine/src/DrumMachineGui.pro:1425109664
-Projects/DrumMachine/src/drummachine.cpp:1425120853
-Projects/DrumMachine/src/drummachine.h:1425111092
-Projects/DrumMachine/src/drummachinegui.cpp:1425109237
-Projects/DrumMachine/src/drummachinegui.h:1425108974
-Projects/DrumMachine/src/main.cpp:1425110570
 Projects/EasyTreeAndXmlTreeHeirarchyMolester/:1384071519
 Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/:1400219657
 Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/cli/:1400229155
@@ -3757,7 +3752,7 @@ Projects/Osios2/design/sldjflkasdjfklajsdlfkjsadfouwelrkjsdfsdofjsldkfjsd.txt:14
 Projects/Osios2/design/this.is.a.data.security.application.but.thats.probably.not.what.you.think.it.means.txt:1414798918
 Projects/Osios2/reverts/:1414326188
 Projects/Osios2/reverts/revertBackupIDontThinkINeedOrWantThisAnymoreForOsios2.diffOf5d375c768ac2c1f97e1bf2431693e4f4be2df01b:1414325772
-Projects/Osios2/src/:1424668100
+Projects/Osios2/src/:1425342107
 Projects/Osios2/src/mainmenuitems/:1415006573
 Projects/Osios2/src/mainmenuitems/writer/:1415092608
 Projects/Osios2/src/mainmenuitems/writer/eventemittingplaintextedit.cpp:1415092608
@@ -3774,6 +3769,7 @@ Projects/Osios2/src/timelinenodetypes/mainmenuactivitychangedtimelinenode.h:1414
 Projects/Osios2/src/timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.cpp:1414553871
 Projects/Osios2/src/timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.h:1414553833
 Projects/Osios2/src/OsiosGui.pro:1415001820
+Projects/Osios2/src/OsiosGui.pro.user.3.2-pre1:1425331945
 Projects/Osios2/src/iactivitytab_widget_formainmenutabwidget.cpp:1414306500
 Projects/Osios2/src/iactivitytab_widget_formainmenutabwidget.h:1414307140
 Projects/Osios2/src/ibootstrapsplashscreen.h:1414648082
@@ -4746,6 +4742,25 @@ Projects/RpcGenerator/design/use.case.clean.disconnect.dia:1360315927
 Projects/RpcGenerator/design/use.case.ugly.disconnect.detected.on.client.through.socket.error.and.or.server.through.identical.cookie.connect.dia:1360322244
 Projects/RpcGenerator/design/use.case.ugly.disconnect.detected.on.server.through.socket.error.dia:1360321455
 Projects/RpcGenerator/design/when.not.using.all.action.dispensers.opt.to.ignore.error.and.also.a.primitive.design.for.making.sure.all.broadcast.signals.are.being.listened.to.txt:1370575570
+Projects/SamplesKeyboardPiano/:1425211329
+Projects/SamplesKeyboardPiano/src/:1425329819
+Projects/SamplesKeyboardPiano/src/lib/:1425342059
+Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpiano.cpp:1425342059
+Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpiano.h:1425341423
+Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpianoprofile.cpp:1425333382
+Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpianoprofile.h:1425336197
+Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpianoprofileconfiguration.cpp:1425330726
+Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpianoprofileconfiguration.h:1425333368
+Projects/SamplesKeyboardPiano/src/ui/:1425330339
+Projects/SamplesKeyboardPiano/src/ui/gui/:1425342182
+Projects/SamplesKeyboardPiano/src/ui/gui/SamplesKeyboardPianoGui.pro:1425335535
+Projects/SamplesKeyboardPiano/src/ui/gui/main.cpp:1425329922
+Projects/SamplesKeyboardPiano/src/ui/gui/sampleskeyboardpianogui.cpp:1425337608
+Projects/SamplesKeyboardPiano/src/ui/gui/sampleskeyboardpianogui.h:1425337286
+Projects/SamplesKeyboardPiano/src/ui/gui/sampleskeyboardpianoprofilemanagerwidget.cpp:1425338260
+Projects/SamplesKeyboardPiano/src/ui/gui/sampleskeyboardpianoprofilemanagerwidget.h:1425338274
+Projects/SamplesKeyboardPiano/src/ui/gui/sampleskeyboardpianowidget.cpp:1425337493
+Projects/SamplesKeyboardPiano/src/ui/gui/sampleskeyboardpianowidget.h:1425337493
 Projects/SftpUploaderAndRenamerQueue/:1398991625
 Projects/SftpUploaderAndRenamerQueue/src/:1398991629
 Projects/SftpUploaderAndRenamerQueue/src/lib/:1425103143
@@ -5325,7 +5340,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or
 Solutions/Anonymous Bitcoin Computing 2/design/the.goods.service.vs.money.transmitter.differentiation.does.not.exist.with.bitcoins.nor.paper.money.but.does.exist.with.debit.credit.cards.EXCEPT.THOSE.HAVE.FEES.UP.THE.ASS.AND.HUGE.BARRIER.TO.ENTRY.txt:1416508764
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
 Solutions/Anonymous Bitcoin Computing 2/design/two.bandwith.exploits.with.charging.withdrawal.fee.instead.of.transaction.fee.txt:1421237210
-Solutions/Anonymous Bitcoin Computing 2/src/:1425205502
+Solutions/Anonymous Bitcoin Computing 2/src/:1425318097
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1420869222
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
@@ -5339,12 +5354,12 @@ Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcou
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.cpp:1413219024
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1413240036
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1425205498
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1424496448
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1425312435
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.cpp:1399670151
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.h:1399671286
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/addfundsaccounttabbody.cpp:1424496448
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/addfundsaccounttabbody.h:1424495945
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/apikeyaccounttabbody.cpp:1422418586
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/apikeyaccounttabbody.cpp:1425312435
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/apikeyaccounttabbody.h:1420761344
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/filedeletingfileresource.cpp:1393448627
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/filedeletingfileresource.h:1393448163
@@ -5468,15 +5483,15 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400803006
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1425281754
-Solutions/hackyVideoBullshitSite/src/backend/:1424844244
+Solutions/hackyVideoBullshitSite/src/:1425318117
+Solutions/hackyVideoBullshitSite/src/backend/:1425296020
 Solutions/hackyVideoBullshitSite/src/backend/adimageapikey.h:1424844210
-Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1424844244
+Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1425296020
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1420970631
 Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.cpp:1419811954
 Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.h:1401025268
-Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.cpp:1401264947
-Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.h:1401264947
+Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.cpp:1425295977
+Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.h:1425295977
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1400919404
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1399509052
 Solutions/hackyVideoBullshitSite/src/frontend/:1425281719
@@ -5493,7 +5508,7 @@ Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.h:1401030044
 Solutions/hackyVideoBullshitSite/src/hvbsresources.qrc:1401115865
 Solutions/hackyVideoBullshitSite/src/lastmodifiedtimestampsandpaths.h:1401009546
 Solutions/hackyVideoBullshitSite/src/main.cpp:1424665291
-Solutions/hackyVideoBullshitSite/src/wtcontrollerandstdoutowner.cpp:1424557701
+Solutions/hackyVideoBullshitSite/src/wtcontrollerandstdoutowner.cpp:1425296081
 Solutions/hackyVideoBullshitSite/src/wtcontrollerandstdoutowner.h:1424557437
 Solutions/hackyVideoBullshitSite/tools/:1401400769
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/:1400305152
@@ -5622,4 +5637,4 @@ licenses/license.dpl.txt:1388242176
 .gitignore:1425055833
 copyright.txt:1388203681
 license.dpl.txt:1388242176
-todo.txt:1425216981
+todo.txt:1425293658

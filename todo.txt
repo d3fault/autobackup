@@ -2,7 +2,8 @@ deploy:
 hottee
 
 do:
-book
+"not serving this"
+webp->jpg (binarySupplement post-update also?)
 copyleft disclaimer (assignment is easiest, but shitty)
 git auto submodulization (solves binaries problem)
 page jump = segfault

@@ -1,0 +1,11 @@
+LoL @ ffprobe saying it's machine parsable. Here's what adding "-print_format json" does.
+
+Before:
+Large blob of plaintext statistics, including newlines, tabs, and spaces
+
+After:
+{
+Large blob of plaintext statistics, including newlines, tabs, and spaces
+}
+
+-_-

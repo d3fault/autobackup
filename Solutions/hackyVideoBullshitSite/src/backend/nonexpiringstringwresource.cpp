@@ -5,10 +5,17 @@
 #include <Wt/WDateTime>
 
 //doesn't make sense for this to be "backend", but also doesn't NEED to be front end (abstract WResource pointer is "enough"). need to refactor my backend to not depend on anything Wt related, but don't give nearly enough of a fuck to do that now...
-NonExpiringStringWResource::NonExpiringStringWResource(std::string resourceBytes, std::string resourceMimeType, std::string resourceSuggestedFilename, DispositionType dispositionType, WObject *parent)
+NonExpiringStringWResource::NonExpiringStringWResource(std::string resourceBytes, std::string resourceMimeType, DispositionType dispositionType, std::string resourceSuggestedFilename, WObject *parent)
     : WResource(parent), m_ResourceBytes(resourceBytes), m_ResourceBytesLength(resourceBytes.length()), m_ResourceMimeType(resourceMimeType)
 {
-    suggestFileName(resourceSuggestedFilename, dispositionType);
+    if(resourceSuggestedFilename != "")
+    {
+        suggestFileName(resourceSuggestedFilename, dispositionType);
+    }
+    else
+    {
+        setDispositionType(dispositionType);
+    }
 }
 //TODOoptimization: maybe make this a global public resource, so that the expire date actually does something. if the user closes browser and re-opens it, they'll have a new wt session and i think that means they'd re-request the resource, but am unsure (pretty sure though)...
 void NonExpiringStringWResource::handleRequest(const Http::Request &request, Http::Response &response)

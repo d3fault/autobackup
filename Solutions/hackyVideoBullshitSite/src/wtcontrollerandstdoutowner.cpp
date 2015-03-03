@@ -112,7 +112,7 @@ void WtControllerAndStdOutOwner::initializeAndStart(int argc, char **argv)
         emit fatalErrorDetected();
         return;
     }
-    m_MySexyFaceLogoResource = new NonExpiringStringWResource(mySexyFaceLogoString, "image/jpeg", "my.sexy.face.logo.jpg", WResource::Inline);
+    m_MySexyFaceLogoResource = new NonExpiringStringWResource(mySexyFaceLogoString, "image/jpeg", WResource::Inline, "my.sexy.face.logo.jpg");
     m_WtServer->addResource(m_MySexyFaceLogoResource, "/my.sexy.face.logo.jpg");
 
     //add the no ad global/public resource
@@ -122,7 +122,7 @@ void WtControllerAndStdOutOwner::initializeAndStart(int argc, char **argv)
         emit fatalErrorDetected();
         return;
     }
-    m_NoAdImagePlaceholderResource = new NonExpiringStringWResource(noAdPlaceholderImageString, "image/jpeg", "image.jpg", WResource::Inline);
+    m_NoAdImagePlaceholderResource = new NonExpiringStringWResource(noAdPlaceholderImageString, "image/jpeg", WResource::Inline, "no.ad.placeholder.jpg");
     m_WtServer->addResource(m_NoAdImagePlaceholderResource, "/no.ad.placeholder.jpg");
 
     std::string copyrightText = readFileIntoString(":/copyright.txt"); //TODOoptional: settings file, cli arg, whatever
