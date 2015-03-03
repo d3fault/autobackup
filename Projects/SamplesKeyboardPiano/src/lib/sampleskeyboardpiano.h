@@ -30,7 +30,7 @@ private:
     void ffProbeAudioFilesInBaseDirOfCurrentProfile();
     void ensureCurrentConfigurationOfCurrentProfileHasArandomSampleForEveryKeyboardKey();
     int ffProbeDurationMsFromAudioFile(const QString &audioFilePath);
-    QPair<QString /*filePathThatOffsetPointsTo*/,int /*remainingOffsetIntoDeterminedFile*/> determineFileInBaseDirThatOffsetIntoAllFilesPointsTo(int offsetIntoAllFiles);
+    QPair<QString /*filePathThatOffsetPointsTo*/,int /*remainingOffsetIntoDeterminedFile*/> determineFileInBaseDirThatOffsetIntoAllFilesPointsTo(int offsetIntoAllFiles, int durationOfSample);
     void getNewRandomSampleForThisKeyboardKey(int keyboardKey);
 signals:
     void e(const QString &msg);
@@ -39,6 +39,8 @@ public slots:
     void probeProfiles();
     void selectProfile(SamplesKeyboardPianoProfile profile);
     void drum(int keyboardKey, bool shiftKeyPressed);
+private slots:
+    void handleSoundEffectStatusChanged();
 };
 
 #endif // SAMPLESKEYBOARDPIANO_H

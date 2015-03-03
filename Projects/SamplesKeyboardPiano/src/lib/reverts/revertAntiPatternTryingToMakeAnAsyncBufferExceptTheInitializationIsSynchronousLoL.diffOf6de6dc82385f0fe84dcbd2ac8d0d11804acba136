@@ -1,0 +1,295 @@
+diff --git a/Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpiano.cpp b/Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpiano.cpp
+index fc95bbc..3de2fd6 100644
+--- a/Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpiano.cpp
++++ b/Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpiano.cpp
+@@ -21,77 +21,82 @@
+ 
+ #define SamplesKeyboardPiano_CACHE_DIR_WITH_SLASH_APPENDED "/run/shm/" //TODOoptional: runtime arg, or profile value
+ 
++#define SamplesKeyboardPiano_NUM_RANDOM_SAMPLES_TO_BUFFER 3
++
+ //TODOreq: getting intermittent error "QSoundEffect(pulseaudio): Error in pulse audio stream" when generating new random samples for a key (but weirdly never at startup/first-generate). Every generate attempt thereafter gets the same error
+ //TODOoptimization: have a buffer of, say, 5, "nextRandomSamples", so that when a random sample is requested, we don't have to go to disk, demux and decode the file, write it back out, read it back in, and play it -- an even better (but much more difficult) solution would be to use libav directly and to only ever read from disk once (however I'm using /run/shm so... technically I keep the file in memory ;-P), but even THAT better solution should still use a buffer (~5'ish) of "nextRandomSamples"
+-//TODOoptional: a way to say "extend this sample's duration" (typically in chronological order, but possibly in reverse chronological order too)... using some keyboard modifier etc. maybe if you press space before the sample ends, it keeps going [for the entire duration of the song even]. I'd need to refactor for this ofc. Alternatively, you could hold down a modifier (alt, etc) _BEFORE_ pressing the key (or clicking the button in gui) for the same "extending" functionality
++//TODOoptional: a way to say "extend this sample's duration" (typically in chronological order, but possibly in reverse chronological order too)... using some keyboard modifier etc. maybe if you press space before the sample ends, it keeps going [for the entire duration of the song even]. I'd need to refactor for this ofc. Alternatively, you could hold down a modifier (alt, etc) _BEFORE_ pressing the key (or clicking the button in gui) for the same "extending" functionality. Maybe something like holding down the plus or minus key extends left or right (had:increases/decreases duration (hmm))
+ SamplesKeyboardPiano::SamplesKeyboardPiano(QObject *parent)
+     : QObject(parent)
+     , m_TotalDurationOfAllAudioFilesInCurrentProfilesBaseDir(0)
+     , m_MinSampleDurationMs(500) //TODOreq: this and max should be runtime changeable via ui, and the changes should maybe be reflected in the timeline (but maybe not, since the 'results of' the change (randomly selected samples + offsets + durations) would already be reflected)
+     , m_MaxSampleDurationMs(1500)
++    , m_CurrentlyBufferingArandomSample(false)
++    , m_FfmpegProcess(new QProcess(this))
+ {
+     QCoreApplication::setApplicationName("SamplesKeyboardPiano");
+     QCoreApplication::setOrganizationName("SamplesKeyboardPianoOrganization");
+     QCoreApplication::setOrganizationDomain("SamplesKeyboardPianoDomain");
+ 
+-#if 0
+-    QSoundEffect *soundEffect = new QSoundEffect(this);
+-    soundEffect->setSource(QUrl::fromLocalFile());
+-#endif
++    qsrand(QDateTime::currentMSecsSinceEpoch());
++
++    m_FfmpegProcess->setProcessChannelMode(QProcess::MergedChannels);
++    connect(m_FfmpegProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(handleFfmpegProcessFinished(int,QProcess::ExitStatus)));
+ }
+-QSoundEffect *SamplesKeyboardPiano::soundEffectFrom_FilePath_Offset_And_Duration(const QString &soundEffectFilePath, int soundEffectMillisecondsOffsetIntoFile, int soundEffectMillisecondsDurationOfFile) //TODOoptional: might be good idea to delete the cached sample files at some point
++void SamplesKeyboardPiano::beginAsyncGenerateSoundEffectFrom_FilePath_Offset_And_Duration(const QString &soundEffectFilePath, int soundEffectMillisecondsOffsetIntoFile, int soundEffectMillisecondsDurationOfFile, int keyboardKeyOfCurrentConfigurationToInsertItInto_OrAminusOneIfJustBufferIt) //TODOoptional: might be good idea to delete the cached sample files at some point
+ {
+-    //TODOoptimization: check the output doesn't already exist (if it does, use it)
+-
++    m_KeyboardKeyOfCurrentConfigurationToInsertItInto_OrAminusOneIfJustBufferIt = keyboardKeyOfCurrentConfigurationToInsertItInto_OrAminusOneIfJustBufferIt;
++    //check the output doesn't already exist (if it does, use it)
+     QFileInfo cachedFileInfo(SamplesKeyboardPiano_CACHE_DIR_WITH_SLASH_APPENDED + soundEffectFilePath);
+     QDir pathMaker(cachedFileInfo.path());
+     if(!pathMaker.exists())
+     {
+         pathMaker.mkpath(pathMaker.path());
+     }
+-
+-    QString cachedSampleFilename = SamplesKeyboardPiano_CACHE_DIR_WITH_SLASH_APPENDED + soundEffectFilePath + "_" + QString::number(soundEffectMillisecondsOffsetIntoFile) + "_" + QString::number(soundEffectMillisecondsDurationOfFile) + ".wav";
+-
+-    if(QFileInfo::exists(cachedSampleFilename))
++    m_CachedSampleFilenameCurrentlyBeingCreated = SamplesKeyboardPiano_CACHE_DIR_WITH_SLASH_APPENDED + soundEffectFilePath + "_" + QString::number(soundEffectMillisecondsOffsetIntoFile) + "_" + QString::number(soundEffectMillisecondsDurationOfFile) + ".wav";
++    if(QFileInfo::exists(m_CachedSampleFilenameCurrentlyBeingCreated))
+     {
+-        return soundEffectFromCachedSampleFile(cachedSampleFilename);
++        //TODOmb: re-generate random params and try again?
++        assignOrEnqueueSoundEffectCachedSampleFile();
++        return;
+     }
+ 
+-    QProcess ffmpegProcess(this);
+-    ffmpegProcess.setProcessChannelMode(QProcess::MergedChannels);
+     QStringList ffmpegArgs;
+     double millisecondsOffsetAsDouble = static_cast<double>(soundEffectMillisecondsOffsetIntoFile);
+     double millisecondsOffsetAsDecimal = millisecondsOffsetAsDouble * 0.001;
+     double millsecondsDurationAsDouble = static_cast<double>(soundEffectMillisecondsDurationOfFile);
+     double millisecondsDurationAsDecimal =  millsecondsDurationAsDouble * 0.001;
+-    ffmpegArgs << "-ss" << QString::number(millisecondsOffsetAsDecimal, 'f') << "-i" << soundEffectFilePath << "-t" << QString::number(millisecondsDurationAsDecimal, 'f') << cachedSampleFilename;
+-    ffmpegProcess.start("ffmpeg", ffmpegArgs, QIODevice::ReadOnly);
+-    if(!ffmpegProcess.waitForStarted())
++    ffmpegArgs << "-ss" << QString::number(millisecondsOffsetAsDecimal, 'f') << "-i" << soundEffectFilePath << "-t" << QString::number(millisecondsDurationAsDecimal, 'f') << m_CachedSampleFilenameCurrentlyBeingCreated;
++    m_FfmpegProcess->start("ffmpeg", ffmpegArgs, QIODevice::ReadOnly);
++    m_CurrentlyBufferingArandomSample = true;
++
++#if 0
++    if(!m_FfmpegProcess->waitForStarted())
+     {
+-        emit e(ffmpegProcess.errorString());
++        emit e(m_FfmpegProcess->errorString());
+         emit e("ffmpeg failed to start");
+         return 0;
+     }
+-    if(!ffmpegProcess.waitForFinished(-1))
++    if(!m_FfmpegProcess->waitForFinished(-1))
+     {
+-        emit e(ffmpegProcess.errorString());
++        emit e(m_FfmpegProcess->errorString());
+         emit e("ffmpeg failed to finish");
+         return 0;
+     }
+-    if((ffmpegProcess.exitCode() != 0) || (ffmpegProcess.exitStatus() != QProcess::NormalExit))
++    if((m_FfmpegProcess->exitCode() != 0) || (m_FfmpegProcess->exitStatus() != QProcess::NormalExit))
+     {
+-        emit e(ffmpegProcess.errorString());
+-        emit e(ffmpegProcess.readAll());
++        emit e(m_FfmpegProcess->errorString());
++        emit e(m_FfmpegProcess->readAll());
+         emit e("ffmpeg exitted abnormally");
+         return 0;
+     }
+-
+-    return soundEffectFromCachedSampleFile(cachedSampleFilename);
++#endif
+ }
+ QSoundEffect *SamplesKeyboardPiano::soundEffectFromCachedSampleFile(const QString &cachedSampleFilename)
+ {
+     QSoundEffect *soundEffect = new QSoundEffect(this); //TODOreq: use better memory utilization (right now every configuration of every profile is loaded at startup xD)
+     soundEffect->setSource(QUrl::fromLocalFile(cachedSampleFilename));
++    connect(soundEffect, SIGNAL(statusChanged()), this, SLOT(handleSoundEffectStatusChanged()));
+     return soundEffect;
+ }
+ void SamplesKeyboardPiano::ffProbeAudioFilesInBaseDirOfCurrentProfile()
+@@ -197,10 +202,11 @@ int SamplesKeyboardPiano::ffProbeDurationMsFromAudioFile(const QString &audioFil
+     }
+     return -1;
+ }
+-QPair<QString, int> SamplesKeyboardPiano::determineFileInBaseDirThatOffsetIntoAllFilesPointsTo(int offsetIntoAllFiles)
++QPair<QString, int> SamplesKeyboardPiano::determineFileInBaseDirThatOffsetIntoAllFilesPointsTo(int offsetIntoAllFiles, int durationOfSample)
+ {
+     QPair<QString,int> ret;
+     QHashIterator<QString,int> it(m_AudioFilesInBaseDirAndTheirDurationsInMilliseconds);
++    int durationOfAllFilesSoFarIncludingCurrent = 0;
+     while(it.hasNext())
+     {
+         it.next();
+@@ -208,7 +214,9 @@ QPair<QString, int> SamplesKeyboardPiano::determineFileInBaseDirThatOffsetIntoAl
+         {
+ 
+             ret.first = it.key();
+-            ret.second = offsetIntoAllFiles;
++            //ret.second = offsetIntoAllFiles;
++            durationOfAllFilesSoFarIncludingCurrent += it.value();
++            ret.second = qMin(offsetIntoAllFiles, durationOfAllFilesSoFarIncludingCurrent-durationOfSample); //we get the last "duration" milliseconds of the song (relying on offsetIntoAllFiles only might have put us out of bounds). TODOreq: the song inputs must be >= max_sample_duration in order for this to work
+             return ret;
+         }
+         offsetIntoAllFiles -= it.value();
+@@ -218,15 +226,44 @@ QPair<QString, int> SamplesKeyboardPiano::determineFileInBaseDirThatOffsetIntoAl
+ }
+ void SamplesKeyboardPiano::getNewRandomSampleForThisKeyboardKey(int keyboardKey)
+ {
+-    qsrand(QDateTime::currentMSecsSinceEpoch());
+-    int offsetIntoAllFiles = (qrand() % m_TotalDurationOfAllAudioFilesInCurrentProfilesBaseDir); //TODOmb: "long songs" have higher likelyhood of a sample being selected from them. might be better off doing a rand() with the numSongs first, then another rand() for the offset therein. TODOoptional: qrand() mod'ing is not uniformly distributed
+-    int duration = (qrand() % (m_MaxSampleDurationMs - m_MinSampleDurationMs)); //TODOprobably: we need to account for "end of songs"... there might not be enough duration left! we COULD grab the ms from the beginning 'next' song, but chances are extremely high it won't sound good with the ending of the 'current' song...
+-    QPair<QString /*filePathThatOffsetPointsTo*/,int /*remainingOffsetIntoDeterminedFile*/> filePathAndRemainingOffset = determineFileInBaseDirThatOffsetIntoAllFilesPointsTo(offsetIntoAllFiles);
+-    QSoundEffect *sampleForKeyboardKey = soundEffectFrom_FilePath_Offset_And_Duration(filePathAndRemainingOffset.first, filePathAndRemainingOffset.second, duration);
++    QSoundEffect *sampleForKeyboardKey = consumeBufferedRandomSample();
+     if(sampleForKeyboardKey)
+     {
+         m_CurrentProfile.CurrentConfiguration.KeyboardKeysToSamplesHash.insert(keyboardKey, sampleForKeyboardKey); //TODOreq: QSettings::save() -- and also timeline'ize xD
+     }
++    else
++    {
++        emit e("couldn't generate samples fast enough, try increasing SamplesKeyboardPiano_NUM_RANDOM_SAMPLES_TO_BUFFER");
++    }
++}
++QSoundEffect *SamplesKeyboardPiano::consumeBufferedRandomSample()
++{
++    QSoundEffect *ret = 0;
++    if(!m_BufferedRandomSamplesQueue.isEmpty())
++    {
++        ret = m_BufferedRandomSamplesQueue.dequeue();
++        QMetaObject::invokeMethod(this, "handleBufferedRandomSampleConsumed", Qt::QueuedConnection); //queued because we want to consume and play the sample asep
++    }
++    return ret;
++}
++void SamplesKeyboardPiano::beginAsyncBufferingOfRandomSample()
++{
++    int offsetIntoAllFiles = (qrand() % m_TotalDurationOfAllAudioFilesInCurrentProfilesBaseDir); //TODOmb: "long songs" have higher likelyhood of a sample being selected from them. might be better off doing a rand() with the numSongs first, then another rand() for the offset therein. TODOoptional: qrand() mod'ing is not uniformly distributed
++    int duration = (qrand() % (m_MaxSampleDurationMs - m_MinSampleDurationMs)); //TO DOne(handled in determineFileInBaseDirThatOffsetIntoAllFilesPointsTo): we need to account for "end of songs"... there might not be enough duration left! we COULD grab the ms from the beginning 'next' song, but chances are extremely high it won't sound good with the ending of the 'current' song...
++    QPair<QString /*filePathThatOffsetPointsTo*/,int /*remainingOffsetIntoDeterminedFile*/> filePathAndRemainingOffset = determineFileInBaseDirThatOffsetIntoAllFilesPointsTo(offsetIntoAllFiles, duration);
++    beginAsyncGenerateSoundEffectFrom_FilePath_Offset_And_Duration(filePathAndRemainingOffset.first, filePathAndRemainingOffset.second, duration, (Qt::Key_A-1));
++}
++void SamplesKeyboardPiano::assignOrEnqueueSoundEffectCachedSampleFile()
++{
++    QSoundEffect *soundEffect = soundEffectFromCachedSampleFile(m_CachedSampleFilenameCurrentlyBeingCreated);
++    if(m_KeyboardKeyOfCurrentConfigurationToInsertItInto_OrAminusOneIfJustBufferIt == (Qt::Key_A-1))
++    {
++        m_BufferedRandomSamplesQueue.enqueue(soundEffect);
++    }
++    else
++    {
++        m_CurrentProfile.CurrentConfiguration.KeyboardKeysToSamplesHash.insert(m_KeyboardKeyOfCurrentConfigurationToInsertItInto_OrAminusOneIfJustBufferIt, soundEffect);
++    }
+ }
+ void SamplesKeyboardPiano::probeProfiles()
+ {
+@@ -252,7 +289,7 @@ void SamplesKeyboardPiano::probeProfiles()
+                 int soundEffectMillisecondsOffsetIntoFile = settings.value(SamplesKeyboardPiano_SETTINGS_PROFILE_CONFIGURATION_SOUNDEFFECTMILLSECONDSOFFSETINTOFILE_KEY).toInt();
+                 int soundEffectMillisecondsDurationOfFile = settings.value(SamplesKeyboardPiano_SETTINGS_PROFILE_CONFIGURATION_SOUNDEFFECTMILLSECONDSDURATIONOFFILE_KEY).toInt();
+                 settings.endGroup();
+-                configuration.KeyboardKeysToSamplesHash.insert(currentKeyboardKey, soundEffectFrom_FilePath_Offset_And_Duration(soundEffectFilePath, soundEffectMillisecondsOffsetIntoFile, soundEffectMillisecondsDurationOfFile));
++                configuration.KeyboardKeysToSamplesHash.insert(currentKeyboardKey, beginAsyncGenerateSoundEffectFrom_FilePath_Offset_And_Duration(soundEffectFilePath, soundEffectMillisecondsOffsetIntoFile, soundEffectMillisecondsDurationOfFile, currentKeyboardKey));
+             }
+             profile.Configurations.append(configuration);
+         }
+@@ -283,6 +320,12 @@ void SamplesKeyboardPiano::drum(int keyboardKey, bool shiftKeyPressed)
+     if(shiftKeyPressed)
+     {
+         //randomly select/set new sample -- TODOoptional: make note of it in replayeable timeline
++        QSoundEffect *soundEffect = m_CurrentProfile.CurrentConfiguration.KeyboardKeysToSamplesHash.take(keyboardKey);
++        if(soundEffect)
++        {
++            disconnect(soundEffect, SIGNAL(statusChanged()));
++            delete soundEffect;
++        }
+         getNewRandomSampleForThisKeyboardKey(keyboardKey);
+         //Uncomment for two presses before the new sample plays: return;
+     }
+@@ -292,3 +335,35 @@ void SamplesKeyboardPiano::drum(int keyboardKey, bool shiftKeyPressed)
+     if(soundEffect)
+         soundEffect->play();
+ }
++void SamplesKeyboardPiano::handleSoundEffectStatusChanged()
++{
++    QSoundEffect *soundEffect = qobject_cast<QSoundEffect*>(sender()); //TODOoptional: bleh
++    QSoundEffect::Status soundEffectStatus = soundEffect->status();
++    if(soundEffectStatus == QSoundEffect::Error)
++    {
++        emit e("QSoundEffect reported error while loading source: " + soundEffect->source().toString());
++    }
++}
++void SamplesKeyboardPiano::handleBufferedRandomSampleConsumed()
++{
++    if(!m_CurrentlyBufferingArandomSample)
++    {
++        beginAsyncBufferingOfRandomSample();
++    }
++}
++void SamplesKeyboardPiano::handleFfmpegProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
++{
++    m_CurrentlyBufferingArandomSample = false;
++    if((exitCode != 0) || (exitStatus != QProcess::NormalExit))
++    {
++        emit e(m_FfmpegProcess->errorString());
++        emit e(m_FfmpegProcess->readAll());
++        emit e("ffmpeg exitted abnormally");
++        return;
++    }
++    m_BufferedRandomSamplesQueue.enqueue(soundEffectFromCachedSampleFile(m_CachedSampleFilenameCurrentlyBeingCreated));
++    if(m_BufferedRandomSamplesQueue.size() < SamplesKeyboardPiano_NUM_RANDOM_SAMPLES_TO_BUFFER)
++    {
++        beginAsyncBufferingOfRandomSample();
++    }
++}
+diff --git a/Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpiano.h b/Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpiano.h
+index 429fd6a..a316b3b 100644
+--- a/Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpiano.h
++++ b/Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpiano.h
+@@ -3,6 +3,8 @@
+ 
+ #include <QObject>
+ #include <QHash>
++#include <QQueue>
++#include <QProcess>
+ 
+ #include "sampleskeyboardpianoprofile.h"
+ 
+@@ -25,13 +27,23 @@ private:
+     int m_MinSampleDurationMs;
+     int m_MaxSampleDurationMs;
+ 
+-    QSoundEffect *soundEffectFrom_FilePath_Offset_And_Duration(const QString &soundEffectFilePath, int soundEffectMillisecondsOffsetIntoFile, int soundEffectMillisecondsDurationOfFile);
++    bool m_CurrentlyBufferingArandomSample;
++    QQueue<QSoundEffect*> m_BufferedRandomSamplesQueue;
++    QString m_CachedSampleFilenameCurrentlyBeingCreated;
++    int m_KeyboardKeyOfCurrentConfigurationToInsertItInto_OrAminusOneIfJustBufferIt;
++    QProcess *m_FfmpegProcess;
++
++    void beginAsyncGenerateSoundEffectFrom_FilePath_Offset_And_Duration(const QString &soundEffectFilePath, int soundEffectMillisecondsOffsetIntoFile, int soundEffectMillisecondsDurationOfFile, int keyboardKeyOfCurrentConfigurationToInsertItInto_OrAminusOneIfJustBufferIt);
+     QSoundEffect *soundEffectFromCachedSampleFile(const QString &cachedSampleFilename);
+     void ffProbeAudioFilesInBaseDirOfCurrentProfile();
+     void ensureCurrentConfigurationOfCurrentProfileHasArandomSampleForEveryKeyboardKey();
+     int ffProbeDurationMsFromAudioFile(const QString &audioFilePath);
+-    QPair<QString /*filePathThatOffsetPointsTo*/,int /*remainingOffsetIntoDeterminedFile*/> determineFileInBaseDirThatOffsetIntoAllFilesPointsTo(int offsetIntoAllFiles);
++    QPair<QString /*filePathThatOffsetPointsTo*/,int /*remainingOffsetIntoDeterminedFile*/> determineFileInBaseDirThatOffsetIntoAllFilesPointsTo(int offsetIntoAllFiles, int durationOfSample);
+     void getNewRandomSampleForThisKeyboardKey(int keyboardKey);
++
++    QSoundEffect *consumeBufferedRandomSample();
++    void beginAsyncBufferingOfRandomSample();
++    void assignOrEnqueueSoundEffectCachedSampleFile();
+ signals:
+     void e(const QString &msg);
+     void profilesProbed(QList<SamplesKeyboardPianoProfile> profiles);
+@@ -39,6 +51,10 @@ public slots:
+     void probeProfiles();
+     void selectProfile(SamplesKeyboardPianoProfile profile);
+     void drum(int keyboardKey, bool shiftKeyPressed);
++private slots:
++    void handleSoundEffectStatusChanged();
++    void handleBufferedRandomSampleConsumed();
++    void handleFfmpegProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
+ };
+ 
+ #endif // SAMPLESKEYBOARDPIANO_H
