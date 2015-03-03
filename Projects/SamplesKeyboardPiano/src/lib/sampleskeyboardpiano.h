@@ -31,6 +31,7 @@ private:
     void ensureCurrentConfigurationOfCurrentProfileHasArandomSampleForEveryKeyboardKey();
     int ffProbeDurationMsFromAudioFile(const QString &audioFilePath);
     QPair<QString /*filePathThatOffsetPointsTo*/,int /*remainingOffsetIntoDeterminedFile*/> determineFileInBaseDirThatOffsetIntoAllFilesPointsTo(int offsetIntoAllFiles);
+    void getNewRandomSampleForThisKeyboardKey(int keyboardKey);
 signals:
     void e(const QString &msg);
     void profilesProbed(QList<SamplesKeyboardPianoProfile> profiles);

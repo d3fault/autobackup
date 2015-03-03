@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     sampleskeyboardpianogui.cpp \
     ../../lib/sampleskeyboardpianoprofile.cpp \
     ../../lib/sampleskeyboardpianoprofileconfiguration.cpp \
-    sampleskeyboardpianoprofilemanagerwidget.cpp
+    sampleskeyboardpianoprofilemanagerwidget.cpp \
+    shiftclickablepushbutton.cpp
 
 HEADERS  += \
     ../../lib/sampleskeyboardpiano.h \
@@ -26,6 +27,7 @@ HEADERS  += \
     sampleskeyboardpianogui.h \
     ../../lib/sampleskeyboardpianoprofile.h \
     ../../lib/sampleskeyboardpianoprofileconfiguration.h \
-    sampleskeyboardpianoprofilemanagerwidget.h
+    sampleskeyboardpianoprofilemanagerwidget.h \
+    shiftclickablepushbutton.h
 
 INCLUDEPATH += ../../lib

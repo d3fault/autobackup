@@ -10,7 +10,8 @@ class SamplesKeyboardPianoWidget : public QWidget
     Q_OBJECT
 public:
     SamplesKeyboardPianoWidget(QWidget *parent = 0);
-    void keyPressEvent(QKeyEvent *keyEvent, bool shiftKeyPressed);
+protected:
+    virtual void keyPressEvent(QKeyEvent *keyEvent);
 signals:
     void alphabeticalKeyPressDetected(int keyboardKey, bool shiftKeyPressed);
 };

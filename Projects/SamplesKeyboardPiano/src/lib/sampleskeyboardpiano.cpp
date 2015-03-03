@@ -21,11 +21,14 @@
 
 #define SamplesKeyboardPiano_CACHE_DIR_WITH_SLASH_APPENDED "/run/shm/" //TODOoptional: runtime arg, or profile value
 
+//TODOreq: getting intermittent error "QSoundEffect(pulseaudio): Error in pulse audio stream" when generating new random samples for a key (but weirdly never at startup/first-generate). Every generate attempt thereafter gets the same error
+//TODOoptimization: have a buffer of, say, 5, "nextRandomSamples", so that when a random sample is requested, we don't have to go to disk, demux and decode the file, write it back out, read it back in, and play it -- an even better (but much more difficult) solution would be to use libav directly and to only ever read from disk once (however I'm using /run/shm so... technically I keep the file in memory ;-P), but even THAT better solution should still use a buffer (~5'ish) of "nextRandomSamples"
+//TODOoptional: a way to say "extend this sample's duration" (typically in chronological order, but possibly in reverse chronological order too)... using some keyboard modifier etc. maybe if you press space before the sample ends, it keeps going [for the entire duration of the song even]. I'd need to refactor for this ofc. Alternatively, you could hold down a modifier (alt, etc) _BEFORE_ pressing the key (or clicking the button in gui) for the same "extending" functionality
 SamplesKeyboardPiano::SamplesKeyboardPiano(QObject *parent)
     : QObject(parent)
     , m_TotalDurationOfAllAudioFilesInCurrentProfilesBaseDir(0)
-    , m_MinSampleDurationMs(100) //TODOreq: this and max should be runtime changeable via ui, and the changes should maybe be reflected in the timeline (but maybe not, since the 'results of' the change (randomly selected samples + offsets + durations) would already be reflected)
-    , m_MaxSampleDurationMs(1000)
+    , m_MinSampleDurationMs(500) //TODOreq: this and max should be runtime changeable via ui, and the changes should maybe be reflected in the timeline (but maybe not, since the 'results of' the change (randomly selected samples + offsets + durations) would already be reflected)
+    , m_MaxSampleDurationMs(1500)
 {
     QCoreApplication::setApplicationName("SamplesKeyboardPiano");
     QCoreApplication::setOrganizationName("SamplesKeyboardPianoOrganization");
@@ -122,18 +125,9 @@ void SamplesKeyboardPiano::ensureCurrentConfigurationOfCurrentProfileHasArandomS
     for(int i = Qt::Key_A; i <= Qt::Key_Z; ++i)
     {
         QSoundEffect *sampleAttachedToCurrentKeyboardKey = m_CurrentProfile.CurrentConfiguration.KeyboardKeysToSamplesHash.value(i, 0);
-        if(sampleAttachedToCurrentKeyboardKey == 0)
+        if(!sampleAttachedToCurrentKeyboardKey)
         {
-            //get new random sample for this keyboard key
-            qsrand(QDateTime::currentMSecsSinceEpoch());
-            int offsetIntoAllFiles = (qrand() % m_TotalDurationOfAllAudioFilesInCurrentProfilesBaseDir); //TODOmb: "long songs" have higher likelyhood of a sample being selected from them. might be better off doing a rand() with the numSongs first, then another rand() for the offset therein. TODOoptional: qrand() mod'ing is not uniformly distributed
-            int duration = (qrand() % (m_MaxSampleDurationMs - m_MinSampleDurationMs)); //TODOprobably: we need to account for "end of songs"... there might not be enough duration left! we COULD grab the ms from the beginning 'next' song, but chances are extremely high it won't sound good with the ending of the 'current' song...
-            QPair<QString /*filePathThatOffsetPointsTo*/,int /*remainingOffsetIntoDeterminedFile*/> filePathAndRemainingOffset = determineFileInBaseDirThatOffsetIntoAllFilesPointsTo(offsetIntoAllFiles);
-            sampleAttachedToCurrentKeyboardKey = soundEffectFrom_FilePath_Offset_And_Duration(filePathAndRemainingOffset.first, filePathAndRemainingOffset.second, duration);
-            if(sampleAttachedToCurrentKeyboardKey)
-            {
-                m_CurrentProfile.CurrentConfiguration.KeyboardKeysToSamplesHash.insert(i, sampleAttachedToCurrentKeyboardKey); //TODOreq: QSettings::save() -- and also timeline'ize xD
-            }
+            getNewRandomSampleForThisKeyboardKey(i);
         }
     }
 }
@@ -222,6 +216,18 @@ QPair<QString, int> SamplesKeyboardPiano::determineFileInBaseDirThatOffsetIntoAl
     emit e("got to end of determineFileInBaseDirThatOffsetIntoAllFilesPointsTo. this should never happen");
     return ret; //maybe populate with hash.first()? but we don't know it exists xD
 }
+void SamplesKeyboardPiano::getNewRandomSampleForThisKeyboardKey(int keyboardKey)
+{
+    qsrand(QDateTime::currentMSecsSinceEpoch());
+    int offsetIntoAllFiles = (qrand() % m_TotalDurationOfAllAudioFilesInCurrentProfilesBaseDir); //TODOmb: "long songs" have higher likelyhood of a sample being selected from them. might be better off doing a rand() with the numSongs first, then another rand() for the offset therein. TODOoptional: qrand() mod'ing is not uniformly distributed
+    int duration = (qrand() % (m_MaxSampleDurationMs - m_MinSampleDurationMs)); //TODOprobably: we need to account for "end of songs"... there might not be enough duration left! we COULD grab the ms from the beginning 'next' song, but chances are extremely high it won't sound good with the ending of the 'current' song...
+    QPair<QString /*filePathThatOffsetPointsTo*/,int /*remainingOffsetIntoDeterminedFile*/> filePathAndRemainingOffset = determineFileInBaseDirThatOffsetIntoAllFilesPointsTo(offsetIntoAllFiles);
+    QSoundEffect *sampleForKeyboardKey = soundEffectFrom_FilePath_Offset_And_Duration(filePathAndRemainingOffset.first, filePathAndRemainingOffset.second, duration);
+    if(sampleForKeyboardKey)
+    {
+        m_CurrentProfile.CurrentConfiguration.KeyboardKeysToSamplesHash.insert(keyboardKey, sampleForKeyboardKey); //TODOreq: QSettings::save() -- and also timeline'ize xD
+    }
+}
 void SamplesKeyboardPiano::probeProfiles()
 {
     QSettings settings;
@@ -276,8 +282,9 @@ void SamplesKeyboardPiano::drum(int keyboardKey, bool shiftKeyPressed)
 {
     if(shiftKeyPressed)
     {
-        //TODOreq: randomly select/set new sample. TODOoptional: make note of it in replayeable timeline
-        return;
+        //randomly select/set new sample -- TODOoptional: make note of it in replayeable timeline
+        getNewRandomSampleForThisKeyboardKey(keyboardKey);
+        //Uncomment for two presses before the new sample plays: return;
     }
 
     //QSoundEffect *soundEffect = m_KeysToSoundEffectsHash.value(key);
