@@ -55,6 +55,7 @@ public:
     //QList<QString> allMyAvailableMemberGettersWhenInAnyOfMyOwnSlots_AsString();
 
     QString headerFilenameOnly();
+    QString sourceFilenameOnly();
 
 
     //TODOoptional: should be private

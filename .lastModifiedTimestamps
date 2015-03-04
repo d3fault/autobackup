@@ -2911,7 +2911,7 @@ Projects/CopyFileContentsToClipboard/src/CopyFileContentsToClipboardGui.pro:1409
 Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.cpp:1409509743
 Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.h:1409507797
 Projects/CopyFileContentsToClipboard/src/main.cpp:1409508222
-Projects/DesignEqualsImplementation2/:1425101507
+Projects/DesignEqualsImplementation2/:1425491226
 Projects/DesignEqualsImplementation2/design/:1418094927
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/:1411932839
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/0004_SingleSignalMultipleSlots/:1411934573
@@ -2984,7 +2984,7 @@ Projects/DesignEqualsImplementation2/design/use.case.is.series.of.either.slot.de
 Projects/DesignEqualsImplementation2/design/use.cases.define.slot.bodies.at.runtime.but.only.resolve.where.connect.statements.go.at.source.generation.time.txt:1408252978
 Projects/DesignEqualsImplementation2/design/when.to.do.the.cross.thread.call.analysis.optimization.sdfljsdlfjsdl.txt:1410402949
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1425102887
+Projects/DesignEqualsImplementation2/src/:1425496515
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
@@ -3056,12 +3056,12 @@ Projects/DesignEqualsImplementation2/src/ui/gui/usecasegraphicsscene.h:141271010
 Projects/DesignEqualsImplementation2/src/ui/gui/usecaseumlitemswidget.cpp:1410388713
 Projects/DesignEqualsImplementation2/src/ui/gui/usecaseumlitemswidget.h:1404489887
 Projects/DesignEqualsImplementation2/src/DesignEqualsImplementationGui.pro:1412468044
-Projects/DesignEqualsImplementation2/src/designequalsimplementation.cpp:1410419673
+Projects/DesignEqualsImplementation2/src/designequalsimplementation.cpp:1425496489
 Projects/DesignEqualsImplementation2/src/designequalsimplementation.h:1409808106
 Projects/DesignEqualsImplementation2/src/designequalsimplementationactor.cpp:1410388840
 Projects/DesignEqualsImplementation2/src/designequalsimplementationactor.h:1404574889
-Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.cpp:1413768452
-Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.h:1413768504
+Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.cpp:1425494349
+Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.h:1425494349
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifeline.cpp:1413768292
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifeline.h:1411177010
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifelineunitofexecution.cpp:1405431299
@@ -3083,10 +3083,10 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationlenientsignal
 Projects/DesignEqualsImplementation2/src/designequalsimplementationlenientsignalorslotsignaturerparser.h:1409070776
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprivatemethodsynchronouscallstatement.cpp:1410402054
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprivatemethodsynchronouscallstatement.h:1410401193
-Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.cpp:1410400943
+Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.cpp:1425492602
 Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.h:1410417365
-Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.cpp:1424669653
-Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.h:1412598628
+Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.cpp:1425496320
+Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.h:1425492602
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.cpp:1412600743
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.h:1409871198
 Projects/DesignEqualsImplementation2/src/designequalsimplementationsignalemissionstatement.cpp:1410400627
@@ -3734,7 +3734,7 @@ Projects/Osios/src/ui/osiosuiapp.h:1403725308
 Projects/Osios/src/OsiosGui.pro:1404008961
 Projects/Osios/src/osios.cpp:1404010898
 Projects/Osios/src/osios.h:1403729701
-Projects/Osios2/:1414341370
+Projects/Osios2/:1425491065
 Projects/Osios2/design/:1418076677
 Projects/Osios2/design/app.state.empty.json.doc.analogy.notes.but.stopped.to.go.play.with.state.machine.examples.txt:1414629578
 Projects/Osios2/design/at.least.sharding.in.the.forwarding.sense.could.at.least.save.on.bandwidth.when.used.with.pki.txt:1414785003
@@ -3752,7 +3752,7 @@ Projects/Osios2/design/sldjflkasdjfklajsdlfkjsadfouwelrkjsdfsdofjsldkfjsd.txt:14
 Projects/Osios2/design/this.is.a.data.security.application.but.thats.probably.not.what.you.think.it.means.txt:1414798918
 Projects/Osios2/reverts/:1414326188
 Projects/Osios2/reverts/revertBackupIDontThinkINeedOrWantThisAnymoreForOsios2.diffOf5d375c768ac2c1f97e1bf2431693e4f4be2df01b:1414325772
-Projects/Osios2/src/:1425342107
+Projects/Osios2/src/:1425491147
 Projects/Osios2/src/mainmenuitems/:1415006573
 Projects/Osios2/src/mainmenuitems/writer/:1415092608
 Projects/Osios2/src/mainmenuitems/writer/eventemittingplaintextedit.cpp:1415092608
@@ -3769,7 +3769,6 @@ Projects/Osios2/src/timelinenodetypes/mainmenuactivitychangedtimelinenode.h:1414
 Projects/Osios2/src/timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.cpp:1414553871
 Projects/Osios2/src/timelinenodetypes/profilecreationannounce_aka_genesistimelinenode.h:1414553833
 Projects/Osios2/src/OsiosGui.pro:1415001820
-Projects/Osios2/src/OsiosGui.pro.user.3.2-pre1:1425331945
 Projects/Osios2/src/iactivitytab_widget_formainmenutabwidget.cpp:1414306500
 Projects/Osios2/src/iactivitytab_widget_formainmenutabwidget.h:1414307140
 Projects/Osios2/src/ibootstrapsplashscreen.h:1414648082
@@ -4754,7 +4753,7 @@ Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpianoprofile.h:1425336197
 Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpianoprofileconfiguration.cpp:1425330726
 Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpianoprofileconfiguration.h:1425333368
 Projects/SamplesKeyboardPiano/src/ui/:1425380973
-Projects/SamplesKeyboardPiano/src/ui/gui/:1425381213
+Projects/SamplesKeyboardPiano/src/ui/gui/:1425477849
 Projects/SamplesKeyboardPiano/src/ui/gui/SamplesKeyboardPianoGui.pro:1425344075
 Projects/SamplesKeyboardPiano/src/ui/gui/main.cpp:1425329922
 Projects/SamplesKeyboardPiano/src/ui/gui/sampleskeyboardpianogui.cpp:1425342806
@@ -5641,4 +5640,4 @@ licenses/license.dpl.txt:1388242176
 .gitignore:1425055833
 copyright.txt:1388203681
 license.dpl.txt:1388242176
-todo.txt:1425377673
+todo.txt:1425495597

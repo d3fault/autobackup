@@ -2,6 +2,7 @@ deploy:
 hottee
 
 do:
+.pro.user.pre shit
 "not serving this"
 webp->jpg (binarySupplement post-update also?)
 copyleft disclaimer (assignment is easiest, but shitty)
@@ -11,4 +12,4 @@ Hottee: "working dir(s)", on start first check currentDateTime >= 2015, then cre
 Hottee: "q" -> we will quit when the input process closes, if the upload queue is [still] empty a few seconds after the input process closes
 ~24hr cronjob: make torrent of all 'yesterdays' (just ended day) video segments -- also same for weekly (later, bump that to monthly) -- hvbs download page builds links based on torrents it finds in a directory?
 num unique visitors (wt unique id?) per day
-rubber bands
+my sexy face: close if res of primary is 800x600 (mb opt in cli arg for the functionality)

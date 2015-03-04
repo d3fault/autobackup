@@ -313,7 +313,7 @@ void DesignEqualsImplementation::newProject()
     emit projectOpened(testProject);
 #endif // DesignEqualsImplementation_TEST_GUI_MODE
     DesignEqualsImplementationProject *newProject = new DesignEqualsImplementationProject(this);
-    newProject->Name = "New Project 1"; //TODOreq: auto-increment
+    newProject->Name = "NewProject1"; //TODOreq: auto-increment. TODOoptional: human readable variant with spaces (for window title)? mb project name generated FROM human readable name by taking out spaces (two line edits, the second one (project name) auto-generates as you type human readable name)
 
     connect(newProject, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
     m_CurrentlyOpenedDesignEqualsImplementationProjects.append(newProject);

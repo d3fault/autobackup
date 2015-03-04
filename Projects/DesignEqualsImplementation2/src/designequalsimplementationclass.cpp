@@ -150,6 +150,10 @@ QString DesignEqualsImplementationClass::headerFilenameOnly()
 {
     return ClassName.toLower() + ".h";
 }
+QString DesignEqualsImplementationClass::sourceFilenameOnly()
+{
+    return ClassName.toLower() + ".cpp";
+}
 QString DesignEqualsImplementationClass::autoNameForNewChildMemberOfType(DesignEqualsImplementationClass *childMemberClassType) //TODOreq: check for collission with properties and signals/slots too, which are all technically "members" so I may refactor to account for that fact
 {
     int indexCurrentlyTestingForNameCollission = -1;

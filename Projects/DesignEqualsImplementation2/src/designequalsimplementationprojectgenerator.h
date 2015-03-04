@@ -14,6 +14,7 @@ class DesignEqualsImplementationProjectGenerator : public QObject
     Q_OBJECT
 public:
     explicit DesignEqualsImplementationProjectGenerator(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, QObject *parent = 0);
+    bool generateProjectFileAndWriteItToDisk(DesignEqualsImplementationProject *designEqualsImplementationProject);
     bool processClassStep0declaringClassInProject(DesignEqualsImplementationClass *designEqualsImplementationClass);
     bool processUseCase(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase);
     //bool processClassStep1writingTheFile(DesignEqualsImplementationClass *designEqualsImplementationClass);

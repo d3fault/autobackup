@@ -203,6 +203,12 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(ProjectGenerat
 
     //cleanupJitGeneratedLinesFromAPreviousGenerate();
 
+    if(!projectGenerator.generateProjectFileAndWriteItToDisk(this)) //TODOreq: cli/lib/gui differences
+    {
+        emit e("failed to generate project file");
+        return false;
+    }
+
     //two steps because use cases append connect statements to class constructors before writing
     Q_FOREACH(DesignEqualsImplementationClass *designEqualsImplementationClass, m_Classes)
     {
