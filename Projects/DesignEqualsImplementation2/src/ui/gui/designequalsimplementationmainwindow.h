@@ -32,6 +32,7 @@ private:
     QAction *m_OpenProjectAction;
     QAction *m_RenameProjectAction;
     QAction *m_NewUseCaseAction;
+    QAction *m_EditCppAction;
     QAction *m_GenerateSourceCodeAction;
     //More actions
     QAction *m_MoveMousePointerDefaultAction;
@@ -74,6 +75,7 @@ private slots:
 #endif
     void handleRenameProjectActionTriggered();
     void handleNewUseCaseActionTriggered();
+    void handleEditCppActionTriggered();
     void handleProjectTabWidgetOrClassDiagramAndUseCasesTabWidgetCurrentTabChanged();
     void handleUseCaseAdded(DesignEqualsImplementationUseCase *newUseCase);
     void handleAllUseCasesListWidgetItemDoubleClicked(QListWidgetItem *doubleClickedListWidgetItem);

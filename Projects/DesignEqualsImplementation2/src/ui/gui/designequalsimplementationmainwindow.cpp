@@ -67,12 +67,14 @@ void DesignEqualsImplementationMainWindow::createActions()
     m_OpenProjectAction = new QAction(tr("&Open Project"), this);
     m_RenameProjectAction = new QAction(tr("&Rename Project"), this);
     m_NewUseCaseAction = new QAction(tr("New &Use Case"), this);
+    m_EditCppAction = new QAction(tr("&Edit C++"), this);
     m_GenerateSourceCodeAction = new QAction(tr("&Generate Source Code"), this);
     connect(m_NewProjectAction, SIGNAL(triggered()), this, SIGNAL(newProjectRequested()));
     connect(m_SaveProjectAction, SIGNAL(triggered()), this, SLOT(handleSaveRequested()));
     connect(m_OpenProjectAction, SIGNAL(triggered()), this, SLOT(handleOpenProjectActionTriggered()));
     connect(m_RenameProjectAction, SIGNAL(triggered()), this, SLOT(handleRenameProjectActionTriggered()));
     connect(m_NewUseCaseAction, SIGNAL(triggered()), this, SLOT(handleNewUseCaseActionTriggered()));
+    connect(m_EditCppAction, SIGNAL(triggered()), this, SLOT(handleEditCppActionTriggered()));
     connect(m_GenerateSourceCodeAction, SIGNAL(triggered()), this, SLOT(handleGenerateSourceCodeActionTriggered()));
 
     //Main Toolbar Actions
@@ -99,6 +101,7 @@ void DesignEqualsImplementationMainWindow::createMenu()
     fileNew->addAction(m_NewUseCaseAction);
     fileMenu->addAction(m_OpenProjectAction);
     fileMenu->addAction(m_RenameProjectAction);
+    fileMenu->addAction(m_EditCppAction);
     fileMenu->addAction(m_GenerateSourceCodeAction);
 
     fileMenu->addSeparator();
@@ -118,6 +121,7 @@ void DesignEqualsImplementationMainWindow::createToolbars()
     projectOperationsToolbar_aka_fileNewMenuEquivalentToolbar->addAction(m_SaveProjectAction);
     projectOperationsToolbar_aka_fileNewMenuEquivalentToolbar->addAction(m_OpenProjectAction);
     projectOperationsToolbar_aka_fileNewMenuEquivalentToolbar->addAction(m_NewUseCaseAction);
+    projectOperationsToolbar_aka_fileNewMenuEquivalentToolbar->addAction(m_EditCppAction);
     projectOperationsToolbar_aka_fileNewMenuEquivalentToolbar->addAction(m_GenerateSourceCodeAction);
 
     //addToolBarBreak();
@@ -231,6 +235,11 @@ void DesignEqualsImplementationMainWindow::handleNewUseCaseActionTriggered()
 {
     DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget *currentProjectTab = static_cast<DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget*>(m_OpenProjectsTabWidget->currentWidget());
     QMetaObject::invokeMethod(currentProjectTab, "requestNewUseCase");
+}
+void DesignEqualsImplementationMainWindow::handleEditCppActionTriggered()
+{
+    DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget *currentProjectTab = static_cast<DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget*>(m_OpenProjectsTabWidget->currentWidget());
+    QMetaObject::invokeMethod(currentProjectTab, "requestEditCppMode");
 }
 void DesignEqualsImplementationMainWindow::handleProjectTabWidgetOrClassDiagramAndUseCasesTabWidgetCurrentTabChanged()
 {

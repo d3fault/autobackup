@@ -26,6 +26,7 @@ DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::DesignEqual
     //^Meh, even though I _COULD_ solve it using implicit sharing, I'm wondering if a mutex is easier/better (whichever has less code is better imo (BUT mutex might lock the GUI so... it goes both ways)). Idfk just studying implicit sharing and thinking about frontend<-->backend in general [for this specific app]
 
     connect(this, SIGNAL(newUseCaseRequested()), project, SLOT(handleNewUseCaseRequested()));
+    connect(this, SIGNAL(editCppModeRequested()), project, SLOT(handleEditCppModeRequested()));
     connect(project, SIGNAL(useCaseAdded(DesignEqualsImplementationUseCase*)), this, SLOT(handleUseCaseAdded(DesignEqualsImplementationUseCase*)));
 
     //After beginning coding with a mutex (lazy :-P) for synchronization, I'm realizing that I think I need to have tons of "classAdded", "slotAdded", etc signals ANYWAYS. Well I mean idfk tbh, it depends on if I want to use reactor pattern or just do the backend "adding" as well as front-end "adding" in the front-end code. Even what I was considering doing with implicit sharing does NOT use reactor pattern... so... idfk... maybe I can't save myself from typing all that shit out no matter what I do. I'm pretty damn sure reactor pattern is better and more future proof and eases synchronization in the long run anyways... so...
@@ -70,6 +71,10 @@ void DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::ensure
 
     if(m_ClassDiagramAndUseCasesTabWidget->currentIndex() != useCaseTabIndex)
         m_ClassDiagramAndUseCasesTabWidget->setCurrentIndex(useCaseTabIndex);
+}
+void DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::requestEditCppMode()
+{
+    emit editCppModeRequested();
 }
 void DesignEqualsImplementationProjectAsWidgetForOpenedProjectsTabWidget::requestNewUseCase()
 {

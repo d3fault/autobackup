@@ -7,10 +7,10 @@
 class DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene;
 class DesignEqualsImplementationClassSlot;
 class IDesignEqualsImplementationHaveOrderedListOfStatements;
-class IDesignEqualsImplementationStatement;
+class IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements;
 class IRepresentSnapGraphicsItemAndProxyGraphicsItem;
 
-typedef QPair<QGraphicsItem* /*visual representation*/, IDesignEqualsImplementationStatement* /*underlyingStatement*/> ExistingStatementListEntryTypedef;
+typedef QPair<QGraphicsItem* /*visual representation*/, IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements* /*underlyingStatement*/> ExistingStatementListEntryTypedef;
 
 class DesignEqualsImplementationSlotGraphicsItemForUseCaseScene : public QObject, public QGraphicsRectItem, public ISnappableSourceGraphicsItem
 {
@@ -41,13 +41,13 @@ private:
 
     static const QRectF minRect();
     void privateConstructor();
-    void insertStatementGraphicsItem(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted);
+    void insertStatementGraphicsItem(int indexInsertedInto, IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *statementInserted);
     void repositionExistingStatementsAndSnapPoints();
     qreal calculateMyRectHeightUsingExistingStatements();
 signals:
     void geometryChanged();
 private slots:
-    void handleStatementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted);
+    void handleStatementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *statementInserted);
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCLASSLIFELINESLOTGRAPHICSITEMFORUSECASESCENE_H

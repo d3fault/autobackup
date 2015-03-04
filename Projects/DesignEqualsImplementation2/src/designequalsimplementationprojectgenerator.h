@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QHash>
+#include <QTextStream>
 
 #include "designequalsimplementationproject.h"
 
@@ -13,7 +14,7 @@ class DesignEqualsImplementationProjectGenerator : public QObject
 {
     Q_OBJECT
 public:
-    explicit DesignEqualsImplementationProjectGenerator(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, QObject *parent = 0);
+    explicit DesignEqualsImplementationProjectGenerator(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, bool generateCppEditModeDelimitingComments = false, QObject *parent = 0);
     bool generateProjectFileAndWriteItToDisk(DesignEqualsImplementationProject *designEqualsImplementationProject);
     bool processClassStep0declaringClassInProject(DesignEqualsImplementationClass *designEqualsImplementationClass);
     bool processUseCase(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase);
@@ -38,6 +39,7 @@ public:
 private:
     DesignEqualsImplementationProject::ProjectGenerationMode m_ProjectGenerationMode;
     QString m_DestinationDirectoryPath;
+    bool m_GenerateCppEditModeDelimitingComments;
 
     QHash<DesignEqualsImplementationClass*, QList<QString> /* connect statments in the key class's initialization sequence */> m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements;
 
@@ -45,6 +47,7 @@ private:
     bool recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSlotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, DesignEqualsImplementationClassLifeLine *classLifeline, DesignEqualsImplementationClassSlot *slotToWalk);
     bool writeClassToDisk(DesignEqualsImplementationClass *currentClass);
     void appendConnectStatementToClassInitializationSequence(DesignEqualsImplementationClass *classToGetConnectStatementInInitializationSequence, const QString &connectStatement);
+    void writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(QTextStream &textStream, const QString &className, int slotIndex, int statementIndex);
 
 
     static inline QString firstCharacterToLower(const QString &inputString)

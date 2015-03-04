@@ -5,7 +5,7 @@
 
 class DesignEqualsImplementationProject;
 
-class IDesignEqualsImplementationStatement
+class IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements
 {
 public:
     enum StatementTypeEnum
@@ -13,9 +13,10 @@ public:
           SignalEmitStatementType
         , SlotInvokeStatementType
         , PrivateMethodSynchronousCallStatementType
+        , ChunkOfRawCppStatements
     };
-    explicit IDesignEqualsImplementationStatement(StatementTypeEnum statementType) : StatementType(statementType) { }
-    virtual ~IDesignEqualsImplementationStatement() { }
+    explicit IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements(StatementTypeEnum statementType) : StatementType(statementType) { }
+    virtual ~IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements() { }
     virtual QString toRawCppWithEndingSemicolon() { return toRawCppWithoutEndingSemicolon() + ";"; }
     virtual QString toRawCppWithoutEndingSemicolon()=0; //if/else/while/etc can't have it
     virtual bool isSignalEmit() { return false; }

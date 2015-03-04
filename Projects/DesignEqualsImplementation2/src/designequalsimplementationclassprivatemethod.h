@@ -22,7 +22,7 @@ public:
     static void streamOutPrivateMethodReference(DesignEqualsImplementationProject *project, DesignEqualsImplementationClassPrivateMethod *privateMethod, QDataStream &out);
     static DesignEqualsImplementationClassPrivateMethod* streamInPrivateMethodReference(DesignEqualsImplementationProject *project, QDataStream &in);
 signals:
-    void statementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted);
+    void statementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *statementInserted);
 };
 #if 0
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassPrivateMethod &designEqualsImplementationClassPrivateMethod);

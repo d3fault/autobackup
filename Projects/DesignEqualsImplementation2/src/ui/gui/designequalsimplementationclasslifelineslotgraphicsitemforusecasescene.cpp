@@ -151,12 +151,12 @@ void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::privateConstruct
 
     //Draw existing (serialized) statements, or at least make the vertical space for them and know they exist (as of writing, "arrows" are unfinished)
     //I think for now I'm not going to have any visual representation of the "amount of statements", I'll just use a simple odd/even strategy for "statements" vs. "snapping points"
-    connect(m_Slot, SIGNAL(statementInserted(int,IDesignEqualsImplementationStatement*)), this, SLOT(handleStatementInserted(int,IDesignEqualsImplementationStatement*)));
+    connect(m_Slot, SIGNAL(statementInserted(int,IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements*)), this, SLOT(handleStatementInserted(int,IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements*)));
 
     if(!m_Slot->orderedListOfStatements().isEmpty())
     {
         int currentStatemendIndex = 0;
-        Q_FOREACH(IDesignEqualsImplementationStatement *currentStatement, m_Slot->orderedListOfStatements())
+        Q_FOREACH(IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *currentStatement, m_Slot->orderedListOfStatements())
         {
             insertStatementGraphicsItem(currentStatemendIndex++, currentStatement);
         }
@@ -167,7 +167,7 @@ void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::privateConstruct
     }
     repositionExistingStatementsAndSnapPoints(); //regardless of any statements, we always want at least 1 snap point to be positioned
 }
-void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::insertStatementGraphicsItem(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted)
+void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::insertStatementGraphicsItem(int indexInsertedInto, IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *statementInserted)
 {
     QGraphicsItem *newVisualRepresentationOfStatement = UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementType(statementInserted, indexInsertedInto, this);
     //newVisualRepresentationOfStatement->setPos(QPointF(DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene_UNIT_OF_EXECUTION_HALF_WIDTH, 0));
@@ -323,7 +323,7 @@ qreal DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::calculateMyRect
     myHeight += DesignEqualsImplementationClassLifeLineUnitOfExecutionGraphicsItemForUseCaseScene_SNAP_OR_STATEMENT_VERTICAL_DISTANCE; //bottom border/margin (we don't want to snap to bottom edge, nor do we want a statement to come out of bottom edge)
     return myHeight;
 }
-void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::handleStatementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted)
+void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::handleStatementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *statementInserted)
 {
     insertStatementGraphicsItem(indexInsertedInto, statementInserted);
     repositionExistingStatementsAndSnapPoints();

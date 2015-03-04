@@ -3,10 +3,10 @@
 #include <QDataStream>
 
 DesignEqualsImplementationSignalEmissionStatement::DesignEqualsImplementationSignalEmissionStatement()
-    : IDesignEqualsImplementationStatement(SignalEmitStatementType) //trivial constructor required for deserializing only. don't use elsewhere
+    : IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements(SignalEmitStatementType) //trivial constructor required for deserializing only. don't use elsewhere
 { }
 DesignEqualsImplementationSignalEmissionStatement::DesignEqualsImplementationSignalEmissionStatement(DesignEqualsImplementationClassSignal *signalToEmit, SignalEmissionOrSlotInvocationContextVariables signalEmissionContextVariablesForSignalArguments)
-    : IDesignEqualsImplementationStatement(IDesignEqualsImplementationStatement::SignalEmitStatementType)
+    : IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements(IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements::SignalEmitStatementType)
     , m_SignalToEmit(signalToEmit)
     , m_SignalEmissionContextVariablesForSignalArguments(signalEmissionContextVariablesForSignalArguments)
 { }

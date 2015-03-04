@@ -43,11 +43,11 @@
 //TODoreq: remember the last used mouse mode when returning to use cases view (tab range). move mode is going to be especially useless once i implement some auto layout scheme, and i might remove move mode altogether (maybe it will still be available in class diagram mode, maybe it won't)
 //TODOreq: not only do I need to make slot invocations touch the upper-left hand corner of the slot graphics item, but additionally when it was INSERTED (either as a statement or a slot on existing signal), I possibly (if same class lifeline, etc) need to re-order the slots on the classlifeline to account for the INSERT. Additionally, maybe the ordering of the slots stays the same but maybe in some auto-layout mode I would still need for a slot graphics item to slide up or down on it's class lifeline graphics item based on the result of either of those kinds of INSERTS as well, simply because they change the visual geometry
 //TODoreq: signal (aka "no dest") click-drag from existing signal statement [graphics item] shows the dialog but slot is unselectable and therefore dialog un-accept-able. Better to not show dialog at all (in the future I might allow signal to signal daisy chaining)
-QGraphicsItem *UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementType(IDesignEqualsImplementationStatement *theStatement, int indexInsertedInto, QGraphicsItem *parent)
+QGraphicsItem *UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementType(IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *theStatement, int indexInsertedInto, QGraphicsItem *parent)
 {
     switch(theStatement->StatementType)
     {
-    case IDesignEqualsImplementationStatement::SignalEmitStatementType:
+    case IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements::SignalEmitStatementType:
     {
         DesignEqualsImplementationSignalEmissionStatement *signalEmitStatement = static_cast<DesignEqualsImplementationSignalEmissionStatement*>(theStatement);
         DesignEqualsImplementationClassLifeLine *sourceClassLifeline = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(parent)->parentClassLifelineGraphicsItem()->classLifeLine();
@@ -56,14 +56,14 @@ QGraphicsItem *UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementT
         return new DesignEqualsImplementationExistinSignalGraphicsItemForUseCaseScene(sourceSlotGraphicsItem->parentClassLifelineGraphicsItem()->parentUseCaseGraphicsScene(), sourceClassLifeline, slotThatSignalWasEmittedFrom, indexInsertedInto, signalEmitStatement->signalToEmit(), parent);
     }
         break;
-    case IDesignEqualsImplementationStatement::SlotInvokeStatementType:
+    case IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements::SlotInvokeStatementType:
     {
         DesignEqualsImplementationSlotInvocationStatement *slotInvokeStatement = static_cast<DesignEqualsImplementationSlotInvocationStatement*>(theStatement);
         DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *sourceSlotGraphicsItem = static_cast<DesignEqualsImplementationSlotGraphicsItemForUseCaseScene*>(parent);
         return new DesignEqualsImplementationSlotInvokeGraphicsItemForUseCaseScene(sourceSlotGraphicsItem->parentClassLifelineGraphicsItem()->parentUseCaseGraphicsScene(), slotInvokeStatement->classLifelineWhoseSlotIsToBeInvoked(), slotInvokeStatement->slotToInvoke(), parent);
     }
         break;
-    case IDesignEqualsImplementationStatement::PrivateMethodSynchronousCallStatementType:
+    case IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements::PrivateMethodSynchronousCallStatementType:
         return new DesignEqualsImplementationPrivateMethodInvokeStatementGraphicsItemForUseCaseScene(parent);
         break;
         //TODOreq: etc
@@ -650,7 +650,7 @@ bool UseCaseGraphicsScene::processMouseReleaseEvent_andReturnWhetherOrNotToKeepT
             }
             //We're definitely going to delete the slot, but let's copy it's statements (if any) to the actual dest
             int currentStatementIndex = 0;
-            Q_FOREACH(IDesignEqualsImplementationStatement *currentStatement, destinationSlotIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements())
+            Q_FOREACH(IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *currentStatement, destinationSlotIsProbablyNameless_OrZeroIfNoDest->orderedListOfStatements())
             {
                 userChosenDestinationSlot_OrZeroIfNone->insertStatementIntoOrderedListOfStatements(currentStatementIndex++, currentStatement);
             }
@@ -983,7 +983,7 @@ void UseCaseGraphicsScene::handleSlotAddedToExistingSignalSlotConnectionList(Des
     if(!sourceSlotGraphicsItemTheSignalWasEmittedFrom)
         return; //should never happen
     ExistingStatementListEntryTypedef existingSignalStatementAndGraphicsItem = sourceSlotGraphicsItemTheSignalWasEmittedFrom->existingStatementsAndTheirGraphicsItems().at(signalEmitStatementIndexInSlotEmittedFrom);
-    if(existingSignalStatementAndGraphicsItem.second->StatementType != IDesignEqualsImplementationStatement::SignalEmitStatementType)
+    if(existingSignalStatementAndGraphicsItem.second->StatementType != IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements::SignalEmitStatementType)
         return; //should never happen
     DesignEqualsImplementationSignalEmissionStatement *signalEmitStatement = static_cast<DesignEqualsImplementationSignalEmissionStatement*>(existingSignalStatementAndGraphicsItem.second);
     if(signalEmitStatement->signalToEmit() != existingSignalSlotWasAddedTo)

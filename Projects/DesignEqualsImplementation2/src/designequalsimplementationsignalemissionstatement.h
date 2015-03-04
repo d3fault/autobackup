@@ -6,7 +6,7 @@
 #include "designequalsimplementationclasssignal.h"
 #include "signalemissionorslotinvocationcontextvariables.h"
 
-class DesignEqualsImplementationSignalEmissionStatement : public IDesignEqualsImplementationStatement
+class DesignEqualsImplementationSignalEmissionStatement : public IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements
 {
 public:
     explicit DesignEqualsImplementationSignalEmissionStatement();

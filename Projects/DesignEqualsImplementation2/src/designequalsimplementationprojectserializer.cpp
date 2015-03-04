@@ -155,7 +155,7 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
         Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, currentClass->mySlots())
         {
             projectDataStream << currentSlot->m_OrderedListOfStatements.size();
-            Q_FOREACH(IDesignEqualsImplementationStatement *currentStatement, currentSlot->m_OrderedListOfStatements)
+            Q_FOREACH(IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *currentStatement, currentSlot->m_OrderedListOfStatements)
             {
                 //Project Class Slots Statements -- I don't think it's necessary since we iterate the slots the same way we create them, but we might need a slotId to know which slot these statements belong to
                 projectDataStream << static_cast<quint8>(currentStatement->StatementType);
@@ -350,16 +350,16 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
                 //Project Class Slots Statements
                 quint8 currentStatementType;
                 projectDataStream >> currentStatementType;
-                IDesignEqualsImplementationStatement *statement;
-                switch(static_cast<IDesignEqualsImplementationStatement::StatementTypeEnum>(currentStatementType))
+                IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *statement;
+                switch(static_cast<IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements::StatementTypeEnum>(currentStatementType))
                 {
-                case IDesignEqualsImplementationStatement::SignalEmitStatementType:
+                case IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements::SignalEmitStatementType:
                     statement = new DesignEqualsImplementationSignalEmissionStatement();
                     break;
-                case IDesignEqualsImplementationStatement::SlotInvokeStatementType: //TODOreq: [de-]serialize class lifeline containing slot to invoke
+                case IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements::SlotInvokeStatementType: //TODOreq: [de-]serialize class lifeline containing slot to invoke
                     statement = new DesignEqualsImplementationSlotInvocationStatement();
                     break;
-                case IDesignEqualsImplementationStatement::PrivateMethodSynchronousCallStatementType:
+                case IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements::PrivateMethodSynchronousCallStatementType:
                     statement = new DesignEqualsImplementationPrivateMethodSynchronousCallStatement();
                     break;
                 }

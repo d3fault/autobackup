@@ -50,10 +50,12 @@ public:
 
     //inline QString serializationTypeIdForType(const QString &type) { return type; } //TODOoptional: dictionary of types, change return type to int as optimization, etc
 
+    QString projectFileName();
+
     //Temporary for code gen:
     bool writeTemporaryGlueCodeLines(const QString &destinationDirectoryPath);
 private:
-    bool generateSourceCodePrivate(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
+    bool generateSourceCodePrivate(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, bool generateCppEditModeDelimitingComments = false);
     bool tempGenerateHardcodedUiFiles(const QString &destinationDirectoryPath);
     bool allClassLifelinesInAllUseCasesInProjectHaveBeenAssignedInstances();
     inline QString appendSlashIfNeeded(const QString &inputString) { return inputString.endsWith("/") ? inputString : (inputString + "/"); }
@@ -72,6 +74,7 @@ public slots:
     void emitAllClassesAndUseCasesInProject();
     void handleAddUmlItemRequested(UmlItemsTypedef umlItemType, QPointF position);
     void handleNewUseCaseRequested();
+    void handleEditCppModeRequested();
     void generateSourceCode(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
 };
 #if 0

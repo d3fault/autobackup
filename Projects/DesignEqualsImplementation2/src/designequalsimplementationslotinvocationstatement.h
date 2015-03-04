@@ -12,10 +12,10 @@
 class DesignEqualsImplementationClassSlot;
 class DesignEqualsImplementationClassLifeLine;
 
-class DesignEqualsImplementationSlotInvocationStatement : public IDesignEqualsImplementationStatement
+class DesignEqualsImplementationSlotInvocationStatement : public IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements
 {
 public:
-    explicit DesignEqualsImplementationSlotInvocationStatement() : IDesignEqualsImplementationStatement(SlotInvokeStatementType) { }
+    explicit DesignEqualsImplementationSlotInvocationStatement() : IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements(SlotInvokeStatementType) { }
     explicit DesignEqualsImplementationSlotInvocationStatement(DesignEqualsImplementationClassLifeLine *classLifelineWhoseSlotIsAboutToBeInvoked, DesignEqualsImplementationClassSlot *slotToInvoke, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables);
     virtual ~DesignEqualsImplementationSlotInvocationStatement();
     virtual QString toRawCppWithoutEndingSemicolon();

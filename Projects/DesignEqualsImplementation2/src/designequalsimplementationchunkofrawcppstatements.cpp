@@ -1,0 +1,6 @@
+#include "designequalsimplementationchunkofrawcppstatements.h"
+
+DesignEqualsImplementationChunkOfRawCppStatements::DesignEqualsImplementationChunkOfRawCppStatements()
+    : IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements(IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements::ChunkOfRawCppStatements)
+{ }
+

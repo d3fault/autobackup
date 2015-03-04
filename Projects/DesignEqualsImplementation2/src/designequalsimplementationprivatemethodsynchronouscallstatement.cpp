@@ -5,7 +5,7 @@
 //TODOoptional: maybe ctrl modifier when drawing a signal (or hell, even a signal->slot invocation... but nah) makes it synchronous private method call
 //TODOreq: utilize in GUI. drop-down mode would ofc be nice, but that's post-1.0 imo
 DesignEqualsImplementationPrivateMethodSynchronousCallStatement::DesignEqualsImplementationPrivateMethodSynchronousCallStatement(DesignEqualsImplementationClassPrivateMethod *privateMethodToCall, SignalEmissionOrSlotInvocationContextVariables privateMethodArguments)
-    : IDesignEqualsImplementationStatement(PrivateMethodSynchronousCallStatementType)
+    : IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements(PrivateMethodSynchronousCallStatementType)
     , m_PrivateMethodToCall(privateMethodToCall)
     , m_PrivateMethodArguments(privateMethodArguments)
 { }

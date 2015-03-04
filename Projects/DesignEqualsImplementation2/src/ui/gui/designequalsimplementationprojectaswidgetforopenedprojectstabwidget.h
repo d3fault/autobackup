@@ -23,7 +23,10 @@ private:
     DesignEqualsImplementationProject *m_DesignEqualsImplementationProject;
 signals:
     void newUseCaseRequested();
+    void editCppModeRequested();
     void mouseModeChanged(DesignEqualsImplementationMouseModeEnum newMouseMode);
+public slots:
+    void requestEditCppMode();
 private slots:
     void requestNewUseCase();
     void handleUseCaseAdded(DesignEqualsImplementationUseCase *useCase);

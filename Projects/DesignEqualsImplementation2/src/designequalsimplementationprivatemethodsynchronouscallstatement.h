@@ -6,10 +6,10 @@
 #include "designequalsimplementationclassprivatemethod.h"
 #include "signalemissionorslotinvocationcontextvariables.h"
 
-class DesignEqualsImplementationPrivateMethodSynchronousCallStatement : public IDesignEqualsImplementationStatement
+class DesignEqualsImplementationPrivateMethodSynchronousCallStatement : public IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements
 {
 public:
-    explicit DesignEqualsImplementationPrivateMethodSynchronousCallStatement() : IDesignEqualsImplementationStatement(PrivateMethodSynchronousCallStatementType) { }
+    explicit DesignEqualsImplementationPrivateMethodSynchronousCallStatement() : IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements(PrivateMethodSynchronousCallStatementType) { }
     explicit DesignEqualsImplementationPrivateMethodSynchronousCallStatement(DesignEqualsImplementationClassPrivateMethod *privateMethodToCall, SignalEmissionOrSlotInvocationContextVariables privateMethodArguments);
 protected:
     virtual QString toRawCppWithoutEndingSemicolon();

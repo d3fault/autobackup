@@ -9,7 +9,7 @@
 
 //TODOreq: slot invocations should own (or at least know/reference (*****pointers**** would be easiest, since user/ui may change the variable name the future)) the variable name ("m_Bar") of the object whose slot is being invoked
 DesignEqualsImplementationSlotInvocationStatement::DesignEqualsImplementationSlotInvocationStatement(DesignEqualsImplementationClassLifeLine *classLifelineWhoseSlotIsAboutToBeInvoked, DesignEqualsImplementationClassSlot *slotToInvoke, const SignalEmissionOrSlotInvocationContextVariables &slotInvocationContextVariables)
-    : IDesignEqualsImplementationStatement(SlotInvokeStatementType) //is this necessary or is it called for me?
+    : IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements(SlotInvokeStatementType) //is this necessary or is it called for me?
     , m_ClassLifelineWhoseSlotIsToBeInvoked(classLifelineWhoseSlotIsAboutToBeInvoked)
     , m_SlotToInvoke(slotToInvoke)
     , m_SlotInvocationContextVariables(slotInvocationContextVariables)

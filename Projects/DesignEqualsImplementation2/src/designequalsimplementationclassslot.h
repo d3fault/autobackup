@@ -41,7 +41,7 @@ private:
     DesignEqualsImplementationClassSignal *m_FinishedOrExitSignal;
     SignalEmissionOrSlotInvocationContextVariables m_ExitSignalEmissionContextVariables;
 signals:
-    void statementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement *statementInserted);
+    void statementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *statementInserted);
 };
 #if 0
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassSlot &slot);

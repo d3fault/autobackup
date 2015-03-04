@@ -11,19 +11,24 @@
 #include "designequalsimplementationsignalemissionstatement.h"
 #include "designequalsimplementationslotinvocationstatement.h"
 
+#define chunkOfRawCppStatementsSuffix " CHUNK OF RAW CPP STATEMENTS]"
+#define beginChunkOfRawCppStatements "BEGIN" chunkOfRawCppStatementsSuffix
+#define endChunkOfRawCppStatements "END" chunkOfRawCppStatementsSuffix
+
 //not to be confused with project serialization, this is generation of sets of C++ files based on the project in memory
 //one instance = one generation
 //TODOreq: sanitize that all slots in all use cases are 'named' before doing generation. hold off on this for now since "slot naming" might get refactored
 //TODOoptional: any time curly braces don't have anything inside them, they should be on a single line with a space in between (like i already do for constructors). i can/should do the same for slots... it just saves vertical real estate
 //TODOreq: don't generate unnamed temp slot names (unnamed slots). perhaps warn about them in wizard, similar to however un-instanced class lifelines end up being dealt with
-DesignEqualsImplementationProjectGenerator::DesignEqualsImplementationProjectGenerator(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, QObject *parent)
+DesignEqualsImplementationProjectGenerator::DesignEqualsImplementationProjectGenerator(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, bool generateCppEditModeDelimitingComments, QObject *parent)
     : QObject(parent)
     , m_ProjectGenerationMode(projectGenerationMode)
     , m_DestinationDirectoryPath(destinationDirectoryPath)
+    , m_GenerateCppEditModeDelimitingComments(generateCppEditModeDelimitingComments)
 { }
 bool DesignEqualsImplementationProjectGenerator::generateProjectFileAndWriteItToDisk(DesignEqualsImplementationProject *designEqualsImplementationProject)
 {
-    QString projectFilePath = destinationDirectoryPath() + designEqualsImplementationProject->Name + ".pro";
+    QString projectFilePath = destinationDirectoryPath() + designEqualsImplementationProject->projectFileName();
     QFile projectFile(projectFilePath);
     if(!projectFile.open(QIODevice::WriteOnly))
     {
@@ -46,12 +51,12 @@ bool DesignEqualsImplementationProjectGenerator::generateProjectFileAndWriteItTo
     projectFileTextStream << "TEMPLATE = app" << endl << endl;
 
     bool firstClass = true;
-    projectFileTextStream << "HEADERS +=\t";
+    projectFileTextStream << "HEADERS +=" DESIGNEQUALSIMPLEMENTATION_TAB;
     QListIterator<DesignEqualsImplementationClass*> classIterator(designEqualsImplementationProject->classes());
     while(classIterator.hasNext())
     {
         if(!firstClass)
-            projectFileTextStream << "\t\t";
+            projectFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB DESIGNEQUALSIMPLEMENTATION_TAB;
         projectFileTextStream << classIterator.next()->headerFilenameOnly();
         if(classIterator.hasNext())
             projectFileTextStream << " \\";
@@ -64,12 +69,12 @@ bool DesignEqualsImplementationProjectGenerator::generateProjectFileAndWriteItTo
     projectFileTextStream << endl;
 
     firstClass = true;
-    projectFileTextStream << "SOURCES +=\t";
+    projectFileTextStream << "SOURCES +=" DESIGNEQUALSIMPLEMENTATION_TAB;
     classIterator.toFront();
     while(classIterator.hasNext())
     {
         if(!firstClass)
-            projectFileTextStream << "\t\t";
+            projectFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB DESIGNEQUALSIMPLEMENTATION_TAB;
         projectFileTextStream << classIterator.next()->sourceFilenameOnly();
         if(classIterator.hasNext())
             projectFileTextStream << " \\";
@@ -252,7 +257,7 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
 
     //Now iterate that use case entry point's statements and follow any slot invokes (and signal emits ar special too :-P)
     int currentStatementIndex = -1;
-    Q_FOREACH(IDesignEqualsImplementationStatement *currentStatement, slotToWalk->orderedListOfStatements())
+    Q_FOREACH(IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *currentStatement, slotToWalk->orderedListOfStatements())
     {
         ++currentStatementIndex;
 
@@ -623,9 +628,27 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         //Define slot
         sourceFileTextStream    << "void " << currentClass->ClassName << "::" << currentSlot->methodSignatureWithoutReturnType() << endl
                                 << "{" << endl;
-        Q_FOREACH(IDesignEqualsImplementationStatement *currentSlotCurrentStatement, currentSlot->orderedListOfStatements())
+
+        //writeChunkOfRawCppStatements(sourceFileTextStream, currentClass, currentSlot, "#()*##$_TOP_OF_SLOT_DELIMITER_HACK_#)*)(#$");
+
+        int currentStatementIndex = 0;
+        Q_FOREACH(IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *currentSlotCurrentStatement, currentSlot->orderedListOfStatements())
         {
             sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentSlotCurrentStatement->toRawCppWithEndingSemicolon() << endl;
+
+            if(m_GenerateCppEditModeDelimitingComments)
+                writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(sourceFileTextStream, currentClass->ClassName, currentClass->mySlots().indexOf(currentSlot), currentStatementIndex);
+
+#if 0
+            if(m_GenerateCppEditModeDelimitingComments)
+            {
+                if(currentSlotCurrentStatement->StatementType != IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements::ChunkOfRawCppStatements)
+                {
+                    writeChunkOfRawCppStatements(sourceFileTextStream, currentClass, currentSlot, "#()*##$_TOP_OF_SLOT_DELIMITER_HACK_#)*)(#$");
+                }
+            }
+#endif
+            ++currentStatementIndex;
         }
         if(currentSlot->finishedOrExitSignal_OrZeroIfNone())
         {
@@ -658,4 +681,48 @@ void DesignEqualsImplementationProjectGenerator::appendConnectStatementToClassIn
     QList<QString> currentListOfConnectStatements = m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements.value(classToGetConnectStatementInInitializationSequence);
     currentListOfConnectStatements.append(connectStatement);
     m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements.insert(classToGetConnectStatementInInitializationSequence, currentListOfConnectStatements);
+}
+void DesignEqualsImplementationProjectGenerator::writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(QTextStream &textStream, const QString &className, int slotIndex, int statementIndex)
+{
+    //TODOoptional: the "delimiting comments" could be C++ for sexiness and I could parse them with libclang. ex: ClassName::slotName(int,bool,etc)::betweenStatements0and1 (of course the "betweenStatements" part does not get parsed by clang)
+
+#if 0 //example of delimiting comments
+    //[BEGIN CHUNK OF RAW CPP STATEMENTS]
+    //DO NOT WRITE C++ ABOVE THESE COMMENTS
+    //
+    //Class: <classname>
+    //SlotIndex: <slotIndex> (ex: 0)
+    //AfterStatement: <afterStatement> (ex: 0)
+    //
+    //YOU MAY WRITE C++ BELOW THESE COMMENTS
+    //[/BEGIN CHUNK OF RAW CPP STATEMENTS]
+
+
+    //====CHUNK OF RAW CPP GOES HERE====
+
+
+    //[END CHUNK OF RAW CPP STATEMENTS]
+    //YOU MAY WRITE C++ ABOVE THESE COMMENTS
+    //DO NOT WRITE C++ BELOW THESE COMMENTS
+    //[/END CHUNK OF RAW CPP STATEMENTS]
+#endif
+
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//[" beginChunkOfRawCppStatements << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//DO NOT WRITE C++ ABOVE THESE COMMENTS" << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//Class: " << className << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//SlotIndex: " << slotIndex << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//AfterStatement: " << slotIndex << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//YOU MAY WRITE C++ BELOW THESE COMMENTS" << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//[/" beginChunkOfRawCppStatements << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//====CHUNK OF RAW CPP GOES HERE====" << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//[" endChunkOfRawCppStatements << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//YOU MAY WRITE C++ ABOVE THESE COMMENTS" << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//DO NOT WRITE C++ BELOW THESE COMMENTS" << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//[/" endChunkOfRawCppStatements << endl;
 }

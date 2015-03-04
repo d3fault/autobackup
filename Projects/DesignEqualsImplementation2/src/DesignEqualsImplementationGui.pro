@@ -70,7 +70,8 @@ SOURCES += ui/gui/main.cpp\
     ui/gui/designequalsimplementationprivatemethodinvokestatementgraphicsitemforusecasescene.cpp \
     ui/gui/designequalsimplementationclasslifelineslotgraphicsitemforusecasescene.cpp \
     ui/gui/sourceexistingsignalsnappingindicationvisualrepresentation.cpp \
-    ui/gui/signalstatementnotchmultiplextergraphicsrect.cpp
+    ui/gui/signalstatementnotchmultiplextergraphicsrect.cpp \
+    designequalsimplementationchunkofrawcppstatements.cpp
 
 HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
@@ -132,7 +133,8 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     ui/gui/designequalsimplementationclasslifelineslotgraphicsitemforusecasescene.h \
     ui/gui/isnappablesourcegraphicsitem.h \
     ui/gui/sourceexistingsignalsnappingindicationvisualrepresentation.h \
-    ui/gui/signalstatementnotchmultiplextergraphicsrect.h
+    ui/gui/signalstatementnotchmultiplextergraphicsrect.h \
+    designequalsimplementationchunkofrawcppstatements.h
 
 #libclang stuff
 CONFIG += precompile_header
