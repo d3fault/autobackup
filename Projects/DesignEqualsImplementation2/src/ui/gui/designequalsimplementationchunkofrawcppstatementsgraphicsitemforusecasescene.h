@@ -14,6 +14,7 @@ class DesignEqualsImplementationChunkOfRawCppStatementsGraphicsItemForUseCaseSce
     Q_OBJECT
 public:
     DesignEqualsImplementationChunkOfRawCppStatementsGraphicsItemForUseCaseScene(DesignEqualsImplementationChunkOfRawCppStatements *chunkOfRawCppStatements, DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *parentSlotGraphicsItem, QObject *parent = 0);
+    virtual ~DesignEqualsImplementationChunkOfRawCppStatementsGraphicsItemForUseCaseScene() { }
 protected:
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 private:

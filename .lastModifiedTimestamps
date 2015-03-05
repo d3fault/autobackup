@@ -2912,7 +2912,7 @@ Projects/CopyFileContentsToClipboard/src/CopyFileContentsToClipboardGui.pro:1409
 Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.cpp:1409509743
 Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.h:1409507797
 Projects/CopyFileContentsToClipboard/src/main.cpp:1409508222
-Projects/DesignEqualsImplementation2/:1425491226
+Projects/DesignEqualsImplementation2/:1425577115
 Projects/DesignEqualsImplementation2/design/:1418094927
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/:1411932839
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/0004_SingleSignalMultipleSlots/:1411934573
@@ -2985,11 +2985,11 @@ Projects/DesignEqualsImplementation2/design/use.case.is.series.of.either.slot.de
 Projects/DesignEqualsImplementation2/design/use.cases.define.slot.bodies.at.runtime.but.only.resolve.where.connect.statements.go.at.source.generation.time.txt:1408252978
 Projects/DesignEqualsImplementation2/design/when.to.do.the.cross.thread.call.analysis.optimization.sdfljsdlfjsdl.txt:1410402949
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1425576667
+Projects/DesignEqualsImplementation2/src/:1425577370
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
-Projects/DesignEqualsImplementation2/src/ui/gui/:1425576524
+Projects/DesignEqualsImplementation2/src/ui/gui/:1425577089
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.cpp:1409876592
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.h:1408651682
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramumlitemswidget.cpp:1404498658
@@ -3000,8 +3000,8 @@ Projects/DesignEqualsImplementation2/src/ui/gui/classinstancechooserdialog.cpp:1
 Projects/DesignEqualsImplementation2/src/ui/gui/classinstancechooserdialog.h:1411890636
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationactorgraphicsitemforusecasescene.cpp:1404714730
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationactorgraphicsitemforusecasescene.h:1404716553
-Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationchunkofrawcppstatementsgraphicsitemforusecasescene.cpp:1425576524
-Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationchunkofrawcppstatementsgraphicsitemforusecasescene.h:1425576392
+Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationchunkofrawcppstatementsgraphicsitemforusecasescene.cpp:1425577031
+Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationchunkofrawcppstatementsgraphicsitemforusecasescene.h:1425577089
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassasqgraphicsitemforclassdiagramscene.cpp:1425566859
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassasqgraphicsitemforclassdiagramscene.h:1425566544
 Projects/DesignEqualsImplementation2/src/ui/gui/designequalsimplementationclassdiagramaswidgetfortab.cpp:1404542092

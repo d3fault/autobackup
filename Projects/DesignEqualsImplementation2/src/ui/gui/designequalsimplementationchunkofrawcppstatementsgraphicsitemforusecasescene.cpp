@@ -11,7 +11,8 @@
 #include "../../designequalsimplementationchunkofrawcppstatements.h"
 
 DesignEqualsImplementationChunkOfRawCppStatementsGraphicsItemForUseCaseScene::DesignEqualsImplementationChunkOfRawCppStatementsGraphicsItemForUseCaseScene(DesignEqualsImplementationChunkOfRawCppStatements *chunkOfRawCppStatements, DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *parentSlotGraphicsItem, QObject *parent)
-    : QGraphicsRectItem(parentSlotGraphicsItem)
+    : QObject(parent)
+    , QGraphicsRectItem(parentSlotGraphicsItem)
     , m_ChunkOfRawCppStatements(chunkOfRawCppStatements)
     , m_ParentSlotGraphicsItem(parentSlotGraphicsItem)
 {
