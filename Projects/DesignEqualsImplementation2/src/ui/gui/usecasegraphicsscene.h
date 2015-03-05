@@ -18,7 +18,7 @@ class UseCaseGraphicsScene : public IDesignEqualsImplementationGraphicsScene
 {
     Q_OBJECT
 public:
-    static QGraphicsItem *createVisualRepresentationBasedOnStatementType(IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *theStatement, int indexInsertedInto, QGraphicsItem *parent);
+    static QGraphicsItem *createVisualRepresentationBasedOnStatementType(IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *theStatement, int indexInsertedInto, DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *parent);
 
     UseCaseGraphicsScene(DesignEqualsImplementationUseCase *useCase);
     UseCaseGraphicsScene(DesignEqualsImplementationUseCase *useCase, const QRectF &sceneRect);

@@ -10,6 +10,7 @@
 #include "designequalsimplementationguicommon.h"
 #include "classeditordialog.h"
 #include "../../designequalsimplementationcommon.h"
+#include "../../designequalsimplementationproject.h"
 
 //TODOmb: considering changing this to a qpixmap in a graphics scene instead, where teh pixmap is drawn only when the class changes, update called once, then it's simply provided to qgraphicsview (svg might be more optimized?)... i'm going to wait on making a decision until i try to reuse the code for getting the "uml class" drag drop thingo to use the same shape (in designEquals1, i rendered to pixmap for that). i do know one thing, what i'm doing now is hella laggy (but works so fuck it)
 DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationProject *currentProject, QGraphicsItem *graphicsParent, QObject *qobjectParent)
@@ -33,11 +34,14 @@ DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEquals
 
     m_ClassContentsGraphicsTextItem = new QGraphicsTextItem(this);
     updateClassContentsGraphicsTextItem();
+
+    connect(this, SIGNAL(editCppModeRequested(DesignEqualsImplementationClass*)), currentProject, SLOT(handleEditCppModeRequested(DesignEqualsImplementationClass*)));
 }
 void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     QMenu menu;
     QAction *classEditorAction = menu.addAction(tr("Class Editor"));
+    QAction *editCppAction = menu.addAction(tr("Edit C++"));
     QAction *removeClassFromProjectAction = menu.addAction(tr("Remove Class From Project"));
     QAction *selectedAction = menu.exec(event->screenPos());
     if(!selectedAction)
@@ -47,6 +51,10 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::context
         ClassEditorDialog classEditorDialog(m_DesignEqualsImplementationClass, m_CurrentProject);
         if(classEditorDialog.exec() != QDialog::Accepted)
             return;
+    }
+    if(selectedAction == editCppAction)
+    {
+        emit editCppModeRequested(m_DesignEqualsImplementationClass);
     }
     else if(selectedAction == removeClassFromProjectAction) //etc
     {

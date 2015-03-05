@@ -419,7 +419,7 @@ void DesignEqualsImplementationProject::handleNewUseCaseRequested()
     useCase->Name = Name + " - Use Case 1"; //TODOreq: auto incrementing
     addUseCase(useCase);
 }
-void DesignEqualsImplementationProject::handleEditCppModeRequested()
+void DesignEqualsImplementationProject::handleEditCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass)
 {
     QStringList possibleQtCreatorPaths;
     possibleQtCreatorPaths << "/usr/bin/qtcreator" << "/home/d3fault/Qt5.4.1/Tools/QtCreator/bin/qtcreator" << "/home/user/Qt5.2.0/Tools/QtCreator/bin/qtcreator"; //TODOreq: cli arg and/or qsettings value and/or "sensible defaults" on per-OS basis
@@ -452,6 +452,8 @@ void DesignEqualsImplementationProject::handleEditCppModeRequested()
     qtCreatorProcess.setWorkingDirectory(cppEditTemporariesPath);
     QStringList qtCreatorArgs;
     qtCreatorArgs << projectFileName();
+    if(designEqualsImplementationClass)
+        qtCreatorArgs << designEqualsImplementationClass->sourceFilenameOnly(); //TODOreq: if/when I introduce concept of sub-folders (and classes therein), I need to pass the source file's relative path here, not just the filename only
     qtCreatorProcess.start(existingQtCreator, qtCreatorArgs);
     if(!qtCreatorProcess.waitForStarted(-1))
     {

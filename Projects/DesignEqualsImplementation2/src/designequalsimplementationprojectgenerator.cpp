@@ -709,6 +709,7 @@ void DesignEqualsImplementationProjectGenerator::writePairOfDelimitedCommentsInB
     //====CHUNK OF RAW CPP GOES HERE====
 
 
+
     //[END CHUNK OF RAW CPP STATEMENTS]
     //YOU MAY WRITE C++ ABOVE THESE COMMENTS
     //DO NOT WRITE C++ BELOW THESE COMMENTS
@@ -724,11 +725,12 @@ void DesignEqualsImplementationProjectGenerator::writePairOfDelimitedCommentsInB
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//YOU MAY WRITE C++ BELOW THESE COMMENTS" << endl;
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//[/" beginChunkOfRawCppStatements << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
+    textStream << endl;
+    textStream << endl;
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << DEI_CHUNK_OF_RAW_CPP_GOES_HERE_HELPER_COMMENT << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
+    textStream << endl;
+    textStream << endl;
+    textStream << endl;
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//[" endChunkOfRawCppStatements << endl;
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//YOU MAY WRITE C++ ABOVE THESE COMMENTS" << endl;
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//DO NOT WRITE C++ BELOW THESE COMMENTS" << endl;

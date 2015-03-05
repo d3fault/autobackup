@@ -4,13 +4,17 @@
 #include <QGraphicsRectItem>
 
 class DesignEqualsImplementationChunkOfRawCppStatements;
+class DesignEqualsImplementationSlotGraphicsItemForUseCaseScene;
 
 class DesignEqualsImplementationChunkOfRawCppStatementsGraphicsItemForUseCaseScene : public QGraphicsRectItem
 {
 public:
-    DesignEqualsImplementationChunkOfRawCppStatementsGraphicsItemForUseCaseScene(DesignEqualsImplementationChunkOfRawCppStatements *chunkOfRawCppStatements, QGraphicsItem *parent = 0);
+    DesignEqualsImplementationChunkOfRawCppStatementsGraphicsItemForUseCaseScene(DesignEqualsImplementationChunkOfRawCppStatements *chunkOfRawCppStatements, DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *parentSlotGraphicsItem);
+protected:
+    virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 private:
     DesignEqualsImplementationChunkOfRawCppStatements *m_ChunkOfRawCppStatements;
+    DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *m_ParentSlotGraphicsItem;
     QGraphicsTextItem *m_TextGraphicsItem;
 };
 

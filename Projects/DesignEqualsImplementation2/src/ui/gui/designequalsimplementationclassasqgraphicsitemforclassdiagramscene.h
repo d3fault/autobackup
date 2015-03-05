@@ -32,6 +32,8 @@ private:
 
     QString classDetailsAsHtmlString();
     void updateClassContentsGraphicsTextItem();
+signals:
+    void editCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass);
 public slots:
     void handlePropertyAdded(DesignEqualsImplementationClassProperty *propertyAdded);
     void handleHasAPrivateMemberClassAdded(HasA_Private_Classes_Member*);

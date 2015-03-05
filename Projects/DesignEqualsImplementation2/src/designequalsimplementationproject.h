@@ -87,7 +87,7 @@ public slots:
     void emitAllClassesAndUseCasesInProject();
     void handleAddUmlItemRequested(UmlItemsTypedef umlItemType, QPointF position);
     void handleNewUseCaseRequested();
-    void handleEditCppModeRequested();
+    void handleEditCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass = 0);
     void generateSourceCode(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
 };
 #if 0
