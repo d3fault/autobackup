@@ -6,7 +6,7 @@
 TODOreq:
 actor -> a::x -> b::x2
          a::x -> b::x3
-         a::x?<- b::y   <----- DOH, two entry points to x, probably causes the segfault? should fix this in gui then
+         a::x?<- b::y   <----- DOH, two entry points to x, probably causes the segfault? should fix this in gui then. HOWEVER, two entry points to a single slot might be desireable (two signals attached to one slot) -- but in THIS case it would be an infinite loop so maybe not (even still, "x" might have a complex switch statement that knows when to loop and when not to)
 actor <- a::y2
 #endif
 //TODOreq: the deserializing + source generation should be pushed into a lib [and cli] for automation (*cough*build-chain*cough*), but core UML editting stuff doesn't need to (and probably couldn't (well... (fuck this "well")))

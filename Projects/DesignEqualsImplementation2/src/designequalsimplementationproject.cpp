@@ -495,7 +495,7 @@ void DesignEqualsImplementationProject::handleEditCppModeRequested()
         {
             QString currentLine = sourceFileTextStream.readLine();
             QString currentLineTrimmed = currentLine.trimmed();
-            if(currentLineTrimmed.isEmpty() || currentLineTrimmed == "//")
+            if(currentLineTrimmed.isEmpty() || currentLineTrimmed == "//" || currentLineTrimmed == DEI_CHUNK_OF_RAW_CPP_GOES_HERE_HELPER_COMMENT)
                 continue;
             if(!inChunkOfRawCppStatements)
             {
@@ -606,7 +606,8 @@ void DesignEqualsImplementationProject::handleEditCppModeRequested()
 
                 //adding raw c++ statement to current chunk
                 //chunkOfRawCppStatements << currentLine/*.trimmed()*/; //TO DOneoptional(nvm): maybe don't trim, since the c++ might contain curly brackets (scopes) that are indented
-                chunkOfRawCppStatements << currentLineTrimmed; //TODOreq: research something like: "qtcreator -auto-indent-files" -- maybe add it yourself
+                //chunkOfRawCppStatements << currentLineTrimmed; //TODOreq: research something like: "qtcreator -auto-indent-files" -- maybe add it yourself
+                chunkOfRawCppStatements << currentLine;
                 continue;
             }
         }

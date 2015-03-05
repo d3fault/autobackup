@@ -726,7 +726,7 @@ void DesignEqualsImplementationProjectGenerator::writePairOfDelimitedCommentsInB
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//[/" beginChunkOfRawCppStatements << endl;
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//====CHUNK OF RAW CPP GOES HERE====" << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << DEI_CHUNK_OF_RAW_CPP_GOES_HERE_HELPER_COMMENT << endl;
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//[" endChunkOfRawCppStatements << endl;

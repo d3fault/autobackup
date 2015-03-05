@@ -10,6 +10,7 @@
 #define chunkOfRawCppStatementsSuffix " CHUNK OF RAW CPP STATEMENTS]"
 #define beginChunkOfRawCppStatements "BEGIN" chunkOfRawCppStatementsSuffix
 #define endChunkOfRawCppStatements "END" chunkOfRawCppStatementsSuffix
+#define DEI_CHUNK_OF_RAW_CPP_GOES_HERE_HELPER_COMMENT "//====CHUNK OF RAW CPP GOES HERE===="
 
 class DesignEqualsImplementationClass;
 class DesignEqualsImplementationUseCase;

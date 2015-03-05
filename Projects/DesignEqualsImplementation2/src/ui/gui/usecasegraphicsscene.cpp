@@ -17,6 +17,7 @@
 #include "designequalsimplementationexistinsignalgraphicsitemforusecasescene.h"
 #include "designequalsimplementationslotinvokegraphicsitemforusecasescene.h"
 #include "designequalsimplementationprivatemethodinvokestatementgraphicsitemforusecasescene.h"
+#include "designequalsimplementationchunkofrawcppstatementsgraphicsitemforusecasescene.h"
 #include "signalstatementnotchmultiplextergraphicsrect.h"
 #include "signalslotmessagedialog.h"
 #include "snappingindicationvisualrepresentation.h"
@@ -27,6 +28,7 @@
 #include "../../designequalsimplementationclasslifeline.h"
 #include "../../designequalsimplementationsignalemissionstatement.h"
 #include "../../designequalsimplementationslotinvocationstatement.h"
+#include "../../designequalsimplementationchunkofrawcppstatements.h"
 
 #define UseCaseGraphicsScene_MOUSE_HOVER_SQUARE_SIDE_LENGTH 25
 
@@ -65,6 +67,9 @@ QGraphicsItem *UseCaseGraphicsScene::createVisualRepresentationBasedOnStatementT
         break;
     case IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements::PrivateMethodSynchronousCallStatementType:
         return new DesignEqualsImplementationPrivateMethodInvokeStatementGraphicsItemForUseCaseScene(parent);
+        break;
+    case IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements::ChunkOfRawCppStatements:
+        return new DesignEqualsImplementationChunkOfRawCppStatementsGraphicsItemForUseCaseScene(static_cast<DesignEqualsImplementationChunkOfRawCppStatements*>(theStatement), parent);
         break;
         //TODOreq: etc
     }

@@ -1,0 +1,17 @@
+#ifndef DESIGNEQUALSIMPLEMENTATIONCHUNKOFRAWCPPSTATEMENTSGRAPHICSITEMFORUSECASESCENE_H
+#define DESIGNEQUALSIMPLEMENTATIONCHUNKOFRAWCPPSTATEMENTSGRAPHICSITEMFORUSECASESCENE_H
+
+#include <QGraphicsRectItem>
+
+class DesignEqualsImplementationChunkOfRawCppStatements;
+
+class DesignEqualsImplementationChunkOfRawCppStatementsGraphicsItemForUseCaseScene : public QGraphicsRectItem
+{
+public:
+    DesignEqualsImplementationChunkOfRawCppStatementsGraphicsItemForUseCaseScene(DesignEqualsImplementationChunkOfRawCppStatements *chunkOfRawCppStatements, QGraphicsItem *parent = 0);
+private:
+    DesignEqualsImplementationChunkOfRawCppStatements *m_ChunkOfRawCppStatements;
+    QGraphicsTextItem *m_TextGraphicsItem;
+};
+
+#endif // DESIGNEQUALSIMPLEMENTATIONCHUNKOFRAWCPPSTATEMENTSGRAPHICSITEMFORUSECASESCENE_H
