@@ -68,7 +68,7 @@ public:
     //Temporary for code gen:
     bool writeTemporaryGlueCodeLines(const QString &destinationDirectoryPath);
 private:
-    bool generateSourceCodePrivate(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, bool generateCppEditModeDelimitingComments = false);
+    bool generateSourceCodePrivate(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, bool generateCppEditModeDelimitingComments = false, int *out_LineNumberToJumpTo_OrZeroIfNotApplicable = 0, DesignEqualsImplementationClassSlot *slotWeWantLineNumberOf_OnlyWhenApplicable = 0, int statementIndexOfSlotToGetLineNumberOf_OnlyWhenApplicable = -1);
     bool tempGenerateHardcodedUiFiles(const QString &destinationDirectoryPath);
     bool allClassLifelinesInAllUseCasesInProjectHaveBeenAssignedInstances();
     inline QString appendSlashIfNeeded(const QString &inputString) { return inputString.endsWith("/") ? inputString : (inputString + "/"); }
@@ -87,7 +87,7 @@ public slots:
     void emitAllClassesAndUseCasesInProject();
     void handleAddUmlItemRequested(UmlItemsTypedef umlItemType, QPointF position);
     void handleNewUseCaseRequested();
-    void handleEditCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass = 0);
+    void handleEditCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass = 0, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot = 0, int statementIndexOfSlot = -1);
     void generateSourceCode(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
 };
 #if 0

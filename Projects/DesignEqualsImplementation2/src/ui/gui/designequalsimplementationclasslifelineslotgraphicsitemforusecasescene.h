@@ -5,6 +5,7 @@
 #include "isnappablesourcegraphicsitem.h"
 
 class DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene;
+class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassSlot;
 class IDesignEqualsImplementationHaveOrderedListOfStatements;
 class IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements;
@@ -32,6 +33,8 @@ public:
 
     //QPointF calculatePointForStatementsP1AtStatementIndex(int statementIndexToCalculateP1for);
     QList<ExistingStatementListEntryTypedef> existingStatementsAndTheirGraphicsItems() const;
+protected:
+    virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 private:
     //DesignEqualsImplementationClassLifeLineUnitOfExecution *m_UnitOfExecution;
     DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene *m_ParentClassLifeline;
@@ -46,6 +49,7 @@ private:
     qreal calculateMyRectHeightUsingExistingStatements();
 signals:
     void geometryChanged();
+    void editCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot);
 private slots:
     void handleStatementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *statementInserted);
 };

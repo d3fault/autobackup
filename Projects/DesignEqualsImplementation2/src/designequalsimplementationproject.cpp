@@ -165,7 +165,7 @@ bool DesignEqualsImplementationProject::writeTemporaryGlueCodeLines(const QStrin
     return true;
 }
 //TODOreq: atomic project source generation. if it fails, no files are written/modified
-bool DesignEqualsImplementationProject::generateSourceCodePrivate(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, bool generateCppEditModeDelimitingComments)
+bool DesignEqualsImplementationProject::generateSourceCodePrivate(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, bool generateCppEditModeDelimitingComments, int *out_LineNumberToJumpTo_OrZeroIfNotApplicable, DesignEqualsImplementationClassSlot *slotWeWantLineNumberOf_OnlyWhenApplicable, int statementIndexOfSlotToGetLineNumberOf_OnlyWhenApplicable)
 {
     //rambling: so basically our "Classes" member contains only the CORE classes of the project/design, but when we generate the source code we are still going to need to generate glue classes that own/instantiate/connect those core classes
 
@@ -189,7 +189,7 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(ProjectGenerat
 
     //TODOreq: should library generation include a .pro file? a .pri file? both? better solution in qbs? all of the above (default to which?)?
 
-    DesignEqualsImplementationProjectGenerator projectGenerator(projectGenerationMode, destinationDirectoryPath, generateCppEditModeDelimitingComments);
+    DesignEqualsImplementationProjectGenerator projectGenerator(this, projectGenerationMode, destinationDirectoryPath, generateCppEditModeDelimitingComments, out_LineNumberToJumpTo_OrZeroIfNotApplicable, slotWeWantLineNumberOf_OnlyWhenApplicable, statementIndexOfSlotToGetLineNumberOf_OnlyWhenApplicable);
     connect(&projectGenerator, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
 
 #if 0 //TODOreq: merge with project generator
@@ -210,7 +210,7 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(ProjectGenerat
 
     //cleanupJitGeneratedLinesFromAPreviousGenerate();
 
-    if(!projectGenerator.generateProjectFileAndWriteItToDisk(this)) //TODOreq: cli/lib/gui differences
+    if(!projectGenerator.generateProjectFileAndWriteItToDisk()) //TODOreq: cli/lib/gui differences
     {
         emit e("failed to generate project file");
         return false;
@@ -419,7 +419,8 @@ void DesignEqualsImplementationProject::handleNewUseCaseRequested()
     useCase->Name = Name + " - Use Case 1"; //TODOreq: auto incrementing
     addUseCase(useCase);
 }
-void DesignEqualsImplementationProject::handleEditCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass)
+//TODOoptional: don't require CLOSING qt creator before sucking the changes back in. if they save-all in qt creator and then press a button in d=i, we could THEN suck in the changes [using the exact same code already here]. HOWEVER, going to edit C++ mode _AGAIN_ should then overwrite the existing project, which is fine because qt creator can handle it (it just pops up "want to load the changes?" and you press yes)
+void DesignEqualsImplementationProject::handleEditCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, int statementIndexOfSlot)
 {
     QStringList possibleQtCreatorPaths;
     possibleQtCreatorPaths << "/usr/bin/qtcreator" << "/home/d3fault/Qt5.4.1/Tools/QtCreator/bin/qtcreator" << "/home/user/Qt5.2.0/Tools/QtCreator/bin/qtcreator"; //TODOreq: cli arg and/or qsettings value and/or "sensible defaults" on per-OS basis
@@ -442,7 +443,13 @@ void DesignEqualsImplementationProject::handleEditCppModeRequested(DesignEqualsI
 
     //TODOreq: customizeable temp dir shit. TODOreq: raw C++ in constructor/destructor
     QString cppEditTemporariesPath("/run/shm/designEqualsImplementation-CppEditTemporariesAt_" + QString::number(QDateTime::currentMSecsSinceEpoch()) + QDir::separator());
-    if(!generateSourceCodePrivate(DesignEqualsImplementationProject::Library, cppEditTemporariesPath, true))
+    QScopedPointer<int> out_LineNumber;
+    if(designEqualsImplementationClassSlot)
+        out_LineNumber.reset(new int(-1));
+    int statementOfSlotToGetLineNumberOf = 0;
+    if(statementIndexOfSlot > -1)
+        statementOfSlotToGetLineNumberOf = statementIndexOfSlot;
+    if(!generateSourceCodePrivate(DesignEqualsImplementationProject::Library, cppEditTemporariesPath, true, out_LineNumber.data(), designEqualsImplementationClassSlot, statementOfSlotToGetLineNumberOf))
     {
         emit e("failed to generate temporary source code for c++ editting");
         return;
@@ -452,8 +459,20 @@ void DesignEqualsImplementationProject::handleEditCppModeRequested(DesignEqualsI
     qtCreatorProcess.setWorkingDirectory(cppEditTemporariesPath);
     QStringList qtCreatorArgs;
     qtCreatorArgs << projectFileName();
+    QString classSourceFilename;
     if(designEqualsImplementationClass)
-        qtCreatorArgs << designEqualsImplementationClass->sourceFilenameOnly(); //TODOreq: if/when I introduce concept of sub-folders (and classes therein), I need to pass the source file's relative path here, not just the filename only
+        classSourceFilename = designEqualsImplementationClass->sourceFilenameOnly(); //TODOreq: if/when I introduce concept of sub-folders (and classes therein), I need to pass the source file's relative path here, not just the filename only
+    if(designEqualsImplementationClassSlot)
+    {
+        if(*(out_LineNumber.data()) == -1)
+        {
+            emit e("didn't find line we were looking for. this should never happen");
+            return;
+        }
+        classSourceFilename.append(":" + QString::number(*(out_LineNumber.data())));
+    }
+    if(designEqualsImplementationClass)
+        qtCreatorArgs << classSourceFilename;
     qtCreatorProcess.start(existingQtCreator, qtCreatorArgs);
     if(!qtCreatorProcess.waitForStarted(-1))
     {

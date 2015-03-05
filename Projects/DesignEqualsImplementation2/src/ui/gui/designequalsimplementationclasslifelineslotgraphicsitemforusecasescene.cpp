@@ -1,6 +1,8 @@
 #include "designequalsimplementationclasslifelineslotgraphicsitemforusecasescene.h"
 
 #include <QLineF>
+#include <QMenu>
+#include <QGraphicsSceneContextMenuEvent>
 
 #include "designequalsimplementationguicommon.h"
 #include "sourceslotsnappingindicationvisualrepresentation.h"
@@ -8,6 +10,7 @@
 #include "usecasegraphicsscene.h"
 #include "designequalsimplementationclasslifelinegraphicsitemforusecasescene.h"
 #include "designequalsimplementationexistinsignalgraphicsitemforusecasescene.h"
+#include "../../designequalsimplementationproject.h"
 #include "../../designequalsimplementationclass.h"
 #include "../../designequalsimplementationclassslot.h"
 #include "../../idesignequalsimplementationstatement.h"
@@ -121,6 +124,25 @@ QList<ExistingStatementListEntryTypedef> DesignEqualsImplementationSlotGraphicsI
 {
     return m_ExistingStatementsAndTheirGraphicsItems;
 }
+void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    //TODOmb: double clicking slot graphics item could open c++ edit mode?
+
+    QMenu menu;
+    QAction *editCppAction = menu.addAction(tr("Edit C++"));
+    QAction *removeSlotFromClassLifelineAction = menu.addAction(tr("Remove Slot From Class Lifeline"));
+    QAction *selectedAction = menu.exec(event->screenPos());
+    if(!selectedAction)
+        return;
+    if(selectedAction == editCppAction)
+    {
+        emit editCppModeRequested(m_Slot->ParentClass, m_Slot);
+    }
+    if(selectedAction == removeSlotFromClassLifelineAction)
+    {
+        //TODOreq
+    }
+}
 #if 0
 QPointF DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::calculatePointForStatementsP1AtStatementIndex(int statementIndexToCalculateP1for)
 {
@@ -166,6 +188,8 @@ void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::privateConstruct
         setRect(minRect());
     }
     repositionExistingStatementsAndSnapPoints(); //regardless of any statements, we always want at least 1 snap point to be positioned
+
+    connect(this, SIGNAL(editCppModeRequested(DesignEqualsImplementationClass*,DesignEqualsImplementationClassSlot*)), m_Slot->ParentClass->m_ParentProject, SLOT(handleEditCppModeRequested(DesignEqualsImplementationClass*,DesignEqualsImplementationClassSlot*)));
 }
 void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::insertStatementGraphicsItem(int indexInsertedInto, IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *statementInserted)
 {

@@ -19,8 +19,8 @@ class DesignEqualsImplementationProjectGenerator : public QObject
 {
     Q_OBJECT
 public:
-    explicit DesignEqualsImplementationProjectGenerator(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, bool generateCppEditModeDelimitingComments = false, QObject *parent = 0);
-    bool generateProjectFileAndWriteItToDisk(DesignEqualsImplementationProject *designEqualsImplementationProject);
+    explicit DesignEqualsImplementationProjectGenerator(DesignEqualsImplementationProject *designEqualsImplementationProject, DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, bool generateCppEditModeDelimitingComments = false, int *m_Out_LineNumberToJumpTo_OrZeroIfNotApplicable = 0, DesignEqualsImplementationClassSlot *m_SlotWeWantLineNumberOf_OnlyWhenApplicable = 0, int m_StatementIndexOfSlotToGetLineNumberOf_OnlyWhenApplicable = -1, QObject *parent = 0);
+    bool generateProjectFileAndWriteItToDisk();
     bool processClassStep0declaringClassInProject(DesignEqualsImplementationClass *designEqualsImplementationClass);
     bool processUseCase(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase);
     //bool processClassStep1writingTheFile(DesignEqualsImplementationClass *designEqualsImplementationClass);
@@ -42,9 +42,16 @@ public:
         return ret;
     }
 private:
+    DesignEqualsImplementationProject *m_DesignEqualsImplementationProject;
     DesignEqualsImplementationProject::ProjectGenerationMode m_ProjectGenerationMode;
     QString m_DestinationDirectoryPath;
+
     bool m_GenerateCppEditModeDelimitingComments;
+    int *m_Out_LineNumberToJumpTo_OrZeroIfNotApplicable;
+    DesignEqualsImplementationClassSlot *m_SlotWeWantLineNumberOf_OnlyWhenApplicable;
+    int m_StatementIndexOfSlotToGetLineNumberOf_OnlyWhenApplicable;
+    QByteArray m_NewlinesCounterHackInMemoryCopyOfSourceFileByteArray;
+    QTextStream m_NewlinesCounterHackInMemoryCopyOfSourceFileTextStream;
 
     QHash<DesignEqualsImplementationClass*, QList<QString> /* connect statments in the key class's initialization sequence */> m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements;
 
@@ -52,7 +59,8 @@ private:
     bool recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSlotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, DesignEqualsImplementationClassLifeLine *classLifeline, DesignEqualsImplementationClassSlot *slotToWalk);
     bool writeClassToDisk(DesignEqualsImplementationClass *currentClass);
     void appendConnectStatementToClassInitializationSequence(DesignEqualsImplementationClass *classToGetConnectStatementInInitializationSequence, const QString &connectStatement);
-    void writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(QTextStream &textStream, const QString &className, int slotIndex, int statementInsertIndex);
+    void writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(QTextStream &sourceFileTextStream, const QString &className, int slotIndex, int statementInsertIndex);
+    int numNewlinesInSourceFileAtThisPoint();
 
 
     static inline QString firstCharacterToLower(const QString &inputString)

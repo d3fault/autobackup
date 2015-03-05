@@ -11,20 +11,33 @@
 #include "designequalsimplementationsignalemissionstatement.h"
 #include "designequalsimplementationslotinvocationstatement.h"
 
+#define DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO(theStreamCommandShit) \
+{ \
+    sourceFileTextStream theStreamCommandShit \
+    if(m_Out_LineNumberToJumpTo_OrZeroIfNotApplicable) \
+    { \
+        m_NewlinesCounterHackInMemoryCopyOfSourceFileTextStream theStreamCommandShit \
+    } \
+}
 //not to be confused with project serialization, this is generation of sets of C++ files based on the project in memory
 //one instance = one generation
 //TODOreq: sanitize that all slots in all use cases are 'named' before doing generation. hold off on this for now since "slot naming" might get refactored
 //TODOoptional: any time curly braces don't have anything inside them, they should be on a single line with a space in between (like i already do for constructors). i can/should do the same for slots... it just saves vertical real estate
 //TODOreq: don't generate unnamed temp slot names (unnamed slots). perhaps warn about them in wizard, similar to however un-instanced class lifelines end up being dealt with
-DesignEqualsImplementationProjectGenerator::DesignEqualsImplementationProjectGenerator(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, bool generateCppEditModeDelimitingComments, QObject *parent)
+DesignEqualsImplementationProjectGenerator::DesignEqualsImplementationProjectGenerator(DesignEqualsImplementationProject *designEqualsImplementationProject, DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, bool generateCppEditModeDelimitingComments, int *out_LineNumberToJumpTo_OrZeroIfNotApplicable, DesignEqualsImplementationClassSlot *slotWeWantLineNumberOf_OnlyWhenApplicable, int statementIndexOfSlotToGetLineNumberOf_OnlyWhenApplicable, QObject *parent)
     : QObject(parent)
+    , m_DesignEqualsImplementationProject(designEqualsImplementationProject)
     , m_ProjectGenerationMode(projectGenerationMode)
     , m_DestinationDirectoryPath(destinationDirectoryPath)
     , m_GenerateCppEditModeDelimitingComments(generateCppEditModeDelimitingComments)
+    , m_Out_LineNumberToJumpTo_OrZeroIfNotApplicable(out_LineNumberToJumpTo_OrZeroIfNotApplicable)
+    , m_SlotWeWantLineNumberOf_OnlyWhenApplicable(slotWeWantLineNumberOf_OnlyWhenApplicable)
+    , m_StatementIndexOfSlotToGetLineNumberOf_OnlyWhenApplicable(statementIndexOfSlotToGetLineNumberOf_OnlyWhenApplicable)
+    , m_NewlinesCounterHackInMemoryCopyOfSourceFileTextStream(&m_NewlinesCounterHackInMemoryCopyOfSourceFileByteArray)
 { }
-bool DesignEqualsImplementationProjectGenerator::generateProjectFileAndWriteItToDisk(DesignEqualsImplementationProject *designEqualsImplementationProject)
+bool DesignEqualsImplementationProjectGenerator::generateProjectFileAndWriteItToDisk()
 {
-    QString projectFilePath = destinationDirectoryPath() + designEqualsImplementationProject->projectFileName();
+    QString projectFilePath = destinationDirectoryPath() + m_DesignEqualsImplementationProject->projectFileName();
     QFile projectFile(projectFilePath);
     if(!projectFile.open(QIODevice::WriteOnly))
     {
@@ -43,12 +56,12 @@ bool DesignEqualsImplementationProjectGenerator::generateProjectFileAndWriteItTo
     projectFileTextStream << "QT += core" << endl;
     projectFileTextStream << "greaterThan(QT_MAJOR_VERSION, 4): QT += widgets" << endl << endl;
 
-    projectFileTextStream << "TARGET = " << designEqualsImplementationProject->Name << endl;
+    projectFileTextStream << "TARGET = " << m_DesignEqualsImplementationProject->Name << endl;
     projectFileTextStream << "TEMPLATE = app" << endl << endl;
 
     bool firstClass = true;
     projectFileTextStream << "HEADERS +=" DESIGNEQUALSIMPLEMENTATION_TAB;
-    QListIterator<DesignEqualsImplementationClass*> classIterator(designEqualsImplementationProject->classes());
+    QListIterator<DesignEqualsImplementationClass*> classIterator(m_DesignEqualsImplementationProject->classes());
     while(classIterator.hasNext())
     {
         if(!firstClass)
@@ -409,6 +422,8 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         return false;
     }
     QTextStream sourceFileTextStream(&sourceFile);
+    m_NewlinesCounterHackInMemoryCopyOfSourceFileTextStream.flush();
+    m_NewlinesCounterHackInMemoryCopyOfSourceFileByteArray.clear();
 
 #if 0 //endl vs. "\n"
     //PrivateMembers
@@ -502,53 +517,55 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     }
 
     //Source's header+constructor (the top bits, not the ".h" counter-part)
-    sourceFileTextStream    << "#include \"" << currentClass->headerFilenameOnly() << "\"" << endl
-                            << endl;
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "#include \"" << currentClass->headerFilenameOnly() << "\"" << endl
+                            << endl;)
     //Source's header PrivateMemberClasses includes
     Q_FOREACH(HasA_Private_Classes_Member *currentPrivateMember, currentClass->hasA_Private_Classes_Members())
     {
         //#include "bar.h"
-        sourceFileTextStream << "#include \"" << currentPrivateMember->m_MyClass->headerFilenameOnly() << "\"" << endl;
+        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "#include \"" << currentPrivateMember->m_MyClass->headerFilenameOnly() << "\"" << endl;)
     }
     if(atLeastOneHasAPrivateMemberClass)
-        sourceFileTextStream << endl;
-    sourceFileTextStream    << currentClass->ClassName << "::" << currentClass->ClassName << "(QObject *parent)" << endl
-                            << DESIGNEQUALSIMPLEMENTATION_TAB << ": QObject(parent)" << endl;
+    {
+        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << endl;)
+    }
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << currentClass->ClassName << "::" << currentClass->ClassName << "(QObject *parent)" << endl
+                            << DESIGNEQUALSIMPLEMENTATION_TAB << ": QObject(parent)" << endl;)
     //Source's header Properties constructor initializers
     Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
     {
         if(currentProperty->HasInit)
         {
             //, m_SomeBoolProperty(true)
-            sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << ", " << memberNameForProperty(currentProperty->Name) << "(" << currentProperty->OptionalInit << ")" << endl; //TODOoptional: a way to use one of currentClass's constructor args (or even multiple but omg my brain) as the init for a given property. should be 'smart'
+            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << ", " << memberNameForProperty(currentProperty->Name) << "(" << currentProperty->OptionalInit << ")" << endl;) //TODOoptional: a way to use one of currentClass's constructor args (or even multiple but omg my brain) as the init for a given property. should be 'smart'
         }
     }
     //Source's header PrivateMemberClasses constructor initializers
     Q_FOREACH(HasA_Private_Classes_Member *currentPrivateMember, currentClass->hasA_Private_Classes_Members())
     {
         //, m_Bar(new Bar(this))
-        sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << ", " << currentPrivateMember->VariableName << "(new " << currentPrivateMember->m_MyClass->ClassName << "(this))" << endl; //TODOreq: for now all my objects need a QObject *parent=0 constructor, but since that's also a [fixable] requirement for my ObjectOnThreadGroup, no biggy. Still, would be nice to solve the threading issue and to allow constructor args here (RAII = pro)
+        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << ", " << currentPrivateMember->VariableName << "(new " << currentPrivateMember->m_MyClass->ClassName << "(this))" << endl;) //TODOreq: for now all my objects need a QObject *parent=0 constructor, but since that's also a [fixable] requirement for my ObjectOnThreadGroup, no biggy. Still, would be nice to solve the threading issue and to allow constructor args here (RAII = pro)
     }
 
     //Source constructor -- children connection statements (or just constructor statements, but as of writing they are only connect statements)
     QList<QString> classConstructorLines = m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements.value(currentClass);
     if(classConstructorLines.isEmpty())
     {
-        sourceFileTextStream    << "{ }" << endl;
+        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "{ }" << endl;)
     }
     else
     {
-        sourceFileTextStream << "{" << endl;
+        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "{" << endl;)
         Q_FOREACH(const QString &currentLine, classConstructorLines)
         {
-            sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentLine << endl;
+            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << currentLine << endl;)
         }
-        sourceFileTextStream << "}" << endl;
+        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "}" << endl;)
     }
 
     //Source destructor
-    sourceFileTextStream    << currentClass->ClassName << "::~" << currentClass->ClassName << "()" << endl
-                            << "{ }" << endl;
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << currentClass->ClassName << "::~" << currentClass->ClassName << "()" << endl
+                            << "{ }" << endl;)
 
     //Source properties getters and setters definitions
     Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
@@ -557,7 +574,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         //{
         //  return m_X;
         //}
-        sourceFileTextStream << currentProperty->Type << " " << currentClass->ClassName << "::" << getterNameForProperty(currentProperty->Name) << "() const" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "return " << memberNameForProperty(currentProperty->Name) << ";" << endl << "}" << endl;
+        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << currentProperty->Type << " " << currentClass->ClassName << "::" << getterNameForProperty(currentProperty->Name) << "() const" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "return " << memberNameForProperty(currentProperty->Name) << ";" << endl << "}" << endl;)
 
         if(!currentProperty->ReadOnly)
         {
@@ -570,12 +587,12 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
             //  }
             //}
             const QString &newSetPropertyVariableName = "new" + firstCharacterToUpper(currentProperty->Name);
-            sourceFileTextStream << "void " << currentClass->ClassName << "::" << setterNameForProperty(currentProperty->Name) << "(" << currentProperty->Type << " " << "new" << firstCharacterToUpper(currentProperty->Name) << ")" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "if(" << newSetPropertyVariableName << " != " << memberNameForProperty(currentProperty->Name) << ")" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << memberNameForProperty(currentProperty->Name) << " = " << newSetPropertyVariableName << ";" << endl;
+            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "void " << currentClass->ClassName << "::" << setterNameForProperty(currentProperty->Name) << "(" << currentProperty->Type << " " << "new" << firstCharacterToUpper(currentProperty->Name) << ")" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "if(" << newSetPropertyVariableName << " != " << memberNameForProperty(currentProperty->Name) << ")" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << memberNameForProperty(currentProperty->Name) << " = " << newSetPropertyVariableName << ";" << endl;)
             if(currentProperty->NotifiesOnChange)
             {
-                sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << "emit " << changedSignalForProperty(currentProperty->Name) << "(" << memberNameForProperty(currentProperty->Name) << ");" << endl;
+                DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << "emit " << changedSignalForProperty(currentProperty->Name) << "(" << memberNameForProperty(currentProperty->Name) << ");" << endl;)
             }
-            sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "}" << endl << "}" << endl;
+            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << "}" << endl << "}" << endl;)
         }
     }
 
@@ -622,8 +639,8 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         //Declare slot
         headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << currentSlot->methodSignatureWithoutReturnType() << ";" << endl;
         //Define slot
-        sourceFileTextStream    << "void " << currentClass->ClassName << "::" << currentSlot->methodSignatureWithoutReturnType() << endl
-                                << "{" << endl;
+        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "void " << currentClass->ClassName << "::" << currentSlot->methodSignatureWithoutReturnType() << endl
+                                << "{" << endl;)
 
         int statementInsertIndex = 0;
         Q_FOREACH(IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *currentSlotCurrentStatement, currentSlot->orderedListOfStatements())
@@ -631,13 +648,15 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
             if(m_GenerateCppEditModeDelimitingComments)
             {
                 writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(sourceFileTextStream, currentClass->ClassName, currentClass->mySlots().indexOf(currentSlot), statementInsertIndex);
-                sourceFileTextStream << endl;
+                DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << endl;)
             }
 
-            sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentSlotCurrentStatement->toRawCpp() << endl; //TODOreq: when the statement is a chunk of raw cpp statements, we don't want the tab (unless i change my parser to trim when parsing, in which ase i DO want the tab (and MORE tabs for each line as well)
+            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << currentSlotCurrentStatement->toRawCpp() << endl;) //TODOreq: when the statement is a chunk of raw cpp statements, we don't want the tab (unless i change my parser to trim when parsing, in which ase i DO want the tab (and MORE tabs for each line as well)
 
             if(m_GenerateCppEditModeDelimitingComments)
-                sourceFileTextStream << endl;
+            {
+                DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << endl;)
+            }
 
 #if 0
             if(m_GenerateCppEditModeDelimitingComments)
@@ -659,11 +678,13 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         if(currentSlot->finishedOrExitSignal_OrZeroIfNone())
         {
             if(m_GenerateCppEditModeDelimitingComments)
-                sourceFileTextStream << endl;
+            {
+                DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << endl;)
+            }
             DesignEqualsImplementationSignalEmissionStatement finishedOrExitSignalEmitStatement(currentSlot->finishedOrExitSignal_OrZeroIfNone(), currentSlot->finishedOrExitSignalEmissionContextVariables());
-            sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << finishedOrExitSignalEmitStatement.toRawCppWithEndingSemicolon() << endl;
+            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << finishedOrExitSignalEmitStatement.toRawCppWithEndingSemicolon() << endl;)
         }
-        sourceFileTextStream    << "}" << endl;
+        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "}" << endl;)
     }
 
     //Header's footer
@@ -690,7 +711,7 @@ void DesignEqualsImplementationProjectGenerator::appendConnectStatementToClassIn
     currentListOfConnectStatements.append(connectStatement);
     m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements.insert(classToGetConnectStatementInInitializationSequence, currentListOfConnectStatements);
 }
-void DesignEqualsImplementationProjectGenerator::writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(QTextStream &textStream, const QString &className, int slotIndex, int statementInsertIndex)
+void DesignEqualsImplementationProjectGenerator::writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(QTextStream &sourceFileTextStream, const QString &className, int slotIndex, int statementInsertIndex)
 {
     //TODOoptional: the "delimiting comments" could be C++ for sexiness and I could parse them with libclang. ex: ClassName::slotName(int,bool,etc)::betweenStatements0and1 (of course the "betweenStatements" part does not get parsed by clang)
 
@@ -716,23 +737,43 @@ void DesignEqualsImplementationProjectGenerator::writePairOfDelimitedCommentsInB
     //[/END CHUNK OF RAW CPP STATEMENTS]
 #endif
 
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//[" beginChunkOfRawCppStatements << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//DO NOT WRITE C++ ABOVE THESE COMMENTS" << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//Class: " << className << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//SlotIndex: " << slotIndex << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//StatementInsertIndex: " << statementInsertIndex << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//YOU MAY WRITE C++ BELOW THESE COMMENTS" << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//[/" beginChunkOfRawCppStatements << endl;
-    textStream << endl;
-    textStream << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << DEI_CHUNK_OF_RAW_CPP_GOES_HERE_HELPER_COMMENT << endl;
-    textStream << endl;
-    textStream << endl;
-    textStream << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//[" endChunkOfRawCppStatements << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//YOU MAY WRITE C++ ABOVE THESE COMMENTS" << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//DO NOT WRITE C++ BELOW THESE COMMENTS" << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//[/" endChunkOfRawCppStatements << endl;
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << "//[" beginChunkOfRawCppStatements << endl;)
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << "//DO NOT WRITE C++ ABOVE THESE COMMENTS" << endl;)
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;)
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << "//Class: " << className << endl;)
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << "//SlotIndex: " << slotIndex << endl;)
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << "//StatementInsertIndex: " << statementInsertIndex << endl;)
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;)
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << "//YOU MAY WRITE C++ BELOW THESE COMMENTS" << endl;)
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << "//[/" beginChunkOfRawCppStatements << endl;)
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << endl;)
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << endl;)
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << DEI_CHUNK_OF_RAW_CPP_GOES_HERE_HELPER_COMMENT << endl;)
+
+    if(m_Out_LineNumberToJumpTo_OrZeroIfNotApplicable)
+    {
+        if(className == m_SlotWeWantLineNumberOf_OnlyWhenApplicable->ParentClass->ClassName)
+        {
+            if(slotIndex == m_SlotWeWantLineNumberOf_OnlyWhenApplicable->ParentClass->mySlots().indexOf(m_SlotWeWantLineNumberOf_OnlyWhenApplicable))
+            {
+                if(statementInsertIndex == m_StatementIndexOfSlotToGetLineNumberOf_OnlyWhenApplicable)
+                {
+                    *m_Out_LineNumberToJumpTo_OrZeroIfNotApplicable = (numNewlinesInSourceFileAtThisPoint()+1);
+                }
+            }
+        }
+    }
+
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << endl;)
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << endl;)
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << endl;)
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << "//[" endChunkOfRawCppStatements << endl;)
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << "//YOU MAY WRITE C++ ABOVE THESE COMMENTS" << endl;)
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << "//DO NOT WRITE C++ BELOW THESE COMMENTS" << endl;)
+            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << "//[/" endChunkOfRawCppStatements << endl;)
+}
+int DesignEqualsImplementationProjectGenerator::numNewlinesInSourceFileAtThisPoint()
+{
+    m_NewlinesCounterHackInMemoryCopyOfSourceFileTextStream.flush();
+    return m_NewlinesCounterHackInMemoryCopyOfSourceFileByteArray.count('\n');
 }
