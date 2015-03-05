@@ -11,10 +11,6 @@
 #include "designequalsimplementationsignalemissionstatement.h"
 #include "designequalsimplementationslotinvocationstatement.h"
 
-#define chunkOfRawCppStatementsSuffix " CHUNK OF RAW CPP STATEMENTS]"
-#define beginChunkOfRawCppStatements "BEGIN" chunkOfRawCppStatementsSuffix
-#define endChunkOfRawCppStatements "END" chunkOfRawCppStatementsSuffix
-
 //not to be confused with project serialization, this is generation of sets of C++ files based on the project in memory
 //one instance = one generation
 //TODOreq: sanitize that all slots in all use cases are 'named' before doing generation. hold off on this for now since "slot naming" might get refactored
@@ -629,15 +625,19 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         sourceFileTextStream    << "void " << currentClass->ClassName << "::" << currentSlot->methodSignatureWithoutReturnType() << endl
                                 << "{" << endl;
 
-        //writeChunkOfRawCppStatements(sourceFileTextStream, currentClass, currentSlot, "#()*##$_TOP_OF_SLOT_DELIMITER_HACK_#)*)(#$");
-
-        int currentStatementIndex = 0;
+        int statementInsertIndex = 0;
         Q_FOREACH(IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *currentSlotCurrentStatement, currentSlot->orderedListOfStatements())
         {
+            if(m_GenerateCppEditModeDelimitingComments)
+            {
+                writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(sourceFileTextStream, currentClass->ClassName, currentClass->mySlots().indexOf(currentSlot), statementInsertIndex);
+                sourceFileTextStream << endl;
+            }
+
             sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentSlotCurrentStatement->toRawCppWithEndingSemicolon() << endl;
 
             if(m_GenerateCppEditModeDelimitingComments)
-                writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(sourceFileTextStream, currentClass->ClassName, currentClass->mySlots().indexOf(currentSlot), currentStatementIndex);
+                sourceFileTextStream << endl;
 
 #if 0
             if(m_GenerateCppEditModeDelimitingComments)
@@ -648,10 +648,18 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
                 }
             }
 #endif
-            ++currentStatementIndex;
+            ++statementInsertIndex;
+        }
+        if(m_GenerateCppEditModeDelimitingComments)
+        {
+            //if(statementInsertIndex > 0)
+                //sourceFileTextStream << endl;
+            writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(sourceFileTextStream, currentClass->ClassName, currentClass->mySlots().indexOf(currentSlot), statementInsertIndex);
         }
         if(currentSlot->finishedOrExitSignal_OrZeroIfNone())
         {
+            if(m_GenerateCppEditModeDelimitingComments)
+                sourceFileTextStream << endl;
             DesignEqualsImplementationSignalEmissionStatement finishedOrExitSignalEmitStatement(currentSlot->finishedOrExitSignal_OrZeroIfNone(), currentSlot->finishedOrExitSignalEmissionContextVariables());
             sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << finishedOrExitSignalEmitStatement.toRawCppWithEndingSemicolon() << endl;
         }
@@ -682,7 +690,7 @@ void DesignEqualsImplementationProjectGenerator::appendConnectStatementToClassIn
     currentListOfConnectStatements.append(connectStatement);
     m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements.insert(classToGetConnectStatementInInitializationSequence, currentListOfConnectStatements);
 }
-void DesignEqualsImplementationProjectGenerator::writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(QTextStream &textStream, const QString &className, int slotIndex, int statementIndex)
+void DesignEqualsImplementationProjectGenerator::writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(QTextStream &textStream, const QString &className, int slotIndex, int statementInsertIndex)
 {
     //TODOoptional: the "delimiting comments" could be C++ for sexiness and I could parse them with libclang. ex: ClassName::slotName(int,bool,etc)::betweenStatements0and1 (of course the "betweenStatements" part does not get parsed by clang)
 
@@ -692,7 +700,7 @@ void DesignEqualsImplementationProjectGenerator::writePairOfDelimitedCommentsInB
     //
     //Class: <classname>
     //SlotIndex: <slotIndex> (ex: 0)
-    //AfterStatement: <afterStatement> (ex: 0)
+    //StatementInsertIndex: <statementInsertIndex> (ex: 0)
     //
     //YOU MAY WRITE C++ BELOW THESE COMMENTS
     //[/BEGIN CHUNK OF RAW CPP STATEMENTS]
@@ -712,7 +720,7 @@ void DesignEqualsImplementationProjectGenerator::writePairOfDelimitedCommentsInB
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//Class: " << className << endl;
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//SlotIndex: " << slotIndex << endl;
-    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//AfterStatement: " << slotIndex << endl;
+    textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//StatementInsertIndex: " << statementInsertIndex << endl;
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//" << endl;
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//YOU MAY WRITE C++ BELOW THESE COMMENTS" << endl;
     textStream << DESIGNEQUALSIMPLEMENTATION_TAB << "//[/" beginChunkOfRawCppStatements << endl;

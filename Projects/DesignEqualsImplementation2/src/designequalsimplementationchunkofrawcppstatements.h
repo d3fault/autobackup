@@ -8,7 +8,10 @@
 class DesignEqualsImplementationChunkOfRawCppStatements : public IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements
 {
 public:
-    DesignEqualsImplementationChunkOfRawCppStatements();
+    DesignEqualsImplementationChunkOfRawCppStatements(const QStringList &rawCppStatements = QStringList());
+    QString toRawCppWithoutEndingSemicolon();
+    void streamIn(DesignEqualsImplementationProject *project, QDataStream &in);
+    void streamOut(DesignEqualsImplementationProject *project, QDataStream &out);
 private:
     QStringList m_RawCppStatements;
 };

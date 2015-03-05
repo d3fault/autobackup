@@ -7,6 +7,10 @@
 
 #include "designequalsimplementationproject.h"
 
+#define chunkOfRawCppStatementsSuffix " CHUNK OF RAW CPP STATEMENTS]"
+#define beginChunkOfRawCppStatements "BEGIN" chunkOfRawCppStatementsSuffix
+#define endChunkOfRawCppStatements "END" chunkOfRawCppStatementsSuffix
+
 class DesignEqualsImplementationClass;
 class DesignEqualsImplementationUseCase;
 
@@ -47,7 +51,7 @@ private:
     bool recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSlotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, DesignEqualsImplementationClassLifeLine *classLifeline, DesignEqualsImplementationClassSlot *slotToWalk);
     bool writeClassToDisk(DesignEqualsImplementationClass *currentClass);
     void appendConnectStatementToClassInitializationSequence(DesignEqualsImplementationClass *classToGetConnectStatementInInitializationSequence, const QString &connectStatement);
-    void writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(QTextStream &textStream, const QString &className, int slotIndex, int statementIndex);
+    void writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(QTextStream &textStream, const QString &className, int slotIndex, int statementInsertIndex);
 
 
     static inline QString firstCharacterToLower(const QString &inputString)

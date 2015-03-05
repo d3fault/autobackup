@@ -8,6 +8,7 @@
 #include <QDateTime>
 
 #include "designequalsimplementationprojectgenerator.h"
+#include "designequalsimplementationchunkofrawcppstatements.h"
 
 #define DesignEqualsImplementationProject_SERIALIZATION_VERSION 1
 
@@ -466,6 +467,149 @@ void DesignEqualsImplementationProject::handleEditCppModeRequested()
     {
         emit e("qt creator exitted abnormally" + qtCreatorProcess.errorString());
         return;
+    }
+
+    //qt creator session ended
+
+    Q_FOREACH(DesignEqualsImplementationClass *currentClass, classes())
+    {
+        QString sourceFilePath(cppEditTemporariesPath + currentClass->sourceFilenameOnly());
+        QFile sourceFile(sourceFilePath);
+        if(!sourceFile.open(QIODevice::ReadOnly))
+        {
+            emit e("failed to open for reading: " + sourceFilePath);
+            return;
+        }
+        static const QString youFuckedUpBitch("you fucked with the delimiting comments, bro. don't. gj all your shit is fucked and is not being imported, but don't worry the files are still located at: " + cppEditTemporariesPath);
+        QTextStream sourceFileTextStream(&sourceFile);
+        bool inBeginChunkOfRawCppStatementsComment = false;
+        QString className;
+        int slotIndex = -1;
+        int statementInsertIndex = -1;
+        bool inChunkOfRawCppStatements = false;
+        QStringList chunkOfRawCppStatements;
+        int rollingStatementOffset = 0; //because the statement index changes as we insert them as we go
+        QString lastSeenClass;
+        int lastSeenSlotIndex = -1;
+        while(!sourceFileTextStream.atEnd())
+        {
+            QString currentLine = sourceFileTextStream.readLine();
+            QString currentLineTrimmed = currentLine.trimmed();
+            if(currentLineTrimmed.isEmpty() || currentLineTrimmed == "//")
+                continue;
+            if(!inChunkOfRawCppStatements)
+            {
+                if(!inBeginChunkOfRawCppStatementsComment)
+                {
+                    if(currentLine.contains("["  beginChunkOfRawCppStatements))
+                    {
+                        inBeginChunkOfRawCppStatementsComment = true;
+                        continue;
+                    }
+
+                    //generated c++ we want to ignore
+                    continue;
+                }
+                else
+                {
+                    static const QString classPrefix("Class: "); //TODOoptional: make this section, and the delimiting comments generating section, all refer to the same #defines
+                    if(currentLine.contains(classPrefix))
+                    {
+                        QStringList classLineSplit = currentLine.split(classPrefix);
+                        if(classLineSplit.size() != 2)
+                        {
+                            emit e(youFuckedUpBitch);
+                            return;
+                        }
+                        className = classLineSplit.at(1);
+                        if(className != lastSeenClass)
+                        {
+                            rollingStatementOffset = 0;
+                        }
+                        lastSeenClass = className;
+                        continue;
+                    }
+                    static const QString slotIndexPrefix("SlotIndex: ");
+                    if(currentLine.contains(slotIndexPrefix))
+                    {
+                        QStringList slotIndexLineSplit = currentLine.split(slotIndexPrefix);
+                        if(slotIndexLineSplit.size() != 2)
+                        {
+                            emit e(youFuckedUpBitch);
+                            return;
+                        }
+                        bool convertOk = false;
+                        slotIndex = slotIndexLineSplit.at(1).toInt(&convertOk);
+                        if(!convertOk)
+                        {
+                            emit e(youFuckedUpBitch);
+                            return;
+                        }
+                        if(slotIndex != lastSeenSlotIndex)
+                        {
+                            rollingStatementOffset = 0;
+                        }
+                        continue;
+                    }
+                    static const QString statementInsertIndexPrefix("StatementInsertIndex: ");
+                    if(currentLine.contains(statementInsertIndexPrefix))
+                    {
+                        QStringList statementInsertIndexLineSplit = currentLine.split(statementInsertIndexPrefix);
+                        if(statementInsertIndexLineSplit.size() != 2)
+                        {
+                            emit e(youFuckedUpBitch);
+                            return;
+                        }
+                        bool convertOk = false;
+                        statementInsertIndex = statementInsertIndexLineSplit.at(1).toInt(&convertOk);
+                        if(!convertOk)
+                        {
+                            emit e(youFuckedUpBitch);
+                            return;
+                        }
+                        continue;
+                    }
+                    if(currentLine.contains("[/" beginChunkOfRawCppStatements))
+                    {
+                        //sanitize
+                        if(className.isEmpty() || slotIndex == -1 || statementInsertIndex == -1)
+                        {
+                            emit e(youFuckedUpBitch);
+                            return;
+                        }
+                        inChunkOfRawCppStatements = true;
+                        continue;
+                    }
+
+                    //should never get here
+                    continue;
+                }
+            }
+            else
+            {
+                if(currentLine.contains("[" endChunkOfRawCppStatements))
+                {
+                    //done gathering chunk of raw cpp statements, so put them into the list of statements, reset the values this while loop relies on, and then continue;
+
+                    //make chunk of c++ statements a "statement" of the slot (so it gets generated etc)
+                    DesignEqualsImplementationClass *designEqualsImplementationClass = classFromClassName(className);
+                    DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot = designEqualsImplementationClass->mySlots().at(slotIndex);
+                    designEqualsImplementationClassSlot->insertStatementIntoOrderedListOfStatements(statementInsertIndex + (rollingStatementOffset++), new DesignEqualsImplementationChunkOfRawCppStatements(chunkOfRawCppStatements));
+
+                    //reset everything to look for the next class/slot/statement in this source file
+                    inBeginChunkOfRawCppStatementsComment = false;
+                    inChunkOfRawCppStatements = false;
+                    chunkOfRawCppStatements.clear();
+
+                    continue;
+                }
+
+                //adding raw c++ statement to current chunk
+                //chunkOfRawCppStatements << currentLine/*.trimmed()*/; //TO DOneoptional(nvm): maybe don't trim, since the c++ might contain curly brackets (scopes) that are indented
+                chunkOfRawCppStatements << currentLineTrimmed; //TODOreq: research something like: "qtcreator -auto-indent-files" -- maybe add it yourself
+                continue;
+            }
+        }
     }
 }
 //TODOreq: overwrite warnings, backing up user modifications, putting "do not edit this file" warnings, etc etc

@@ -52,6 +52,19 @@ public:
 
     QString projectFileName();
 
+    inline DesignEqualsImplementationClass *classFromClassName(const QString &className)
+    {
+        Q_FOREACH(DesignEqualsImplementationClass *currentClass, m_Classes)
+        {
+            if(currentClass->ClassName == className)
+            {
+                return currentClass;
+            }
+        }
+        emit e("classFromClassName could not find class: " + className);
+        return 0;
+    }
+
     //Temporary for code gen:
     bool writeTemporaryGlueCodeLines(const QString &destinationDirectoryPath);
 private:
