@@ -6,6 +6,18 @@
 #include "designequalsimplementationslotinvocationstatement.h"
 #include "designequalsimplementationprivatemethodsynchronouscallstatement.h"
 
+QString IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements::toRawCpp()
+{
+    if(StatementType == ChunkOfRawCppStatements)
+    {
+        return toRawCppWithoutEndingSemicolon();
+    }
+    else
+    {
+        return toRawCppWithEndingSemicolon();
+    }
+}
+
 #if 0
 QDataStream &operator<<(QDataStream &out, IDesignEqualsImplementationStatement *&statement)
 {

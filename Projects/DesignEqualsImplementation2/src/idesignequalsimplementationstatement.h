@@ -17,7 +17,8 @@ public:
     };
     explicit IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements(StatementTypeEnum statementType) : StatementType(statementType) { }
     virtual ~IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements() { }
-    virtual QString toRawCppWithEndingSemicolon() { return toRawCppWithoutEndingSemicolon() + ";"; }
+    QString toRawCpp();
+    QString toRawCppWithEndingSemicolon() { return toRawCppWithoutEndingSemicolon() + ";"; }
     virtual QString toRawCppWithoutEndingSemicolon()=0; //if/else/while/etc can't have it
     virtual bool isSignalEmit() { return false; }
     virtual bool isSlotInvoke() { return false; }

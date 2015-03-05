@@ -634,7 +634,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
                 sourceFileTextStream << endl;
             }
 
-            sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentSlotCurrentStatement->toRawCppWithEndingSemicolon() << endl;
+            sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentSlotCurrentStatement->toRawCpp() << endl; //TODOreq: when the statement is a chunk of raw cpp statements, we don't want the tab (unless i change my parser to trim when parsing, in which ase i DO want the tab (and MORE tabs for each line as well)
 
             if(m_GenerateCppEditModeDelimitingComments)
                 sourceFileTextStream << endl;

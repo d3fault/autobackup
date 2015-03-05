@@ -549,6 +549,7 @@ void DesignEqualsImplementationProject::handleEditCppModeRequested()
                         {
                             rollingStatementOffset = 0;
                         }
+                        lastSeenSlotIndex = slotIndex;
                         continue;
                     }
                     static const QString statementInsertIndexPrefix("StatementInsertIndex: ");
@@ -592,9 +593,13 @@ void DesignEqualsImplementationProject::handleEditCppModeRequested()
                     //done gathering chunk of raw cpp statements, so put them into the list of statements, reset the values this while loop relies on, and then continue;
 
                     //make chunk of c++ statements a "statement" of the slot (so it gets generated etc)
-                    DesignEqualsImplementationClass *designEqualsImplementationClass = classFromClassName(className);
-                    DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot = designEqualsImplementationClass->mySlots().at(slotIndex);
-                    designEqualsImplementationClassSlot->insertStatementIntoOrderedListOfStatements(statementInsertIndex + (rollingStatementOffset++), new DesignEqualsImplementationChunkOfRawCppStatements(chunkOfRawCppStatements));
+                    if(!chunkOfRawCppStatements.isEmpty())
+                    {
+                        DesignEqualsImplementationClass *designEqualsImplementationClass = classFromClassName(className);
+                        DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot = designEqualsImplementationClass->mySlots().at(slotIndex);
+                        designEqualsImplementationClassSlot->insertStatementIntoOrderedListOfStatements(statementInsertIndex + (rollingStatementOffset), new DesignEqualsImplementationChunkOfRawCppStatements(chunkOfRawCppStatements));
+                        ++rollingStatementOffset;
+                    }
 
                     //reset everything to look for the next class/slot/statement in this source file
                     inBeginChunkOfRawCppStatementsComment = false;
