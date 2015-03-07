@@ -52,7 +52,10 @@ private:
     QString classDetailsAsHtmlString();
 signals:
     void e(const QString &);
+    void editCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass);
 private slots:
+    void handleEditCppButtonClicked();
+
     void handleQuickAddNewPropertyButtonClicked();
     void handleQuickAddNewSignalButtonClicked();
     void handleQuickAddNewSlotButtonClicked();

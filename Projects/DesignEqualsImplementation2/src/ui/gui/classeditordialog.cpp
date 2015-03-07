@@ -43,9 +43,11 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
     QHBoxLayout *classNameRow = new QHBoxLayout();
     QLabel *classNameLabel = new QLabel(tr("Class &Name:"));
     QLineEdit *classNameLineEdit = new QLineEdit(classToEdit->ClassName);
+    QPushButton *editCppButton = new QPushButton(tr("Edit C++"));
     classNameLabel->setBuddy(classNameLineEdit);
     classNameRow->addWidget(classNameLabel);
     classNameRow->addWidget(classNameLineEdit);
+    classNameRow->addWidget(editCppButton);
 
 #if 0 //TODOoptional
     QHBoxLayout *validStateNameRow = new QHBoxLayout();
@@ -78,6 +80,7 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
     setLayout(myLayout);
 
     connect(classNameLineEdit, SIGNAL(textChanged(QString)), m_ClassBeingEditted, SLOT(setClassName(QString))); //TODOreq: sanitize: no spaces etc. a libclang syntax check would be best, but also maybe overkill
+    connect(editCppButton, SIGNAL(clicked()), this, SLOT(handleEditCppButtonClicked()));
 
     connect(doneButton, SIGNAL(clicked()), this, SLOT(handleDoneButtonClicked()));
     //connect(doneButton, SIGNAL(clicked()), this, SLOT(accept())); //or reject or done or close, no matter. might make this modeless. TODOreq: process any fields that may have been typed into. Like basically "done" could be a shortcut for "add slot" (+ done) or "add property" (+ done) etc. HOWEVER this may not be desireable so maybe we should prompt the user. Additionally, which of the unfinished edits to we process? All of them? Perhaps just a warning with cancel/ok whenever un-committed edits are detected? Perhaps even a checkbox for to do the speedy "add + done" thing to save clicks, opt in by default but saving whether or not it's checked
@@ -92,6 +95,7 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationClass *classToEdi
     connect(classToEdit, SIGNAL(slotAdded(DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotAdded(DesignEqualsImplementationClassSlot*)));
 #endif
 
+    connect(this, SIGNAL(editCppModeRequested(DesignEqualsImplementationClass*)), currentProject, SLOT(handleEditCppModeRequested(DesignEqualsImplementationClass*)));
 
     m_QuickMemberAddLineEdit->setFocus();
 }
@@ -333,6 +337,10 @@ QString ClassEditorDialog::classDetailsAsHtmlString()
     }
 
     return classContentsString;
+}
+void ClassEditorDialog::handleEditCppButtonClicked()
+{
+    emit editCppModeRequested(m_ClassBeingEditted); //TODOoptional: each slot in the class could also have similar "Edit C++" buttons (the backend logic for this is already implemented)
 }
 void ClassEditorDialog::handleQuickAddNewPropertyButtonClicked()
 {

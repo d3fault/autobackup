@@ -13,6 +13,7 @@
 #include "designequalsimplementationclasslifelineslotgraphicsitemforusecasescene.h"
 #include "classinstancechooserdialog.h"
 #include "classeditordialog.h"
+#include "../../designequalsimplementationproject.h"
 #include "../../designequalsimplementationclass.h"
 #include "../../designequalsimplementationusecase.h"
 #include "../../designequalsimplementationclasslifeline.h"
@@ -43,6 +44,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::context
     QMenu menu;
     QAction *chooseInstanceAction = menu.addAction(tr("Choose Instance"));
     QAction *classEditorAction = menu.addAction(tr("Class Editor"));
+    Action *editCppAction = menu.addAction(tr("Edit C++"));
     QAction *removeClassLifelineFromUseCaseAction = menu.addAction(tr("Remove Class Lifeline from Use Case"));
     QAction *selectedAction = menu.exec(event->screenPos());
     if(!selectedAction)
@@ -53,13 +55,18 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::context
         classInstanceChooserDialog.exec();
         return;
     }
-    else if(selectedAction == classEditorAction)
+    if(selectedAction == classEditorAction)
     {
         ClassEditorDialog classEditorDialog(classLifeLine()->designEqualsImplementationClass(), m_DesignEqualsImplementationClassLifeLine->parentUseCase()->designEqualsImplementationProject());
-        if(classEditorDialog.exec() != QDialog::Accepted)
-            return;
+        classEditorDialog.exec();
+        return;
     }
-    else if(selectedAction == removeClassLifelineFromUseCaseAction) //etc
+    if(selectedAction == editCppAction)
+    {
+        emit editCppModeRequested(m_DesignEqualsImplementationClassLifeLine->designEqualsImplementationClass());
+        return;
+    }
+    if(selectedAction == removeClassLifelineFromUseCaseAction) //etc
     {
         //TODOreq
     }
@@ -134,6 +141,8 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
     repositionSlotsBecauseOneSlotsChanged();
     connect(classLifeLine, SIGNAL(slotInsertedIntoClassLifeLine(int,DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotInsertedIntoClassLifeLine(int, DesignEqualsImplementationClassSlot*)));
     connect(classLifeLine, SIGNAL(slotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot*)));
+
+    connect(this, SIGNAL(editCppModeRequested(DesignEqualsImplementationClass*)), m_DesignEqualsImplementationClassLifeLine->designEqualsImplementationClass()->m_ParentProject, SLOT(handleEditCppModeRequested(DesignEqualsImplementationClass*)));
 }
 DesignEqualsImplementationSlotGraphicsItemForUseCaseScene* DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::createAndInsertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot)
 {

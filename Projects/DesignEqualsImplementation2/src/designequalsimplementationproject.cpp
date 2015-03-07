@@ -439,7 +439,7 @@ void DesignEqualsImplementationProject::handleEditCppModeRequested(DesignEqualsI
         return;
     }
 
-    //TODOreq: explain in messagebox what's about to happen (maybe give cancel button), and explain the rules about the comments delimeters (also: "don't show the messagebox again"). should probably lock the entire application while qtcreator is running, i think qapplication has a method for that
+    //TODOreq: explain in messagebox what's about to happen (maybe give cancel button), and explain the rules about the comments delimeters (also: "don't show this messagebox again" checkbox). should probably lock the entire application while qtcreator is running (however, waitForFinished() pretty much does this already), i think qapplication has a method for that
 
     //TODOreq: customizeable temp dir shit. TODOreq: raw C++ in constructor/destructor
     QString cppEditTemporariesPath("/run/shm/designEqualsImplementation-CppEditTemporariesAt_" + QString::number(QDateTime::currentMSecsSinceEpoch()) + QDir::separator());
@@ -455,7 +455,7 @@ void DesignEqualsImplementationProject::handleEditCppModeRequested(DesignEqualsI
         return;
     }
 
-    QProcess qtCreatorProcess(this);
+    QProcess qtCreatorProcess(this); //TODOoptional: "-client" and "-block" args are of interest, as is "-pid" (and allowing user to specify it). "-client" and "-block" work best when there's already an instance of qt creator open, as then closing the document specified (or the project if no file was specified) via simple Ctrl+W makes the "blocking" continue.... which basically means: you keep qt creator and the project open, but can edit individual files still without having to re-open qtcreator or the project... FAST AS FUCK. however, if there is no qtcreator open when you do -client -block, one is opened for you and the -block does not continue until the entire qt creator is closed :(. So eh that "message box" explaining what is going to happen can/should advise you to open a qt creator beforehand (and maybe that should be the place to specify the optional PID of the instance to use (because shit, they might have 20 qt creators open)? (and btw, the pid should be remembered for the duration of this d=i session)). We advise them to open a qt creator before hitting "continue" -- a bit of refactoring needs to be done to generate c++ temporaries overwriting the old ones in order for the "fastness" to occur (and we should only ever overwrite files that have changed TODOoptimization... should make qtcreator's re-parsing much faster but i'm not sure about that)
     qtCreatorProcess.setWorkingDirectory(cppEditTemporariesPath);
     QStringList qtCreatorArgs;
     qtCreatorArgs << projectFileName();
@@ -490,7 +490,7 @@ void DesignEqualsImplementationProject::handleEditCppModeRequested(DesignEqualsI
         return;
     }
 
-    //qt creator session ended
+    //qt creator session ended, so now parse/import in their raw c++
 
     Q_FOREACH(DesignEqualsImplementationClass *currentClass, classes())
     {
