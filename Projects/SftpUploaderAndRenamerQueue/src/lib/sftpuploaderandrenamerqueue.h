@@ -9,7 +9,7 @@
 class QTextStream;
 class QTimer;
 
-typedef QPair<QString/*unixTimestamp*/,QString/*filename*/> SftpUploaderAndRenamerQueueTimestampAndFilenameType;
+typedef QPair<QString/*destFilenameToRenameToAfterUpload*/,QString/*srcFilenameToUpload*/> SftpUploaderAndRenamerQueue_DestFilenameToRenameToAfterUpload_and_SrcFilenameToUpload_Type;
 
 class SftpUploaderAndRenamerQueue : public QObject
 {
@@ -28,7 +28,7 @@ public:
 private:
     static bool m_HaveRunConstructorOncePerApp;
 
-    QQueue<SftpUploaderAndRenamerQueueTimestampAndFilenameType> m_SegmentsQueuedForUpload;
+    QQueue<SftpUploaderAndRenamerQueue_DestFilenameToRenameToAfterUpload_and_SrcFilenameToUpload_Type> m_SegmentsQueuedForUpload;
     QTimer *m_FiveSecondRetryDequeueAndUploadTimer;
     QTimer *m_Sftp30secondKillerTimer;
 
@@ -59,13 +59,13 @@ signals:
     void o(const QString &);
     void e(const QString &);
     void sftpUploaderAndRenamerQueueStarted();
-    void fileUploadAndRenameSuccess(const QString &unixTimestamp, const QString &filename);
+    void fileUploadAndRenameSuccess(const QString &remoteTimestamp, const QString &localFilename);
     void statusGenerated(const QString &);
     void quitRequested();
     void sftpUploaderAndRenamerQueueStopped();
 public slots:
     void startSftpUploaderAndRenamerQueue(const QString &remoteDestinationToUploadTo, const QString &remoteDestinationToMoveTo, const QString &userHostPathComboSftpArg, const QString &sftpProcessPath);
-    void enqueueFileForUploadAndRename(SftpUploaderAndRenamerQueueTimestampAndFilenameType timestampAndFilenameToEnqueueForUpload);
+    void enqueueFileForUploadAndRename(SftpUploaderAndRenamerQueue_DestFilenameToRenameToAfterUpload_and_SrcFilenameToUpload_Type timestampAndFilenameToEnqueueForUpload);
     void tellStatus();
 
     void changeSftpUploaderAndRenamerQueueState(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum newSftpUploaderAndRenamerQueueState);

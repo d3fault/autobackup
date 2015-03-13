@@ -62,7 +62,7 @@ void HotteeCli::cliUserInterfaceMenu()
                     "\t2\t- Stop writing after current 100mb chunk ends\n"
                     "t3\t- Restart Output Process at next chunk start (use 0 to make sure chunk index isn't about to change before calling)" //TODOoptional: make more fail-safe, allow and recover from "missing the index" (destination netcat didn't open in time or some shit)
                     "\tqq\t- Quit NOW (mid-chunk). Use 'q' instead if you can.\n"
-                    "\tq\t- Quit after current 100mb chunk ends\n";
+                    "\tq\t- Quit after current 100mb chunk ends (or when the input process closes)\n";
     //TODOoptional: handleD("\t9 - Quit when current destination fills up");
     handleD(ret);
 }
@@ -118,7 +118,7 @@ void HotteeCli::stdInHasLineOfInput()
     {
         disconnect(&m_StdInSocketNotifier, SIGNAL(activated(int)));
         emit quitAfterThisChunkFinishesRequested();
-        handleD("Hottee is going to quit after this chunk finishes...");
+        handleD("Hottee is going to quit after this chunk finishes (or when the input process closes)...");
         return;
     }
     cliUserInterfaceMenu();

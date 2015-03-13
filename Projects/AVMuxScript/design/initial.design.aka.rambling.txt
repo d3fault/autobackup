@@ -1,0 +1,36 @@
+Auto-Muxing of A+V from a day of hatcam + voice recording (a script to be run at night time (doubles as backup script + recharging of batteries) -- I suppose the next morning I have to run another script to start the distribution process after transferring the mux'd data over the air gap)
+
+
+So basically it's just a matter of ffprobe and timestamps. Last modified timestamps will not be accurate (ctime would maybe be, but is unreliable af so). I can name files/folders using the start timestamps however. I'm not sure actually what the last modified timestamp of a file continuously written to over an hour would be, I would imagine it'd be the very last moment you write bytes to it, but MAYBE it's the time at which you fopen'd the file for writing??? I should research/test this. I've really never thought of it before. A text document is easy to comprehend because it is not saved until the end... but A/V is different.
+
+
+Test/Research:
+- Last modified timestamp points to beginning or end of continuously written file? VOICE RECORD = BEGINNING (woot)
+- A/V mux with some parts audio only (black screen I'd imagine)
+- A/V mux with some parts video only (silence I'd imagine)
+- A/V mux with combination of some parts audio only, some parts video only
+- A/V mux with some audio/video parts missing for only a few minutes/seconds -- RESUME FUNCTIONALITY. I don't even know the ffmpeg command for this. Like eh "mux a single file using like 20x audio and video files, this is where audio[0] starts (so on until audio[19]), this is where video[0] starts (so on until video[19])). Obviously when there's a part with neither audio nor video, we move onto a completely different target mux'd file. I'm unsure if the different audio (or video) "segements" would be considered different elementary streams or what. The simplest solution is to have A/V be the same length, timestamp sync'd, and to not have any stop/restart gaps, so maybe I should get _THAT_ working first.
+
+
+Since my video is "raw encoded" (encoded, but not muxed into a typical media container), I think I have to calculate it's duration manually. ConcurrentLossyDirectoryCopier accomplished this I believe.
+
+
+I should KISS and just try to mux two A/V streams together in a semi-automated fashion (because manually is dick easy (the same applies to that [growing] torrent I still haven't created xD)). I should read the timestamps and start them both accordingly. I dunno how to do that, but a hacky way (i know would work) to accomplish "silent audio" (or video) would be to fucking make it beforehand (make both A/V the same duration) before feeding it into the main mux command. *does some ffmpeg research*
+
+NOTE: After mux'ing the file, I should then `touch` it (or name it, or both) to the desired timestamp.
+
+
+After a tiny bit of research, the concat demuxer could accomplish this if I have "blank audio" and "blank video" and use 1337 h4x to prepare two a/v streams that are the same duration (I _THINK_ that lossy compressing the "blank a/v" will make it's size neglible -- I'm not sure there's a proper way to say "this stream is taking a pause until X")
+
+
+TODOoptional: a "sample 5 seconds of muxed shit" could be used to see how closely the timestamps of the two devices are together... and then to feed in an offset to the final mux for fixing it. I have to re-set my datetime on the video capture box (hat) on every reboot lolol.
+
+Just read about aevalsrc. I can tell this is going to be an all day thing.
+
+It doesn't look like aevalsrc is compatible with concat demuxer. I could very well be wrong because ffmpeg commands CAN be longer than my dick. Yea I mean fuck trying to use this mux script on old files (where tons of audio and tons of video may be missing), I should just try to get it for the common case from now on: A/V devices system time sync'd as accurately as humanly possible (xD), additionally they are both started at "the same time"... so at most I should only have to generate like a second or so of blank audio or video on each end. Now onto looking at "ffmpeg insert black frames" (thx suggest).
+
+Hmm, -filter_complex seems to be the proper way to do it. It is by definition, not KISS.
+
+
+NOTE: when there's no audio for an entire duration of video, or the opposite (no video for the duration of audio), then obviously I shouldn't generate ANY silence/black-screens and the resulting .ogg should just have 1x elementary stream. I raged a while ago because .ogg is for audio only and A+V, but now it suits me :).
+

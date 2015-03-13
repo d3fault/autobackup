@@ -148,7 +148,7 @@ void FfmpegSegmentUploader::handleSftpUploaderAndRenamerQueueStarted() //or i co
 void FfmpegSegmentUploader::handleSftpFileUploadAndRenameSuccess(const QString &unixTimestamp, const QString &filename)
 {
     m_EnsureVideoSegmentUploadedAtLeastOnceEvery4minutesTimer->start(); //[re-]start
-    emit o("segment upload success (Current time: " + QDateTime::currentDateTime().toString() + " -- Segment timestamp: " + unixTimestamp + " -- Segment filename: " + filename);
+    emit o("segment upload success (Current time: " + QDateTime::currentDateTime().toString() + " -- Remote filename: " + unixTimestamp + " -- Local filename: " + filename);
 }
 void FfmpegSegmentUploader::handleFfmpegProcessStarted()
 {
@@ -200,8 +200,8 @@ void FfmpegSegmentUploader::handleSegmentsEntryListFileModified()
         return; //idk my bff jill, but i saw sftp try to upload the localPath folder because 'second' was an empty string (no recursive flag = fails/exits)
     QPair<QString,QString> newPair;
     newPair.second = m_FfmpegSegmentUploaderSessionPath + newLine;
-    newPair.first = QString::number(QDateTime::currentDateTime().addSecs(-m_SegmentLengthSeconds).toMSecsSinceEpoch()/1000); //it's added to the segment entry list right when encoding finishes. idfk how i thought it was added right when encoding starts (thought i saw it happen (fucking saw it happen again and then stop happening one run later, WTFZ))... now gotta un-code dat shiz
-    QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "enqueueFileForUploadAndRename", Q_ARG(SftpUploaderAndRenamerQueueTimestampAndFilenameType, newPair));
+    newPair.first = QString::number(QDateTime::currentDateTime().addSecs(-m_SegmentLengthSeconds).toMSecsSinceEpoch()/1000) + ".ogg"; //it's added to the segment entry list right when encoding finishes. idfk how i thought it was added right when encoding starts (thought i saw it happen (fucking saw it happen again and then stop happening one run later, WTFZ))... now gotta un-code dat shiz
+    QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "enqueueFileForUploadAndRename", Q_ARG(SftpUploaderAndRenamerQueue_DestFilenameToRenameToAfterUpload_and_SrcFilenameToUpload_Type, newPair));
 }
 void FfmpegSegmentUploader::killFfmpegProcessIfStillRunning()
 {

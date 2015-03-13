@@ -1,0 +1,13 @@
+Recording at 10fps and encoding at 10fps for the video: Over the course of 4163.41 seconds, the video gets ahead of the audio by ~167 seconds.
+Audio was 128kbps but I doubt that's relevant.
+
+What fps should I use to correct it?
+
+A slower fps.
+I tested 9fps, it is too slow.
+
+
+9.59888
+
+Determined via: (10*(4163.41-167))/4163.41
+(cross multiplication or some flashback from 3rd fucking grade)

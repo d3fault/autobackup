@@ -12,22 +12,20 @@ MusicFingersBackendTesterWidget::MusicFingersBackendTesterWidget(QWidget *parent
 {
     QHBoxLayout *myLayout = new QHBoxLayout();
 
-    createSlider(myLayout, Finger::LeftPinky0);
-    createSlider(myLayout, Finger::LeftRing1);
-    createSlider(myLayout, Finger::LeftMiddl2);
-    createSlider(myLayout, Finger::LeftIndex3);
-    createSlider(myLayout, Finger::LeftThumb4);
+    createSlider(myLayout, Finger::LeftPinky_A0);
+    createSlider(myLayout, Finger::LeftRing_A1);
+    createSlider(myLayout, Finger::LeftMiddle_A2);
+    createSlider(myLayout, Finger::LeftIndex_A3);
+    createSlider(myLayout, Finger::LeftThumb_A4);
 
-    createSlider(myLayout, Finger::RightThumb5);
-    createSlider(myLayout, Finger::RightIndex6);
-    createSlider(myLayout, Finger::RightMiddle);
-    createSlider(myLayout, Finger::RightRing7);
-    createSlider(myLayout, Finger::RightPinky8);
+    createSlider(myLayout, Finger::RightThumb_A5);
+    createSlider(myLayout, Finger::RightIndex_A6);
+    createSlider(myLayout, Finger::RightMiddle_A7);
+    createSlider(myLayout, Finger::RightRing_A8);
+    createSlider(myLayout, Finger::RightPinky_A9);
 
     setLayout(myLayout);
 }
-MusicFingersBackendTesterWidget::~MusicFingersBackendTesterWidget()
-{ }
 void MusicFingersBackendTesterWidget::handleSliderMoved(int newPosition)
 {
     QSlider *slider = qobject_cast<QSlider*>(sender());

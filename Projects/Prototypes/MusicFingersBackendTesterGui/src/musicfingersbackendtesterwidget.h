@@ -13,7 +13,6 @@ class MusicFingersBackendTesterWidget : public QWidget
     Q_OBJECT
 public:
     MusicFingersBackendTesterWidget(QWidget *parent = 0);
-    ~MusicFingersBackendTesterWidget();
 private:
     QHash<QSlider*, Finger::FingerEnum> m_Fingers;
     void createSlider(QLayout *layoutToAddTo, Finger::FingerEnum theFinger);

@@ -140,7 +140,7 @@ void SftpUploaderAndRenamerQueue::startSftpUploaderAndRenamerQueue(const QString
     m_SftpUploaderAndRenamerQueueState = SftpUploaderAndRenamerQueueState_NotYetStarted;
     startSftpProcessInBatchMode();
 }
-void SftpUploaderAndRenamerQueue::enqueueFileForUploadAndRename(SftpUploaderAndRenamerQueueTimestampAndFilenameType timestampAndFilenameToEnqueueForUpload)
+void SftpUploaderAndRenamerQueue::enqueueFileForUploadAndRename(SftpUploaderAndRenamerQueue_DestFilenameToRenameToAfterUpload_and_SrcFilenameToUpload_Type timestampAndFilenameToEnqueueForUpload)
 {
     m_SegmentsQueuedForUpload.enqueue(timestampAndFilenameToEnqueueForUpload);
     tryDequeueAndUploadSingleSegment();
@@ -232,7 +232,7 @@ void SftpUploaderAndRenamerQueue::tryDequeueAndUploadSingleSegment()
 
         QString remoteUploadPath = "\"" + m_RemoteDestinationToUploadToWithSlashAppended + fileInfoToGetFilenamePortion.fileName() + "\"";
         QString putCommand = "put \"" + queuedPair.second + "\" " + remoteUploadPath;
-        QString renameCommand = "rename \"" + remoteUploadPath + "\" \"" + m_RemoteDestinationToMoveToWithSlashAppended + queuedPair.first + ".ogg\"";
+        QString renameCommand = "rename \"" + remoteUploadPath + "\" \"" + m_RemoteDestinationToMoveToWithSlashAppended + queuedPair.first + "\"";
         //queue upload then rename to sftp
         *m_SftpProcessTextStream << putCommand << endl << renameCommand << endl;
         m_SftpPutInProgressSoWatchForRenameCommandEcho = true;
@@ -298,7 +298,7 @@ void SftpUploaderAndRenamerQueue::handleSftpProcessReadyReadStandardOut()
             if(m_SftpPutInProgressSoWatchForRenameCommandEcho && currentLine.startsWith("sftp> rename "))
             {
                 m_SftpPutInProgressSoWatchForRenameCommandEcho = false;
-                SftpUploaderAndRenamerQueueTimestampAndFilenameType fileJustUploadedAndRenamed = m_SegmentsQueuedForUpload.dequeue();
+                SftpUploaderAndRenamerQueue_DestFilenameToRenameToAfterUpload_and_SrcFilenameToUpload_Type fileJustUploadedAndRenamed = m_SegmentsQueuedForUpload.dequeue();
                 emit fileUploadAndRenameSuccess(fileJustUploadedAndRenamed.first, fileJustUploadedAndRenamed.second);
                 if(m_SegmentsQueuedForUpload.isEmpty() && m_SftpUploaderAndRenamerQueueState != SftpUploaderAndRenamerQueueState_Started) //TODOoptional: the last segment PROBABLY won't be segmentLengthSeconds long, so the timestamp we calculate when it's added to the segment entry list will be early and 'pointing to a time in the previous segment'. i could solve this by keeping track of time elapsed or whatever and then only using that for the very last segment added when quitting, but i'm too lazy for now :-P
                 {

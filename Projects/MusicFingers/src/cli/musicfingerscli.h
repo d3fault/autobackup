@@ -12,7 +12,9 @@ public:
     QTextStream m_StdOut;
     QTextStream m_StdErr;
 
+private:
     void cliUsage();
+    bool serialPortSelectionIsValid(const QString &serialPortSelection, int numSerialPorts);
 signals:
     void queryMusicFingerPositionRequested(int fingerIndex);
 private slots:

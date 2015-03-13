@@ -54,6 +54,9 @@
 
 #define HVBS_VIDEO_SEGMENT_SPECIAL_PATH_TO_INDICATE_CURRENT_IS_LATEST "n"
 
+//TODOreq: if latest vid is <= 4 minutes from current time, show latest vid (since very likely i am "live"). else, show ~24 hours before latest vid, to give "fake live" illusion
+//TODOreq: "resume where i left off" [sanitized] cookie
+
 //segfault if server is started before assigning these that are pointers :-P (fuck yea performance)
 AdImageGetAndSubscribeManager* HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = 0;
 QString HackyVideoBullshitSiteGUI::m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended = QDir::rootPath(); //root tends to have a small number of files that rarely change, so a good default for when the user forgets to specify (since it will be 'watched')

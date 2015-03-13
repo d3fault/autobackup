@@ -5,7 +5,6 @@
 #-------------------------------------------------
 
 QT       += core
-
 QT       -= gui
 
 TARGET = FfmpegSegmentUploaderCli
@@ -14,17 +13,13 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-
 SOURCES += main.cpp \
     ffmpegsegmentuploadercli.cpp \
-    ../lib/ffmpegsegmentuploader.cpp \
-    ../../../../../../Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.cpp
+    ../lib/ffmpegsegmentuploader.cpp
 
 HEADERS += \
     ffmpegsegmentuploadercli.h \
-    ../lib/ffmpegsegmentuploader.h \
-    ../../../../../../Projects/SftpUploaderAndRenamerQueue/src/lib/sftpuploaderandrenamerqueue.h
+    ../lib/ffmpegsegmentuploader.h
 
-INCLUDEPATH += ../../../../../../Projects/SftpUploaderAndRenamerQueue/src/lib/
-
+include(../../../../../../Projects/SftpUploaderAndRenamerQueue/src/sftpuploadandrenamerqueue.pri)
 include(../../../../../../GloballySharedClasses/standardinputnotifier.pri)

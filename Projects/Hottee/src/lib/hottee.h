@@ -63,7 +63,9 @@ public slots:
 private slots:
     void handleInputProcessReadyReadStandardOutput();
     void handleInputStdErr();
+    void handleInputProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
     void handleOutputProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    void cleanupHotteeingAndRequestQuit();
 };
 
 #endif // HOTTEE_H

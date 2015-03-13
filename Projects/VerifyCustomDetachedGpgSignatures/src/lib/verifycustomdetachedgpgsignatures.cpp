@@ -8,6 +8,8 @@
 #define GPG_END_SIG_DELIMITER "-----END PGP SIGNATURE-----"
 #define GPG_DEFAULT_PATH "/usr/bin/gpg" //TODOoptional: custom path as arg
 
+//TODOreq: the sig file generator (which as of now is just a bash script) should be able to "recursively sign heirarchy, skipping already signed files". as of now, it would re-sign the files
+//TODOreq: might be a good idea to mention existing files on filesystem that don't have an entry in the signatures file
 VerifyCustomDetachedGpgSignatures::VerifyCustomDetachedGpgSignatures(QObject *parent)
     : QObject(parent)
     , m_GpgProcess(new QProcess(this))

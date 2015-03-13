@@ -14,11 +14,11 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    ../lib/musicfingers.cpp \
     musicfingerscli.cpp
 
 HEADERS += \
-    ../lib/musicfingers.h \
     musicfingerscli.h
 
 include(../../../../GloballySharedClasses/standardinputnotifier.pri)
+include(../musicfingers.pri)
+include(../musicfingersserialportintegration.pri)

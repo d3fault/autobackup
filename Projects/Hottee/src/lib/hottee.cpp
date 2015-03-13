@@ -5,6 +5,7 @@
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QDir>
+#include <QTimer>
 
 #include <boost/filesystem.hpp> //*shakes fist at Qt*
 
@@ -130,8 +131,7 @@ bool Hottee::readInputProcessesStdOutAndWriteAccordingly()
                 {
                     emit d("Hottee is cleanly quitting at end of chunk: " + m_CurrentOutputFile->fileName());
                     emit d("Wait...");
-                    cleanupHotteeing(); //it isn't strictly necessary to call this here, since it's called by our destructor... but in order to make readyRead never be emitted again, it's best to call it as soon as possible (now)
-                    emit quitRequested(); //TO DOnereq: backends should not call "quit", they should just emit "done" or "stopped" and then the listener can decide when to call quit. BECAUSE: if there are multiple backends. I think there is a way to do that "waiting for all backends to finish" thing fancily using QFuture or similar, but can't find it. QFutureSynchronizer sounds right, but has no signals wtf -_-. I _COULD_ solve that uglily by using a separate thread whose job is just to synchronously wait on all my backends to finish, and then he emits a signal. Ugly and expensive, but would work.
+                    cleanupHotteeingAndRequestQuit();
                     return true; //true/false doesn't matter here, since readyRead is never emitted again we never get to to where it would matter
                 }
 
@@ -332,6 +332,7 @@ void Hottee::startHotteeing(const QString &inputProcessPathAndArgs, const QStrin
     m_InputProcess->setReadChannel(QProcess::StandardOutput);
     connect(m_InputProcess, SIGNAL(readyRead()), this, SLOT(handleInputProcessReadyReadStandardOutput()));
     connect(m_InputProcess, SIGNAL(readyReadStandardError()), this, SLOT(handleInputStdErr()));
+    connect(m_InputProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(handleInputProcessFinished(int,QProcess::ExitStatus)));
     m_InputProcess->start(inputProcessPathAndArgs, QIODevice::ReadOnly);
 }
 void Hottee::queryChunkWriteOffsetAndStorageCapacityStuff()
@@ -399,6 +400,12 @@ void Hottee::stopWritingAtEndOfThisChunk()
 void Hottee::quitAfterThisChunkFinishes()
 {
     m_QuitAfterThisChunkFinishes = true;
+
+    if(!m_InputProcess->isOpen())
+    {
+        emit o("Stopping in 5 seconds...");
+        QTimer::singleShot(5000, this, SLOT(cleanupHotteeingAndRequestQuit()));
+    }
 }
 void Hottee::cleanupHotteeing()
 {
@@ -406,7 +413,7 @@ void Hottee::cleanupHotteeing()
     {
         if(m_InputProcess->isOpen())
         {
-            m_InputProcess->close();
+            m_InputProcess->terminate();
             m_InputProcess->waitForFinished(-1);
         }
         delete m_InputProcess;
@@ -416,7 +423,7 @@ void Hottee::cleanupHotteeing()
     {
         if(m_OutputProcess->isOpen())
         {
-            m_OutputProcess->close();
+            m_OutputProcess->terminate();
             m_OutputProcess->waitForFinished(-1);
         }
         delete m_OutputProcess;
@@ -426,6 +433,7 @@ void Hottee::cleanupHotteeing()
     {
         if(m_CurrentOutputFile->isOpen())
         {
+            m_CurrentOutputFile->flush();
             m_CurrentOutputFile->close();
             emit d("only wrote " + QString::number(m_Current100mbChunkWriteOffset) + " bytes in last 100mb chunk");
         }
@@ -447,6 +455,25 @@ void Hottee::handleInputStdErr()
     QString allStdErrString(allStdErrBA);
     emit d("input process wrote to stderr: " + allStdErrString);
 }
+void Hottee::handleInputProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    if(exitCode != 0)
+    {
+        emit e("Hottee's input process didn't exit with code zero: " + QString::number(exitCode));
+    }
+    if(exitStatus != QProcess::NormalExit)
+    {
+        emit e("Hottee's input process didn't exit normally" + QString::number(exitStatus));
+    }
+
+    emit o("Hottee's input process stopped during 100mb segment # " + QString::number(m_100mbChunkOffsetForFilename));
+
+    if(m_QuitAfterThisChunkFinishes)
+    {
+        emit o("Stopping in 5 seconds...");
+        QTimer::singleShot(5000, this, SLOT(cleanupHotteeingAndRequestQuit()));
+    }
+}
 void Hottee::handleOutputProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
     if(exitCode != 0)
@@ -462,4 +489,9 @@ void Hottee::handleOutputProcessFinished(int exitCode, QProcess::ExitStatus exit
         return;
 
     emit o("Hottee's output process stopped during 100mb segment # " + QString::number(m_100mbChunkOffsetForFilename));
+}
+void Hottee::cleanupHotteeingAndRequestQuit()
+{
+    cleanupHotteeing(); //it isn't strictly necessary to call this here, since it's called by our destructor... but in order to make readyRead never be emitted again, it's best to call it as soon as possible (now)
+    emit quitRequested(); //TO DOnereq: backends should not call "quit", they should just emit "done" or "stopped" and then the listener can decide when to call quit. BECAUSE: if there are multiple backends. I think there is a way to do that "waiting for all backends to finish" thing fancily using QFuture or similar, but can't find it. QFutureSynchronizer sounds right, but has no signals wtf -_-. I _COULD_ solve that uglily by using a separate thread whose job is just to synchronously wait on all my backends to finish, and then he emits a signal. Ugly and expensive, but would work.
 }

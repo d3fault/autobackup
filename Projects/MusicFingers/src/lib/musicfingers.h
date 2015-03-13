@@ -4,8 +4,6 @@
 #include <QObject>
 #include <QHash>
 #include <QtMultimedia/QAudio>
-#include <QScopedPointer>
-#include <QtSerialPort/QSerialPort>
 
 #define MUSIC_FINGERS_MIN_POSITION 0
 #define MUSIC_FINGERS_MAX_POSITION 1023
@@ -57,16 +55,14 @@ class MusicFingers : public QObject
 public:
     explicit MusicFingers(QObject *parent = 0);
     static bool isValidFingerId(int fingerId);
+    static Finger::FingerEnum fingerIdToFingerEnum(int fingerId);
 private:
-    QHash<Finger::FingerEnum, int /*position*/> m_Fingers;
+    QHash<Finger::FingerEnum /*finger*/, int /*position*/> m_Fingers;
     QAudioOutput *m_AudioOutput;
     QIODevice *m_AudioOutputIoDevice;
     double m_TimeInBytesForMySineWave;
-    QScopedPointer<QSerialPort> m_SerialPort;
 
     QByteArray synthesizeAudioUsingFingerPositions(int numBytesToSynthesize_aka_audioOutputPeriodSize);
-    void processLineOfFingerMovementProtocol(const QString &lineOfFingerMovementProtocol);
-    Finger::FingerEnum fingerIdToFingerEnum(int fingerId);
 signals:
     void presentAudioFrame(const QByteArray &audioFrame);
     void o(const QString &msg);
@@ -78,7 +74,6 @@ public slots:
 private slots:
     void handleAudioOutputStateChanged(QAudio::State newState);
     void writeBytesToAudioOutput();
-    void handleSerialPortReadyRead();
 };
 
 #endif // MUSICFINGERS_H
