@@ -1,5 +1,7 @@
 #include "musicfingersbackendtestergui.h"
 
+#include <QDebug>
+
 #include "objectonthreadgroup.h"
 #include "musicfingers.h"
 #include "musicfingersbackendtesterwidget.h"
@@ -22,7 +24,12 @@ MusicFingersBackendTesterGui::MusicFingersBackendTesterGui(QObject *parent)
 void MusicFingersBackendTesterGui::handleMusicFingersReadyForConnections(QObject *musicFingersAsQObject)
 {
     MusicFingers *business = static_cast<MusicFingers*>(musicFingersAsQObject);
+    connect(business, SIGNAL(o(QString)), this, SLOT(handleO(QString)));
     MusicFingersBackendTesterWidget *gui = new MusicFingersBackendTesterWidget();
     connect(gui, SIGNAL(fingerMoved(Finger::FingerEnum,int)), business, SLOT(moveFinger(Finger::FingerEnum,int)));
     gui->show();
+}
+void MusicFingersBackendTesterGui::handleO(const QString &msg)
+{
+    qWarning() << msg;
 }

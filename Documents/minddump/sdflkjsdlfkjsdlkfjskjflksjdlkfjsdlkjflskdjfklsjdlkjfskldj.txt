@@ -1,0 +1,1 @@
+It (the business aspect) will fail only if you let it fail. It will fail by default (error of omission), stop dicking around.
