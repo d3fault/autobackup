@@ -100,7 +100,7 @@ void VideoSegmentsImporterFolderWatcher::stopNow()
 void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged()
 {
     QDir theDir(m_VideoSegmentsImporterFolderToWatchWithSlashAppended);
-    const QStringList &theDirEntryList = theDir.entryList(QDir::NoDotAndDotDot | QDir::Files, QDir::Name /* | QDir::Reversed*/); //could sort by time instead, but i'm naming them using unix timestamps so...
+    const QStringList &theDirEntryList = theDir.entryList(QDir::NoDotAndDotDot | QDir::Files, QDir::Time /* | QDir::Reversed*/);
     QListIterator<QString> it(theDirEntryList);
     while(it.hasNext())
     {

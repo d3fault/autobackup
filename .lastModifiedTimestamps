@@ -5521,8 +5521,8 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400803006
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1426324573
-Solutions/hackyVideoBullshitSite/src/backend/:1426324522
+Solutions/hackyVideoBullshitSite/src/:1426325009
+Solutions/hackyVideoBullshitSite/src/backend/:1426324953
 Solutions/hackyVideoBullshitSite/src/backend/adimageapikey.h:1424844210
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1425296020
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1420970631
@@ -5530,12 +5530,12 @@ Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.cpp:1
 Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.h:1401025268
 Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.cpp:1425295977
 Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.h:1425295977
-Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1426324522
+Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1426324953
 Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1399509052
-Solutions/hackyVideoBullshitSite/src/frontend/:1426324570
+Solutions/hackyVideoBullshitSite/src/frontend/:1426324953
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.cpp:1425106320
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.h:1398743110
-Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1426324570
+Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.cpp:1426324953
 Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:1426322591
 Solutions/hackyVideoBullshitSite/src/frontend/hvbsshared.h:1424550347
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1424751631
