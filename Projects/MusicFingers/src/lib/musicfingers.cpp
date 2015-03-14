@@ -5,6 +5,7 @@
 #include <QDebug>
 
 //TODOmb: if all of [5] (one hand) of the finger sensors move at the same time (and the same distance), it means the WRIST is moving, not [necessarily] the fingers.... so I can/should filter that wrist movement out. Differentiating between that and intentional movement of all 5 fingers would be difficult, if not impossible
+//TODOoptional: easing curves (both for the 'linear transition, but also optionally for overshooting and doubling back all sexy like) when moving the finger. OutElastic seems best (from the visual example I'm testing), but OutBack seems aight too. I think using the QAnimation classes directly might help, but am unsure. I need to make sure that I "adjust" the animated easing curve, instead of "restarting" it for every finger movement (obviously once the animation/easing-curve is OVER, then I "restart" it on the next finger movement). When starting this to do, I thought it would just be a neat experiment, now I'm pretty sure QPropertyAnimation is the proper solution to the 'linear transition' problem (choppiness) :-P. I'm going to make an assumption and say the Qt devs are fucking smart as fuck and probably handle changing the destination/end value of the property animation while the animation is running...
 MusicFingers::MusicFingers(QObject *parent)
     : QObject(parent)
     , m_AudioOutputHasBeenIdleBefore(false)
@@ -86,125 +87,14 @@ Finger::FingerEnum MusicFingers::fingerIdToFingerEnum(int fingerId)
         return Finger::A0_LeftPinky; //should never happen, caller should (and does atm) sanitize before calling
     }
 }
-#if 0 //isuck
-QByteArray MusicFingers::synthesizeAudioUsingFingerPositions(int numBytesToSynthesize)
-{
-    //TODOoptional: runtime math formula random permuations (press space key = new random math formula (it tells you which ofc (and ideally all are recorded (and ideally rated based on how i like em))))
-
-    QByteArray ret; //TODOoptimization: maybe smart to re-use this buffer, maybe doesn't matter
-    ret.reserve(numBytesToSynthesize);
-    //ret.resize(numBytesToSynthesize);
-    int numberOfShortsWeCanFitIntoRet = numBytesToSynthesize / sizeof(short);
-    //for(int i = 0; i < (numberOfDoublesWeCanFitIntoRet/2); ++i)
-    for(int i = 0; i < numberOfShortsWeCanFitIntoRet; ++i)
-    {
-        int a0_fingerPos = m_Fingers.value(Finger::LeftPinky_A0);
-        int a1_fingerPos = m_Fingers.value(Finger::A1_LeftRing);
-
-
-        //double y = sin(++m_TimeInBytesForMySineWave)*fingerPos;
-
-        //mute
-        //double y = pow(sin(++m_TimeInBytesForMySineWave), static_cast<double>(fingerPos));
-
-#if 0
-        //YES
-        double y = sin((++m_TimeInBytesForMySineWave)*a0_fingerPos)*a0_fingerPos;
-#endif
-
-        //mute
-        //double y = sin((++m_TimeInBytesForMySineWave)*a0_fingerPos);
-
-        //mute
-        //double y = sin((++m_TimeInBytesForMySineWave)/a0_fingerPos)/a0_fingerPos;
-
-        //mute
-        //double y = pow(sin((++m_TimeInBytesForMySineWave)*a0_fingerPos*a0_fingerPos), a0_fingerPos*a0_fingerPos);
-
-        //mute
-        //double y = sin((++m_TimeInBytesForMySineWave)*a0_fingerPos)*pow(a0_fingerPos, a0_fingerPos);
-
-#if 0
-        //BETTER YES
-        //seems the same as sin, but "faster". has cool/unique (compared to rest) sound when position is at/near: 639
-        double y = tan((++m_TimeInBytesForMySineWave)*a0_fingerPos)*a0_fingerPos;
-#endif
-
-        //mute
-        //double y = asin((++m_TimeInBytesForMySineWave)*a0_fingerPos)*a0_fingerPos;
-
-#if 0
-        //soft fuzzy sound only when moving finger
-        double y = asinh((++m_TimeInBytesForMySineWave)*a0_fingerPos)*a0_fingerPos;
-#endif
-
-        //A1 added
-
-        //a1 has little effect
-        //double y = sin((++m_TimeInBytesForMySineWave)*a0_fingerPos)*a1_fingerPos;
-
-        //white noise unless one of the sensors is near 1 (which makes it equivalent to my "YES" formula)
-        //double y_a0 = sin((++m_TimeInBytesForMySineWave)*a0_fingerPos)*a0_fingerPos;
-        //double y_a1 = sin((++m_TimeInBytesForMySineWave)*a1_fingerPos)*a1_fingerPos;
-        //double y = y_a0 * y_a1;
-
-        //ret.insert(i, y);
-
-        //a1 doesn't change anything, a0 behaves like "YES"
-        //double y0 = sin((++m_TimeInBytesForMySineWave)*a0_fingerPos)*a0_fingerPos;
-        //double y1 = sin((++m_TimeInBytesForMySineWave)*a1_fingerPos)*a1_fingerPos;
-        //ret.append(y0);
-        //ret.append(y1);
-
-        //a1 has little effect
-        //double y = tan((++m_TimeInBytesForMySineWave)*a0_fingerPos)*a1_fingerPos;
-
-        //quiet af, movement has very little (if any) effect
-        //double y = tan((++m_TimeInBytesForMySineWave*a0_fingerPos))*sin(m_TimeInBytesForMySineWave*a1_fingerPos);
-
-        //white noise
-        //double y = (tan((++m_TimeInBytesForMySineWave*a0_fingerPos))*sin(m_TimeInBytesForMySineWave*a1_fingerPos)) * (a0_fingerPos*a1_fingerPos);
-
-        //quiet af, movement has very little (if any) effect
-        //double y = tan((++m_TimeInBytesForMySineWave*a0_fingerPos)) / sin(m_TimeInBytesForMySineWave*a1_fingerPos);
-
-        //double y = sin((2 * M_PI * (++m_TimeInBytesForMySineWave))*a0_fingerPos)*a0_fingerPos;
-
-        //ret.append(y);
-
-        static const long minFreq = 0;
-        static const long maxFreq = 1023;
-        //map 0-1023 -> minFreq-maxFreq
-        long a0_fingerPos_AsLong = static_cast<long>(a0_fingerPos);
-        long a0_mappedFrequency = (a0_fingerPos_AsLong - MUSIC_FINGERS_MIN_POSITION) * (maxFreq - minFreq) / (MUSIC_FINGERS_MAX_POSITION - MUSIC_FINGERS_MIN_POSITION) + minFreq; //jacked from Arduino/WMath.cpp , which in turn was jacked from Wiring. it's just math anyways (not copyrighteable)
-#if 0
-        if(m_TimeInBytesForMySineWave % 50000 == 0)
-            emit o("Freq: " + QString::number(a0_mappedFrequency));
-#endif
-        //a0_mappedFrequency = 440;
-
-        //short sample = 32760 * sin( (2.f*static_cast<float>(M_PI)*static_cast<float>(a0_mappedFrequency)) / m_SampleRate * (++m_TimeInBytesForMySineWave));
-
-        qreal sample = qSin( (static_cast<qreal>(2) * static_cast<qreal>(M_PI) * static_cast<qreal>(a0_mappedFrequency)) / m_SampleRate * (++m_TimeInBytesForMySineWave));
-        short sampleShort = static_cast<short>(sample * 32760);
-
-        if(m_TimeInBytesForMySineWave % 100000 == 0)
-            emit o("Sample: " + QString::number(sample));
-
-        ret.append(sampleShort);
-    }
-    return ret;
-}
-#endif
 void MusicFingers::moveFinger(Finger::FingerEnum fingerToMove, int newPosition)
 {
     //qDebug() << fingerToMove << newPosition;
-    //m_Fingers.insert(fingerToMove, newPosition);
     m_MusicFingersSynthesizer->moveFinger(fingerToMove, newPosition);
 }
 void MusicFingers::queryMusicFingerPosition(int fingerIndex)
 {
-    emit o("Finger position: " + QString::number(m_MusicFingersSynthesizer->m_Fingers.value(fingerIdToFingerEnum(fingerIndex))));
+    emit o("Finger position: " + QString::number(m_MusicFingersSynthesizer->m_Fingers.value(fingerIdToFingerEnum(fingerIndex))->position()));
 }
 void MusicFingers::handleAudioOutputStateChanged(QAudio::State newState)
 {
@@ -220,9 +110,3 @@ void MusicFingers::handleAudioOutputStateChanged(QAudio::State newState)
     }
     qDebug() << "Audio Output changed state to: " << newState;
 }
-#if 0
-void MusicFingers::writeBytesToAudioOutput()
-{
-    m_AudioOutputIoDevice->write(synthesizeAudioUsingFingerPositions(m_AudioOutput->periodSize()*m_NumPeriodsToWritePerTimeout));
-}
-#endif

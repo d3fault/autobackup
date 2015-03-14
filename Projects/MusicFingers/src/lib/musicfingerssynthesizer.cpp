@@ -5,24 +5,27 @@
 
 #include "musicfingers.h"
 
+#define MusicFingersSynthesizer_ADD_FINGER(whichFinger) m_Fingers.insert(whichFinger, new Finger(whichFinger, FINGERS_INITIAL_POSITION, this));
+
 MusicFingersSynthesizer::MusicFingersSynthesizer(QObject *parent)
     : QIODevice(parent)
     , m_SampleIndex(0) //TODOmb: smoothly wrap back to zero instead of just overflowing?
 {
-    m_Fingers.insert(Finger::LeftPinky_A0, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::LeftRing_A1, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::LeftMiddle_A2, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::LeftIndex_A3, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::LeftThumb_A4, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::RightThumb_A5, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::RightIndex_A6, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::RightMiddle_A7, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::RightRing_A8, FINGERS_INITIAL_POSITION);
-    m_Fingers.insert(Finger::RightPinky_A9, FINGERS_INITIAL_POSITION);
+    MusicFingersSynthesizer_ADD_FINGER(Finger::LeftPinky_A0)
+    MusicFingersSynthesizer_ADD_FINGER(Finger::LeftRing_A1)
+    MusicFingersSynthesizer_ADD_FINGER(Finger::LeftMiddle_A2)
+    MusicFingersSynthesizer_ADD_FINGER(Finger::LeftIndex_A3)
+    MusicFingersSynthesizer_ADD_FINGER(Finger::LeftThumb_A4)
+    MusicFingersSynthesizer_ADD_FINGER(Finger::RightThumb_A5)
+    MusicFingersSynthesizer_ADD_FINGER(Finger::RightIndex_A6)
+    MusicFingersSynthesizer_ADD_FINGER(Finger::RightMiddle_A7)
+    MusicFingersSynthesizer_ADD_FINGER(Finger::RightRing_A8)
+    MusicFingersSynthesizer_ADD_FINGER(Finger::RightPinky_A9)
 }
 void MusicFingersSynthesizer::moveFinger(Finger::FingerEnum fingerToMove, int newPosition)
 {
-    m_Fingers.insert(fingerToMove, newPosition);
+    //m_Fingers.insert(fingerToMove, newPosition);
+    m_Fingers.value(fingerToMove)->animatedMoveFingerPosition(newPosition);
 }
 void MusicFingersSynthesizer::setLengthOfDataToSynthesizeWhenReadDataIsCalled(qint64 newLengthOfDataToSynthesizeWhenReadDataIsCalled)
 {
@@ -38,7 +41,7 @@ qint64 MusicFingersSynthesizer::readData(char *data, qint64 maxlen)
         //map 0-1023 -> minFreq-maxFreq
         static const qreal minFreq = 50;
         static const qreal maxFreq = 2000;
-        qreal a0_fingerPos_AsQreal = static_cast<qreal>(m_Fingers.value(Finger::LeftPinky_A0));
+        qreal a0_fingerPos_AsQreal = static_cast<qreal>(m_Fingers.value(Finger::LeftPinky_A0)->position());
         qreal a0_mappedFrequency = (a0_fingerPos_AsQreal - MUSIC_FINGERS_MIN_POSITION) * (maxFreq - minFreq) / (MUSIC_FINGERS_MAX_POSITION - MUSIC_FINGERS_MIN_POSITION) + minFreq; //jacked from Arduino/WMath.cpp , which in turn was jacked from Wiring. it's just math anyways (not copyrighteable)
 
         const qreal x = qSin(static_cast<qreal>(2) * static_cast<qreal>(M_PI) * a0_mappedFrequency * qreal(m_SampleIndex % MUSIC_FINGERS_SAMPLE_RATE) / static_cast<qreal>(MUSIC_FINGERS_SAMPLE_RATE));

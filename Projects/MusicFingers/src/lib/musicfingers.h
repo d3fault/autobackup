@@ -27,11 +27,8 @@ public:
 private:
     QAudioOutput *m_AudioOutput;
     MusicFingersSynthesizer *m_MusicFingersSynthesizer;
-    //int m_SampleRate;
     bool m_AudioOutputHasBeenIdleBefore;
     int m_NumPeriodsToWriteEachTime;
-    //long long m_TimeInBytesForMySineWave;
-    //QByteArray synthesizeAudioUsingFingerPositions(int numBytesToSynthesize_aka_audioOutputPeriodSize);
 signals:
     void o(const QString &msg);
     void quitRequested();
@@ -40,7 +37,6 @@ public slots:
     void queryMusicFingerPosition(int fingerIndex);
 private slots:
     void handleAudioOutputStateChanged(QAudio::State newState);
-    //void writeBytesToAudioOutput();
 };
 
 #endif // MUSICFINGERS_H

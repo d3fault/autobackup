@@ -15,7 +15,8 @@ public:
 private:
     friend class MusicFingers;
 
-    QHash<Finger::FingerEnum /*finger*/, int /*position*/> m_Fingers;
+    QHash<Finger::FingerEnum /*fingerEnum*/, Finger* /*finger*/> m_Fingers;
+    //QHash<Finger::FingerEnum /*finger*/, QPropertyAnimation* /*transitionToPosition*/> m_FingerTransitionAnimations;
     long long m_SampleIndex;
     qint64 m_LengthOfDataToSynthesizeWhenReadDataIsCalled;
 

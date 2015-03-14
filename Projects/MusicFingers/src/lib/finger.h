@@ -1,9 +1,16 @@
 #ifndef FINGER_H
 #define FINGER_H
 
+#include <QObject>
 
-class Finger
+class QPropertyAnimation;
+
+class MusicFingersSynthesizer;
+
+class Finger : public QObject
 {
+    Q_OBJECT
+    Q_PROPERTY(int position READ position WRITE setPosition)
 public:
     enum FingerEnum
     {
@@ -37,6 +44,17 @@ public:
       , RightPinky_A9
       , A9_RightPinky = RightPinky_A9
     };
+
+    Finger(FingerEnum finger, int initialPosition, QObject *parent = Q_NULLPTR);
+
+    void animatedMoveFingerPosition(int newPosition);
+
+    int position() const;
+    void setPosition(int newPosition);
+private:
+    FingerEnum m_Finger;
+    int m_Position;
+    QPropertyAnimation *m_FingerMovementAnimation;
 };
 
 #endif // FINGER_H
