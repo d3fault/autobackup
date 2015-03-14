@@ -64,6 +64,9 @@ private:
     qint64 determineSecondsSinceEpochFromVideoSegmentFilepath(const std::string &videoSegmentFilePath);
     bool latestVidIsLessThan4minutesOld(qint64 latestVideoSegmentSecondsSinceEpoch);
     void displayVideoSegmentRoughly24hoursBefore(qint64 latestVideoSegmentSecondsSinceEpoch);
+    std::string determineFirstVideoSegmentThatComesChronologicallyAfterThisEpochTimeInSeconds(qint64 targetEpochTimeInSeconds, qint64 epochTimeInSecondsOfLatestVideoSegment);
+    std::string getFilePathOfFirstVideoSegmentInFirstDayOfYearFolder(const QString &knownToExistYearFolderAbsolutePathWithSlashAppended);
+    std::string getFilePathOfFirstVideoSegmentInDayFolder(const QString &knownToExistDayFolderAbsolutePathWithSlashAppended);
     //void tellUserThatCurrentVideoSegmentIsLatest();
     void handleHomeAnchorClickedSoShowLatestVideoSegmentEvenIfAlreadyHome();
 

@@ -14,7 +14,7 @@
 #define FfmpegSegmentUploader_FFMPEG_COMMAND_SEGMENT_ENTRY_LIST_FILE_REPLACEMENT_STRING "%SEGMENT_ENTRY_LIST_FILE%"
 #define FfmpegSegmentUploader_FFMPEG_COMMAND_SEGMENT_LENGTH_STRING "%SEGMENT_LENGTH_SECONDS%"
 
-//configure ffmpeg with: ./configure --enable-shared --disable-doc --disable-htmlpages --disable-podpages --enable-libopus --enable-libtheora --enable-libv4l2
+//configure ffmpeg with: ./configure --enable-shared --disable-htmlpages --disable-podpages --enable-libopus --enable-libtheora --enable-libv4l2
 
 #define FfmpegSegmentUploader_VIDEO_BITRATE "275k"
 

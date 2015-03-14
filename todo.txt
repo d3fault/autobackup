@@ -3,11 +3,13 @@ hottee
 ffmpeg segment uploader
 
 do:
+hvbs 24hr + cookie
+abc explain vids
+music fingers vanilla piano (DOIT FAGGOT)
 "not serving this"
-webp->jpg (binarySupplement post-update also?)
+binarySupplement post-update also?
 copyleft disclaimer (assignment is easiest, but shitty)
 git auto submodulization (solves binaries problem)
-page jump = segfault
 Hottee: "working dir(s)", on start first check currentDateTime >= 2015, then create hotteeAt<timestampWithMs> sub-folder (fail if it exists (UNLESS RESUMING, in which case we need to know that hotteeAt<timestamp> sub-folder as an arg))
 ~24hr cronjob: make torrent of all 'yesterdays' (just ended day) video segments -- also same for weekly (later, bump that to monthly) -- hvbs download page builds links based on torrents it finds in a directory?
 num unique visitors (wt unique id?) per day
