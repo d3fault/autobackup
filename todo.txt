@@ -3,7 +3,6 @@ hottee
 ffmpeg segment uploader
 
 do:
-mouse/motion zoom
 "not serving this"
 webp->jpg (binarySupplement post-update also?)
 copyleft disclaimer (assignment is easiest, but shitty)

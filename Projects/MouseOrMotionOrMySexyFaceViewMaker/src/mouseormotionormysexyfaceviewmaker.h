@@ -62,9 +62,10 @@ private:
     void drawMySexyFace();
     bool thereIsEnoughRoomToDrawQtCreatorBlinkingCursorInOrderToExcludeItFromFutureSearching(int verticalPositionOfMotionPoint, int horizontalPositionOfMotionPoint, int imageWidth);
     void thereWasMotionAt(QPoint point);
+    void zoomInIfNeeded();
 signals:
     void e(const QString &msg);
-    void presentPixmapForViewingRequested(const QPixmap &);
+    void presentPixmapForViewingRequested(const QPixmap &pixmapForViewing);
     void detectedMySexyFaceStreamIsFrozen();
     void quitRequested();
 public slots:

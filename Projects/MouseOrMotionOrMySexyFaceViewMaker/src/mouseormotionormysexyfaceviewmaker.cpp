@@ -13,6 +13,7 @@
 
 #define MOUSE_OR_MOTION_OR_MY_SEXY_FACE_MINIMUM_TIME_MS_WITHOUT_MOTION_BEFORE_SHOWING_MY_FACE 2000
 #define MOUSE_OR_MOTION_OR_MY_SEXY_FACE_DIVIDE_MY_SEXY_FACE_BY_WHEN_MAKING_THUMBNAIL 4
+#define MOUSE_OR_MOTION_OR_MY_SEXY_FACE_ZOOM_FACTOR 2.0
 
 #define MY_SEXY_FACE_THUMBNAIL_SNIPPET_KDSFJLSKDJF(painter) \
 QImage mySexyFaceImage((const unsigned char*)(m_LastReadFrameOfMySexyFace.constData()), m_CameraResolution.width(), m_CameraResolution.height(), QImage::Format_RGB32); \
@@ -87,11 +88,15 @@ MouseOrMotionOrMySexyFaceViewMaker::~MouseOrMotionOrMySexyFaceViewMaker()
 //TODOoptional: error quit if screen dimensions < view dimensions, for now it is simply undefined. I was tempted to write that the app would be pointless if that were the case, but actually once I implement "zoom", then it would still even be handy on 640x480 (working) -> 800x600 (view) cases (though why you wouldn't use 800x600 for working is beyond me)
 QRect MouseOrMotionOrMySexyFaceViewMaker::makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint) //TODOreq: does this return the upper-left point of the rect instead? confused but eh methinks it works and i remember changing it to something like that
 {
-    //start with a normal rectangle around the point
-    QPoint topLeft(inputPoint.x()-(m_ViewSize.width()/2),
-              inputPoint.y()-(m_ViewSize.height()/2));
+    QSize targetSize; //taking into account zoom factor
+    targetSize.setWidth(m_ViewSize.width()/MOUSE_OR_MOTION_OR_MY_SEXY_FACE_ZOOM_FACTOR);
+    targetSize.setHeight(m_ViewSize.height()/MOUSE_OR_MOTION_OR_MY_SEXY_FACE_ZOOM_FACTOR);
 
-    //then adjust
+    //start with a normal calculation of the top-left corner (may be out of bounds)
+    QPoint topLeft(inputPoint.x()-(targetSize.width()/2),
+              inputPoint.y()-(targetSize.height()/2));
+
+    //then adjust it to make sure it's within bounds
     if(topLeft.x() < 0)
     {
         //int adjust = (0-ret.x());
@@ -101,16 +106,16 @@ QRect MouseOrMotionOrMySexyFaceViewMaker::makeRectAroundPointStayingWithinResolu
     {
         topLeft.setY(0);
     }
-    if(topLeft.x() > (m_ScreenResolutionX-m_ViewSize.width()))
+    if(topLeft.x() > (m_ScreenResolutionX-targetSize.width()))
     {
-        topLeft.setX(m_ScreenResolutionX-m_ViewSize.width());
+        topLeft.setX(m_ScreenResolutionX-targetSize.width());
     }
-    if(topLeft.y() > (m_ScreenResolutionY-m_ViewSize.height()))
+    if(topLeft.y() > (m_ScreenResolutionY-targetSize.height()))
     {
-        topLeft.setY(m_ScreenResolutionY-m_ViewSize.height());
+        topLeft.setY(m_ScreenResolutionY-targetSize.height());
     }
 
-    QRect ret(topLeft.x(), topLeft.y(), m_ViewSize.width(), m_ViewSize.height());
+    QRect ret(topLeft.x(), topLeft.y(), targetSize.width(), targetSize.height());
     return ret;
 }
 void MouseOrMotionOrMySexyFaceViewMaker::drawMySexyFace()
@@ -177,6 +182,13 @@ void MouseOrMotionOrMySexyFaceViewMaker::thereWasMotionAt(QPoint point)
     m_TogglingMinimumsTimerIsStarted = false;
     m_ThereWasMotionRecently = true;
 }
+void MouseOrMotionOrMySexyFaceViewMaker::zoomInIfNeeded()
+{
+    if(MOUSE_OR_MOTION_OR_MY_SEXY_FACE_ZOOM_FACTOR != 1.0)
+    {
+        m_CurrentPixmapBeingPresented = m_CurrentPixmapBeingPresented.scaled(m_ViewSize);
+    }
+}
 void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int captureFps, int motionDetectionFps, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution, int optionalRequiredPrimaryScreenWidth_OrNegativeOneIfNotSupplied)
 {
     if(!m_Initialized)
@@ -185,7 +197,12 @@ void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceVie
         emit quitRequested();
         return;
     }
-
+    if(QGuiApplication::screens().size() == 1)
+    {
+        emit e("there's only one screen");
+        emit quitRequested();
+        return;
+    }
     if(optionalRequiredPrimaryScreenWidth_OrNegativeOneIfNotSupplied > -1)
     {
         if(m_ScreenResolutionX != optionalRequiredPrimaryScreenWidth_OrNegativeOneIfNotSupplied)
@@ -262,7 +279,10 @@ void MouseOrMotionOrMySexyFaceViewMaker::captureIntervalTimerTimedOut()
         {
             QPainter painter(&m_CurrentPixmapBeingPresented);
             painter.drawPixmap(currentCursorPosition.x()-rectWithinResolution.x(), currentCursorPosition.y()-rectWithinResolution.y(), m_MousePixmapToDraw.width(), m_MousePixmapToDraw.height(), m_MousePixmapToDraw);
-
+        }
+        zoomInIfNeeded();
+        {
+            QPainter painter(&m_CurrentPixmapBeingPresented);
             //draw my sexy face thumb
             if(m_HaveFrameOfMySexyFace)
             {
@@ -285,6 +305,8 @@ void MouseOrMotionOrMySexyFaceViewMaker::captureIntervalTimerTimedOut()
         const QRect &rectWithinResolution = makeRectAroundPointStayingWithinResolution(m_LastPointWithMotionSeen);
         m_CurrentPixmapBeingPresented = m_CurrentDesktopCap_AsPixmap_ForMotionDetection_ButAlsoForPresentingWhenNotCheckingForMotion.copy(rectWithinResolution); //sure we used QImage for pixel analysis, but we still have the QPixmap handy so woot saved a conversion
         //m_PreviousPixmap = QPixmap();
+
+        zoomInIfNeeded();
 
         //draw my sexy face thumb
         if(m_HaveFrameOfMySexyFace)
