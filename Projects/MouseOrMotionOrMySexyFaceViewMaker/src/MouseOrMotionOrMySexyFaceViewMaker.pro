@@ -9,9 +9,9 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = MouseOrMotionOrMySexyFaceViewMaker
-
 TEMPLATE = app
 
+#DEFINES += MOUSE_OR_MOTION_OR_MY_SEXY_FACE_VIEW_MAKER_USE_BACKEND_THREAD
 
 SOURCES += main.cpp\
     mouseormotionormysexyfaceviewmakergui.cpp \
@@ -23,7 +23,10 @@ HEADERS  += \
     mouseormotionormysexyfaceviewmaker.h \
     mouseormotionormysexyfaceviewmakerwidget.h
 
-include(../../../GloballySharedClasses/objectonthreadhelper.pri)
+contains(DEFINES, MOUSE_OR_MOTION_OR_MY_SEXY_FACE_VIEW_MAKER_USE_BACKEND_THREAD)
+{
+    include(../../../GloballySharedClasses/objectonthreadhelper.pri)
+}
 
 RESOURCES += \
     mouseCursor.qrc

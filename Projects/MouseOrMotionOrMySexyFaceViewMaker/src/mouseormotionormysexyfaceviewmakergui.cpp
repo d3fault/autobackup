@@ -5,19 +5,50 @@
 #include <QMenu>
 #include <QAction>
 #include <QActionGroup>
+#include <QMessageBox>
+
+#ifdef MOUSE_OR_MOTION_OR_MY_SEXY_FACE_VIEW_MAKER_USE_BACKEND_THREAD
+#include "objectonthreadgroup.h"
+#endif
 
 MouseOrMotionOrMySexyFaceViewMakerGui::MouseOrMotionOrMySexyFaceViewMakerGui(QObject *parent)
     : QObject(parent)
-    , m_Gui(0)
+    , m_Gui(new MouseOrMotionOrMySexyFaceViewMakerWidget(m_ViewSize))
+    , m_OptionalRequiredPrimaryScreenWidth_OrNegativeOneIfNotSupplied(-1)
     //, m_SystemTrayIconMenu(0)
 {
-    connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(handleAboutToQuit()));
-    connect(&m_BusinessThread, SIGNAL(objectIsReadyForConnectionsOnly()), this, SLOT(handleMouseAndOrMotionViewMakerReadyForConnections()));
-    m_BusinessThread.start();
+#ifdef MOUSE_OR_MOTION_OR_MY_SEXY_FACE_VIEW_MAKER_USE_BACKEND_THREAD
+    ObjectOnThreadGroup *backendThread = new ObjectOnThreadGroup(this);
+    backendThread->addObjectOnThread<MouseOrMotionOrMySexyFaceViewMaker>("handleMouseAndOrMotionViewMakerReadyForConnections");
+    backendThread->doneAddingObjectsOnThreads();
+#else
+    MouseOrMotionOrMySexyFaceViewMaker *mouseOrMotionOrMySexyFaceViewMaker = new MouseOrMotionOrMySexyFaceViewMaker(this);
+#endif
 
-    //optional arguments parsing
     QStringList arguments = QCoreApplication::arguments();
+
+    //optional arguments parsing (flags)
+    int indexOfRequirePrimaryScreenWidth = arguments.indexOf("--require-primary-screen-width");
     bool convertOk;
+    if(indexOfRequirePrimaryScreenWidth > -1)
+    {
+        arguments.removeAt(indexOfRequirePrimaryScreenWidth);
+        if(arguments.size() <= indexOfRequirePrimaryScreenWidth)
+        {
+            qDebug("--require-primary-screen-width must be followed by a value");
+            handleQuitRequested();
+            return;
+        }
+        m_OptionalRequiredPrimaryScreenWidth_OrNegativeOneIfNotSupplied = arguments.takeAt(indexOfRequirePrimaryScreenWidth).toInt(&convertOk);
+        if(!convertOk)
+        {
+            qDebug("primary screen width was not valid int");
+            handleQuitRequested();
+            return;
+        }
+    }
+
+    //optional arguments parsing (ordered)
     m_ViewSize.setWidth(800);
     int argIndex = 0;
     if(arguments.size() > ++argIndex)
@@ -93,22 +124,19 @@ MouseOrMotionOrMySexyFaceViewMakerGui::MouseOrMotionOrMySexyFaceViewMakerGui(QOb
     }
     //TODOoptional: could do drawn cursor image path, whether or not to save the image as video, etc...
 
-    m_Gui = new MouseOrMotionOrMySexyFaceViewMakerWidget(m_ViewSize);
+#ifndef MOUSE_OR_MOTION_OR_MY_SEXY_FACE_VIEW_MAKER_USE_BACKEND_THREAD
+    handleMouseAndOrMotionViewMakerReadyForConnections(mouseOrMotionOrMySexyFaceViewMaker);
+#endif
 }
-MouseOrMotionOrMySexyFaceViewMakerGui::~MouseOrMotionOrMySexyFaceViewMakerGui()
+void MouseOrMotionOrMySexyFaceViewMakerGui::handleMouseAndOrMotionViewMakerReadyForConnections(QObject *mouseOrMotionOrMySexyFaceViewMakerAsQObject)
 {
-    if(m_Gui)
-        delete m_Gui;
-    /*if(m_SystemTrayIconMenu)
-        delete m_SystemTrayIconMenu;*/
-}
-void MouseOrMotionOrMySexyFaceViewMakerGui::handleMouseAndOrMotionViewMakerReadyForConnections()
-{
-    MouseOrMotionOrMySexyFaceViewMaker *business = m_BusinessThread.getObjectPointerForConnectionsOnly();
-    connect(business, SIGNAL(presentPixmapForViewingRequested(QPixmap)), m_Gui, SLOT(presentPixmapForViewing(QPixmap)));
-    connect(business, SIGNAL(detectedMySexyFaceStreamIsFrozen()), m_Gui, SLOT(handleMySexyFaceStreamIsFrozen()));
-    connect(m_Gui, SIGNAL(setMouseOrMotionOrMySexyFaceViewModeRequested()), business, SLOT(setMouseOrMotionOrMySexyFaceViewMode()));
-    connect(m_Gui, SIGNAL(setMySexyFaceViewModeRequested()), business, SLOT(setMySexyFaceViewMode()));
+    MouseOrMotionOrMySexyFaceViewMaker *business = static_cast<MouseOrMotionOrMySexyFaceViewMaker*>(mouseOrMotionOrMySexyFaceViewMakerAsQObject);
+    connect(business, SIGNAL(presentPixmapForViewingRequested(QPixmap)), m_Gui.data(), SLOT(presentPixmapForViewing(QPixmap)));
+    connect(business, SIGNAL(detectedMySexyFaceStreamIsFrozen()), m_Gui.data(), SLOT(handleMySexyFaceStreamIsFrozen()));
+    connect(m_Gui.data(), SIGNAL(setMouseOrMotionOrMySexyFaceViewModeRequested()), business, SLOT(setMouseOrMotionOrMySexyFaceViewMode()));
+    connect(m_Gui.data(), SIGNAL(setMySexyFaceViewModeRequested()), business, SLOT(setMySexyFaceViewMode()));
+    connect(business, SIGNAL(e(QString)), this, SLOT(handleE(QString)));
+    connect(business, SIGNAL(quitRequested()), this, SLOT(handleQuitRequested()));
 
     m_Gui->show();
 
@@ -142,10 +170,13 @@ void MouseOrMotionOrMySexyFaceViewMakerGui::handleMouseAndOrMotionViewMakerReady
     systemTrayIcon->setVisible(true);
 #endif
 
-    QMetaObject::invokeMethod(business, "startMakingMouseOrMotionOrMySexyFaceViews", Qt::QueuedConnection, Q_ARG(QSize, m_ViewSize), Q_ARG(int, m_CaptureFps), Q_ARG(int, m_MotionDetectionFps), Q_ARG(int, m_BottomPixelRowsToIgnore), Q_ARG(QString, m_CameraDeviceName), Q_ARG(QSize, m_CameraResolution));
+    QMetaObject::invokeMethod(business, "startMakingMouseOrMotionOrMySexyFaceViews", Qt::QueuedConnection, Q_ARG(QSize, m_ViewSize), Q_ARG(int, m_CaptureFps), Q_ARG(int, m_MotionDetectionFps), Q_ARG(int, m_BottomPixelRowsToIgnore), Q_ARG(QString, m_CameraDeviceName), Q_ARG(QSize, m_CameraResolution), Q_ARG(int, m_OptionalRequiredPrimaryScreenWidth_OrNegativeOneIfNotSupplied));
 }
-void MouseOrMotionOrMySexyFaceViewMakerGui::handleAboutToQuit()
+void MouseOrMotionOrMySexyFaceViewMakerGui::handleE(const QString &msg)
 {
-    m_BusinessThread.quit();
-    m_BusinessThread.wait();
+    QMessageBox::critical(0, tr("Error"), msg);
+}
+void MouseOrMotionOrMySexyFaceViewMakerGui::handleQuitRequested()
+{
+    QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
 }

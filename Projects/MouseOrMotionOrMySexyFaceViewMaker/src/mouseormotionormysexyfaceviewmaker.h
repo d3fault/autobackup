@@ -34,8 +34,7 @@ private:
     QScreen *m_Screen;
     int m_ScreenResolutionX;
     int m_ScreenResolutionY;
-    int m_ViewWidth;
-    int m_ViewHeight;
+    QSize m_ViewSize;
     int m_BottomPixelRowsToIgnore;
     QImage m_PreviousDesktopCap_AsImage_ForMotionDetection;
     QPixmap m_CurrentDesktopCap_AsPixmap_ForMotionDetection_ButAlsoForPresentingWhenNotCheckingForMotion;
@@ -59,15 +58,17 @@ private:
     QTimer *m_VerifyEvery10secondsMySexyFaceStreamIsntFrozen_Timer;
 
     //Mouse Or Motion methods
-    QPoint makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint);
+    QRect makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint);
     void drawMySexyFace();
     bool thereIsEnoughRoomToDrawQtCreatorBlinkingCursorInOrderToExcludeItFromFutureSearching(int verticalPositionOfMotionPoint, int horizontalPositionOfMotionPoint, int imageWidth);
     void thereWasMotionAt(QPoint point);
 signals:
+    void e(const QString &msg);
     void presentPixmapForViewingRequested(const QPixmap &);
     void detectedMySexyFaceStreamIsFrozen();
+    void quitRequested();
 public slots:
-    void startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int captureFps, int motionDetectionFps, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution);
+    void startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int captureFps, int motionDetectionFps, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution, int optionalRequiredPrimaryScreenWidth_OrNegativeOneIfNotSupplied);
     void setMouseOrMotionOrMySexyFaceViewMode();
     //void setMouseOrLastMouseViewMode();
     void setMySexyFaceViewMode();

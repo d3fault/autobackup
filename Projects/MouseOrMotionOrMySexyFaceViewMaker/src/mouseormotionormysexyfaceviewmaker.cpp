@@ -18,7 +18,7 @@
 QImage mySexyFaceImage((const unsigned char*)(m_LastReadFrameOfMySexyFace.constData()), m_CameraResolution.width(), m_CameraResolution.height(), QImage::Format_RGB32); \
 QImage mySexyFaceImageThumbnail = mySexyFaceImage.scaled(m_CameraResolution.width() / MOUSE_OR_MOTION_OR_MY_SEXY_FACE_DIVIDE_MY_SEXY_FACE_BY_WHEN_MAKING_THUMBNAIL, m_CameraResolution.height() / MOUSE_OR_MOTION_OR_MY_SEXY_FACE_DIVIDE_MY_SEXY_FACE_BY_WHEN_MAKING_THUMBNAIL); \
 int border = 20; \
-painter.drawImage(m_ViewWidth-mySexyFaceImageThumbnail.width()-border, m_ViewHeight-mySexyFaceImageThumbnail.height()-border, mySexyFaceImageThumbnail); \
+painter.drawImage(m_ViewSize.width()-mySexyFaceImageThumbnail.width()-border, m_ViewSize.height()-mySexyFaceImageThumbnail.height()-border, mySexyFaceImageThumbnail); \
 
 //we want the video to update on the thumbnail during the 2 seconds we wait (especially since there will be lots of tiny pauses (less than 2 seconds) during normal usage where we still want video to continue)
 #define REDRAW_MY_FACE_THUMBNAIL_ON_CURRENTLY_PRESENTED_PIXMAP \
@@ -51,7 +51,7 @@ MouseOrMotionOrMySexyFaceViewMaker::MouseOrMotionOrMySexyFaceViewMaker(QObject *
     m_Initialized = true;
 
     QSize screenResolution = m_Screen->size();
-    qDebug() << screenResolution; //TODOoptional: if(numScreens > 1 && screen resolution == capture resolution, give qmessagebox asking yes/no for whether to continue. when i don't do xrandr, the secondary screen (as 'primaryScreen()' above) is used which fucks up royally the motion detection
+    //qDebug() << screenResolution; //TODOoptional: if(numScreens > 1 && screen resolution == capture resolution, give qmessagebox asking yes/no for whether to continue. when i don't do xrandr, the secondary screen (as 'primaryScreen()' above) is used which fucks up royally the motion detection
     m_ScreenResolutionX = screenResolution.width();
     m_ScreenResolutionY = screenResolution.height();
 
@@ -85,30 +85,32 @@ MouseOrMotionOrMySexyFaceViewMaker::~MouseOrMotionOrMySexyFaceViewMaker()
     }
 }
 //TODOoptional: error quit if screen dimensions < view dimensions, for now it is simply undefined. I was tempted to write that the app would be pointless if that were the case, but actually once I implement "zoom", then it would still even be handy on 640x480 (working) -> 800x600 (view) cases (though why you wouldn't use 800x600 for working is beyond me)
-QPoint MouseOrMotionOrMySexyFaceViewMaker::makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint) //TODOreq: does this return the upper-left point of the rect instead? confused but eh methinks it works and i remember changing it to something like that
+QRect MouseOrMotionOrMySexyFaceViewMaker::makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint) //TODOreq: does this return the upper-left point of the rect instead? confused but eh methinks it works and i remember changing it to something like that
 {
     //start with a normal rectangle around the point
-    QPoint ret(inputPoint.x()-(m_ViewWidth/2),
-              inputPoint.y()-(m_ViewHeight/2));
+    QPoint topLeft(inputPoint.x()-(m_ViewSize.width()/2),
+              inputPoint.y()-(m_ViewSize.height()/2));
 
     //then adjust
-    if(ret.x() < 0)
+    if(topLeft.x() < 0)
     {
         //int adjust = (0-ret.x());
-        ret.setX(0);
+        topLeft.setX(0);
     }
-    if(ret.y() < 0)
+    if(topLeft.y() < 0)
     {
-        ret.setY(0);
+        topLeft.setY(0);
     }
-    if(ret.x() > (m_ScreenResolutionX-m_ViewWidth))
+    if(topLeft.x() > (m_ScreenResolutionX-m_ViewSize.width()))
     {
-        ret.setX(m_ScreenResolutionX-m_ViewWidth);
+        topLeft.setX(m_ScreenResolutionX-m_ViewSize.width());
     }
-    if(ret.y() > (m_ScreenResolutionY-m_ViewHeight))
+    if(topLeft.y() > (m_ScreenResolutionY-m_ViewSize.height()))
     {
-        ret.setY(m_ScreenResolutionY-m_ViewHeight);
+        topLeft.setY(m_ScreenResolutionY-m_ViewSize.height());
     }
+
+    QRect ret(topLeft.x(), topLeft.y(), m_ViewSize.width(), m_ViewSize.height());
     return ret;
 }
 void MouseOrMotionOrMySexyFaceViewMaker::drawMySexyFace()
@@ -145,9 +147,9 @@ void MouseOrMotionOrMySexyFaceViewMaker::drawMySexyFace()
         QImage mySexyFaceImageMaybeScaled = mySexyFaceImage;
 
         //COMMENT NEXT 3 LINES TO NOT SCALE 720x480 -> 800x600
-        if(m_CameraResolution.width() != m_ViewWidth || m_CameraResolution.height() != m_ViewHeight)
+        if(m_CameraResolution.width() != m_ViewSize.width() || m_CameraResolution.height() != m_ViewSize.height())
         {
-            mySexyFaceImageMaybeScaled = mySexyFaceImage.scaled(m_ViewWidth, m_ViewHeight);
+            mySexyFaceImageMaybeScaled = mySexyFaceImage.scaled(m_ViewSize.width(), m_ViewSize.height());
         }
 
         QPixmap mySexyFacePixmap = QPixmap::fromImage(mySexyFaceImageMaybeScaled);
@@ -175,18 +177,28 @@ void MouseOrMotionOrMySexyFaceViewMaker::thereWasMotionAt(QPoint point)
     m_TogglingMinimumsTimerIsStarted = false;
     m_ThereWasMotionRecently = true;
 }
-void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int captureFps, int motionDetectionFps, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution)
+void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int captureFps, int motionDetectionFps, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution, int optionalRequiredPrimaryScreenWidth_OrNegativeOneIfNotSupplied)
 {
     if(!m_Initialized)
     {
-        qDebug() << "failed to initialize screen, or wrong image format from grabWindow";
+        emit e("failed to initialize screen, or wrong image format from grabWindow");
+        emit quitRequested();
         return;
     }
 
-    m_ViewWidth = viewSize.width();
-    m_ViewHeight = viewSize.height();
-    m_LastPointWithMotionSeen.setX(m_ViewWidth/2);
-    m_LastPointWithMotionSeen.setY(m_ViewHeight/2);
+    if(optionalRequiredPrimaryScreenWidth_OrNegativeOneIfNotSupplied > -1)
+    {
+        if(m_ScreenResolutionX != optionalRequiredPrimaryScreenWidth_OrNegativeOneIfNotSupplied)
+        {
+            emit e("primary screen resolution was not what was expected");
+            emit quitRequested();
+            return;
+        }
+    }
+
+    m_ViewSize = viewSize;
+    m_LastPointWithMotionSeen.setX(m_ViewSize.width()/2);
+    m_LastPointWithMotionSeen.setY(m_ViewSize.height()/2);
     m_CaptureIntervalTimer->start(1000/captureFps);
     m_MotionDetectionIntervalTimer->start(1000/motionDetectionFps);
     m_BottomPixelRowsToIgnore = bottomPixelRowsToIgnore; //woot Xfce lets me specify this directly/easily
@@ -239,13 +251,13 @@ void MouseOrMotionOrMySexyFaceViewMaker::captureIntervalTimerTimedOut()
         //TODOreq: "pre-zoom" before grab
 
         //don't start grabbing to the left of, or above, the screen
-        const QPoint &rectWithinResolution = makeRectAroundPointStayingWithinResolution(currentCursorPosition);
+        const QRect &rectWithinResolution = makeRectAroundPointStayingWithinResolution(currentCursorPosition);
         //TODOqt4: QPixmap::grabWindow(), not sure if 'grabbing only primary screen' will work (and heck, surprised it's even working now in qt5)
         m_CurrentPixmapBeingPresented = m_Screen->grabWindow(0, //0 makes entire desktop eligible, restrained by a rect in following params
                                                rectWithinResolution.x(),
                                                rectWithinResolution.y(),
-                                               m_ViewWidth, //my makeRect need only return topLeft point, fuck it
-                                               m_ViewHeight);
+                                               rectWithinResolution.width(), //my makeRect need only return topLeft point, fuck it
+                                               rectWithinResolution.height());
         //draw mouse cursor (TODOoptional: svg cock, bonus points if it splooges when i click)
         {
             QPainter painter(&m_CurrentPixmapBeingPresented);
@@ -270,8 +282,8 @@ void MouseOrMotionOrMySexyFaceViewMaker::captureIntervalTimerTimedOut()
     {
         //draw rect around the last point where motion was detected
         //use first difference seen point
-        const QPoint &rectWithinResolution = makeRectAroundPointStayingWithinResolution(m_LastPointWithMotionSeen);
-        m_CurrentPixmapBeingPresented = m_CurrentDesktopCap_AsPixmap_ForMotionDetection_ButAlsoForPresentingWhenNotCheckingForMotion.copy(rectWithinResolution.x(), rectWithinResolution.y(), m_ViewWidth, m_ViewHeight); //sure we used QImage for pixel analysis, but we still have the QPixmap handy so woot saved a conversion
+        const QRect &rectWithinResolution = makeRectAroundPointStayingWithinResolution(m_LastPointWithMotionSeen);
+        m_CurrentPixmapBeingPresented = m_CurrentDesktopCap_AsPixmap_ForMotionDetection_ButAlsoForPresentingWhenNotCheckingForMotion.copy(rectWithinResolution); //sure we used QImage for pixel analysis, but we still have the QPixmap handy so woot saved a conversion
         //m_PreviousPixmap = QPixmap();
 
         //draw my sexy face thumb
