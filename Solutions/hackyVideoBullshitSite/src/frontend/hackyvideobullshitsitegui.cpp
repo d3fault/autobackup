@@ -54,8 +54,9 @@
 
 #define HVBS_VIDEO_SEGMENT_SPECIAL_PATH_TO_INDICATE_CURRENT_IS_LATEST "n"
 
-//TODOreq: if latest vid is <= 4 minutes from current time, show latest vid (since very likely i am "live"). else, show ~24 hours before latest vid, to give "fake live" illusion
 //TODOreq: "resume where i left off" [sanitized] cookie
+
+//TODOoptional: to the right of the vid I could have "news" and/or "interesting clips"
 
 //segfault if server is started before assigning these that are pointers :-P (fuck yea performance)
 AdImageGetAndSubscribeManager* HackyVideoBullshitSiteGUI::m_AdImageGetAndSubscribeManager = 0;
@@ -269,7 +270,7 @@ void HackyVideoBullshitSiteGUI::handleInternalPathChanged(const string &newInter
     if(newInternalPath == "/" || newInternalPath == "" || newInternalPath == HVBS_WEB_CLEAN_URL_TO_AIRBORNE_VIDEO_SEGMENTS "/Latest")
     {
         deleteTimelineAndDirectoryBrowsingStackIfNeeded();
-        displayVideoSegment(determineLatestVideoSegmentPathOrUsePlaceholder());
+        displayEither_LatestVideoSegmentIfLive_or_24hrOldVideoIfNotLive(); //TODOreq: "latest vid" button
         return;
     }
 
@@ -546,6 +547,26 @@ void HackyVideoBullshitSiteGUI::handleAdImageChanged(WResource *newAdImageResour
     }
     triggerUpdate();
 }
+void HackyVideoBullshitSiteGUI::displayEither_LatestVideoSegmentIfLive_or_24hrOldVideoIfNotLive()
+{
+    const std::string &latestVideoSegmentPath = determineLatestVideoSegmentPathOrUsePlaceholder();
+    if(latestVideoSegmentPath == HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER)
+    {
+        displayVideoSegment(HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER);
+        return;
+    }
+    qint64 latestVideoSegmentSecondsSinceEpoch = determineSecondsSinceEpochFromVideoSegmentFilepath(latestVideoSegmentPath);
+    if(latestVidIsLessThan4minutesOld(latestVideoSegmentSecondsSinceEpoch))
+    {
+        //[probably] live, so display latest video
+        displayVideoSegment(latestVideoSegmentPath);
+    }
+    else
+    {
+        //[probably not] live, so display ~24hours (err towards newer) old vid
+        displayVideoSegmentRoughly24hoursBefore(latestVideoSegmentSecondsSinceEpoch);
+    }
+}
 void HackyVideoBullshitSiteGUI::displayVideoSegment(const string &videoSegmentFilePath)
 {
     WContainerWidget *videoSegmentContainer = new WContainerWidget();
@@ -789,6 +810,42 @@ string HackyVideoBullshitSiteGUI::determineLatestVideoSegmentPathOrUsePlaceholde
     }
     //should never get here, but just in case and to make compiler stfu:
     return HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER;
+}
+qint64 HackyVideoBullshitSiteGUI::determineSecondsSinceEpochFromVideoSegmentFilepath(const string &videoSegmentFilePath)
+{
+    QFileInfo latestVideoSegmentFileInfo(QString::fromStdString(videoSegmentFilePath));
+    const QString &latestVidTimestampAsString = latestVideoSegmentFileInfo.baseName();
+    return latestVidTimestampAsString.toLongLong();
+}
+bool HackyVideoBullshitSiteGUI::latestVidIsLessThan4minutesOld(qint64 latestVideoSegmentSecondsSinceEpoch)
+{
+    qint64 currentTimestamp = QDateTime::currentMSecsSinceEpoch() / 1000;
+    if((currentTimestamp - latestVideoSegmentSecondsSinceEpoch) <= 4)
+    {
+        return true;
+    }
+    return false;
+}
+void HackyVideoBullshitSiteGUI::displayVideoSegmentRoughly24hoursBefore(qint64 latestVideoSegmentSecondsSinceEpoch) //If I record only 1x 3 minute video segment over the course of 24 hours, it is the one that will be shown xD (this method did nothing). Fuckit
+{
+    QDateTime oneDayBeforeLatestVideo = QDateTime::fromMSecsSinceEpoch((latestVideoSegmentSecondsSinceEpoch - (60*60*24)) * 1000);
+    int yearOfOneDayBeforeLatestVideo = oneDayBeforeLatestVideo.date().year();
+    QString yearOfOneDayBeforeLatestVideoString = QString::number(yearOfOneDayBeforeLatestVideo);
+    while(!QFile::exists(m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended + yearOfOneDayBeforeLatestVideoString))
+    {
+        ++yearOfOneDayBeforeLatestVideo;
+        yearOfOneDayBeforeLatestVideoString = QString::number(yearOfOneDayBeforeLatestVideo);
+    }
+    //found year folder
+    QString absolutePathOfYearFolderWithSlashAppended = m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended + yearOfOneDayBeforeLatestVideoString + QDir::separator();
+    QDir yearDir(absolutePathOfYearFolderWithSlashAppended);
+    QStringList daysInYearDir = yearDir.entryList((QDir::NoDotAndDotDot | QDir::Files), QDir::Name); //TODOreq: sorting by name in this entire file is no good: 1, 10, 2. for days it's especially bad, but even for unix timestamps it's no good (but will be alright most of the time). year is fine for now (until the year 10000). lol i am dumb
+    QString absolutePathOfDayFolderWithSlashAppended = absolutePathOfYearFolderWithSlashAppended + daysInYearDir.first() + QDir::separator();
+    QDir dayDir(absolutePathOfDayFolderWithSlashAppended);
+    QStringList videoSegmentsInDayFolder = dayDir.entryList((QDir::NoDotAndDotDot | QDir::Files), QDir::Name);
+    const QString &absoluteFilePathOfFirstVideoSegmentInDayFolder = absolutePathOfDayFolderWithSlashAppended + videoSegmentsInDayFolder.first();
+    const std::string &firstVideoSegmentInDayFolderAsStdString = absoluteFilePathOfFirstVideoSegmentInDayFolder.toStdString();
+    displayVideoSegment(firstVideoSegmentInDayFolderAsStdString);
 }
 void HackyVideoBullshitSiteGUI::handleHomeAnchorClickedSoShowLatestVideoSegmentEvenIfAlreadyHome()
 {

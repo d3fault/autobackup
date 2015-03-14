@@ -53,6 +53,7 @@ private:
 
     void handleInternalPathChanged(const std::string &newInternalPath);
     void handleAdImageChanged(WResource *newAdImageResource, std::string newAdUrl, std::string newAdAltAndHover);
+    void displayEither_LatestVideoSegmentIfLive_or_24hrOldVideoIfNotLive();
     void displayVideoSegment(const std::string &videoSegmentFilePath);
     void handleAutoPlayNextVideoSegmentCheckboxChecked();
     void handleAutoPlayNextVideoSegmentCheckboxUnchecked();
@@ -60,6 +61,9 @@ private:
     QString getEarliestEntryInFolder(const QString &folderWithSlashAppended);
     void handleNextVideoClipButtonClicked();
     std::string determineLatestVideoSegmentPathOrUsePlaceholder();
+    qint64 determineSecondsSinceEpochFromVideoSegmentFilepath(const std::string &videoSegmentFilePath);
+    bool latestVidIsLessThan4minutesOld(qint64 latestVideoSegmentSecondsSinceEpoch);
+    void displayVideoSegmentRoughly24hoursBefore(qint64 latestVideoSegmentSecondsSinceEpoch);
     //void tellUserThatCurrentVideoSegmentIsLatest();
     void handleHomeAnchorClickedSoShowLatestVideoSegmentEvenIfAlreadyHome();
 

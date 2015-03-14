@@ -32,10 +32,10 @@ void VideoSegmentsImporterFolderWatcher::maybePropagateToNeighbor(const QString 
     if(!m_PropagateToNeighbor)
         return;
 
-    SftpUploaderAndRenamerQueueTimestampAndFilenameType enqueuForUploadType;
-    enqueuForUploadType.first = timestampUsedInRename;
+    SftpUploaderAndRenamerQueue_DestFilenameToRenameToAfterUpload_and_SrcFilenameToUpload_Type enqueuForUploadType;
+    enqueuForUploadType.first = timestampUsedInRename + ".ogg";
     enqueuForUploadType.second = localFilenameToPropagate;
-    QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "enqueueFileForUploadAndRename", Q_ARG(SftpUploaderAndRenamerQueueTimestampAndFilenameType, enqueuForUploadType));
+    QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "enqueueFileForUploadAndRename", Q_ARG(SftpUploaderAndRenamerQueue_DestFilenameToRenameToAfterUpload_and_SrcFilenameToUpload_Type, enqueuForUploadType));
 }
 void VideoSegmentsImporterFolderWatcher::beginStoppingVideoNeighborPropagation(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum newSftpUploaderAndRenamerQueueState)
 {
