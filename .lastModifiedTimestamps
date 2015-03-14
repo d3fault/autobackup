@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1426301183
+Documents/minddump/:1426313307
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1631,6 +1631,7 @@ Documents/minddump/lskjdfkljslkfjsdfoudslkfjsdofuisdlfkjsdfouewrlkjsdf.txt:13599
 Documents/minddump/lskjdfljsldkjflksdjfouwerlkjsoduflsdjkfosudflskdjfouljweroulkjsdfsfdjkkljsdkf.txt:1394268960
 Documents/minddump/lskjdflkjsadfosuidflkjsdofiusldfjsdofiulkjweoruiljksdfoiusdlfkjsdoifulkjewroiu.txt:1383337477
 Documents/minddump/lskjdflkjsflkjslkjdflsrtertjdfsokdjfsoduflkwjerouljsdfouldskjfoewur.txt:1396667615
+Documents/minddump/lskjdflkjslkdjfldlkfjlskdjflksjdflkjsdlkfjlksdjf.nothing.matters.unless.you.let.or.make.it.matter.txt:1426310621
 Documents/minddump/lskjdflksjadflkjwerhlkshdfousdflkjweoruiklsdf.txt:1396905462
 Documents/minddump/lskjdflksjdfkljslkdjflksdjflsdjflksjdfljksdflksdjfsdklfjlkfjsdklf.txt:1408725970
 Documents/minddump/lskjdflksjdflkjsklfjsdlkfjslkdjflksdjflksjdfkjsdflkjsdlkf.txt:1424355326
@@ -2340,6 +2341,7 @@ Documents/minddump/sldfjsldhflsjdflkjsdlfkjsdlkjfsdlkfjsdlkjfoulksdf.txt:1401269
 Documents/minddump/sldfjsldjflksdjflkjsdkfljsdkljflkoiweurlsjdfosduflsdjfosduflk.txt:1405678748
 Documents/minddump/sldfjsldjflsdjflkjsdflkjsdlkfjlskdjflksjflskjflksdjf.txt:1406047558
 Documents/minddump/sldfjsldkjflsdhfljsdflkjsdlfkjsdlfkjsdlkfj.txt:1401288745
+Documents/minddump/sldfjsldkjflskdjflkjsdlkfjskdljfklsdjfshdlfkjsdlkfjsdlkjflk.txt:1426313307
 Documents/minddump/sldfjsljdflsjdfhdlskfjsldkjfouewlrjhfldksdf.txt:1402002158
 Documents/minddump/sldfkjalsdjflksjdflkjsdlkfjdslkjflsdjkfouwe.txt:1398999726
 Documents/minddump/sldfkjalskdjflksjdflksjdfosduflkwjerousdfjsdflkjreoi.txt:1396824015
@@ -3698,14 +3700,14 @@ Projects/MusicFingers/src/cli/MusicFingersCli.pro:1426284942
 Projects/MusicFingers/src/cli/main.cpp:1424887225
 Projects/MusicFingers/src/cli/musicfingerscli.cpp:1426284478
 Projects/MusicFingers/src/cli/musicfingerscli.h:1426283088
-Projects/MusicFingers/src/lib/:1426306655
+Projects/MusicFingers/src/lib/:1426312004
 Projects/MusicFingers/src/lib/finger.cpp:1426306655
 Projects/MusicFingers/src/lib/finger.h:1426305699
 Projects/MusicFingers/src/lib/musicfingers.cpp:1426305590
 Projects/MusicFingers/src/lib/musicfingers.h:1426302573
-Projects/MusicFingers/src/lib/musicfingersserialportintegration.cpp:1426284654
+Projects/MusicFingers/src/lib/musicfingersserialportintegration.cpp:1426312872
 Projects/MusicFingers/src/lib/musicfingersserialportintegration.h:1426284790
-Projects/MusicFingers/src/lib/musicfingerssynthesizer.cpp:1426305611
+Projects/MusicFingers/src/lib/musicfingerssynthesizer.cpp:1426312003
 Projects/MusicFingers/src/lib/musicfingerssynthesizer.h:1426304790
 Projects/MusicFingers/src/musicfingers.pri:1426304643
 Projects/MusicFingers/src/musicfingersserialportintegration.pri:1426284928
@@ -4024,10 +4026,10 @@ Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/serverw
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/serverwidget.h:1353793900
 Projects/Prototypes/MultiClientServerTypesHelloer/src/ServerClientShared/:1356102268
 Projects/Prototypes/MusicFingersBackendTesterGui/:1426305662
-Projects/Prototypes/MusicFingersBackendTesterGui/src/:1426306688
-Projects/Prototypes/MusicFingersBackendTesterGui/src/MusicFingersBackendTesterGui.pro:1424791559
+Projects/Prototypes/MusicFingersBackendTesterGui/src/:1426313340
+Projects/Prototypes/MusicFingersBackendTesterGui/src/MusicFingersBackendTesterGui.pro:1426307054
 Projects/Prototypes/MusicFingersBackendTesterGui/src/main.cpp:1424675997
-Projects/Prototypes/MusicFingersBackendTesterGui/src/musicfingersbackendtestergui.cpp:1426302001
+Projects/Prototypes/MusicFingersBackendTesterGui/src/musicfingersbackendtestergui.cpp:1426307025
 Projects/Prototypes/MusicFingersBackendTesterGui/src/musicfingersbackendtestergui.h:1426289516
 Projects/Prototypes/MusicFingersBackendTesterGui/src/musicfingersbackendtesterwidget.cpp:1426284766
 Projects/Prototypes/MusicFingersBackendTesterGui/src/musicfingersbackendtesterwidget.h:1426279680

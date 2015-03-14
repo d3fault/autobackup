@@ -2,11 +2,12 @@
 
 #include <QDebug>
 
-#include "objectonthreadgroup.h"
 #include "musicfingers.h"
 #include "musicfingersbackendtesterwidget.h"
 
-//#define MusicFingersBackendTesterGui_USE_SEPARATE_THREAD
+#ifdef MusicFingersBackendTesterGui_USE_SEPARATE_THREAD
+#include "objectonthreadgroup.h"
+#endif
 
 MusicFingersBackendTesterGui::MusicFingersBackendTesterGui(QObject *parent)
     : QObject(parent)

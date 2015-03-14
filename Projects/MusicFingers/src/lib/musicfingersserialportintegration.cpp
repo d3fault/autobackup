@@ -2,6 +2,8 @@
 
 #include <QStringList>
 
+//Maybe I should say fuck the synth for now and hook this shit up to a/the samples piano. Only downside is that the analog values would be mostly wasted, HOWEVER here's one use of them: you pass a threshold with your finger to start the piano sample at a minimum volume, and as the finger becomes more curled, the volume of the sample increases. That should be an optional mode, the default being binary/boolean on/off (playing the sample at a constant volume once you pass the threshold). Of course the samples are pretty short (but also, the speed of light is pretty quick), so I'm not sure how noticeable it would be. REGARDLESS, it will be a step in proper modulization of the fingers+serialport stuff, which should be portable to keyboard/mouse shit too (but OTOH, the best way to do that is with a leonardo/micro, and my micro is in the mail -- I'm not sure if I should use Serial.write(key) and Keyboard.write(key) simultaneously -- one for logging/key-set-switching/mode-switching/etc and the other to be interpreted by the OS). A vanilla piano mode is desireable. And even though my sin-synth is utter garbage, it does provide a "target" for implementing/testing some kind of "mode switching". I think the music modes should all be mutually exclusive with each other, and keyboard and mouse should be mutually exclusive with each other, but ANY COMBINATION of "any music mode" and "either keyboard or mouse or neither" should be allowed.
+//A vanilla piano is also a much more tangible target, this synth shit needs a TON of work (AND HEY, I WANT TO GO THE FUCK OUTSIDE)
 MusicFingersSerialPortIntegration::MusicFingersSerialPortIntegration(QObject *parent)
     : QSerialPort(parent)
 {
