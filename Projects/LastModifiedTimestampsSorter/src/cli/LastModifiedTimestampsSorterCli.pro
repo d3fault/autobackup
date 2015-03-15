@@ -5,7 +5,6 @@
 #-------------------------------------------------
 
 QT       += core
-
 QT       -= gui
 
 TARGET = LastModifiedTimestampsSorterCli
@@ -13,7 +12,6 @@ CONFIG   += console
 CONFIG   -= app_bundle
 
 TEMPLATE = app
-
 
 SOURCES += main.cpp \
     ../lib/lastmodifiedtimestampssorter.cpp \
@@ -23,4 +21,4 @@ HEADERS += \
     ../lib/lastmodifiedtimestampssorter.h \
     lastmodifiedtimestampssortercli.h
 
-include(../../../../GloballySharedClasses/simplifiedlastmodifiedtimestamp.pri)
+include(../../../../GloballySharedClasses/lastmodifiedtimestamp.pri)

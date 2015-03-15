@@ -1,0 +1,17 @@
+mfw unix time repeats itself for leap seconds -_-. you fucking idiots took something simple and made it complicated. why is "pure number of seconds elapsed since x" so difficult to stick with? who gives a fuck if it becomes unsync'd with the rotation of the earth. ADJUST FOR LEAP SECONDS LATER, IN SOFTWARE, WHEN TRANSLATING TO A TIMEZONE (inb4 an epoch needs an originating timezone (this is true, but that doesn't mean it needs to follow the dumb retarded "leap second" rules that that timezone has)).
+
+Fuckity fuck fuck all my assumptions were wrong, now my code is going to crash during a leap second (or a file overwritten/erased/forgotten-forever, etc).
+
+one liner: "seconds elapsed since jan 1 midnight 1970"
+
+then pages and pages below: "oh btw it repeats itself for leap seconds"
+
+
+YOU FUCKING ASSHOLES, you broke the one liner.
+
+
+
+I'm looking for a real epoch now... but I know of none without that flaw, and even if I find one it probably won't have widespread library support. I'll make my own if I have to (but again, no lib support -- I could add lib (heh) support, but it would be difficult to "un-code" the leap second/year/etc support... and even more difficult to calculate it manually (wat do? look up at the stars and perform math?)), the moment I exitted me mum's vagoo = 0
+
+
+oh just read about the "TAI-based variant". good I'm glad to see I'm not the only non-retard alive. but still, lib support -_-

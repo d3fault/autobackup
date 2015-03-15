@@ -21,7 +21,7 @@ LastModifiedTimestampsSorterCli::LastModifiedTimestampsSorterCli(QObject *parent
     m_LastModifiedTimestampsSorter = new LastModifiedTimestampsSorter(this);
     connect(m_LastModifiedTimestampsSorter, SIGNAL(d(QString)), this, SLOT(handleD(QString)));
     connect(m_LastModifiedTimestampsSorter, SIGNAL(sortedLineOutput(QString)), this, SLOT(handleSortedLineOutput(QString)));
-    connect(m_LastModifiedTimestampsSorter, SIGNAL(finishedOutputtingSortedLines()), QCoreApplication::instance(), SLOT(quit()), Qt::QueuedConnection);
+    connect(m_LastModifiedTimestampsSorter, SIGNAL(finishedOutputtingSortedLines(int)), QCoreApplication::instance(), SLOT(quit()), Qt::QueuedConnection);
     QMetaObject::invokeMethod(m_LastModifiedTimestampsSorter, "sortAndOutputLastModifiedTimestamps", Q_ARG(QString,args.at(1)));
 }
 void LastModifiedTimestampsSorterCli::handleD(const QString &msg)

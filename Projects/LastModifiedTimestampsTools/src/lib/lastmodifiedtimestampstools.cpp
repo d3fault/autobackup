@@ -126,7 +126,14 @@ bool LastModifiedTimestampsTools::molestHeirarchy(const QString &dirToMolest, co
 
             //TODOreq: unsure if it matters, but to be safe: molest all files and then all dirs
 
-            if(!fileModificationDateChanger.changeModificationDate(dirToMolestWithSlashAppended + lastModifiedTimestampEntry->filePath(), lastModifiedTimestampEntry->lastModifiedTimestamp()))
+            QString filePathToMolest = dirToMolestWithSlashAppended + lastModifiedTimestampEntry->filePath();
+            if(!QFile::exists(filePathToMolest))
+            {
+                emit d("File path does not exist: " + filePathToMolest);
+                //return false; //we could just continue;
+                continue; //or maybe we should return false (proper solution = cli arg (or gui checkbox) to choose what to do)
+            }
+            if(!fileModificationDateChanger.changeModificationDate(filePathToMolest, lastModifiedTimestampEntry->lastModifiedTimestamp()))
             {
                 emit d("Failed to change modification date for an entry, so stopping");
                 return false;

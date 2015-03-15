@@ -42,7 +42,7 @@ void SftpUploadAndRenameAllVideoSegmentsInFolder::handleSftpUploaderAndRenamerQu
     {
         const QFileInfo &currentFile = it.next();
         SftpUploaderAndRenamerQueue_DestFilenameToRenameToAfterUpload_and_SrcFilenameToUpload_Type queueEntry;
-        queueEntry.first = TODOreq; timestamp+ogg; //TODOreq: sort properly: segment-1.ogg, segment-10.ogg, segment-2.ogg
+        queueEntry.first = TODOreq; timestamp+ogg; //TODOreq: sort properly: segment-1.ogg, segment-10.ogg, segment-2.ogg. TODOreq: use dedicated "watched" folder to dodge race condition where ffmpeg segment uploader and this app both "rename to" the same timestamp ( exists() might return false, but the rename might still overwrite ). the hvbs "folder watcher" is single threaded (or at least needs to be), so that it's "exists()" and "rename()" checks aren't racy (when hvbs exists() returns true, simply +1 the timestamp until exists() returns false imo)
         queueEntry.second = currentFile.absoluteFilePath();
         emit enqueueFileForUploadAndRenameRequested(queueEntry);
 

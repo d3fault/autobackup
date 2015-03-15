@@ -1,15 +1,18 @@
 deploy:
 hottee
 ffmpeg segment uploader
+hvbs
 
 do:
-hvbs 24hr + cookie
 abc explain vids
+import script[s]
+server migration
 music fingers vanilla piano (DOIT FAGGOT)
+
 "not serving this"
 binarySupplement post-update also?
-copyleft disclaimer (assignment is easiest, but shitty)
+copyleft disclaimer (assignment is easiest, but shitty, CLA would be better but maybe complicated (also shitty, just less shitty than assignment), some kind of "you agree to give your works to me in DPL3(+? (maybe two versions, one with the plus and one without))" would be best (and idk that itself kind of sounds like a CLA, idfk want2buy lawyer))
 git auto submodulization (solves binaries problem)
-Hottee: "working dir(s)", on start first check currentDateTime >= 2015, then create hotteeAt<timestampWithMs> sub-folder (fail if it exists (UNLESS RESUMING, in which case we need to know that hotteeAt<timestamp> sub-folder as an arg))
+Hottee: "working dir(s)", on start first check currentDateTime >= 2015, then create hotteeAt<timestampWithMs> sub-folder (fail if it exists (UNLESS RESUMING, in which case we need to know that hotteeAt<timestamp> sub-folder as an arg and the 100mb index))
 ~24hr cronjob: make torrent of all 'yesterdays' (just ended day) video segments -- also same for weekly (later, bump that to monthly) -- hvbs download page builds links based on torrents it finds in a directory?
 num unique visitors (wt unique id?) per day

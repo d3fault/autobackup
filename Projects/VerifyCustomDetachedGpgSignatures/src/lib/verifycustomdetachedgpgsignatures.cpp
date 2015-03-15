@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QProcess>
+#include <QDirIterator>
 
 #define GPG_END_SIG_DELIMITER "-----END PGP SIGNATURE-----"
 #define GPG_DEFAULT_PATH "/usr/bin/gpg" //TODOoptional: custom path as arg
@@ -19,6 +20,25 @@ VerifyCustomDetachedGpgSignatures::VerifyCustomDetachedGpgSignatures(QObject *pa
     connect(m_GpgProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(handleGpgProcessError(QProcess::ProcessError)));
     connect(m_GpgProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(handleGpgProcessFinished(int,QProcess::ExitStatus)));
 }
+void VerifyCustomDetachedGpgSignatures::buildListOfFilesOnFsToSeeIfAnyAreMissingSigs(const QDir &dir)
+{
+    //TODOoptimization: since this app is already asynchronous, it would be "neat" if the building of this list was ALSO asynchronous. basically do one directory at a time, with a QMetaObject::invokeMethod using QQueuedConnection to schedule the generating of the next directory... so that the building of this list, and the verifying of gpg sigs and subsequent removal from this list being asynchronously built, could be done in a MEMORY EFFICIENT manner (if the dir was huuuuuuuuuge, it might actually be noticeable). In that design, when a gpg sig finishes verifying and it isn't seen in this list we are asynchronously building (not because it doesn't exist (it must or the verify will fail), but simply because we haven't gotten to that directory yet), we should put it in a separate list that is checked against before entries are added into this main list being built here ("list of files on filesystem")... and of course once the async fs gen does encounter an already verified file, it simply removes the entry from that additional list
+
+    //A much less memory efficient "synchronous" strategy is being used instead of the above described optimization.... where every filepath in the target dir must be in memory before we can even begin verifying sigs
+    QDir dirToIterate = dir;
+    dirToIterate.setFilter(dirToIterate.filter() | QDir::NoDotAndDotDot);
+    QDirIterator dirIterator(dir, QDirIterator::Subdirectories);
+    m_ListOfFileOnFsToSeeIfAnyAreMissingSigs.clear();
+    while(dirIterator.hasNext())
+    {
+        dirIterator.next();
+        const QFileInfo &currentEntry = dirIterator.fileInfo();
+        if(currentEntry.isFile())
+        {
+            m_ListOfFileOnFsToSeeIfAnyAreMissingSigs.insert(currentEntry.filePath());
+        }
+    }
+}
 void VerifyCustomDetachedGpgSignatures::verifyNextEntryOfCustomDetachedOrEmitFinishedIfNoMore() //pseudo-recursive (async) -- head
 {
     if(!m_CustomDetachedSignaturesStream.atEnd())
@@ -32,26 +52,20 @@ void VerifyCustomDetachedGpgSignatures::verifyNextEntryOfCustomDetachedOrEmitFin
         }
         verifyFileSignatureAndThenContinueOntoNextEntryOfCustomDetached(currentFilePathToVerify, currentFileSignature);
         return;
+    }
 
-#if 0 //fail (anti-pattern)
-        QString nextLine = m_CustomDetachedSignaturesStream.readLine();
-        if(!nextLine.isEmpty())
+    if(!m_ListOfFileOnFsToSeeIfAnyAreMissingSigs.isEmpty())
+    {
+        emit e("these files on the filesystem were not in the gpg signature file:");
+        emit e("");
+        Q_FOREACH(const QString &currentFileOnFsButNotInSigFile, m_ListOfFileOnFsToSeeIfAnyAreMissingSigs)
         {
-            QString currentFilePathToVerify;
-            QString currentFileSignature;
-            if(readPathAndSignature(nextLine, &currentFilePathToVerify, &currentFileSignature))
-            {
-                verifyFileSignatureAndThenContinueOntoNextEntryOfCustomDetached(currentFilePathToVerify, currentFileSignature);
-                return;
-            }
-            else
-            {
-                emit e("failed to readPathAndSignature"); //TODOoptional: offending line number
-                emit doneVerifyingCustomDetachedGpgSignatures(false);
-                return;
-            }
+            emit e(currentFileOnFsButNotInSigFile);
         }
-#endif
+        emit o("");
+        emit o("however, every file in the gpg signature file did verify");
+        emit doneVerifyingCustomDetachedGpgSignatures(false);
+        return;
     }
 
     emit o("done verifying custom detached gpg signatures");
@@ -76,6 +90,8 @@ bool VerifyCustomDetachedGpgSignatures::readPathAndSignature(QString *out_FilePa
 }
 void VerifyCustomDetachedGpgSignatures::verifyFileSignatureAndThenContinueOntoNextEntryOfCustomDetached(const QString &filePathToVerify, const QString &fileSignature)
 {
+    m_FilePathCurrentlyBeingVerified = filePathToVerify;
+
     QStringList gpgArgs;
     gpgArgs << "--verify" << "-" << filePathToVerify;
     m_GpgProcess->start(GPG_DEFAULT_PATH, gpgArgs, QIODevice::ReadWrite);
@@ -107,13 +123,16 @@ void VerifyCustomDetachedGpgSignatures::verifyCustomDetachedGpgSignatures(const 
         emit doneVerifyingCustomDetachedGpgSignatures(false);
         return;
     }
+
+    buildListOfFilesOnFsToSeeIfAnyAreMissingSigs(dir);
+
     m_CustomDetachedSignaturesStream.setDevice(customDetachedSignaturesIoDevice);
     m_GpgProcess->setWorkingDirectory(dir.absolutePath());
     verifyNextEntryOfCustomDetachedOrEmitFinishedIfNoMore(); //pseudo-recursive (async) -- first head call
 }
 void VerifyCustomDetachedGpgSignatures::handleGpgProcessError(QProcess::ProcessError processError)
 {
-    emit e("gpg process error: " + processError);
+    emit e("gpg qprocess error: '" + QString::number(processError) + "' while trying to verify file: " + m_FilePathCurrentlyBeingVerified);
     emit doneVerifyingCustomDetachedGpgSignatures(false); //TODOoptional: this and handleGpgProcessFinished might both emit this signal. probably doesn't matter
 }
 void VerifyCustomDetachedGpgSignatures::handleGpgProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
@@ -121,14 +140,14 @@ void VerifyCustomDetachedGpgSignatures::handleGpgProcessFinished(int exitCode, Q
     if(exitStatus != QProcess::NormalExit)
     {
         spitOutGpgProcessOutput();
-        emit e("gpg did not exit normally");
+        emit e("gpg did not exit normally when trying to verify file: " + m_FilePathCurrentlyBeingVerified);
         emit doneVerifyingCustomDetachedGpgSignatures(false);
         return;
     }
     if(exitCode != 0)
     {
         spitOutGpgProcessOutput();
-        emit e("one of the signatures was not valid, or there was some other reason gpg did not exit with code 0. gpg exitted with code: " + QString::number(exitCode)); //TODOoptional: this, and other errors, can/should show the current file (and possibly sig) that failed to verify
+        emit e("one of the signatures was not valid, or there was some other reason gpg did not exit with code 0. gpg exitted with code: " + QString::number(exitCode) + " while trying to verify file: " + m_FilePathCurrentlyBeingVerified); //TODOoptional: this, and other errors, can possibly show the sig that failed to verify... but eh filename is probably enough
         emit doneVerifyingCustomDetachedGpgSignatures(false);
         return;
     }
@@ -138,5 +157,6 @@ void VerifyCustomDetachedGpgSignatures::handleGpgProcessFinished(int exitCode, Q
 
     //TODOoptional: if(verbose) { file <name> verified }
 
+    m_FilePathCurrentlyBeingVerified.remove(m_FilePathCurrentlyBeingVerified); //is guaranteed to be in there, unless the user is messing with the dir contents while the app is running (which will lead to undefined behavior anyways)
     verifyNextEntryOfCustomDetachedOrEmitFinishedIfNoMore(); //pseudo-recursive (async) -- tail
 }

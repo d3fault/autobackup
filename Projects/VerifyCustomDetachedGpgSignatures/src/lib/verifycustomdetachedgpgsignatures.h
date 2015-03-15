@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QTextStream>
 #include <QProcess>
+#include <QSet>
 
 class QIODevice;
 
@@ -17,7 +18,10 @@ private:
     QTextStream m_CustomDetachedSignaturesStream;
     QProcess *m_GpgProcess;
     QTextStream m_GpgProcessTextStream;
+    QSet<QString> m_ListOfFileOnFsToSeeIfAnyAreMissingSigs;
+    QString m_FilePathCurrentlyBeingVerified;
 
+    void buildListOfFilesOnFsToSeeIfAnyAreMissingSigs(const QDir &dir);
     void verifyNextEntryOfCustomDetachedOrEmitFinishedIfNoMore();
     bool readPathAndSignature(QString *out_FilePathToVerify, QString *out_CurrentFileSignature);
     void verifyFileSignatureAndThenContinueOntoNextEntryOfCustomDetached(const QString &filePathToVerify, const QString &fileSignature);
