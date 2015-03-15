@@ -16,7 +16,7 @@ class RecursivelyGpgSignIntoCustomDetachedSignaturesFormat : public QObject
 public:
     explicit RecursivelyGpgSignIntoCustomDetachedSignaturesFormat(QObject *parent = 0);
 private:
-    QTextStream m_OutputSigFileTextStream;
+    QTextStream m_InputAndOutputSigFileTextStream;
     QHash<QString /*file path*/, QString /*file sig*/> m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem;
     QMap<QString /*file path*/, QString /*file sig*/> m_AllSigsForOutputting;
     RecursiveCustomDetachedSignatures *m_RecursiveCustomDetachedSignatures;

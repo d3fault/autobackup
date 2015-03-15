@@ -13,6 +13,7 @@ RecursivelyVerifyCustomDetachedGpgSignatures::RecursivelyVerifyCustomDetachedGpg
     , m_RecursiveCustomDetachedSignatures(new RecursiveCustomDetachedSignatures(this))
     , m_GpgProcess(new QProcess(this))
     , m_GpgProcessTextStream(m_GpgProcess)
+    , m_NumFilesVerified(0)
 {
     connect(m_RecursiveCustomDetachedSignatures, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
 
@@ -68,7 +69,7 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::verifyNextEntryOfCustomDetach
         return;
     }
 
-    emit o("done verifying custom detached gpg signatures -- everything OK");
+    emit o("done verifying " + QString::number(m_NumFilesVerified) + " custom detached gpg signatures -- everything OK");
     emit doneRecursivelyVerifyCustomDetachedGpgSignatures(true);
 }
 void RecursivelyVerifyCustomDetachedGpgSignatures::verifyFileSignatureAndThenContinueOntoNextEntryOfCustomDetached(const QString &filePathToVerify, const QString &fileSignature)
@@ -139,5 +140,6 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::handleGpgProcessFinished(int 
     //TODOoptional: if(verbose) { file <name> verified }
 
     m_ListOfFileOnFsToSeeIfAnyAreMissingSigs.remove(m_FilePathCurrentlyBeingVerified); //is guaranteed to be in there, unless the user is messing with the dir contents while the app is running (which will lead to undefined behavior anyways)
+    ++m_NumFilesVerified;
     verifyNextEntryOfCustomDetachedOrEmitFinishedIfNoMore(); //pseudo-recursive (async) -- tail
 }

@@ -25,6 +25,8 @@ private:
     int m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash;
     QString m_FilePathCurrentlyBeingVerified;
 
+    quint64 m_NumFilesVerified;
+
     void buildListOfFilesOnFsToSeeIfAnyAreMissingSigs(const QDir &dir);
     void verifyNextEntryOfCustomDetachedOrEmitFinishedIfNoMore();
     bool readPathAndSignature(QString *out_FilePathToVerify, QString *out_CurrentFileSignature);

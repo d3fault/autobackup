@@ -7,6 +7,7 @@
 
 #include "recursivecustomdetachedgpgsignatures.h"
 
+//TODOoptional: make this app write to stdout if no output sigfile arg is specified. similarly, the verifier should read from stdin if no input sigfile arg is specified. directory is probably always necessary, HOWEVER it might be good to default to cwd for both this and the verifier when none is provided?
 //TODOoptional: a combination of sign+verify: sign files on fs not in sigfile, verify files in sigfile, report sigs in sigfile that do not exist on filesystem -- it shouldn't be the default because reading/verifying EVERY file would take a long as fuck time
 RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::RecursivelyGpgSignIntoCustomDetachedSignaturesFormat(QObject *parent)
     : QObject(parent)
@@ -24,11 +25,14 @@ RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::RecursivelyGpgSignIntoCust
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::readInAllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem()
 {
-    while(!m_OutputSigFileTextStream.atEnd())
+    if(!m_InputAndOutputSigFileTextStream.device()->isOpen()) //not open == doesn't exist yet
+        return;
+
+    while(!m_InputAndOutputSigFileTextStream.atEnd())
     {
         QString alreadySignedFilePath;
         QString alreadySignedFileSig;
-        if(!m_RecursiveCustomDetachedSignatures->readPathAndSignature(m_OutputSigFileTextStream, &alreadySignedFilePath, &alreadySignedFileSig))
+        if(!m_RecursiveCustomDetachedSignatures->readPathAndSignature(m_InputAndOutputSigFileTextStream, &alreadySignedFilePath, &alreadySignedFileSig))
         {
             emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
             return;
@@ -67,10 +71,10 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
         }
     }
 
-    //detect files/sigs in sig file that do not exist on filesystem
+    //detect files/sigs in sig file that do not exist on filesystem -- TODOoptional: --ignore-existing-sigs-with-missing-file (and perhaps it can be specified on a file by file basis... or just for every file encountered for this run)
     if(!m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem.isEmpty())
     {
-        emit e("the below files in the gpg signatures file were not on the filesystem:");
+        emit e("the below files in the gpg signatures file were not found on the filesystem:");
         emit e("");
         QHashIterator<QString /*file path*/, QString /*file sig*/> it(m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem);
         while(it.hasNext())
@@ -79,14 +83,15 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
             emit e(it.key());
         }
         emit e("");
-        emit e("the above files in the gpg signatures file were not on the filesystem");
+        emit e("the above files in the gpg signatures file were not found on the filesystem");
         emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
         return;
     }
 
     //now write the final custom detached signatures file
-    m_OutputSigFileTextStream.device()->close();
-    if(!m_OutputSigFileTextStream.device()->open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
+    if(m_InputAndOutputSigFileTextStream.device()->isOpen()) //not open == doesn't exist
+        m_InputAndOutputSigFileTextStream.device()->close(); //we had it opened in read only mode
+    if(!m_InputAndOutputSigFileTextStream.device()->open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
     {
         emit e("failed to re-open signatures file for writing"); //TODOlol: how to work on iodevices and still know the filename?
         emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
@@ -95,11 +100,12 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
     QMapIterator<QString /*file path*/, QString /*file sig*/> it(m_AllSigsForOutputting);
     while(it.hasNext())
     {
-        m_OutputSigFileTextStream << it.key() << endl << it.value() << endl;
+        it.next();
+        m_InputAndOutputSigFileTextStream << it.key() << endl << it.value();
     }
-    m_OutputSigFileTextStream.flush();
+    m_InputAndOutputSigFileTextStream.flush();
 
-    emit o("(sigs, existing: " + QString::number(m_ExistingSigs) + ", added: " + QString::number(m_AddedSigs) + ", total: " + QString::number(m_TotalSigs));
+    emit o("(sigs, existing: " + QString::number(m_ExistingSigs) + ", added: " + QString::number(m_AddedSigs) + ", total: " + QString::number(m_TotalSigs) + ")");
     emit o("done recusrively signing directory -- everything OK");
     emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(true);
 }
@@ -119,11 +125,14 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::spitOutGpgProcessOutp
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QString &dirToRecursivelySign, const QString &outputSigFilePath, bool forceResigningOfFilesAlreadyPresentInOutputSigFile)
 {
     QFile *outputSigFile = new QFile(outputSigFilePath);
-    if(!outputSigFile->open(QIODevice::ReadOnly | QIODevice::Text))
+    if(QFile::exists(outputSigFilePath))
     {
-        emit e("failed to open sig file for reading and writing: " + outputSigFilePath);
-        emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
-        return;
+        if(!outputSigFile->open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            emit e("failed to open sig file for reading: " + outputSigFilePath);
+            emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
+            return;
+        }
     }
     recursivelyGpgSignIntoCustomDetachedSignaturesFormat(dirToRecursivelySign, outputSigFile, forceResigningOfFilesAlreadyPresentInOutputSigFile);
 }
@@ -135,9 +144,10 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignInt
         emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
         return;
     }
-    m_OutputSigFileTextStream.setDevice(outputSigIoDevice);
+    m_InputAndOutputSigFileTextStream.setDevice(outputSigIoDevice);
     readInAllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem();
     const QString &absolutePathOfDirToRecursivelySign = dirToRecursivelySign.absolutePath();
+    m_GpgProcess->setWorkingDirectory(absolutePathOfDirToRecursivelySign);
     m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash = absolutePathOfDirToRecursivelySign.length() + 1; //+1 to account for trailing slash
     m_DirIterator.reset(new QDirIterator(absolutePathOfDirToRecursivelySign, (QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden), QDirIterator::Subdirectories));
     recursivelyGpgSignDirEntriesAndEmitFinishedWhenNoMore(); //pseudo-recursive (async) -- first head call
