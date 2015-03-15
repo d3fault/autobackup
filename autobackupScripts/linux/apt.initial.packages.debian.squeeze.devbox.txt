@@ -15,7 +15,7 @@ jessie main:
 libclang-3.4-dev llvm-3.4-dev
 
 sid main:
-libboost-all-dev bitcoind
+libboost-all-dev bitcoind tor
 
 
 OLD wheezy main (installing differently now):

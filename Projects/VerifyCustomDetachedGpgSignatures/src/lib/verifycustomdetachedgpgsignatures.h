@@ -19,6 +19,7 @@ private:
     QProcess *m_GpgProcess;
     QTextStream m_GpgProcessTextStream;
     QSet<QString> m_ListOfFileOnFsToSeeIfAnyAreMissingSigs;
+    int m_CharacterLengthOfAbsolutePathOfTargetDir;
     QString m_FilePathCurrentlyBeingVerified;
 
     void buildListOfFilesOnFsToSeeIfAnyAreMissingSigs(const QDir &dir);
