@@ -1,3 +1,6 @@
+BETTER: Use RecursiveGpgTools
+
+
 First, create echoAndSign.sh with contents:
 #!/bin/bash
 echo "$1"
@@ -9,6 +12,3 @@ find . -type f -exec ./echoAndSign.sh '{}' \;
 
 Or if you don't want to echo the filename to stdout, just do:
 find . -type f -execdir gpg --detach-sign --armor '{}' \;
-
-
-To recursively VERIFY the result, use: VerifyCustomDetachedGpgSignatures

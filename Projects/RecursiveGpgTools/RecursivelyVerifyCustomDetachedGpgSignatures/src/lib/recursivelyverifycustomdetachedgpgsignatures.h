@@ -1,5 +1,5 @@
-#ifndef VERIFYCUSTOMDETACHEDGPGSIGNATURES_H
-#define VERIFYCUSTOMDETACHEDGPGSIGNATURES_H
+#ifndef RECURSIVELYVERIFYCUSTOMDETACHEDGPGSIGNATURES_H
+#define RECURSIVELYVERIFYCUSTOMDETACHEDGPGSIGNATURES_H
 
 #include <QObject>
 #include <QDir>
@@ -9,17 +9,20 @@
 
 class QIODevice;
 
-class VerifyCustomDetachedGpgSignatures : public QObject
+class RecursiveCustomDetachedSignatures;
+
+class RecursivelyVerifyCustomDetachedGpgSignatures : public QObject
 {
     Q_OBJECT
 public:
-    explicit VerifyCustomDetachedGpgSignatures(QObject *parent = 0);
+    explicit RecursivelyVerifyCustomDetachedGpgSignatures(QObject *parent = 0);
 private:
     QTextStream m_CustomDetachedSignaturesStream;
+    RecursiveCustomDetachedSignatures *m_RecursiveCustomDetachedSignatures;
     QProcess *m_GpgProcess;
     QTextStream m_GpgProcessTextStream;
     QSet<QString> m_ListOfFileOnFsToSeeIfAnyAreMissingSigs;
-    int m_CharacterLengthOfAbsolutePathOfTargetDir;
+    int m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash;
     QString m_FilePathCurrentlyBeingVerified;
 
     void buildListOfFilesOnFsToSeeIfAnyAreMissingSigs(const QDir &dir);
@@ -30,13 +33,13 @@ private:
 signals:
     void o(const QString &msg);
     void e(const QString &msg);
-    void doneVerifyingCustomDetachedGpgSignatures(bool success);
+    void doneRecursivelyVerifyCustomDetachedGpgSignatures(bool success);
 public slots:
-    void verifyCustomDetachedGpgSignatures(const QString &dir, const QString &customDetachedSignaturesFile /*TODOoptional: read from stdin*/);
-    void verifyCustomDetachedGpgSignatures(const QDir &dir, QIODevice *customDetachedSignaturesIoDevice);
+    void recursivelyVerifyCustomDetachedGpgSignatures(const QString &dir, const QString &customDetachedSignaturesFile /*TODOoptional: read from stdin*/);
+    void recursivelyVerifyCustomDetachedGpgSignatures(const QDir &dir, QIODevice *customDetachedSignaturesIoDevice);
 private slots:
     void handleGpgProcessError(QProcess::ProcessError processError);
     void handleGpgProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
 };
 
-#endif // VERIFYCUSTOMDETACHEDGPGSIGNATURES_H
+#endif // RECURSIVELYVERIFYCUSTOMDETACHEDGPGSIGNATURES_H
