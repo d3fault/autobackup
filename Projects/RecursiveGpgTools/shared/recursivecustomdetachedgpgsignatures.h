@@ -26,7 +26,7 @@ class RecursiveCustomDetachedSignatures : public QObject
 public:
     explicit RecursiveCustomDetachedSignatures(QObject *parent = 0);
     bool readPathAndSignature(QTextStream &customDetachedGpgSignaturesTextStream, QString *out_FilePathToVerify, QString *out_CurrentFileSignature, qint64 *out_CurrentFileUnixTimestamp);
-    bool filesystemLastModifiedUnixTimestampAndMetaUnixTimestampsAreIdentical(const QDateTime &filesystemLastModifiedUnixTimestamp, const RecursiveCustomDetachedSignaturesFileMeta &fileMeta);
+    bool filesystemLastModifiedUnixTimestampAndMetaUnixTimestampsAreIdentical(qint64 filesystemLastModifiedUnixTimestampInSeconds, const RecursiveCustomDetachedSignaturesFileMeta &fileMeta);
 signals:
     void e(const QString &msg);
 };

@@ -59,7 +59,7 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
                 //currentEntry is already in sigfile
 
                 //early warning detection of accidental overwrites: did the last modified timestamp change?
-                if(!m_RecursiveCustomDetachedSignatures->filesystemLastModifiedUnixTimestampAndMetaUnixTimestampsAreIdentical(currentEntry.lastModified(), it.value()))
+                if(!m_RecursiveCustomDetachedSignatures->filesystemLastModifiedUnixTimestampAndMetaUnixTimestampsAreIdentical(m_FileMetaCurrentlyBeingGpgSigned.UnixTimestampInSeconds, it.value()))
                 {
                     emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
                     return;

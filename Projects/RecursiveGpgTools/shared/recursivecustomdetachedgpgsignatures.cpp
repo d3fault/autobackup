@@ -47,14 +47,12 @@ bool RecursiveCustomDetachedSignatures::readPathAndSignature(QTextStream &custom
     while(lastReadLine != GPG_END_SIG_DELIMITER);
     return true;
 }
-bool RecursiveCustomDetachedSignatures::filesystemLastModifiedUnixTimestampAndMetaUnixTimestampsAreIdentical(const QDateTime &filesystemLastModifiedUnixTimestamp, const RecursiveCustomDetachedSignaturesFileMeta &fileMeta)
+bool RecursiveCustomDetachedSignatures::filesystemLastModifiedUnixTimestampAndMetaUnixTimestampsAreIdentical(qint64 filesystemLastModifiedUnixTimestampInSeconds, const RecursiveCustomDetachedSignaturesFileMeta &fileMeta)
 {
-    qint64 unixTimestampInSigsFile = fileMeta.UnixTimestampInSeconds;
-    qint64 unixTimestampOnFs = (filesystemLastModifiedUnixTimestamp.toMSecsSinceEpoch() / 1000);
-    if(unixTimestampInSigsFile != unixTimestampOnFs)
+    if(fileMeta.UnixTimestampInSeconds != filesystemLastModifiedUnixTimestampInSeconds)
     {
         emit e("last modified timestamp on filesystem differs from what's in the sigs file: " + fileMeta.FilePath);
-        emit e("on fs: " + QString::number(unixTimestampOnFs) + " -- in sigs file: " + QString::number(unixTimestampInSigsFile));
+        emit e("on fs: " + QString::number(filesystemLastModifiedUnixTimestampInSeconds) + " -- in sigs file: " + QString::number(fileMeta.UnixTimestampInSeconds));
         return false;
     }
     return true;

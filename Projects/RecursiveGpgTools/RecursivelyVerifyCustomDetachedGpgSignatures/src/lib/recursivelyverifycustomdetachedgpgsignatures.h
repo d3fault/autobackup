@@ -5,11 +5,11 @@
 #include <QDir>
 #include <QTextStream>
 #include <QProcess>
-#include <QSet>
+#include <QHash>
 
 class QIODevice;
 
-class RecursiveCustomDetachedSignatures;
+#include "recursivecustomdetachedgpgsignatures.h"
 
 class RecursivelyVerifyCustomDetachedGpgSignatures : public QObject
 {
@@ -21,16 +21,16 @@ private:
     RecursiveCustomDetachedSignatures *m_RecursiveCustomDetachedSignatures;
     QProcess *m_GpgProcess;
     QTextStream m_GpgProcessTextStream;
-    QSet<QString> m_ListOfFilesOnFsToSeeIfAnyAreMissingSigs;
+    QHash<QString /*file path*/, qint64 /*last modified unix timestamp in seconds*/> m_FilesOnFsToSeeIfAnyAreMissingSigsAndToCheckLastModifiedTImestampsAgainst;
     int m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash;
-    QString m_FilePathCurrentlyBeingVerified;
+    RecursiveCustomDetachedSignaturesFileMeta m_FileMetaCurrentlyBeingVerified;
 
     quint64 m_NumFilesVerified;
 
     void buildListOfFilesOnFsToSeeIfAnyAreMissingSigs(const QDir &dir);
     void verifyNextEntryOfCustomDetachedOrEmitFinishedIfNoMore();
     bool readPathAndSignature(QString *out_FilePathToVerify, QString *out_CurrentFileSignature);
-    void verifyFileSignatureAndThenContinueOntoNextEntryOfCustomDetached(const QString &filePathToVerify, const QString &fileSignature);
+    void verifyFileSignatureAndThenContinueOntoNextEntryOfCustomDetached();
     void spitOutGpgProcessOutput();
 signals:
     void o(const QString &msg);

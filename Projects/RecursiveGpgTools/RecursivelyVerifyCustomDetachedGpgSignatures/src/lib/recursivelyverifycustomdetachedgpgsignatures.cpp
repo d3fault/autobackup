@@ -5,8 +5,7 @@
 #include <QTextStream>
 #include <QProcess>
 #include <QDirIterator>
-
-#include "recursivecustomdetachedgpgsignatures.h"
+#include <QDateTime>
 
 RecursivelyVerifyCustomDetachedGpgSignatures::RecursivelyVerifyCustomDetachedGpgSignatures(QObject *parent)
     : QObject(parent)
@@ -28,14 +27,14 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::buildListOfFilesOnFsToSeeIfAn
     //A much less memory efficient "synchronous" strategy is being used instead of the above described optimization.... where every filepath in the target dir must be in memory before we can even begin verifying sigs
     m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash = dir.absolutePath().length() + 1; //+1 to account for trailing slash
     QDirIterator dirIterator(dir.absolutePath(), (QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden), QDirIterator::Subdirectories);
-    m_ListOfFilesOnFsToSeeIfAnyAreMissingSigs.clear();
+    m_FilesOnFsToSeeIfAnyAreMissingSigsAndToCheckLastModifiedTImestampsAgainst.clear();
     while(dirIterator.hasNext())
     {
         dirIterator.next();
         const QFileInfo &currentEntry = dirIterator.fileInfo();
         if(currentEntry.isFile())
         {
-            m_ListOfFilesOnFsToSeeIfAnyAreMissingSigs.insert(currentEntry.filePath().mid(m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash));
+            m_FilesOnFsToSeeIfAnyAreMissingSigsAndToCheckLastModifiedTImestampsAgainst.insert(currentEntry.filePath().mid(m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash), (currentEntry.lastModified().toMSecsSinceEpoch() / 1000));
         }
     }
 }
@@ -45,22 +44,38 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::verifyNextEntryOfCustomDetach
     {
         QString currentFilePathToVerify;
         QString currentFileSignature;
-        if(!m_RecursiveCustomDetachedSignatures->readPathAndSignature(m_CustomDetachedSignaturesStream, &currentFilePathToVerify, &currentFileSignature))
+        qint64 currentFileUnixTimestamp;
+        if(!m_RecursiveCustomDetachedSignatures->readPathAndSignature(m_CustomDetachedSignaturesStream, &currentFilePathToVerify, &currentFileSignature, &currentFileUnixTimestamp))
         {
             emit doneRecursivelyVerifyCustomDetachedGpgSignatures(false);
             return;
         }
-        verifyFileSignatureAndThenContinueOntoNextEntryOfCustomDetached(currentFilePathToVerify, currentFileSignature);
+        m_FileMetaCurrentlyBeingVerified = RecursiveCustomDetachedSignaturesFileMeta(currentFilePathToVerify, currentFileSignature, currentFileUnixTimestamp);
+
+        //TODOoptional: I need to check here/now (well I could check after the sig verifies, but might as well check before since it's cheaper) whether the fs last modified timestamp matches the sigfiles last modified timestamp, because after the sig verify is successful, we remove it from m_FilesOnFsToSeeIfAnyAreMissingSigsAndToCheckLastModifiedTImestampsAgainst. I am going to error out here as soon as a last modified timestamp mismatch is seen, but I could keep a "list of files with mismatching timestamps" and continue onto the end. Similarly, the recursive gpg signer could also not error-out-on-first-timestamp-mismatch and keep building a list and present it at the end. It seems "off" that I'm waiting until the end to show a list of files missing on fs. I guess I could compare the contents of the two lists before verifying even one (and then error out on first non-existent file) just so it matches the functionality of these timestamps mismatches, BUT tbh I can't make up my mind which I like better: error out on first error, or build up errors and present them all at the end in a list. For a huuuuge directory, the first is better. For a small to medium sized directory, the second is better. I've seen plenty of tools that have CLI args for deciding how to handle errors (quit on first error vs. accumulate and continue), so obviously that is the best/proper solution. But what should I default to? I'll tell ya what: whatever is simplest. So for that reason, I'm erroring out here on the first timestamp mismatch
+        QHash<QString /*file path*/, qint64 /*last modified unix timestamp in seconds*/>::const_iterator it = m_FilesOnFsToSeeIfAnyAreMissingSigsAndToCheckLastModifiedTImestampsAgainst.find(currentFilePathToVerify);
+        if(it != m_FilesOnFsToSeeIfAnyAreMissingSigsAndToCheckLastModifiedTImestampsAgainst.end()) //silently ignore file not existing _here_, because we don't want to ruin the code at the end that spits out a list of missing files
+        {
+            if(!m_RecursiveCustomDetachedSignatures->filesystemLastModifiedUnixTimestampAndMetaUnixTimestampsAreIdentical(it.value(), m_FileMetaCurrentlyBeingVerified))
+            {
+                emit doneRecursivelyVerifyCustomDetachedGpgSignatures(false);
+                return;
+            }
+        }
+
+        verifyFileSignatureAndThenContinueOntoNextEntryOfCustomDetached();
         return;
     }
 
-    if(!m_ListOfFilesOnFsToSeeIfAnyAreMissingSigs.isEmpty())
+    if(!m_FilesOnFsToSeeIfAnyAreMissingSigsAndToCheckLastModifiedTImestampsAgainst.isEmpty())
     {
         emit e("the below files on the filesystem were not in the gpg signature file:");
         emit e("");
-        Q_FOREACH(const QString &currentFileOnFsButNotInSigFile, m_ListOfFilesOnFsToSeeIfAnyAreMissingSigs)
+        QHashIterator<QString /*file path*/, qint64 /*last modified unix timestamp in seconds*/> it(m_FilesOnFsToSeeIfAnyAreMissingSigsAndToCheckLastModifiedTImestampsAgainst);
+        while(it.hasNext())
         {
-            emit e(currentFileOnFsButNotInSigFile);
+            it.next();
+            emit e(it.key());
         }
         emit e("");
         emit e("the above files on the filesystem were not in the gpg signature file");
@@ -72,14 +87,12 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::verifyNextEntryOfCustomDetach
     emit o("done verifying " + QString::number(m_NumFilesVerified) + " custom detached gpg signatures -- everything OK");
     emit doneRecursivelyVerifyCustomDetachedGpgSignatures(true);
 }
-void RecursivelyVerifyCustomDetachedGpgSignatures::verifyFileSignatureAndThenContinueOntoNextEntryOfCustomDetached(const QString &filePathToVerify, const QString &fileSignature)
+void RecursivelyVerifyCustomDetachedGpgSignatures::verifyFileSignatureAndThenContinueOntoNextEntryOfCustomDetached()
 {
-    m_FilePathCurrentlyBeingVerified = filePathToVerify;
-
     QStringList gpgArgs;
-    gpgArgs << "--verify" << "-" << filePathToVerify;
+    gpgArgs << "--verify" << "-" << m_FileMetaCurrentlyBeingVerified.FilePath;
     m_GpgProcess->start(GPG_DEFAULT_PATH, gpgArgs, QIODevice::ReadWrite);
-    m_GpgProcessTextStream << fileSignature;
+    m_GpgProcessTextStream << m_FileMetaCurrentlyBeingVerified.GpgSignature;
     m_GpgProcessTextStream.flush(); //necessary? probably, but idk tbh
     m_GpgProcess->closeWriteChannel();
 }
@@ -114,7 +127,7 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::recursivelyVerifyCustomDetach
 }
 void RecursivelyVerifyCustomDetachedGpgSignatures::handleGpgProcessError(QProcess::ProcessError processError)
 {
-    emit e("gpg qprocess error: '" + QString::number(processError) + "' while trying to verify file: " + m_FilePathCurrentlyBeingVerified);
+    emit e("gpg qprocess error: '" + QString::number(processError) + "' while trying to verify file: " + m_FileMetaCurrentlyBeingVerified.FilePath);
     emit doneRecursivelyVerifyCustomDetachedGpgSignatures(false);
 }
 void RecursivelyVerifyCustomDetachedGpgSignatures::handleGpgProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
@@ -122,14 +135,14 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::handleGpgProcessFinished(int 
     if(exitStatus != QProcess::NormalExit)
     {
         spitOutGpgProcessOutput();
-        emit e("gpg did not exit normally when trying to verify file: " + m_FilePathCurrentlyBeingVerified);
+        emit e("gpg did not exit normally when trying to verify file: " + m_FileMetaCurrentlyBeingVerified.FilePath);
         emit doneRecursivelyVerifyCustomDetachedGpgSignatures(false);
         return;
     }
     if(exitCode != 0)
     {
         spitOutGpgProcessOutput();
-        emit e("one of the signatures was not valid, or there was some other reason gpg did not exit with code 0. gpg exitted with code: " + QString::number(exitCode) + " while trying to verify file: " + m_FilePathCurrentlyBeingVerified); //TODOoptional: this, and other errors, can possibly show the sig that failed to verify... but eh filename is probably enough
+        emit e("one of the signatures was not valid, or there was some other reason gpg did not exit with code 0. gpg exitted with code: " + QString::number(exitCode) + " while trying to verify file: " + m_FileMetaCurrentlyBeingVerified.FilePath); //TODOoptional: this, and other errors, can possibly show the sig that failed to verify... but eh filename is probably enough
         emit doneRecursivelyVerifyCustomDetachedGpgSignatures(false);
         return;
     }
@@ -139,7 +152,7 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::handleGpgProcessFinished(int 
 
     //TODOoptional: if(verbose) { file <name> verified }
 
-    m_ListOfFilesOnFsToSeeIfAnyAreMissingSigs.remove(m_FilePathCurrentlyBeingVerified); //is guaranteed to be in there, unless the user is messing with the dir contents while the app is running (which will lead to undefined behavior anyways)
+    m_FilesOnFsToSeeIfAnyAreMissingSigsAndToCheckLastModifiedTImestampsAgainst.remove(m_FileMetaCurrentlyBeingVerified.FilePath); //is guaranteed to be in there, unless the user is messing with the dir contents while the app is running (which will lead to undefined behavior anyways)
     ++m_NumFilesVerified;
     verifyNextEntryOfCustomDetachedOrEmitFinishedIfNoMore(); //pseudo-recursive (async) -- tail
 }
