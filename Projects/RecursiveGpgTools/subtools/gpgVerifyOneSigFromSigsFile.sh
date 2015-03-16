@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ "$#" -lt 3 ]; then
+if [ "$#" -lt 2 ]; then
 	echo "Usage: $0 relativeFilePathToVerify sigsFile [heightOfOneGpgSigInSigsFile=11]"
 	echo "Ex: $0 path/to/file.txt ~/path/to/sigfile.txt"
 	echo ""
@@ -8,7 +8,7 @@ if [ "$#" -lt 3 ]; then
 fi
 
 heightOfOneGpgSigInSigsFile=11
-if [ "$#" -ge 4 ]; then
+if [ "$#" -ge 3 ]; then
 	heightOfOneGpgSigInSigsFile="$3"
 fi
-grep "$1" -A "$heightOfOneGpgSigInSigsFile" "$sigsFile" | tail -n "$heightOfOneGpgSigInSigsFile" | gpg --verify - "$1" #TODOoptional: determine where the pgp sig ends dynamically without using the height like this
+grep "$1" -A "$heightOfOneGpgSigInSigsFile" "$2" | tail -n "$heightOfOneGpgSigInSigsFile" | gpg --verify - "$1" #TODOoptional: determine where the pgp sig ends dynamically without using the height like this
