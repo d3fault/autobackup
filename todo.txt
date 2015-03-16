@@ -5,11 +5,12 @@ hvbs
 abc2
 
 do:
-abc explain vids -- that and/or step by step tutorials (images), obviously preferably both
 import script[s]
 server migration
+record go outside vid script insists on a reasonable date time, exits without -- even with one, the chosen filename must not exist
 music fingers vanilla piano (DOIT FAGGOT)
 
+abc explain vids -- that and/or step by step tutorials (images), obviously preferably both
 "not serving this"
 binarySupplement post-update also?
 copyleft disclaimer (assignment is easiest, but shitty, CLA would be better but maybe complicated (also shitty, just less shitty than assignment), some kind of "you agree to give your works to me in DPL3(+? (maybe two versions, one with the plus and one without))" would be best (and idk that itself kind of sounds like a CLA, idfk want2buy lawyer))

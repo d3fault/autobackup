@@ -7,6 +7,7 @@
 #include <QDirIterator>
 #include <QDateTime>
 
+//TODOoptional: they can pass in a path to recurse (skipping the rest), or hell even a list of paths/files, and of course the opposite holds true: excludes
 RecursivelyVerifyCustomDetachedGpgSignatures::RecursivelyVerifyCustomDetachedGpgSignatures(QObject *parent)
     : QObject(parent)
     , m_RecursiveCustomDetachedSignatures(new RecursiveCustomDetachedSignatures(this))
