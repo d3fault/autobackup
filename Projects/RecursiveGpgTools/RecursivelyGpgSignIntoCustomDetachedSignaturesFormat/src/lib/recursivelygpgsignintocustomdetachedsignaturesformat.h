@@ -8,7 +8,7 @@
 #include <QScopedPointer>
 #include <QProcess>
 
-class RecursiveCustomDetachedSignatures;
+#include "recursivecustomdetachedgpgsignatures.h"
 
 class RecursivelyGpgSignIntoCustomDetachedSignaturesFormat : public QObject
 {
@@ -17,14 +17,14 @@ public:
     explicit RecursivelyGpgSignIntoCustomDetachedSignaturesFormat(QObject *parent = 0);
 private:
     QTextStream m_InputAndOutputSigFileTextStream;
-    QHash<QString /*file path*/, QString /*file sig*/> m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem;
-    QMap<QString /*file path*/, QString /*file sig*/> m_AllSigsForOutputting;
+    QHash<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem;
+    QMap<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> m_AllSigsForOutputting;
     RecursiveCustomDetachedSignatures *m_RecursiveCustomDetachedSignatures;
     int m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash;
     QScopedPointer<QDirIterator> m_DirIterator;
     QProcess *m_GpgProcess;
     QTextStream m_GpgProcessTextStream;
-    QString m_FilePathCurrentlyBeingGpgSigned;
+    RecursiveCustomDetachedSignaturesFileMeta m_FileMetaCurrentlyBeingGpgSigned;
 
     quint64 m_ExistingSigs;
     quint64 m_AddedSigs;
@@ -32,7 +32,7 @@ private:
 
     void readInAllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem();
     void recursivelyGpgSignDirEntriesAndEmitFinishedWhenNoMore();
-    void gpgSignFileAndThenContinueRecursingDir(const QString &filePathToGpgSign);
+    void gpgSignFileAndThenContinueRecursingDir();
     void spitOutGpgProcessOutput();
 signals:
     void o(const QString &msg);

@@ -21,7 +21,7 @@ private:
     RecursiveCustomDetachedSignatures *m_RecursiveCustomDetachedSignatures;
     QProcess *m_GpgProcess;
     QTextStream m_GpgProcessTextStream;
-    QSet<QString> m_ListOfFileOnFsToSeeIfAnyAreMissingSigs;
+    QSet<QString> m_ListOfFilesOnFsToSeeIfAnyAreMissingSigs;
     int m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash;
     QString m_FilePathCurrentlyBeingVerified;
 

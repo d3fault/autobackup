@@ -28,14 +28,14 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::buildListOfFilesOnFsToSeeIfAn
     //A much less memory efficient "synchronous" strategy is being used instead of the above described optimization.... where every filepath in the target dir must be in memory before we can even begin verifying sigs
     m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash = dir.absolutePath().length() + 1; //+1 to account for trailing slash
     QDirIterator dirIterator(dir.absolutePath(), (QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden), QDirIterator::Subdirectories);
-    m_ListOfFileOnFsToSeeIfAnyAreMissingSigs.clear();
+    m_ListOfFilesOnFsToSeeIfAnyAreMissingSigs.clear();
     while(dirIterator.hasNext())
     {
         dirIterator.next();
         const QFileInfo &currentEntry = dirIterator.fileInfo();
         if(currentEntry.isFile())
         {
-            m_ListOfFileOnFsToSeeIfAnyAreMissingSigs.insert(currentEntry.filePath().mid(m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash));
+            m_ListOfFilesOnFsToSeeIfAnyAreMissingSigs.insert(currentEntry.filePath().mid(m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash));
         }
     }
 }
@@ -54,17 +54,17 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::verifyNextEntryOfCustomDetach
         return;
     }
 
-    if(!m_ListOfFileOnFsToSeeIfAnyAreMissingSigs.isEmpty())
+    if(!m_ListOfFilesOnFsToSeeIfAnyAreMissingSigs.isEmpty())
     {
         emit e("the below files on the filesystem were not in the gpg signature file:");
         emit e("");
-        Q_FOREACH(const QString &currentFileOnFsButNotInSigFile, m_ListOfFileOnFsToSeeIfAnyAreMissingSigs)
+        Q_FOREACH(const QString &currentFileOnFsButNotInSigFile, m_ListOfFilesOnFsToSeeIfAnyAreMissingSigs)
         {
             emit e(currentFileOnFsButNotInSigFile);
         }
         emit e("");
         emit e("the above files on the filesystem were not in the gpg signature file");
-        emit o("however, every file in the gpg signature file did verify, so it wasn't a complete failure");
+        emit o("however, every file in the gpg signatures file verified correctly, so it wasn't a complete failure");
         emit doneRecursivelyVerifyCustomDetachedGpgSignatures(false);
         return;
     }
@@ -139,7 +139,7 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::handleGpgProcessFinished(int 
 
     //TODOoptional: if(verbose) { file <name> verified }
 
-    m_ListOfFileOnFsToSeeIfAnyAreMissingSigs.remove(m_FilePathCurrentlyBeingVerified); //is guaranteed to be in there, unless the user is messing with the dir contents while the app is running (which will lead to undefined behavior anyways)
+    m_ListOfFilesOnFsToSeeIfAnyAreMissingSigs.remove(m_FilePathCurrentlyBeingVerified); //is guaranteed to be in there, unless the user is messing with the dir contents while the app is running (which will lead to undefined behavior anyways)
     ++m_NumFilesVerified;
     verifyNextEntryOfCustomDetachedOrEmitFinishedIfNoMore(); //pseudo-recursive (async) -- tail
 }

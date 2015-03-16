@@ -4,8 +4,7 @@
 #include <QDir>
 #include <QHashIterator>
 #include <QMapIterator>
-
-#include "recursivecustomdetachedgpgsignatures.h"
+#include <QDateTime>
 
 //TODOoptional: make this app write to stdout if no output sigfile arg is specified. similarly, the verifier should read from stdin if no input sigfile arg is specified. directory is probably always necessary, HOWEVER it might be good to default to cwd for both this and the verifier when none is provided?
 //TODOoptional: a combination of sign+verify: sign files on fs not in sigfile, verify files in sigfile, report sigs in sigfile that do not exist on filesystem -- it shouldn't be the default because reading/verifying EVERY file would take a long as fuck time
@@ -32,12 +31,13 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::readInAllSigsFromSigF
     {
         QString alreadySignedFilePath;
         QString alreadySignedFileSig;
-        if(!m_RecursiveCustomDetachedSignatures->readPathAndSignature(m_InputAndOutputSigFileTextStream, &alreadySignedFilePath, &alreadySignedFileSig))
+        qint64 alreadySignedFileUnixTimestamp;
+        if(!m_RecursiveCustomDetachedSignatures->readPathAndSignature(m_InputAndOutputSigFileTextStream, &alreadySignedFilePath, &alreadySignedFileSig, &alreadySignedFileUnixTimestamp))
         {
             emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
             return;
         }
-        m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem.insert(alreadySignedFilePath, alreadySignedFileSig); //TODOreq: we start off with a hash, but as their existences are verified, we move them into a map... the same map that new files+sigs are being placed into. we want it to be sorted for when we re-write the signature file with the new entries. TODOoptimization: don't re-write the sigs file if no new files were seen (perhaps don't even open it in write mode?)
+        m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem.insert(alreadySignedFilePath, RecursiveCustomDetachedSignaturesFileMeta(alreadySignedFilePath, alreadySignedFileSig, alreadySignedFileUnixTimestamp)); //TODOreq: we start off with a hash, but as their existences are verified, we move them into a map... the same map that new files+sigs are being placed into. we want it to be sorted for when we re-write the signature file with the new entries. TODOoptimization: don't re-write the sigs file if no new files were seen (perhaps don't even open it in write mode?)
         ++m_ExistingSigs;
         ++m_TotalSigs;
     }
@@ -51,19 +51,30 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
         if(currentEntry.isFile())
         {
             const QString &relativeFilePath = currentEntry.absoluteFilePath().mid(m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash); //TODOmb: colon and last modified timestamp? maybe I shouldn't mix the two... but eh maybe I should? sign time != modify time, after all...
-            QHash<QString, QString>::iterator it = m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem.find(relativeFilePath);
+            m_FileMetaCurrentlyBeingGpgSigned.FilePath = relativeFilePath;
+            m_FileMetaCurrentlyBeingGpgSigned.UnixTimestampInSeconds = (currentEntry.lastModified().toMSecsSinceEpoch() / 1000);
+            QHash<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/>::iterator it = m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem.find(relativeFilePath);
             if(it != m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem.end())
             {
                 //currentEntry is already in sigfile
 
-                //move it to the map
+                //early warning detection of accidental overwrites: did the last modified timestamp change?
+                if(!m_RecursiveCustomDetachedSignatures->filesystemLastModifiedUnixTimestampAndMetaUnixTimestampsAreIdentical(currentEntry.lastModified(), it.value()))
+                {
+                    emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
+                    return;
+                }
+
+                //last modified timestamp did not change
+
+                //move it to the map for outputting to the new sigs file
                 m_AllSigsForOutputting.insert(it.key(), it.value());
                 m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem.erase(it);
             }
             else
             {
                 //currentEntry is not in sigfile
-                gpgSignFileAndThenContinueRecursingDir(relativeFilePath);
+                gpgSignFileAndThenContinueRecursingDir();
                 ++m_AddedSigs;
                 ++m_TotalSigs;
                 return;
@@ -76,7 +87,7 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
     {
         emit e("the below files in the gpg signatures file were not found on the filesystem:");
         emit e("");
-        QHashIterator<QString /*file path*/, QString /*file sig*/> it(m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem);
+        QHashIterator<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> it(m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem);
         while(it.hasNext())
         {
             it.next();
@@ -97,11 +108,11 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
         emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
         return;
     }
-    QMapIterator<QString /*file path*/, QString /*file sig*/> it(m_AllSigsForOutputting);
+    QMapIterator<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> it(m_AllSigsForOutputting);
     while(it.hasNext())
     {
         it.next();
-        m_InputAndOutputSigFileTextStream << it.key() << endl << it.value();
+        m_InputAndOutputSigFileTextStream << it.value();
     }
     m_InputAndOutputSigFileTextStream.flush();
 
@@ -109,12 +120,10 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
     emit o("done recusrively signing directory -- everything OK");
     emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(true);
 }
-void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::gpgSignFileAndThenContinueRecursingDir(const QString &filePathToGpgSign)
+void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::gpgSignFileAndThenContinueRecursingDir()
 {
-    m_FilePathCurrentlyBeingGpgSigned = filePathToGpgSign;
-
     QStringList gpgArgs;
-    gpgArgs << "--detach-sign" << "--armor" << "-o" << "-" << filePathToGpgSign;
+    gpgArgs << "--detach-sign" << "--armor" << "-o" << "-" << m_FileMetaCurrentlyBeingGpgSigned.FilePath;
     m_GpgProcess->start(GPG_DEFAULT_PATH, gpgArgs, QIODevice::ReadOnly);
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::spitOutGpgProcessOutput()
@@ -154,7 +163,7 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignInt
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::handleGpgProcessError(QProcess::ProcessError processError)
 {
-    emit e("gpg qprocess error: '" + QString::number(processError) + "' while trying to sign file: " + m_FilePathCurrentlyBeingGpgSigned);
+    emit e("gpg qprocess error: '" + QString::number(processError) + "' while trying to sign file: " + m_FileMetaCurrentlyBeingGpgSigned.FilePath);
     emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::handleGpgProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
@@ -162,22 +171,22 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::handleGpgProcessFinis
     if(exitStatus != QProcess::NormalExit)
     {
         spitOutGpgProcessOutput();
-        emit e("gpg did not exit normally when trying to sign file: " + m_FilePathCurrentlyBeingGpgSigned);
+        emit e("gpg did not exit normally when trying to sign file: " + m_FileMetaCurrentlyBeingGpgSigned.FilePath);
         emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
         return;
     }
     if(exitCode != 0)
     {
         spitOutGpgProcessOutput();
-        emit e("gpg did not exit with code 0. gpg exitted with code: " + QString::number(exitCode) + " while trying to sign file: " + m_FilePathCurrentlyBeingGpgSigned);
+        emit e("gpg did not exit with code 0. gpg exitted with code: " + QString::number(exitCode) + " while trying to sign file: " + m_FileMetaCurrentlyBeingGpgSigned.FilePath);
         emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
         return;
     }
 
-    QString fileSig = m_GpgProcessTextStream.readAll();
+    m_FileMetaCurrentlyBeingGpgSigned.GpgSignature = m_GpgProcessTextStream.readAll();
 
     //TODOoptional: if(verbose) { file <name> signed } -- random/semi-OT: instead of littering your code with if(m_Quiet), if(m_Verbose), etc... just do emit e/o/v as usual and then [dis-]connect the signals accordingly. this marks the first time i've ever thought of using "emit v"
 
-    m_AllSigsForOutputting.insert(m_FilePathCurrentlyBeingGpgSigned, fileSig);
+    m_AllSigsForOutputting.insert(m_FileMetaCurrentlyBeingGpgSigned.FilePath, m_FileMetaCurrentlyBeingGpgSigned);
     recursivelyGpgSignDirEntriesAndEmitFinishedWhenNoMore(); //pseudo-recursive (async) -- tail
 }
