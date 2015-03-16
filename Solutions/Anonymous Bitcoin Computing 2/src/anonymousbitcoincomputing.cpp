@@ -194,7 +194,7 @@ int AnonymousBitcoinComputing::startAbcAndWaitForFinished(int argc, char **argv)
     }
     std::string abcLogoString = std::string(abcLogoBuffer, fileSizeHack);
     delete [] abcLogoBuffer;
-    NonExpiringStringWResource abcLogoImageResource(abcLogoString, "image/svg+xml", "abc.logo.svg", WResource::Inline);
+    NonExpiringStringWResource abcLogoImageResource(abcLogoString, "image/svg+xml", WResource::Inline, "abc.logo.svg");
     abcLogoString.clear(); //we made a copy already. TODOoptimization similar calls can go in hvbs i suppose
     wtServer.addResource(&abcLogoImageResource, "/abc.logo.svg");
     //END ABC LOGO

@@ -78,8 +78,10 @@ void ApiKeyAccountTabBody::displayApiKey(const string &couchbaseDocument, bool l
     new WBreak(this);
     const std::string &apiSampleQuery = ABC2_API_GET_CURRENT_AD_ACTION_FULL_PATH_MACRO(m_AbcApp->m_CurrentlyLoggedInUsername, "0", apiKey);
     new WText("HTTPS: https://anonymousbitcoincomputing.com:" + s_ApiHttpsPort + apiSampleQuery, this);
+#if 0
     new WBreak(this);
     new WText("Tor Hidden Service: http://abcapijjqq7uvbpk.onion" + apiSampleQuery, this);
+#endif
     new WBreak(this);
-    new WText("Feel free to paste these example API queries into your browser right now to see what the JSON response looks like", this);
+    new WText("Feel free to paste this example API query into your browser right now to see what the JSON response looks like", this);
 }

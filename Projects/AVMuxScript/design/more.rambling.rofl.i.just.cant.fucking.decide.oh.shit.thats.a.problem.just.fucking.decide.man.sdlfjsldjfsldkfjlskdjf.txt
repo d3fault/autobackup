@@ -1,0 +1,39 @@
+re: Large [binary] files
+When syncing from one directory to another, the ideal backup solution would gpg verify on both the sending and receiving side (assuming there's a network in between. If there isn't a network in between the "rsync" command src/dest, one gpg verify is enough). One might argue that it is overkill, and indeed it is if done improperly. BUT, having the file already in memory, a prerequisite to rsync'ing it to begin with, is the majority of the overhead. A gpg verify of that in memory content is cheap/practically-free.
+
+Obviously, this isn't cheap/free unless you have a ton of RAM (commands simplified for readability):
+local: gpg verify file
+rsync local:file -> remote:file
+remote: gpg verify file
+
+A while ago, when I created the MyBrain archives, I got into a habit of making huge as fuck shell commands that used "tee" to calculate sha1sums during copying. I didn't get it to do sha1sum matching (I suck at bash), but that was as easy as looking at the command results at the end of the copy op.
+
+I want something similar to that tee command chaining, but using gpg verify. Maybe rsync has hooks I can setup, but I bet they'll be a pain to tweak properly (ex: if the remote hook "returns 1", I want it's stderr/out to be told to me on the sender side). Rsync's manpage is a beast, I'm skimming it now.
+
+What I want can be accomplished with tee + netcat, providing I send the sig before the file (no biggy). That it doesn't provide encryption is a tiny bit concerning: my files are public so fuck it (and the gpg verify stage kinda almost buys me same shit (eh)), but a proper solution should use ssh.
+
+
+
+Guh this all stems from my "import script" task, obviously. I'm scared to break away from git because git provides OVERWRITE PROTECTION. aka: "oh shit the gpg sig doesn't verify... but damnit i overwrite the file so now what?" (in git, I just checkout the old copy). It provides overwrite protection, but at the cost of taking up twice as much space (minimum (although only for non-bare checkouts... so...)).
+
+
+interesting rsync options (unrelated to above problem unfortunately):
+my typical args: -avhhu --partial --progress
+--delay-updates (with or without --partial-dir)
+--ignore-existing (if pulling in from untrusted source (and in that case, probably combined with --delay-updates/--partial-dir))
+
+OT: I read the wiki page on "ECC" the other day and it made me paranoid as fuck about the [long-term] integrity of my files. Git is enough, yea, but has performance issues for large files guh... which is why I'm researching a gpg sign/verify solution (might as well since it's about as much work as md5/sha1, but buys you much more)
+
+
+Linus says signing every commit is stupid/overkill. I agree, but fuck it we're talking about an insignificant amount of hdd space. I am tempted to do "ultra sign everything" mode, where the recursive gpg sign tool is used on every file in the repo, the custom-detached-sigs file that recursive tool generates is itself signed (this sig of the custom-detached-sigs file must be excluded from the recursive gpg sign, of course), then sign the git commit as well (which contains the regular repo files, the custom detached signatures file, and the signature of the custom detached signatures file). Definitely overkill, fuck it come at me bro. Oh and of course I should still store last modified timestamps SOMEWHERE (doesn't have to be in custom detached sigs file, so long as it is in the repo as a vanilla file (and generated before the recursive gpg sign (BUT, it is "more efficient" to only recursively iterate the heirarchy once (excluding git's additional recurse lewlies))).
+
+^^This of course is only for text files (well I mean it would work for binaries too, just eh I'm not sure I want to use git for binaries (I "want" to, but there are huge cons to it)).
+
+
+Another con of git is that I can't split up the repo and store different parts on different drives. Doing so would be confusing regardless, but might be necessary on the short term xD.
+
+
+To add to the confusion of the import script, currently I'm storing the audio half in git, and the video files simply as files.
+
+
+Making a "weekly torrent" (automatically, ofc) sounds like it would play nicer with non-git (because what if git updates the files in that torrent?). A "git diff --binary [weekAgoHash] [latestHash]" would be swell/efficient/EASY, but mostly useless to the downloaders of it (unless I provided a tool to apply the patch for them (which implies a tool to download the weekly torrents to begin with (and that sounds like much too much work for a simple "import script" that I just want to fucking KISS and get the fuck done so I can do vanilla piano music fingers and go the fuck outside [more])). NOT using git will force me to "eh don't overwrite these files" (doing so is disasterous fml), so it's easier/saner to say "these are part of this week's torrent")

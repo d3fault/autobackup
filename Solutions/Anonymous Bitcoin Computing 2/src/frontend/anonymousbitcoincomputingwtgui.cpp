@@ -259,14 +259,16 @@ void AnonymousBitcoinComputingWtGUI::buildGui()
 
     m_MainVLayout->addLayout(m_BodyHLayout, 1, Wt::AlignTop | Wt::AlignLeft);
 }
+//TODOmb: bleh I need auto-blog. sign up for a free wordpress blog, auto-configured abc ad already attached (I take out a bigger cut than 3% since I'm hosting too)... fucking infinite directions and the business ones are all so boring :(...
 void AnonymousBitcoinComputingWtGUI::showHomeWidget()
 {
     if(!m_HomeWidget)
     {
         m_HomeWidget = new WContainerWidget(m_MainStack);
-        new WText("Welcome to " ABC_HUMAN_READABLE_NAME_PLX, m_HomeWidget);
+        new WText("Welcome to " ABC_HUMAN_READABLE_NAME_PLX ".<br /><br />" ABC_HUMAN_READABLE_NAME_PLX " is an advertising platform for both buying and selling ads. There's a 1.5% transaction fee and a 1.5% withdrawal fee. The reason it's so cheap is because I cut out the crooked credit card middle men, which saves money both on fees and on backcharges. " ABC_HUMAN_READABLE_NAME_PLX " allows you to advertise on regular websites, tor hidden services, or anywhere else you can think of. Unlike other advertising agencies (not naming names, but a giant search engine comes to mind), we don't use our 'terms of service' as a means of censoring you. The only rule is this: don't break the law.<br /><br />Selling advertising (website owners placing ads on their site) works like this: You choose your ad's dimensions (width x height of the ad image), prohibited categories, the duration that the ad will be shown on your site for, and the minimum purchase price for that duration. The cost to rent your ad space doubles in price every time someone purchases it, then trickles back down to your chosen minimum price and settles back on it the moment the last ad expires. You should always choose a low minimum price, because you always want your ad space to be purchased, but the \"doubling\" algorithm makes advertisers have to compete with each other for your ad space.<br /><br /><br />", m_HomeWidget);
         //new WAnchor(WLink(WLink::InternalPath, ABC_INTERNAL_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0), ABC_ANCHOR_TEXTS_PATH_ADS_BUY_AD_SPACE_D3FAULT_CAMPAIGN_0, m_HomeWidget);
 
+#if 0
         new WBreak(m_HomeWidget);
         new WBreak(m_HomeWidget);
 
@@ -278,10 +280,10 @@ void AnonymousBitcoinComputingWtGUI::showHomeWidget()
 
         new WBreak(m_HomeWidget);
         new WBreak(m_HomeWidget);
-
-        new WText("Github: ", m_HomeWidget);
+#endif
+        new WText(ABC_HUMAN_READABLE_NAME_PLX " is ", m_HomeWidget);
         const std::string githubUrl = "https://github.com/d3faultdotxbe/autobackup/tree/master/Solutions/Anonymous Bitcoin Computing 2";
-        WAnchor *githubAnchor = new WAnchor(WLink(WLink::Url, githubUrl), githubUrl, m_HomeWidget);
+        WAnchor *githubAnchor = new WAnchor(WLink(WLink::Url, githubUrl), "Open Source", m_HomeWidget);
         githubAnchor->setTarget(TargetNewWindow);
     }
     m_MainStack->setCurrentWidget(m_HomeWidget);

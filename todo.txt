@@ -2,9 +2,10 @@ deploy:
 hottee
 ffmpeg segment uploader
 hvbs
+abc2
 
 do:
-abc explain vids
+abc explain vids -- that and/or step by step tutorials (images), obviously preferably both
 import script[s]
 server migration
 music fingers vanilla piano (DOIT FAGGOT)

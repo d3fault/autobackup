@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1426416141
+Documents/minddump/:1426427976
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1426377451
+Documents/minddump/dreams/:1426466790
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -228,6 +228,7 @@ Documents/minddump/dreams/skldfjlsakjdflskdjflkjweorulsdkjfsldfj.top.isnt.dream.
 Documents/minddump/dreams/slafjsldajflsjdlfkjsdlkjfsoufslkjfaosudflkasdjfl.txt:1398268465
 Documents/minddump/dreams/slakdjfsldkjflksajdflksjdfoudsfouwelrjkousdflkjsdofudsl.txt:1391543176
 Documents/minddump/dreams/sldfjklsadkjflsdkjflsdkjfoiuwelrjousdfjskdfsjsdfoiuewr.txt:1390571228
+Documents/minddump/dreams/sldfjklsddfdsjfklsjdkfljsdklfjlskjdflkjslkfjlksdjflksjdklfjsdlk.txt:1426466790
 Documents/minddump/dreams/sldfjlskdjflksdjfljdslkfjlsdkjflksdjfklsjdflkjsdklf.txt:1417400918
 Documents/minddump/dreams/sldfkjsldkjfklsdjflksdjflksdjfoiuwlekjrouldsfkjsdofusldkjfsl.txt:1405963331
 Documents/minddump/dreams/sldjfklasjdkfsaoduflsajfosudfljsdfousdlfk.txt:1385555624
@@ -680,6 +681,7 @@ Documents/minddump/backing.up.etc.fucks.with.my.head.here.is.some.plans.on.how.t
 Documents/minddump/be.prepared.for.that.embarrassment.embrace.it.txt:1323683770
 Documents/minddump/being.of.electricity.txt:1322679120
 Documents/minddump/being.recorded.keeps.the.record.clear.but.most.still.never.verbally.admit.defeat.txt:1325464115
+Documents/minddump/bitcoin.it.posts.for.lulz.slfdjslfkjsldkfjlskdjflkjsdflkj.txt:1426427976
 Documents/minddump/blah.blah.blah.been.wanting.to.build.this.for.years.txt:1321978847
 Documents/minddump/bleeding.out.of.my.head.lol.minddump.is.the.only.appropriate.folder.txt:1322679223
 Documents/minddump/book.page.000000000idkhowprecisetbh.txt:1355476251
@@ -2812,8 +2814,9 @@ Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/Sft
 Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/main.cpp:1426017680
 Projects/AVMuxScript/Night/:1426022232
 Projects/AVMuxScript/Night/backupReplicateDeleteMuxUmountAndShutTheFuckDown.sh:1426025137
-Projects/AVMuxScript/design/:1425976782
+Projects/AVMuxScript/design/:1426466748
 Projects/AVMuxScript/design/initial.design.aka.rambling.txt:1425923027
+Projects/AVMuxScript/design/more.rambling.rofl.i.just.cant.fucking.decide.oh.shit.thats.a.problem.just.fucking.decide.man.sdlfjsldjfsldkfjlskdjf.txt:1426466748
 Projects/AVMuxScript/design/some.corrective.fps.math.that.ehh.didnt.even.work.for.fuck.who.knows.what.reason.i.mean.the.end.DID.match.but.somehow.the.mid.still.drifted.so.wtfh4x.txt:1425976782
 Projects/AdAgency/:1333471837
 Projects/AdAgency/design/:1333472910
@@ -4541,13 +4544,13 @@ Projects/RecursiveFileStringReplaceRenamer/src/lib/recursivefilestringreplaceren
 Projects/RecursiveGpgTools/:1426418610
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/:1426417651
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/:1426426094
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/:1426427273
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/:1426430363
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli.pro:1426424895
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/main.cpp:1426424959
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/recursivelygpgsignintocustomdetachedsignaturesformatcli.cpp:1426425218
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/recursivelygpgsignintocustomdetachedsignaturesformatcli.h:1426425116
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/:1426427252
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/recursivelygpgsignintocustomdetachedsignaturesformat.cpp:1426427252
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/:1426428256
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/recursivelygpgsignintocustomdetachedsignaturesformat.cpp:1426428256
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/recursivelygpgsignintocustomdetachedsignaturesformat.h:1426425916
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/:1425008691
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/:1426420860
@@ -5358,7 +5361,7 @@ Solutions/Anonymous Bitcoin Computing/src/shared/AppClientBankServerProtocol.h:1
 Solutions/Anonymous Bitcoin Computing/src/shared/WtFrontEndAndAppDbProtocol.h:1336171731
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.cpp:1339499716
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.h:1339499197
-Solutions/Anonymous Bitcoin Computing 2/:1425204379
+Solutions/Anonymous Bitcoin Computing 2/:1426429879
 Solutions/Anonymous Bitcoin Computing 2/assets/:1415110445
 Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/:1424492850
 Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/AllTransactionsWithStateOfUncreditted.txt:1419797626
@@ -5398,7 +5401,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or
 Solutions/Anonymous Bitcoin Computing 2/design/the.goods.service.vs.money.transmitter.differentiation.does.not.exist.with.bitcoins.nor.paper.money.but.does.exist.with.debit.credit.cards.EXCEPT.THOSE.HAVE.FEES.UP.THE.ASS.AND.HUGE.BARRIER.TO.ENTRY.txt:1416508764
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
 Solutions/Anonymous Bitcoin Computing 2/design/two.bandwith.exploits.with.charging.withdrawal.fee.instead.of.transaction.fee.txt:1421237210
-Solutions/Anonymous Bitcoin Computing 2/src/:1425318097
+Solutions/Anonymous Bitcoin Computing 2/src/:1426430806
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1420869222
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
@@ -5411,13 +5414,13 @@ Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcou
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1420056288
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.cpp:1413219024
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1413240036
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1425205498
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1425312435
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1426430787
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1426428937
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.cpp:1399670151
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.h:1399671286
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/addfundsaccounttabbody.cpp:1424496448
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/addfundsaccounttabbody.h:1424495945
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/apikeyaccounttabbody.cpp:1425312435
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/apikeyaccounttabbody.cpp:1426428937
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/apikeyaccounttabbody.h:1420761344
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/filedeletingfileresource.cpp:1393448627
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/filedeletingfileresource.h:1393448163
@@ -5445,7 +5448,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/l
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h:1416420577
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.cpp:1393160674
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.h:1393161161
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1424755457
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1426430787
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1422340377
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/gettodaysadslothttpsserver.cpp:1420328918
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/gettodaysadslothttpsserver.h:1420328932
@@ -5459,8 +5462,8 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend/registersuccessfulwidget.cp
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/registersuccessfulwidget.h:1393117244
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/torhiddenservicehttplocalhostonlyserver.cpp:1420680821
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/torhiddenservicehttplocalhostonlyserver.h:1420627012
-Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/:1420055381
-Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/abcapigetcouchbasedocumentbykeyrequestresponder.cpp:1420054453
+Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/:1426430236
+Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/abcapigetcouchbasedocumentbykeyrequestresponder.cpp:1426430236
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/abcapigetcouchbasedocumentbykeyrequestresponder.h:1419923490
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/abcapistorecouchbasedocumentbykeyrequestresponder.cpp:1420054376
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/abcapistorecouchbasedocumentbykeyrequestresponder.h:1420054338
@@ -5478,7 +5481,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/viewqueryco
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/viewquerycouchbasedocumentbykeyrequest.h:1415959088
 Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:1424497913
 Solutions/Anonymous Bitcoin Computing 2/src/abc2common.h:1422333886
-Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:1422347051
+Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:1426430028
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.h:1420328539
 Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1422340475
 Solutions/Anonymous Bitcoin Computing 2/tools/:1418885409
@@ -5632,7 +5635,7 @@ Solutions/launchASEPbecauseRedAlert/todo.lol.asdflkjsdfousdfweroiu.txt:138717389
 Solutions/launchASEPbecauseRedAlert/video.bytestream.design.rofl.so.ghetto.and.pro.asdflhslfjsadflkj.txt:1402001107
 Solutions/standard.wt.deploy.arguments.to.get.clean.urls.working.properly.txt:1398266138
 autobackupScripts/:1349691249
-autobackupScripts/linux/:1424393985
+autobackupScripts/linux/:1426427877
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/:1338074874
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
@@ -5650,6 +5653,7 @@ autobackupScripts/linux/750x2:1321489260
 autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1426413017
 autobackupScripts/linux/base64theSha1SumOfAFileProperly.sh:1424394103
 autobackupScripts/linux/cleanAptEtc.sh:1350618598
+autobackupScripts/linux/cmd.to.make.torrent.with.lots.of.relevant.trackers.txt:1426427907
 autobackupScripts/linux/debian.squeeze.dell.mini.9.post.install.instructions.txt:1368042665
 autobackupScripts/linux/dedicated.server.domain.name.associating.txt:1409246698
 autobackupScripts/linux/design.for.new.auto-commit.infrastructure.that.is.basic.incremement.of.current.auto-commit.but.nowhere.near.what.i.want.ultimately.txt:1343536975
@@ -5695,4 +5699,4 @@ licenses/license.dpl.txt:1388242176
 .gitignore:1425055833
 copyright.txt:1388203681
 license.dpl.txt:1388242176
-todo.txt:1426378450
+todo.txt:1426430342

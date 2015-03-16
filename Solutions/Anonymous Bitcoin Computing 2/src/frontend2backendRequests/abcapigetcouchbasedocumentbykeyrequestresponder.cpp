@@ -12,4 +12,3 @@ void AbcApiGetCouchbaseDocumentByKeyRequestResponder::respondWithCAS(unsigned ch
     //TODOoptional: API doesn't use cas atm, so fuck it
     qFatal("AbcApiGetCouchbaseDocumentByKeyRequestResponder::respondWithCAS not implemented");
 }
-

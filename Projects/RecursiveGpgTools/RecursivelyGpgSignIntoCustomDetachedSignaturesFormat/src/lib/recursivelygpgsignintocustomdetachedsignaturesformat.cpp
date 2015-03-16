@@ -124,7 +124,7 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::spitOutGpgProcessOutp
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QString &dirToRecursivelySign, const QString &outputSigFilePath, bool forceResigningOfFilesAlreadyPresentInOutputSigFile)
 {
-    QFile *outputSigFile = new QFile(outputSigFilePath);
+    QFile *outputSigFile = new QFile(outputSigFilePath, this);
     if(QFile::exists(outputSigFilePath))
     {
         if(!outputSigFile->open(QIODevice::ReadOnly | QIODevice::Text))
@@ -176,7 +176,7 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::handleGpgProcessFinis
 
     QString fileSig = m_GpgProcessTextStream.readAll();
 
-    //TODOoptional: if(verbose) { file <name> signed }
+    //TODOoptional: if(verbose) { file <name> signed } -- random/semi-OT: instead of littering your code with if(m_Quiet), if(m_Verbose), etc... just do emit e/o/v as usual and then [dis-]connect the signals accordingly. this marks the first time i've ever thought of using "emit v"
 
     m_AllSigsForOutputting.insert(m_FilePathCurrentlyBeingGpgSigned, fileSig);
     recursivelyGpgSignDirEntriesAndEmitFinishedWhenNoMore(); //pseudo-recursive (async) -- tail
