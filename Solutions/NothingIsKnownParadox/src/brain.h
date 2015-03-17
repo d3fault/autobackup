@@ -15,24 +15,18 @@ private:
     QStringList m_ThingsKnown;
 
     bool isTrue(const QString &logic);
-    //bool somethingCanBeDeterminedFromKnownThings();
+    void makeClaim(const QString &theClaim);
+    void addKnownThing(const QString &thingKnown);
+    void removeKnownThing(const QString &thingThatUsedToBeConsideredKnownButIsNowKnownToBeFalse);
 signals:
     void o(const QString &msg);
     void whatIsThisQuestioned();
     void askSelfWhatIsKnown();
-    void claimMade(const QString &theClaim);
-    void addKnownThingRequested(const QString &thingKnown);
     void newInformationLearned();
-    void removeKnownThingRequested(const QString &thingThatUsedToBeConsideredKnownButIsNowKnownToBeFalse);
     void oldInformationTurnedOutToBeFalse();
-public slots:
-    //void observeEnvironment();
 private slots:
     void thinkDeepAboutWhatThisIs();
     void evaluateKnownThings();
-    void makeClaim(const QString &theClaim);
-    void addKnownThing(const QString &thingKnown);
-    void removeKnownThing(const QString &thingThatUsedToBeConsideredKnownButIsNowKnownToBeFalse);
 };
 
 #endif // BRAIN_H

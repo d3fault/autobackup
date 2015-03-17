@@ -11,7 +11,10 @@ class NothingIsKnownParadoxCli : public QObject
 public:
     explicit NothingIsKnownParadoxCli(QObject *parent = 0);
 private:
+    QTextStream m_StdIn;
     QTextStream m_StdOut;
+signals:
+    void quitRequested();
 private slots:
     void handleO(const QString &msg);
 };

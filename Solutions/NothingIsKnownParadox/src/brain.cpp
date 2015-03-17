@@ -6,12 +6,11 @@ Brain::Brain(QObject *parent)
     //all these queued connections are to let execution return to the event loop (the stack... unstacks... when that happens) before going onto the next slot, because otherwise we would run out of memory and crash
     connect(this, SIGNAL(whatIsThisQuestioned()), this, SLOT(thinkDeepAboutWhatThisIs()), Qt::QueuedConnection);
     connect(this, SIGNAL(askSelfWhatIsKnown()), this, SLOT(evaluateKnownThings()), Qt::QueuedConnection);
-    connect(this, SIGNAL(claimMade(QString)), this, SLOT(makeClaim(QString)), Qt::QueuedConnection);
-    connect(this, SIGNAL(addKnownThingRequested(QString)), this, SLOT(addKnownThing(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(newInformationLearned()), this, SLOT(evaluateKnownThings()), Qt::QueuedConnection); //new information can, and often does, invalidate old information
-    connect(this, SIGNAL(removeKnownThingRequested(QString)), this, SLOT(removeKnownThing(QString)), Qt::QueuedConnection);
     connect(this, SIGNAL(oldInformationTurnedOutToBeFalse()), this, SLOT(evaluateKnownThings()), Qt::QueuedConnection);
 
+
+    //A brain randomly instantiates into existence, and asks...
     emit whatIsThisQuestioned();
 }
 bool Brain::isTrue(const QString &logic)
@@ -27,26 +26,11 @@ bool Brain::isTrue(const QString &logic)
     //{ }
     return false;
 }
-//bool Brain::somethingCanBeDeterminedFromKnownThings()
-//{
-//    if(m_ThingsKnown.isEmpty())
-//    {
-//        return false;
-//    }
-//    else
-//    {
-//        Q_FOREACH(const QString &currentKnownThing, m_ThingsKnown)
-//        {
-
-//        }
-//    }
-//    return false;
-//}
 void Brain::makeClaim(const QString &theClaim)
 {
     if(isTrue(theClaim))
     {
-        emit addKnownThingRequested(theClaim);
+        addKnownThing(theClaim);
     }
 }
 void Brain::addKnownThing(const QString &thingKnown)
@@ -61,13 +45,6 @@ void Brain::removeKnownThing(const QString &thingThatUsedToBeConsideredKnownButI
     emit o("I used to think: '" + thingThatUsedToBeConsideredKnownButIsNowKnownToBeFalse + "', but it turned out to be false");
     emit oldInformationTurnedOutToBeFalse();
 }
-//void Brain::observeEnvironment()
-//{
-//    if(!somethingCanBeDeterminedFromKnownThings())
-//    {
-
-//    }
-//}
 void Brain::thinkDeepAboutWhatThisIs()
 {
     emit askSelfWhatIsKnown();
@@ -76,8 +53,7 @@ void Brain::evaluateKnownThings()
 {
     if(m_ThingsKnown.isEmpty())
     {
-        emit o(NOTHING_IS_KNOWN_CLAIM);
-        emit claimMade(NOTHING_IS_KNOWN_CLAIM); //I'm tempted to have some kind of "observe that nothing is known" signal/slot, but actually not having those signals/slots illustrates the bootstrapping nature of our brain
+        makeClaim(NOTHING_IS_KNOWN_CLAIM); //I'm tempted to have some kind of "observe that nothing is known" signal/slot, but actually not having those signals/slots illustrates the bootstrapping nature of our brain
     }
     else
     {
@@ -89,8 +65,9 @@ void Brain::evaluateKnownThings()
             }
             else
             {
-                emit removeKnownThingRequested(thingKnown);
+                removeKnownThing(thingKnown);
             }
         }
+        //An evolved implementation would utilize all the observations in the above foreach and possibly theorize something new here
     }
 }
