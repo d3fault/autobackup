@@ -14,7 +14,7 @@ public:
 private:
     QStringList m_ThingsKnown;
 
-    bool isTrue(const QString &logic);
+    bool isTrue(const QString &claimBeingAnalyzed);
     void makeClaim(const QString &theClaim);
     void addKnownThing(const QString &thingKnown);
     void removeKnownThing(const QString &thingThatUsedToBeConsideredKnownButIsNowKnownToBeFalse);

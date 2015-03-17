@@ -11,16 +11,14 @@ Brain::Brain(QObject *parent)
 
 
     //A brain randomly instantiates into existence, and asks...
+    emit o("What is this?");
     emit whatIsThisQuestioned();
 }
-bool Brain::isTrue(const QString &logic)
+bool Brain::isTrue(const QString &claimBeingAnalyzed)
 {
-    if(logic == NOTHING_IS_KNOWN_CLAIM)
+    if(claimBeingAnalyzed == NOTHING_IS_KNOWN_CLAIM)
     {
-        if(m_ThingsKnown.isEmpty())
-            return true;
-        else
-            return false;
+        return m_ThingsKnown.isEmpty();
     }
     //else if(logic == etc)
     //{ }
@@ -36,7 +34,7 @@ void Brain::makeClaim(const QString &theClaim)
 void Brain::addKnownThing(const QString &thingKnown)
 {
     m_ThingsKnown << thingKnown;
-    emit o("I now know: " + thingKnown);
+    emit o("I now know: '" + thingKnown + "'");
     emit newInformationLearned();
 }
 void Brain::removeKnownThing(const QString &thingThatUsedToBeConsideredKnownButIsNowKnownToBeFalse)
@@ -47,6 +45,7 @@ void Brain::removeKnownThing(const QString &thingThatUsedToBeConsideredKnownButI
 }
 void Brain::thinkDeepAboutWhatThisIs()
 {
+    emit o("Hmm, well what do I know?");
     emit askSelfWhatIsKnown();
 }
 void Brain::evaluateKnownThings()
