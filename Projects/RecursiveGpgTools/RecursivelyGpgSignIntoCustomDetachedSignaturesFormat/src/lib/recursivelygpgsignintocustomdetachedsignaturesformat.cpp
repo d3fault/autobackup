@@ -99,25 +99,28 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
         return;
     }
 
-    //now write the final custom detached signatures file
-    if(m_InputAndOutputSigFileTextStream.device()->isOpen()) //not open == doesn't exist
-        m_InputAndOutputSigFileTextStream.device()->close(); //we had it opened in read only mode
-    if(!m_InputAndOutputSigFileTextStream.device()->open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
+    if(m_AddedSigs > 0)
     {
-        emit e("failed to re-open signatures file for writing"); //TODOlol: how to work on iodevices and still know the filename?
-        emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
-        return;
+        //now write the final custom detached signatures file
+        if(m_InputAndOutputSigFileTextStream.device()->isOpen()) //not open == doesn't exist
+            m_InputAndOutputSigFileTextStream.device()->close(); //we had it opened in read only mode
+        if(!m_InputAndOutputSigFileTextStream.device()->open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
+        {
+            emit e("failed to re-open signatures file for writing"); //TODOlol: how to work on iodevices and still know the filename?
+            emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
+            return;
+        }
+        QMapIterator<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> it(m_AllSigsForOutputting);
+        while(it.hasNext())
+        {
+            it.next();
+            m_InputAndOutputSigFileTextStream << it.value();
+        }
+        m_InputAndOutputSigFileTextStream.flush();
     }
-    QMapIterator<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> it(m_AllSigsForOutputting);
-    while(it.hasNext())
-    {
-        it.next();
-        m_InputAndOutputSigFileTextStream << it.value();
-    }
-    m_InputAndOutputSigFileTextStream.flush();
 
     emit o("(sigs, existing: " + QString::number(m_ExistingSigs) + ", added: " + QString::number(m_AddedSigs) + ", total: " + QString::number(m_TotalSigs) + ")");
-    emit o("done recusrively signing directory -- everything OK");
+    emit o("done recusrively signing directory -- everything OK" + ((m_AddedSigs > 0) ? QString() : QString(" (nothing added)")));
     emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(true);
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::gpgSignFileAndThenContinueRecursingDir()

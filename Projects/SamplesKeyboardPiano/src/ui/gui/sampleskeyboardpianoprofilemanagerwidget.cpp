@@ -63,7 +63,7 @@ void SamplesKeyboardPianoProfileManagerWidget::handleAddProfileButtonClicked()
 
     SamplesKeyboardPianoProfile newProfile;
     newProfile.Name = m_NewProfileNameLineEdit->text();
-    newProfile.BaseDir = "/home/d3fault/binarySupplement/Music/ccMixterCCYBY"; //TODOreq: browse line edit
+    newProfile.BaseDir = "/home/d3fault/temp/Music/ccMixterCCYBY"; //TODOreq: browse line edit
     QVariant variant;
     variant.setValue(newProfile);
     m_ProfilesComboBox->addItem(newProfile.Name, variant); //TODOreq: serialize to QSettings xD

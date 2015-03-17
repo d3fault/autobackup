@@ -21,6 +21,8 @@
 
 #define SamplesKeyboardPiano_CACHE_DIR_WITH_SLASH_APPENDED "/run/shm/" //TODOoptional: runtime arg, or profile value
 
+//TODOreq: don't segfault when samples src dir doesn't exist
+//TODOmb: if a sound effect is playing, does it fuck shit up if i change the source while it's playing? might need a queue type mechanism (change sound effect after it ends), but mb sound effects (qt guys) are intelligent enough to do that for me
 //TODOreq: getting intermittent error "QSoundEffect(pulseaudio): Error in pulse audio stream" when generating new random samples for a key (but weirdly never at startup/first-generate). Every generate attempt thereafter gets the same error
 //TODOoptimization: have a buffer of, say, 5, "nextRandomSamples", so that when a random sample is requested, we don't have to go to disk, demux and decode the file, write it back out, read it back in, and play it -- an even better (but much more difficult) solution would be to use libav directly and to only ever read from disk once (however I'm using /run/shm so... technically I keep the file in memory ;-P), but even THAT better solution should still use a buffer (~5'ish) of "nextRandomSamples"
 //TODOoptional: a way to say "extend this sample's duration" (typically in chronological order, but possibly in reverse chronological order too)... using some keyboard modifier etc. maybe if you press space before the sample ends, it keeps going [for the entire duration of the song even]. I'd need to refactor for this ofc. Alternatively, you could hold down a modifier (alt, etc) _BEFORE_ pressing the key (or clicking the button in gui) for the same "extending" functionality. Maybe something like holding down the plus or minus key extends left or right (had:increases/decreases duration (hmm))
@@ -154,6 +156,7 @@ int SamplesKeyboardPiano::ffProbeDurationMsFromAudioFile(const QString &audioFil
 
     QTextStream ffProbeTextStream(&ffProbeProcess);
     QString currentFfProbeLine;
+    emit e(currentFfProbeLine);
     bool inFormatSection = false;
     while(!ffProbeTextStream.atEnd())
     {
@@ -182,7 +185,7 @@ int SamplesKeyboardPiano::ffProbeDurationMsFromAudioFile(const QString &audioFil
                 {
                     return -1;
                 }
-                return (parsedDurationSeconds*100);
+                return (parsedDurationSeconds*1000);
             }
         }
         else if(currentFfProbeLine == "[FORMAT]")

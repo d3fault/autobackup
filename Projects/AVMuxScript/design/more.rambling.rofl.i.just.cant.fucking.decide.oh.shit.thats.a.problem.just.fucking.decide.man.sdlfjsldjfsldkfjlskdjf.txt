@@ -57,3 +57,6 @@ Weird/funny/OT (but understandable): a read-only file can be copied preserving t
 
 
 And besides, it totally strokes my ego to have all my files signed :) -- but guh an extra file.asc next to every file? no fucking thanks :-P. TODOoptional: verifysinglefile (or list of files, mb the command accepts N args) in custom detached sigs file
+
+
+Come to think of it, git-annex doesn't provide any overwrite protection if you're using ntfs/fat (where permissions are ignored). In that case, your just rely on copies on other drives (which is the same solution as the cpp script I'm writing now)
