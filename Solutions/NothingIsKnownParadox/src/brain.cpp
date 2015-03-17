@@ -1,78 +1,96 @@
 #include "brain.h"
 
-Brain::Brain(QObject *parent) :
-    QObject(parent)
+Brain::Brain(QObject *parent)
+    : QObject(parent)
 {
-    connect(this, SIGNAL(reportWhetherOrNotNothingIsKnown(bool)), this, SLOT(addReportResultsToListOfThingsKnown(bool)), Qt::QueuedConnection);
-    connect(this, SIGNAL(reEvaluateAllThingsKnownRequested()), this, SLOT(reEvaluateAllThingsKnown()), Qt::QueuedConnection);
-    connect(this, SIGNAL(removeFromThingsKnownRequested(QList<QString>)), this, SLOT(removeFromThingsKnown(QList<QString>)), Qt::QueuedConnection);
+    //all these queued connections are to let execution return to the event loop (the stack... unstacks... when that happens) before going onto the next slot, because otherwise we would run out of memory and crash
+    connect(this, SIGNAL(whatIsThisQuestioned()), this, SLOT(thinkDeepAboutWhatThisIs()), Qt::QueuedConnection);
+    connect(this, SIGNAL(askSelfWhatIsKnown()), this, SLOT(evaluateKnownThings()), Qt::QueuedConnection);
+    connect(this, SIGNAL(claimMade(QString)), this, SLOT(makeClaim(QString)), Qt::QueuedConnection);
+    connect(this, SIGNAL(addKnownThingRequested(QString)), this, SLOT(addKnownThing(QString)), Qt::QueuedConnection);
+    connect(this, SIGNAL(newInformationLearned()), this, SLOT(evaluateKnownThings()), Qt::QueuedConnection); //new information can, and often does, invalidate old information
+    connect(this, SIGNAL(removeKnownThingRequested(QString)), this, SLOT(removeKnownThing(QString)), Qt::QueuedConnection);
+    connect(this, SIGNAL(oldInformationTurnedOutToBeFalse()), this, SLOT(evaluateKnownThings()), Qt::QueuedConnection);
+
+    emit whatIsThisQuestioned();
 }
-bool Brain::isTrue(QString claim)
+bool Brain::isTrue(const QString &logic)
 {
-    switch(claim)
+    if(logic == NOTHING_IS_KNOWN_CLAIM)
     {
-    case THE_CLAIM:
-    {
-        if(m_ThingsKnown.size() < 1)
-        {
+        if(m_ThingsKnown.isEmpty())
             return true;
-        }
         else
-        {
             return false;
-        }
     }
-    break;
-    case THE_OPPOSITE_CLAIM:
-    {
-        if(m_ThingsKnown.size() > 0)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    break;
-    default:
-        return false;
-    break;
-    }
+    //else if(logic == etc)
+    //{ }
     return false;
 }
-void Brain::determineWhetherOrNotNothingIsKnown()
+//bool Brain::somethingCanBeDeterminedFromKnownThings()
+//{
+//    if(m_ThingsKnown.isEmpty())
+//    {
+//        return false;
+//    }
+//    else
+//    {
+//        Q_FOREACH(const QString &currentKnownThing, m_ThingsKnown)
+//        {
+
+//        }
+//    }
+//    return false;
+//}
+void Brain::makeClaim(const QString &theClaim)
 {
-    emit reportWhetherOrNotNothingIsKnown(m_ThingsKnown.size() < 1);
-}
-void Brain::addReportResultsToListOfThingsKnown(bool nothingIsKnown)
-{
-    if(nothingIsKnown)
+    if(isTrue(theClaim))
     {
-        m_ThingsKnown.append(THE_CLAIM);
+        emit addKnownThingRequested(theClaim);
+    }
+}
+void Brain::addKnownThing(const QString &thingKnown)
+{
+    m_ThingsKnown << thingKnown;
+    emit o("I now know: " + thingKnown);
+    emit newInformationLearned();
+}
+void Brain::removeKnownThing(const QString &thingThatUsedToBeConsideredKnownButIsNowKnownToBeFalse)
+{
+    m_ThingsKnown.removeOne(thingThatUsedToBeConsideredKnownButIsNowKnownToBeFalse);
+    emit o("I used to think: '" + thingThatUsedToBeConsideredKnownButIsNowKnownToBeFalse + "', but it turned out to be false");
+    emit oldInformationTurnedOutToBeFalse();
+}
+//void Brain::observeEnvironment()
+//{
+//    if(!somethingCanBeDeterminedFromKnownThings())
+//    {
+
+//    }
+//}
+void Brain::thinkDeepAboutWhatThisIs()
+{
+    emit askSelfWhatIsKnown();
+}
+void Brain::evaluateKnownThings()
+{
+    if(m_ThingsKnown.isEmpty())
+    {
+        emit o(NOTHING_IS_KNOWN_CLAIM);
+        emit claimMade(NOTHING_IS_KNOWN_CLAIM); //I'm tempted to have some kind of "observe that nothing is known" signal/slot, but actually not having those signals/slots illustrates the bootstrapping nature of our brain
     }
     else
     {
-        m_ThingsKnown.append(THE_OPPOSITE_CLAIM); //does this fuck shit up? it's certainly implied, but i think it might mess up my infinite toggling :(
-        //hmm analyzing "how" this "something is known" fits and how it breaks the toggling effect (it always stays in m_ThingsKnown and can not be removed, it depends on itself (or something)!), appears, to my mathematically unworthy mind, to be a mathematical proof of something being known
-    }
-
-    //the heart of the paradox, the source of the infinite toggling
-    emit reEvaluateAllThingsKnownRequested();
-}
-void Brain::reEvaluateAllThingsKnown()
-{
-    QMutableListIterator<QString> it(m_ThingsKnown);
-    while(it.hasNext())
-    {
-        QString current = it.next();
-        if(!isTrue(current))
+        Q_FOREACH(const QString &thingKnown, m_ThingsKnown)
         {
-            it.remove();
-            //TODOreq: does a re-evaluate go here too (a boolean flag if ANY have been removed)? It makes sense that yes it would get re-evaluated on removal, and it also exposes some weird error cases where inter dependent things known are determined true or false based on their position in the list! but for such a small example such as this, that error case will probably never occur
+            if(isTrue(thingKnown))
+            {
+                emit o("I already know: " + thingKnown); //I don't think this app gets to this block of code, but eh I couldn't think what else to put here
+            }
+            else
+            {
+                emit removeKnownThingRequested(thingKnown);
+            }
         }
     }
-
-    //as a sort of special hack for this app, at the end of every re-evaluation we try to determine whether or not nothing is known
-    determineWhetherOrNotNothingIsKnown();
 }

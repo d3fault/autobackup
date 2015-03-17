@@ -2,27 +2,37 @@
 #define BRAIN_H
 
 #include <QObject>
-#include <QMutableListIterator>
+#include <QStringList>
 
-#define THE_CLAIM "Nothing Is Known"
-#define THE_OPPOSITE_CLAIM "Something Is Known"
+#define NOTHING_IS_KNOWN_CLAIM "Nothing is known"
 
 class Brain : public QObject
 {
     Q_OBJECT
 public:
-    explicit Brain(QObject *parent = 0);    
+    Brain(QObject *parent = 0);
 private:
-    QList<QString> m_ThingsKnown;
-    bool isTrue(QString claim);
+    QStringList m_ThingsKnown;
+
+    bool isTrue(const QString &logic);
+    //bool somethingCanBeDeterminedFromKnownThings();
 signals:
-    void reportWhetherOrNotNothingIsKnown(bool nothingIsKnown);
-    void reEvaluateAllThingsKnownRequested();
+    void o(const QString &msg);
+    void whatIsThisQuestioned();
+    void askSelfWhatIsKnown();
+    void claimMade(const QString &theClaim);
+    void addKnownThingRequested(const QString &thingKnown);
+    void newInformationLearned();
+    void removeKnownThingRequested(const QString &thingThatUsedToBeConsideredKnownButIsNowKnownToBeFalse);
+    void oldInformationTurnedOutToBeFalse();
 public slots:
-    void determineWhetherOrNotNothingIsKnown();
+    //void observeEnvironment();
 private slots:
-    void addReportResultsToListOfThingsKnown(bool nothingIsKnown);
-    void reEvaluateAllThingsKnown();
+    void thinkDeepAboutWhatThisIs();
+    void evaluateKnownThings();
+    void makeClaim(const QString &theClaim);
+    void addKnownThing(const QString &thingKnown);
+    void removeKnownThing(const QString &thingThatUsedToBeConsideredKnownButIsNowKnownToBeFalse);
 };
 
 #endif // BRAIN_H
