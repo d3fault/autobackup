@@ -1,1 +1,1 @@
-By default, INFORMATION is illegal to share.
+By default, INFORMATION received is illegal to share.

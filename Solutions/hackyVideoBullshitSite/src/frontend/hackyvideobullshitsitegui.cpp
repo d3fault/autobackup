@@ -704,7 +704,7 @@ void HackyVideoBullshitSiteGUI::handleLatestVideoSegmentEnded()
 QString HackyVideoBullshitSiteGUI::getEarliestEntryInFolder(const QString &folderWithSlashAppended)
 {
     QDir folderDir(folderWithSlashAppended);
-    const QStringList folderEntries = folderDir.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Time | QDir::Reversed)); //we know this isn't empty because we move the folder into place with a file already in it
+    const QStringList folderEntries = folderDir.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Time)); //we know this isn't empty because we move the folder into place with a file already in it
     const QString &earliestEntryInFolder = folderEntries.last(); //last is 'first' (chronologically), since we sort reversed xD
     QString ret = folderWithSlashAppended + earliestEntryInFolder;
     return ret;
@@ -752,7 +752,7 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
     const QString &currentVideoSegmentDayFolder = currentVideoSegmentYearFolder_AbsoluteAndWithSlashAppended + QString::number(currentVideoSegmentFilenamesDayOfYear) + QDir::separator();
 
     QDir currentVideoSegmentDayDir(currentVideoSegmentDayFolder);
-    const QStringList all3MinuteSegmentsInDayFolder = currentVideoSegmentDayDir.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Time | QDir::Reversed));
+    const QStringList all3MinuteSegmentsInDayFolder = currentVideoSegmentDayDir.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Time));
 
     if(all3MinuteSegmentsInDayFolder.first() == currentVideoSegmentFilenameOnly)
     {
@@ -766,7 +766,7 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
 
             //Get the next year folder that exists, we may have been offline for 1+ years
             QDir rootVideoSegmentsDir(m_AirborneVideoSegmentsBaseDirActual_NOT_CLEAN_URL_withSlashAppended);
-            const QStringList allYearFolders = rootVideoSegmentsDir.entryList((QDir::NoDotAndDotDot | QDir::Dirs), (QDir::Time | QDir::Reversed));
+            const QStringList allYearFolders = rootVideoSegmentsDir.entryList((QDir::NoDotAndDotDot | QDir::Dirs), (QDir::Time));
             QString currentVideoSegmentYearString = QString::number(currentVideoSegmentFilenamesYear);
             if(allYearFolders.first() == currentVideoSegmentYearString)
             {
@@ -787,7 +787,7 @@ void HackyVideoBullshitSiteGUI::handleNextVideoClipButtonClicked()
         }
         //we've ruled out year shift. either day shift or current is latest
         QDir currentVideoSegmentYearDir(currentVideoSegmentYearFolder_AbsoluteAndWithSlashAppended);
-        const QStringList allDayFoldersInCurrentYear = currentVideoSegmentYearDir.entryList((QDir::NoDotAndDotDot | QDir::Dirs), (QDir::Time | QDir::Reversed));
+        const QStringList allDayFoldersInCurrentYear = currentVideoSegmentYearDir.entryList((QDir::NoDotAndDotDot | QDir::Dirs), (QDir::Time));
         QString currentVideoSegmentFilenamesDayOfYearString = QString::number(currentVideoSegmentFilenamesDayOfYear);
         if(allDayFoldersInCurrentYear.first() == currentVideoSegmentFilenamesDayOfYearString)
         {
@@ -845,7 +845,7 @@ string HackyVideoBullshitSiteGUI::determineLatestVideoSegmentPathOrUsePlaceholde
             }
             //day folder found, now find latest segment using sorting :(
             QDir dayFolder(dayFolderToLookFor);
-            const QStringList all3MinuteSegmentsInDayFolder = dayFolder.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Time | QDir::Reversed));
+            const QStringList all3MinuteSegmentsInDayFolder = dayFolder.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Time));
             return all3MinuteSegmentsInDayFolder.isEmpty() ? HVBS_PRELAUNCH_OR_NO_VIDEOS_PLACEHOLDER /*perhaps should also prevent the year/day folder spinlock described above */ : (dayFolderToLookFor + all3MinuteSegmentsInDayFolder.first()).toStdString(); //TODOoptimization: read the if'd out stuff above about fixing having to list (cached.) + sort (probably not cached?) the dir. basically ~11:59pm will be more expensive than ~12:01am
         }
     }
@@ -933,7 +933,7 @@ string HackyVideoBullshitSiteGUI::determineFirstVideoSegmentThatComesChronologic
     //still in target epoch's day... but the target might be pointing to after all of the videos in that day, in which ase I think I need more recursion?
     //iterate the video segments in that day folder until you find one with a timestamp > the target timestamp (might never find it, in which case: recursion methinks)
     QDir dayDir(absolutePathOfDayFolderWithSlashAppended);
-    QStringList videoSegmentsInDayFolder = dayDir.entryList((QDir::NoDotAndDotDot | QDir::Files), QDir::Time);
+    QStringList videoSegmentsInDayFolder = dayDir.entryList((QDir::NoDotAndDotDot | QDir::Files), QDir::Time | QDir::Reversed);
     Q_FOREACH(const QString &currentVideoSegmentInDayFolder, videoSegmentsInDayFolder)
     {
         qint64 timestampInSecondsOfCurrentVideoSegment = determineSecondsSinceEpochFromVideoSegmentFilepath(currentVideoSegmentInDayFolder.toStdString()); //TODOoptional: senseless toStdString -> fromStdString conversion here
@@ -955,7 +955,7 @@ string HackyVideoBullshitSiteGUI::determineFirstVideoSegmentThatComesChronologic
 
 #if 0 //old, fail
     QDir yearDir(absolutePathOfYearFolderWithSlashAppended);
-    QStringList daysInYearDir = yearDir.entryList((QDir::NoDotAndDotDot | QDir::Files), QDir::Time);
+    QStringList daysInYearDir = yearDir.entryList((QDir::NoDotAndDotDot | QDir::Files), QDir::Time | QDir::Reversed);
 
     int indexOfDayFolderMaybe = daysInYearDir.indexOf(QString::number(targetDateTime.date().day()));
     if(indexOfDayFolderMaybe == -1)
@@ -965,7 +965,7 @@ string HackyVideoBullshitSiteGUI::determineFirstVideoSegmentThatComesChronologic
 
     QString absolutePathOfDayFolderWithSlashAppended = absolutePathOfYearFolderWithSlashAppended + daysInYearDir.first() + QDir::separator();
     QDir dayDir(absolutePathOfDayFolderWithSlashAppended);
-    QStringList videoSegmentsInDayFolder = dayDir.entryList((QDir::NoDotAndDotDot | QDir::Files), QDir::Time);
+    QStringList videoSegmentsInDayFolder = dayDir.entryList((QDir::NoDotAndDotDot | QDir::Files), QDir::Time | QDir::Reversed);
     const QString &absoluteFilePathOfFirstVideoSegmentInDayFolder = absolutePathOfDayFolderWithSlashAppended + videoSegmentsInDayFolder.first();
     std::string firstVideoSegmentInDayFolderAsStdString = absoluteFilePathOfFirstVideoSegmentInDayFolder.toStdString();
     return firstVideoSegmentInDayFolderAsStdString;
@@ -974,11 +974,11 @@ string HackyVideoBullshitSiteGUI::determineFirstVideoSegmentThatComesChronologic
 string HackyVideoBullshitSiteGUI::getFilePathOfFirstVideoSegmentInFirstDayOfYearFolder(const QString &knownToExistYearFolderAbsolutePathWithSlashAppended)
 {
     QDir aYearFolderAfterYearThatJustEndedThatHasAtLeastOneVideoPublishedInIt_Dir(knownToExistYearFolderAbsolutePathWithSlashAppended);
-    const QStringList allDayFoldersInThatYearFolder = aYearFolderAfterYearThatJustEndedThatHasAtLeastOneVideoPublishedInIt_Dir.entryList((QDir::NoDotAndDotDot | QDir::Dirs), (QDir::Time | QDir::Reversed));
+    const QStringList allDayFoldersInThatYearFolder = aYearFolderAfterYearThatJustEndedThatHasAtLeastOneVideoPublishedInIt_Dir.entryList((QDir::NoDotAndDotDot | QDir::Dirs), (QDir::Time));
     const QString &firstDayFolderInThatYearFolder = allDayFoldersInThatYearFolder.last(); //last is 'first' (choronologically) becuase we sort in reverse (I probably could/should change this, but I'm used to it (and kinda afraid of switching NOW) so whatever)
     QString firstDayFolderInThatYearFolder_AbsoluteAndWithSlashAppended = knownToExistYearFolderAbsolutePathWithSlashAppended + firstDayFolderInThatYearFolder + QDir::separator();
     QDir firstDayFolderInThatYearFolder_Dir(firstDayFolderInThatYearFolder_AbsoluteAndWithSlashAppended);
-    const QStringList allVideoSegmentsInThatDayFolder = firstDayFolderInThatYearFolder_Dir.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Time | QDir::Reversed));
+    const QStringList allVideoSegmentsInThatDayFolder = firstDayFolderInThatYearFolder_Dir.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Time));
     const QString &nextExistingVideoSegmentFilename = allVideoSegmentsInThatDayFolder.last();
     QString nextExistingVideoSegmentAbsoluteFilePath = firstDayFolderInThatYearFolder_AbsoluteAndWithSlashAppended + nextExistingVideoSegmentFilename;
     std::string nextExistingVideoSegmentAbsoluteFilePath_StdString = nextExistingVideoSegmentAbsoluteFilePath.toStdString();
@@ -987,7 +987,7 @@ string HackyVideoBullshitSiteGUI::getFilePathOfFirstVideoSegmentInFirstDayOfYear
 string HackyVideoBullshitSiteGUI::getFilePathOfFirstVideoSegmentInDayFolder(const QString &knownToExistDayFolderAbsolutePathWithSlashAppended)
 {
     QDir dayDir(knownToExistDayFolderAbsolutePathWithSlashAppended);
-    const QStringList allVideoSegementsInThatDayFolder = dayDir.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Time | QDir::Reversed));
+    const QStringList allVideoSegementsInThatDayFolder = dayDir.entryList((QDir::NoDotAndDotDot | QDir::Files), (QDir::Time));
     const QString &nextExistingVideoSegmentFilename = allVideoSegementsInThatDayFolder.last(); //last is first, because sorting in reverse xD
     QString nextExistingVideoSegmentFilename_Absolute = knownToExistDayFolderAbsolutePathWithSlashAppended + nextExistingVideoSegmentFilename;
     std::string nextExistingVideoSegmentFilename_Absolute_StdStr = nextExistingVideoSegmentFilename_Absolute.toStdString();
