@@ -19,7 +19,15 @@ private:
     bool isAudioFile(const QFileInfo &fileToCheck);
     int probeDurationFromMediaFile(const QString &mediaFile);
     static bool timespansIntersect(qint64 timespan_0_StartTimeMs, qint64 timespan_0_DurationInMillseconds, qint64 timespan_1_StartTimeMs, qint64 timespan_1_DurationInMillseconds);
+    static inline QString appendSlashIfNeeded(const QString &inputString)
+    {
+        if(inputString.endsWith("/"))
+            return inputString;
+        return inputString + "/";
+    }
 signals:
+    void o(const QString &msg);
+    void e(const QString &msg);
     void doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(bool success);
 public slots:
     void muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QDir &directoryOfAudioFiles, const QDir &directoryOfVideoFiles, const QDir &muxOutputDirectory);
