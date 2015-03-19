@@ -25,6 +25,7 @@ signals:
     void newInformationLearned();
     void oldInformationTurnedOutToBeFalse();
 private slots:
+    void realizeSomethingIsHappening();
     void thinkDeepAboutWhatThisIs();
     void evaluateKnownThings();
 };

@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1426583489
+Documents/minddump/:1426680931
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -2491,6 +2491,7 @@ Documents/minddump/the.last.sentence.sucks.asldfkjweorusldfjosadufsdfjouwerlkjds
 Documents/minddump/the.meaning.of.life.adlsfjasdfuwaoerusdlfkjasd.txt:1331249924
 Documents/minddump/the.original.thought.was.i.wish.my.parents.were.as.happy.as.me.but.i.abstracted.it.txt:1424846761
 Documents/minddump/the.problem.with.writing.test.cases.slfdjkslkfjlskdfjasdofu.txt:1392354677
+Documents/minddump/the.system.is.a.piece.of.shit.if.you.need.proof.here.it.is.lsdjflsdjflkj038408sjlkjflskj.txt:1426680931
 Documents/minddump/then.than.sldkfjsadlkjfoweuralkjfsdfjsdlkfssssdf.txt:1337110913
 Documents/minddump/there.are.no.places.on.earth.in.2014.where.i.can.be.free.txt:1397712194
 Documents/minddump/there.is.a.tangent.in.here.that.i.intended.to.finish.but.you.can.figure.it.out.txt:1323589274
@@ -2822,7 +2823,7 @@ Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/Sft
 Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/main.cpp:1426017680
 Projects/AVMuxScript/Night/:1426497390
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/:1426564468
-Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/:1426594033
+Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/:1426653048
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/BackupReplicateDeleteMuxAndUmountCli.pro:1426514295
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/directoriesofaudioandvideofilesmuxersyncer.cpp:1426594028
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/directoriesofaudioandvideofilesmuxersyncer.h:1426593704
@@ -4836,7 +4837,7 @@ Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpianoprofile.h:1425336197
 Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpianoprofileconfiguration.cpp:1425330726
 Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpianoprofileconfiguration.h:1425333368
 Projects/SamplesKeyboardPiano/src/ui/:1425380973
-Projects/SamplesKeyboardPiano/src/ui/gui/:1426585472
+Projects/SamplesKeyboardPiano/src/ui/gui/:1426700864
 Projects/SamplesKeyboardPiano/src/ui/gui/SamplesKeyboardPianoGui.pro:1425344075
 Projects/SamplesKeyboardPiano/src/ui/gui/main.cpp:1425329922
 Projects/SamplesKeyboardPiano/src/ui/gui/sampleskeyboardpianogui.cpp:1425342806
@@ -5538,10 +5539,10 @@ Solutions/NothingIsKnownParadox/oldSrc/brain.h:1383183026
 Solutions/NothingIsKnownParadox/oldSrc/main.cpp:1383183831
 Solutions/NothingIsKnownParadox/oldSrc/nothingisknownparadox.cpp:1383180873
 Solutions/NothingIsKnownParadox/oldSrc/nothingisknownparadox.h:1383180866
-Solutions/NothingIsKnownParadox/src/:1426602325
+Solutions/NothingIsKnownParadox/src/:1426651797
 Solutions/NothingIsKnownParadox/src/NothingIsKnownParadoxCli.pro:1426596730
-Solutions/NothingIsKnownParadox/src/brain.cpp:1426602226
-Solutions/NothingIsKnownParadox/src/brain.h:1426602014
+Solutions/NothingIsKnownParadox/src/brain.cpp:1426651667
+Solutions/NothingIsKnownParadox/src/brain.h:1426651608
 Solutions/NothingIsKnownParadox/src/main.cpp:1426600734
 Solutions/NothingIsKnownParadox/src/nothingisknownparadox.cpp:1426599928
 Solutions/NothingIsKnownParadox/src/nothingisknownparadox.h:1426596842

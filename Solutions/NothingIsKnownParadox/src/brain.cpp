@@ -3,16 +3,13 @@
 Brain::Brain(QObject *parent)
     : QObject(parent)
 {
-    //all these queued connections are to let execution return to the event loop (the stack... unstacks... when that happens) before going onto the next slot, because otherwise we would run out of memory and crash
+    //all these queued connections are to let execution return to the event loop (which lets the stack unwind, preventing the app from running out memory and crashing)
     connect(this, SIGNAL(whatIsThisQuestioned()), this, SLOT(thinkDeepAboutWhatThisIs()), Qt::QueuedConnection);
     connect(this, SIGNAL(askSelfWhatIsKnown()), this, SLOT(evaluateKnownThings()), Qt::QueuedConnection);
     connect(this, SIGNAL(newInformationLearned()), this, SLOT(evaluateKnownThings()), Qt::QueuedConnection); //new information can, and often does, invalidate old information
     connect(this, SIGNAL(oldInformationTurnedOutToBeFalse()), this, SLOT(evaluateKnownThings()), Qt::QueuedConnection);
 
-
-    //A brain randomly instantiates into existence, and asks...
-    emit o("What is this?");
-    emit whatIsThisQuestioned();
+    QMetaObject::invokeMethod(this, "realizeSomethingIsHappening", Qt::QueuedConnection);
 }
 bool Brain::isTrue(const QString &claimBeingAnalyzed)
 {
@@ -42,6 +39,12 @@ void Brain::removeKnownThing(const QString &thingThatUsedToBeConsideredKnownButI
     m_ThingsKnown.removeOne(thingThatUsedToBeConsideredKnownButIsNowKnownToBeFalse);
     emit o("I used to think: '" + thingThatUsedToBeConsideredKnownButIsNowKnownToBeFalse + "', but it turned out to be false");
     emit oldInformationTurnedOutToBeFalse();
+}
+void Brain::realizeSomethingIsHappening()
+{
+    //A brain randomly instantiates into existence, realizes something is happening, and asks...
+    emit o("What is this?");
+    emit whatIsThisQuestioned();
 }
 void Brain::thinkDeepAboutWhatThisIs()
 {
