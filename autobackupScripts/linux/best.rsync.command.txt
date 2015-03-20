@@ -1,0 +1,14 @@
+cd into target dir (don't use asterisk (./*) otherwise you miss hidden files) and then:
+rsync -avhh --progress --backup --suffix=~accidentallyOverwrittenDuringSyncAt-`date +%s` ./ /path/to/dest
+
+splain:
+-a = archive, preserve permissions and timestamps etc
+-v = verbose
+-hh = 1024-based human readable sizes (K, M, G, etc)
+--backup = make backup if you would have overwritten
+--suffix = when backing up, rename the file that would have been overwritten using this suffix
+...and the `date +%s` gives you unixtime, so backups don't overwrite other backups (but they might during a leap second, fucking idiots)
+
+maybe use the -u (only update if [dest isn't] newer) flag, but idfk it's meaning has escaped me (like saying a word too many times). doesn't rsync already not overwrite unless newer??? it's weird because i do know that when i send over my "src" directories, i need to use the -u flag to prevent the qt creator on the vm (the dest) from recompiling every source file... but i don't get it, i run rsync (other times) without the -u flag and it doesn't 're-send' the files... you know what ima fucken DO that "src" sending scenario with and without the -u flag and see wtf is goin on. d=i is a good example for that because it takes a year to compile. OH just re-read rsync manual, I thought -u meant send only if src is newer, but it's "don't update if dest is newer", which maybe yes is what I want because.... well fuck idk actually maybe the --backup --suffix shit accounts for it good enough (otherwise we might miss valuable changes on the src). guh idfk.
+
+above command is vulnerable to leap seconds, fucking idiots

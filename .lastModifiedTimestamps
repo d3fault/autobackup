@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1426680931
+Documents/minddump/:1426824726
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1487,6 +1487,7 @@ Documents/minddump/lksdjflskdjfosdiurljsoiuewrljdfoiuwerjdfhdslk.txt:1358802697
 Documents/minddump/lksdjfosudfldsjkfouilkjsdofiualskdjfoisaduflkjwerouljsdfousldkfj.txt:1370470697
 Documents/minddump/lksjadflkjsdkfljsdlkfjsdlkfjsdouifslkjdfoiusdflkjer.txt:1393063604
 Documents/minddump/lksjdafkljasdfouasdflkjdsouiflkjsdfoulkjwer.txt:1384573951
+Documents/minddump/lksjdfjsdlfkjsdlkjflksdjflkjsdfoulekrjousdflkjsdlfjsdofulkjsdlkfj.txt:1426823334
 Documents/minddump/lksjdfkljsfkljsklfjklsdjfklsdjflksjdfosduflksjdfousdlfkjsdlfjk.txt:1422637473
 Documents/minddump/lksjdfljsadlfkjlkjwerouslkdjfoiudslfkjou.txt:1398082095
 Documents/minddump/lksjdfljsdflkjsdfouwlejrousdjflsdkjflskdjflksjdflkjouewrlk.txt:1423688114
@@ -2448,6 +2449,7 @@ Documents/minddump/slkfdslfkjlsakdjflsdjflksdjflkjsdflkjweroulsdkfjsdf.txt:13987
 Documents/minddump/slkfjsalkjfdlsdaffskdwerwerasfsdfjfsdofusdlkfjsdlfkj.txt:1360772334
 Documents/minddump/slkfjsdlkjfsdlkjfoiwuerlkjafdousdlfkjwoeiurlkjfoiu.txt:1357937791
 Documents/minddump/slkfjsldkjflksdjflksjdlkfjsdlkfjskldjfklsjdklfjsdlkfjdsflkjsdlkfjsldkfjsldkfjdlkjf.txt:1421449684
+Documents/minddump/slkfjslkdjflksdjfjsdfjsdlkfjlksdjflksjdflkjdouwerkjsdfljfdlkjsdf.txt:1426824726
 Documents/minddump/slkjfdlskajdfosudflsajfosuaflsjdfousfljsofusfdoulsjdfousdflk.txt:1390303637
 Documents/minddump/so.fucking.high.txt:1344456089
 Documents/minddump/so.fucking.pumped.i.can.feel.adrenaline.rushing.around.etc.nothing.to.do.with.doc.but.just.my.mood.today.wooo.txt:1350504798
@@ -2823,11 +2825,11 @@ Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/Sft
 Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/main.cpp:1426017680
 Projects/AVMuxScript/Night/:1426497390
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/:1426564468
-Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/:1426752749
+Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/:1426834112
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/BackupReplicateDeleteMuxAndUmountCli.pro:1426514295
-Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/directoriesofaudioandvideofilesmuxersyncer.cpp:1426752745
+Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/directoriesofaudioandvideofilesmuxersyncer.cpp:1426834003
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/directoriesofaudioandvideofilesmuxersyncer.h:1426752538
-Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/main.cpp:1426591591
+Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/main.cpp:1426821950
 Projects/AVMuxScript/Night/backupReplicateDeleteMuxUmountAndShutTheFuckDown.sh:1426497268
 Projects/AVMuxScript/design/:1426466748
 Projects/AVMuxScript/design/initial.design.aka.rambling.txt:1425923027
@@ -5661,7 +5663,7 @@ Solutions/launchASEPbecauseRedAlert/todo.lol.asdflkjsdfousdfweroiu.txt:138717389
 Solutions/launchASEPbecauseRedAlert/video.bytestream.design.rofl.so.ghetto.and.pro.asdflhslfjsadflkj.txt:1402001107
 Solutions/standard.wt.deploy.arguments.to.get.clean.urls.working.properly.txt:1398266138
 autobackupScripts/:1349691249
-autobackupScripts/linux/:1426427877
+autobackupScripts/linux/:1426823496
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/:1338074874
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
 autobackupScripts/linux/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
@@ -5678,6 +5680,7 @@ autobackupScripts/linux/750x1:1321490944
 autobackupScripts/linux/750x2:1321489260
 autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1426413017
 autobackupScripts/linux/base64theSha1SumOfAFileProperly.sh:1424394103
+autobackupScripts/linux/best.rsync.command.txt:1426823496
 autobackupScripts/linux/cleanAptEtc.sh:1350618598
 autobackupScripts/linux/cmd.to.make.torrent.with.lots.of.relevant.trackers.txt:1426427907
 autobackupScripts/linux/debian.squeeze.dell.mini.9.post.install.instructions.txt:1368042665

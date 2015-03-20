@@ -127,7 +127,7 @@ private:
 #define sudoUmountCmdPrefix "sudo " umountCmdPrefix
 
 //i had specified partial, but took it out in favor of backup (because I wouldn't want to backup a partial lol
-#define rsyncCmdPrefix "rsync -avhh --backup --progress --suffix=~accidentallyOverwrittenDuringSyncAt-"
+#define rsyncCmdPrefix "rsync -avhh --progress --backup --suffix=~accidentallyOverwrittenDuringSyncAt-"
 #define rsyncCmdMiddle " ./ "
 
 #define RETURN_ONE_IF_CMD_RUN_AT_CONSTRUCTOR_OF_SMART_PROCESS_THINGO_FAILS(scopedPointerVarName, constructCmd, destructCmd) \
