@@ -110,7 +110,7 @@ DirectoriesOfAudioAndVideoFilesMuxerSyncer::DirectoriesOfAudioAndVideoFilesMuxer
     m_AudioExtensions.append("wav");
     m_AudioExtensions.append("mp3");
     m_AudioExtensions.append("wma");
-    //m_AudioExtensions.append("ogg"); --bleh could be av or just v or just a (you bastards. TODOoptional: ffprobe dat shiz)
+    //m_AudioExtensions.append("ogg"); --bleh could be av or just v or just a (you bastards. TODOoptional: ffprobe dat shiz and look at teh streamz, or require a and v folders to be different)
     m_AudioExtensions.append("flac");
     m_AudioExtensions.append("opus");
 }
@@ -220,6 +220,13 @@ bool DirectoriesOfAudioAndVideoFilesMuxerSyncer::timespansIntersect(qint64 times
     }
     //since we've elimited every other option, we can deduce that they intersect
     return true;
+}
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QString &directoryOfAudioFiles, const QString &directoryOfVideoFiles, const QString &muxOutputDirectory)
+{
+    QDir directoryOfAudioFilesDir(directoryOfAudioFiles);
+    QDir directoryOfVideoFilesDir(directoryOfVideoFiles);
+    QDir muxOutputDirectoryDir(muxOutputDirectory);
+    muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(directoryOfAudioFilesDir, directoryOfVideoFilesDir, muxOutputDirectoryDir);
 }
 void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QDir &directoryOfAudioFiles, const QDir &directoryOfVideoFiles, const QDir &muxOutputDirectory)
 {
