@@ -7,7 +7,6 @@
 #include <QMapIterator>
 #include <QTemporaryDir>
 #include <QSharedPointer>
-#include <QTemporaryFile>
 
 #define DUMP_PROCESS_OUTPUT(process) \
 emit o(process.readAllStandardOutput()); \
@@ -111,7 +110,7 @@ DirectoriesOfAudioAndVideoFilesMuxerSyncer::DirectoriesOfAudioAndVideoFilesMuxer
     m_AudioExtensions.append("wav");
     m_AudioExtensions.append("mp3");
     m_AudioExtensions.append("wma");
-    //m_AudioExtensions.append("ogg"); --bleh could be av or just a (you bastards)
+    //m_AudioExtensions.append("ogg"); --bleh could be av or just v or just a (you bastards. TODOoptional: ffprobe dat shiz)
     m_AudioExtensions.append("flac");
     m_AudioExtensions.append("opus");
 }
@@ -224,7 +223,6 @@ bool DirectoriesOfAudioAndVideoFilesMuxerSyncer::timespansIntersect(qint64 times
 }
 void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QDir &directoryOfAudioFiles, const QDir &directoryOfVideoFiles, const QDir &muxOutputDirectory)
 {
-#if 1
     if(!directoryOfAudioFiles.exists())
     {
         emit e("directory of audio files does not exist:" + directoryOfAudioFiles.absolutePath());
@@ -308,7 +306,6 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
         }
     }
 
-    //TODOreq: what should i do if no audio intersects a video file? at the very least, i should NOT mux in silent audio
     //TODOreq: i think there is only going to be 1x itsoffset per video file. ACTUALLY, per day. ACTUALLY, it will be a constant itsoffset (WOOT, ezier) as long as the two clocks don't drift apart. ACTUALLY, since i have to re-set the time on boot for the video device every time, I do need an itsoffset. The itsoffset will be valid for as long as I keep the video device on for (assuming I don't keep it on long enough for drift to factor in heh)
     Q_FOREACH(QSharedPointer<VideoFileMetaAndIntersectingAudios> currentVideoFileMetaAndIntersectingAudiosSharedPointer, videoFileMetaAndIntersectingAudios)
     {
@@ -335,7 +332,6 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
         {
             //have audio stream
 
-            //bool firstAudioSegment = true; //TODOreq: when muxing with video, check if this is still true... in which case there wasn't any audio after all? should never happen since we already accounted for it and the ones in the list DO intersect... so eh mb nvm
             QMapIterator<qint64 /* start timestamp of audio */, AudioFileMeta> currentAudioFile(currentVideoFile.IntersectingAudioFiles);
             QString audioFileBeingBuilt(tempDir_WithSlashAppended + currentVideoFile.VideoFileInfo.completeBaseName() + ".flac"); //maybe use hq opus at temporary format instead of flac? oh one hand, i don't want to decode, encode, decode, encode (using flac means i decode -> encode). on the other hand, i might run out of hdd space if i've been recording all day! rofl stupid problems, little wiggle room. i calculated it, ~24 hrs of .flac would take ~4gb, so I'm aight
             //qint64 audioFileBeingBuiltDurationMs = 0; //TODOoptional: at the end of iterating, Q_ASSERT this is same length as video (actually it can be shorter, ffmpeg doesn't care about audio tracks ending too soon.... so nvm i guess :-/)
@@ -344,298 +340,88 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
             {
                 currentAudioFile.next();
                 QStringList ffmpegAudioArgs;
-#if 0 //lost
-                if(firstAudioSegment)
-                {
-                    firstAudioSegment = false; //the first audio file might have started before the video, in which case we need to to -ss until the timestamp of the video. TO DOnereq: the first audio file might even extend beyond the video (meaning it's the only audio), in which case -t must be used to end when the video does
-                    qint64 ss_Milliseconds = videoStartTimestampMSecs - currentAudioFile.key();  //TO DOnereq: just before insertion into command, check to see if it's still zero and then don't insert it if it is. one case where that'd happen is if the first audio segment and video both had the exact same start time (which is what we AIM for)
-                    double ss_Seconds = static_cast<double>(ss_Milliseconds) / 1000.0;
-                    qint64 audioEndTimestampMs = (currentAudioFile.key() + currentAudioFile.value().DurationInMillseconds);
-                    audioFileBeingBuiltDurationMs += currentAudioFile.value().DurationInMillseconds;
-                    qint64 t_Ms; //TO DOnereq: just before insertion into command, check to see if it's still zero and then don't insert it if it is. TODOreq: account for silence prepended
-                    //calculate '-t' if necessary
-                    bool t_IsNecessary = (audioEndTimestampMs > videoEndTimestampMs);
-                    if(currentAudioFile.key() <= videoStartTimestampMSecs)
-                    {
-                        //first audio segment started before video, use -ss
 
-                        if(ss_Milliseconds > 0)
-                        {
-                            audioFileBeingBuiltDurationMs -= ss_Milliseconds;
-                            ffmpegAudioArgs << "-ss" << QString::number(ss_Seconds, 'f');
-                            if(t_IsNecessary)
-                            {
-                                //t_Ms = intersectingAudioFilesIterator.value().DurationInMillseconds; //wrong?
-                                //t_Ms -= ss_Milliseconds;
-                                /*
-                                a:[--------]
-                                v:  [---]
-                                olol ez just length of v xD
-                                */
-                                t_Ms = videoEndTimestampMs - videoStartTimestampMSecs;
-                            }
-                        }
-                    }
-                    else if(currentAudioFile.key() > videoStartTimestampMSecs)
-                    {
-                        //first audio segment started after video, so prepend silence
-                        //prepend 69 seconds of audio command: ffmpeg -i input.mp3 -filter_complex 'aevalsrc=0:d=69[slug];[slug][0]concat=n=2:v=0:a=1[out]' -map '[out]' output.flac
-                        qint64 silenceDurationMs = currentAudioFile.key() - videoStartTimestampMSecs;
-                        if(t_IsNecessary)
-                        {
-                            t_Ms = videoEndTimestampMs - currentAudioFile.key();
-                            t_Ms += silenceDurationMs;
-                            /*
-                            a:   [------]
-                            v:[-------]
-                            damn is so much ezier when i have visuals: t = videoEndTimestampMs - audioStartTimestmap; -- but yes, we do need to += silenceDurationMs -- so really it's just the length of v, but that only is valid for first audio file, when the subsequent audio files then nvm
-                            oh look at that, it's what i had. good
-                            */
-                        }
-                        audioFileBeingBuiltDurationMs += silenceDurationMs;
-                        double silenceDurationSeconds = static_cast<double>(silenceDurationMs) / 1000.0;
-                        APPEND_SILENCE_PREPEND_ARGS_TO_FFMPEG_ARGSLIST(ffmpegAudioArgs, silenceDurationSeconds)
-                    }
-                    if(t_IsNecessary)
-                    {
-                        audioFileBeingBuiltDurationMs -= (audioEndTimestampMs - videoEndTimestampMs); //subtracting the part that -t cuts off
-                        double t_Seconds = static_cast<double>(t_Ms) / 1000.0;
-                        ffmpegAudioArgs << QString::number(t_Seconds, 'f');
-                    }
-                    //the input (-i) must come after the -ss
-                    ffmpegAudioArgs << "-i" << currentAudioFile.value().AudioFileInfo.absoluteFilePath() << audioFileBeingBuilt;
-                    RUN_FFMPEG(ffmpegAudioArgs)
+                //-ss (only for the first, and only if needed)
+                //-t (if needed)
+                //prepend silence (if needed)
+
+                //all three of these affect each other (fml)
+                //which should i calculate first? it quickly becomes spaghetti code. KISS (easier said than done)
+                //i think i shouldn't prepend silence before onto the next audio file, but append silence onto the audioFileBeingBuilt and then consider every ms up to the next audio file to already be accounted for. that's just KISS imo (but is arguably less elegant (fuckit)) <----- YES.
+                //TO DOnereq: there are multiple places where audioFileBeingBuilt will get created for the FIRST time (if -ss is used, we don't prepend silence (audioFileBeingBuilt is first created for first audio file). if -ss is not used, we [probably] do prepend silence (audioFileBeingBuilt is first created when prepending silence). and there's a rare case where we neither prepend silence nor use -ss (the audio and video start at exactly the same ms, in which case audioFileBeingBuilt is first created for the first audio file) -- the alternative is to use the "prepend silence onto next audio file" solution. TO DOnereq(related): we DON'T need to add silence if there are no more audio files. i think my while(hasNext) iterator already does this for me actually
+
+                qint64 audioStartTimestampMs = currentAudioFile.key();
+                qint64 audioEndTimestampMs = audioStartTimestampMs + currentAudioFile.value().DurationInMillseconds;
+
+                //append silence onto audioFileBeingBuilt before proceeding, simply for sanity in calculations
+                if(audioFileBeingBuilt_HaveAudioUpToTimestampMs < audioStartTimestampMs) //no -ss is implied/deduced via this calculation
+                {
+                    //need to put silence onto audioFileBeingBuilt until audioStartTimestampMs
+                    qint64 silenceMs = audioStartTimestampMs - audioFileBeingBuilt_HaveAudioUpToTimestampMs;
+                    double silence_Seconds = static_cast<double>(silenceMs) / 1000.0;
+
+                    //make silence
+                    QString audioSilence = tempDir_WithSlashAppended + "tempAudioSegmentAboutToBecomeAudioFileBeingBuiltOrConcatenatedOntoAudioFileBeingBuilt.flac";
+                    QStringList audioSilenceArgs;
+                    QString silenceFilter("'aevalsrc=0:d=" + QString::number(silence_Seconds, 'f') + "'");
+                    audioSilenceArgs << "-f" << "-lavfi" << silenceFilter << "-ac" << "1" << audioSilence;
+                    RUN_FFMPEG(audioSilenceArgs)
+
+                    //concat onto or become audioFileBeingBuilt
+                    CONCAT_ONTO_OR_BECOME_AUDIO_FILE(audioFileBeingBuilt, audioSilence)
+
+                    audioFileBeingBuilt_HaveAudioUpToTimestampMs += silenceMs;
+                }
+
+                //we know at this point that audioFileBeingBuilt_HaveAudioUpToTimestampMs points to audioStartTimestampMs (the resulting audio file might be off by a few ms, but whatever close enough for now). ACTUALLY, audioFileBeingBuilt_HaveAudioUpToTimestampMs might be pointing at videoStartTimestampMSecs if the audio started before video (-ss needed)
+
+                //-t
+                qint64 t_Ms = 0;
+                if(audioEndTimestampMs > videoEndTimestampMs)
+                {
+                    //audio extended past video, use -t
+                    t_Ms = videoEndTimestampMs - audioFileBeingBuilt_HaveAudioUpToTimestampMs; //-ss offset sidestepped/accounted-for
+                    audioFileBeingBuilt_HaveAudioUpToTimestampMs += t_Ms; //random: i think whenever we have -t, we no longer even need "haveAudioUpTo", because it is the last audio file xD
                 }
                 else
                 {
-                    //subsequent audio segments
-                    //there is no chance of this/these audio segment[s] starting before the video starts
-                    //there is a high chance of needing to prepend silence, and no chance of using "-ss". a small but possible chance we don't need to prepend silence. -t might apply, and it needs to take into account all the audio segments that came before it TODOreq
-
-                    bool t_IsNecessary = ((currentAudioFile.key() + currentAudioFile.value().DurationInMillseconds) > videoEndTimestampMs);
-                    if((videoStartTimestampMSecs + audioFileBeingBuiltDurationMs) < currentAudioFile.key())
-                    {
-                        //prepend silence
-                        qint64 silenceDurationMs = currentAudioFile.key() - (videoStartTimestampMSecs + audioFileBeingBuiltDurationMs);
-                        audioFileBeingBuiltDurationMs += silenceDurationMs;
-                        double silenceDurationSeconds = static_cast<double>(silenceDurationMs) / 1000.0;
-                        APPEND_SILENCE_PREPEND_ARGS_TO_FFMPEG_ARGSLIST(ffmpegAudioArgs, silenceDurationSeconds)
-                    }
-                    else
-                    {
-                        //whoa the audio file started RIGHT AS the one before it ended, heh pretty unlikely. i don't think i need to even do anything xD
-                        //TODOoptional: if i am using 2x audio recording devices, then there's good chance of [INTENTIONAL(battery dying, etc)] audio overlap (which would bring us to this block of code, and we'd need to use -ss on one of the audio segments). also note that if i ever do implement that, i need to factor in -ss into the usage of -t (which the "firstAudioSegment" already does)
-                    }
-
-                    if()
-                    {
-                        //audio extends beyond video, use -t
-                    }
-
-
-                    //TODOreq: whether as is or (more likely) prepended with silence, we need to concat this onto audioFileBeingBuilt
+                    audioFileBeingBuilt_HaveAudioUpToTimestampMs += (audioEndTimestampMs-audioFileBeingBuilt_HaveAudioUpToTimestampMs); //-ss offset sidestepped/accounted-for
                 }
-            }
-#endif
 
-            //-ss (only for the first, and only if needed)
-            //-t (if needed)
-            //prepend silence (if needed)
+                //-ss
+                if(audioStartTimestampMs < videoStartTimestampMSecs)
+                {
+                    //audio started before video, use -ss. ONLY THE FIRST AUDIO FILE WILL GET HERE.
+                    qint64 ss_Ms = videoStartTimestampMSecs-audioStartTimestampMs;
+                    double ss_Seconds = static_cast<double>(ss_Ms) / 1000.0;
+                    ffmpegAudioArgs << "-ss" << QString::number(ss_Seconds, 'f');
+                }
 
-            //all three of these affect each other (fml)
-            //which should i calculate first? it quickly becomes spaghetti code. KISS (easier said than done)
-            //i think i shouldn't prepend silence before onto the next audio file, but append silence onto the audioFileBeingBuilt and then consider every ms up to the next audio file to already be accounted for. that's just KISS imo (but is arguably less elegant (fuckit)) <----- YES.
-            //TODOreq: there are multiple places where audioFileBeingBuilt will get created for the FIRST time (if -ss is used, we don't prepend silence (audioFileBeingBuilt is first created for first audio file). if -ss is not used, we [probably] do prepend silence (audioFileBeingBuilt is first created when prepending silence). and there's a rare case where we neither prepend silence nor use -ss (the audio and video start at exactly the same ms, in which case audioFileBeingBuilt is first created for the first audio file) -- the alternative is to use the "prepend silence onto next audio file" solution. TODOreq(related): we DON'T need to add silence if there are no more audio files. i think my while(hasNext) iterator already does this for me actually
 
-            qint64 audioStartTimestampMs = currentAudioFile.key();
-            qint64 audioEndTimestampMs = audioStartTimestampMs + currentAudioFile.value().DurationInMillseconds;
+                ffmpegAudioArgs << "-i" << currentAudioFile.value().AudioFileInfo.absoluteFilePath(); //-i must come after -ss
+                if(t_Ms != 0)
+                {
+                    double t_Seconds = static_cast<double>(t_Ms) / 1000.0;
+                    ffmpegAudioArgs << "-t" << QString::number(t_Seconds, 'f');
+                }
+                ffmpegAudioArgs << "-ac" << "1"; //output to 1 channel audio, despite our source having 2 (if I change this to two, my silence generator needs to also change to 2 (probably)) -- this must come after -i
 
-            //append silence onto audioFileBeingBuilt before proceeding, simply for sanity in calculations
-            if(audioFileBeingBuilt_HaveAudioUpToTimestampMs < audioStartTimestampMs) //no -ss is implied/deduced via this calculation
-            {
-                //need to put silence onto audioFileBeingBuilt until audioStartTimestampMs
-                qint64 silenceMs = audioStartTimestampMs - audioFileBeingBuilt_HaveAudioUpToTimestampMs;
-                double silence_Seconds = static_cast<double>(silenceMs) / 1000.0;
-
-                //make silence
-                QString audioSilence = tempDir_WithSlashAppended + "tempAudioSegmentAboutToBecomeAudioFileBeingBuiltOrConcatenatedOntoAudioFileBeingBuilt.flac";
-                QStringList audioSilenceArgs;
-                QString silenceFilter("'aevalsrc=0:d=" + QString::number(silence_Seconds, 'f') + "'");
-                audioSilenceArgs << "-f" << "-lavfi" << silenceFilter << "-ac" << "1" << audioSilence;
-                RUN_FFMPEG(audioSilenceArgs)
+                //make audio segment (possibly a noop if -t and -ss weren't used, in which case all it did was store into flac)
+                QString audioSegment = tempDir_WithSlashAppended + "tempAudioSegmentAboutToBecomeAudioFileBeingBuiltOrConcatenatedOntoAudioFileBeingBuilt.flac";
+                ffmpegAudioArgs << audioSegment;
+                RUN_FFMPEG(ffmpegAudioArgs)
 
                 //concat onto or become audioFileBeingBuilt
-                CONCAT_ONTO_OR_BECOME_AUDIO_FILE(audioFileBeingBuilt, audioSilence)
-
-                audioFileBeingBuilt_HaveAudioUpToTimestampMs += silenceMs;
+                CONCAT_ONTO_OR_BECOME_AUDIO_FILE(audioFileBeingBuilt, audioSegment)
             }
-
-#if 0 //close, but needs a refactor utilizing+modifying audioFileBeingBuilt_HaveAudioUpToTimestampMs, which didn't exist when I first wrote it
-            //-t
-            qint64 t_Ms = 0;
-            if(audioEndTimestampMs > videoEndTimestampMs)
-            {
-                //audio extended past video, use -t
-                /*
-                a:     [---------]
-                v:-----------]
-                want:  ^_____^
-                t=videoEndTimestampMs-audioStartTimestampMs
-                indeed, the a may have started before the v, but when calculating -ss below, -t can be modified
-                */
-                t_Ms = videoEndTimestampMs - audioStartTimestampMs;
-            }
-
-            //-ss
-            if(currentAudioFile.key() < videoStartTimestampMSecs)
-            {
-                //audio started before video, use -ss. ONLY THE FIRST AUDIO FILE WILL GET HERE. NVM: we need to calculate -t first, because we need to modify -t based on -ss
-                /*
-                a:[--------------]
-                v:    [------]
-                want: ^______^
-                OR:
-                a:[--------------]
-                v:    [---------------]
-                want: ^_______________^
-                OR:
-                a:[--------------]
-                v:    [----------]
-                want: ^__________^
-
-                NOPE: first: ss=videoEndTimestampMs-videoStartTimestampMSecs
-                NOPE: second: ss=videoEndTimestampMs-videoStartTimestampMSecs
-                NOPE: third: ss=videoEndTimestampMs-videoStartTimestampMSecs
-                wtf? all 3 are the same
-                oh wait that calculates what we WANT, not -ss
-                but.... all three are:
-                ss=videoStartTimestampMSecs-audioStartTimestampMs;
-                */
-                qint64 ss_Ms = videoStartTimestampMSecs-audioStartTimestampMs;
-                //t_Ms -= ss_Ms;
-                //now, do we have to modify -t? or is that only for prepended silence? guh i forget (*looks at old spaghetti code* (wish me luck). yep that didn't help too messy). there's no getting around it, i need to re-determine it. nope. wait yes. fffff i hate math
-                /*
-                a:3-11
-                v:5-9
-                ss:2
-                t:?
-                NOPE. i was right the first time, we don't need to fuck with t
-                */
-                double ss_Seconds = static_cast<double>(ss_Ms) / 1000.0;
-                ffmpegAudioArgs << "-ss" << QString::number(ss_Seconds, 'f');
-            }
-#endif
-#if 0 //lost again fml
-            //-t
-            qint64 t_Ms = 0;
-            if(audioEndTimestampMs > videoEndTimestampMs)
-            {
-                //audio extended past video, use -t
-                /*
-                a:     [---------]
-                v:-----------]
-                want:  ^_____^
-                t=videoEndTimestampMs-audioStartTimestampMs
-                indeed, the a may have started before the v, but when calculating -ss below, -t can be modified
-                i don't think this changed at all (implicitly) when I utilized audioFileBeingBuilt_HaveAudioUpToTimestampMs, but maybe it did? #badatmath. oh right i don't need to CHANGE anything, just need to ADD the modification of audioFileBeingBuilt_HaveAudioUpToTimestampMs
-                */
-                t_Ms = videoEndTimestampMs - audioStartTimestampMs;
-                audioFileBeingBuilt_HaveAudioUpToTimestampMs += t_Ms; //well that was easy
-            }
-            else
-            {
-                audioFileBeingBuilt_HaveAudioUpToTimestampMs += currentAudioFile.value().DurationInMillseconds;
-            }
-
-            //-ss
-            if(currentAudioFile.key() < videoStartTimestampMSecs)
-            {
-                //audio started before video, use -ss. ONLY THE FIRST AUDIO FILE WILL GET HERE. NVM: we need to calculate -t first, because we need to modify -t based on -ss
-                /*
-                a:[--------------]
-                v:    [------]
-                want: ^______^
-                OR:
-                a:[--------------]
-                v:    [---------------]
-                want: ^_______________^
-                OR:
-                a:[--------------]
-                v:    [----------]
-                want: ^__________^
-
-                NOPE: first: ss=videoEndTimestampMs-videoStartTimestampMSecs
-                NOPE: second: ss=videoEndTimestampMs-videoStartTimestampMSecs
-                NOPE: third: ss=videoEndTimestampMs-videoStartTimestampMSecs
-                wtf? all 3 are the same
-                oh wait that calculates what we WANT, not -ss
-                but.... all three are:
-                ss=videoStartTimestampMSecs-audioStartTimestampMs;
-                */
-                qint64 ss_Ms = videoStartTimestampMSecs-audioStartTimestampMs;
-                //t_Ms -= ss_Ms;
-                //now, do we have to modify -t? or is that only for prepended silence? guh i forget (*looks at old spaghetti code* (wish me luck). yep that didn't help too messy). there's no getting around it, i need to re-determine it. nope. wait yes. fffff i hate math
-                /*
-                a:3-11
-                v:5-9
-                ss:2
-                t:?
-                NOPE. i was right the first time, we don't need to fuck with t
-                */
-                double ss_Seconds = static_cast<double>(ss_Ms) / 1000.0;
-                ffmpegAudioArgs << "-ss" << QString::number(ss_Seconds, 'f');
-                audioFileBeingBuilt_HaveAudioUpToTimestampMs -= ss_Ms;
-            }
-#endif
-
-            //we know at this point that audioFileBeingBuilt_HaveAudioUpToTimestampMs points to audioStartTimestampMs (the resulting audio file might be off by a few ms, but whatever close enough for now). ACTUALLY, audioFileBeingBuilt_HaveAudioUpToTimestampMs might be pointing at videoStartTimestampMSecs if the audio started before video (-ss needed)
-
-            //-t
-            qint64 t_Ms = 0;
-            if(audioEndTimestampMs > videoEndTimestampMs)
-            {
-                //audio extended past video, use -t
-                t_Ms = videoEndTimestampMs - audioFileBeingBuilt_HaveAudioUpToTimestampMs; //-ss offset sidestepped/accounted-for
-                audioFileBeingBuilt_HaveAudioUpToTimestampMs += t_Ms; //random: i think whenever we have -t, we no longer even need "haveAudioUpTo", because it is the last audio file xD
-            }
-            else
-            {
-                audioFileBeingBuilt_HaveAudioUpToTimestampMs += (audioEndTimestampMs-audioFileBeingBuilt_HaveAudioUpToTimestampMs); //-ss offset sidestepped/accounted-for
-            }
-
-            //-ss
-            if(currentAudioFile.key() < videoStartTimestampMSecs)
-            {
-                //audio started before video, use -ss. ONLY THE FIRST AUDIO FILE WILL GET HERE.
-                qint64 ss_Ms = videoStartTimestampMSecs-audioStartTimestampMs;
-                double ss_Seconds = static_cast<double>(ss_Ms) / 1000.0;
-                ffmpegAudioArgs << "-ss" << QString::number(ss_Seconds, 'f');
-            }
-
-
-            ffmpegAudioArgs << "-i" << currentAudioFile.value().AudioFileInfo.absoluteFilePath(); //-i must come after -ss
-            if(t_Ms != 0)
-            {
-                double t_Seconds = static_cast<double>(t_Ms) / 1000.0;
-                ffmpegAudioArgs << "-t" << QString::number(t_Seconds, 'f');
-            }
-            ffmpegAudioArgs << "-ac" << "1"; //output to 1 channel audio, despite our source having 2 (if I change this to two, my silence generator needs to also change to 2 (probably)) -- this must come after -i
-
-            //make audio segment (possibly a noop if -t and -ss weren't used, in which case all it did was store into flac)
-            QString audioSegment = tempDir_WithSlashAppended + "tempAudioSegmentAboutToBecomeAudioFileBeingBuiltOrConcatenatedOntoAudioFileBeingBuilt.flac";
-            ffmpegAudioArgs << audioSegment;
-            RUN_FFMPEG(ffmpegAudioArgs)
-
-            //concat onto or become audioFileBeingBuilt
-            CONCAT_ONTO_OR_BECOME_AUDIO_FILE(audioFileBeingBuilt, audioSegment)
+            ffmpegArgs << "-i" << audioFileBeingBuilt << "-acodec" << "opus" << "-b:a" << "32k" << "-ac" <<  "1" << "-map" << "1";
         }
-        ffmpegArgs << "-i" << audioFileBeingBuilt << "-acodec" << "opus" << "-b:a" << "32k" << "-ac" <<  "1" << "-map" << "1";
+        //mux -- TODOreq: lutyuv brightness? being outside maybe not necessary (idfk) -- also: noir for night time shenigans (a realtime preview would come in handy too)!
+        QString muxTargetDirectory_WithSlashAppended = muxOutputDirectory.absolutePath() + QDir::separator();
+        ffmpegArgs << "-s" << "720x480" << "-b:v" << "275k" << "-vcodec" << "theora" << "-r" << "10" << "-f" << "segment" << "-segment_time" << "180" << "-segment_list_size" << "999999999" << "-segment_wrap" << "999999999" << "-segment_list" << QString(muxTargetDirectory_WithSlashAppended + currentVideoFile.VideoFileInfo.completeBaseName() + "-segmentEntryList.txt") << "-reset_timestamps" << "1" << QString(muxTargetDirectory_WithSlashAppended + currentVideoFile.VideoFileInfo.completeBaseName() + "-%d.ogg");
+        RUN_FFMPEG(ffmpegArgs)
+        emit o("muxed video using " + QString::number(currentVideoFile.IntersectingAudioFiles.size()) + " audio files");
     }
-    //mux -- TODOreq: lutyuv brightness? being outside maybe not necessary (idfk)
-    QString muxTargetDirectory_WithSlashAppended = muxOutputDirectory.absolutePath() + QDir::separator();
-    ffmpegArgs << "-s" << "720x480" << "-b:v" << "275k" << "-vcodec" << "theora" << "-r" << "10" << "-f" << "segment" << "-segment_time" << "180" << "-segment_list_size" << "999999999" << "-segment_wrap" << "999999999" << "-segment_list" << QString(muxTargetDirectory_WithSlashAppended + "segmentEntryList.txt") << "-reset_timestamps" << "1" << QString(muxTargetDirectory_WithSlashAppended + "outsideSegment-%d.ogg");
-    RUN_FFMPEG(ffmpegArgs)
     emit o("done muxing and syncing directory of audio with directory of video -- everything OK");
     emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(true);
-#endif
 }

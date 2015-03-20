@@ -2825,9 +2825,9 @@ Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/Sft
 Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/main.cpp:1426017680
 Projects/AVMuxScript/Night/:1426497390
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/:1426564468
-Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/:1426834112
+Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/:1426836887
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/BackupReplicateDeleteMuxAndUmountCli.pro:1426514295
-Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/directoriesofaudioandvideofilesmuxersyncer.cpp:1426834003
+Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/directoriesofaudioandvideofilesmuxersyncer.cpp:1426836536
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/directoriesofaudioandvideofilesmuxersyncer.h:1426752538
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/main.cpp:1426821950
 Projects/AVMuxScript/Night/backupReplicateDeleteMuxUmountAndShutTheFuckDown.sh:1426497268
@@ -5680,7 +5680,7 @@ autobackupScripts/linux/750x1:1321490944
 autobackupScripts/linux/750x2:1321489260
 autobackupScripts/linux/apt.initial.packages.debian.squeeze.devbox.txt:1426413017
 autobackupScripts/linux/base64theSha1SumOfAFileProperly.sh:1424394103
-autobackupScripts/linux/best.rsync.command.txt:1426823496
+autobackupScripts/linux/best.rsync.command.txt:1426836021
 autobackupScripts/linux/cleanAptEtc.sh:1350618598
 autobackupScripts/linux/cmd.to.make.torrent.with.lots.of.relevant.trackers.txt:1426427907
 autobackupScripts/linux/debian.squeeze.dell.mini.9.post.install.instructions.txt:1368042665
