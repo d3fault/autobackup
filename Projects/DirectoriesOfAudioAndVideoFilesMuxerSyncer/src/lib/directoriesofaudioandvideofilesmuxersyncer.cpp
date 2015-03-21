@@ -440,7 +440,7 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
         if(truncateVideosToMsDuration_OrZeroToNotTruncate > 0)
         {
             double truncateVideoToSecondsDuration = static_cast<double>(truncateVideosToMsDuration_OrZeroToNotTruncate) / 1000.0;
-            ffmpegArgs << QString::number(truncateVideoToSecondsDuration, 'f');
+            ffmpegArgs << "-t" << QString::number(truncateVideoToSecondsDuration, 'f');
         }
         ffmpegArgs << QString(muxTargetDirectory_WithSlashAppended + currentVideoFile.VideoFileInfo.completeBaseName() + "-%d.ogg");
         RUN_FFMPEG(ffmpegArgs)

@@ -10,6 +10,7 @@
 
 #define DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_AUDIO_DELAY_ARG "--audio-delay-ms"
 #define DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_TRUNCATE_VIDEOS_TO_MS_ARG "--truncate-videos-to-ms"
+//#define DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_INTERACTIVELY
 
 DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::DirectoriesOfAudioAndVideoFilesMuxerSyncerCli(QObject *parent)
     : QObject(parent)
