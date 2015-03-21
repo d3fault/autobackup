@@ -225,14 +225,14 @@ bool DirectoriesOfAudioAndVideoFilesMuxerSyncer::timespansIntersect(qint64 times
     //since we've elimited every other option, we can deduce that they intersect
     return true;
 }
-void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QString &directoryOfAudioFiles, const QString &directoryOfVideoFiles, const QString &muxOutputDirectory)
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QString &directoryOfAudioFiles, const QString &directoryOfVideoFiles, const QString &muxOutputDirectory, qint64 audioDelayMs)
 {
     QDir directoryOfAudioFilesDir(directoryOfAudioFiles);
     QDir directoryOfVideoFilesDir(directoryOfVideoFiles);
     QDir muxOutputDirectoryDir(muxOutputDirectory);
-    muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(directoryOfAudioFilesDir, directoryOfVideoFilesDir, muxOutputDirectoryDir);
+    muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(directoryOfAudioFilesDir, directoryOfVideoFilesDir, muxOutputDirectoryDir, audioDelayMs);
 }
-void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QDir &directoryOfAudioFiles, const QDir &directoryOfVideoFiles, const QDir &muxOutputDirectory)
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QDir &directoryOfAudioFiles, const QDir &directoryOfVideoFiles, const QDir &muxOutputDirectory, qint64 audioDelayMs)
 {
     if(!directoryOfAudioFiles.exists())
     {
@@ -303,7 +303,7 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
         Q_FOREACH(QSharedPointer<VideoFileMetaAndIntersectingAudios> currentVideoFileMetaAndIntersectingAudiosSharedPointer, videoFileMetaAndIntersectingAudios)
         {
             VideoFileMetaAndIntersectingAudios &currentVideoFileMetaAndIntersectingAudios = *currentVideoFileMetaAndIntersectingAudiosSharedPointer.data();
-            qint64 startTimestampOfAudioMs = currentAudioFile.lastModified().toMSecsSinceEpoch();
+            qint64 startTimestampOfAudioMs = currentAudioFile.lastModified().toMSecsSinceEpoch() + audioDelayMs;
             if(timespansIntersect(currentVideoFileMetaAndIntersectingAudios.VideoFileInfo.lastModified().toMSecsSinceEpoch(), currentVideoFileMetaAndIntersectingAudios.DurationInMillseconds, startTimestampOfAudioMs, durationOfAudioFileInMs))
             {
                 if(currentVideoFileMetaAndIntersectingAudios.IntersectingAudioFiles.contains(startTimestampOfAudioMs))

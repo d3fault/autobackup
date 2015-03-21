@@ -1,0 +1,3 @@
+"Played around" with libsox and got synthing to memory buffers working. No process call (that woulda worked), no writing to file (that would worked too), just libsox -> memory buffer -> qbuffer(qbytearray(memory buffer)) -> qaudiooutput like a real man. Haven't tested the playing from qbuffer stuff, but I'm thinking it'll work (and if not, I can figure out something else (custom io device ez)).
+
+"Played around" was a term I used reporting to a software manager back at an internship I had back in the day. I said that's how I found bugs in the software etc ("trying random things" was really what I meant). He didn't like it, because work is SERIOUS BUSINESS. I didn't get in trouble or anything, he was just lol confused and I think someone else had to explain it to him.
