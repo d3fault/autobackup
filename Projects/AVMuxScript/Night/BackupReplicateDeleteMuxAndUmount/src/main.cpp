@@ -11,7 +11,7 @@
 
 
 //MANDATORY config:
-#define videoFps "10" /* this must be kept in sync with whatever the capture device is using and also the ffmpeg mux command in DirectoriesOfAudioAndVideoFilesMuxerSyncer. Don't change this value mid-day. only change it in between days (ie, at morning before recording, or at night _after_ running this script) */
+#define videoFps "16" /* this must be kept in sync with whatever the capture device is using. Don't change this value mid-day. only change it in between days (ie, at morning before recording, or at night _after_ running this script). I considered keeping it in sync with the value in DirectoriesOfAudioAndVideoFilesMuxerSyncer, but opted not to (my master copies will be 16fps, the web/muxed ones 10fps) */
 #define videoSourceMountPoint "/mnt/videoSource"
 #define videoSource videoSourceMountPoint "/goOutsideVids"
 
