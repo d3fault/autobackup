@@ -5,14 +5,16 @@
 
 #include "directoriesofaudioandvideofilesmuxersyncer.h"
 
-//#define ERRRRRR cliUsage(); emit exitRequested(1); return;
-#define ERRRRRR cliUsage(); qApp->exit(1); return;
+#define ERRRRRR cliUsage(); emit exitRequested(1); return;
+//#define ERRRRRR cliUsage(); qApp->exit(1); return;
 
 DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::DirectoriesOfAudioAndVideoFilesMuxerSyncerCli(QStringList arguments, QObject *parent)
     : QObject(parent)
     , m_StdOut(stdout)
     , m_StdErr(stderr)
 {
+    connect(this, &DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::exitRequested, qApp, &QCoreApplication::exit, Qt::QueuedConnection);
+
     arguments.removeFirst(); //filename
 #if 1 //fff keeping qcoreapp out of this class means i haven't to exitRequested yet (still in constructor). could solve it a few ways, none of which are 'elegant' :(. Maybe I can/should introduce a "delayedConstructor" that is queued invoked from every "real" constructor, so i can get around the "can't connect to signals emitted in constructor" problem (for EVERY qobject i make, not just these *cli and *gui ones). that tiny bit of non-elegance does buy me a decent amount... (but i am digressing like fuck considering this is all dep of musicfingers xD (i never turn down an opportunity to experiment with improving the elegance of my code (maybe that's a problem (but if i don't do it, i never improve my code))))
     if(arguments.size() < 2)
@@ -53,6 +55,6 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::handleDoneMuxingAndSyncingDi
     {
         handleE("muxing and syncing directory of audio with directory of video failed");
     }
-    //emit exitRequested(success ? 0 : 1);
-    qApp->exit(success ? 0 : 1);
+    emit exitRequested(success ? 0 : 1);
+    //eh still need queued connection because we may not have entered event loop for first time yet... qApp->exit(success ? 0 : 1);
 }

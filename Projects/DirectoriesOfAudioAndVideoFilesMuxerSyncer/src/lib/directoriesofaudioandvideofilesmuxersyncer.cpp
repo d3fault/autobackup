@@ -50,12 +50,20 @@ if(ffmpegProcess.exitCode() != 0 || ffmpegProcess.exitStatus() != QProcess::Norm
 
 #define APPEND_SILENCE_PREPEND_ARGS_TO_FFMPEG_ARGSLIST(theArgs, silenceSeconds) \
 QString filterComplex("'aevalsrc=0:d=" + QString::number(silenceSeconds, 'f') + "[slug];[slug][0]concat=n=2:v=0:a=1[out]'"); \
-theArgs << "-filter_complex" << filterComplex << "-map" << "'[out]'";
+theArgs << "-filter_complex" << filterComplex << "-map" << "[out]";
 
 #define EMIT_ERROR_AND_RETURN_IF_RENAME_FAILS(renameFrom, renameTo) \
 if(!QFile::rename(renameFrom, renameTo)) \
 { \
     emit e("failed to rename: '" + renameFrom + "' to '" + renameTo + "'"); \
+    emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(false); \
+    return; \
+}
+
+#define EMIT_ERROR_AND_RETURN_IF_REMOVE_FAILS(toRemove) \
+if(!QFile::remove(toRemove)) \
+{ \
+    emit e("failed to remove: " + toRemove); \
     emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(false); \
     return; \
 }
@@ -67,15 +75,11 @@ if(QFile::exists(toConcatOntoOrBecome)) \
     /*ffmpeg -i firstInput.flac -i secondInput.flac -filter_complex '[0:0][1:0]concat=n=2:v=0:a=1[out]' -map '[out]' output.flac*/ \
     QString concatenatedOutput = tempDir_WithSlashAppended + "concatenatedTemp.flac"; \
     QStringList ffmpegAudioConcatArgs; \
-    ffmpegAudioConcatArgs << "-i" << toConcatOntoOrBecome << "-i" << audioSegment << "-filter_complex" << "'[0:0][1:0]concat=n=2:v=0:a=1[out]'" << "-map" << "'[out]'" << concatenatedOutput; \
+    ffmpegAudioConcatArgs << "-i" << toConcatOntoOrBecome << "-i" << audioSegment << "-filter_complex" << "[0:0][1:0]concat=n=2:v=0:a=1[out]" << "-map" << "[out]" << concatenatedOutput; \
     RUN_FFMPEG(ffmpegAudioConcatArgs) \
-    /*now remove audioFileBeingBuilt, then rename concatenatedOutput to audioFileBeingBuilt*/ \
-    if(!QFile::remove(toConcatOntoOrBecome)) \
-    { \
-        emit e("failed to remove: " + toConcatOntoOrBecome); \
-        emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(false); \
-        return; \
-    } \
+    /*now remove audioFileBeingBuilt and audioSegment, then rename concatenatedOutput to audioFileBeingBuilt*/ \
+    EMIT_ERROR_AND_RETURN_IF_REMOVE_FAILS(audioSegment) \
+    EMIT_ERROR_AND_RETURN_IF_REMOVE_FAILS(toConcatOntoOrBecome) \
     EMIT_ERROR_AND_RETURN_IF_RENAME_FAILS(concatenatedOutput, toConcatOntoOrBecome) \
 } \
 else \
@@ -329,7 +333,8 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
         qint64 videoEndTimestampMs = (videoStartTimestampMSecs + currentVideoFile.DurationInMillseconds);
         QProcess ffmpegProcess;
         QStringList ffmpegArgs;
-        ffmpegArgs << "-i" << currentVideoFile.VideoFileInfo.absoluteFilePath() << "-map" << "0";
+        ffmpegArgs << "-i" << currentVideoFile.VideoFileInfo.absoluteFilePath();
+        QStringList mapAudio;
         if(currentVideoFile.IntersectingAudioFiles.isEmpty())
         {
             //don't have audio stream
@@ -338,12 +343,13 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
         else
         {
             //have audio stream
+            mapAudio << "-map" << "1";
 
             QMapIterator<qint64 /* start timestamp of audio */, AudioFileMeta> currentAudioFile(currentVideoFile.IntersectingAudioFiles);
             QString audioFileBeingBuilt(tempDir_WithSlashAppended + currentVideoFile.VideoFileInfo.completeBaseName() + ".flac"); //maybe use hq opus at temporary format instead of flac? oh one hand, i don't want to decode, encode, decode, encode (using flac means i decode -> encode). on the other hand, i might run out of hdd space if i've been recording all day! rofl stupid problems, little wiggle room. i calculated it, ~24 hrs of .flac would take ~4gb, so I'm aight
             //qint64 audioFileBeingBuiltDurationMs = 0; //TODOoptional: at the end of iterating, Q_ASSERT this is same length as video (actually it can be shorter, ffmpeg doesn't care about audio tracks ending too soon.... so nvm i guess :-/)
             qint64 audioFileBeingBuilt_HaveAudioUpToTimestampMs = videoStartTimestampMSecs; //this is kinda like 'duration' in earlier/ifdef'd out attempt, but is a unix timestamp instead
-            while(currentAudioFile.hasNext());
+            while(currentAudioFile.hasNext())
             {
                 currentAudioFile.next();
                 QStringList ffmpegAudioArgs;
@@ -370,8 +376,8 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
                     //make silence
                     QString audioSilence = tempDir_WithSlashAppended + "tempAudioSegmentAboutToBecomeAudioFileBeingBuiltOrConcatenatedOntoAudioFileBeingBuilt.flac";
                     QStringList audioSilenceArgs;
-                    QString silenceFilter("'aevalsrc=0:d=" + QString::number(silence_Seconds, 'f') + "'");
-                    audioSilenceArgs << "-f" << "-lavfi" << silenceFilter << "-ac" << "1" << audioSilence;
+                    QString silenceFilter("aevalsrc=0:d=" + QString::number(silence_Seconds, 'f'));
+                    audioSilenceArgs << "-f" << "lavfi" << "-i" << silenceFilter << "-ac" << "1" << audioSilence;
                     RUN_FFMPEG(audioSilenceArgs)
 
                     //concat onto or become audioFileBeingBuilt
@@ -421,11 +427,11 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
                 //concat onto or become audioFileBeingBuilt
                 CONCAT_ONTO_OR_BECOME_AUDIO_FILE(audioFileBeingBuilt, audioSegment)
             }
-            ffmpegArgs << "-i" << audioFileBeingBuilt << "-acodec" << "opus" << "-b:a" << "32k" << "-ac" <<  "1" << "-map" << "1";
+            ffmpegArgs << "-i" << audioFileBeingBuilt << "-acodec" << "opus" << "-b:a" << "32k" << "-ac" <<  "1";
         }
         //mux -- TODOreq: lutyuv brightness? being outside maybe not necessary (idfk) -- also: noir for night time shenigans (a realtime preview would come in handy too)!
         QString muxTargetDirectory_WithSlashAppended = muxOutputDirectory.absolutePath() + QDir::separator();
-        ffmpegArgs << "-s" << "720x480" << "-b:v" << "275k" << "-vcodec" << "theora" << "-r" << "10" << "-f" << "segment" << "-segment_time" << "180" << "-segment_list_size" << "999999999" << "-segment_wrap" << "999999999" << "-segment_list" << QString(muxTargetDirectory_WithSlashAppended + currentVideoFile.VideoFileInfo.completeBaseName() + "-segmentEntryList.txt") << "-reset_timestamps" << "1" << QString(muxTargetDirectory_WithSlashAppended + currentVideoFile.VideoFileInfo.completeBaseName() + "-%d.ogg");
+        ffmpegArgs << "-s" << "720x480" << "-b:v" << "275k" << "-vcodec" << "theora" << "-r" << "10" << "-f" << "segment" << "-segment_time" << "180" << "-segment_list_size" << "999999999" << "-segment_wrap" << "999999999" << "-segment_list" << QString(muxTargetDirectory_WithSlashAppended + currentVideoFile.VideoFileInfo.completeBaseName() + "-segmentEntryList.txt") << "-reset_timestamps" << "1" << "-map" << "0" << mapAudio << QString(muxTargetDirectory_WithSlashAppended + currentVideoFile.VideoFileInfo.completeBaseName() + "-%d.ogg");
         RUN_FFMPEG(ffmpegArgs)
         emit o("muxed video using " + QString::number(currentVideoFile.IntersectingAudioFiles.size()) + " audio files");
     }

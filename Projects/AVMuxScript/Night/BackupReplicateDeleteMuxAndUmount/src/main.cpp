@@ -395,7 +395,7 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     //============DO THE ACTUAL BACKUP=========
     RETURN_ONE_IF_RSYNC_COPY_CMD_FAILS(audioSource, backupDestAudioDir_WithSlashAppended)
     //RETURN_ONE_IF_RSYNC_COPY_CMD_FAILS(videoSource, backupDestVideoDir_WithSlashAppended)
-    RETURN_ONE_IF_ANY_FILE_IN_VIDEOSOURCE_FAILS_TO_COPYMUX(videoSource) //because ffprobe can't do raw h264, i mux and copy the video files (into mkv) at the same time. doing this allows me to change the hardcoded fps in the future without losing the fps for the vids made in the past
+    RETURN_ONE_IF_ANY_FILE_IN_VIDEOSOURCE_FAILS_TO_COPYMUX(videoSource) //because ffprobe can't do raw h264, i mux and copy the video files (into mkv) at the same time. doing this allows me to change the hardcoded fps in the future without losing the fps for the vids made in the past. TODOreq: touch mkv to parsed timestamp (the last modified timestamp on fs is does not reflect the start time)
 
 
     //TODOreq: maybe run the recursive gpg signer at this point? it will detect most overwrites (we don't want to replicate overwrites), woot. recursive gpg signer serves doubly as a cheap af way to verify last modified timestamps for a hierarchy... but with the added bonus that it signs new files it sees :-D. the best protection would be to run recursive sign + verify here, so we KNOW there weren't any overwrites.... however that is slow as fuuuuuuuck to do every time....

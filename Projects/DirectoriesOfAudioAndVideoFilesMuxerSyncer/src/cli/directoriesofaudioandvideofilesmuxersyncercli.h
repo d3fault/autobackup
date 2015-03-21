@@ -16,7 +16,7 @@ private:
 
     void cliUsage();
 signals:
-    //void exitRequested(int exitCode);
+    void exitRequested(int exitCode);
 private slots:
     void handleO(const QString &msg);
     void handleE(const QString &msg);

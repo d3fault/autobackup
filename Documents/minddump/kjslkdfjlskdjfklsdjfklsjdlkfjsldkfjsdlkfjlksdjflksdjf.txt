@@ -1,0 +1,3 @@
+I was hesitant/lazy about testing this mux/sync script, but finally got around to it. Fucking worst timing ever lol, did the recording from 12:59-1:01am (ish)... but when setting the date on the video device I put in "12" instead of.... "0"...? rofl yea I suck. so now the 1:00am timestamp shows up as 13. Hey guys it's zero o'clock!
+
+I guess it could have been worse and not transitioned to 1:00am and I would've had a harder time figuring out why the script wasn't working. But meh now I get/have to fix those timestamps by hand (either that or I redo the recording guh so lazy (but it stand between me and music fingers))
