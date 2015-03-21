@@ -6,7 +6,10 @@
 #include <QDateTime>
 #include <QMapIterator>
 #include <QTemporaryDir>
-#include <QSharedPointer>
+#include <QSetIterator>
+#include <QSettings>
+
+#define DirectoriesOfAudioAndVideoFilesMuxerSyncer_VIDEO_PREVIEWER "mplayer" /*TODOoptional: allow specifying via command line*/
 
 #define DUMP_PROCESS_OUTPUT(process) \
 emit o(process.readAllStandardOutput()); \
@@ -90,8 +93,9 @@ else \
 
 //this version considers video to be the more important of the two. I thought about having black screens when there's audio only, and even single stream audio only files, but considering it's a visual website the *videos* will be posted on, I'm going to make hasVideoAtThisMomentInTime (pseudo, obviously not gonna code it like that (because there would literally be infinite checks. LITERALLY)) the threshold for output. I'm going to try my best to always have audio whenever I have video, to minimize the silence
 //can't decide if this should be async or not! my use of it in import script is kinda making it sync, fuckit
-DirectoriesOfAudioAndVideoFilesMuxerSyncer::DirectoriesOfAudioAndVideoFilesMuxerSyncer(QObject *parent)
+DirectoriesOfAudioAndVideoFilesMuxerSyncer::DirectoriesOfAudioAndVideoFilesMuxerSyncer(DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::DirectoriesOfAudioAndVideoFilesMuxerSyncerModeEnum mode, QObject *parent)
     : QObject(parent)
+    , m_Mode(mode)
 {
     m_VideoExtensions.append("m4v");
     m_VideoExtensions.append("3gp");
@@ -118,6 +122,249 @@ DirectoriesOfAudioAndVideoFilesMuxerSyncer::DirectoriesOfAudioAndVideoFilesMuxer
     //m_AudioExtensions.append("ogg"); --bleh could be av or just v or just a (you bastards. TODOoptional: ffprobe dat shiz and look at teh streamz, or require a and v folders to be different)
     m_AudioExtensions.append("flac");
     m_AudioExtensions.append("opus");
+}
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxSyncNextVideoFileOrEmitDoneIfNoMore()
+{
+    if(m_VideoFilesIterator->hasNext())
+    {
+        m_CurrentVideoFile = m_VideoFilesIterator->next();
+        muxSyncCurrentVideoFile();
+    }
+
+    if(m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::NormalMode)
+    {
+        emit o("done muxing and syncing directory of audio with directory of video -- everything OK");
+        emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(true);
+        return;
+    }
+    else // m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::InteractivelyCalculateAudioDelaysMode
+    {
+        emit audioDelaysFileCalculatedSoTellMeWhereToSaveIt(); //yea i could have gotten it in my constructor or even as an arg to muxAndSyncDirectoryOfAudioWithDirectoryOfVideo... but I'm thinking ahead: it's better in a GUI situation to ask for the filename to save to at the very end
+        return;
+    }
+}
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxSyncCurrentVideoFile()
+{
+    //[re-]find intersecting audio segments
+    m_CurrentVideoFile->IntersectingAudioFiles.clear();
+    QSetIterator<AudioFileMeta> audioFileMetaIterator(m_AudioFileMetas);
+    while(audioFileMetaIterator.hasNext())
+    {
+        const AudioFileMeta &currentAudioFileMeta = audioFileMetaIterator.next();
+        qint64 startTimestampOfAudioMs = currentAudioFileMeta.AudioFileInfo.lastModified().toMSecsSinceEpoch() + m_AudioDelayMs; //NOTE: it's crucial that any other use of "start timestamp of audio" does not use the last modified timestamp in AudioFileMeta.AudioFileInfo [alone]. The Audio Delay must be incorporated, and the easiest way to ensure it is is to simply use the key from the map IntersectingAudioFiles
+        qint64 durationOfAudioFileInMs = currentAudioFileMeta.DurationInMillseconds;
+        if(timespansIntersect(m_CurrentVideoFile->VideoFileInfo.lastModified().toMSecsSinceEpoch(), m_CurrentVideoFile->DurationInMillseconds, startTimestampOfAudioMs, durationOfAudioFileInMs))
+        {
+            if(m_CurrentVideoFile->IntersectingAudioFiles.contains(startTimestampOfAudioMs))
+            {
+                emit e("two audio files found with same start time"); //for now we don't check the more likely case of two audio files intersecting... but if they're the same start time that's different (and will probably never happen)
+                emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(false);
+                return;
+            }
+            m_CurrentVideoFile->IntersectingAudioFiles.insert(startTimestampOfAudioMs, AudioFileMeta(currentAudioFileMeta.AudioFileInfo, durationOfAudioFileInMs)); //reconstruction of AudioFileMeta intentional to ensure deep copy, just in case (i don't think it's necessary, but eh doesn't hurt either)
+        }
+    }
+
+    //now dooeeeet
+    m_TempDir.reset(new QTemporaryDir());
+    if(!m_TempDir->isValid())
+    {
+        emit e("failed to get temp dir:" + m_TempDir->path());
+        emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(false);
+        return;
+    }
+    QString tempDir_WithSlashAppended = appendSlashIfNeeded(m_TempDir->path());
+    qint64 videoStartTimestampMSecs = m_CurrentVideoFile->VideoFileInfo.lastModified().toMSecsSinceEpoch();
+    qint64 videoEndTimestampMs = (videoStartTimestampMSecs + m_CurrentVideoFile->DurationInMillseconds);
+    QProcess ffmpegProcess;
+    QStringList ffmpegArgs;
+    ffmpegArgs << "-i" << m_CurrentVideoFile->VideoFileInfo.absoluteFilePath();
+    QStringList mapAudio;
+    if(m_CurrentVideoFile->IntersectingAudioFiles.isEmpty())
+    {
+        //don't have audio stream
+        ffmpegArgs << "-an";
+    }
+    else
+    {
+        //have audio stream
+        mapAudio << "-map" << "1";
+
+        QMapIterator<qint64 /* start timestamp of audio */, AudioFileMeta> currentAudioFile(m_CurrentVideoFile->IntersectingAudioFiles);
+        QString audioFileBeingBuilt(tempDir_WithSlashAppended + m_CurrentVideoFile->VideoFileInfo.completeBaseName() + ".flac"); //maybe use hq opus at temporary format instead of flac? oh one hand, i don't want to decode, encode, decode, encode (using flac means i decode -> encode). on the other hand, i might run out of hdd space if i've been recording all day! rofl stupid problems, little wiggle room. i calculated it, ~24 hrs of .flac would take ~4gb, so I'm aight
+        //qint64 audioFileBeingBuiltDurationMs = 0; //TODOoptional: at the end of iterating, Q_ASSERT this is same length as video (actually it can be shorter, ffmpeg doesn't care about audio tracks ending too soon.... so nvm i guess :-/)
+        qint64 audioFileBeingBuilt_HaveAudioUpToTimestampMs = videoStartTimestampMSecs; //this is kinda like 'duration' in earlier/ifdef'd out attempt, but is a unix timestamp instead
+        while(currentAudioFile.hasNext())
+        {
+            currentAudioFile.next();
+            QStringList ffmpegAudioArgs;
+
+            //-ss (only for the first, and only if needed)
+            //-t (if needed)
+            //prepend silence (if needed)
+
+            //all three of these affect each other (fml)
+            //which should i calculate first? it quickly becomes spaghetti code. KISS (easier said than done)
+            //i think i shouldn't prepend silence before onto the next audio file, but append silence onto the audioFileBeingBuilt and then consider every ms up to the next audio file to already be accounted for. that's just KISS imo (but is arguably less elegant (fuckit)) <----- YES.
+            //TO DOnereq: there are multiple places where audioFileBeingBuilt will get created for the FIRST time (if -ss is used, we don't prepend silence (audioFileBeingBuilt is first created for first audio file). if -ss is not used, we [probably] do prepend silence (audioFileBeingBuilt is first created when prepending silence). and there's a rare case where we neither prepend silence nor use -ss (the audio and video start at exactly the same ms, in which case audioFileBeingBuilt is first created for the first audio file) -- the alternative is to use the "prepend silence onto next audio file" solution. TO DOnereq(related): we DON'T need to add silence if there are no more audio files. i think my while(hasNext) iterator already does this for me actually
+
+            qint64 audioStartTimestampMs = currentAudioFile.key();
+            qint64 audioEndTimestampMs = audioStartTimestampMs + currentAudioFile.value().DurationInMillseconds;
+
+            //append silence onto audioFileBeingBuilt before proceeding, simply for sanity in calculations
+            if(audioFileBeingBuilt_HaveAudioUpToTimestampMs < audioStartTimestampMs) //no -ss is implied/deduced via this calculation
+            {
+                //need to put silence onto audioFileBeingBuilt until audioStartTimestampMs
+                qint64 silenceMs = audioStartTimestampMs - audioFileBeingBuilt_HaveAudioUpToTimestampMs;
+                double silence_Seconds = static_cast<double>(silenceMs) / 1000.0;
+
+                //make silence
+                QString audioSilence = tempDir_WithSlashAppended + "tempAudioSegmentAboutToBecomeAudioFileBeingBuiltOrConcatenatedOntoAudioFileBeingBuilt.flac";
+                QStringList audioSilenceArgs;
+                QString silenceFilter("aevalsrc=0:d=" + QString::number(silence_Seconds, 'f'));
+                audioSilenceArgs << "-f" << "lavfi" << "-i" << silenceFilter << "-ac" << "1" << audioSilence;
+                RUN_FFMPEG(audioSilenceArgs)
+
+                //concat onto or become audioFileBeingBuilt
+                CONCAT_ONTO_OR_BECOME_AUDIO_FILE(audioFileBeingBuilt, audioSilence)
+
+                audioFileBeingBuilt_HaveAudioUpToTimestampMs += silenceMs;
+            }
+
+            //we know at this point that audioFileBeingBuilt_HaveAudioUpToTimestampMs points to audioStartTimestampMs (the resulting audio file might be off by a few ms, but whatever close enough for now). ACTUALLY, audioFileBeingBuilt_HaveAudioUpToTimestampMs might be pointing at videoStartTimestampMSecs if the audio started before video (-ss needed)
+
+            //-t
+            qint64 t_Ms = 0;
+            if(audioEndTimestampMs > videoEndTimestampMs)
+            {
+                //audio extended past video, use -t
+                t_Ms = videoEndTimestampMs - audioFileBeingBuilt_HaveAudioUpToTimestampMs; //-ss offset sidestepped/accounted-for
+                audioFileBeingBuilt_HaveAudioUpToTimestampMs += t_Ms; //random: i think whenever we have -t, we no longer even need "haveAudioUpTo", because it is the last audio file xD
+            }
+            else
+            {
+                audioFileBeingBuilt_HaveAudioUpToTimestampMs += (audioEndTimestampMs-audioFileBeingBuilt_HaveAudioUpToTimestampMs); //-ss offset sidestepped/accounted-for
+            }
+
+            //-ss
+            if(audioStartTimestampMs < videoStartTimestampMSecs)
+            {
+                //audio started before video, use -ss. ONLY THE FIRST AUDIO FILE WILL GET HERE.
+                qint64 ss_Ms = videoStartTimestampMSecs-audioStartTimestampMs;
+                double ss_Seconds = static_cast<double>(ss_Ms) / 1000.0;
+                ffmpegAudioArgs << "-ss" << QString::number(ss_Seconds, 'f');
+            }
+
+
+            ffmpegAudioArgs << "-i" << currentAudioFile.value().AudioFileInfo.absoluteFilePath(); //-i must come after -ss
+            if(t_Ms != 0)
+            {
+                double t_Seconds = static_cast<double>(t_Ms) / 1000.0;
+                ffmpegAudioArgs << "-t" << QString::number(t_Seconds, 'f');
+            }
+            ffmpegAudioArgs << "-ac" << "1"; //output to 1 channel audio, despite our source having 2 (if I change this to two, my silence generator needs to also change to 2 (probably)) -- this must come after -i
+
+            //make audio segment (possibly a noop if -t and -ss weren't used, in which case all it did was store into flac)
+            QString audioSegment = tempDir_WithSlashAppended + "tempAudioSegmentAboutToBecomeAudioFileBeingBuiltOrConcatenatedOntoAudioFileBeingBuilt.flac";
+            ffmpegAudioArgs << audioSegment;
+            RUN_FFMPEG(ffmpegAudioArgs)
+
+            //concat onto or become audioFileBeingBuilt
+            CONCAT_ONTO_OR_BECOME_AUDIO_FILE(audioFileBeingBuilt, audioSegment)
+        }
+        QStringList muxOutputAudioCodec;
+        if(m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::NormalMode)
+        {
+            muxOutputAudioCodec << "-acodec" << "opus" << "-b:a" << "32k";
+        }
+        else //m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::InteractivelyCalculateAudioDelaysMode
+        {
+            muxOutputAudioCodec << "-acodec" << "copy"; //it's already flac
+        }
+        ffmpegArgs << "-i" << audioFileBeingBuilt << muxOutputAudioCodec << "-ac" <<  "1";
+    }
+    //mux -- TODOreq: lutyuv brightness? being outside maybe not necessary (idfk) -- also: noir for night time shenigans (a realtime preview would come in handy too)!
+    QString muxTargetDirectory_WithSlashAppended;
+    QStringList muxOutputFormat;
+    QString muxOutputAbsoluteFilePath = muxTargetDirectory_WithSlashAppended + m_CurrentVideoFile->VideoFileInfo.completeBaseName();
+    QStringList muxOutputVideoCodec;
+    if(m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::NormalMode)
+    {
+        muxTargetDirectory_WithSlashAppended = m_MuxOutputDirectory.absolutePath() + QDir::separator();
+        muxOutputFormat << "segment" << "-segment_time" << "180" << "-segment_list_size" << "999999999" << "-segment_wrap" << "999999999" << "-segment_list" << QString(muxTargetDirectory_WithSlashAppended + m_CurrentVideoFile->VideoFileInfo.completeBaseName() + "-segmentEntryList.txt") << "-reset_timestamps" << "1";
+        muxOutputAbsoluteFilePath += "-%d.ogg";
+        muxOutputVideoCodec << "-s" << "720x480" << "-b:v" << "275k" << "-vcodec" << "theora" << "-r" << "10";
+    }
+    else //m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::InteractivelyCalculateAudioDelaysMode
+    {
+        muxTargetDirectory_WithSlashAppended = appendSlashIfNeeded(m_TempDir->path());
+        muxOutputFormat << "mkv";
+        muxOutputAbsoluteFilePath += ".mkv";
+        muxOutputVideoCodec << "-vcodec" << "copy";
+    }
+    ffmpegArgs << muxOutputVideoCodec << "-f" << muxOutputFormat << "-map" << "0" << mapAudio;
+    if(m_TruncateVideosToMsDuration_OrZeroToNotTruncate > 0)
+    {
+        double truncateVideoToSecondsDuration = static_cast<double>(m_TruncateVideosToMsDuration_OrZeroToNotTruncate) / 1000.0;
+        ffmpegArgs << "-t" << QString::number(truncateVideoToSecondsDuration, 'f');
+    }
+    ffmpegArgs << muxOutputAbsoluteFilePath;
+    RUN_FFMPEG(ffmpegArgs)
+    emit o("muxed video using " + QString::number(m_CurrentVideoFile->IntersectingAudioFiles.size()) + " audio files");
+    if(m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::NormalMode)
+    {
+        muxSyncNextVideoFileOrEmitDoneIfNoMore();
+        return;
+    }
+    else //m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::InteractivelyCalculateAudioDelaysMode
+    {
+        if(!m_UseCurrentAudioDelayForTheRestOfTheVideoFiles)
+        {
+            m_CurrentTruncatedPreviewedVideoFileBeingAnalyzedForCorrectAudioDelay = muxOutputAbsoluteFilePath;
+            if(!showUserCurrentTruncatedVideoPreviewSoTheyCanAnalyzeAudioDelay())
+                return;
+            emit truncatedPreviewedVideoFileReadyForAudioDelayUserInput(m_AudioDelayMs);
+            return;
+        }
+        else
+        {
+            useCurrentAudioDelayForCurrentVideo();
+            muxSyncNextVideoFileOrEmitDoneIfNoMore();
+            return;
+        }
+    }
+}
+bool DirectoriesOfAudioAndVideoFilesMuxerSyncer::showUserCurrentTruncatedVideoPreviewSoTheyCanAnalyzeAudioDelay()
+{
+    QProcess videoPreviewProcess;
+    QStringList videoPreviewArgs;
+    videoPreviewArgs << m_CurrentTruncatedPreviewedVideoFileBeingAnalyzedForCorrectAudioDelay;
+    videoPreviewProcess.start(DirectoriesOfAudioAndVideoFilesMuxerSyncer_VIDEO_PREVIEWER, videoPreviewArgs, QIODevice::ReadOnly);
+    if(!videoPreviewProcess.waitForStarted(-1))
+    {
+        emit e("failed to start: " DirectoriesOfAudioAndVideoFilesMuxerSyncer_VIDEO_PREVIEWER);
+        emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(false);
+        return false;
+    }
+    if(!videoPreviewProcess.waitForFinished(-1))
+    {
+        emit e("failed to finish: " DirectoriesOfAudioAndVideoFilesMuxerSyncer_VIDEO_PREVIEWER);
+        emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(false);
+        return false;
+    }
+    if(videoPreviewProcess.exitCode() != 0 || videoPreviewProcess.exitStatus() != QProcess::NormalExit)
+    {
+        emit e(DirectoriesOfAudioAndVideoFilesMuxerSyncer_VIDEO_PREVIEWER " finished abnormally with exit code: " + QString::number(videoPreviewProcess.exitCode()));
+        return false;
+    }
+    return true;
+}
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::useCurrentAudioDelayForCurrentVideo()
+{
+    if(m_AudioDelayMs != 0) //no need to store 0, since that's what it initializes to. TODOreq: when iterating the "audio delay ms from file" and encountering a video file without an entry in that file, don't use "previous audio delay" but instead use 0
+    {
+        m_InteractivelyCalculatedAudioDelays.insert(m_CurrentVideoFile->VideoFileInfo.fileName(), m_AudioDelayMs);
+    }
 }
 bool DirectoriesOfAudioAndVideoFilesMuxerSyncer::isVideoFile(const QFileInfo &fileToCheck)
 {
@@ -235,6 +482,13 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
 }
 void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QDir &directoryOfAudioFiles, const QDir &directoryOfVideoFiles, const QDir &muxOutputDirectory, qint64 audioDelayMs, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate)
 {
+    m_MuxOutputDirectory = muxOutputDirectory;
+    m_AudioDelayMs = audioDelayMs;
+    m_TruncateVideosToMsDuration_OrZeroToNotTruncate = truncateVideosToMsDuration_OrZeroToNotTruncate;
+    m_VideoFileMetaAndIntersectingAudios.clear();
+    m_InteractivelyCalculatedAudioDelays.clear();
+    m_UseCurrentAudioDelayForTheRestOfTheVideoFiles = false;
+
     if(!directoryOfAudioFiles.exists())
     {
         emit e("directory of audio files does not exist:" + directoryOfAudioFiles.absolutePath());
@@ -248,18 +502,18 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
         return;
     }
 
-    if(!muxOutputDirectory.exists())
+    if(!m_MuxOutputDirectory.exists())
     {
-        if(!muxOutputDirectory.mkpath(muxOutputDirectory.absolutePath()))
+        if(!m_MuxOutputDirectory.mkpath(m_MuxOutputDirectory.absolutePath()))
         {
-            emit e("failed to make mux output directory: " + muxOutputDirectory.absolutePath());
+            emit e("failed to make mux output directory: " + m_MuxOutputDirectory.absolutePath());
             emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(false);
             return;
         }
     }
-    else if(!muxOutputDirectory.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden).isEmpty())
+    else if(!m_MuxOutputDirectory.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden).isEmpty())
     {
-        emit e("mux output directory is not empty: " + muxOutputDirectory.absolutePath());
+        emit e("mux output directory is not empty: " + m_MuxOutputDirectory.absolutePath());
         emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(false);
         return;
     }
@@ -290,162 +544,63 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
     }
 
     //probe video files durations
-    QList<QSharedPointer<VideoFileMetaAndIntersectingAudios> > videoFileMetaAndIntersectingAudios;
     Q_FOREACH(const QFileInfo &currentVideoFile, allVideoFilesInVideoDir)
     {
         qint64 durationOfVideoFileInMs = probeDurationFromMediaFile(currentVideoFile.absoluteFilePath());
-        if(truncateVideosToMsDuration_OrZeroToNotTruncate > 0)
+        if(m_TruncateVideosToMsDuration_OrZeroToNotTruncate > 0)
         {
-            durationOfVideoFileInMs = qMin(truncateVideosToMsDuration_OrZeroToNotTruncate, durationOfVideoFileInMs);
+            durationOfVideoFileInMs = qMin(m_TruncateVideosToMsDuration_OrZeroToNotTruncate, durationOfVideoFileInMs);
         }
-        videoFileMetaAndIntersectingAudios << QSharedPointer<VideoFileMetaAndIntersectingAudios>(new VideoFileMetaAndIntersectingAudios(currentVideoFile, durationOfVideoFileInMs)); //TODOreq: the video's last modified timestamp must be accurate before we get here. in my backup script, the filename holds the timestamp, and i haven't yet tested whether or not the last modified timestamp is accurate on the fs (since the file is being written to for a long duration)
+        m_VideoFileMetaAndIntersectingAudios << QSharedPointer<VideoFileMetaAndIntersectingAudios>(new VideoFileMetaAndIntersectingAudios(currentVideoFile, durationOfVideoFileInMs)); //TODOreq: the video's last modified timestamp must be accurate before we get here. in my backup script, the filename holds the timestamp, and i haven't yet tested whether or not the last modified timestamp is accurate on the fs (since the file is being written to for a long duration)
     }
 
-    //probe audio files durations, and link them to the video files they intersect with
+    //probe audio files durations
     Q_FOREACH(const QFileInfo &currentAudioFile, allAudioFilesInAudioDir)
     {
         qint64 durationOfAudioFileInMs = probeDurationFromMediaFile(currentAudioFile.absoluteFilePath());
-        Q_FOREACH(QSharedPointer<VideoFileMetaAndIntersectingAudios> currentVideoFileMetaAndIntersectingAudiosSharedPointer, videoFileMetaAndIntersectingAudios)
-        {
-            VideoFileMetaAndIntersectingAudios &currentVideoFileMetaAndIntersectingAudios = *currentVideoFileMetaAndIntersectingAudiosSharedPointer.data();
-            qint64 startTimestampOfAudioMs = currentAudioFile.lastModified().toMSecsSinceEpoch() + audioDelayMs;
-            if(timespansIntersect(currentVideoFileMetaAndIntersectingAudios.VideoFileInfo.lastModified().toMSecsSinceEpoch(), currentVideoFileMetaAndIntersectingAudios.DurationInMillseconds, startTimestampOfAudioMs, durationOfAudioFileInMs))
-            {
-                if(currentVideoFileMetaAndIntersectingAudios.IntersectingAudioFiles.contains(startTimestampOfAudioMs))
-                {
-                    emit e("two audio files found with same start time"); //for now we don't check the more likely case of two audio files intersecting... but if they're the same start time that's different (and will probably never happen)
-                    emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(false);
-                    return;
-                }
-                currentVideoFileMetaAndIntersectingAudios.IntersectingAudioFiles.insert(startTimestampOfAudioMs, AudioFileMeta(currentAudioFile, durationOfAudioFileInMs));
-            }
-        }
+        m_AudioFileMetas.insert(AudioFileMeta(currentAudioFile, durationOfAudioFileInMs));
     }
 
-    //TODOreq: i think there is only going to be 1x itsoffset per video file. ACTUALLY, per day. ACTUALLY, it will be a constant itsoffset (WOOT, ezier) as long as the two clocks don't drift apart. ACTUALLY, since i have to re-set the time on boot for the video device every time, I do need an itsoffset. The itsoffset will be valid for as long as I keep the video device on for (assuming I don't keep it on long enough for drift to factor in heh)
-    Q_FOREACH(QSharedPointer<VideoFileMetaAndIntersectingAudios> currentVideoFileMetaAndIntersectingAudiosSharedPointer, videoFileMetaAndIntersectingAudios)
+    m_VideoFilesIterator.reset(new QListIterator<QSharedPointer<VideoFileMetaAndIntersectingAudios> >(m_VideoFileMetaAndIntersectingAudios));
+    muxSyncNextVideoFileOrEmitDoneIfNoMore();
+}
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::handleUserWantsToPreviewThisAudioDelayAgain()
+{
+    showUserCurrentTruncatedVideoPreviewSoTheyCanAnalyzeAudioDelay();
+}
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::handleUserWantsToUseCurrentAudioDelayMs()
+{
+    useCurrentAudioDelayForCurrentVideo();
+    muxSyncNextVideoFileOrEmitDoneIfNoMore();
+}
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::handleUserWantsToUseCurrentAudioDelayMsForTheRestOfTheVideoFiles()
+{
+    useCurrentAudioDelayForCurrentVideo();
+    m_UseCurrentAudioDelayForTheRestOfTheVideoFiles = true;
+    muxSyncNextVideoFileOrEmitDoneIfNoMore();
+}
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::handleUserInputtedNewAudioDelay_SoGenerateAndPreviewIt(qint64 newAudioDelayMs)
+{
+    //TO DOnereq: do i need to re-find intersecting audio files??? if yes, i should at least NOT have to re-scan the fs (inefficient), nor should i have to re-probe the audio files (even more inefficient)
+    //^honestly it really depends how big the gap is. if it's eh small then prolly not... but if it's omghuge then yea. i'd say the proper way is to re-detect intersections, but the quicker way is to not ;-P. for now i'm gonna not. not because i made a decision on it, but because i need to KISS at first. oops i accidentally proper'd it the first tiem ;-P
+
+    m_AudioDelayMs = newAudioDelayMs;
+    muxSyncCurrentVideoFile();
+}
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::handleAudioDelaysOutputFilePathChosen(const QString &audioDelaysOutputSaveFilaPath)
+{
+    //if(m_InteractivelyCalculatedAudioDelays.isEmpty())
+    //    return; //don't create the file if nothing to put in it -- actually, do. TODOmb: it's either i always make it and sometimes it's empty, or i allow it to not exist when parsing/importing it... since i want to use this app in automated scenarios... so there's no winning either way heh. i'm actually thinking maybe that allowing it to not exist on import is the lesser of two evils (but then it could also mean "silent failures" (NO WINNING). perhaps a "--dont-error-out-if-audio-delays-file-doesnt-exist" flag for the automated usages???? For now KISS and just gonna make it
+
+    //custom datastream? custom textstream? naaawwww qsettings ftw
+    QSettings audioDelaysOutputFile(audioDelaysOutputSaveFilaPath, QSettings::IniFormat);
+    QHashIterator<QString /* video file name */, qint64 /* chosen audio delay ms */> audioDelaysIterator(m_InteractivelyCalculatedAudioDelays);
+    while(audioDelaysIterator.hasNext())
     {
-        const VideoFileMetaAndIntersectingAudios &currentVideoFile = *currentVideoFileMetaAndIntersectingAudiosSharedPointer.data();
-        QTemporaryDir tempDir;
-        if(!tempDir.isValid())
-        {
-            emit e("failed to get temp dir:" + tempDir.path());
-            emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(false);
-            return;
-        }
-        QString tempDir_WithSlashAppended = appendSlashIfNeeded(tempDir.path());
-        qint64 videoStartTimestampMSecs = currentVideoFile.VideoFileInfo.lastModified().toMSecsSinceEpoch();
-        qint64 videoEndTimestampMs = (videoStartTimestampMSecs + currentVideoFile.DurationInMillseconds);
-        QProcess ffmpegProcess;
-        QStringList ffmpegArgs;
-        ffmpegArgs << "-i" << currentVideoFile.VideoFileInfo.absoluteFilePath();
-        QStringList mapAudio;
-        if(currentVideoFile.IntersectingAudioFiles.isEmpty())
-        {
-            //don't have audio stream
-            ffmpegArgs << "-an";
-        }
-        else
-        {
-            //have audio stream
-            mapAudio << "-map" << "1";
-
-            QMapIterator<qint64 /* start timestamp of audio */, AudioFileMeta> currentAudioFile(currentVideoFile.IntersectingAudioFiles);
-            QString audioFileBeingBuilt(tempDir_WithSlashAppended + currentVideoFile.VideoFileInfo.completeBaseName() + ".flac"); //maybe use hq opus at temporary format instead of flac? oh one hand, i don't want to decode, encode, decode, encode (using flac means i decode -> encode). on the other hand, i might run out of hdd space if i've been recording all day! rofl stupid problems, little wiggle room. i calculated it, ~24 hrs of .flac would take ~4gb, so I'm aight
-            //qint64 audioFileBeingBuiltDurationMs = 0; //TODOoptional: at the end of iterating, Q_ASSERT this is same length as video (actually it can be shorter, ffmpeg doesn't care about audio tracks ending too soon.... so nvm i guess :-/)
-            qint64 audioFileBeingBuilt_HaveAudioUpToTimestampMs = videoStartTimestampMSecs; //this is kinda like 'duration' in earlier/ifdef'd out attempt, but is a unix timestamp instead
-            while(currentAudioFile.hasNext())
-            {
-                currentAudioFile.next();
-                QStringList ffmpegAudioArgs;
-
-                //-ss (only for the first, and only if needed)
-                //-t (if needed)
-                //prepend silence (if needed)
-
-                //all three of these affect each other (fml)
-                //which should i calculate first? it quickly becomes spaghetti code. KISS (easier said than done)
-                //i think i shouldn't prepend silence before onto the next audio file, but append silence onto the audioFileBeingBuilt and then consider every ms up to the next audio file to already be accounted for. that's just KISS imo (but is arguably less elegant (fuckit)) <----- YES.
-                //TO DOnereq: there are multiple places where audioFileBeingBuilt will get created for the FIRST time (if -ss is used, we don't prepend silence (audioFileBeingBuilt is first created for first audio file). if -ss is not used, we [probably] do prepend silence (audioFileBeingBuilt is first created when prepending silence). and there's a rare case where we neither prepend silence nor use -ss (the audio and video start at exactly the same ms, in which case audioFileBeingBuilt is first created for the first audio file) -- the alternative is to use the "prepend silence onto next audio file" solution. TO DOnereq(related): we DON'T need to add silence if there are no more audio files. i think my while(hasNext) iterator already does this for me actually
-
-                qint64 audioStartTimestampMs = currentAudioFile.key();
-                qint64 audioEndTimestampMs = audioStartTimestampMs + currentAudioFile.value().DurationInMillseconds;
-
-                //append silence onto audioFileBeingBuilt before proceeding, simply for sanity in calculations
-                if(audioFileBeingBuilt_HaveAudioUpToTimestampMs < audioStartTimestampMs) //no -ss is implied/deduced via this calculation
-                {
-                    //need to put silence onto audioFileBeingBuilt until audioStartTimestampMs
-                    qint64 silenceMs = audioStartTimestampMs - audioFileBeingBuilt_HaveAudioUpToTimestampMs;
-                    double silence_Seconds = static_cast<double>(silenceMs) / 1000.0;
-
-                    //make silence
-                    QString audioSilence = tempDir_WithSlashAppended + "tempAudioSegmentAboutToBecomeAudioFileBeingBuiltOrConcatenatedOntoAudioFileBeingBuilt.flac";
-                    QStringList audioSilenceArgs;
-                    QString silenceFilter("aevalsrc=0:d=" + QString::number(silence_Seconds, 'f'));
-                    audioSilenceArgs << "-f" << "lavfi" << "-i" << silenceFilter << "-ac" << "1" << audioSilence;
-                    RUN_FFMPEG(audioSilenceArgs)
-
-                    //concat onto or become audioFileBeingBuilt
-                    CONCAT_ONTO_OR_BECOME_AUDIO_FILE(audioFileBeingBuilt, audioSilence)
-
-                    audioFileBeingBuilt_HaveAudioUpToTimestampMs += silenceMs;
-                }
-
-                //we know at this point that audioFileBeingBuilt_HaveAudioUpToTimestampMs points to audioStartTimestampMs (the resulting audio file might be off by a few ms, but whatever close enough for now). ACTUALLY, audioFileBeingBuilt_HaveAudioUpToTimestampMs might be pointing at videoStartTimestampMSecs if the audio started before video (-ss needed)
-
-                //-t
-                qint64 t_Ms = 0;
-                if(audioEndTimestampMs > videoEndTimestampMs)
-                {
-                    //audio extended past video, use -t
-                    t_Ms = videoEndTimestampMs - audioFileBeingBuilt_HaveAudioUpToTimestampMs; //-ss offset sidestepped/accounted-for
-                    audioFileBeingBuilt_HaveAudioUpToTimestampMs += t_Ms; //random: i think whenever we have -t, we no longer even need "haveAudioUpTo", because it is the last audio file xD
-                }
-                else
-                {
-                    audioFileBeingBuilt_HaveAudioUpToTimestampMs += (audioEndTimestampMs-audioFileBeingBuilt_HaveAudioUpToTimestampMs); //-ss offset sidestepped/accounted-for
-                }
-
-                //-ss
-                if(audioStartTimestampMs < videoStartTimestampMSecs)
-                {
-                    //audio started before video, use -ss. ONLY THE FIRST AUDIO FILE WILL GET HERE.
-                    qint64 ss_Ms = videoStartTimestampMSecs-audioStartTimestampMs;
-                    double ss_Seconds = static_cast<double>(ss_Ms) / 1000.0;
-                    ffmpegAudioArgs << "-ss" << QString::number(ss_Seconds, 'f');
-                }
-
-
-                ffmpegAudioArgs << "-i" << currentAudioFile.value().AudioFileInfo.absoluteFilePath(); //-i must come after -ss
-                if(t_Ms != 0)
-                {
-                    double t_Seconds = static_cast<double>(t_Ms) / 1000.0;
-                    ffmpegAudioArgs << "-t" << QString::number(t_Seconds, 'f');
-                }
-                ffmpegAudioArgs << "-ac" << "1"; //output to 1 channel audio, despite our source having 2 (if I change this to two, my silence generator needs to also change to 2 (probably)) -- this must come after -i
-
-                //make audio segment (possibly a noop if -t and -ss weren't used, in which case all it did was store into flac)
-                QString audioSegment = tempDir_WithSlashAppended + "tempAudioSegmentAboutToBecomeAudioFileBeingBuiltOrConcatenatedOntoAudioFileBeingBuilt.flac";
-                ffmpegAudioArgs << audioSegment;
-                RUN_FFMPEG(ffmpegAudioArgs)
-
-                //concat onto or become audioFileBeingBuilt
-                CONCAT_ONTO_OR_BECOME_AUDIO_FILE(audioFileBeingBuilt, audioSegment)
-            }
-            ffmpegArgs << "-i" << audioFileBeingBuilt << "-acodec" << "opus" << "-b:a" << "32k" << "-ac" <<  "1";
-        }
-        //mux -- TODOreq: lutyuv brightness? being outside maybe not necessary (idfk) -- also: noir for night time shenigans (a realtime preview would come in handy too)!
-        QString muxTargetDirectory_WithSlashAppended = muxOutputDirectory.absolutePath() + QDir::separator();
-        ffmpegArgs << "-s" << "720x480" << "-b:v" << "275k" << "-vcodec" << "theora" << "-r" << "10" << "-f" << "segment" << "-segment_time" << "180" << "-segment_list_size" << "999999999" << "-segment_wrap" << "999999999" << "-segment_list" << QString(muxTargetDirectory_WithSlashAppended + currentVideoFile.VideoFileInfo.completeBaseName() + "-segmentEntryList.txt") << "-reset_timestamps" << "1" << "-map" << "0" << mapAudio;
-        if(truncateVideosToMsDuration_OrZeroToNotTruncate > 0)
-        {
-            double truncateVideoToSecondsDuration = static_cast<double>(truncateVideosToMsDuration_OrZeroToNotTruncate) / 1000.0;
-            ffmpegArgs << "-t" << QString::number(truncateVideoToSecondsDuration, 'f');
-        }
-        ffmpegArgs << QString(muxTargetDirectory_WithSlashAppended + currentVideoFile.VideoFileInfo.completeBaseName() + "-%d.ogg");
-        RUN_FFMPEG(ffmpegArgs)
-        emit o("muxed video using " + QString::number(currentVideoFile.IntersectingAudioFiles.size()) + " audio files");
+        audioDelaysOutputFile.setValue(audioDelaysIterator.key(), audioDelaysIterator.value());
     }
-    emit o("done muxing and syncing directory of audio with directory of video -- everything OK");
-    emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(true);
+}
+bool AudioFileMeta::operator==(const AudioFileMeta &audioFileMeta) const
+{
+    return (this->AudioFileInfo == audioFileMeta.AudioFileInfo);
 }
