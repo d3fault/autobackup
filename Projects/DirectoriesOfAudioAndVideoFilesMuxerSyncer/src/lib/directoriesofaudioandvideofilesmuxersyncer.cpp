@@ -89,6 +89,7 @@ else \
 }
 
 //this version considers video to be the more important of the two. I thought about having black screens when there's audio only, and even single stream audio only files, but considering it's a visual website the *videos* will be posted on, I'm going to make hasVideoAtThisMomentInTime (pseudo, obviously not gonna code it like that (because there would literally be infinite checks. LITERALLY)) the threshold for output. I'm going to try my best to always have audio whenever I have video, to minimize the silence
+//can't decide if this should be async or not! my use of it in import script is kinda making it sync, fuckit
 DirectoriesOfAudioAndVideoFilesMuxerSyncer::DirectoriesOfAudioAndVideoFilesMuxerSyncer(QObject *parent)
     : QObject(parent)
 {
@@ -140,7 +141,7 @@ bool DirectoriesOfAudioAndVideoFilesMuxerSyncer::isAudioFile(const QFileInfo &fi
     }
     return false;
 }
-int DirectoriesOfAudioAndVideoFilesMuxerSyncer::probeDurationFromMediaFile(const QString &mediaFile)
+qint64 DirectoriesOfAudioAndVideoFilesMuxerSyncer::probeDurationFromMediaFile(const QString &mediaFile)
 {
     //BEGIN CODE JACKED FROM SAMPLES PIANO KEYBOARD
     QProcess ffProbeProcess(this);
@@ -225,14 +226,14 @@ bool DirectoriesOfAudioAndVideoFilesMuxerSyncer::timespansIntersect(qint64 times
     //since we've elimited every other option, we can deduce that they intersect
     return true;
 }
-void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QString &directoryOfAudioFiles, const QString &directoryOfVideoFiles, const QString &muxOutputDirectory, qint64 audioDelayMs)
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QString &directoryOfAudioFiles, const QString &directoryOfVideoFiles, const QString &muxOutputDirectory, qint64 audioDelayMs, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate)
 {
     QDir directoryOfAudioFilesDir(directoryOfAudioFiles);
     QDir directoryOfVideoFilesDir(directoryOfVideoFiles);
     QDir muxOutputDirectoryDir(muxOutputDirectory);
-    muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(directoryOfAudioFilesDir, directoryOfVideoFilesDir, muxOutputDirectoryDir, audioDelayMs);
+    muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(directoryOfAudioFilesDir, directoryOfVideoFilesDir, muxOutputDirectoryDir, audioDelayMs, truncateVideosToMsDuration_OrZeroToNotTruncate);
 }
-void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QDir &directoryOfAudioFiles, const QDir &directoryOfVideoFiles, const QDir &muxOutputDirectory, qint64 audioDelayMs)
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QDir &directoryOfAudioFiles, const QDir &directoryOfVideoFiles, const QDir &muxOutputDirectory, qint64 audioDelayMs, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate)
 {
     if(!directoryOfAudioFiles.exists())
     {
@@ -292,14 +293,18 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
     QList<QSharedPointer<VideoFileMetaAndIntersectingAudios> > videoFileMetaAndIntersectingAudios;
     Q_FOREACH(const QFileInfo &currentVideoFile, allVideoFilesInVideoDir)
     {
-        int durationOfVideoFileInMs = probeDurationFromMediaFile(currentVideoFile.absoluteFilePath());
+        qint64 durationOfVideoFileInMs = probeDurationFromMediaFile(currentVideoFile.absoluteFilePath());
+        if(truncateVideosToMsDuration_OrZeroToNotTruncate > 0)
+        {
+            durationOfVideoFileInMs = qMin(truncateVideosToMsDuration_OrZeroToNotTruncate, durationOfVideoFileInMs);
+        }
         videoFileMetaAndIntersectingAudios << QSharedPointer<VideoFileMetaAndIntersectingAudios>(new VideoFileMetaAndIntersectingAudios(currentVideoFile, durationOfVideoFileInMs)); //TODOreq: the video's last modified timestamp must be accurate before we get here. in my backup script, the filename holds the timestamp, and i haven't yet tested whether or not the last modified timestamp is accurate on the fs (since the file is being written to for a long duration)
     }
 
     //probe audio files durations, and link them to the video files they intersect with
     Q_FOREACH(const QFileInfo &currentAudioFile, allAudioFilesInAudioDir)
     {
-        int durationOfAudioFileInMs = probeDurationFromMediaFile(currentAudioFile.absoluteFilePath());
+        qint64 durationOfAudioFileInMs = probeDurationFromMediaFile(currentAudioFile.absoluteFilePath());
         Q_FOREACH(QSharedPointer<VideoFileMetaAndIntersectingAudios> currentVideoFileMetaAndIntersectingAudiosSharedPointer, videoFileMetaAndIntersectingAudios)
         {
             VideoFileMetaAndIntersectingAudios &currentVideoFileMetaAndIntersectingAudios = *currentVideoFileMetaAndIntersectingAudiosSharedPointer.data();
@@ -431,7 +436,13 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
         }
         //mux -- TODOreq: lutyuv brightness? being outside maybe not necessary (idfk) -- also: noir for night time shenigans (a realtime preview would come in handy too)!
         QString muxTargetDirectory_WithSlashAppended = muxOutputDirectory.absolutePath() + QDir::separator();
-        ffmpegArgs << "-s" << "720x480" << "-b:v" << "275k" << "-vcodec" << "theora" << "-r" << "10" << "-f" << "segment" << "-segment_time" << "180" << "-segment_list_size" << "999999999" << "-segment_wrap" << "999999999" << "-segment_list" << QString(muxTargetDirectory_WithSlashAppended + currentVideoFile.VideoFileInfo.completeBaseName() + "-segmentEntryList.txt") << "-reset_timestamps" << "1" << "-map" << "0" << mapAudio << QString(muxTargetDirectory_WithSlashAppended + currentVideoFile.VideoFileInfo.completeBaseName() + "-%d.ogg");
+        ffmpegArgs << "-s" << "720x480" << "-b:v" << "275k" << "-vcodec" << "theora" << "-r" << "10" << "-f" << "segment" << "-segment_time" << "180" << "-segment_list_size" << "999999999" << "-segment_wrap" << "999999999" << "-segment_list" << QString(muxTargetDirectory_WithSlashAppended + currentVideoFile.VideoFileInfo.completeBaseName() + "-segmentEntryList.txt") << "-reset_timestamps" << "1" << "-map" << "0" << mapAudio;
+        if(truncateVideosToMsDuration_OrZeroToNotTruncate > 0)
+        {
+            double truncateVideoToSecondsDuration = static_cast<double>(truncateVideosToMsDuration_OrZeroToNotTruncate) / 1000.0;
+            ffmpegArgs << QString::number(truncateVideoToSecondsDuration, 'f');
+        }
+        ffmpegArgs << QString(muxTargetDirectory_WithSlashAppended + currentVideoFile.VideoFileInfo.completeBaseName() + "-%d.ogg");
         RUN_FFMPEG(ffmpegArgs)
         emit o("muxed video using " + QString::number(currentVideoFile.IntersectingAudioFiles.size()) + " audio files");
     }

@@ -9,14 +9,16 @@
 //#define ERRRRRR { cliUsage(); qApp->exit(1); return; }
 
 #define DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_AUDIO_DELAY_ARG "--audio-delay-ms"
+#define DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_TRUNCATE_VIDEOS_TO_MS_ARG "--truncate-videos-to-ms"
 
-DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::DirectoriesOfAudioAndVideoFilesMuxerSyncerCli(QStringList arguments, QObject *parent)
+DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::DirectoriesOfAudioAndVideoFilesMuxerSyncerCli(QObject *parent)
     : QObject(parent)
     , m_StdOut(stdout)
     , m_StdErr(stderr)
 {
     connect(this, &DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::exitRequested, qApp, &QCoreApplication::exit, Qt::QueuedConnection);
 
+    QStringList arguments = qApp->arguments();
     arguments.removeFirst(); //filename
 
     qint64 audioDelayMs = 0;
@@ -27,11 +29,22 @@ DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::DirectoriesOfAudioAndVideoFilesMu
         arguments.removeAt(audioDelayMsIndex);
         //0 1 2 4   (size=4)
         if(arguments.size() < (audioDelayMsIndex+1))
-        {
             ERRRRRR
-        }
         bool convertOk = false;
         audioDelayMs = arguments.takeAt(audioDelayMsIndex).toLongLong(&convertOk);
+        if(!convertOk)
+            ERRRRRR
+    }
+
+    qint64 truncateVideosToMs_OrZeroIfNotToTruncate = 0;
+    int truncateVideosToMsIndex = arguments.indexOf(DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_TRUNCATE_VIDEOS_TO_MS_ARG);
+    if(truncateVideosToMsIndex > -1)
+    {
+        arguments.removeAt(truncateVideosToMsIndex);
+        if(arguments.size() < (truncateVideosToMsIndex+1))
+            ERRRRRR
+        bool convertOk = false;
+        truncateVideosToMs_OrZeroIfNotToTruncate = arguments.takeAt(truncateVideosToMsIndex).toLongLong(&convertOk);
         if(!convertOk)
             ERRRRRR
     }
@@ -56,11 +69,11 @@ DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::DirectoriesOfAudioAndVideoFilesMu
     connect(directoriesOfAudioAndVideoFilesMuxerSyncer, SIGNAL(e(QString)), this, SLOT(handleE(QString)));
     connect(directoriesOfAudioAndVideoFilesMuxerSyncer, SIGNAL(doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(bool)), this, SLOT(handleDoneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(bool)));
 
-    QMetaObject::invokeMethod(directoriesOfAudioAndVideoFilesMuxerSyncer, "muxAndSyncDirectoryOfAudioWithDirectoryOfVideo", Q_ARG(QString, directoryOfAudioFiles), Q_ARG(QString, directoryOfVideoFiles), Q_ARG(QString, outputDirectory), Q_ARG(qint64, audioDelayMs));
+    QMetaObject::invokeMethod(directoriesOfAudioAndVideoFilesMuxerSyncer, "muxAndSyncDirectoryOfAudioWithDirectoryOfVideo", Q_ARG(QString, directoryOfAudioFiles), Q_ARG(QString, directoryOfVideoFiles), Q_ARG(QString, outputDirectory), Q_ARG(qint64, audioDelayMs), Q_ARG(qint64, truncateVideosToMs_OrZeroIfNotToTruncate));
 }
 void DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::cliUsage()
 {
-    handleO("Usage: DirectoriesOfAudioAndVideoFilesMuxerSyncerCli srcDir destDir\n\nYou can specify that the audio and video sources are in different directories, in which case you specify the src audio dir first, src video dir second, and of course dest dir last\n\n" DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_AUDIO_DELAY_ARG "\t delay the audio files by this many milliseconds. it can be negative");
+    handleO("Usage: DirectoriesOfAudioAndVideoFilesMuxerSyncerCli srcDir destDir\n\nYou can specify that the audio and video sources are in different directories, in which case you specify the src audio dir first, src video dir second, and of course dest dir last\n\n" DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_AUDIO_DELAY_ARG "\t delay the audio files by this many milliseconds. it can be negative\n"DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_TRUNCATE_VIDEOS_TO_MS_ARG "\t truncate all videos to this duration in milliseconds. this is useful for example when trying to calculate the audio delay, saves you from having to process the entire file(s)");
 }
 void DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::handleO(const QString &msg)
 {

@@ -9,7 +9,7 @@ class DirectoriesOfAudioAndVideoFilesMuxerSyncerCli : public QObject
 {
     Q_OBJECT
 public:
-    explicit DirectoriesOfAudioAndVideoFilesMuxerSyncerCli(QStringList arguments, QObject *parent = 0);
+    explicit DirectoriesOfAudioAndVideoFilesMuxerSyncerCli(QObject *parent = 0);
 private:
     QTextStream m_StdOut;
     QTextStream m_StdErr;

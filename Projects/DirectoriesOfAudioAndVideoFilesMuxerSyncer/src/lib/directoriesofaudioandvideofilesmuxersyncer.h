@@ -17,7 +17,7 @@ private:
 
     bool isVideoFile(const QFileInfo &fileToCheck);
     bool isAudioFile(const QFileInfo &fileToCheck);
-    int probeDurationFromMediaFile(const QString &mediaFile);
+    qint64 probeDurationFromMediaFile(const QString &mediaFile);
     static bool timespansIntersect(qint64 timespan_0_StartTimeMs, qint64 timespan_0_DurationInMillseconds, qint64 timespan_1_StartTimeMs, qint64 timespan_1_DurationInMillseconds);
     static inline QString appendSlashIfNeeded(const QString &inputString)
     {
@@ -30,8 +30,8 @@ signals:
     void e(const QString &msg);
     void doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(bool success);
 public slots:
-    void muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QString &directoryOfAudioFiles, const QString &directoryOfVideoFiles, const QString &muxOutputDirectory, qint64 audioDelayMs = 0);
-    void muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QDir &directoryOfAudioFiles, const QDir &directoryOfVideoFiles, const QDir &muxOutputDirectory, qint64 audioDelayMs = 0);
+    void muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QString &directoryOfAudioFiles, const QString &directoryOfVideoFiles, const QString &muxOutputDirectory, qint64 audioDelayMs = 0, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate = 0);
+    void muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QDir &directoryOfAudioFiles, const QDir &directoryOfVideoFiles, const QDir &muxOutputDirectory, qint64 audioDelayMs = 0, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate = 0);
 };
 struct AudioFileMeta
 {
@@ -40,7 +40,7 @@ struct AudioFileMeta
         , DurationInMillseconds(durationInMilliseconds)
     { }
     QFileInfo AudioFileInfo;
-    int DurationInMillseconds;
+    qint64 DurationInMillseconds;
 };
 struct VideoFileMetaAndIntersectingAudios
 {
@@ -49,7 +49,7 @@ struct VideoFileMetaAndIntersectingAudios
         , DurationInMillseconds(durationInMillseconds)
     { }
     QFileInfo VideoFileInfo;
-    int DurationInMillseconds;
+    qint64 DurationInMillseconds;
     QMap<qint64 /* audio file start time in milliseconds*/, AudioFileMeta> IntersectingAudioFiles; //map just for sorting
 };
 
