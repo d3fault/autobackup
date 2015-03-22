@@ -70,6 +70,21 @@ DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::DirectoriesOfAudioAndVideoFilesMu
         }
     }
 
+    QString audioDelaysInputFile_OrEmptyStringIfNoneProvided;
+    int useAudioDelaysFromFileIndex = arguments.indexOf(DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_USE_AUDIO_DELAYS_FROM_FILE_ARG);
+    if(useAudioDelaysFromFileIndex > -1)
+    {
+        if(!m_AudioDelaysOutputFile_OrEmptyStringIfNotInteractivelyCalculatingThem.isEmpty())
+        {
+            handleE("ERROR: you can't use " DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_INTERACTIVELY_CALCULATE_AUDIO_DELAYS_TO_FILE_ARG " and " DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_USE_AUDIO_DELAYS_FROM_FILE_ARG " together"); //TODOoptional: allow it. the import file could just be the 'starting points'
+            ERRRRRR
+        }
+        arguments.removeAt(useAudioDelaysFromFileIndex);
+        if(arguments.size() < (useAudioDelaysFromFileIndex+1))
+            ERRRRRR
+        audioDelaysInputFile_OrEmptyStringIfNoneProvided = arguments.takeAt(useAudioDelaysFromFileIndex);.
+    }
+
 
 #if 1 //fff keeping qcoreapp out of this class means i haven't to exitRequested yet (still in constructor). could solve it a few ways, none of which are 'elegant' :(. Maybe I can/should introduce a "delayedConstructor" that is queued invoked from every "real" constructor, so i can get around the "can't connect to signals emitted in constructor" problem (for EVERY qobject i make, not just these *cli and *gui ones). that tiny bit of non-elegance does buy me a decent amount... (but i am digressing like fuck considering this is all dep of musicfingers xD (i never turn down an opportunity to experiment with improving the elegance of my code (maybe that's a problem (but if i don't do it, i never improve my code))))
     if(arguments.size() < 2)
@@ -97,7 +112,7 @@ DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::DirectoriesOfAudioAndVideoFilesMu
     connect(this, SIGNAL(audioDelaysOutputFilePathChosen(QString)), directoriesOfAudioAndVideoFilesMuxerSyncer, SLOT(handleAudioDelaysOutputFilePathChosen(QString)));
     connect(directoriesOfAudioAndVideoFilesMuxerSyncer, SIGNAL(doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(bool)), this, SLOT(handleDoneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(bool)));
 
-    QMetaObject::invokeMethod(directoriesOfAudioAndVideoFilesMuxerSyncer, "muxAndSyncDirectoryOfAudioWithDirectoryOfVideo", Q_ARG(QString, directoryOfAudioFiles), Q_ARG(QString, directoryOfVideoFiles), Q_ARG(QString, outputDirectory), Q_ARG(qint64, audioDelayMs), Q_ARG(qint64, truncateVideosToMs_OrZeroIfNotToTruncate));
+    QMetaObject::invokeMethod(directoriesOfAudioAndVideoFilesMuxerSyncer, "muxAndSyncDirectoryOfAudioWithDirectoryOfVideo", Q_ARG(QString, directoryOfAudioFiles), Q_ARG(QString, directoryOfVideoFiles), Q_ARG(QString, outputDirectory), Q_ARG(qint64, audioDelayMs), Q_ARG(qint64, truncateVideosToMs_OrZeroIfNotToTruncate), Q_ARG(QString, audioDelaysInputFile_OrEmptyStringIfNoneProvided));
 }
 void DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::cliUsage()
 {

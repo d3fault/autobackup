@@ -152,6 +152,11 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxSyncCurrentVideoFile()
     while(audioFileMetaIterator.hasNext())
     {
         const AudioFileMeta &currentAudioFileMeta = audioFileMetaIterator.next();
+        if(!m_AudioDelaysInputFile_OrEmptyStringIfNoneProvided.isEmpty())
+        {
+            QSettings audioDelaysInputFile(m_AudioDelaysInputFile_OrEmptyStringIfNoneProvided, QSettings::IniFormat); //TODOoptimization: might be better to not re-instantiate this over and over, but actually i think qsettings might handle it intelligently (unsure, dgaf atm)
+            m_AudioDelayMs = audioDelaysInputFile.value(m_CurrentVideoFile->VideoFileInfo.fileName(), 0);
+        }
         qint64 startTimestampOfAudioMs = currentAudioFileMeta.AudioFileInfo.lastModified().toMSecsSinceEpoch() + m_AudioDelayMs; //NOTE: it's crucial that any other use of "start timestamp of audio" does not use the last modified timestamp in AudioFileMeta.AudioFileInfo [alone]. The Audio Delay must be incorporated, and the easiest way to ensure it is is to simply use the key from the map IntersectingAudioFiles
         qint64 durationOfAudioFileInMs = currentAudioFileMeta.DurationInMillseconds;
         if(timespansIntersect(m_CurrentVideoFile->VideoFileInfo.lastModified().toMSecsSinceEpoch(), m_CurrentVideoFile->DurationInMillseconds, startTimestampOfAudioMs, durationOfAudioFileInMs))
@@ -291,7 +296,7 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxSyncCurrentVideoFile()
     QStringList muxOutputVideoCodec;
     if(m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::NormalMode)
     {
-        muxOutputFormat << "segment" << "-segment_time" << "180" << "-segment_list_size" << "999999999" << "-segment_wrap" << "999999999" << "-segment_list" << QString(muxTargetDirectory_WithSlashAppended + m_CurrentVideoFile->VideoFileInfo.completeBaseName() + "-segmentEntryList.txt") << "-reset_timestamps" << "1";
+        muxOutputFormat << "segment" << "-segment_time" << "180" << "-segment_list_size" << "999999999" << "-segment_wrap" << "999999999" << "-segment_list" << QString(muxTargetDirectory_WithSlashAppended + m_CurrentVideoFile->VideoFileInfo.completeBaseName() + "-segmentEntryList.txt") << "-reset_timestamps" << "1"; //TODOreq: since i'm now going to be calling this app using a QProcess from my import script, I should move this segment format crap to there and introduce an --pass-ffmpeg-arg.... arg... to this app. Maybe I should require them to specify an extension (not to be confused with 'format', since 'mkv' is not a valid ffmpeg format, YET FFMPEG CAN GUESS MATROSKA BASED ON THE .MKV EXTENSION *@#(*@#&(* ) for the muxed files (and continue using the video file's complete base name for the prefix). There's a lot of flexibility here (allowing them to provide a template for an output filename seems... confusing... since there are multiple output filenames (best to just stick with video base name imo)), but this app is pretty useless to most others with the format hardcoded to segment@3mins (not that it'd be hard to change, but most wouldn't want to (don't blame em))
         muxOutputAbsoluteFilePath += "-%d.ogg";
         muxOutputVideoCodec << "-s" << "720x480" << "-b:v" << "275k" << "-vcodec" << "theora" << "-r" << "10";
     }
@@ -360,7 +365,7 @@ bool DirectoriesOfAudioAndVideoFilesMuxerSyncer::showUserCurrentTruncatedVideoPr
 }
 void DirectoriesOfAudioAndVideoFilesMuxerSyncer::useCurrentAudioDelayForCurrentVideo()
 {
-    if(m_AudioDelayMs != 0) //no need to store 0, since that's what it initializes to. TODOreq: when iterating the "audio delay ms from file" and encountering a video file without an entry in that file, don't use "previous audio delay" but instead use 0
+    if(m_AudioDelayMs != 0) //no need to store 0, since that's what it initializes to. TO DOnereq: when iterating the "audio delay ms from file" and encountering a video file without an entry in that file, don't use "previous audio delay [from audio delay file]" but instead use 0. if, however, the previous audio delay was typed in during this session, we should still use that audio delay as the default for the current file. ahh this is easier than i thought. for a moment i thought i was allowing interactive mode at the same time as supplying an audio delays input... which would make things a bit more complicated (still doable but eh)
     {
         m_InteractivelyCalculatedAudioDelays.insert(m_CurrentVideoFile->VideoFileInfo.fileName(), m_AudioDelayMs);
     }
@@ -472,14 +477,20 @@ bool DirectoriesOfAudioAndVideoFilesMuxerSyncer::timespansIntersect(qint64 times
     //since we've elimited every other option, we can deduce that they intersect
     return true;
 }
-void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QString &directoryOfAudioFiles, const QString &directoryOfVideoFiles, const QString &muxOutputDirectory, qint64 audioDelayMs, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate)
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QString &directoryOfAudioFiles, const QString &directoryOfVideoFiles, const QString &muxOutputDirectory, qint64 audioDelayMs, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate, const QString &audioDelaysInputFile_OrEmptyStringIfNoneProvided)
 {
     QDir directoryOfAudioFilesDir(directoryOfAudioFiles);
     QDir directoryOfVideoFilesDir(directoryOfVideoFiles);
     QDir muxOutputDirectoryDir(muxOutputDirectory);
-    muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(directoryOfAudioFilesDir, directoryOfVideoFilesDir, muxOutputDirectoryDir, audioDelayMs, truncateVideosToMsDuration_OrZeroToNotTruncate);
+    /*woooo qsettings ezier -- QFile *audioDelaysInputFile_OrZeroIfNoneProvided = 0;
+    if(!audioDelaysInputFile_OrEmptyStringIfNoneProvided.isEmpty())
+    {
+        audioDelaysInputFile_OrZeroIfNoneProvided = new QFile(audioDelaysInputFile_OrEmptyStringIfNoneProvided, this);
+        if(!audioDelaysInputFile_OrZeroIfNoneProvided->open())
+    }*/
+    muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(directoryOfAudioFilesDir, directoryOfVideoFilesDir, muxOutputDirectoryDir, audioDelayMs, truncateVideosToMsDuration_OrZeroToNotTruncate, audioDelaysInputFile_OrEmptyStringIfNoneProvided);
 }
-void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QDir &directoryOfAudioFiles, const QDir &directoryOfVideoFiles, const QDir &muxOutputDirectory, qint64 audioDelayMs, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate)
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QDir &directoryOfAudioFiles, const QDir &directoryOfVideoFiles, const QDir &muxOutputDirectory, qint64 audioDelayMs, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate, const QString &audioDelaysInputFile_OrEmptyStringIfNoneProvided)
 {
     m_MuxOutputDirectory = muxOutputDirectory;
     m_AudioDelayMs = audioDelayMs;
@@ -487,6 +498,7 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
     m_VideoFileMetaAndIntersectingAudios.clear();
     m_InteractivelyCalculatedAudioDelays.clear();
     m_UseCurrentAudioDelayForTheRestOfTheVideoFiles = false;
+    m_AudioDelaysInputFile_OrEmptyStringIfNoneProvided = audioDelaysInputFile_OrEmptyStringIfNoneProvided;
 
     if(!directoryOfAudioFiles.exists())
     {
@@ -593,7 +605,7 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::handleAudioDelaysOutputFilePath
 
     //custom datastream? custom textstream? naaawwww qsettings ftw
     QSettings audioDelaysOutputFile(audioDelaysOutputSaveFilaPath, QSettings::IniFormat);
-    QHashIterator<QString /* video file name */, qint64 /* chosen audio delay ms */> audioDelaysIterator(m_InteractivelyCalculatedAudioDelays);
+    QHashIterator<QString /* video fileName */, qint64 /* chosen audio delay ms */> audioDelaysIterator(m_InteractivelyCalculatedAudioDelays);
     while(audioDelaysIterator.hasNext())
     {
         audioDelaysIterator.next();
