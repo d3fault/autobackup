@@ -129,6 +129,7 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxSyncNextVideoFileOrEmitDoneI
     {
         m_CurrentVideoFile = m_VideoFilesIterator->next();
         muxSyncCurrentVideoFile();
+        return;
     }
 
     if(m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::NormalMode)
@@ -284,21 +285,19 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxSyncCurrentVideoFile()
         ffmpegArgs << "-i" << audioFileBeingBuilt << muxOutputAudioCodec << "-ac" <<  "1";
     }
     //mux -- TODOreq: lutyuv brightness? being outside maybe not necessary (idfk) -- also: noir for night time shenigans (a realtime preview would come in handy too)!
-    QString muxTargetDirectory_WithSlashAppended;
+    QString muxTargetDirectory_WithSlashAppended = (m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::NormalMode ? (m_MuxOutputDirectory.absolutePath() + QDir::separator()) : (appendSlashIfNeeded(m_TempDir->path())));
     QStringList muxOutputFormat;
     QString muxOutputAbsoluteFilePath = muxTargetDirectory_WithSlashAppended + m_CurrentVideoFile->VideoFileInfo.completeBaseName();
     QStringList muxOutputVideoCodec;
     if(m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::NormalMode)
     {
-        muxTargetDirectory_WithSlashAppended = m_MuxOutputDirectory.absolutePath() + QDir::separator();
         muxOutputFormat << "segment" << "-segment_time" << "180" << "-segment_list_size" << "999999999" << "-segment_wrap" << "999999999" << "-segment_list" << QString(muxTargetDirectory_WithSlashAppended + m_CurrentVideoFile->VideoFileInfo.completeBaseName() + "-segmentEntryList.txt") << "-reset_timestamps" << "1";
         muxOutputAbsoluteFilePath += "-%d.ogg";
         muxOutputVideoCodec << "-s" << "720x480" << "-b:v" << "275k" << "-vcodec" << "theora" << "-r" << "10";
     }
     else //m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::InteractivelyCalculateAudioDelaysMode
     {
-        muxTargetDirectory_WithSlashAppended = appendSlashIfNeeded(m_TempDir->path());
-        muxOutputFormat << "mkv";
+        muxOutputFormat << "matroska";
         muxOutputAbsoluteFilePath += ".mkv";
         muxOutputVideoCodec << "-vcodec" << "copy";
     }
@@ -590,15 +589,18 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::handleUserInputtedNewAudioDelay
 void DirectoriesOfAudioAndVideoFilesMuxerSyncer::handleAudioDelaysOutputFilePathChosen(const QString &audioDelaysOutputSaveFilaPath)
 {
     //if(m_InteractivelyCalculatedAudioDelays.isEmpty())
-    //    return; //don't create the file if nothing to put in it -- actually, do. TODOmb: it's either i always make it and sometimes it's empty, or i allow it to not exist when parsing/importing it... since i want to use this app in automated scenarios... so there's no winning either way heh. i'm actually thinking maybe that allowing it to not exist on import is the lesser of two evils (but then it could also mean "silent failures" (NO WINNING). perhaps a "--dont-error-out-if-audio-delays-file-doesnt-exist" flag for the automated usages???? For now KISS and just gonna make it
+    //^^QSettings already does lazy file creation (no values set = no file created), and I'm willing to bet it -- oh right same constructor, OF COURSE it doesn't care if the file doesn't exist...
 
     //custom datastream? custom textstream? naaawwww qsettings ftw
     QSettings audioDelaysOutputFile(audioDelaysOutputSaveFilaPath, QSettings::IniFormat);
     QHashIterator<QString /* video file name */, qint64 /* chosen audio delay ms */> audioDelaysIterator(m_InteractivelyCalculatedAudioDelays);
     while(audioDelaysIterator.hasNext())
     {
+        audioDelaysIterator.next();
         audioDelaysOutputFile.setValue(audioDelaysIterator.key(), audioDelaysIterator.value());
     }
+    emit o("successfully wrote audio delays to: " + audioDelaysOutputSaveFilaPath);
+    emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(true);
 }
 bool AudioFileMeta::operator==(const AudioFileMeta &audioFileMeta) const
 {
