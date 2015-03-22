@@ -148,15 +148,21 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxSyncCurrentVideoFile()
 {
     //[re-]find intersecting audio segments
     m_CurrentVideoFile->IntersectingAudioFiles.clear();
+    if(!m_AudioDelaysInputFile_OrEmptyStringIfNoneProvided.isEmpty())
+    {
+        QSettings audioDelaysInputFile(m_AudioDelaysInputFile_OrEmptyStringIfNoneProvided, QSettings::IniFormat); //TODOoptimization: might be better to not re-instantiate this over and over, but actually i think qsettings might handle it intelligently (unsure, dgaf atm)
+        bool convertOk = false;
+        m_AudioDelayMs = audioDelaysInputFile.value(m_CurrentVideoFile->VideoFileInfo.fileName(), 0).toLongLong(&convertOk);
+        if(!convertOk)
+        {
+            emit e("WARNING: " + m_CurrentVideoFile->VideoFileInfo.fileName() + " had an invalid audio delay in the audio delays file");
+            m_AudioDelayMs = 0;
+        }
+    }
     QSetIterator<AudioFileMeta> audioFileMetaIterator(m_AudioFileMetas);
     while(audioFileMetaIterator.hasNext())
     {
         const AudioFileMeta &currentAudioFileMeta = audioFileMetaIterator.next();
-        if(!m_AudioDelaysInputFile_OrEmptyStringIfNoneProvided.isEmpty())
-        {
-            QSettings audioDelaysInputFile(m_AudioDelaysInputFile_OrEmptyStringIfNoneProvided, QSettings::IniFormat); //TODOoptimization: might be better to not re-instantiate this over and over, but actually i think qsettings might handle it intelligently (unsure, dgaf atm)
-            m_AudioDelayMs = audioDelaysInputFile.value(m_CurrentVideoFile->VideoFileInfo.fileName(), 0);
-        }
         qint64 startTimestampOfAudioMs = currentAudioFileMeta.AudioFileInfo.lastModified().toMSecsSinceEpoch() + m_AudioDelayMs; //NOTE: it's crucial that any other use of "start timestamp of audio" does not use the last modified timestamp in AudioFileMeta.AudioFileInfo [alone]. The Audio Delay must be incorporated, and the easiest way to ensure it is is to simply use the key from the map IntersectingAudioFiles
         qint64 durationOfAudioFileInMs = currentAudioFileMeta.DurationInMillseconds;
         if(timespansIntersect(m_CurrentVideoFile->VideoFileInfo.lastModified().toMSecsSinceEpoch(), m_CurrentVideoFile->DurationInMillseconds, startTimestampOfAudioMs, durationOfAudioFileInMs))

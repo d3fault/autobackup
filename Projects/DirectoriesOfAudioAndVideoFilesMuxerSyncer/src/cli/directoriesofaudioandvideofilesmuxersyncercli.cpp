@@ -11,7 +11,7 @@
 #define DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_AUDIO_DELAY_ARG "--audio-delay-ms"
 #define DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_TRUNCATE_VIDEOS_TO_MS_ARG "--truncate-videos-to-ms"
 #define DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_INTERACTIVELY_CALCULATE_AUDIO_DELAYS_TO_FILE_ARG "--interactively-calculate-audio-delays-to-file"
-#define DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_USE_AUDIO_DELAYS_FROM_FILE_ARG "--use-audio-delays-from-file" //TODOreq
+#define DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_USE_AUDIO_DELAYS_FROM_FILE_ARG "--use-audio-delays-from-file"
 
 DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::DirectoriesOfAudioAndVideoFilesMuxerSyncerCli(QObject *parent)
     : QObject(parent)
@@ -82,7 +82,7 @@ DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::DirectoriesOfAudioAndVideoFilesMu
         arguments.removeAt(useAudioDelaysFromFileIndex);
         if(arguments.size() < (useAudioDelaysFromFileIndex+1))
             ERRRRRR
-        audioDelaysInputFile_OrEmptyStringIfNoneProvided = arguments.takeAt(useAudioDelaysFromFileIndex);.
+        audioDelaysInputFile_OrEmptyStringIfNoneProvided = arguments.takeAt(useAudioDelaysFromFileIndex);
     }
 
 
