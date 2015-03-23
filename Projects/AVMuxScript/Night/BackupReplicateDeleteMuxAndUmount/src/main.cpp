@@ -13,25 +13,31 @@
 
 
 //MANDATORY config -- NOTE: do not use paths with spaces:
-#define muxerSyncerBinaryFilePath "/home/d3fault/autobackup/Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/build-DirectoriesOfAudioAndVideoFilesMuxerSyncerCli-Desktop_Qt_5_4_1_GCC_64bit-Release/DirectoriesOfAudioAndVideoFilesMuxerSyncerCli"
-#define videoFps "16" /* this must be kept in sync with whatever the capture device is using. Don't change this value mid-day. only change it in between days (ie, at morning before recording, or at night _after_ running this script). I considered keeping it in sync with the value in DirectoriesOfAudioAndVideoFilesMuxerSyncer, but opted not to (my master copies will be 16fps, the web/muxed ones 10fps) */
 #define videoSourceMountPoint "/mnt/videoSource"
 #define videoSource videoSourceMountPoint "/goOutsideVids"
 
 #define audioSourceMountPoint "/mnt/audioSource"
 #define audioSource audioSourceMountPoint "/VOICE/FOLDER01"
 
-#define destPathOnBackupAndReplicaMountPoints "/binary/outside"
+#define videoFps "16" /* this must be kept in sync with whatever the capture device is using. Don't change this value mid-day. only change it in between days (ie, at morning before recording, or at night _after_ running this script). I considered keeping it in sync with the value in DirectoriesOfAudioAndVideoFilesMuxerSyncer, but opted not to (my master copies will be 16fps, the web/muxed ones 10fps) */
+
+#define destPathBinaryRoot "/binary"
+#define outsidePathRelativeToMountPoint destPathBinaryRoot "/outside"
+#define allSigsFileName "allSigs.txt" //.asc? it's custom so nah
+#define sigsFilePathRelativeToMountPoint destPathBinaryRoot "/" allSigsFileName
 
 #define backupMountPoint "/mnt/sdb"
-#define backupDestBase backupMountPoint destPathOnBackupAndReplicaMountPoints
+#define backupDestOutsideBase backupMountPoint outsidePathRelativeToMountPoint
 
 //NOTE: the _last_ replica in this list is used as the "air gap" drive (passed to morning script). no replicas are necessary, and no mux/sync'ing is done if none are available
 #define allReplicas \
-QList<QPair<QString /* replica mount point */, QString /* replica base dir */> > replicas; \
-replicas << qMakePair(QString("/mnt/sdc"), QString("/mnt/sdc") + destPathOnBackupAndReplicaMountPoints); \
-replicas << qMakePair(QString("/mnt/blackCavalry"), QString("/mnt/blackCavalry") + destPathOnBackupAndReplicaMountPoints);
-#define airGapReplicaTempDirForMuxedCopies "/mnt/blackCavalry/temp/forMorningScript" //TODOreq: ensure it exists and is writeable at beginning
+QList<QPair<QString /* replica mount point */, QString /* replica binary root */> > replicas; \
+replicas << qMakePair(QString("/mnt/sdc"), QString("/mnt/sdc" + QString(destPathBinaryRoot))); \
+replicas << qMakePair(QString("/mnt/blackCavalry"), QString("/mnt/blackCavalry" + QString(destPathBinaryRoot)));
+#define airGapReplicaTempDirForMuxedCopies "/mnt/blackCavalry/temp/forMorningScript"
+
+#define muxerSyncerBinaryFilePath "/home/d3fault/autobackup/Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/build-DirectoriesOfAudioAndVideoFilesMuxerSyncerCli-Desktop_Qt_5_4_1_GCC_64bit-Release/DirectoriesOfAudioAndVideoFilesMuxerSyncerCli"
+#define recursiveGpgSignerBinaryFilePath "/home/d3fault/autobackup/Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/build-RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli-Desktop_Qt_5_4_1_GCC_64bit-Release/RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli"
 
 //optional config:
 #define backupDestPrefix "/daySyncedAt-"
@@ -53,9 +59,13 @@ qDebug() << theProcess.readAllStandardError(); \
 qDebug() << theProcess.readAllStandardOutput();
 static bool runProcess(const QString &cmd, const QString &workingDirectory_OrEmptyStringIfToNotSet = QString())
 {
+    qDebug() << "about to run process:" << cmd;
     QProcess process;
     if(!workingDirectory_OrEmptyStringIfToNotSet.isEmpty())
+    {
+        qDebug() << "...with working dir of:" << workingDirectory_OrEmptyStringIfToNotSet;
         process.setWorkingDirectory(workingDirectory_OrEmptyStringIfToNotSet);
+    }
     //process.setProcessChannelMode(QProcess::MergedChannels);
     qDebug() << "running command:" << cmd;
     process.start(cmd);
@@ -133,7 +143,8 @@ private:
 #define sudoUmountCmdPrefix "sudo " umountCmdPrefix
 
 //i had specified partial, but took it out in favor of backup (because I wouldn't want to backup a partial lol
-#define rsyncCmdPrefix "rsync -avhh --progress --protect-args --backup --suffix=~accidentallyOverwrittenDuringSyncAt-"
+#define rsyncCmdPrefix "rsync -avhh --progress --protect-args"
+#define rsyncCmdExcludingAllSigsPrefix rsyncCmdPrefix " --exclude '/" allSigsFileName "' --backup --suffix=~accidentallyOverwrittenDuringSyncAt-"
 #define rsyncCmdMiddle " ./ " //the src dir, but we are setting the process's working directory to the src dir instead (/path/to/src/* would miss hidden files)
 
 #define RETURN_ONE_IF_CMD_RUN_AT_CONSTRUCTOR_OF_SMART_PROCESS_THINGO_FAILS(scopedPointerVarName, constructCmd, destructCmd) \
@@ -173,7 +184,7 @@ listToAppendTo << aSharedPointer;
 }
 
 #define RETURN_ONE_IF_RSYNC_COPY_CMD_FAILS(rsyncCmdSource, rsyncCmdDest) \
-if(!runProcess(rsyncCmdPrefix + unixTimeInSecondsNow + rsyncCmdMiddle + rsyncCmdDest, rsyncCmdSource)) \
+if(!runProcess(rsyncCmdExcludingAllSigsPrefix + unixTimeInSecondsNow + rsyncCmdMiddle + rsyncCmdDest, rsyncCmdSource)) \
 { \
     qDebug() << "failed to backup (" << rsyncCmdSource << ") to (" << rsyncCmdDest << ")"; \
     return 1; \
@@ -356,7 +367,7 @@ replicaDirs << aSharedPointer;
         qDebug() << "failed to create temporary audio delays file"; \
         return 1; \
     } \
-    theAudioDelaysFile.close(); /*we only wanted it to be created (UNIQUELY), didn't want it to be opened. TODOreq: setAutoRemove(false) later (at/just-before-or-mb-after the move next to a/v folders -- TODOreq: check the file isn't empty before doing the move. if it's empty, don't do the move and leave autoRemove on)*/ \
+    theAudioDelaysFile.close(); /*we only wanted it to be created (UNIQUELY), didn't want it to be opened*/ \
     interactiveMuxerSyncerArgs << audioSource << tempPathForTruncatedMuxedVideosForAudioDelaysFileCalculation << "--interactively-calculate-audio-delays-to-file" << theAudioDelaysFile.fileName(); \
     muxerSyncerProcess.start(muxerSyncerBinaryFilePath, interactiveMuxerSyncerArgs); \
     if(!muxerSyncerProcess.waitForStarted(-1)) \
@@ -429,7 +440,7 @@ QString removeTrailingSlashIfNeeded(const QString &inputString)
 
 //OT: the style I'm using in this is schmexy, having scoped/shared pointers do tasks when they go out of scope. The same kind of thing can be used in any other designs in a slot that is invoked in an asynchronous design. I tend to do sanity tests, and if any of them fail I do "emit doneDoingThisAsyncTask(false); return;" -- false to indicate failure ofc. I could use the scoped/shared pointers like I am in this app, where the destructor emits doneDoingThisAsyncTask(false), unless I set some bool (like CmdRunAtConstructionSucceeded used in this app) to true, in which case the "next async step/signal/slot/whatever" is emitted instead! For the final async slot, the only difference would be the "true" or "false" value of "success", but for the all the intermediate steps it could be "emit doneWith<x>(false)" vs. "[emit] proceedToStep<y>()". It would simply save lines of code, as in each sanity check I can just type "return;" instead of emitting the signal. Even though it would save lines of code, a con is that it decreases readability. Maybe would be useful in d=i, where it doesn't decrease understandability (although it still does in the generated C++ (but eh I am beginning to think that making the generated C++ might be wasted effort (idk I flip flop on the issue. ex: C++ started off as a C code generator... then ditched it later because it was too limiting))).
 
-//TODOreq: when go recursively gpg verify? here's an idea: a serialized list of all entries and when they were last gpg verified (note: the list itself is signed and verified after/before every use of it). at the end of this "import+mux" script, we (NOPE: look at the time. if it's before I'd be waking up by a few hours) recursively gpg verify maybe as many of those entries as possible for about ~30 minutes (obviously don't SIGKILL the gpg verify at 30 minutes... it can go over that) -- stop of course if all of them were verified in that time (will happen with small dirs). the "source" (either main backup dir or one of the replicas) used for the gpg verify is selected at random (different random selection for every entry). Using ~30 minutes after a "sync+mux at night" script is smart because then I never have to sit and wait for the gpg verifying to finish, I'll be asleep. Failed verifications need to be presented somewhere (maybe at the start of the next night's sync? or some morning time notification (beginning of morning script?)). This idea should probably be an entirely different app, and the command chain in bash is this: "BackupReplicateDeleteMuxAndUmountCli && RecursivelyGpgVerifyForAbout30MinsAndKeepRecordOfShit && xfce4-session-logout --fast --halt" (yes, i want to NOT shut down when when _anything_ fails (maybe i'll play a sound using more bash shit))
+//TODOoptional: when to recursively gpg verify? here's an idea: a serialized list of all entries and when they were last gpg verified (note: the list itself is signed and verified after/before every use of it). at the end of this "import+mux" script, we (NOPE: look at the time. if it's before I'd be waking up by a few hours) recursively gpg verify maybe as many of those entries as possible for about ~30 minutes (obviously don't SIGKILL the gpg verify at 30 minutes... it can go over that) -- stop of course if all of them were verified in that time (will happen with small dirs). the "source" (either main backup dir or one of the replicas) used for the gpg verify is selected at random (different random selection for every entry). Using ~30 minutes after a "sync+mux at night" script is smart because then I never have to sit and wait for the gpg verifying to finish, I'll be asleep. Failed verifications need to be presented somewhere (maybe at the start of the next night's sync? or some morning time notification (beginning of morning script?)). This idea should probably be an entirely different app, and the command chain in bash is this: "BackupReplicateDeleteMuxAndUmountCli && RecursivelyGpgVerifyForAbout30MinsAndKeepRecordOfShit && xfce4-session-logout --fast --halt" (yes, i want to NOT shut down when when _anything_ fails (maybe i'll play a sound using more bash shit))
 
 //This import/backup script is (had:becoming) a pain in my ass, I need/want to go outside!!! But then I remember that my going [with the hat on] outside is pointless if I can't come back home and import it!!! Hah!
 
@@ -437,10 +448,8 @@ QString removeTrailingSlashIfNeeded(const QString &inputString)
 /*
 for lack of a better place (lol organization problems within organization problems (and a joke within (and an explaination next to it (and another 8..8)):
 
-files/
-files/text/ (git repo, can be 'textBare' on some drives)
-files/binary/
-files/.meta/binaryMeta (git repo for sigs, can be 'binaryMetaBare' on some drives)
+text/ (git repo, is 'textBare' on replicas)
+binary/ (managed via this app and others like it)
 
 the reason i want binaryMeta to not be in binary is so that i can cd into binary and do "rsync --etc --backup --prefix=~accidentallyOverwitten ./ /someCopy". if i were to keep the sigs in binary, then it would get overwritten every time and there would be tons of "accidentallyOverwritten" copies of the sigsfile. i could exclude it from the rsync and send it on it's own command but i think i also want versioning of it (i just don't want a bunch of "accidentallyOverwritten" files to be that versioning (sloppy))
 
@@ -455,14 +464,13 @@ maybe the determiner for whether or not text and binaryMeta have the word "Bare"
 
 
 NOPE:
+files/.meta/binaryMeta (git repo for sigs, is 'binaryMetaBare' on replicas)
 files/.meta/text (maybe this dir doesn't exist, but i was thinking of putting .lastModifiedTimestamps here (since it's so small, might as well keep it in files/text/ -- however if i wanted sigs of /text/ (no point since git, just sign commits/tags nvm nvm)))
 
 */
 
 int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardcoded list of replicas (or hell, provided via args even). we TRY to replicate to all of them (maybe a hardcoded max + randomization of which we select), but error out before even starting if at least minNumReplicas can't be mounted/replicated-to)
 {
-    //TODOmb: a QTemporaryDir guarantees me to not overwrite another dir, but I wish I could ...... OH WAIT mkdir (not path) fails if dir exists! woot! So I should make the dirs on the backup and all replicas before beginning the backup. They all must succeed. What if just one fails, do I then rmdir the ones I created before that fail? (more fancy scoped destructor shits?). rmdir is actually not dangerous, because it fails if the dir isn't empty.
-
     QCoreApplication a(argc, argv);
     return 1;
 
@@ -471,6 +479,18 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     {
         //TODOmb: qbs has build-on-demand + run functionality
         qDebug() << "muxer syncer binary either doesn't exist or isn't executable:" << muxerSyncerBinaryFilePath;
+        return 1;
+    }
+    QFileInfo recursiveGpgSignerBinaryFileInfo(recursiveGpgSignerBinaryFilePath);
+    if((!recursiveGpgSignerBinaryFileInfo.exists()) || (!recursiveGpgSignerBinaryFileInfo.isExecutable()))
+    {
+        qDebug() << "recursive gpg signer either doesn't exist or isn't executable:" << recursiveGpgSignerBinaryFilePath;
+        return 1;
+    }
+    QFileInfo airGapReplicaTempDirFileInfo(airGapReplicaTempDirForMuxedCopies);
+    if((!airGapReplicaTempDirFileInfo.exists()) || ((!airGapReplicaTempDirFileInfo.isDir())) || (!airGapReplicaTempDirFileInfo.isWritable()))
+    {
+        qDebug() << "air gap replica temp dir either doesn't exist or isn't a dir or isn't writeable:" << airGapReplicaTempDirForMuxedCopies;
         return 1;
     }
 
@@ -482,11 +502,18 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     allReplicas
     QListIterator<QPair<QString, QString> > replicasIterator(replicas);
     QList<QSharedPointer<BeforeAndAfterProcessRunner> > replicaMounts;
+    int numReplicasMounted = 0;
     while(replicasIterator.hasNext())
     {
         const QPair<QString,QString> &currentReplica = replicasIterator.next();
         //atm all my replicas are ntfs, so they require sudo... but eh i shouldn't issue it if it's not needed (and I'm considering switching every drive I have to ext4 because fuck that other OS :-P)
         RETURN_ONE_IF_CMD_RUN_AT_CONSTRUCTOR_OF_SMART_PROCESS_THINGO_FAILS_LIST_VARIANT(replicaMounts, sudoMountCmdPrefix + currentReplica.first, sudoUmountCmdPrefix + currentReplica.first)
+        ++numReplicasMounted;
+    }
+    if(numReplicasMounted < 1)
+    {
+        qDebug() << "there weren't at least 1 replicas available"; //TODOoptional: use minReplicas intelligently. entries in the list of replicas should be allowed to not be availalbe (so long as minReplicas is met), whereas right now we error out on the first unavailable replica. also, shuffle() the replicas for load balancing :-P
+        return 1;
     }
 
 
@@ -494,7 +521,7 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     RETURN_ONE_IF_DIR_IS_NOT_GOOD(videoSource)
     RETURN_ONE_IF_DIR_IS_NOT_GOOD(audioSource)
     RETURN_ONE_IF_VIDEOSOURCE_DIR_HAS_ANY_NONFILES_OR_NONH264FILES(videoSource) //handling sub-directories is a pain, so not going to allow it for now
-    RETURN_ONE_IF_DIR_IS_NOT_GOOD(backupDestBase)
+    RETURN_ONE_IF_DIR_IS_NOT_GOOD(backupDestOutsideBase)
     //do the same, but for the replicas
     replicasIterator.toFront();
     while(replicasIterator.hasNext())
@@ -506,14 +533,14 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
 
     //calculate/generate audio delays file
     QTemporaryFile audioDelaysFile;
-    //TODOreq: run, synchronously, the muxer syncer in interactive mode to get audio delay timestamps (we use the audio delays file later, and also save it next to the 'a' and 'v' folders (TODOblah: such a file should surely be in revision control fml since we're talking-about/handling /binary/)). I would rather call it as a lib, but mixing sync+async is easiest to do with a QProcess (another thread + wait condition works too (and keeps me in 'lib' mode), but is surely not 'easier')
-    RETURN_ONE_IF_GENERATING_AUDIO_DELAYS_FILE_FAILS(audioDelaysFile) //TODOmb: if replicas.isEmpty(), perhaps we should skip this step... since ultimately it means we won't be mux'ing to a replica for the morning script
+    //run the muxer syncer in interactive mode to get audio delay timestamps (we use the audio delays file later, and also save it next to the 'a' and 'v' folders (TODOblah: such a file should surely be in revision control fml since we're talking-about/handling /binary/)). I would rather call it as a lib, but mixing sync+async is easiest to do with a QProcess (another thread + wait condition works too (and keeps me in 'lib' mode), but is surely not 'easier')
+    RETURN_ONE_IF_GENERATING_AUDIO_DELAYS_FILE_FAILS(audioDelaysFile) //TODOmb: if replicas.isEmpty(), perhaps we should skip this step... since ultimately it means we won't be mux'ing to a replica for the morning script (no muxing = no need to av sync)
 
 
     //prepare to backup, make the dest dirs, bailing out if any one of them fails to be made (or is already made)
     QString unixTimeInSecondsNow = QString::number(QDateTime::currentMSecsSinceEpoch()/1000);
     QString backupDestNewSubDir_WithSlashAppended = backupDestPrefix + unixTimeInSecondsNow + QDir::separator();
-    QString backupDest_WithSlashAppended = backupDestBase + backupDestNewSubDir_WithSlashAppended;
+    QString backupDest_WithSlashAppended = backupDestOutsideBase + backupDestNewSubDir_WithSlashAppended;
     QString backupDestAudioDir_WithSlashAppended(backupDest_WithSlashAppended + backupDestAudioSubDir + QDir::separator());
     QString backupDestVideoDir_WithSlashAppended(backupDest_WithSlashAppended + backupDestVideoSubDir + QDir::separator());
     //QDir backupDestDir(backupDest_WithSlashAppended);
@@ -525,7 +552,7 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     QList<QSharedPointer<AutoRemovingDirMker> > replicaDirs;
     while(replicasIterator.hasNext())
     {
-        QString replicaBackupDest_WithSlashAppended = removeTrailingSlashIfNeeded(replicasIterator.next().second) + destPathOnBackupAndReplicaMountPoints + backupDestNewSubDir_WithSlashAppended;
+        QString replicaBackupDest_WithSlashAppended = removeTrailingSlashIfNeeded(replicasIterator.next().second) + outsidePathRelativeToMountPoint + backupDestNewSubDir_WithSlashAppended;
         RETURN_ONE_IF_MKDIR_AT_CONSTRUCTOR_OF_SMART_MKDIR_THINGO_FAILS_LIST_VARIANT(replicaDirs, replicaBackupDest_WithSlashAppended)
     }
 
@@ -553,11 +580,31 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     RETURN_ONE_IF_PUTTING_AUDIO_DELAYS_FILE_NEXT_TO_A_V_FOLDERS_FAILS(audioDelaysFile, audioDelaysFileName)
 
 
-    //TODOreq: run the recursive gpg signer. it will detect most overwrites (we don't want to replicate overwrites), woot. recursive gpg signer serves doubly as a cheap af way to verify last modified timestamps for a hierarchy... but with the added bonus that it signs new files it sees :-D. the best protection would be to run recursive sign + verify here, so we KNOW there weren't any overwrites.... however that is slow as fuuuuuuuck to do every time....
-
-
     //try to set to read-only, buys just a tiny bit of overwrite protection
     GIVE_WARNING_IF_SETTINGS_PERMISSIONS_TO_READ_ONLY_FAILS(backupDest_WithSlashAppended)
+
+
+    //run recursive gpg signer. it will detect most overwrites (we don't want to replicate overwrites), woot. recursive gpg signer serves doubly as a cheap af way to verify last modified timestamps for a hierarchy... but with the added bonus that it signs new files it sees :-D. the best protection would be to run recursive sign + verify here, so we KNOW there weren't any overwrites.... however that is slow as fuuuuuuuck to do every time....
+    QProcess recursiveGpgSignerProcess;
+    recursiveGpgSignerProcess.setProcessChannelMode(QProcess::ForwardedChannels);
+    QStringList recursiveGpgSignerArgs;
+    recursiveGpgSignerArgs << backupMountPoint destPathBinaryRoot << backupMountPoint sigsFilePathRelativeToMountPoint << "--exclude" << allSigsFileName;
+    recursiveGpgSignerProcess.start(recursiveGpgSignerBinaryFilePath, recursiveGpgSignerArgs, QIODevice::ReadOnly);
+    if(!recursiveGpgSignerProcess.waitForStarted(-1))
+    {
+        qDebug() << "recursive gpg signer failed to start with args:" << recursiveGpgSignerArgs;
+        return 1;
+    }
+    if(!recursiveGpgSignerProcess.waitForFinished(-1))
+    {
+        qDebug() << "recursive gpg signer failed to finish with args:" << recursiveGpgSignerArgs;
+        return 1;
+    }
+    if((recursiveGpgSignerProcess.exitCode() != 0) || (recursiveGpgSignerProcess.exitStatus() != QProcess::NormalExit))
+    {
+        qDebug() << "recursive gpg signer exitted abnormally with exit code:" << recursiveGpgSignerProcess.exitCode();
+        return 1;
+    }
 
 
     //replicate
@@ -568,12 +615,21 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
         const QPair<QString,QString> &currentReplica = replicasIterator.next();
         QString replicaDestWithSlashAppended = appendSlashIfNeeded(currentReplica.second);
         RETURN_ONE_IF_RSYNC_COPY_CMD_FAILS(hackyLoadBalancerChangingSourceHehForEachReplicaHeh, replicaDestWithSlashAppended)
+        //replicate the sigs file (it was excluded from the regular replicate command because we DON'T want to backup-on-overwrite it
+        if(!runProcess(rsyncCmdPrefix " ./" allSigsFileName " " + replicaDestWithSlashAppended, hackyLoadBalancerChangingSourceHehForEachReplicaHeh))
+        {
+            qDebug() << "failed to replicate:" << allSigsFileName << "to:" << replicaDestWithSlashAppended;
+            return 1;
+        }
         GIVE_WARNING_IF_SETTINGS_PERMISSIONS_TO_READ_ONLY_FAILS(replicaDestWithSlashAppended)
         hackyLoadBalancerChangingSourceHehForEachReplicaHeh = replicaDestWithSlashAppended;
     }
 
-    //TODOblah: gpg sign/verify/ANYTHING here?
 
+    //TODOoptional: I suppose this is where the "gpg verify randomly (but in a fashion that ensures each file is verified before looping around (and additionally, each file is 'randomly' verified on EACH replica before the same replica is checked again)) for ~30 mins" would go... because we do need the replicas to be mounted -- any file on any replica doesn't gpg verify = return 1 (don't shutdown. i want to see that shit in the morning asep)
+
+
+    //unmount most replicas
     QSharedPointer<BeforeAndAfterProcessRunner> airGapDriveForTheMuxedCopiesForMorningScript;
     if(!replicaMounts.isEmpty())
     {
@@ -594,12 +650,15 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
 
     //mux
     //oh boy, the hardest part (by far) -- might as well go into OO mode since the muxing part might be re-used and I'd been planning on doing it in Qt anyways...
+#if 0
     if(airGapDriveForTheMuxedCopiesForMorningScript.isNull())
     {
+        //will never happen
         qDebug() << "no replica available for muxing to. done copying to backup drive only";
-        //return 0; -- third time i've flip-flopped on this. we WANT replicas! TODOreq: fail before even starting backup if no replicas in the replica list?
+        //return 0; -- third time i've flip-flopped on this. we WANT replicas! TO DOnereq: fail before even starting backup if no replicas in the replica list?
         return 1;
     }
+#endif
     //mux directly to the usb in temp/dist dir for Morning script (TODOreq: delete them at the end of Morning script)
     QProcess muxSyncProcess;
     muxSyncProcess.setProcessChannelMode(QProcess::ForwardedChannels); //OT'ish: lol i'm dumb for doing this manually (but when i pass them to signals o/e, then i have to do it manually)

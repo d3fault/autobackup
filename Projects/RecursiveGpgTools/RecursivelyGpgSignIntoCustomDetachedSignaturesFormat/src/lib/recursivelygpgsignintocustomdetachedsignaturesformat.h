@@ -25,6 +25,7 @@ private:
     QProcess *m_GpgProcess;
     QTextStream m_GpgProcessTextStream;
     RecursiveCustomDetachedSignaturesFileMeta m_FileMetaCurrentlyBeingGpgSigned;
+    QStringList m_ExcludeEntries;
 
     quint64 m_ExistingSigs;
     quint64 m_AddedSigs;
@@ -39,8 +40,8 @@ signals:
     void e(const QString &msg);
     void doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(bool success);
 public slots:
-    void recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QString &dirToRecursivelySign, const QString &outputSigFilePath, bool forceResigningOfFilesAlreadyPresentInOutputSigFile = false);
-    void recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QDir &dirToRecursivelySign, QIODevice *outputSigIoDevice, bool forceResigningOfFilesAlreadyPresentInOutputSigFile = false);
+    void recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QString &dirToRecursivelySign, const QString &outputSigFilePath, bool forceResigningOfFilesAlreadyPresentInOutputSigFile = false, const QStringList &excludeEntries = QStringList());
+    void recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QDir &dirToRecursivelySign, QIODevice *outputSigIoDevice, bool forceResigningOfFilesAlreadyPresentInOutputSigFile = false, const QStringList &excludeEntries = QStringList());
 private slots:
     void handleGpgProcessError(QProcess::ProcessError processError);
     void handleGpgProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);

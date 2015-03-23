@@ -50,7 +50,9 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
         const QFileInfo &currentEntry = m_DirIterator->fileInfo();
         if(currentEntry.isFile())
         {
-            const QString &relativeFilePath = currentEntry.absoluteFilePath().mid(m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash); //TODOmb: colon and last modified timestamp? maybe I shouldn't mix the two... but eh maybe I should? sign time != modify time, after all...
+            const QString &relativeFilePath = currentEntry.absoluteFilePath().mid(m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash);
+            if(m_ExcludeEntries.contains(relativeFilePath))
+                continue;
             m_FileMetaCurrentlyBeingGpgSigned.FilePath = relativeFilePath;
             m_FileMetaCurrentlyBeingGpgSigned.UnixTimestampInSeconds = (currentEntry.lastModified().toMSecsSinceEpoch() / 1000);
             QHash<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/>::iterator it = m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem.find(relativeFilePath);
@@ -134,7 +136,7 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::spitOutGpgProcessOutp
     emit e(m_GpgProcess->readAllStandardError());
     emit e(m_GpgProcess->readAllStandardOutput());
 }
-void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QString &dirToRecursivelySign, const QString &outputSigFilePath, bool forceResigningOfFilesAlreadyPresentInOutputSigFile)
+void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QString &dirToRecursivelySign, const QString &outputSigFilePath, bool forceResigningOfFilesAlreadyPresentInOutputSigFile, const QStringList &excludeEntries)
 {
     QFile *outputSigFile = new QFile(outputSigFilePath, this);
     if(QFile::exists(outputSigFilePath))
@@ -146,9 +148,9 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignInt
             return;
         }
     }
-    recursivelyGpgSignIntoCustomDetachedSignaturesFormat(dirToRecursivelySign, outputSigFile, forceResigningOfFilesAlreadyPresentInOutputSigFile);
+    recursivelyGpgSignIntoCustomDetachedSignaturesFormat(dirToRecursivelySign, outputSigFile, forceResigningOfFilesAlreadyPresentInOutputSigFile, excludeEntries);
 }
-void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QDir &dirToRecursivelySign, QIODevice *outputSigIoDevice, bool forceResigningOfFilesAlreadyPresentInOutputSigFile) //TODOoptional: --force-resign flag, but non-default. TODOoptional: better than a simple "force-resign" flag, we could store the last modified timestamp on the file path line... and as we iterate, we compare modified timestamps. if they don't match, we re-verify. if the sigs don't match, we notify (and i guess the user could opt to overwriting with the new sig (depends on use case entirely)). if the sig does verify, we 'touch' the file so that it gets it's old timestamp back (alternatively but less likely, we update the last modified timestamp in the sigfile to the one seen on the filesystem... it could be a "whichever is earlier" algorithm... but I think in general I'll want to 'touch' the fs timestamp with the one found in the sigfile)
+void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QDir &dirToRecursivelySign, QIODevice *outputSigIoDevice, bool forceResigningOfFilesAlreadyPresentInOutputSigFile, const QStringList &excludeEntries) //TODOoptional: --force-resign flag, but non-default. TODOoptional: better than a simple "force-resign" flag, we could store the last modified timestamp on the file path line... and as we iterate, we compare modified timestamps. if they don't match, we re-verify. if the sigs don't match, we notify (and i guess the user could opt to overwriting with the new sig (depends on use case entirely)). if the sig does verify, we 'touch' the file so that it gets it's old timestamp back (alternatively but less likely, we update the last modified timestamp in the sigfile to the one seen on the filesystem... it could be a "whichever is earlier" algorithm... but I think in general I'll want to 'touch' the fs timestamp with the one found in the sigfile)
 {
     if(!dirToRecursivelySign.exists())
     {
@@ -162,6 +164,7 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignInt
     m_GpgProcess->setWorkingDirectory(absolutePathOfDirToRecursivelySign);
     m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash = absolutePathOfDirToRecursivelySign.length() + 1; //+1 to account for trailing slash
     m_DirIterator.reset(new QDirIterator(absolutePathOfDirToRecursivelySign, (QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden), QDirIterator::Subdirectories));
+    m_ExcludeEntries = excludeEntries;
     recursivelyGpgSignDirEntriesAndEmitFinishedWhenNoMore(); //pseudo-recursive (async) -- first head call
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::handleGpgProcessError(QProcess::ProcessError processError)

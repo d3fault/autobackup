@@ -288,11 +288,11 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxSyncCurrentVideoFile()
         ffmpegArgs << "-i" << audioFileBeingBuilt;
         if(m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::NormalMode)
         {
-            //TO DOnereq: ffmpegArgs << "-acodec" << "opus" << "-b:a" << "32k" << "-ac" <<  "1";
+            //ffmpegArgs << "-acodec" << "opus" << "-b:a" << "32k" << "-ac" <<  "1"; -- TODOoptional: when there are no intersecting audio files for a given video file, we want -an and to NOT specify acodec etc. hmm actually ffmpeg might handle -an and the audio codecs just fine, *tests*. YEP, ffmpeg handles it fine (gives warning about unused audio bitrate). Still, more proper solution would be to have --add-ffmpeg-audio-arg; changing from req to optional. TODOoptional: maybe we could allow -acodec copy if we encode/mux the silence/etc to whatever the input codec is (or still deal in flac until the very end, then before it's muxed with video encode it). I think since my concat op is a different call different from the generate silence call, I can use acodec copy... but I'm unsure
         }
         else //m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::InteractivelyCalculateAudioDelaysMode
         {
-            ffmpegArgs << "-acodec" << "copy" << "-ac" <<  "1"; //it's already flac
+            ffmpegArgs << "-acodec" << "copy" << "-ac" <<  "1"; //it's already flac. TODOreq: input format needs to be able to support flac, since that's what we mux the flac into during interactive/preview mode. This problem would exist with any codec, not just flac. I could allow the user to specify the preview-video-format/preview-audio-codec (and might as well say preview-vide-codec too). Another solution is to force-reencoding video to some codec/format that can store flac... but then generating a preview might take too long guh no winning
         }
     }
 
@@ -325,9 +325,9 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxSyncCurrentVideoFile()
     }
     else //m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::InteractivelyCalculateAudioDelaysMode
     {
-        ffmpegArgs << "-f" << "matroska";
+        //eh ffmpeg will figure it out from the ext: ffmpegArgs << "-f" << "matroska";
         ffmpegArgs << "-vcodec" << "copy"; //preview fast! we don't care codec! we dont care grammar neether! /rebel
-        muxOutputAbsoluteFilePath += ".mkv";
+        muxOutputAbsoluteFilePath += ("." + m_CurrentVideoFile->VideoFileInfo.suffix());
     }
     ffmpegArgs << "-map" << "0" << mapAudio;
     if(m_TruncateVideosToMsDuration_OrZeroToNotTruncate > 0)

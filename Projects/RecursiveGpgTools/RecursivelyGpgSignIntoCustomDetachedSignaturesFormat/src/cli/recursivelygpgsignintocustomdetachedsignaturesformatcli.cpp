@@ -4,6 +4,9 @@
 
 #include "recursivelygpgsignintocustomdetachedsignaturesformat.h"
 
+#define ERRRRRR { cliUsage(); emit exitRequested(1); return; }
+#define RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli_EXCLUDE_ARG "--exclude"
+
 RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli::RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli(QObject *parent)
     : QObject(parent)
     , m_StdOut(stdout)
@@ -17,13 +20,25 @@ RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli::RecursivelyGpgSignIntoC
     connect(this, &RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli::exitRequested, qApp, &QCoreApplication::exit, Qt::QueuedConnection); //TODOqt4: just eh a method that does the same
 
     QStringList argz = qApp->arguments();
-    if(argz.length() != 3)
+    argz.removeFirst();
+
+    QStringList excludeEntries;
+    int excludeIndex;
+    while((excludeIndex = argz.indexOf(RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli_EXCLUDE_ARG)) > -1)
     {
-        handleE("Usage: RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli dir sigsFile");
-        emit exitRequested(1);
-        return;
+        argz.removeAt(excludeIndex);
+        if(arguments.size() < (muxToExtIndex+1))
+            ERRRRRR
+        excludeEntries << argz.takeAt(excludeIndex);
     }
-    QMetaObject::invokeMethod(recursivelyGpgSignIntoCustomDetachedSignaturesFormat, "recursivelyGpgSignIntoCustomDetachedSignaturesFormat", Q_ARG(QString,argz.at(1)), Q_ARG(QString,argz.at(2)));
+
+    if(argz.length() != 2)
+        ERRRRRR
+    QMetaObject::invokeMethod(recursivelyGpgSignIntoCustomDetachedSignaturesFormat, "recursivelyGpgSignIntoCustomDetachedSignaturesFormat", Q_ARG(QString,argz.at(0)), Q_ARG(QString,argz.at(1)), Q_ARG(bool, false), Q_ARG(QStringList, excludeEntries));
+}
+void RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli::cliUsage()
+{
+    handleE("Usage: RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli dir sigsFile");
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli::handleO(const QString &msg)
 {
