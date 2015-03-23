@@ -34,7 +34,7 @@
 QList<QPair<QString /* replica mount point */, QString /* replica binary root */> > replicas; \
 replicas << qMakePair(QString("/mnt/sdc"), QString("/mnt/sdc" + QString(destPathBinaryRoot))); \
 replicas << qMakePair(QString("/mnt/blackCavalry"), QString("/mnt/blackCavalry" + QString(destPathBinaryRoot)));
-#define airGapReplicaTempDirForMuxedCopies "/mnt/blackCavalry/temp/forMorningScript"
+#define airGapReplicaTempDirForMuxedCopiesRelativeToMountPoint "/temp/forMorningScript"
 
 #define muxerSyncerBinaryFilePath "/home/d3fault/autobackup/Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/build-DirectoriesOfAudioAndVideoFilesMuxerSyncerCli-Desktop_Qt_5_4_1_GCC_64bit-Release/DirectoriesOfAudioAndVideoFilesMuxerSyncerCli"
 #define recursiveGpgSignerBinaryFilePath "/home/d3fault/autobackup/Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/build-RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli-Desktop_Qt_5_4_1_GCC_64bit-Release/RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli"
@@ -459,6 +459,7 @@ tempted to have a 3rd [non-hidden] folder under files/ called "versionedBinaries
 
 TODOopimization: in binaryMeta could be a skeleton hierarchy copy of binary, but in each dir is just a single sigsfile. would just less then amount of re-writing of sigs that haven't changed i'll be doing in this first implementation. and i also need to add some logic to recursive gpg signer "don't rewrite the sigsfile if nothing has been added" (actually that's easy af so i can/should add it now)
 //TODOoptional: intentionally over-use 'append/remove slashes if necessary'... because the user-input'd config may not have slashes in the right place
+//TODOmb: keep N days in the past on audio/video source? knowing what is what becomes a [solvable] issues (could move them into dirs accordingly). it's just in case something goes wrong further down the line... it hopefully would be noticed before those N days. gotta make sure i don't run out of room ofc
 
 maybe the determiner for whether or not text and binaryMeta have the word "Bare" appended is determined by whether or not the drive is a replica
 
@@ -487,12 +488,6 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
         qDebug() << "recursive gpg signer either doesn't exist or isn't executable:" << recursiveGpgSignerBinaryFilePath;
         return 1;
     }
-    QFileInfo airGapReplicaTempDirFileInfo(airGapReplicaTempDirForMuxedCopies);
-    if((!airGapReplicaTempDirFileInfo.exists()) || ((!airGapReplicaTempDirFileInfo.isDir())) || (!airGapReplicaTempDirFileInfo.isWritable()))
-    {
-        qDebug() << "air gap replica temp dir either doesn't exist or isn't a dir or isn't writeable:" << airGapReplicaTempDirForMuxedCopies;
-        return 1;
-    }
 
     //mount all -- TODOreq: ntfs drives need sudo xD
     RETURN_ONE_IF_CMD_RUN_AT_CONSTRUCTOR_OF_SMART_PROCESS_THINGO_FAILS(audioSourceMount, mountCmdPrefix audioSourceMountPoint, umountCmdPrefix audioSourceMountPoint)
@@ -513,6 +508,13 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     if(numReplicasMounted < 1)
     {
         qDebug() << "there weren't at least 1 replicas available"; //TODOoptional: use minReplicas intelligently. entries in the list of replicas should be allowed to not be availalbe (so long as minReplicas is met), whereas right now we error out on the first unavailable replica. also, shuffle() the replicas for load balancing :-P
+        return 1;
+    }
+    QString airGapTempDestPath = replicas.last().second + airGapReplicaTempDirForMuxedCopiesRelativeToMountPoint;
+    QFileInfo airGapReplicaTempDirFileInfo(airGapTempDestPath);
+    if((!airGapReplicaTempDirFileInfo.exists()) || ((!airGapReplicaTempDirFileInfo.isDir())) || (!airGapReplicaTempDirFileInfo.isWritable()))
+    {
+        qDebug() << "air gap replica temp dir either doesn't exist or isn't a dir or isn't writeable:" << airGapTempDestPath;
         return 1;
     }
 
@@ -663,7 +665,7 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     QProcess muxSyncProcess;
     muxSyncProcess.setProcessChannelMode(QProcess::ForwardedChannels); //OT'ish: lol i'm dumb for doing this manually (but when i pass them to signals o/e, then i have to do it manually)
     QStringList muxSyncArgs;
-    muxSyncArgs << backupDestAudioDir_WithSlashAppended << backupDestVideoDir_WithSlashAppended << airGapReplicaTempDirForMuxedCopies << "--use-audio-delays-from-file" << audioDelaysFileName;
+    muxSyncArgs << backupDestAudioDir_WithSlashAppended << backupDestVideoDir_WithSlashAppended << airGapTempDestPath << "--use-audio-delays-from-file" << audioDelaysFileName;
 #define MUX_SYNCER_ADD_FFMPEG_ARG "--add-ffmpeg-arg"
     muxSyncArgs << MUX_SYNCER_ADD_FFMPEG_ARG << "-acodec" << MUX_SYNCER_ADD_FFMPEG_ARG << "opus" << MUX_SYNCER_ADD_FFMPEG_ARG << "-b:a" << MUX_SYNCER_ADD_FFMPEG_ARG << "32k" << MUX_SYNCER_ADD_FFMPEG_ARG << "-ac" <<  MUX_SYNCER_ADD_FFMPEG_ARG << "1" << MUX_SYNCER_ADD_FFMPEG_ARG << "-s" << MUX_SYNCER_ADD_FFMPEG_ARG << "720x480" << MUX_SYNCER_ADD_FFMPEG_ARG << "-b:v" << MUX_SYNCER_ADD_FFMPEG_ARG << "275k" << MUX_SYNCER_ADD_FFMPEG_ARG << "-vcodec" << MUX_SYNCER_ADD_FFMPEG_ARG << "theora" << MUX_SYNCER_ADD_FFMPEG_ARG << "-r" << MUX_SYNCER_ADD_FFMPEG_ARG << "10" << MUX_SYNCER_ADD_FFMPEG_ARG << "-f" << MUX_SYNCER_ADD_FFMPEG_ARG << "segment" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_time" << MUX_SYNCER_ADD_FFMPEG_ARG << "180" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_list_size" << MUX_SYNCER_ADD_FFMPEG_ARG << "999999999" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_wrap" << MUX_SYNCER_ADD_FFMPEG_ARG << "999999999" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_list" << MUX_SYNCER_ADD_FFMPEG_ARG << QString(backupDestVideoDir_WithSlashAppended + "%VIDEOBASENAME%-segmentEntryList.txt") << MUX_SYNCER_ADD_FFMPEG_ARG << "-reset_timestamps" << MUX_SYNCER_ADD_FFMPEG_ARG << "1" << "--mux-to-ext" << "-%d.ogg";
     //TODOreq: lutyuv brightness? being outside maybe not necessary (idfk) -- also: noir for night time shenigans (a realtime preview would come in handy too)!

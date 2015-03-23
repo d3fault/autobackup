@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1427100510
+Documents/minddump/:1427131149
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -2457,6 +2457,7 @@ Documents/minddump/slkfdslfkjlsakdjflsdjflksdjflkjsdflkjweroulsdkfjsdf.txt:13987
 Documents/minddump/slkfjsalkjfdlsdaffskdwerwerasfsdfjfsdofusdlkfjsdlfkj.txt:1360772334
 Documents/minddump/slkfjsdlkjfsdlkjfoiwuerlkjafdousdlfkjwoeiurlkjfoiu.txt:1357937791
 Documents/minddump/slkfjsldkjflksdjflksjdlkfjsdlkfjskldjfklsjdklfjsdlkfjdsflkjsdlkfjsldkfjsldkfjdlkjf.txt:1421449684
+Documents/minddump/slkfjslkdfjklsdjfklsdjfklsdjfkljsdkfljlkfjlksjdflkjslkdfjsdlkjf.txt:1427131170
 Documents/minddump/slkfjslkdjflksdjfjsdfjsdlkfjlksdjflksjdflkjdouwerkjsdfljfdlkjsdf.txt:1426824726
 Documents/minddump/slkjfdlskajdfosudflsajfosuaflsjdfousfljsofusfdoulsjdfousdflk.txt:1390303637
 Documents/minddump/so.fucking.high.txt:1344456089
@@ -2834,9 +2835,9 @@ Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/Sft
 Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/main.cpp:1426017680
 Projects/AVMuxScript/Night/:1426497390
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/:1426844447
-Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/:1427125406
+Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/:1427130390
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/BackupReplicateDeleteMuxAndUmountCli.pro:1427089056
-Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/main.cpp:1427122882
+Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/main.cpp:1427129769
 Projects/AVMuxScript/Night/backupReplicateDeleteMuxUmountAndShutTheFuckDown.sh:1426497268
 Projects/AVMuxScript/design/:1426466748
 Projects/AVMuxScript/design/initial.design.aka.rambling.txt:1425923027
@@ -3172,7 +3173,7 @@ Projects/DesignEqualsImplementation2/src/libclangpch.h:1409068915
 Projects/DesignEqualsImplementation2/src/signalemissionorslotinvocationcontextvariables.cpp:1409796472
 Projects/DesignEqualsImplementation2/src/signalemissionorslotinvocationcontextvariables.h:1409796463
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/:1427089086
-Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/:1427125433
+Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/:1427125626
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/cli/:1427110530
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/cli/directoriesofaudioandvideofilesmuxersyncercli.cpp:1427110530
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/cli/directoriesofaudioandvideofilesmuxersyncercli.h:1426978913
@@ -4581,10 +4582,10 @@ Projects/RecursiveFileStringReplaceRenamer/src/lib/recursivefilestringreplaceren
 Projects/RecursiveGpgTools/:1426487982
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/:1426417651
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/:1427110838
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/:1427125421
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/:1427125693
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli.pro:1426424895
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/main.cpp:1426424959
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/recursivelygpgsignintocustomdetachedsignaturesformatcli.cpp:1427117072
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/recursivelygpgsignintocustomdetachedsignaturesformatcli.cpp:1427125686
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/recursivelygpgsignintocustomdetachedsignaturesformatcli.h:1427116744
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/:1427117375
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/recursivelygpgsignintocustomdetachedsignaturesformat.cpp:1427117375
@@ -5748,4 +5749,4 @@ licenses/license.dpl.txt:1388242176
 .gitignore:1425055833
 copyright.txt:1388203681
 license.dpl.txt:1388242176
-todo.txt:1426505580
+todo.txt:1427130256

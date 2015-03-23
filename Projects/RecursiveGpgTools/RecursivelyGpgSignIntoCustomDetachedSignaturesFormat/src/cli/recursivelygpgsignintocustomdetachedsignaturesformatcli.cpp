@@ -20,14 +20,14 @@ RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli::RecursivelyGpgSignIntoC
     connect(this, &RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli::exitRequested, qApp, &QCoreApplication::exit, Qt::QueuedConnection); //TODOqt4: just eh a method that does the same
 
     QStringList argz = qApp->arguments();
-    argz.removeFirst();
+    argz.removeFirst(); //app filename
 
     QStringList excludeEntries;
     int excludeIndex;
     while((excludeIndex = argz.indexOf(RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli_EXCLUDE_ARG)) > -1)
     {
         argz.removeAt(excludeIndex);
-        if(arguments.size() < (muxToExtIndex+1))
+        if(argz.size() < (excludeIndex+1))
             ERRRRRR
         excludeEntries << argz.takeAt(excludeIndex);
     }
