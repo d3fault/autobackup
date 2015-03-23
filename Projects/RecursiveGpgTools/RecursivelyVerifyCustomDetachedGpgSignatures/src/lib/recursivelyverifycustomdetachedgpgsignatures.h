@@ -27,7 +27,7 @@ private:
 
     quint64 m_NumFilesVerified;
 
-    void buildListOfFilesOnFsToSeeIfAnyAreMissingSigs(const QDir &dir);
+    void buildListOfFilesOnFsToSeeIfAnyAreMissingSigs(const QDir &dir, const QStringList &excludeEntries = QStringList());
     void verifyNextEntryOfCustomDetachedOrEmitFinishedIfNoMore();
     bool readPathAndSignature(QString *out_FilePathToVerify, QString *out_CurrentFileSignature);
     void verifyFileSignatureAndThenContinueOntoNextEntryOfCustomDetached();
@@ -37,8 +37,8 @@ signals:
     void e(const QString &msg);
     void doneRecursivelyVerifyCustomDetachedGpgSignatures(bool success);
 public slots:
-    void recursivelyVerifyCustomDetachedGpgSignatures(const QString &dir, const QString &customDetachedSignaturesFile /*TODOoptional: read from stdin*/);
-    void recursivelyVerifyCustomDetachedGpgSignatures(const QDir &dir, QIODevice *customDetachedSignaturesIoDevice);
+    void recursivelyVerifyCustomDetachedGpgSignatures(const QString &dir, const QString &customDetachedSignaturesFile /*TODOoptional: read from stdin*/, const QStringList &excludeEntries = QStringList());
+    void recursivelyVerifyCustomDetachedGpgSignatures(const QDir &dir, QIODevice *customDetachedSignaturesIoDevice, const QStringList &excludeEntries = QStringList());
 private slots:
     void handleGpgProcessError(QProcess::ProcessError processError);
     void handleGpgProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);

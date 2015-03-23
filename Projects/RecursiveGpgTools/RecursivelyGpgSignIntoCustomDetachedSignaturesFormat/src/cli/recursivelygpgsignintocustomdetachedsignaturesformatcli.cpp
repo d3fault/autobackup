@@ -5,7 +5,6 @@
 #include "recursivelygpgsignintocustomdetachedsignaturesformat.h"
 
 #define ERRRRRR { cliUsage(); emit exitRequested(1); return; }
-#define RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli_EXCLUDE_ARG "--exclude"
 
 RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli::RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli(QObject *parent)
     : QObject(parent)
@@ -24,7 +23,7 @@ RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli::RecursivelyGpgSignIntoC
 
     QStringList excludeEntries;
     int excludeIndex;
-    while((excludeIndex = argz.indexOf(RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli_EXCLUDE_ARG)) > -1)
+    while((excludeIndex = argz.indexOf(RecursiveGpgTools_EXCLUDE_ARG)) > -1)
     {
         argz.removeAt(excludeIndex);
         if(argz.size() < (excludeIndex+1))
@@ -39,6 +38,8 @@ RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli::RecursivelyGpgSignIntoC
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli::cliUsage()
 {
     handleE("Usage: RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli dir sigsFile");
+    handleE("");
+    handleE(RecursiveGpgTools_EXCLUDE_ARG "\tExclude files. Specified as a path relative to the dir to recursively verify (without a leading './'). You can use this flag multiple times. Note, it only affects files on the filesystem not yet in the sigsfile. It does not suppress the warning 'file x was in sigsfile but not on filesystem'"); //TODOoptional: allow excludings sigs in sigsfile not on fs (to suppress that warning)
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli::handleO(const QString &msg)
 {

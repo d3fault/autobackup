@@ -139,8 +139,24 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::spitOutGpgProcessOutp
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QString &dirToRecursivelySign, const QString &outputSigFilePath, bool forceResigningOfFilesAlreadyPresentInOutputSigFile, const QStringList &excludeEntries)
 {
     QFile *outputSigFile = new QFile(outputSigFilePath, this);
-    if(QFile::exists(outputSigFilePath))
+    QFileInfo outputSigFileInfo(*outputSigFile);
+    const QString &absolutePathOfDirToRecursivelySign_WithSlashAppended = appendSlashIfNeeded(dirToRecursivelySign);
+    const QString &outputSigsFileAbsolutePath = outputSigFileInfo.absoluteFilePath();
+    QStringList excludeEntriesWithOutputSigsFilePossiblyAddedToExclusionList = excludeEntries; //cow
+    if(outputSigsFileAbsolutePath.startsWith(absolutePathOfDirToRecursivelySign_WithSlashAppended))
     {
+        //output sigs file is in target dir, so exclude it
+        QString outputSigsFileRelativePath = outputSigsFileAbsolutePath.mid(absolutePathOfDirToRecursivelySign_WithSlashAppended.length());
+        excludeEntriesWithOutputSigsFilePossiblyAddedToExclusionList << outputSigsFileRelativePath;
+    }
+    if(outputSigFileInfo.exists())
+    {
+        if(!outputSigFileInfo.isFile())
+        {
+            emit e("sigsfile exists but is not a file");
+            emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
+            return;
+        }
         if(!outputSigFile->open(QIODevice::ReadOnly | QIODevice::Text))
         {
             emit e("failed to open sig file for reading: " + outputSigFilePath);
@@ -148,7 +164,7 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignInt
             return;
         }
     }
-    recursivelyGpgSignIntoCustomDetachedSignaturesFormat(dirToRecursivelySign, outputSigFile, forceResigningOfFilesAlreadyPresentInOutputSigFile, excludeEntries);
+    recursivelyGpgSignIntoCustomDetachedSignaturesFormat(dirToRecursivelySign, outputSigFile, forceResigningOfFilesAlreadyPresentInOutputSigFile, excludeEntriesWithOutputSigsFilePossiblyAddedToExclusionList);
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QDir &dirToRecursivelySign, QIODevice *outputSigIoDevice, bool forceResigningOfFilesAlreadyPresentInOutputSigFile, const QStringList &excludeEntries) //TODOoptional: --force-resign flag, but non-default. TODOoptional: better than a simple "force-resign" flag, we could store the last modified timestamp on the file path line... and as we iterate, we compare modified timestamps. if they don't match, we re-verify. if the sigs don't match, we notify (and i guess the user could opt to overwriting with the new sig (depends on use case entirely)). if the sig does verify, we 'touch' the file so that it gets it's old timestamp back (alternatively but less likely, we update the last modified timestamp in the sigfile to the one seen on the filesystem... it could be a "whichever is earlier" algorithm... but I think in general I'll want to 'touch' the fs timestamp with the one found in the sigfile)
 {

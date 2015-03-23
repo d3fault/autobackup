@@ -13,6 +13,8 @@ private:
     QTextStream m_StdOut;
     QTextStream m_StdErr;
     bool m_Quitting;
+
+    void cliUsage();
 signals:
     void exitRequested(int exitCode);
 private slots:

@@ -4,6 +4,8 @@
 
 #include "recursivelyverifycustomdetachedgpgsignatures.h"
 
+#define ERRRRRR { cliUsage(); emit exitRequested(1); return; }
+
 RecursivelyVerifyCustomDetachedGpgSignaturesCli::RecursivelyVerifyCustomDetachedGpgSignaturesCli(QObject *parent)
     : QObject(parent)
     , m_StdOut(stdout)
@@ -17,13 +19,27 @@ RecursivelyVerifyCustomDetachedGpgSignaturesCli::RecursivelyVerifyCustomDetached
     connect(this, &RecursivelyVerifyCustomDetachedGpgSignaturesCli::exitRequested, qApp, &QCoreApplication::exit, Qt::QueuedConnection); //TODOqt4: just eh a method that does the same
 
     QStringList argz = qApp->arguments();
-    if(argz.length() != 3)
+    argz.removeFirst(); //app filename
+
+    QStringList excludeEntries;
+    int excludeIndex;
+    while((excludeIndex = argz.indexOf(RecursiveGpgTools_EXCLUDE_ARG)) > -1)
     {
-        handleE("Usage: VerifyCustomDetachedGpgSignaturesCli dir sigsFile");
-        emit exitRequested(1);
-        return;
+        argz.removeAt(excludeIndex);
+        if(argz.size() < (excludeIndex+1))
+            ERRRRRR
+        excludeEntries << argz.takeAt(excludeIndex);
     }
-    QMetaObject::invokeMethod(recursivelyVerifyCustomDetachedGpgSignatures, "recursivelyVerifyCustomDetachedGpgSignatures", Q_ARG(QString,argz.at(1)), Q_ARG(QString,argz.at(2)));
+
+    if(argz.length() != 2)
+        ERRRRRR
+    QMetaObject::invokeMethod(recursivelyVerifyCustomDetachedGpgSignatures, "recursivelyVerifyCustomDetachedGpgSignatures", Q_ARG(QString,argz.at(0)), Q_ARG(QString,argz.at(1)), Q_ARG(QStringList, excludeEntries));
+}
+void RecursivelyVerifyCustomDetachedGpgSignaturesCli::cliUsage()
+{
+    handleE("Usage: VerifyCustomDetachedGpgSignaturesCli dir sigsFile");
+    handleE("");
+    handleE(RecursiveGpgTools_EXCLUDE_ARG "\tExclude files. Specified as a path relative to the dir to recursively verify (without a leading './'). You can use this flag multiple times. Note, it only affects files on the filesystem. ie, suppresses the warning 'file x was on filesystem but not in sigs file'. It does not exclude any entry in the sigsfile"); //TODOoptional: exclude entries in sigs file
 }
 void RecursivelyVerifyCustomDetachedGpgSignaturesCli::handleO(const QString &msg)
 {

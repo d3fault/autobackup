@@ -7,6 +7,7 @@
 #include <QDirIterator>
 #include <QDateTime>
 
+//TODOreq: exclude flag
 //TODOoptional: they can pass in a path to recurse (skipping the rest), or hell even a list of paths/files, and of course the opposite holds true: excludes
 RecursivelyVerifyCustomDetachedGpgSignatures::RecursivelyVerifyCustomDetachedGpgSignatures(QObject *parent)
     : QObject(parent)
@@ -21,7 +22,7 @@ RecursivelyVerifyCustomDetachedGpgSignatures::RecursivelyVerifyCustomDetachedGpg
     connect(m_GpgProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(handleGpgProcessError(QProcess::ProcessError)));
     connect(m_GpgProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(handleGpgProcessFinished(int,QProcess::ExitStatus)));
 }
-void RecursivelyVerifyCustomDetachedGpgSignatures::buildListOfFilesOnFsToSeeIfAnyAreMissingSigs(const QDir &dir)
+void RecursivelyVerifyCustomDetachedGpgSignatures::buildListOfFilesOnFsToSeeIfAnyAreMissingSigs(const QDir &dir, const QStringList &excludeEntries)
 {
     //TODOoptimization: since this app is already asynchronous, it would be "neat" if the building of this list was ALSO asynchronous. basically do one directory at a time, with a QMetaObject::invokeMethod using QQueuedConnection to schedule the generating of the next directory... so that the building of this list, and the verifying of gpg sigs and subsequent removal from this list being asynchronously built, could be done in a MEMORY EFFICIENT manner (if the dir was huuuuuuuuuge, it might actually be noticeable). In that design, when a gpg sig finishes verifying and it isn't seen in this list we are asynchronously building (not because it doesn't exist (it must or the verify will fail), but simply because we haven't gotten to that directory yet), we should put it in a separate list that is checked against before entries are added into this main list being built here ("list of files on filesystem")... and of course once the async fs gen does encounter an already verified file, it simply removes the entry from that additional list
 
@@ -35,7 +36,10 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::buildListOfFilesOnFsToSeeIfAn
         const QFileInfo &currentEntry = dirIterator.fileInfo();
         if(currentEntry.isFile())
         {
-            m_FilesOnFsToSeeIfAnyAreMissingSigsAndToCheckLastModifiedTImestampsAgainst.insert(currentEntry.filePath().mid(m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash), (currentEntry.lastModified().toMSecsSinceEpoch() / 1000));
+            const QString &currentEntryRelativePath = currentEntry.filePath().mid(m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash);
+            if(excludeEntries.contains(currentEntryRelativePath))
+                continue;
+            m_FilesOnFsToSeeIfAnyAreMissingSigsAndToCheckLastModifiedTImestampsAgainst.insert(currentEntryRelativePath, (currentEntry.lastModified().toMSecsSinceEpoch() / 1000));
         }
     }
 }
@@ -101,19 +105,29 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::spitOutGpgProcessOutput()
 {
     emit e(m_GpgProcessTextStream.readAll());
 }
-void RecursivelyVerifyCustomDetachedGpgSignatures::recursivelyVerifyCustomDetachedGpgSignatures(const QString &dir, const QString &customDetachedSignaturesFile)
+void RecursivelyVerifyCustomDetachedGpgSignatures::recursivelyVerifyCustomDetachedGpgSignatures(const QString &dir, const QString &customDetachedSignaturesFile, const QStringList &excludeEntries)
 {
     QDir myDir(dir);
     QFile *myFile = new QFile(customDetachedSignaturesFile, this);
+    QFileInfo inputSigFileInfo(*myFile);
+    const QString &absolutePathOfDirToRecursivelyVerify_WithSlashAppended = appendSlashIfNeeded(dir);
+    const QString &inputSigsFileAbsolutePath = inputSigFileInfo.absoluteFilePath();
+    QStringList excludeEntriesWithInputSigsFilePossiblyAddedToExclusionList = excludeEntries; //cow
+    if(inputSigsFileAbsolutePath.startsWith(absolutePathOfDirToRecursivelyVerify_WithSlashAppended))
+    {
+        //input sigs file is in target dir, so exclude it
+        QString inputSigsFileRelativePath = inputSigsFileAbsolutePath.mid(absolutePathOfDirToRecursivelyVerify_WithSlashAppended.length());
+        excludeEntriesWithInputSigsFilePossiblyAddedToExclusionList << inputSigsFileRelativePath;
+    }
     if(!myFile->open(QIODevice::ReadOnly | QIODevice::Text))
     {
         emit e("failed to open for reading: " + customDetachedSignaturesFile);
         emit doneRecursivelyVerifyCustomDetachedGpgSignatures(false);
         return;
     }
-    recursivelyVerifyCustomDetachedGpgSignatures(myDir, myFile);
+    recursivelyVerifyCustomDetachedGpgSignatures(myDir, myFile, excludeEntriesWithInputSigsFilePossiblyAddedToExclusionList);
 }
-void RecursivelyVerifyCustomDetachedGpgSignatures::recursivelyVerifyCustomDetachedGpgSignatures(const QDir &dir, QIODevice *customDetachedSignaturesIoDevice)
+void RecursivelyVerifyCustomDetachedGpgSignatures::recursivelyVerifyCustomDetachedGpgSignatures(const QDir &dir, QIODevice *customDetachedSignaturesIoDevice,  const QStringList &excludeEntries)
 {
     if(!dir.exists())
     {
@@ -121,7 +135,7 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::recursivelyVerifyCustomDetach
         emit doneRecursivelyVerifyCustomDetachedGpgSignatures(false);
         return;
     }
-    buildListOfFilesOnFsToSeeIfAnyAreMissingSigs(dir);
+    buildListOfFilesOnFsToSeeIfAnyAreMissingSigs(dir, excludeEntries);
     m_CustomDetachedSignaturesStream.setDevice(customDetachedSignaturesIoDevice);
     m_GpgProcess->setWorkingDirectory(dir.absolutePath());
     verifyNextEntryOfCustomDetachedOrEmitFinishedIfNoMore(); //pseudo-recursive (async) -- first head call

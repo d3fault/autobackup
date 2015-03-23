@@ -6,6 +6,7 @@
 #include <QTextStream>
 
 #define GPG_DEFAULT_PATH "/usr/bin/gpg" //TODOoptional: custom path as arg
+#define RecursiveGpgTools_EXCLUDE_ARG "--exclude"
 
 struct RecursiveCustomDetachedSignaturesFileMeta //POD
 {
