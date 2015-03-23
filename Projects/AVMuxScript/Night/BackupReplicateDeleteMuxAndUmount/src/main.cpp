@@ -32,8 +32,8 @@
 //NOTE: the _last_ replica in this list is used as the "air gap" drive (passed to morning script). no replicas are necessary, and no mux/sync'ing is done if none are available
 #define allReplicas \
 QList<QPair<QString /* replica mount point */, QString /* replica binary root */> > replicas; \
-replicas << qMakePair(QString("/mnt/sdc"), QString("/mnt/sdc" + QString(destPathBinaryRoot))); \
-replicas << qMakePair(QString("/mnt/blackCavalry"), QString("/mnt/blackCavalry" + QString(destPathBinaryRoot)));
+replicas << qMakePair(QString("/mnt/sdc"), QString("/mnt/sdc" + QString(destPathBinaryRoot)));
+//replicas << qMakePair(QString("/mnt/blackCavalry"), QString("/mnt/blackCavalry" + QString(destPathBinaryRoot)));
 #define airGapReplicaTempDirForMuxedCopiesRelativeToMountPoint "/temp/forMorningScript"
 
 #define muxerSyncerBinaryFilePath "/home/d3fault/autobackup/Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/build-DirectoriesOfAudioAndVideoFilesMuxerSyncerCli-Desktop_Qt_5_4_1_GCC_64bit-Release/DirectoriesOfAudioAndVideoFilesMuxerSyncerCli"
@@ -67,7 +67,6 @@ static bool runProcess(const QString &cmd, const QString &workingDirectory_OrEmp
         process.setWorkingDirectory(workingDirectory_OrEmptyStringIfToNotSet);
     }
     //process.setProcessChannelMode(QProcess::MergedChannels);
-    qDebug() << "running command:" << cmd;
     process.start(cmd);
     if(!process.waitForStarted(-1))
     {
@@ -387,8 +386,14 @@ replicaDirs << aSharedPointer;
     } \
 }
 
+#define RETURN_ONE_IF_RSYNC_SINGLE_FILE_FAILS(theSrcDir, theSrcFilePathRelativeToSrcDir, theDestDirWithSlashAppended_OrDestFilePath) \
+if(!runProcess(QString(rsyncCmdPrefix " ./") + theSrcFilePathRelativeToSrcDir + QString(" ") + theDestDirWithSlashAppended_OrDestFilePath, theSrcDir)) \
+{ \
+    qDebug() << "failed to copy:" << theSrcFilePathRelativeToSrcDir << "to:" << theDestDirWithSlashAppended_OrDestFilePath; \
+    return 1; \
+}
+
 #define RETURN_ONE_IF_PUTTING_AUDIO_DELAYS_FILE_NEXT_TO_A_V_FOLDERS_FAILS(theAudioDelaysFile, targetAudioDelaysFilePath) \
-/*first check it isn't empty*/ \
 QFile audioDelaysFileEmptyChecker(theAudioDelaysFile.fileName()); \
 if(!audioDelaysFileEmptyChecker.open(QIODevice::ReadOnly | QIODevice::Text)) \
 { \
@@ -397,7 +402,7 @@ if(!audioDelaysFileEmptyChecker.open(QIODevice::ReadOnly | QIODevice::Text)) \
 } \
 bool audioDelaysFileIsEmpty = true; \
 { \
-    QTextStream audioDelaysFileTextStream(&audioDelaysFile); \
+    QTextStream audioDelaysFileTextStream(&audioDelaysFileEmptyChecker); \
     while(!audioDelaysFileTextStream.atEnd()) \
     { \
         if(!audioDelaysFileTextStream.readLine().isEmpty()) \
@@ -410,15 +415,12 @@ bool audioDelaysFileIsEmpty = true; \
 audioDelaysFileEmptyChecker.close(); \
 if(!audioDelaysFileIsEmpty) \
 { \
-    if(QFile::rename(theAudioDelaysFile.fileName(), targetAudioDelaysFilePath)) \
-    { \
-        theAudioDelaysFile.setAutoRemove(false); \
-    } \
-    else \
-    { \
-        qDebug() << "failed to rename audio delays file from '" << theAudioDelaysFile.fileName() << "' to '" << targetAudioDelaysFilePath << "'"; \
-        return 1; \
-    } \
+    QFileInfo theAudioDelayFileInfo(theAudioDelaysFile.fileName()); \
+    RETURN_ONE_IF_RSYNC_SINGLE_FILE_FAILS(theAudioDelayFileInfo.absolutePath(), theAudioDelayFileInfo.fileName(), targetAudioDelaysFilePath) \
+} \
+else \
+{ \
+    qDebug() << "audio delays file was empty, so not moving:" << theAudioDelaysFile.fileName(); \
 }
 
 QString appendSlashIfNeeded(const QString &inputString)
@@ -473,7 +475,6 @@ files/.meta/text (maybe this dir doesn't exist, but i was thinking of putting .l
 int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardcoded list of replicas (or hell, provided via args even). we TRY to replicate to all of them (maybe a hardcoded max + randomization of which we select), but error out before even starting if at least minNumReplicas can't be mounted/replicated-to)
 {
     QCoreApplication a(argc, argv);
-    return 1;
 
     QFileInfo muxerSyncerBinaryFileInfo(muxerSyncerBinaryFilePath);
     if((!muxerSyncerBinaryFileInfo.exists()) || (!muxerSyncerBinaryFileInfo.isExecutable()))
@@ -510,11 +511,11 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
         qDebug() << "there weren't at least 1 replicas available"; //TODOoptional: use minReplicas intelligently. entries in the list of replicas should be allowed to not be availalbe (so long as minReplicas is met), whereas right now we error out on the first unavailable replica. also, shuffle() the replicas for load balancing :-P
         return 1;
     }
-    QString airGapTempDestPath = replicas.last().second + airGapReplicaTempDirForMuxedCopiesRelativeToMountPoint;
-    QFileInfo airGapReplicaTempDirFileInfo(airGapTempDestPath);
+    QString airGapTempDestRoot = replicas.last().first + airGapReplicaTempDirForMuxedCopiesRelativeToMountPoint;
+    QFileInfo airGapReplicaTempDirFileInfo(airGapTempDestRoot);
     if((!airGapReplicaTempDirFileInfo.exists()) || ((!airGapReplicaTempDirFileInfo.isDir())) || (!airGapReplicaTempDirFileInfo.isWritable()))
     {
-        qDebug() << "air gap replica temp dir either doesn't exist or isn't a dir or isn't writeable:" << airGapTempDestPath;
+        qDebug() << "air gap replica temp dir either doesn't exist or isn't a dir or isn't writeable:" << airGapTempDestRoot;
         return 1;
     }
 
@@ -528,8 +529,9 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     replicasIterator.toFront();
     while(replicasIterator.hasNext())
     {
-        const QString &currentReplicasBaseDir = replicasIterator.next().second;
-        RETURN_ONE_IF_DIR_IS_NOT_GOOD(currentReplicasBaseDir)
+        const QPair<QString,QString> &currentReplica = replicasIterator.next();
+        RETURN_ONE_IF_DIR_IS_NOT_GOOD(currentReplica.first)
+        RETURN_ONE_IF_DIR_IS_NOT_GOOD(currentReplica.second)
     }
 
 
@@ -554,9 +556,12 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     QList<QSharedPointer<AutoRemovingDirMker> > replicaDirs;
     while(replicasIterator.hasNext())
     {
-        QString replicaBackupDest_WithSlashAppended = removeTrailingSlashIfNeeded(replicasIterator.next().second) + outsidePathRelativeToMountPoint + backupDestNewSubDir_WithSlashAppended;
+        QString replicaBackupDest_WithSlashAppended = removeTrailingSlashIfNeeded(replicasIterator.next().first) + outsidePathRelativeToMountPoint + backupDestNewSubDir_WithSlashAppended;
         RETURN_ONE_IF_MKDIR_AT_CONSTRUCTOR_OF_SMART_MKDIR_THINGO_FAILS_LIST_VARIANT(replicaDirs, replicaBackupDest_WithSlashAppended)
     }
+    //do the same, but for the air gap replica
+    QString airGapTempDestPath = airGapTempDestRoot + backupDestNewSubDir_WithSlashAppended;
+    RETURN_ONE_IF_MKDIR_AT_CONSTRUCTOR_OF_SMART_MKDIR_THINGO_FAILS(newlyMadeAirGapTempDestDir, airGapTempDestPath)
 
 
     //since every mkdir succeeded, set "autoRemove" on the dirs to false (it would fail if there's content in it anyways, but still) -- TODOmb: should this go later, after the backup (and/or replicate (respectively))? if a copy fails mid-list-of-files, having it be auto-remove would fail since it's just rmdir'ing, idfk how i want it to fail
@@ -569,6 +574,7 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     {
         replicaDirsIterator.next()->AutoRemove = false;
     }
+    newlyMadeAirGapTempDestDir->AutoRemove = false;
 
 
     //============DO THE ACTUAL BACKUP=========
@@ -580,6 +586,7 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     //backup the audio delays file next to the a and v folders
     QString audioDelaysFileName = backupDest_WithSlashAppended + "audioDelays.ini";
     RETURN_ONE_IF_PUTTING_AUDIO_DELAYS_FILE_NEXT_TO_A_V_FOLDERS_FAILS(audioDelaysFile, audioDelaysFileName)
+    /*first check it isn't empty*/
 
 
     //try to set to read-only, buys just a tiny bit of overwrite protection
@@ -611,18 +618,14 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
 
     //replicate
     replicasIterator.toFront();
-    QString hackyLoadBalancerChangingSourceHehForEachReplicaHeh = backupDest_WithSlashAppended; //at first backup dest is used as src, but then we use the first replica as the source, and so on. TODOoptional: a flag for a replica "don't use as source in load balancing" (usb [2.0] drives) -- atm I only have one replica usb drive and it's the very last replica anyways lolol
+    QString hackyLoadBalancerChangingSourceHehForEachReplicaHeh = backupMountPoint destPathBinaryRoot; //at first backup dest is used as src, but then we use the first replica as the source, and so on. TODOoptional: a flag for a replica "don't use as source in load balancing" (usb [2.0] drives) -- atm I only have one replica usb drive and it's the very last replica anyways lolol
     while(replicasIterator.hasNext())
     {
         const QPair<QString,QString> &currentReplica = replicasIterator.next();
         QString replicaDestWithSlashAppended = appendSlashIfNeeded(currentReplica.second);
         RETURN_ONE_IF_RSYNC_COPY_CMD_FAILS(hackyLoadBalancerChangingSourceHehForEachReplicaHeh, replicaDestWithSlashAppended)
         //replicate the sigs file (it was excluded from the regular replicate command because we DON'T want to backup-on-overwrite it
-        if(!runProcess(rsyncCmdPrefix " ./" allSigsFileName " " + replicaDestWithSlashAppended, hackyLoadBalancerChangingSourceHehForEachReplicaHeh))
-        {
-            qDebug() << "failed to replicate:" << allSigsFileName << "to:" << replicaDestWithSlashAppended;
-            return 1;
-        }
+        RETURN_ONE_IF_RSYNC_SINGLE_FILE_FAILS(hackyLoadBalancerChangingSourceHehForEachReplicaHeh, allSigsFileName, replicaDestWithSlashAppended)
         GIVE_WARNING_IF_SETTINGS_PERMISSIONS_TO_READ_ONLY_FAILS(replicaDestWithSlashAppended)
         hackyLoadBalancerChangingSourceHehForEachReplicaHeh = replicaDestWithSlashAppended;
     }
@@ -667,7 +670,7 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     QStringList muxSyncArgs;
     muxSyncArgs << backupDestAudioDir_WithSlashAppended << backupDestVideoDir_WithSlashAppended << airGapTempDestPath << "--use-audio-delays-from-file" << audioDelaysFileName;
 #define MUX_SYNCER_ADD_FFMPEG_ARG "--add-ffmpeg-arg"
-    muxSyncArgs << MUX_SYNCER_ADD_FFMPEG_ARG << "-acodec" << MUX_SYNCER_ADD_FFMPEG_ARG << "opus" << MUX_SYNCER_ADD_FFMPEG_ARG << "-b:a" << MUX_SYNCER_ADD_FFMPEG_ARG << "32k" << MUX_SYNCER_ADD_FFMPEG_ARG << "-ac" <<  MUX_SYNCER_ADD_FFMPEG_ARG << "1" << MUX_SYNCER_ADD_FFMPEG_ARG << "-s" << MUX_SYNCER_ADD_FFMPEG_ARG << "720x480" << MUX_SYNCER_ADD_FFMPEG_ARG << "-b:v" << MUX_SYNCER_ADD_FFMPEG_ARG << "275k" << MUX_SYNCER_ADD_FFMPEG_ARG << "-vcodec" << MUX_SYNCER_ADD_FFMPEG_ARG << "theora" << MUX_SYNCER_ADD_FFMPEG_ARG << "-r" << MUX_SYNCER_ADD_FFMPEG_ARG << "10" << MUX_SYNCER_ADD_FFMPEG_ARG << "-f" << MUX_SYNCER_ADD_FFMPEG_ARG << "segment" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_time" << MUX_SYNCER_ADD_FFMPEG_ARG << "180" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_list_size" << MUX_SYNCER_ADD_FFMPEG_ARG << "999999999" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_wrap" << MUX_SYNCER_ADD_FFMPEG_ARG << "999999999" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_list" << MUX_SYNCER_ADD_FFMPEG_ARG << QString(backupDestVideoDir_WithSlashAppended + "%VIDEOBASENAME%-segmentEntryList.txt") << MUX_SYNCER_ADD_FFMPEG_ARG << "-reset_timestamps" << MUX_SYNCER_ADD_FFMPEG_ARG << "1" << "--mux-to-ext" << "-%d.ogg";
+    muxSyncArgs << MUX_SYNCER_ADD_FFMPEG_ARG << "-acodec" << MUX_SYNCER_ADD_FFMPEG_ARG << "opus" << MUX_SYNCER_ADD_FFMPEG_ARG << "-b:a" << MUX_SYNCER_ADD_FFMPEG_ARG << "32k" << MUX_SYNCER_ADD_FFMPEG_ARG << "-ac" <<  MUX_SYNCER_ADD_FFMPEG_ARG << "1" << MUX_SYNCER_ADD_FFMPEG_ARG << "-s" << MUX_SYNCER_ADD_FFMPEG_ARG << "720x480" << MUX_SYNCER_ADD_FFMPEG_ARG << "-b:v" << MUX_SYNCER_ADD_FFMPEG_ARG << "275k" << MUX_SYNCER_ADD_FFMPEG_ARG << "-vcodec" << MUX_SYNCER_ADD_FFMPEG_ARG << "theora" << MUX_SYNCER_ADD_FFMPEG_ARG << "-r" << MUX_SYNCER_ADD_FFMPEG_ARG << "10" << MUX_SYNCER_ADD_FFMPEG_ARG << "-f" << MUX_SYNCER_ADD_FFMPEG_ARG << "segment" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_time" << MUX_SYNCER_ADD_FFMPEG_ARG << "180" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_list_size" << MUX_SYNCER_ADD_FFMPEG_ARG << "999999999" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_wrap" << MUX_SYNCER_ADD_FFMPEG_ARG << "999999999" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_list" << MUX_SYNCER_ADD_FFMPEG_ARG << QString(airGapTempDestPath + "/%VIDEOBASENAME%-segmentEntryList.txt") << MUX_SYNCER_ADD_FFMPEG_ARG << "-reset_timestamps" << MUX_SYNCER_ADD_FFMPEG_ARG << "1" << "--mux-to-ext" << "-%d.ogg";
     //TODOreq: lutyuv brightness? being outside maybe not necessary (idfk) -- also: noir for night time shenigans (a realtime preview would come in handy too)!
     muxSyncProcess.start(muxerSyncerBinaryFilePath, muxSyncArgs);
     if(!muxSyncProcess.waitForStarted(-1))

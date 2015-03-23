@@ -97,7 +97,7 @@ DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::DirectoriesOfAudioAndVideoFilesMu
 
     QStringList additionalFfmpegArgs;
     int addFfmpegArgIndex;
-    while((addFfmpegArgIndex = arguments.indexOf(DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_ADD_FFMPEG_ARG_ARG) > -1))
+    while((addFfmpegArgIndex = arguments.indexOf(DirectoriesOfAudioAndVideoFilesMuxerSyncerCli_ADD_FFMPEG_ARG_ARG)) > -1)
     {
         arguments.removeAt(addFfmpegArgIndex);
         if(arguments.size() < (addFfmpegArgIndex+1))
@@ -117,20 +117,20 @@ DirectoriesOfAudioAndVideoFilesMuxerSyncerCli::DirectoriesOfAudioAndVideoFilesMu
 
 
 #if 1 //fff keeping qcoreapp out of this class means i haven't to exitRequested yet (still in constructor). could solve it a few ways, none of which are 'elegant' :(. Maybe I can/should introduce a "delayedConstructor" that is queued invoked from every "real" constructor, so i can get around the "can't connect to signals emitted in constructor" problem (for EVERY qobject i make, not just these *cli and *gui ones). that tiny bit of non-elegance does buy me a decent amount... (but i am digressing like fuck considering this is all dep of musicfingers xD (i never turn down an opportunity to experiment with improving the elegance of my code (maybe that's a problem (but if i don't do it, i never improve my code))))
-    int numArgumentsRemainingAtThisPoint = 2;
+    int minNumArgumentsRemainingAtThisPoint = 2;
     if(mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::InteractivelyCalculateAudioDelaysMode)
     {
-        --numArgumentsRemainingAtThisPoint; //no output directory in interactive mode
+        --minNumArgumentsRemainingAtThisPoint; //no output directory in interactive mode
     }
-    if(arguments.size() < numArgumentsRemainingAtThisPoint)
+    if(arguments.size() < minNumArgumentsRemainingAtThisPoint)
     {
         ERRRRRR
     }
 #endif
     QString directoryOfAudioFiles = arguments.takeFirst();
-    --numArgumentsRemainingAtThisPoint;
+    --minNumArgumentsRemainingAtThisPoint;
     QString directoryOfVideoFiles = directoryOfAudioFiles;
-    if(arguments.size() > numArgumentsRemainingAtThisPoint)
+    if(arguments.size() > minNumArgumentsRemainingAtThisPoint)
     {
         directoryOfVideoFiles = arguments.takeFirst();
     }
