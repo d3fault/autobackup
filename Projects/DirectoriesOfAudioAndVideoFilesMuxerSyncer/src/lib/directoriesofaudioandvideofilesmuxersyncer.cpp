@@ -93,9 +93,10 @@ else \
 
 //this version considers video to be the more important of the two. I thought about having black screens when there's audio only, and even single stream audio only files, but considering it's a visual website the *videos* will be posted on, I'm going to make hasVideoAtThisMomentInTime (pseudo, obviously not gonna code it like that (because there would literally be infinite checks. LITERALLY)) the threshold for output. I'm going to try my best to always have audio whenever I have video, to minimize the silence
 //can't decide if this should be async or not! my use of it in import script is kinda making it sync, fuckit
-DirectoriesOfAudioAndVideoFilesMuxerSyncer::DirectoriesOfAudioAndVideoFilesMuxerSyncer(DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::DirectoriesOfAudioAndVideoFilesMuxerSyncerModeEnum mode, QObject *parent)
+//TODOoptional: allow runtime changing of the -t used in interactive calculations mode (should it stick for the next video?). note, if implementing, the import script should then mux a larger timespan (-t) (h264 -> mkv, before handing them to this app), otherwise that functionality would be unusable
+DirectoriesOfAudioAndVideoFilesMuxerSyncer::DirectoriesOfAudioAndVideoFilesMuxerSyncer(QObject *parent)
     : QObject(parent)
-    , m_Mode(mode)
+    , m_Mode(DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::NormalMode)
 {
     m_VideoExtensions.append("m4v");
     m_VideoExtensions.append("3gp");
@@ -169,7 +170,7 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxSyncCurrentVideoFile()
         {
             if(m_CurrentVideoFile->IntersectingAudioFiles.contains(startTimestampOfAudioMs))
             {
-                emit e("two audio files found with same start time"); //for now we don't check the more likely case of two audio files intersecting... but if they're the same start time that's different (and will probably never happen)
+                emit e("two audio files found with same start time"); //for now we don't check the more likely case of two audio files intersecting... but if they're the same start time that's different (and will probably never happen). best solution: mix them together <3. TODOoptional: check for intersecting audio files and error out (unless mixing is implemented ofc)
                 emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(false);
                 return;
             }
@@ -284,35 +285,51 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxSyncCurrentVideoFile()
             //concat onto or become audioFileBeingBuilt
             CONCAT_ONTO_OR_BECOME_AUDIO_FILE(audioFileBeingBuilt, audioSegment)
         }
-        QStringList muxOutputAudioCodec;
+        ffmpegArgs << "-i" << audioFileBeingBuilt;
         if(m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::NormalMode)
         {
-            muxOutputAudioCodec << "-acodec" << "opus" << "-b:a" << "32k";
+            //TO DOnereq: ffmpegArgs << "-acodec" << "opus" << "-b:a" << "32k" << "-ac" <<  "1";
         }
         else //m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::InteractivelyCalculateAudioDelaysMode
         {
-            muxOutputAudioCodec << "-acodec" << "copy"; //it's already flac
+            ffmpegArgs << "-acodec" << "copy" << "-ac" <<  "1"; //it's already flac
         }
-        ffmpegArgs << "-i" << audioFileBeingBuilt << muxOutputAudioCodec << "-ac" <<  "1";
     }
-    //mux -- TODOreq: lutyuv brightness? being outside maybe not necessary (idfk) -- also: noir for night time shenigans (a realtime preview would come in handy too)!
+
+    //mux
     QString muxTargetDirectory_WithSlashAppended = (m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::NormalMode ? (m_MuxOutputDirectory.absolutePath() + QDir::separator()) : (appendSlashIfNeeded(m_TempDir->path())));
-    QStringList muxOutputFormat;
     QString muxOutputAbsoluteFilePath = muxTargetDirectory_WithSlashAppended + m_CurrentVideoFile->VideoFileInfo.completeBaseName();
-    QStringList muxOutputVideoCodec;
     if(m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::NormalMode)
     {
-        muxOutputFormat << "segment" << "-segment_time" << "180" << "-segment_list_size" << "999999999" << "-segment_wrap" << "999999999" << "-segment_list" << QString(muxTargetDirectory_WithSlashAppended + m_CurrentVideoFile->VideoFileInfo.completeBaseName() + "-segmentEntryList.txt") << "-reset_timestamps" << "1"; //TODOreq: since i'm now going to be calling this app using a QProcess from my import script, I should move this segment format crap to there and introduce an --pass-ffmpeg-arg.... arg... to this app. Maybe I should require them to specify an extension (not to be confused with 'format', since 'mkv' is not a valid ffmpeg format, YET FFMPEG CAN GUESS MATROSKA BASED ON THE .MKV EXTENSION *@#(*@#&(* ) for the muxed files (and continue using the video file's complete base name for the prefix). There's a lot of flexibility here (allowing them to provide a template for an output filename seems... confusing... since there are multiple output filenames (best to just stick with video base name imo)), but this app is pretty useless to most others with the format hardcoded to segment@3mins (not that it'd be hard to change, but most wouldn't want to (don't blame em))
-        muxOutputAbsoluteFilePath += "-%d.ogg";
-        muxOutputVideoCodec << "-s" << "720x480" << "-b:v" << "275k" << "-vcodec" << "theora" << "-r" << "10";
+        QStringList additionalFfmpegArgsWithSpecialStringReplaced = m_AdditionalFfmpegArgs; //cow. cheap/almost-free if the special base name string is not found
+        int numAdditionalArgs = additionalFfmpegArgsWithSpecialStringReplaced.size();
+        for(int i = 0; i < numAdditionalArgs; ++i)
+        {
+            QString currentAdditionalArg = additionalFfmpegArgsWithSpecialStringReplaced.at(i);
+            if(currentAdditionalArg.contains(DirectoriesOfAudioAndVideoFilesMuxerSyncer_SPECIAL_STRING_REPLACE_BASE_NAME))
+            {
+                currentAdditionalArg.replace(DirectoriesOfAudioAndVideoFilesMuxerSyncer_SPECIAL_STRING_REPLACE_BASE_NAME, m_CurrentVideoFile->VideoFileInfo.completeBaseName());
+                additionalFfmpegArgsWithSpecialStringReplaced.replace(i, currentAdditionalArg);
+            }
+        }
+        ffmpegArgs << additionalFfmpegArgsWithSpecialStringReplaced;
+        //TO DOnereq: "-s" << "720x480" << "-b:v" << "275k" << "-vcodec" << "theora" << "-r" << "10" << "-f" << "segment" << "-segment_time" << "180" << "-segment_list_size" << "999999999" << "-segment_wrap" << "999999999" << "-segment_list" << QString(muxTargetDirectory_WithSlashAppended + m_CurrentVideoFile->VideoFileInfo.completeBaseName() + "-segmentEntryList.txt") << "-reset_timestamps" << "1"; //TO DOnereq: since i'm now going to be calling this app using a QProcess from my import script, I should move this segment format crap to there and introduce an --pass-ffmpeg-arg.... arg... to this app. Maybe I should require them to specify an extension (not to be confused with 'format', since 'mkv' is not a valid ffmpeg format, YET FFMPEG CAN GUESS MATROSKA BASED ON THE .MKV EXTENSION *@#(*@#&(* ) for the muxed files (and continue using the video file's complete base name for the prefix). There's a lot of flexibility here (allowing them to provide a template for an output filename seems... confusing... since there are multiple output filenames (best to just stick with video base name imo)), but this app is pretty useless to most others with the format hardcoded to segment@3mins (not that it'd be hard to change, but most wouldn't want to (don't blame em))
+        if(m_MuxToExtWithDot_OrEmptyStringIfToUseSrcVideoExt.isEmpty())
+        {
+            muxOutputAbsoluteFilePath += ("." + m_CurrentVideoFile->VideoFileInfo.suffix());
+        }
+        else
+        {
+            muxOutputAbsoluteFilePath += m_MuxToExtWithDot_OrEmptyStringIfToUseSrcVideoExt;
+        }
     }
     else //m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::InteractivelyCalculateAudioDelaysMode
     {
-        muxOutputFormat << "matroska";
+        ffmpegArgs << "-f" << "matroska";
+        ffmpegArgs << "-vcodec" << "copy"; //preview fast! we don't care codec! we dont care grammar neether! /rebel
         muxOutputAbsoluteFilePath += ".mkv";
-        muxOutputVideoCodec << "-vcodec" << "copy";
     }
-    ffmpegArgs << muxOutputVideoCodec << "-f" << muxOutputFormat << "-map" << "0" << mapAudio;
+    ffmpegArgs << "-map" << "0" << mapAudio;
     if(m_TruncateVideosToMsDuration_OrZeroToNotTruncate > 0)
     {
         double truncateVideoToSecondsDuration = static_cast<double>(m_TruncateVideosToMsDuration_OrZeroToNotTruncate) / 1000.0;
@@ -348,6 +365,7 @@ bool DirectoriesOfAudioAndVideoFilesMuxerSyncer::showUserCurrentTruncatedVideoPr
 {
     QProcess videoPreviewProcess;
     QStringList videoPreviewArgs;
+    emit o("now previewing: " + m_CurrentTruncatedPreviewedVideoFileBeingAnalyzedForCorrectAudioDelay);
     videoPreviewArgs << m_CurrentTruncatedPreviewedVideoFileBeingAnalyzedForCorrectAudioDelay;
     videoPreviewProcess.start(DirectoriesOfAudioAndVideoFilesMuxerSyncer_VIDEO_PREVIEWER, videoPreviewArgs, QIODevice::ReadOnly);
     if(!videoPreviewProcess.waitForStarted(-1))
@@ -365,6 +383,7 @@ bool DirectoriesOfAudioAndVideoFilesMuxerSyncer::showUserCurrentTruncatedVideoPr
     if(videoPreviewProcess.exitCode() != 0 || videoPreviewProcess.exitStatus() != QProcess::NormalExit)
     {
         emit e(DirectoriesOfAudioAndVideoFilesMuxerSyncer_VIDEO_PREVIEWER " finished abnormally with exit code: " + QString::number(videoPreviewProcess.exitCode()));
+        emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(false);
         return false;
     }
     return true;
@@ -483,22 +502,21 @@ bool DirectoriesOfAudioAndVideoFilesMuxerSyncer::timespansIntersect(qint64 times
     //since we've elimited every other option, we can deduce that they intersect
     return true;
 }
-void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QString &directoryOfAudioFiles, const QString &directoryOfVideoFiles, const QString &muxOutputDirectory, qint64 audioDelayMs, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate, const QString &audioDelaysInputFile_OrEmptyStringIfNoneProvided)
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::DirectoriesOfAudioAndVideoFilesMuxerSyncerModeEnum mode, const QString &directoryOfAudioFiles, const QString &directoryOfVideoFiles, const QString &muxOutputDirectory, const QStringList &additionalFfmpegArgs, const QString &muxToExt_OrEmptyStringIfToUseSrcVideoExt, qint64 audioDelayMs, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate, const QString &audioDelaysInputFile_OrEmptyStringIfNoneProvided)
 {
     QDir directoryOfAudioFilesDir(directoryOfAudioFiles);
     QDir directoryOfVideoFilesDir(directoryOfVideoFiles);
     QDir muxOutputDirectoryDir(muxOutputDirectory);
-    /*woooo qsettings ezier -- QFile *audioDelaysInputFile_OrZeroIfNoneProvided = 0;
-    if(!audioDelaysInputFile_OrEmptyStringIfNoneProvided.isEmpty())
-    {
-        audioDelaysInputFile_OrZeroIfNoneProvided = new QFile(audioDelaysInputFile_OrEmptyStringIfNoneProvided, this);
-        if(!audioDelaysInputFile_OrZeroIfNoneProvided->open())
-    }*/
-    muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(directoryOfAudioFilesDir, directoryOfVideoFilesDir, muxOutputDirectoryDir, audioDelayMs, truncateVideosToMsDuration_OrZeroToNotTruncate, audioDelaysInputFile_OrEmptyStringIfNoneProvided);
+    muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(mode, directoryOfAudioFilesDir, directoryOfVideoFilesDir, muxOutputDirectoryDir, additionalFfmpegArgs, muxToExt_OrEmptyStringIfToUseSrcVideoExt, audioDelayMs, truncateVideosToMsDuration_OrZeroToNotTruncate, audioDelaysInputFile_OrEmptyStringIfNoneProvided);
 }
-void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QDir &directoryOfAudioFiles, const QDir &directoryOfVideoFiles, const QDir &muxOutputDirectory, qint64 audioDelayMs, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate, const QString &audioDelaysInputFile_OrEmptyStringIfNoneProvided)
+void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::DirectoriesOfAudioAndVideoFilesMuxerSyncerModeEnum mode, const QDir &directoryOfAudioFiles, const QDir &directoryOfVideoFiles, const QDir &muxOutputDirectory, const QStringList &additionalFfmpegArgs, const QString &muxToExt_OrEmptyStringIfToUseSrcVideoExt, qint64 audioDelayMs, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate, const QString &audioDelaysInputFile_OrEmptyStringIfNoneProvided)
 {
+    m_Mode = mode;
     m_MuxOutputDirectory = muxOutputDirectory;
+    m_AdditionalFfmpegArgs = additionalFfmpegArgs;
+    m_MuxToExtWithDot_OrEmptyStringIfToUseSrcVideoExt = muxToExt_OrEmptyStringIfToUseSrcVideoExt;
+    if(!m_MuxToExtWithDot_OrEmptyStringIfToUseSrcVideoExt.contains("."))
+        m_MuxToExtWithDot_OrEmptyStringIfToUseSrcVideoExt = ("." + m_MuxToExtWithDot_OrEmptyStringIfToUseSrcVideoExt);
     m_AudioDelayMs = audioDelayMs;
     m_TruncateVideosToMsDuration_OrZeroToNotTruncate = truncateVideosToMsDuration_OrZeroToNotTruncate;
     m_VideoFileMetaAndIntersectingAudios.clear();
@@ -519,20 +537,23 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
         return;
     }
 
-    if(!m_MuxOutputDirectory.exists())
+    if(m_Mode == DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::NormalMode)
     {
-        if(!m_MuxOutputDirectory.mkpath(m_MuxOutputDirectory.absolutePath()))
+        if(!m_MuxOutputDirectory.exists())
         {
-            emit e("failed to make mux output directory: " + m_MuxOutputDirectory.absolutePath());
+            if(!m_MuxOutputDirectory.mkpath(m_MuxOutputDirectory.absolutePath()))
+            {
+                emit e("failed to make mux output directory: " + m_MuxOutputDirectory.absolutePath());
+                emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(false);
+                return;
+            }
+        }
+        else if(!m_MuxOutputDirectory.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden).isEmpty())
+        {
+            emit e("mux output directory is not empty: " + m_MuxOutputDirectory.absolutePath());
             emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(false);
             return;
         }
-    }
-    else if(!m_MuxOutputDirectory.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden).isEmpty())
-    {
-        emit e("mux output directory is not empty: " + m_MuxOutputDirectory.absolutePath());
-        emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(false);
-        return;
     }
 
     //make list of video files
@@ -568,7 +589,7 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::muxAndSyncDirectoryOfAudioWithD
         {
             durationOfVideoFileInMs = qMin(m_TruncateVideosToMsDuration_OrZeroToNotTruncate, durationOfVideoFileInMs);
         }
-        m_VideoFileMetaAndIntersectingAudios << QSharedPointer<VideoFileMetaAndIntersectingAudios>(new VideoFileMetaAndIntersectingAudios(currentVideoFile, durationOfVideoFileInMs)); //TODOreq: the video's last modified timestamp must be accurate before we get here. in my backup script, the filename holds the timestamp, and i haven't yet tested whether or not the last modified timestamp is accurate on the fs (since the file is being written to for a long duration)
+        m_VideoFileMetaAndIntersectingAudios << QSharedPointer<VideoFileMetaAndIntersectingAudios>(new VideoFileMetaAndIntersectingAudios(currentVideoFile, durationOfVideoFileInMs));
     }
 
     //probe audio files durations

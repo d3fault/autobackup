@@ -8,9 +8,12 @@
 #include <QDateTime>
 #include <QDirIterator>
 #include <QSharedPointer>
+#include <QTemporaryDir>
+#include <QTemporaryFile>
 
 
-//MANDATORY config:
+//MANDATORY config -- NOTE: do not use paths with spaces:
+#define muxerSyncerBinaryFilePath "/home/d3fault/autobackup/Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/build-DirectoriesOfAudioAndVideoFilesMuxerSyncerCli-Desktop_Qt_5_4_1_GCC_64bit-Release/DirectoriesOfAudioAndVideoFilesMuxerSyncerCli"
 #define videoFps "16" /* this must be kept in sync with whatever the capture device is using. Don't change this value mid-day. only change it in between days (ie, at morning before recording, or at night _after_ running this script). I considered keeping it in sync with the value in DirectoriesOfAudioAndVideoFilesMuxerSyncer, but opted not to (my master copies will be 16fps, the web/muxed ones 10fps) */
 #define videoSourceMountPoint "/mnt/videoSource"
 #define videoSource videoSourceMountPoint "/goOutsideVids"
@@ -23,13 +26,16 @@
 #define backupMountPoint "/mnt/sdb"
 #define backupDestBase backupMountPoint destPathOnBackupAndReplicaMountPoints
 
+//NOTE: the _last_ replica in this list is used as the "air gap" drive (passed to morning script). no replicas are necessary, and no mux/sync'ing is done if none are available
 #define allReplicas \
+QList<QPair<QString /* replica mount point */, QString /* replica base dir */> > replicas; \
 replicas << qMakePair(QString("/mnt/sdc"), QString("/mnt/sdc") + destPathOnBackupAndReplicaMountPoints); \
 replicas << qMakePair(QString("/mnt/blackCavalry"), QString("/mnt/blackCavalry") + destPathOnBackupAndReplicaMountPoints);
+#define airGapReplicaTempDirForMuxedCopies "/mnt/blackCavalry/temp/forMorningScript" //TODOreq: ensure it exists and is writeable at beginning
 
 //optional config:
 #define backupDestPrefix "/daySyncedAt-"
-#define backupDestNewFolderForThisSync backupDestBase backupDestPrefix
+//#define backupDestNewFolderForThisSync backupDestBase backupDestPrefix
 #define backupDestAudioSubDir "a"
 #define backupDestVideoSubDir "v"
 
@@ -42,9 +48,9 @@ UUID=0A5C1C5C6C0566FD /mnt/blackCavalry auto rw,user,noauto 0 0
 #endif
 
 
-#define DUMP_PROCESS_OUTPUT \
-qDebug() << process.readAllStandardError(); \
-qDebug() << process.readAllStandardOutput();
+#define DUMP_PROCESS_OUTPUT(theProcess) \
+qDebug() << theProcess.readAllStandardError(); \
+qDebug() << theProcess.readAllStandardOutput();
 static bool runProcess(const QString &cmd, const QString &workingDirectory_OrEmptyStringIfToNotSet = QString())
 {
     QProcess process;
@@ -55,17 +61,17 @@ static bool runProcess(const QString &cmd, const QString &workingDirectory_OrEmp
     process.start(cmd);
     if(!process.waitForStarted(-1))
     {
-        DUMP_PROCESS_OUTPUT
+        DUMP_PROCESS_OUTPUT(process)
         qDebug() << "failed to start:" << cmd;
         return false;
     }
     if(!process.waitForFinished(-1))
     {
-        DUMP_PROCESS_OUTPUT
+        DUMP_PROCESS_OUTPUT(process)
         qDebug() << "failed to finish:" << cmd;
         return false;
     }
-    DUMP_PROCESS_OUTPUT
+    DUMP_PROCESS_OUTPUT(process)
     if(process.exitCode() != 0 || process.exitStatus() != QProcess::NormalExit)
     {        
         qDebug() << "command exitted abnormally with exit code:" << process.exitCode() << " -- " << cmd;
@@ -127,8 +133,8 @@ private:
 #define sudoUmountCmdPrefix "sudo " umountCmdPrefix
 
 //i had specified partial, but took it out in favor of backup (because I wouldn't want to backup a partial lol
-#define rsyncCmdPrefix "rsync -avhh --progress --backup --suffix=~accidentallyOverwrittenDuringSyncAt-"
-#define rsyncCmdMiddle " ./ "
+#define rsyncCmdPrefix "rsync -avhh --progress --protect-args --backup --suffix=~accidentallyOverwrittenDuringSyncAt-"
+#define rsyncCmdMiddle " ./ " //the src dir, but we are setting the process's working directory to the src dir instead (/path/to/src/* would miss hidden files)
 
 #define RETURN_ONE_IF_CMD_RUN_AT_CONSTRUCTOR_OF_SMART_PROCESS_THINGO_FAILS(scopedPointerVarName, constructCmd, destructCmd) \
 QScopedPointer<BeforeAndAfterProcessRunner> scopedPointerVarName(new BeforeAndAfterProcessRunner(constructCmd, destructCmd)); \
@@ -240,7 +246,7 @@ replicaDirs << aSharedPointer;
     } \
 }
 
-#define RETURN_ONE_IF_ANY_FILE_IN_VIDEOSOURCE_FAILS_TO_COPYMUX(theVideoSourceDir) \
+#define RETURN_ONE_IF_ANY_FILE_IN_VIDEOSOURCE_FAILS_TO_COPYMUX(theVideoSourceDir, copyMuxToDestDir_WithSlashAppended, ffmpegTruncateArgOrZeroIfToNotSpecify) \
 { \
     QDirIterator videoSrcDirIterator(theVideoSourceDir, (QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden)/*, QDirIterator::Subdirectories*/); \
     while(videoSrcDirIterator.hasNext()) \
@@ -248,30 +254,159 @@ replicaDirs << aSharedPointer;
         videoSrcDirIterator.next(); \
         const QFileInfo &currentVideoFileInfo = videoSrcDirIterator.fileInfo(); \
         QStringList ffmpegCopyAndMuxArgs; \
-        ffmpegCopyAndMuxArgs << "-f" << "h264" << "-r" << videoFps << "-i" << currentVideoFileInfo.absoluteFilePath() << "-an" << "-vcodec" << "copy" << (backupDestVideoDir_WithSlashAppended + currentVideoFileInfo.completeBaseName() + ".mkv"); \
+        ffmpegCopyAndMuxArgs << "-f" << "h264" << "-r" << videoFps << "-i" << currentVideoFileInfo.absoluteFilePath() << "-an" << "-vcodec" << "copy"; \
+        if(ffmpegTruncateArgOrZeroIfToNotSpecify != 0) \
+        { \
+            ffmpegCopyAndMuxArgs << "-t" << QString::number(ffmpegTruncateArgOrZeroIfToNotSpecify); \
+        } \
+        ffmpegCopyAndMuxArgs << (copyMuxToDestDir_WithSlashAppended + currentVideoFileInfo.completeBaseName() + ".mkv"); \
         QProcess process; \
         process.start("ffmpeg", ffmpegCopyAndMuxArgs, QIODevice::ReadOnly); \
+        QString dupeWarningMb("WARNING: some files may have already been copied/muxed into " + QString(copyMuxToDestDir_WithSlashAppended) + " , and re-running this app again may create dupes in a different/new folder (ignore this warning if the dir just mentioned is a temp dir)"); \
         if(!process.waitForStarted(-1)) \
         { \
-            DUMP_PROCESS_OUTPUT \
+            DUMP_PROCESS_OUTPUT(process) \
             qDebug() << "ffmpeg failed to start with args" << ffmpegCopyAndMuxArgs; \
-            qDebug() << "some files may have already been copied/muxed into backup dest, and re-running this app may create dupes"; \
+            qDebug() << dupeWarningMb; \
             return 1; \
         } \
         if(!process.waitForFinished(-1)) \
         { \
-            DUMP_PROCESS_OUTPUT \
+            DUMP_PROCESS_OUTPUT(process) \
             qDebug() << "ffmpeg failed to finish with args" << ffmpegCopyAndMuxArgs; \
-            qDebug() << "some files may have already been copied/muxed into backup dest, and re-running this app may create dupes"; \
+            qDebug() << dupeWarningMb; \
             return 1; \
         } \
-        DUMP_PROCESS_OUTPUT \
+        DUMP_PROCESS_OUTPUT(process) \
         if(process.exitCode() != 0 || process.exitStatus() != QProcess::NormalExit) \
         { \
             qDebug() << "ffmpeg exitted abnormally with exit code:" << process.exitCode() << " -- args:" << ffmpegCopyAndMuxArgs; \
-            qDebug() << "some files may have already been copied/muxed into backup dest, and re-running this app may create dupes"; \
+            qDebug() << dupeWarningMb; \
             return 1; \
         } \
+    } \
+}
+
+#define RETURN_ONE_IF_TOUCHING_ALL_VIDEO_FILES_IN_DIR_USING_TIMESTAMPS_PARSED_FROM_FILENAMES_FAILS(dirOfVideosToTouch) \
+{ \
+    QDirIterator videoFilesToTouchIterator(dirOfVideosToTouch, (QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden)); \
+    while(videoFilesToTouchIterator.hasNext()) \
+    { \
+        videoFilesToTouchIterator.next(); \
+        const QFileInfo &currentVideoFileInfo = videoFilesToTouchIterator.fileInfo(); \
+        if(!currentVideoFileInfo.isFile()) /*should never happen*/ \
+            continue; \
+        QProcess process; \
+        QStringList touchProcessArgs; \
+        QStringList fileNameExcludingExtensionSplitAtDots = currentVideoFileInfo.completeBaseName().split("."); /*TODOreq: my go outside script needs to be updated to make files called "outsideAt.unixTimestamp.h264" -- it also needs time sanity checking*/ \
+        if(fileNameExcludingExtensionSplitAtDots.size() < 1) \
+        { \
+            qDebug() << "filename didn't have enough parts to have a unix time" << currentVideoFileInfo.fileName(); \
+            return 1; \
+        } \
+        bool convertOk = false; \
+        qint64 unixTimestampSecondsMb = fileNameExcludingExtensionSplitAtDots.last().toLongLong(&convertOk); \
+        if(!convertOk) \
+        { \
+            qDebug() << "second to last part (dots) was not a unix timestamp" << currentVideoFileInfo.fileName(); \
+            return 1; \
+        } \
+        touchProcessArgs << QString("--date=@" + QString::number(unixTimestampSecondsMb)) << "--no-create" << videoFilesToTouchIterator.filePath(); \
+        process.start("touch", touchProcessArgs, QIODevice::ReadOnly); \
+        if(!process.waitForStarted(-1)) \
+        { \
+            DUMP_PROCESS_OUTPUT(process) \
+            qDebug() << "touch failed to start:" << videoFilesToTouchIterator.filePath(); \
+            return 1; \
+        } \
+        if(!process.waitForFinished(-1)) \
+        { \
+            DUMP_PROCESS_OUTPUT(process) \
+            qDebug() << "touch failed to finish:" << videoFilesToTouchIterator.filePath(); \
+            return 1; \
+        } \
+        DUMP_PROCESS_OUTPUT(process) \
+        if(process.exitCode() != 0 || process.exitStatus() != QProcess::NormalExit) \
+        { \
+            qDebug() << "touch exitted abnormally with exit code:" << process.exitCode(); \
+            return 1; \
+        } \
+    } \
+}
+
+#define RETURN_ONE_IF_GENERATING_AUDIO_DELAYS_FILE_FAILS(theAudioDelaysFile) \
+{ \
+    /*mux h264 on videoSource to mkv in tempDir with -t specified*/ \
+    QTemporaryDir tempDirForTruncatedMuxedVideosForAudioDelaysFileCalculation; /*TO DOnemb: speed up deletion (as soon as we don't need it). TO DOnereq: parse/touch filenames*/ \
+    if(!tempDirForTruncatedMuxedVideosForAudioDelaysFileCalculation.isValid()) \
+    { \
+        qDebug() << "failed to get temp dir for muxing the video for calculating the audio delays file:" << tempDirForTruncatedMuxedVideosForAudioDelaysFileCalculation.path(); \
+        return 1; \
+    } \
+    QString tempPathForTruncatedMuxedVideosForAudioDelaysFileCalculation = appendSlashIfNeeded(tempDirForTruncatedMuxedVideosForAudioDelaysFileCalculation.path()); \
+    RETURN_ONE_IF_ANY_FILE_IN_VIDEOSOURCE_FAILS_TO_COPYMUX(videoSource, tempPathForTruncatedMuxedVideosForAudioDelaysFileCalculation, 15) \
+    RETURN_ONE_IF_TOUCHING_ALL_VIDEO_FILES_IN_DIR_USING_TIMESTAMPS_PARSED_FROM_FILENAMES_FAILS(tempPathForTruncatedMuxedVideosForAudioDelaysFileCalculation) \
+    /*TODOoptimization: mux mp3 on audioSource to flac in tempDir with -t specified (keeps reads from audioSource to a minimum) -- maybe -t should be larger than normal to account for the looping/sync'ing process? at some -t, it's smarter to just do the full backup/copy lol*/ \
+    QProcess muxerSyncerProcess; \
+    muxerSyncerProcess.setInputChannelMode(QProcess::ForwardedInputChannel); /*woot 5.2 <3*/ \
+    muxerSyncerProcess.setProcessChannelMode(QProcess::ForwardedChannels); \
+    QStringList interactiveMuxerSyncerArgs; \
+    if(!theAudioDelaysFile.open()) \
+    { \
+        qDebug() << "failed to create temporary audio delays file"; \
+        return 1; \
+    } \
+    theAudioDelaysFile.close(); /*we only wanted it to be created (UNIQUELY), didn't want it to be opened. TODOreq: setAutoRemove(false) later (at/just-before-or-mb-after the move next to a/v folders -- TODOreq: check the file isn't empty before doing the move. if it's empty, don't do the move and leave autoRemove on)*/ \
+    interactiveMuxerSyncerArgs << audioSource << tempPathForTruncatedMuxedVideosForAudioDelaysFileCalculation << "--interactively-calculate-audio-delays-to-file" << theAudioDelaysFile.fileName(); \
+    muxerSyncerProcess.start(muxerSyncerBinaryFilePath, interactiveMuxerSyncerArgs); \
+    if(!muxerSyncerProcess.waitForStarted(-1)) \
+    { \
+        qDebug() << "interactive muxer syncer failed to start with these args:" << interactiveMuxerSyncerArgs; \
+        return 1; \
+    } \
+    if(!muxerSyncerProcess.waitForFinished(-1)) \
+    { \
+        qDebug() << "interactive muxer syncer failed to start with these args:" << interactiveMuxerSyncerArgs; \
+        return 1; \
+    } \
+    if(muxerSyncerProcess.exitCode() != 0 || muxerSyncerProcess.exitStatus() != QProcess::NormalExit) \
+    { \
+        qDebug() << "interactive muxer syncer exitted abnormally with exit code:" << muxerSyncerProcess.exitCode(); \
+        return 1; \
+    } \
+}
+
+#define RETURN_ONE_IF_PUTTING_AUDIO_DELAYS_FILE_NEXT_TO_A_V_FOLDERS_FAILS(theAudioDelaysFile, targetAudioDelaysFilePath) \
+/*first check it isn't empty*/ \
+QFile audioDelaysFileEmptyChecker(theAudioDelaysFile.fileName()); \
+if(!audioDelaysFileEmptyChecker.open(QIODevice::ReadOnly | QIODevice::Text)) \
+{ \
+    qDebug() << "failed to open audio delays file for checking if it's empty:" << theAudioDelaysFile.fileName(); \
+    return 1; \
+} \
+bool audioDelaysFileIsEmpty = true; \
+{ \
+    QTextStream audioDelaysFileTextStream(&audioDelaysFile); \
+    while(!audioDelaysFileTextStream.atEnd()) \
+    { \
+        if(!audioDelaysFileTextStream.readLine().isEmpty()) \
+        { \
+            audioDelaysFileIsEmpty = false; \
+            break; \
+        } \
+    } \
+} \
+audioDelaysFileEmptyChecker.close(); \
+if(!audioDelaysFileIsEmpty) \
+{ \
+    if(QFile::rename(theAudioDelaysFile.fileName(), targetAudioDelaysFilePath)) \
+    { \
+        theAudioDelaysFile.setAutoRemove(false); \
+    } \
+    else \
+    { \
+        qDebug() << "failed to rename audio delays file from '" << theAudioDelaysFile.fileName() << "' to '" << targetAudioDelaysFilePath << "'"; \
+        return 1; \
     } \
 }
 
@@ -314,6 +449,7 @@ this structure is also forwards-compatible with git auto submodules helper, once
 tempted to have a 3rd [non-hidden] folder under files/ called "versionedBinaries". gimp xcf files, for example, would go in there. those are binaries that i DO want to use under git (worth the wait/overhead/etc).. but i still don't want it to slow down my text folder
 
 TODOopimization: in binaryMeta could be a skeleton hierarchy copy of binary, but in each dir is just a single sigsfile. would just less then amount of re-writing of sigs that haven't changed i'll be doing in this first implementation. and i also need to add some logic to recursive gpg signer "don't rewrite the sigsfile if nothing has been added" (actually that's easy af so i can/should add it now)
+//TODOoptional: intentionally over-use 'append/remove slashes if necessary'... because the user-input'd config may not have slashes in the right place
 
 maybe the determiner for whether or not text and binaryMeta have the word "Bare" appended is determined by whether or not the drive is a replica
 
@@ -330,12 +466,19 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     QCoreApplication a(argc, argv);
     return 1;
 
+    QFileInfo muxerSyncerBinaryFileInfo(muxerSyncerBinaryFilePath);
+    if((!muxerSyncerBinaryFileInfo.exists()) || (!muxerSyncerBinaryFileInfo.isExecutable()))
+    {
+        //TODOmb: qbs has build-on-demand + run functionality
+        qDebug() << "muxer syncer binary either doesn't exist or isn't executable:" << muxerSyncerBinaryFilePath;
+        return 1;
+    }
+
     //mount all -- TODOreq: ntfs drives need sudo xD
     RETURN_ONE_IF_CMD_RUN_AT_CONSTRUCTOR_OF_SMART_PROCESS_THINGO_FAILS(audioSourceMount, mountCmdPrefix audioSourceMountPoint, umountCmdPrefix audioSourceMountPoint)
     RETURN_ONE_IF_CMD_RUN_AT_CONSTRUCTOR_OF_SMART_PROCESS_THINGO_FAILS(videoSourceMount, mountCmdPrefix videoSourceMountPoint, umountCmdPrefix videoSourceMountPoint)
     RETURN_ONE_IF_CMD_RUN_AT_CONSTRUCTOR_OF_SMART_PROCESS_THINGO_FAILS(backupMount, sudoMountCmdPrefix backupMountPoint, sudoUmountCmdPrefix backupMountPoint)
     //do the same, but for the replicas
-    QList<QPair<QString /* replica mount point */, QString /* replica base dir */> > replicas;
     allReplicas
     QListIterator<QPair<QString, QString> > replicasIterator(replicas);
     QList<QSharedPointer<BeforeAndAfterProcessRunner> > replicaMounts;
@@ -361,10 +504,16 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     }
 
 
-    //prepate to backup, make the dest dirs, bailing out if any one of them fails to be made (or is already made)
+    //calculate/generate audio delays file
+    QTemporaryFile audioDelaysFile;
+    //TODOreq: run, synchronously, the muxer syncer in interactive mode to get audio delay timestamps (we use the audio delays file later, and also save it next to the 'a' and 'v' folders (TODOblah: such a file should surely be in revision control fml since we're talking-about/handling /binary/)). I would rather call it as a lib, but mixing sync+async is easiest to do with a QProcess (another thread + wait condition works too (and keeps me in 'lib' mode), but is surely not 'easier')
+    RETURN_ONE_IF_GENERATING_AUDIO_DELAYS_FILE_FAILS(audioDelaysFile) //TODOmb: if replicas.isEmpty(), perhaps we should skip this step... since ultimately it means we won't be mux'ing to a replica for the morning script
+
+
+    //prepare to backup, make the dest dirs, bailing out if any one of them fails to be made (or is already made)
     QString unixTimeInSecondsNow = QString::number(QDateTime::currentMSecsSinceEpoch()/1000);
-    QString backupDestNewSubDir_WithSlashAppended = backupDestPrefix + unixTimeInSecondsNow + QDir::separator();;
-    QString backupDest_WithSlashAppended = backupDestNewFolderForThisSync + backupDestNewSubDir_WithSlashAppended;
+    QString backupDestNewSubDir_WithSlashAppended = backupDestPrefix + unixTimeInSecondsNow + QDir::separator();
+    QString backupDest_WithSlashAppended = backupDestBase + backupDestNewSubDir_WithSlashAppended;
     QString backupDestAudioDir_WithSlashAppended(backupDest_WithSlashAppended + backupDestAudioSubDir + QDir::separator());
     QString backupDestVideoDir_WithSlashAppended(backupDest_WithSlashAppended + backupDestVideoSubDir + QDir::separator());
     //QDir backupDestDir(backupDest_WithSlashAppended);
@@ -381,7 +530,7 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     }
 
 
-    //since every mkdir succeeded, set "autoRemove" on the dirs to false (it would fail if there's content in it anyways, but still)
+    //since every mkdir succeeded, set "autoRemove" on the dirs to false (it would fail if there's content in it anyways, but still) -- TODOmb: should this go later, after the backup (and/or replicate (respectively))? if a copy fails mid-list-of-files, having it be auto-remove would fail since it's just rmdir'ing, idfk how i want it to fail
     newlyMadeBackupDestDir->AutoRemove = false;
     newlyMadeBackupDestAudioDir->AutoRemove = false;
     newlyMadeBackupDestVideoDir->AutoRemove = false;
@@ -392,17 +541,23 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
         replicaDirsIterator.next()->AutoRemove = false;
     }
 
+
     //============DO THE ACTUAL BACKUP=========
     RETURN_ONE_IF_RSYNC_COPY_CMD_FAILS(audioSource, backupDestAudioDir_WithSlashAppended)
     //RETURN_ONE_IF_RSYNC_COPY_CMD_FAILS(videoSource, backupDestVideoDir_WithSlashAppended)
-    RETURN_ONE_IF_ANY_FILE_IN_VIDEOSOURCE_FAILS_TO_COPYMUX(videoSource) //because ffprobe can't do raw h264, i mux and copy the video files (into mkv) at the same time. doing this allows me to change the hardcoded fps in the future without losing the fps for the vids made in the past. TODOreq: touch mkv to parsed timestamp (the last modified timestamp on fs is does not reflect the start time)
+    RETURN_ONE_IF_ANY_FILE_IN_VIDEOSOURCE_FAILS_TO_COPYMUX(videoSource, backupDestVideoDir_WithSlashAppended, 0) //because ffprobe can't do raw h264, i mux and copy the video files (into mkv) at the same time. doing this allows me to change the hardcoded fps in the future without losing the fps for the vids made in the past
+    RETURN_ONE_IF_TOUCHING_ALL_VIDEO_FILES_IN_DIR_USING_TIMESTAMPS_PARSED_FROM_FILENAMES_FAILS(backupDestVideoDir_WithSlashAppended)
+
+    //backup the audio delays file next to the a and v folders
+    QString audioDelaysFileName = backupDest_WithSlashAppended + "audioDelays.ini";
+    RETURN_ONE_IF_PUTTING_AUDIO_DELAYS_FILE_NEXT_TO_A_V_FOLDERS_FAILS(audioDelaysFile, audioDelaysFileName)
 
 
-    //TODOreq: maybe run the recursive gpg signer at this point? it will detect most overwrites (we don't want to replicate overwrites), woot. recursive gpg signer serves doubly as a cheap af way to verify last modified timestamps for a hierarchy... but with the added bonus that it signs new files it sees :-D. the best protection would be to run recursive sign + verify here, so we KNOW there weren't any overwrites.... however that is slow as fuuuuuuuck to do every time....
+    //TODOreq: run the recursive gpg signer. it will detect most overwrites (we don't want to replicate overwrites), woot. recursive gpg signer serves doubly as a cheap af way to verify last modified timestamps for a hierarchy... but with the added bonus that it signs new files it sees :-D. the best protection would be to run recursive sign + verify here, so we KNOW there weren't any overwrites.... however that is slow as fuuuuuuuck to do every time....
 
 
-    GIVE_WARNING_IF_SETTINGS_PERMISSIONS_TO_READ_ONLY_FAILS(backupDestAudioDir_WithSlashAppended)
-    GIVE_WARNING_IF_SETTINGS_PERMISSIONS_TO_READ_ONLY_FAILS(backupDestVideoDir_WithSlashAppended)
+    //try to set to read-only, buys just a tiny bit of overwrite protection
+    GIVE_WARNING_IF_SETTINGS_PERMISSIONS_TO_READ_ONLY_FAILS(backupDest_WithSlashAppended)
 
 
     //replicate
@@ -419,7 +574,12 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
 
     //TODOblah: gpg sign/verify/ANYTHING here?
 
-    replicaMounts.clear(); //unmounts all replicas :)
+    QSharedPointer<BeforeAndAfterProcessRunner> airGapDriveForTheMuxedCopiesForMorningScript;
+    if(!replicaMounts.isEmpty())
+    {
+        airGapDriveForTheMuxedCopiesForMorningScript = replicaMounts.last(); //ref
+    }
+    replicaMounts.clear(); //unmounts all replicas, except the airGap one ref'd above :)
 
 
     //delete sources (ffffffff one typo and I'm dead (is why I exit on ANY error))
@@ -434,13 +594,42 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
 
     //mux
     //oh boy, the hardest part (by far) -- might as well go into OO mode since the muxing part might be re-used and I'd been planning on doing it in Qt anyways...
-#if 0
+    if(airGapDriveForTheMuxedCopiesForMorningScript.isNull())
+    {
+        qDebug() << "no replica available for muxing to. done copying to backup drive only";
+        //return 0; -- third time i've flip-flopped on this. we WANT replicas! TODOreq: fail before even starting backup if no replicas in the replica list?
+        return 1;
+    }
+    //mux directly to the usb in temp/dist dir for Morning script (TODOreq: delete them at the end of Morning script)
+    QProcess muxSyncProcess;
+    muxSyncProcess.setProcessChannelMode(QProcess::ForwardedChannels); //OT'ish: lol i'm dumb for doing this manually (but when i pass them to signals o/e, then i have to do it manually)
+    QStringList muxSyncArgs;
+    muxSyncArgs << backupDestAudioDir_WithSlashAppended << backupDestVideoDir_WithSlashAppended << airGapReplicaTempDirForMuxedCopies << "--use-audio-delays-from-file" << audioDelaysFileName;
+#define MUX_SYNCER_ADD_FFMPEG_ARG "--add-ffmpeg-arg"
+    muxSyncArgs << MUX_SYNCER_ADD_FFMPEG_ARG << "-acodec" << MUX_SYNCER_ADD_FFMPEG_ARG << "opus" << MUX_SYNCER_ADD_FFMPEG_ARG << "-b:a" << MUX_SYNCER_ADD_FFMPEG_ARG << "32k" << MUX_SYNCER_ADD_FFMPEG_ARG << "-ac" <<  MUX_SYNCER_ADD_FFMPEG_ARG << "1" << MUX_SYNCER_ADD_FFMPEG_ARG << "-s" << MUX_SYNCER_ADD_FFMPEG_ARG << "720x480" << MUX_SYNCER_ADD_FFMPEG_ARG << "-b:v" << MUX_SYNCER_ADD_FFMPEG_ARG << "275k" << MUX_SYNCER_ADD_FFMPEG_ARG << "-vcodec" << MUX_SYNCER_ADD_FFMPEG_ARG << "theora" << MUX_SYNCER_ADD_FFMPEG_ARG << "-r" << MUX_SYNCER_ADD_FFMPEG_ARG << "10" << MUX_SYNCER_ADD_FFMPEG_ARG << "-f" << MUX_SYNCER_ADD_FFMPEG_ARG << "segment" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_time" << MUX_SYNCER_ADD_FFMPEG_ARG << "180" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_list_size" << MUX_SYNCER_ADD_FFMPEG_ARG << "999999999" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_wrap" << MUX_SYNCER_ADD_FFMPEG_ARG << "999999999" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_list" << MUX_SYNCER_ADD_FFMPEG_ARG << QString(backupDestVideoDir_WithSlashAppended + "%VIDEOBASENAME%-segmentEntryList.txt") << MUX_SYNCER_ADD_FFMPEG_ARG << "-reset_timestamps" << MUX_SYNCER_ADD_FFMPEG_ARG << "1" << "--mux-to-ext" << "-%d.ogg";
+    //TODOreq: lutyuv brightness? being outside maybe not necessary (idfk) -- also: noir for night time shenigans (a realtime preview would come in handy too)!
+    muxSyncProcess.start(muxerSyncerBinaryFilePath, muxSyncArgs);
+    if(!muxSyncProcess.waitForStarted(-1))
+    {
+        qDebug() << "mux syncer failed to start with args:" << muxSyncArgs;
+        return 1;
+    }
+    if(!muxSyncProcess.waitForFinished(-1))
+    {
+        qDebug() << "mux syncer failed to finish with args:" << muxSyncArgs;
+        return 1;
+    }
+    if(muxSyncProcess.exitCode() != 0 || muxSyncProcess.exitStatus() != QProcess::NormalExit)
+    {
+        qDebug() << "mux syncer exitted abnormally with exit code:" << muxSyncProcess.exitCode() << " with args:" << muxSyncArgs;
+        return 1;
+    }
 
-#replicate to the usb in temp/dist dir for Morning script (TODOreq: delete these at the end of Morning script (or the beginning of this Night script, when we see our usb temp/dist dir was deleted by morning))
 
-#umount
+    //unmount
+    //the air gap drive gets unmounted when the shared pointer goes out of scope
 
-#endif
 
+    qDebug() << "backup replicate delete mux and unmount finished successfully -- everything OK";
     return 0;
 }

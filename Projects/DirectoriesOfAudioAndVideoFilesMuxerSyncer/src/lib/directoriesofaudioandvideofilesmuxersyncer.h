@@ -10,6 +10,8 @@
 #include <QSharedPointer>
 #include <QSet>
 
+#define DirectoriesOfAudioAndVideoFilesMuxerSyncer_SPECIAL_STRING_REPLACE_BASE_NAME "%VIDEOBASENAME%"
+
 struct AudioFileMeta
 {
     AudioFileMeta(const QFileInfo &audioFileInfo, int durationInMilliseconds)
@@ -47,7 +49,7 @@ class DirectoriesOfAudioAndVideoFilesMuxerSyncer : public QObject
 {
     Q_OBJECT
 public:
-    explicit DirectoriesOfAudioAndVideoFilesMuxerSyncer(DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::DirectoriesOfAudioAndVideoFilesMuxerSyncerModeEnum mode = DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::NormalMode, QObject *parent = 0);
+    explicit DirectoriesOfAudioAndVideoFilesMuxerSyncer(QObject *parent = 0);
 private:
     DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::DirectoriesOfAudioAndVideoFilesMuxerSyncerModeEnum m_Mode;
     QList<QSharedPointer<VideoFileMetaAndIntersectingAudios> > m_VideoFileMetaAndIntersectingAudios;
@@ -55,8 +57,10 @@ private:
     QScopedPointer<QListIterator<QSharedPointer<VideoFileMetaAndIntersectingAudios> > > m_VideoFilesIterator;
     QSharedPointer<VideoFileMetaAndIntersectingAudios> m_CurrentVideoFile;
     QScopedPointer<QTemporaryDir> m_TempDir;
-    QDir m_MuxOutputDirectory;
+    QStringList m_AdditionalFfmpegArgs;
+    QDir m_MuxOutputDirectory; //unused when m_Mode == InteractivelyCalculateAudioDelaysMode
     QString m_CurrentTruncatedPreviewedVideoFileBeingAnalyzedForCorrectAudioDelay; //only used when m_Mode == InteractivelyCalculateAudioDelaysMode
+    QString m_MuxToExtWithDot_OrEmptyStringIfToUseSrcVideoExt;
     qint64 m_AudioDelayMs;
     qint64 m_TruncateVideosToMsDuration_OrZeroToNotTruncate;
     QHash<QString /* video file name */, qint64 /* chosen audio delay ms */> m_InteractivelyCalculatedAudioDelays;
@@ -86,8 +90,8 @@ signals:
     void audioDelaysFileCalculatedSoTellMeWhereToSaveIt();
     void doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(bool success);
 public slots:
-    void muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QString &directoryOfAudioFiles, const QString &directoryOfVideoFiles, const QString &muxOutputDirectory, qint64 audioDelayMs = 0, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate = 0, const QString &audioDelaysInputFile_OrEmptyStringIfNoneProvided = QString());
-    void muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(const QDir &directoryOfAudioFiles, const QDir &directoryOfVideoFiles, const QDir &muxOutputDirectory, qint64 audioDelayMs = 0, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate = 0, const QString &audioDelaysInputFile_OrEmptyStringIfNoneProvided = QString());
+    void muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::DirectoriesOfAudioAndVideoFilesMuxerSyncerModeEnum mode, const QString &directoryOfAudioFiles, const QString &directoryOfVideoFiles, const QString &muxOutputDirectory, const QStringList &additionalFfmpegArgs = QStringList(), const QString &muxToExt_OrEmptyStringIfToUseSrcVideoExt = QString(), qint64 audioDelayMs = 0, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate = 0, const QString &audioDelaysInputFile_OrEmptyStringIfNoneProvided = QString());
+    void muxAndSyncDirectoryOfAudioWithDirectoryOfVideo(DirectoriesOfAudioAndVideoFilesMuxerSyncerMode::DirectoriesOfAudioAndVideoFilesMuxerSyncerModeEnum mode, const QDir &directoryOfAudioFiles, const QDir &directoryOfVideoFiles, const QDir &muxOutputDirectory, const QStringList &additionalFfmpegArgs = QStringList(), const QString &muxToExt_OrEmptyStringIfToUseSrcVideoExt = QString(), qint64 audioDelayMs = 0, qint64 truncateVideosToMsDuration_OrZeroToNotTruncate = 0, const QString &audioDelaysInputFile_OrEmptyStringIfNoneProvided = QString());
 
     //interactive mode
     void handleUserWantsToPreviewThisAudioDelayAgain();

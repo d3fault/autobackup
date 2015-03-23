@@ -1,16 +1,2 @@
 cd into target dir (don't use asterisk (./*) otherwise you miss hidden files) and then:
-rsync -avhh --progress --backup --suffix=~accidentallyOverwrittenDuringSyncAt-`date +%s` ./ /path/to/dest
-
-splain:
--a = archive, preserve permissions and timestamps etc
--v = verbose
--hh = 1024-based human readable sizes (K, M, G, etc)
---backup = make backup if you would have overwritten
---suffix = when backing up, rename the file that would have been overwritten using this suffix
-...and the `date +%s` gives you unixtime, so backups don't overwrite other backups (but they might during a leap second, fucking idiots)
-
-maybe use the -u (only update if [dest isn't] newer) flag, but idfk it's meaning has escaped me (like saying a word too many times). doesn't rsync already not overwrite unless newer??? it's weird because i do know that when i send over my "src" directories, i need to use the -u flag to prevent the qt creator on the vm (the dest) from recompiling every source file... but i don't get it, i run rsync (other times) without the -u flag and it doesn't 're-send' the files... you know what ima fucken DO that "src" sending scenario with and without the -u flag and see wtf is goin on. d=i is a good example for that because it takes a year to compile. OH just re-read rsync manual, I thought -u meant send only if src is newer, but it's "don't update if dest is newer", which maybe yes is what I want because.... well fuck idk actually maybe the --backup --suffix shit accounts for it good enough (otherwise we might miss valuable changes on the src). guh idfk.
-
-i think i DO want the -u flag, it allows me to push in any/all direction[s] and the 'latest' (most up to date) version will be the one that is in place (but there are still backups if i specify --backups). honestly i don't want to use -u OR --backup in my import script i'm working on for 'binary' (write files once, never touch again)... but eh i'm still trying to think of what is the safest scenario. --backup won't necessarily overwrite those 'most up to date' versions, but it will make the 'most up to date' version the one with the ~accidentallyOverwritten, instead of the opposite/probably-more-intended where the older one becomes ~accidentallyOverwritten. hmm ok i decided not to have the -u flag, because if they both have modifications, but the dest just has newer modifications, then the src modifications will never get copied over. leaving the -u flag out makes it replicate still, despite the newest edition becoming ~accidentallyOverwritten. and good, when it is renamed to ~accidentallyOverwritten, the lastModified timestamp doesn't change
-
-above command is vulnerable to leap seconds, fucking idiots
+rsync -avhh --progress --protect-args --backup --suffix=~accidentallyOverwrittenDuringSyncAt-`date +%s` ./ /path/to/dest

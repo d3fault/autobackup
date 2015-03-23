@@ -1,0 +1,10 @@
+We all want to "leave our mark", but it's pointless since the black hole gobbles everything up every time.
+
+forever()
+{
+	//which came first? fuckit
+	BlackHole::instance()->gobbleEverythingUp();
+	BlackHole::instance()->vomitEverythingOut();
+}
+
+s/BlackHole/BigBang

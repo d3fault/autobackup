@@ -1,0 +1,1 @@
+Abstracting is infinite/endless, but "abstracting only as far as needed" (and abstracting further as needed, when needed) is often the source of of huge design errors that trigger rewrites of entire projects.

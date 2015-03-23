@@ -14,5 +14,3 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 SOURCES += main.cpp
-
-include(../../../../DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/directoriesofaudioandvideofilesmuxersyncer.pri)
