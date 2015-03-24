@@ -21,6 +21,7 @@
 
 #define HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS "/-!-!-!-!-!-!-!-placeholder/path-!-!-!-!-!-!-!"
 
+//TODOoptional: beneath the video on the front page I could show the 'latest 100' docs... either inline'd or just linked
 HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *parent)
     : QObject(parent)
     , m_ArgC(argc)

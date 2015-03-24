@@ -5,15 +5,14 @@ hvbs
 abc2
 
 do:
-import script[s]
+Morning script
 server migration
-record go outside vid script insists on a reasonable date time, exits without -- even with one, the chosen filename must not exist
 music fingers -> libsox synth (pluck/sin) -> speakers
 
 abc explain vids -- that and/or step by step tutorials (images), obviously preferably both
 "not serving this"
-binarySupplement post-update also?
+binary post-update also?
 copyleft disclaimer (assignment is easiest, but shitty, CLA would be better but maybe complicated (also shitty, just less shitty than assignment), some kind of "you agree to give your works to me in DPL3(+? (maybe two versions, one with the plus and one without))" would be best (and idk that itself kind of sounds like a CLA (typical CLAs require giving up MORE, however), idfk want2buy lawyer))
 Hottee: "working dir(s)", on start first check currentDateTime >= 2015, then create hotteeAt<timestampWithMs> sub-folder (fail if it exists (UNLESS RESUMING, in which case we need to know that hotteeAt<timestamp> sub-folder as an arg and the 100mb index))
-~24hr cronjob: make torrent of all 'yesterdays' (just ended day) video segments -- also same for weekly (later, bump that to monthly) -- hvbs download page builds links based on torrents it finds in a directory?
+~24hr cronjob: make torrent of all 'yesterdays' (just ended day) video segments -- also same for weekly (later, bump that to monthly). since binary is static and timeline'd, the torrent file could be generated simply using the last modified timestamps. I could easily keep track of 'the last second in the last torrent', then add everything since to the new torrent and record the new 'last second' -- hvbs download page builds links based on torrents it finds in a directory?
 num unique visitors (wt unique id?) per day

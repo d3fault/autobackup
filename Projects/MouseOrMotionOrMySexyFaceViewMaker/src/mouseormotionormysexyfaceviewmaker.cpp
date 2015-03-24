@@ -27,6 +27,7 @@ QPainter painter(&m_CurrentPixmapBeingPresented); \
 MY_SEXY_FACE_THUMBNAIL_SNIPPET_KDSFJLSKDJF(painter) \
 emit presentPixmapForViewingRequested(m_CurrentPixmapBeingPresented);
 
+//TODOoptional: the mouseOrMotion code could additionally (or solely) be serialized to create a timeline of "doing something on OS" ranges, and I could use those ranges to cut out the duplicate-and-shittier-quality 'my sexy face-ONLY' segments (which do still have justification for being made in general, since that's how I 'live stream'... but the non-OS portions of those segments don't have any need to be stored permanently)
 MouseOrMotionOrMySexyFaceViewMaker::MouseOrMotionOrMySexyFaceViewMaker(QObject *parent)
     : QObject(parent)
     , m_ViewMode(MouseOrMotionOrMySexyFaceViewMode)
