@@ -1,0 +1,119 @@
+commit 0366afc2378bc18a7ff3d2584413a8b44ce30133
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Sat Mar 21 02:40:14 2015 -0700
+
+    QuickDirtyAutoBackupHalper2 Commit @Sat Mar 21 02:40:12 2015
+
+commit b860c37d270ce7c4e6db960f38700381040f273a
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Fri Mar 20 04:21:56 2015 -0700
+
+    QuickDirtyAutoBackupHalper2 Commit @Fri Mar 20 04:21:23 2015
+
+commit b676bdb54ed96ac14490ec10e9437be650a1e444
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Sat Mar 14 23:19:53 2015 -0700
+
+    Fixed timestamps that were buried in git history because I forgot to molest a fresh clone
+
+commit c6dac5b98a137321b3d17073a6851500524b16c9
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Mon Mar 9 22:34:31 2015 -0700
+
+    QuickDirtyAutoBackupHalper2 Commit @Mon Mar 9 22:21:55 2015
+
+commit c03eeb0128e31a26689ca0f1a0076203cb227a3d
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Thu Mar 5 11:54:01 2015 -0700
+
+    QuickDirtyAutoBackupHalper2 Commit @Thu Mar 5 11:52:40 2015
+
+commit 1c2f2eff67621523c6901b3d554cdc93ba2fc141
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Mon Mar 2 17:26:07 2015 -0700
+
+    QuickDirtyAutoBackupHalper2 Commit @Mon Mar 2 17:26:07 2015
+
+commit 96cc5fef0289d762d4d253bceb693681eaa0f59a
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Mon Mar 2 02:22:18 2015 -0700
+
+    QuickDirtyAutoBackupHalper2 Commit @Mon Mar 2 02:20:52 2015
+
+commit 783576b8500cc0631004748f2d2caea703e12edc
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Fri Feb 27 17:03:32 2015 -0700
+
+    QuickDirtyAutoBackupHalper2 Commit @Fri Feb 27 17:00:01 2015
+
+commit 58cb5ab2a01c4d0c3691cf558e0d9c9b410418af
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Thu Feb 26 04:39:44 2015 -0700
+
+    QuickDirtyAutoBackupHalper2 Commit @Thu Feb 26 04:28:15 2015
+
+commit b9e53ed9842075088ed7e6013e58718e614f9c2a
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Thu Feb 26 03:49:09 2015 -0700
+
+    QuickDirtyAutoBackupHalper2 Commit @Thu Feb 26 03:49:04 2015
+
+commit 78d63f9bc908740be07f15c2043e256495e790da
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Tue Feb 24 09:29:28 2015 -0700
+
+    QuickDirtyAutoBackupHalper2 Commit @Tue Feb 24 09:27:29 2015
+
+commit cf8e0b138f8f1d3afb6b9e0a2671f9210e882d5a
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Thu Feb 19 04:38:48 2015 -0700
+
+    QuickDirtyAutoBackupHalper2 Commit @Thu Feb 19 04:38:34 2015
+
+commit 9061e6104293507802bb4afc4e7fd9aa27cc23e6
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Thu Jan 29 02:53:45 2015 -0700
+
+    Pulled in a bunch of videos that were taken roughly over the previous summer, some a bit earlier
+
+commit 33a42d43d5f91cf80311b34f6906ea367d8c0d36
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Thu Jan 29 02:20:10 2015 -0700
+
+    Pulled in a bunch of voice recorder files
+
+commit bc4f665b5bf42ab834a9c5b01f5a76a01095c024
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Wed Jan 28 11:29:38 2015 -0700
+
+    Scanned everything again at 600dpi minimum. Lots of new stuff as well
+
+commit 63d89971df0d662fb6f3d572b1805a94656e8209
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Tue Sep 9 00:50:16 2014 -0700
+
+    Added some more cdk music, gave him his own folder
+
+commit ac46dec5376d0ce6543d9c3b73e9008497ead13f
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Mon Jun 2 08:43:00 2014 -0700
+
+    QuickDirtyAutoBackupHalper2 Commit @Mon Jun 2 08:41:53 2014
+
+commit 2f139d044d30f58c55ee042e2b78973089b7b202
+Author: d3fault <d3fault@localhost.localdomain>
+Date:   Sun Jun 1 07:06:04 2014 -0700
+
+    QuickDirtyAutoBackupHalper2 Commit @Sun Jun 1 07:06:02 2014
+
+commit f03f77b79f22c46e881e2a31bab36ef48d96e693
+Author: root <root@localhost.localdomain>
+Date:   Sat Dec 28 09:49:40 2013 -0700
+
+    Added scan2013 folder, which has a lot of misc stuff over the years
+
+commit bc00fb25c9cd65367e138ccd483ba09f67da3243
+Author: root <root@d3faultDebianHostname>
+Date:   Tue Dec 17 01:26:46 2013 -0700
+
+    Initial Binary Supplement Commit: CC-*BY Music, Final Droid Pics/Recordings, Caydon Videos

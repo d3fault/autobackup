@@ -22,7 +22,7 @@
 #define videoFps "16" /* this must be kept in sync with whatever the capture device is using. Don't change this value mid-day. only change it in between days (ie, at morning before recording, or at night _after_ running this script). I considered keeping it in sync with the value in DirectoriesOfAudioAndVideoFilesMuxerSyncer, but opted not to (my master copies will be 16fps, the web/muxed ones 10fps) */
 
 #define destPathBinaryRoot "/binary"
-#define outsidePathRelativeToMountPoint destPathBinaryRoot "/outside"
+#define outsidePathRelativeToMountPoint destPathBinaryRoot "/Videos/FirstPerson/Hat"
 #define allSigsFileName "allSigs.txt" //.asc? it's custom so nah
 #define sigsFilePathRelativeToMountPoint destPathBinaryRoot "/" allSigsFileName
 
@@ -66,21 +66,18 @@ static bool runProcess(const QString &cmd, const QString &workingDirectory_OrEmp
         qDebug() << "...with working dir of:" << workingDirectory_OrEmptyStringIfToNotSet;
         process.setWorkingDirectory(workingDirectory_OrEmptyStringIfToNotSet);
     }
-    //process.setProcessChannelMode(QProcess::MergedChannels);
+    process.setProcessChannelMode(QProcess::ForwardedChannels);
     process.start(cmd);
     if(!process.waitForStarted(-1))
     {
-        DUMP_PROCESS_OUTPUT(process)
         qDebug() << "failed to start:" << cmd;
         return false;
     }
     if(!process.waitForFinished(-1))
     {
-        DUMP_PROCESS_OUTPUT(process)
         qDebug() << "failed to finish:" << cmd;
         return false;
     }
-    DUMP_PROCESS_OUTPUT(process)
     if(process.exitCode() != 0 || process.exitStatus() != QProcess::NormalExit)
     {        
         qDebug() << "command exitted abnormally with exit code:" << process.exitCode() << " -- " << cmd;
@@ -187,23 +184,6 @@ if(!runProcess(rsyncCmdExcludingAllSigsPrefix + unixTimeInSecondsNow + rsyncCmdM
 { \
     qDebug() << "failed to backup (" << rsyncCmdSource << ") to (" << rsyncCmdDest << ")"; \
     return 1; \
-}
-
-#define GIVE_WARNING_IF_SETTINGS_PERMISSIONS_TO_READ_ONLY_FAILS(dirToRecursivelySetAllFilesToReadOnlyIn) \
-{ \
-    QDirIterator dirIterator(dirToRecursivelySetAllFilesToReadOnlyIn, (QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden), QDirIterator::Subdirectories); \
-    while(dirIterator.hasNext()) \
-    { \
-        dirIterator.next(); \
-        const QFileInfo &currentFileInfo = dirIterator.fileInfo(); \
-        if(!currentFileInfo.isFile()) \
-            continue; \
-        if(!QFile::setPermissions(currentFileInfo.absoluteFilePath(), (QFileDevice::ReadOwner | QFileDevice::ReadGroup | QFileDevice::ReadOther))) \
-        { \
-            qDebug() << "warning, could not set file to read-only:" << currentFileInfo.filePath(); \
-            break; /*chances are the rest won't work either*/ \
-        } \
-    } \
 }
 
 #define RETURN_ONE_IF_RECURSIVE_DELETE_OR_REMAKE_FAILS(dirToDeleteAndRemake) \
@@ -440,6 +420,63 @@ QString removeTrailingSlashIfNeeded(const QString &inputString)
     return inputString;
 }
 
+#define DESIRED_FILE_READ_ONLY_PERMISSIONS (QFileDevice::ReadOwner | QFileDevice::ReadGroup | QFileDevice::ReadOther | QFileDevice::ReadUser)
+#define DESIRED_FILE_READWRITE_FOR_OWNERUSER_ONLY_PERMISSIONS (QFileDevice::ReadOwner | QFileDevice::ReadGroup | QFileDevice::ReadOther | QFileDevice::ReadUser | QFile::WriteOwner | QFile::WriteUser)
+#define DESIRED_FOLDER_0755_PERMISSIONS (QFileDevice::ReadGroup | QFileDevice::ReadOwner | QFileDevice::ReadOther | QFileDevice::ReadUser | QFileDevice::WriteOwner | QFileDevice::WriteUser | QFileDevice::ExeOwner | QFileDevice::ExeOther | QFileDevice::ExeGroup | QFileDevice::ExeUser)
+void setPermissionsToReadOnlyAndGiveWarningIfItFails(const QString &absolutePathToRecursivelySetAllFilesToReadOnlyIn, const QStringList &fileEntriesToSetToWriteOwnerUserAlso)
+{
+    int characterLengthOfAbsolutePathToRecursivelySetAllFilesToReadOnlyIn_WithSlashAppended = appendSlashIfNeeded(absolutePathToRecursivelySetAllFilesToReadOnlyIn).length();
+    QDirIterator dirIterator(absolutePathToRecursivelySetAllFilesToReadOnlyIn, (QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden), QDirIterator::Subdirectories);
+    while(dirIterator.hasNext())
+    {
+        dirIterator.next();
+        const QFileInfo &currentFileInfo = dirIterator.fileInfo();
+        const QString &currentAbsoluteFilePath = currentFileInfo.absoluteFilePath();
+        if(currentFileInfo.isFile())
+        {
+            const QString &relativeFilePath = currentAbsoluteFilePath.mid(characterLengthOfAbsolutePathToRecursivelySetAllFilesToReadOnlyIn_WithSlashAppended);
+            if(!fileEntriesToSetToWriteOwnerUserAlso.contains(relativeFilePath))
+            {
+                //read-only
+                if(currentFileInfo.permissions() != DESIRED_FILE_READ_ONLY_PERMISSIONS)
+                {
+                    if(!QFile::setPermissions(currentAbsoluteFilePath, DESIRED_FILE_READ_ONLY_PERMISSIONS))
+                    {
+                        qDebug() << "warning: could not set file to read-only:" << currentAbsoluteFilePath;
+                        break; //chances are the rest won't work either
+                    }
+                }
+            }
+            else
+            {
+                //read-only for most, write for owner/user
+                if(currentFileInfo.permissions() != DESIRED_FILE_READWRITE_FOR_OWNERUSER_ONLY_PERMISSIONS)
+                {
+                    if(!QFile::setPermissions(currentAbsoluteFilePath, DESIRED_FILE_READWRITE_FOR_OWNERUSER_ONLY_PERMISSIONS))
+                    {
+                        qDebug() << "warning: could not set file to read-only for most and readwrite for owner/user:" << currentAbsoluteFilePath;
+                        break; //chances are the rest won't work either
+                    }
+                }
+            }
+            continue;
+        }
+        if(currentFileInfo.isDir())
+        {
+            //0755
+            if(currentFileInfo.permissions() != DESIRED_FOLDER_0755_PERMISSIONS)
+            {
+                if(!QFile::setPermissions(currentAbsoluteFilePath, DESIRED_FOLDER_0755_PERMISSIONS))
+                {
+                    qDebug() << "warning: could not set folder to read-only:" << currentAbsoluteFilePath;
+                    break; //chances are the rest won't work either
+                }
+            }
+            continue;
+        }
+    }
+}
+
 //OT: the style I'm using in this is schmexy, having scoped/shared pointers do tasks when they go out of scope. The same kind of thing can be used in any other designs in a slot that is invoked in an asynchronous design. I tend to do sanity tests, and if any of them fail I do "emit doneDoingThisAsyncTask(false); return;" -- false to indicate failure ofc. I could use the scoped/shared pointers like I am in this app, where the destructor emits doneDoingThisAsyncTask(false), unless I set some bool (like CmdRunAtConstructionSucceeded used in this app) to true, in which case the "next async step/signal/slot/whatever" is emitted instead! For the final async slot, the only difference would be the "true" or "false" value of "success", but for the all the intermediate steps it could be "emit doneWith<x>(false)" vs. "[emit] proceedToStep<y>()". It would simply save lines of code, as in each sanity check I can just type "return;" instead of emitting the signal. Even though it would save lines of code, a con is that it decreases readability. Maybe would be useful in d=i, where it doesn't decrease understandability (although it still does in the generated C++ (but eh I am beginning to think that making the generated C++ might be wasted effort (idk I flip flop on the issue. ex: C++ started off as a C code generator... then ditched it later because it was too limiting))).
 
 //TODOoptional: when to recursively gpg verify? here's an idea: a serialized list of all entries and when they were last gpg verified (note: the list itself is signed and verified after/before every use of it). at the end of this "import+mux" script, we (NOPE: look at the time. if it's before I'd be waking up by a few hours) recursively gpg verify maybe as many of those entries as possible for about ~30 minutes (obviously don't SIGKILL the gpg verify at 30 minutes... it can go over that) -- stop of course if all of them were verified in that time (will happen with small dirs). the "source" (either main backup dir or one of the replicas) used for the gpg verify is selected at random (different random selection for every entry). Using ~30 minutes after a "sync+mux at night" script is smart because then I never have to sit and wait for the gpg verifying to finish, I'll be asleep. Failed verifications need to be presented somewhere (maybe at the start of the next night's sync? or some morning time notification (beginning of morning script?)). This idea should probably be an entirely different app, and the command chain in bash is this: "BackupReplicateDeleteMuxAndUmountCli && RecursivelyGpgVerifyForAbout30MinsAndKeepRecordOfShit && xfce4-session-logout --fast --halt" (yes, i want to NOT shut down when when _anything_ fails (maybe i'll play a sound using more bash shit))
@@ -503,7 +540,7 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     {
         const QPair<QString,QString> &currentReplica = replicasIterator.next();
         //atm all my replicas are ntfs, so they require sudo... but eh i shouldn't issue it if it's not needed (and I'm considering switching every drive I have to ext4 because fuck that other OS :-P)
-        RETURN_ONE_IF_CMD_RUN_AT_CONSTRUCTOR_OF_SMART_PROCESS_THINGO_FAILS_LIST_VARIANT(replicaMounts, sudoMountCmdPrefix + currentReplica.first, sudoUmountCmdPrefix + currentReplica.first)
+        RETURN_ONE_IF_CMD_RUN_AT_CONSTRUCTOR_OF_SMART_PROCESS_THINGO_FAILS_LIST_VARIANT(replicaMounts, mountCmdPrefix + currentReplica.first, umountCmdPrefix + currentReplica.first)
         ++numReplicasMounted;
     }
     if(numReplicasMounted < 1)
@@ -590,14 +627,14 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
 
 
     //try to set to read-only, buys just a tiny bit of overwrite protection
-    GIVE_WARNING_IF_SETTINGS_PERMISSIONS_TO_READ_ONLY_FAILS(backupDest_WithSlashAppended)
+    setPermissionsToReadOnlyAndGiveWarningIfItFails(backupMountPoint destPathBinaryRoot, QStringList() << allSigsFileName);
 
 
     //run recursive gpg signer. it will detect most overwrites (we don't want to replicate overwrites), woot. recursive gpg signer serves doubly as a cheap af way to verify last modified timestamps for a hierarchy... but with the added bonus that it signs new files it sees :-D. the best protection would be to run recursive sign + verify here, so we KNOW there weren't any overwrites.... however that is slow as fuuuuuuuck to do every time....
     QProcess recursiveGpgSignerProcess;
     recursiveGpgSignerProcess.setProcessChannelMode(QProcess::ForwardedChannels);
     QStringList recursiveGpgSignerArgs;
-    recursiveGpgSignerArgs << backupMountPoint destPathBinaryRoot << backupMountPoint sigsFilePathRelativeToMountPoint << "--exclude" << allSigsFileName;
+    recursiveGpgSignerArgs << backupMountPoint destPathBinaryRoot << backupMountPoint sigsFilePathRelativeToMountPoint;
     recursiveGpgSignerProcess.start(recursiveGpgSignerBinaryFilePath, recursiveGpgSignerArgs, QIODevice::ReadOnly);
     if(!recursiveGpgSignerProcess.waitForStarted(-1))
     {
@@ -626,7 +663,7 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
         RETURN_ONE_IF_RSYNC_COPY_CMD_FAILS(hackyLoadBalancerChangingSourceHehForEachReplicaHeh, replicaDestWithSlashAppended)
         //replicate the sigs file (it was excluded from the regular replicate command because we DON'T want to backup-on-overwrite it
         RETURN_ONE_IF_RSYNC_SINGLE_FILE_FAILS(hackyLoadBalancerChangingSourceHehForEachReplicaHeh, allSigsFileName, replicaDestWithSlashAppended)
-        GIVE_WARNING_IF_SETTINGS_PERMISSIONS_TO_READ_ONLY_FAILS(replicaDestWithSlashAppended)
+        setPermissionsToReadOnlyAndGiveWarningIfItFails(replicaDestWithSlashAppended, QStringList() << allSigsFileName);
         hackyLoadBalancerChangingSourceHehForEachReplicaHeh = replicaDestWithSlashAppended;
     }
 

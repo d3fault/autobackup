@@ -32,6 +32,12 @@ private:
     bool readPathAndSignature(QString *out_FilePathToVerify, QString *out_CurrentFileSignature);
     void verifyFileSignatureAndThenContinueOntoNextEntryOfCustomDetached();
     void spitOutGpgProcessOutput();
+    inline QString appendSlashIfNeeded(const QString &inputString)
+    {
+        if(inputString.endsWith("/"))
+            return inputString;
+        return inputString + "/";
+    }
 signals:
     void o(const QString &msg);
     void e(const QString &msg);

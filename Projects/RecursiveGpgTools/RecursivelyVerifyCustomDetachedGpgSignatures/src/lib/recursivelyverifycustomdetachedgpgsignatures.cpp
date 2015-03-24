@@ -74,7 +74,7 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::verifyNextEntryOfCustomDetach
 
     if(!m_FilesOnFsToSeeIfAnyAreMissingSigsAndToCheckLastModifiedTImestampsAgainst.isEmpty())
     {
-        emit e("the below files on the filesystem were not in the gpg signature file:");
+        emit e("the below files on the filesystem were not in the gpg signatures file:");
         emit e("");
         QHashIterator<QString /*file path*/, qint64 /*last modified unix timestamp in seconds*/> it(m_FilesOnFsToSeeIfAnyAreMissingSigsAndToCheckLastModifiedTImestampsAgainst);
         while(it.hasNext())
@@ -83,7 +83,7 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::verifyNextEntryOfCustomDetach
             emit e(it.key());
         }
         emit e("");
-        emit e("the above files on the filesystem were not in the gpg signature file");
+        emit e("the above files on the filesystem were not in the gpg signatures file");
         emit o("however, every file in the gpg signatures file verified correctly, so it wasn't a complete failure");
         emit doneRecursivelyVerifyCustomDetachedGpgSignatures(false);
         return;
@@ -118,6 +118,12 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::recursivelyVerifyCustomDetach
         //input sigs file is in target dir, so exclude it
         QString inputSigsFileRelativePath = inputSigsFileAbsolutePath.mid(absolutePathOfDirToRecursivelyVerify_WithSlashAppended.length());
         excludeEntriesWithInputSigsFilePossiblyAddedToExclusionList << inputSigsFileRelativePath;
+    }
+    if((!inputSigFileInfo.exists()) || (!inputSigFileInfo.isFile()))
+    {
+        emit e("sigsfile either doesn't exist or isn't a file: " + customDetachedSignaturesFile);
+        emit doneRecursivelyVerifyCustomDetachedGpgSignatures(false);
+        return;
     }
     if(!myFile->open(QIODevice::ReadOnly | QIODevice::Text))
     {
