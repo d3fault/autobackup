@@ -8,6 +8,7 @@
 
 //TODOoptional: make this app write to stdout if no output sigsfile arg is specified. similarly, the verifier should read from stdin if no input sigsfile arg is specified. directory is probably always necessary, HOWEVER it might be good to default to cwd for both this and the verifier when none is provided?
 //TODOoptional: a combination of sign+verify: sign files on fs not in sigfile, verify files in sigfile, report sigs in sigfile that do not exist on filesystem -- it shouldn't be the default because reading/verifying EVERY file would take a long as fuck time
+//TODOoptimization: applies to both this and verifier. if i'm not IO bound but am in fact cpu bound, then QtConcurrent could possibly be used... so long as gpg doesn't care about being called multiple times simultaneously
 RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::RecursivelyGpgSignIntoCustomDetachedSignaturesFormat(QObject *parent)
     : QObject(parent)
     , m_RecursiveCustomDetachedSignatures(new RecursiveCustomDetachedSignatures(this))

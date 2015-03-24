@@ -32,7 +32,8 @@
 //NOTE: the _last_ replica in this list is used as the "air gap" drive (passed to morning script). no replicas are necessary, and no mux/sync'ing is done if none are available
 #define allReplicas \
 QList<QPair<QString /* replica mount point */, QString /* replica binary root */> > replicas; \
-replicas << qMakePair(QString("/mnt/sdc"), QString("/mnt/sdc" + QString(destPathBinaryRoot)));
+replicas << qMakePair(QString("/mnt/sdc"), QString("/mnt/sdc" + QString(destPathBinaryRoot))); \
+replicas << qMakePair(QString("/mnt/toshibaB"), QString("/mnt/toshibaB" + QString(destPathBinaryRoot)));
 //replicas << qMakePair(QString("/mnt/blackCavalry"), QString("/mnt/blackCavalry" + QString(destPathBinaryRoot)));
 #define airGapReplicaTempDirForMuxedCopiesRelativeToMountPoint "/temp/forMorningScript"
 
@@ -85,14 +86,14 @@ static bool runProcess(const QString &cmd, const QString &workingDirectory_OrEmp
     }
     return true;
 }
-struct BeforeAndAfterProcessRunner //I was just gonna use these on the stack, but putting them in scoped pointers lets me speed up the destruction with ease (and the alternative was to add extra curly brace scopes lolol fuck that)
+struct RunProcessAtConstructionAndThenAnotherAtDestructionButOnlyIfProcessRunAtConstructionSucceeded //I was just gonna use these on the stack, but putting them in scoped pointers lets me speed up the destruction with ease (and the alternative was to add extra curly brace scopes lolol fuck that)
 {
-    BeforeAndAfterProcessRunner(const QString &cmdToRunAtConstruction, const QString &cmdToRunAtDestructionUnlessConstructionProcessFailed)
+    RunProcessAtConstructionAndThenAnotherAtDestructionButOnlyIfProcessRunAtConstructionSucceeded(const QString &cmdToRunAtConstruction, const QString &cmdToRunAtDestructionUnlessConstructionProcessFailed)
         : m_CmdToRunAtDestructionUnlessConstructionProcessFailed(cmdToRunAtDestructionUnlessConstructionProcessFailed)
     {
         CmdRunAtConstructionSucceeded = runProcess(cmdToRunAtConstruction);
     }
-    ~BeforeAndAfterProcessRunner()
+    ~RunProcessAtConstructionAndThenAnotherAtDestructionButOnlyIfProcessRunAtConstructionSucceeded()
     {
         if(CmdRunAtConstructionSucceeded)
         {
@@ -134,9 +135,7 @@ private:
 };
 
 #define mountCmdPrefix "mount -v "
-#define sudoMountCmdPrefix "sudo " mountCmdPrefix
 #define umountCmdPrefix "umount -v "
-#define sudoUmountCmdPrefix "sudo " umountCmdPrefix
 
 //i had specified partial, but took it out in favor of backup (because I wouldn't want to backup a partial lol
 #define rsyncCmdPrefix "rsync -avhh --progress --protect-args"
@@ -144,7 +143,7 @@ private:
 #define rsyncCmdMiddle " ./ " //the src dir, but we are setting the process's working directory to the src dir instead (/path/to/src/* would miss hidden files)
 
 #define RETURN_ONE_IF_CMD_RUN_AT_CONSTRUCTOR_OF_SMART_PROCESS_THINGO_FAILS(scopedPointerVarName, constructCmd, destructCmd) \
-QScopedPointer<BeforeAndAfterProcessRunner> scopedPointerVarName(new BeforeAndAfterProcessRunner(constructCmd, destructCmd)); \
+QScopedPointer<RunProcessAtConstructionAndThenAnotherAtDestructionButOnlyIfProcessRunAtConstructionSucceeded> scopedPointerVarName(new RunProcessAtConstructionAndThenAnotherAtDestructionButOnlyIfProcessRunAtConstructionSucceeded(constructCmd, destructCmd)); \
 if(!scopedPointerVarName->CmdRunAtConstructionSucceeded) \
 { \
     qDebug() << "exitting because command failed: " << constructCmd; \
@@ -152,7 +151,7 @@ if(!scopedPointerVarName->CmdRunAtConstructionSucceeded) \
 }
 
 #define RETURN_ONE_IF_CMD_RUN_AT_CONSTRUCTOR_OF_SMART_PROCESS_THINGO_FAILS_LIST_VARIANT(listToAppendTo, constructCmd, destructCmd) \
-QSharedPointer<BeforeAndAfterProcessRunner> aSharedPointer(new BeforeAndAfterProcessRunner(constructCmd, destructCmd)); \
+QSharedPointer<RunProcessAtConstructionAndThenAnotherAtDestructionButOnlyIfProcessRunAtConstructionSucceeded> aSharedPointer(new RunProcessAtConstructionAndThenAnotherAtDestructionButOnlyIfProcessRunAtConstructionSucceeded(constructCmd, destructCmd)); \
 if(!aSharedPointer->CmdRunAtConstructionSucceeded) \
 { \
     return 1; \
@@ -527,14 +526,14 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
         return 1;
     }
 
-    //mount all -- TODOreq: ntfs drives need sudo xD
+    //mount all
     RETURN_ONE_IF_CMD_RUN_AT_CONSTRUCTOR_OF_SMART_PROCESS_THINGO_FAILS(audioSourceMount, mountCmdPrefix audioSourceMountPoint, umountCmdPrefix audioSourceMountPoint)
     RETURN_ONE_IF_CMD_RUN_AT_CONSTRUCTOR_OF_SMART_PROCESS_THINGO_FAILS(videoSourceMount, mountCmdPrefix videoSourceMountPoint, umountCmdPrefix videoSourceMountPoint)
-    RETURN_ONE_IF_CMD_RUN_AT_CONSTRUCTOR_OF_SMART_PROCESS_THINGO_FAILS(backupMount, sudoMountCmdPrefix backupMountPoint, sudoUmountCmdPrefix backupMountPoint)
+    RETURN_ONE_IF_CMD_RUN_AT_CONSTRUCTOR_OF_SMART_PROCESS_THINGO_FAILS(backupMount, mountCmdPrefix backupMountPoint, umountCmdPrefix backupMountPoint)
     //do the same, but for the replicas
     allReplicas
     QListIterator<QPair<QString, QString> > replicasIterator(replicas);
-    QList<QSharedPointer<BeforeAndAfterProcessRunner> > replicaMounts;
+    QList<QSharedPointer<RunProcessAtConstructionAndThenAnotherAtDestructionButOnlyIfProcessRunAtConstructionSucceeded> > replicaMounts;
     int numReplicasMounted = 0;
     while(replicasIterator.hasNext())
     {
@@ -672,7 +671,7 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
 
 
     //unmount most replicas
-    QSharedPointer<BeforeAndAfterProcessRunner> airGapDriveForTheMuxedCopiesForMorningScript;
+    QSharedPointer<RunProcessAtConstructionAndThenAnotherAtDestructionButOnlyIfProcessRunAtConstructionSucceeded> airGapDriveForTheMuxedCopiesForMorningScript;
     if(!replicaMounts.isEmpty())
     {
         airGapDriveForTheMuxedCopiesForMorningScript = replicaMounts.last(); //ref
