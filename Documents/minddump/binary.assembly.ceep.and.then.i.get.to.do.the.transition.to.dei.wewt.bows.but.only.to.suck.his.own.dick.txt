@@ -1,0 +1,3 @@
+re: Born too soon
+Writing C++ is slow (d=i ftw), but handwriting binary (which I've had the pleasure of experiencing in academia) is a million times slower.
+Since perfection can never be attained, faster methods of programming are always being devised; therefore, you're always "born too soon" -- so you're not, you're just born when you are.

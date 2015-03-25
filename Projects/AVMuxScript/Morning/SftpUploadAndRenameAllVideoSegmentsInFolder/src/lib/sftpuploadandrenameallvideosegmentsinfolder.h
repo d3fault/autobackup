@@ -20,7 +20,7 @@ signals:
     void enqueueFileForUploadAndRenameRequested(SftpUploaderAndRenamerQueue_DestFilenameToRenameToAfterUpload_and_SrcFilenameToUpload_Type);
     void quitRequested();
 public slots:
-    void startSftpUploadAndRenameAllVideoSegmentsInFolder(const QString &dirContainingTheFiles, const QString &remoteDestinationToUploadTo, const QString &remoteDestinationToMoveTo, const QString &userHostPathComboSftpArg, const QString &sftpProcessPath);
+    void startSftpUploadAndRenameAllVideoSegmentsInFolder(const QString &dirContainingTheFiles, const QString &remoteDestinationToUploadTo, const QString &remoteDestinationToMoveTo, const QString &userHostPathComboSftpArg, const QString &sftpProcessPath = "sftp");
 private slots:
     void handleSftpUploaderAndRenamerQueueStarted();
     void handleFileUploadAndRenameSuccess(const QString &remoteTimestamp, const QString &localFilename);

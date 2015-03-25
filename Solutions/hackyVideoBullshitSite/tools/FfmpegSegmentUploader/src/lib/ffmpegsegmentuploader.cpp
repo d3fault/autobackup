@@ -200,7 +200,7 @@ void FfmpegSegmentUploader::handleSegmentsEntryListFileModified()
         return; //idk my bff jill, but i saw sftp try to upload the localPath folder because 'second' was an empty string (no recursive flag = fails/exits)
     QPair<QString,QString> newPair;
     newPair.second = m_FfmpegSegmentUploaderSessionPath + newLine;
-    newPair.first = QString::number(QDateTime::currentDateTime().addSecs(-m_SegmentLengthSeconds).toMSecsSinceEpoch()/1000) + ".ogg"; //it's added to the segment entry list right when encoding finishes. idfk how i thought it was added right when encoding starts (thought i saw it happen (fucking saw it happen again and then stop happening one run later, WTFZ))... now gotta un-code dat shiz
+    newPair.first = QString::number(QDateTime::currentDateTime().addSecs(-m_SegmentLengthSeconds).toMSecsSinceEpoch()/1000) + ".ogg"; //it's added to the segment entry list right when encoding finishes. idfk how i thought it was added right when encoding starts (thought i saw it happen (fucking saw it happen again and then stop happening one run later, WTFZ))... now gotta un-code dat shiz. TODOoptional: save the timestamps and rename all the files to them LOCALLY on shutdown (i don't know if i can do this when ffmpeg is actually running, but actually yea i wouldn't be surprised at all if i could since it has no reason to go back and modify a segment it's done with)
     QMetaObject::invokeMethod(m_SftpUploaderAndRenamerQueue, "enqueueFileForUploadAndRename", Q_ARG(SftpUploaderAndRenamerQueue_DestFilenameToRenameToAfterUpload_and_SrcFilenameToUpload_Type, newPair));
 }
 void FfmpegSegmentUploader::killFfmpegProcessIfStillRunning()

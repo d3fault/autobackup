@@ -1,0 +1,1 @@
+I want to set up a gerrit instance so I can accept contributions, but I'm scared to death of running "git pull" from my offline box. I have a strict "push only" policy that's ingrained in my brain.

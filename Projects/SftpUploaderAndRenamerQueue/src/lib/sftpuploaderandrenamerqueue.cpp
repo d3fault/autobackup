@@ -7,7 +7,7 @@
 
 //TODOoptional: take out 5 second wait thing since it's stupid and does nothing anyways (no connection = still passes). really the only way i can find out if it's connected is by seeing if an upload/rename completes. HOWEVER this is only optional because it's only visual (i mean aside from the stupid 5 second wait itself) and doesn't break anything else
 
-bool SftpUploaderAndRenamerQueue::m_HaveRunConstructorOncePerApp = false;
+bool SftpUploaderAndRenamerQueue::m_HaveRunConstructorOncePerApp = false; //TODOblah: not thread-safe. OWNED
 
 //at first i was amped to learn about sftp, but now after trying to use it in automation it's a freaking pain in the ass. provides very little feedback (whereas scp i'd just check return code == 0). hmm, *tries cranking up verbosity*. cool, increasing verbosity does NOTHING (except a bunch of shit i don't care about on stderr). there's no "upload complete" message... pos...
 SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueue(QObject *parent)
