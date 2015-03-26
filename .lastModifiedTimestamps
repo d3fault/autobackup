@@ -4168,10 +4168,12 @@ Projects/Prototypes/QDataStreamDoesNotHandleShortReads/src/testclient.h:13449109
 Projects/Prototypes/QDataStreamDoesNotHandleShortReads/src/testserver.cpp:1344916742
 Projects/Prototypes/QDataStreamDoesNotHandleShortReads/src/testserver.h:1344915758
 Projects/Prototypes/QDataStreamDoesNotHandleShortReads/answer.txt:1351840895
-Projects/Prototypes/QSaveFileToStdOut/:1427383001
-Projects/Prototypes/QSaveFileToStdOut/src/:1427383040
-Projects/Prototypes/QSaveFileToStdOut/src/QSaveFileToStdOut.pro:1427383073
-Projects/Prototypes/QSaveFileToStdOut/src/main.cpp:1427383786
+Projects/Prototypes/QSaveFileToStdOut/:1427384897
+Projects/Prototypes/QSaveFileToStdOut/src/:1427388667
+Projects/Prototypes/QSaveFileToStdOut/src/QSaveFileToStdOut.pro:1427384177
+Projects/Prototypes/QSaveFileToStdOut/src/main.cpp:1427388043
+Projects/Prototypes/QSaveFileToStdOut/src/savefileorstdout.cpp:1427388500
+Projects/Prototypes/QSaveFileToStdOut/src/savefileorstdout.h:1427387800
 Projects/Prototypes/QSslTest1/:1329936215
 Projects/Prototypes/QSslTest1/src/:1330088607
 Projects/Prototypes/QSslTest1/src/SecureClient/:1343589488
