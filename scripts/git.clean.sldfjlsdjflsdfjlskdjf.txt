@@ -1,0 +1,8 @@
+First run:
+git clean --dry-run -X -d | grep -iv "build-" | grep -iv ".pro.user"
+
+It should show NOTHING. It shows what would be deleted in the clean, but we filter out the "build-" and ".pro.user" dirs/files.
+Note: The reason I use -X is because I have various folders in my repo that are empty/untracked but that I don't want to be deleted.
+
+If the above command shows nothing:
+git clean -X -d -f

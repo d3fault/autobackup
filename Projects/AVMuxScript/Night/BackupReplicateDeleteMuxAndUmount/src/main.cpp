@@ -37,8 +37,8 @@ replicas << qMakePair(QString("/mnt/toshibaB"), QString("/mnt/toshibaB" + QStrin
 //replicas << qMakePair(QString("/mnt/blackCavalry"), QString("/mnt/blackCavalry" + QString(destPathBinaryRoot)));
 #define airGapReplicaTempDirForMuxedCopiesRelativeToMountPoint "/temp/forMorningScript"
 
-#define muxerSyncerBinaryFilePath "/home/d3fault/autobackup/Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/build-DirectoriesOfAudioAndVideoFilesMuxerSyncerCli-Desktop_Qt_5_4_1_GCC_64bit-Release/DirectoriesOfAudioAndVideoFilesMuxerSyncerCli"
-#define recursiveGpgSignerBinaryFilePath "/home/d3fault/autobackup/Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/build-RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli-Desktop_Qt_5_4_1_GCC_64bit-Release/RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli"
+#define muxerSyncerBinaryFilePath "/home/d3fault/text/Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/build-DirectoriesOfAudioAndVideoFilesMuxerSyncerCli-Desktop_Qt_5_4_1_GCC_64bit-Release/DirectoriesOfAudioAndVideoFilesMuxerSyncerCli"
+#define recursiveGpgSignerBinaryFilePath "/home/d3fault/text/Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/build-RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli-Desktop_Qt_5_4_1_GCC_64bit-Release/RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli"
 
 //optional config:
 #define backupDestPrefix "/daySyncedAt-"

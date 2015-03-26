@@ -2832,8 +2832,8 @@ Pictures/yet.another.tangent.explained.and.for.some.reason.always.below.zero.unt
 Projects/:1426837154
 Projects/AVMuxScript/:1426022175
 Projects/AVMuxScript/Morning/:1426017664
-Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/:1427301404
-Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/:1427302909
+Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/:1427380548
+Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/:1427380548
 Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/cli/:1427301528
 Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/cli/main.cpp:1427301527
 Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/cli/sftpuploadandrenameallvideosegmentsinfoldercli.cpp:1427301295
@@ -2844,10 +2844,10 @@ Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/lib
 Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/SftpUploadAndRenameAllVideoSegmentsInFolderCli.pro:1427302900
 Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/sftpuploadandrenameallvideosegmentsinfolder.pri:1427300106
 Projects/AVMuxScript/Night/:1426497390
-Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/:1427187530
-Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/:1427225047
+Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/:1427381117
+Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/:1427381593
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/BackupReplicateDeleteMuxAndUmountCli.pro:1427089056
-Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/main.cpp:1427225032
+Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/main.cpp:1427381531
 Projects/AVMuxScript/Night/backupReplicateDeleteMuxUmountAndShutTheFuckDown.sh:1426497268
 Projects/AVMuxScript/design/:1426466748
 Projects/AVMuxScript/design/initial.design.aka.rambling.txt:1425923027
@@ -2887,7 +2887,7 @@ Projects/AdCaptcha/design/:1329932208
 Projects/AdCaptcha/design/depreciating.values.starting.at.twice.the.previous.slots.amount.not.DOUBLING.PER.DAY.as.i.like.to.see.it.THERE.IS.ALGORITHM.STUFF.IN.HERE.txt:1329932185
 Projects/AdCaptcha/design/security.concerns.will.always.eat.away.at.my.brain.who.cares.if.your.customer.funds.get.jacked.i.mean.obviously.they.do.but.cover.your.own.ass.FIRST.txt:1329917474
 Projects/AdCaptcha/design/usable.on.tor.hidden.sites.because.they.do.not.REPORT.BACK.like.most.bullshit.ads.txt:1329932208
-Projects/AdCaptcha/src/:1393101982
+Projects/AdCaptcha/src/:1427380548
 Projects/AdCaptcha/src/embed/:1328901342
 Projects/AdCaptcha/src/embed/adcaptchaembed.cpp:1328862416
 Projects/AdCaptcha/src/embed/adcaptchaembed.h:1328901342
@@ -2942,7 +2942,7 @@ Projects/BulkFileTextPrepender/:1388246831
 Projects/BulkFileTextPrepender/design/:1388246842
 Projects/BulkFileTextPrepender/design/why.created.txt:1400836555
 Projects/BulkFileTextPrepender/src/:1400836389
-Projects/BulkFileTextPrepender/src/gui/:1400844957
+Projects/BulkFileTextPrepender/src/gui/:1427380548
 Projects/BulkFileTextPrepender/src/gui/BulkFileTextPrependerGui.pro:1388240418
 Projects/BulkFileTextPrepender/src/gui/bulkfiletextprependergui.cpp:1388239486
 Projects/BulkFileTextPrepender/src/gui/bulkfiletextprependergui.h:1388236939
@@ -2953,7 +2953,7 @@ Projects/BulkFileTextPrepender/src/lib/:1400841585
 Projects/BulkFileTextPrepender/src/lib/bulkfiletextprepender.cpp:1400841584
 Projects/BulkFileTextPrepender/src/lib/bulkfiletextprepender.h:1388239361
 Projects/ConcurrentLossyDirectoryCopier/:1426577904
-Projects/ConcurrentLossyDirectoryCopier/src/:1426584842
+Projects/ConcurrentLossyDirectoryCopier/src/:1427380548
 Projects/ConcurrentLossyDirectoryCopier/src/ConcurrentLossyDirectoryCopier.pro:1387197904
 Projects/ConcurrentLossyDirectoryCopier/src/concurrentlossydirectorycopier.cpp:1387206600
 Projects/ConcurrentLossyDirectoryCopier/src/concurrentlossydirectorycopier.h:1387197927
@@ -2973,13 +2973,13 @@ Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRele
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/copyandmergeaneasytreefileandareplacementeasytreefilewhileverifyingrelevantfileswidget.cpp:1379405459
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/copyandmergeaneasytreefileandareplacementeasytreefilewhileverifyingrelevantfileswidget.h:1379253035
 Projects/CopyAndMergeAnEasyTreeFileAndAReplacementEasyTreeFileWhileVerifyingRelevantFiles/src/main.cpp:1379408785
-Projects/CopyFileContentsToClipboard/:1409508688
-Projects/CopyFileContentsToClipboard/src/:1409509905
+Projects/CopyFileContentsToClipboard/:1427380548
+Projects/CopyFileContentsToClipboard/src/:1427380548
 Projects/CopyFileContentsToClipboard/src/CopyFileContentsToClipboardGui.pro:1409509877
 Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.cpp:1409509743
 Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.h:1409507797
 Projects/CopyFileContentsToClipboard/src/main.cpp:1409508222
-Projects/DesignEqualsImplementation2/:1425577115
+Projects/DesignEqualsImplementation2/:1427380548
 Projects/DesignEqualsImplementation2/design/:1418094927
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/:1411932839
 Projects/DesignEqualsImplementation2/design/typicalDesignsAndTheirCorrespondingImplementations/0004_SingleSignalMultipleSlots/:1411934573
@@ -3052,7 +3052,7 @@ Projects/DesignEqualsImplementation2/design/use.case.is.series.of.either.slot.de
 Projects/DesignEqualsImplementation2/design/use.cases.define.slot.bodies.at.runtime.but.only.resolve.where.connect.statements.go.at.source.generation.time.txt:1408252978
 Projects/DesignEqualsImplementation2/design/when.to.do.the.cross.thread.call.analysis.optimization.sdfljsdlfjsdl.txt:1410402949
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1425964407
+Projects/DesignEqualsImplementation2/src/:1427380548
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
@@ -3182,8 +3182,8 @@ Projects/DesignEqualsImplementation2/src/ihavetypeandvariablenameandpreferredtex
 Projects/DesignEqualsImplementation2/src/libclangpch.h:1409068915
 Projects/DesignEqualsImplementation2/src/signalemissionorslotinvocationcontextvariables.cpp:1409796472
 Projects/DesignEqualsImplementation2/src/signalemissionorslotinvocationcontextvariables.h:1409796463
-Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/:1427089086
-Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/:1427187031
+Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/:1427381373
+Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/:1427381384
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/cli/:1427138873
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/cli/directoriesofaudioandvideofilesmuxersyncercli.cpp:1427138873
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/cli/directoriesofaudioandvideofilesmuxersyncercli.h:1426978913
@@ -3194,13 +3194,13 @@ Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/lib/directoriesofaudioan
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/DirectoriesOfAudioAndVideoFilesMuxerSyncerCli.pro:1426839750
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/directoriesofaudioandvideofilesmuxersyncer.pri:1426837378
 Projects/EasyTreeAndXmlTreeHeirarchyMolester/:1384071519
-Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/:1400219657
-Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/cli/:1400229155
+Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/:1427380548
+Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/cli/:1427380548
 Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/cli/LastModifiedDateHeirarchyMolesterCli.pro:1384343680
 Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/cli/lastmodifieddateheirarchymolestercli.cpp:1400219797
 Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/cli/lastmodifieddateheirarchymolestercli.h:1384333420
 Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/cli/main.cpp:1384077058
-Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/gui/:1400222034
+Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/gui/:1427380548
 Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/gui/LastModifiedDateHeirarchyMolesterGui.pro:1400216208
 Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/gui/lastmodifieddateheirarchymolestergui.cpp:1384139062
 Projects/EasyTreeAndXmlTreeHeirarchyMolester/src/gui/lastmodifieddateheirarchymolestergui.h:1383984898
@@ -3288,16 +3288,16 @@ Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglefront
 Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglefrontendwithtwobackendsexampletest.cpp:1350801765
 Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglefrontendwithtwobackendsexampletest.h:1350801765
 Projects/GitBitShit/:1414205808
-Projects/GitBitShit/GitBitShitDaemon/:1414203865
-Projects/GitBitShit/GitBitShitDaemon/src/:1414215898
+Projects/GitBitShit/GitBitShitDaemon/:1427380548
+Projects/GitBitShit/GitBitShitDaemon/src/:1427380548
 Projects/GitBitShit/GitBitShitDaemon/src/GitBitShitDaemon.pro:1414204310
 Projects/GitBitShit/GitBitShitDaemon/src/gitbitshitdaemon.cpp:1414215065
 Projects/GitBitShit/GitBitShitDaemon/src/gitbitshitdaemon.h:1414213708
 Projects/GitBitShit/GitBitShitDaemon/src/gitbitshitdaemonclient.cpp:1414214173
 Projects/GitBitShit/GitBitShitDaemon/src/gitbitshitdaemonclient.h:1414214020
 Projects/GitBitShit/GitBitShitDaemon/src/main.cpp:1414201196
-Projects/GitBitShit/GitBitShitDaemonClient/:1414205988
-Projects/GitBitShit/GitBitShitDaemonClient/src/:1414215896
+Projects/GitBitShit/GitBitShitDaemonClient/:1427380548
+Projects/GitBitShit/GitBitShitDaemonClient/src/:1427380548
 Projects/GitBitShit/GitBitShitDaemonClient/src/NotifyGitBitShitDaemonOfMessage.pro:1414205625
 Projects/GitBitShit/GitBitShitDaemonClient/src/main.cpp:1414205640
 Projects/GitBitShit/GitBitShitDaemonClient/src/notifygitbitshitdaemonofmessagecli.cpp:1414213123
@@ -3316,7 +3316,7 @@ Projects/GitUnrollRerollCensorshipMachine/src/cli/GitUnrollRerollCensorshipMachi
 Projects/GitUnrollRerollCensorshipMachine/src/cli/gitunrollrerollcensorshipmachinecli.cpp:1384342788
 Projects/GitUnrollRerollCensorshipMachine/src/cli/gitunrollrerollcensorshipmachinecli.h:1384342788
 Projects/GitUnrollRerollCensorshipMachine/src/cli/main.cpp:1384789654
-Projects/GitUnrollRerollCensorshipMachine/src/gui/:1390028500
+Projects/GitUnrollRerollCensorshipMachine/src/gui/:1427380548
 Projects/GitUnrollRerollCensorshipMachine/src/gui/GitUnrollRerollCensorshipMachineGui.pro:1385057206
 Projects/GitUnrollRerollCensorshipMachine/src/gui/gitunrollrerollcensorshipmachinegui.cpp:1385060408
 Projects/GitUnrollRerollCensorshipMachine/src/gui/gitunrollrerollcensorshipmachinegui.h:1385057564
@@ -3331,7 +3331,7 @@ Projects/Hottee/:1395376892
 Projects/Hottee/design/:1395376928
 Projects/Hottee/design/initial.idea.txt:1395376928
 Projects/Hottee/src/:1426015550
-Projects/Hottee/src/cli/:1426016531
+Projects/Hottee/src/cli/:1427380548
 Projects/Hottee/src/cli/HotteeCli.pro:1424653922
 Projects/Hottee/src/cli/hotteecli.cpp:1426016094
 Projects/Hottee/src/cli/hotteecli.h:1402473036
@@ -3660,7 +3660,7 @@ Projects/Ideas/youtube.video.reposter.retarded.spam.idea.txt:1322357399
 Projects/Ideas/yum.fedora.liveusb.automation.but.kinda.ties.in.with.d3fault.ultimately.the.public.encryption.key.concept.txt:1338022568
 Projects/LastModifiedTimestampsSorter/:1397727653
 Projects/LastModifiedTimestampsSorter/src/:1426397961
-Projects/LastModifiedTimestampsSorter/src/cli/:1426399746
+Projects/LastModifiedTimestampsSorter/src/cli/:1427380548
 Projects/LastModifiedTimestampsSorter/src/cli/LastModifiedTimestampsSorterCli.pro:1426397980
 Projects/LastModifiedTimestampsSorter/src/cli/lastmodifiedtimestampssortercli.cpp:1426398245
 Projects/LastModifiedTimestampsSorter/src/cli/lastmodifiedtimestampssortercli.h:1397731687
@@ -3669,13 +3669,13 @@ Projects/LastModifiedTimestampsSorter/src/lib/:1409253091
 Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.cpp:1409253091
 Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.h:1401024899
 Projects/LastModifiedTimestampsTools/:1401622753
-Projects/LastModifiedTimestampsTools/src/:1425964249
+Projects/LastModifiedTimestampsTools/src/:1427380548
 Projects/LastModifiedTimestampsTools/src/cli/:1425964214
 Projects/LastModifiedTimestampsTools/src/cli/LastModifiedTimestampsToolsCli.pro:1401628169
 Projects/LastModifiedTimestampsTools/src/cli/lastmodifiedtimestampstoolscli.cpp:1401629996
 Projects/LastModifiedTimestampsTools/src/cli/lastmodifiedtimestampstoolscli.h:1401629655
 Projects/LastModifiedTimestampsTools/src/cli/main.cpp:1401627943
-Projects/LastModifiedTimestampsTools/src/gui/:1426401697
+Projects/LastModifiedTimestampsTools/src/gui/:1427380548
 Projects/LastModifiedTimestampsTools/src/gui/LastModifiedTimestampsToolsGui.pro:1401628209
 Projects/LastModifiedTimestampsTools/src/gui/lastmodifiedtimestampstoolsgui.cpp:1401629170
 Projects/LastModifiedTimestampsTools/src/gui/lastmodifiedtimestampstoolsgui.h:1401623257
@@ -3720,10 +3720,10 @@ Projects/LossyDirectoryCopier/src/lossydirectorycopiergui.h:1386649739
 Projects/LossyDirectoryCopier/src/lossydirectorycopierwidget.cpp:1386987034
 Projects/LossyDirectoryCopier/src/lossydirectorycopierwidget.h:1386987034
 Projects/LossyDirectoryCopier/src/main.cpp:1386648220
-Projects/MouseAndOrMotionViewMaker/:1425107883
+Projects/MouseAndOrMotionViewMaker/:1427380548
 Projects/MouseAndOrMotionViewMaker/design/:1396053309
 Projects/MouseAndOrMotionViewMaker/design/initial.idea.txt:1396053674
-Projects/MouseAndOrMotionViewMaker/src/:1425120869
+Projects/MouseAndOrMotionViewMaker/src/:1427380548
 Projects/MouseAndOrMotionViewMaker/src/MouseAndOrMotionViewMaker.pro:1396110368
 Projects/MouseAndOrMotionViewMaker/src/main.cpp:1399699761
 Projects/MouseAndOrMotionViewMaker/src/mouseCursor.qrc:1396110428
@@ -3734,8 +3734,8 @@ Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakergui.cpp:14251108
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakergui.h:1396200558
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.cpp:1424694544
 Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.h:1396112897
-Projects/MouseOrMotionOrMySexyFaceViewMaker/:1424873281
-Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1426320437
+Projects/MouseOrMotionOrMySexyFaceViewMaker/:1427380548
+Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1427380548
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/MouseOrMotionOrMySexyFaceViewMaker.pro:1426316518
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/main.cpp:1424682360
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseCursor.qrc:1424756197
@@ -3768,10 +3768,10 @@ Projects/MusicFingers/src/lib/musicfingerssynthesizer.cpp:1426312003
 Projects/MusicFingers/src/lib/musicfingerssynthesizer.h:1426304790
 Projects/MusicFingers/src/musicfingers.pri:1426304643
 Projects/MusicFingers/src/musicfingersserialportintegration.pri:1426284928
-Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/:1412762111
+Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/:1427380548
 Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/design/:1412752309
 Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/design/initial.idea.aldfjalsdjflasdkjfosduflsdakjfsdof.txt:1412752309
-Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/src/:1412765177
+Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/src/:1427380548
 Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/src/NothingFancyNotepadWIthAutoFilenameButManualSave.pro:1412763939
 Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/src/main.cpp:1412759527
 Projects/NothingFancyNotepadWIthAutoFilenameButManualSave/src/newprofiledialog.cpp:1412761947
@@ -3785,10 +3785,10 @@ Projects/OptionallySecureAsFuckBitcoinBankServer/design/:1383865538
 Projects/OptionallySecureAsFuckBitcoinBankServer/design/initial.design.2.ok.i.think.i.figured.out.how.to.do.balance.transfers.securely.w0000t.presign.permission.to.transfer.a.balance.txt:1331099803
 Projects/OptionallySecureAsFuckBitcoinBankServer/design/initial.design.but.eh.i.think.this.is.actually.insecure.unless.i.can.figure.out.balance.transfers.txt:1331099050
 Projects/OptionallySecureAsFuckBitcoinBankServer/design/not.security.related..but.only.poll.for.new.block.and.after.one.is.seen.THEN.iterate.expecting.payment.address.list.txt:1383865538
-Projects/Osios/:1403728696
+Projects/Osios/:1427380548
 Projects/Osios/design/:1403693496
 Projects/Osios/design/osios.initial.idea.txt:1403693766
-Projects/Osios/src/:1414343250
+Projects/Osios/src/:1427380548
 Projects/Osios/src/office/:1404010350
 Projects/Osios/src/office/iosiosofficenotepadui.h:1404010350
 Projects/Osios/src/ui/:1404010346
@@ -3825,7 +3825,7 @@ Projects/Osios/src/ui/osiosuiapp.h:1403725308
 Projects/Osios/src/OsiosGui.pro:1404008961
 Projects/Osios/src/osios.cpp:1404010898
 Projects/Osios/src/osios.h:1403729701
-Projects/Osios2/:1425491065
+Projects/Osios2/:1427380548
 Projects/Osios2/design/:1418076677
 Projects/Osios2/design/app.state.empty.json.doc.analogy.notes.but.stopped.to.go.play.with.state.machine.examples.txt:1414629578
 Projects/Osios2/design/at.least.sharding.in.the.forwarding.sense.could.at.least.save.on.bandwidth.when.used.with.pki.txt:1414785003
@@ -3843,7 +3843,7 @@ Projects/Osios2/design/sldjflkasdjfklajsdlfkjsadfouwelrkjsdfsdofjsldkfjsd.txt:14
 Projects/Osios2/design/this.is.a.data.security.application.but.thats.probably.not.what.you.think.it.means.txt:1414798918
 Projects/Osios2/reverts/:1414326188
 Projects/Osios2/reverts/revertBackupIDontThinkINeedOrWantThisAnymoreForOsios2.diffOf5d375c768ac2c1f97e1bf2431693e4f4be2df01b:1414325772
-Projects/Osios2/src/:1425491147
+Projects/Osios2/src/:1427380548
 Projects/Osios2/src/mainmenuitems/:1415006573
 Projects/Osios2/src/mainmenuitems/writer/:1415092608
 Projects/Osios2/src/mainmenuitems/writer/eventemittingplaintextedit.cpp:1415092608
@@ -3893,8 +3893,8 @@ Projects/Osios2/src/osiossettings.cpp:1414711609
 Projects/Osios2/src/osiossettings.h:1414723077
 Projects/Osios2/src/timelineserializer.cpp:1414732743
 Projects/Osios2/src/timelineserializer.h:1414706614
-Projects/OsiosInNetworkVerifiedGraphicsView/:1414093958
-Projects/OsiosInNetworkVerifiedGraphicsView/OsiosInNetworkVerifiedGraphicsView/:1414101615
+Projects/OsiosInNetworkVerifiedGraphicsView/:1427380548
+Projects/OsiosInNetworkVerifiedGraphicsView/OsiosInNetworkVerifiedGraphicsView/:1427380548
 Projects/OsiosInNetworkVerifiedGraphicsView/OsiosInNetworkVerifiedGraphicsView/OsiosInNetworkVerifiedGraphicsView.pro:1414093948
 Projects/OsiosInNetworkVerifiedGraphicsView/OsiosInNetworkVerifiedGraphicsView/main.cpp:1414093948
 Projects/OsiosInNetworkVerifiedGraphicsView/OsiosInNetworkVerifiedGraphicsView/osiosinnetworkverifiedgraphicsviewwidget.cpp:1414095489
@@ -3910,9 +3910,9 @@ Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge
 Projects/ProjectGoOutside/i.could.use.this.as.a.name.of.my.stream.channel.show.or.whatever.its.called.txt:1355727455
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
 Projects/ProjectGoOutside/wasdf.com.home.for.fingers.software.and.setup.but.also.for.controlling.windows.linux.etc.TITLE.FOR.DOMAIN.txt:1341829441
-Projects/Prototypes/:1427297314
-Projects/Prototypes/AdDoublesRawMathLaunchSim/:1390331620
-Projects/Prototypes/AdDoublesRawMathLaunchSim/src/:1390584039
+Projects/Prototypes/:1427382996
+Projects/Prototypes/AdDoublesRawMathLaunchSim/:1427380548
+Projects/Prototypes/AdDoublesRawMathLaunchSim/src/:1427380548
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/AdDoublesRawMathLaunchSim.pro:1390329374
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/addoublesrawmathlaunchsim.cpp:1390332764
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/addoublesrawmathlaunchsim.h:1390332764
@@ -3946,12 +3946,12 @@ Projects/Prototypes/AudioVideoBuffers/src/localfile.cpp:1327620579
 Projects/Prototypes/AudioVideoBuffers/src/localfile.h:1327619948
 Projects/Prototypes/AudioVideoBuffers/src/main.cpp:1326662366
 Projects/Prototypes/Benchmarks/:1423240451
-Projects/Prototypes/Benchmarks/AtomicPointerAndDerefVsAtomicallyReferenceCountedAkaImplicitlySharedConstReferences/:1414659147
-Projects/Prototypes/Benchmarks/AtomicPointerAndDerefVsAtomicallyReferenceCountedAkaImplicitlySharedConstReferences/src/:1414660641
+Projects/Prototypes/Benchmarks/AtomicPointerAndDerefVsAtomicallyReferenceCountedAkaImplicitlySharedConstReferences/:1427380549
+Projects/Prototypes/Benchmarks/AtomicPointerAndDerefVsAtomicallyReferenceCountedAkaImplicitlySharedConstReferences/src/:1427380549
 Projects/Prototypes/Benchmarks/AtomicPointerAndDerefVsAtomicallyReferenceCountedAkaImplicitlySharedConstReferences/src/AtomicPointerAndDerefVsAtomicallyReferenceCountedAkaImplicitlySharedConstReferences.pro:1414656439
 Projects/Prototypes/Benchmarks/AtomicPointerAndDerefVsAtomicallyReferenceCountedAkaImplicitlySharedConstReferences/src/main.cpp:1414660584
-Projects/Prototypes/Benchmarks/DirectMethodCallVsVirtualMethodCallVsInvokeMethodVsSignalSlotActivation/:1407139658
-Projects/Prototypes/Benchmarks/DirectMethodCallVsVirtualMethodCallVsInvokeMethodVsSignalSlotActivation/src/:1407141361
+Projects/Prototypes/Benchmarks/DirectMethodCallVsVirtualMethodCallVsInvokeMethodVsSignalSlotActivation/:1427380549
+Projects/Prototypes/Benchmarks/DirectMethodCallVsVirtualMethodCallVsInvokeMethodVsSignalSlotActivation/src/:1427380549
 Projects/Prototypes/Benchmarks/DirectMethodCallVsVirtualMethodCallVsInvokeMethodVsSignalSlotActivation/src/ui/:1407139609
 Projects/Prototypes/Benchmarks/DirectMethodCallVsVirtualMethodCallVsInvokeMethodVsSignalSlotActivation/src/ui/cli/:1407141060
 Projects/Prototypes/Benchmarks/DirectMethodCallVsVirtualMethodCallVsInvokeMethodVsSignalSlotActivation/src/ui/cli/directmethodcallvsvirtualmethodcallvsinvokemethodvssignalslotactivationcli.cpp:1407141060
@@ -3960,8 +3960,8 @@ Projects/Prototypes/Benchmarks/DirectMethodCallVsVirtualMethodCallVsInvokeMethod
 Projects/Prototypes/Benchmarks/DirectMethodCallVsVirtualMethodCallVsInvokeMethodVsSignalSlotActivation/src/DirectMethodCallVsVirtualMethodCallVsInvokeMethodVsSignalSlotActivationCli.pro:1407139647
 Projects/Prototypes/Benchmarks/DirectMethodCallVsVirtualMethodCallVsInvokeMethodVsSignalSlotActivation/src/directmethodcallvsvirtualmethodcallvsinvokemethodvssignalslotactivation.cpp:1407140956
 Projects/Prototypes/Benchmarks/DirectMethodCallVsVirtualMethodCallVsInvokeMethodVsSignalSlotActivation/src/directmethodcallvsvirtualmethodcallvsinvokemethodvssignalslotactivation.h:1407140956
-Projects/Prototypes/Benchmarks/LockfreeQueueOfSharedPtrs_AlwaysGetNew_Vs_GetNewOrRecycled/:1423242506
-Projects/Prototypes/Benchmarks/LockfreeQueueOfSharedPtrs_AlwaysGetNew_Vs_GetNewOrRecycled/LockfreeQueueOfSharedPtrs_AlwaysGetNew_Vs_GetNewOrRecycledCli/:1423399525
+Projects/Prototypes/Benchmarks/LockfreeQueueOfSharedPtrs_AlwaysGetNew_Vs_GetNewOrRecycled/:1427380549
+Projects/Prototypes/Benchmarks/LockfreeQueueOfSharedPtrs_AlwaysGetNew_Vs_GetNewOrRecycled/LockfreeQueueOfSharedPtrs_AlwaysGetNew_Vs_GetNewOrRecycledCli/:1427380549
 Projects/Prototypes/Benchmarks/LockfreeQueueOfSharedPtrs_AlwaysGetNew_Vs_GetNewOrRecycled/LockfreeQueueOfSharedPtrs_AlwaysGetNew_Vs_GetNewOrRecycledCli/LockfreeQueueOfSharedPtrs_AlwaysGetNew_Vs_GetNewOrRecycledCli.pro:1423242522
 Projects/Prototypes/Benchmarks/LockfreeQueueOfSharedPtrs_AlwaysGetNew_Vs_GetNewOrRecycled/LockfreeQueueOfSharedPtrs_AlwaysGetNew_Vs_GetNewOrRecycledCli/main.cpp:1423242925
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/:1344095688
@@ -3986,10 +3986,10 @@ Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/mainwid
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/testdriver.cpp:1340400146
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/testdriver.h:1340399397
 Projects/Prototypes/Couchbase/:1415170103
-Projects/Prototypes/Couchbase/CouchbaseNotepad/:1413077413
+Projects/Prototypes/Couchbase/CouchbaseNotepad/:1427380549
 Projects/Prototypes/Couchbase/CouchbaseNotepad/design/:1413069202
 Projects/Prototypes/Couchbase/CouchbaseNotepad/design/intial.idea.couchbase.notepad.txt:1413069461
-Projects/Prototypes/Couchbase/CouchbaseNotepad/src/:1413089395
+Projects/Prototypes/Couchbase/CouchbaseNotepad/src/:1427380549
 Projects/Prototypes/Couchbase/CouchbaseNotepad/src/CouchbaseNotepadGui.pro:1413076481
 Projects/Prototypes/Couchbase/CouchbaseNotepad/src/couchbasenotepad.cpp:1413081070
 Projects/Prototypes/Couchbase/CouchbaseNotepad/src/couchbasenotepad.h:1413080691
@@ -3998,10 +3998,10 @@ Projects/Prototypes/Couchbase/CouchbaseNotepad/src/couchbasenotepadgui.h:1413080
 Projects/Prototypes/Couchbase/CouchbaseNotepad/src/couchbasenotepadwidget.cpp:1413081512
 Projects/Prototypes/Couchbase/CouchbaseNotepad/src/couchbasenotepadwidget.h:1413079451
 Projects/Prototypes/Couchbase/CouchbaseNotepad/src/main.cpp:1413075062
-Projects/Prototypes/Couchbase/PaginationOfViewQuery/:1415179965
+Projects/Prototypes/Couchbase/PaginationOfViewQuery/:1427380549
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/design/:1415170222
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/design/pagination.of.view.query.initial.idea.txt:1415251166
-Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/:1417420932
+Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/:1427380549
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/PaginationOfViewQueryGui.pro:1415268847
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/main.cpp:1415171470
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquery.cpp:1415437592
@@ -4011,27 +4011,27 @@ Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquerygui
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquerygui.h:1415175219
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquerywidget.cpp:1415357119
 Projects/Prototypes/Couchbase/PaginationOfViewQuery/src/paginationofviewquerywidget.h:1415357057
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/:1389498494
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/:1427380549
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/:1389940657
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/javascriptless.connections.do.blocking.get.javascript.is.async.both.share.a.cache.ideally.txt:1389498532
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/lockfree.queue.is.in.openbsd.current.lawl.and.some.other.simple.optimizations.txt:1390027651
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/design/observe.100ms.timeout.only.when.something.to.observe.of.course.txt:1389608097
-Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/:1390242935
+Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/:1427380549
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/WtCouchbaseKeySetAndGetTest.pro:1389779646
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/main.cpp:1390242934
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/setvaluebykeyrequestfromwt.h:1389720128
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.cpp:1389777479
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.h:1389777895
-Projects/Prototypes/DhtAppDownloadCompileStubExample/:1409906195
-Projects/Prototypes/DhtAppDownloadCompileStubExample/src/:1409906187
+Projects/Prototypes/DhtAppDownloadCompileStubExample/:1427380549
+Projects/Prototypes/DhtAppDownloadCompileStubExample/src/:1427380549
 Projects/Prototypes/DhtAppDownloadCompileStubExample/src/DhtAppDownloadCompileStubExampleCli.pro:1409904081
 Projects/Prototypes/DhtAppDownloadCompileStubExample/src/dht.cpp:1409905615
 Projects/Prototypes/DhtAppDownloadCompileStubExample/src/dht.h:1409905591
 Projects/Prototypes/DhtAppDownloadCompileStubExample/src/dhtappdownloadcompilestubexample.cpp:1409906093
 Projects/Prototypes/DhtAppDownloadCompileStubExample/src/dhtappdownloadcompilestubexample.h:1409904701
 Projects/Prototypes/DhtAppDownloadCompileStubExample/src/main.cpp:1409905744
-Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/:1408610152
-Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/:1408653121
+Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/:1427380549
+Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/:1427380549
 Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/FunctionDecomposerWithNewTypeDetectorGui.pro:1408653057
 Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/functiondecomposerwithnewtypedetector.cpp:1408647035
 Projects/Prototypes/FunctionDecomposerWithNewTypeDetectorGui/src/functiondecomposerwithnewtypedetector.h:1408609539
@@ -4045,8 +4045,8 @@ Projects/Prototypes/GenericAcker/:1350049497
 Projects/Prototypes/GenericAcker/design/:1350050661
 Projects/Prototypes/GenericAcker/design/initial.design.simple.sendMessage.got.lost.towards.the.end.not.sure.this.is.what.i.want.dia:1350049517
 Projects/Prototypes/GenericAcker/design/not.sure.this.is.the.right.thing.aswerouwoeariuasflkj.txt:1350050661
-Projects/Prototypes/IntentionalImproperRoundingBitcoinWithdrawalFeesAlwaysUp/:1418378735
-Projects/Prototypes/IntentionalImproperRoundingBitcoinWithdrawalFeesAlwaysUp/src/:1418388297
+Projects/Prototypes/IntentionalImproperRoundingBitcoinWithdrawalFeesAlwaysUp/:1427380549
+Projects/Prototypes/IntentionalImproperRoundingBitcoinWithdrawalFeesAlwaysUp/src/:1427380549
 Projects/Prototypes/IntentionalImproperRoundingBitcoinWithdrawalFeesAlwaysUp/src/IntentionalImproperRoundingBitcoinWithdrawalFeesAlwaysUpCli.pro:1418371742
 Projects/Prototypes/IntentionalImproperRoundingBitcoinWithdrawalFeesAlwaysUp/src/main.cpp:1418388249
 Projects/Prototypes/MouseControlWhileIconified/:1350874094
@@ -4082,8 +4082,8 @@ Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/multise
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/serverwidget.cpp:1353794064
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiServerHelloer/serverwidget.h:1353793900
 Projects/Prototypes/MultiClientServerTypesHelloer/src/ServerClientShared/:1356102268
-Projects/Prototypes/MusicFingersBackendTesterGui/:1426305662
-Projects/Prototypes/MusicFingersBackendTesterGui/src/:1426313340
+Projects/Prototypes/MusicFingersBackendTesterGui/:1427380549
+Projects/Prototypes/MusicFingersBackendTesterGui/src/:1427380549
 Projects/Prototypes/MusicFingersBackendTesterGui/src/MusicFingersBackendTesterGui.pro:1426307054
 Projects/Prototypes/MusicFingersBackendTesterGui/src/main.cpp:1424675997
 Projects/Prototypes/MusicFingersBackendTesterGui/src/musicfingersbackendtestergui.cpp:1426307025
@@ -4127,8 +4127,8 @@ Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/WorkingInputTest/worki
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/WorkingInputTest/workinginputtestbusiness.cpp:1359418608
 Projects/Prototypes/ObjectOnThreadWithConstructorArgs/src/WorkingInputTest/workinginputtestbusiness.h:1359418585
 Projects/Prototypes/ObjectsSynchronizer/:1397553970
-Projects/Prototypes/ObjectsSynchronizer/src/:1397554751
-Projects/Prototypes/ObjectsSynchronizer/src/gui/:1400280547
+Projects/Prototypes/ObjectsSynchronizer/src/:1427380549
+Projects/Prototypes/ObjectsSynchronizer/src/gui/:1427380549
 Projects/Prototypes/ObjectsSynchronizer/src/gui/ObjectsSynchronizerGui.pro:1397556924
 Projects/Prototypes/ObjectsSynchronizer/src/gui/main.cpp:1397558786
 Projects/Prototypes/ObjectsSynchronizer/src/gui/objectssynchronizerwidget.cpp:1397553960
@@ -4168,6 +4168,10 @@ Projects/Prototypes/QDataStreamDoesNotHandleShortReads/src/testclient.h:13449109
 Projects/Prototypes/QDataStreamDoesNotHandleShortReads/src/testserver.cpp:1344916742
 Projects/Prototypes/QDataStreamDoesNotHandleShortReads/src/testserver.h:1344915758
 Projects/Prototypes/QDataStreamDoesNotHandleShortReads/answer.txt:1351840895
+Projects/Prototypes/QSaveFileToStdOut/:1427383001
+Projects/Prototypes/QSaveFileToStdOut/src/:1427383040
+Projects/Prototypes/QSaveFileToStdOut/src/QSaveFileToStdOut.pro:1427383073
+Projects/Prototypes/QSaveFileToStdOut/src/main.cpp:1427383786
 Projects/Prototypes/QSslTest1/:1329936215
 Projects/Prototypes/QSslTest1/src/:1330088607
 Projects/Prototypes/QSslTest1/src/SecureClient/:1343589488
@@ -4198,10 +4202,10 @@ Projects/Prototypes/QSslTest1/src/SecureServer/ssltcpserver.cpp:1330088250
 Projects/Prototypes/QSslTest1/src/SecureServer/ssltcpserver.h:1330074096
 Projects/Prototypes/QSslTest1/src/shared/:1329942208
 Projects/Prototypes/QSslTest1/src/shared/protocol.h:1329942208
-Projects/Prototypes/QtBroadcastServerWtClient/:1394515769
+Projects/Prototypes/QtBroadcastServerWtClient/:1427380549
 Projects/Prototypes/QtBroadcastServerWtClient/design/:1333011399
 Projects/Prototypes/QtBroadcastServerWtClient/design/initial.design.txt:1333011399
-Projects/Prototypes/QtBroadcastServerWtClient/src/:1394515797
+Projects/Prototypes/QtBroadcastServerWtClient/src/:1427380549
 Projects/Prototypes/QtBroadcastServerWtClient/src/QtBroadcastServerWtClient.pro:1389318415
 Projects/Prototypes/QtBroadcastServerWtClient/src/main.cpp:1389319930
 Projects/Prototypes/QtBroadcastServerWtClient/src/myrandomnumbergenerator.cpp:1333037257
@@ -4210,8 +4214,8 @@ Projects/Prototypes/QtBroadcastServerWtClient/src/qtbroadcastservernumberwatcher
 Projects/Prototypes/QtBroadcastServerWtClient/src/qtbroadcastservernumberwatcher.h:1333037578
 Projects/Prototypes/QtBroadcastServerWtClient/src/wtnumberwatchingwidget.cpp:1389499082
 Projects/Prototypes/QtBroadcastServerWtClient/src/wtnumberwatchingwidget.h:1333040708
-Projects/Prototypes/QtHttpServer/:1420407265
-Projects/Prototypes/QtHttpServer/src/:1420634185
+Projects/Prototypes/QtHttpServer/:1427380549
+Projects/Prototypes/QtHttpServer/src/:1427380549
 Projects/Prototypes/QtHttpServer/src/QtHttpServerCli.pro:1419899226
 Projects/Prototypes/QtHttpServer/src/main.cpp:1419899203
 Projects/Prototypes/QtHttpServer/src/qthttpclient.cpp:1420272316
@@ -4222,12 +4226,12 @@ Projects/Prototypes/QtHttpServer/src/qthttpservercli.cpp:1419899165
 Projects/Prototypes/QtHttpServer/src/qthttpservercli.h:1419898839
 Projects/Prototypes/QtHttpsServer/:1420271875
 Projects/Prototypes/QtHttpsServer/QtHttpsClientTest/:1420271866
-Projects/Prototypes/QtHttpsServer/QtHttpsClientTest/src/:1420273089
+Projects/Prototypes/QtHttpsServer/QtHttpsClientTest/src/:1427380549
 Projects/Prototypes/QtHttpsServer/QtHttpsClientTest/src/QtHttpsClientTest.pro:1420266027
 Projects/Prototypes/QtHttpsServer/QtHttpsClientTest/src/main.cpp:1420266020
 Projects/Prototypes/QtHttpsServer/QtHttpsClientTest/src/qthttpsclienttest.cpp:1420270225
 Projects/Prototypes/QtHttpsServer/QtHttpsClientTest/src/qthttpsclienttest.h:1420266829
-Projects/Prototypes/QtHttpsServer/src/:1420329023
+Projects/Prototypes/QtHttpsServer/src/:1427380549
 Projects/Prototypes/QtHttpsServer/src/QtHttpsServerCli.pro:1420080881
 Projects/Prototypes/QtHttpsServer/src/main.cpp:1420080997
 Projects/Prototypes/QtHttpsServer/src/qthttpsclient.cpp:1420272379
@@ -4313,8 +4317,8 @@ Projects/Prototypes/RobustNetworkMessagingForRpcGenerator/this.design.is.outdate
 Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/:1404912777
 Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/design/:1404912847
 Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/design/developers.machine.used.as.hardcoded.reference.speed.for.starting.the.loop.at.a.more.efficient.position.txt:1404912847
-Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/:1397167886
-Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/gui/:1397170204
+Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/:1427380549
+Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/gui/:1427380549
 Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/gui/RuntimeDynamicIterationsDeterminerRetainingResponsivenessGui.pro:1397165375
 Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/gui/main.cpp:1397170185
 Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/gui/runtimedynamiciterationsdeterminerretainingresponsivenessgui.cpp:1397169595
@@ -4325,7 +4329,7 @@ Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/sr
 Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/lib/runtimedynamiciterationsdeterminerretainingresponsiveness.cpp:1397204320
 Projects/Prototypes/RuntimeDynamicIterationsDeterminerRetainingResponsiveness/src/lib/runtimedynamiciterationsdeterminerretainingresponsiveness.h:1397168986
 Projects/Prototypes/SerializingStateMachine/:1414630397
-Projects/Prototypes/SerializingStateMachine/src/:1414632307
+Projects/Prototypes/SerializingStateMachine/src/:1427380549
 Projects/Prototypes/SerializingStateMachine/src/SerializingStateMachineCli.pro:1414630308
 Projects/Prototypes/SerializingStateMachine/src/main.cpp:1414630422
 Projects/Prototypes/SerializingStateMachine/src/serializingstatemachine.cpp:1414632302
@@ -4374,7 +4378,7 @@ Projects/Prototypes/easyTreeTest/src/main.cpp:1349007743
 Projects/Prototypes/easyTreeTest/src/mainwidget.cpp:1349020608
 Projects/Prototypes/easyTreeTest/src/mainwidget.h:1349020281
 Projects/Prototypes/libAvAudioPlayer/:1344095745
-Projects/Prototypes/libAvAudioPlayer/src/:1424791480
+Projects/Prototypes/libAvAudioPlayer/src/:1427380549
 Projects/Prototypes/libAvAudioPlayer/src/libAvAudioPlayer.pro:1324565742
 Projects/Prototypes/libAvAudioPlayer/src/libavaudioplayer.cpp:1326489296
 Projects/Prototypes/libAvAudioPlayer/src/libavaudioplayer.h:1324566886
@@ -4389,7 +4393,7 @@ Projects/Prototypes/libAvAudioPlayer/final.notes.on.functionality.txt:1424789661
 Projects/Prototypes/libAvAudioPlayer2/:1344095761
 Projects/Prototypes/libAvAudioPlayer2/design/:1324915532
 Projects/Prototypes/libAvAudioPlayer2/design/initial.spec.txt:1324915532
-Projects/Prototypes/libAvAudioPlayer2/src/:1424878596
+Projects/Prototypes/libAvAudioPlayer2/src/:1427380549
 Projects/Prototypes/libAvAudioPlayer2/src/curldownloader.cpp:1325629322
 Projects/Prototypes/libAvAudioPlayer2/src/curldownloader.h:1324922600
 Projects/Prototypes/libAvAudioPlayer2/src/iloadmediastreamsintomemory.cpp:1324916701
@@ -4554,7 +4558,7 @@ Projects/Prototypes/timelineFileStore/timelineFileStore/timelinenode.cpp:1320133
 Projects/Prototypes/timelineFileStore/timelineFileStore/timelinenode.h:1320133807
 Projects/Prototypes/timelineFileStore/timelineFileStore/timelinewithfilestore.cpp:1320134193
 Projects/Prototypes/timelineFileStore/timelineFileStore/timelinewithfilestore.h:1320134193
-Projects/QuickDirtyAutoBackupHalper/:1427225201
+Projects/QuickDirtyAutoBackupHalper/:1427383948
 Projects/QuickDirtyAutoBackupHalper/oldOldSrc/:1348865438
 Projects/QuickDirtyAutoBackupHalper/oldOldSrc/QuickDirtyAutoBackupHalper.pro:1348500720
 Projects/QuickDirtyAutoBackupHalper/oldOldSrc/main.cpp:1348500703
@@ -4572,7 +4576,7 @@ Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperbusiness.cp
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperbusiness.h:1348569501
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.cpp:1348566704
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.h:1348565463
-Projects/QuickDirtyAutoBackupHalper/src/:1427225220
+Projects/QuickDirtyAutoBackupHalper/src/:1427383960
 Projects/QuickDirtyAutoBackupHalper/src/QuickDirtyAutoBackupHalper.pro:1387287042
 Projects/QuickDirtyAutoBackupHalper/src/main.cpp:1401631299
 Projects/QuickDirtyAutoBackupHalper/src/mainwidget.cpp:1427225168
@@ -4584,7 +4588,7 @@ Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.cpp:1
 Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.h:1349623955
 Projects/RecursiveFileStringReplaceRenamer/:1388246494
 Projects/RecursiveFileStringReplaceRenamer/src/:1388247674
-Projects/RecursiveFileStringReplaceRenamer/src/gui/:1400667049
+Projects/RecursiveFileStringReplaceRenamer/src/gui/:1427380549
 Projects/RecursiveFileStringReplaceRenamer/src/gui/RecursiveFileStringReplaceRenamerGui.pro:1388246417
 Projects/RecursiveFileStringReplaceRenamer/src/gui/main.cpp:1388247632
 Projects/RecursiveFileStringReplaceRenamer/src/gui/recursivefilestringreplacerenamergui.cpp:1388247120
@@ -4595,26 +4599,28 @@ Projects/RecursiveFileStringReplaceRenamer/src/lib/:1388247652
 Projects/RecursiveFileStringReplaceRenamer/src/lib/recursivefilestringreplacerenamer.cpp:1388247646
 Projects/RecursiveFileStringReplaceRenamer/src/lib/recursivefilestringreplacerenamer.h:1388247652
 Projects/RecursiveGpgTools/:1426487982
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/:1426417651
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/:1427367232
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/:1427368025
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli.pro:1426424895
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/:1427381073
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/:1427381086
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/:1427380873
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/main.cpp:1426424959
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/recursivelygpgsignintocustomdetachedsignaturesformatcli.cpp:1427144133
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/recursivelygpgsignintocustomdetachedsignaturesformatcli.h:1427116744
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/:1427368010
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/recursivelygpgsignintocustomdetachedsignaturesformat.cpp:1427368010
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/recursivelygpgsignintocustomdetachedsignaturesformat.h:1427367753
-Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/:1425008691
-Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/:1426484748
-Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/cli/:1427220397
-Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/cli/RecursivelyVerifyCustomDetachedGpgSignaturesCli.pro:1426420077
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli.pro:1427381044
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/recursivelygpgsignintocustomdetachedsignaturesformat.pri:1427380917
+Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/:1427381298
+Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/:1427381308
+Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/cli/:1427381209
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/cli/main.cpp:1426418848
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/cli/recursivelyverifycustomdetachedgpgsignaturescli.cpp:1427143821
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/cli/recursivelyverifycustomdetachedgpgsignaturescli.h:1427142963
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/lib/:1427144999
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/lib/recursivelyverifycustomdetachedgpgsignatures.cpp:1427144999
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/lib/recursivelyverifycustomdetachedgpgsignatures.h:1427144539
+Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/RecursivelyVerifyCustomDetachedGpgSignaturesCli.pro:1427381282
+Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/recursivelyverifycustomdetachedgpgsignatures.pri:1427381248
 Projects/RecursiveGpgTools/shared/:1427142815
 Projects/RecursiveGpgTools/shared/recursivecustomdetachedgpgsignatures.cpp:1426486268
 Projects/RecursiveGpgTools/shared/recursivecustomdetachedgpgsignatures.h:1427142815
@@ -4631,7 +4637,7 @@ Projects/RecursiveVideoLengthAndSizeCalculator/src/recursivevideolengthandsizeca
 Projects/RecursiveVideoLengthAndSizeCalculator/src/recursivevideolengthandsizecalculatorwidget.cpp:1387100410
 Projects/RecursiveVideoLengthAndSizeCalculator/src/recursivevideolengthandsizecalculatorwidget.h:1387100361
 Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/:1367834769
-Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/src/:1395386173
+Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/src/:1427380549
 Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/src/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay.pro:1379410416
 Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/src/main.cpp:1367535156
 Projects/RecursivelyCopyToEmptyDestinationAndEasyTreeHashAlongTheWay/src/mainwidget.cpp:1368114280
@@ -4874,8 +4880,8 @@ Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpianoprofile.cpp:1425333382
 Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpianoprofile.h:1425336197
 Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpianoprofileconfiguration.cpp:1425330726
 Projects/SamplesKeyboardPiano/src/lib/sampleskeyboardpianoprofileconfiguration.h:1425333368
-Projects/SamplesKeyboardPiano/src/ui/:1425380973
-Projects/SamplesKeyboardPiano/src/ui/gui/:1426700864
+Projects/SamplesKeyboardPiano/src/ui/:1427380549
+Projects/SamplesKeyboardPiano/src/ui/gui/:1427380549
 Projects/SamplesKeyboardPiano/src/ui/gui/SamplesKeyboardPianoGui.pro:1425344075
 Projects/SamplesKeyboardPiano/src/ui/gui/main.cpp:1425329922
 Projects/SamplesKeyboardPiano/src/ui/gui/sampleskeyboardpianogui.cpp:1425342806
@@ -4895,7 +4901,7 @@ Projects/SftpUploaderAndRenamerQueue/src/sftpuploadandrenamerqueue.pri:142601779
 Projects/SimpleNotepadAutosaveWithoutOverwriting/:1402138414
 Projects/SimpleNotepadAutosaveWithoutOverwriting/design/:1402137999
 Projects/SimpleNotepadAutosaveWithoutOverwriting/design/as.you.can.see.ive.been.trying.to.figure.this.out.for.a.while.txt.oh.yea.initiail.idea.COINCIDENTALLY.mb.txt:1402137999
-Projects/SimpleNotepadAutosaveWithoutOverwriting/src/:1402144620
+Projects/SimpleNotepadAutosaveWithoutOverwriting/src/:1427380549
 Projects/SimpleNotepadAutosaveWithoutOverwriting/src/SimpleNotepadAutosaveWithoutOverwritingWidget.pro:1402143469
 Projects/SimpleNotepadAutosaveWithoutOverwriting/src/main.cpp:1402135278
 Projects/SimpleNotepadAutosaveWithoutOverwriting/src/signalemittingonkeyeventsplaintextedit.cpp:1402143926
@@ -4907,7 +4913,7 @@ Projects/SimpleNotepadAutosaveWithoutOverwriting/src/simplenotepadautosavewithou
 Projects/StevenHereAndNow/:1404984606
 Projects/StevenHereAndNow/design/:1404984621
 Projects/StevenHereAndNow/design/StevenHereAndNowGui.oops.initial.idea.i.mean.adslfkjflsjfosdufsdklfj.txt:1404984621
-Projects/StevenHereAndNow/src/:1405083320
+Projects/StevenHereAndNow/src/:1427380549
 Projects/StevenHereAndNow/src/bases/:1405078884
 Projects/StevenHereAndNow/src/bases/ievolvedmonkey.cpp:1405078884
 Projects/StevenHereAndNow/src/bases/ievolvedmonkey.h:1405078821
@@ -4946,8 +4952,8 @@ Projects/SubjectMatterMasteryHelper/design/tool.ehnahcement.test.formatter.etz.s
 Projects/SubjectMatterMasteryHelper/examples/:1403582642
 Projects/SubjectMatterMasteryHelper/examples/questions.with.word.answers.txt:1403586990
 Projects/SubjectMatterMasteryHelper/src/:1403586785
-Projects/SubjectMatterMasteryHelper/src/ui/:1403584981
-Projects/SubjectMatterMasteryHelper/src/ui/cli/:1403587243
+Projects/SubjectMatterMasteryHelper/src/ui/:1427380549
+Projects/SubjectMatterMasteryHelper/src/ui/cli/:1427380549
 Projects/SubjectMatterMasteryHelper/src/ui/cli/SubjectMatterMasteryHelperCli.pro:1403583184
 Projects/SubjectMatterMasteryHelper/src/ui/cli/main.cpp:1403584970
 Projects/SubjectMatterMasteryHelper/src/ui/cli/subjectmattermasteryhelpercli.cpp:1403585168
@@ -4982,8 +4988,8 @@ Projects/WebsiteAutomator/src/websiteaction.cpp:1320065635
 Projects/WebsiteAutomator/src/websiteaction.h:1320065677
 Projects/WebsiteAutomator/src/websiteautomator.cpp:1320063447
 Projects/WebsiteAutomator/src/websiteautomator.h:1320063371
-Projects/WhenStackTraceFails/:1398242228
-Projects/WhenStackTraceFails/src/:1398251883
+Projects/WhenStackTraceFails/:1427380549
+Projects/WhenStackTraceFails/src/:1427380549
 Projects/WhenStackTraceFails/src/WhenStackTraceFails.pro:1398242325
 Projects/WhenStackTraceFails/src/main.cpp:1398239932
 Projects/WhenStackTraceFails/src/spaceactivatedspecialplaintextedit.cpp:1398250249
@@ -5002,17 +5008,17 @@ Projects/d3fault/a.good.prng.seed.if.you.need.it.aslfdkjasdlfkjaworujflkj.txt:13
 Projects/d3fault/caq.not.sure.if.this.belongs.in.here.because.isnt.d3fault.mostly.dht.related.but.i.mean.it.would.ideally.have.this.functionality.merged.into.it.too.or.something.txt:1363389963
 Projects/d3fault/protocol.document.types.and.subtypes.originally.for.lifeshaper.but.too.ambitious.so.d3fault.it.is.txt:1355305033
 Projects/d3fault/some.thoughts.on.timeline.items.etc.and.a.desktop.integration.or.replacement.etc.idea.txt:1348976498
-Projects/designEqualsImplementation/:1404130767
+Projects/designEqualsImplementation/:1427380549
 Projects/designEqualsImplementation/design/:1404705933
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/:1404547092
-Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0001_SimpleAsyncLibrarySlotInvokeAndSignalResponse/:1406684979
+Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0001_SimpleAsyncLibrarySlotInvokeAndSignalResponse/:1427380549
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0001_SimpleAsyncLibrarySlotInvokeAndSignalResponse/design/:1406698281
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0001_SimpleAsyncLibrarySlotInvokeAndSignalResponse/design/0001_Redo.Kiss.dia:1406698281
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0001_SimpleAsyncLibrarySlotInvokeAndSignalResponse/design/Class.Diagram.AND.Use.Case.Project.Reference.dia:1406688403
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0001_SimpleAsyncLibrarySlotInvokeAndSignalResponse/design/Class.Diagram.AND.Use.Case.dia:1406688031
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0001_SimpleAsyncLibrarySlotInvokeAndSignalResponse/design/Prototype.but.naw.sdlfjsldfjsdfjousflwekjrlksdf.dia:1406692068
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0001_SimpleAsyncLibrarySlotInvokeAndSignalResponse/design/Sameshit.but.irl.example.Media.Decoder.dia:1405003766
-Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0001_SimpleAsyncLibrarySlotInvokeAndSignalResponse/src/:1408700072
+Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0001_SimpleAsyncLibrarySlotInvokeAndSignalResponse/src/:1427380549
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0001_SimpleAsyncLibrarySlotInvokeAndSignalResponse/src/ui/:1407757688
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0001_SimpleAsyncLibrarySlotInvokeAndSignalResponse/src/ui/cli/:1407197851
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0001_SimpleAsyncLibrarySlotInvokeAndSignalResponse/src/ui/cli/main.cpp:1404129446
@@ -5034,17 +5040,17 @@ Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingIm
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0002_SimpleAsyncLibrarySlotInvokeToBackendThreadInvokeAndEventualSignalResponse/:1404543660
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0002_SimpleAsyncLibrarySlotInvokeToBackendThreadInvokeAndEventualSignalResponse/design/:1404543602
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0002_SimpleAsyncLibrarySlotInvokeToBackendThreadInvokeAndEventualSignalResponse/design/Class.Diagram.AND.Use.Case.dia:1404543602
-Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0002_SimpleAsyncLibrarySlotInvokeToBackendThreadInvokeAndEventualSignalResponse/src/:1404548468
+Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0002_SimpleAsyncLibrarySlotInvokeToBackendThreadInvokeAndEventualSignalResponse/src/:1427380549
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0002_SimpleAsyncLibrarySlotInvokeToBackendThreadInvokeAndEventualSignalResponse/src/SimpleAsyncLibrarySlotInvokeToBackendThreadInvokeAndEventualSignalResponseCli.pro:1404546844
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0002_SimpleAsyncLibrarySlotInvokeToBackendThreadInvokeAndEventualSignalResponse/src/bar.cpp:1404544453
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0002_SimpleAsyncLibrarySlotInvokeToBackendThreadInvokeAndEventualSignalResponse/src/bar.h:1404544423
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0002_SimpleAsyncLibrarySlotInvokeToBackendThreadInvokeAndEventualSignalResponse/src/foo.cpp:1404548468
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0002_SimpleAsyncLibrarySlotInvokeToBackendThreadInvokeAndEventualSignalResponse/src/foo.h:1404545183
-Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0003_UnitOfExecutionDelayerWhenAnyChildDependencyIsOnDifferentThread/:1404549295
+Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0003_UnitOfExecutionDelayerWhenAnyChildDependencyIsOnDifferentThread/:1427380549
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0003_UnitOfExecutionDelayerWhenAnyChildDependencyIsOnDifferentThread/design/:1404552930
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0003_UnitOfExecutionDelayerWhenAnyChildDependencyIsOnDifferentThread/design/Class.Diagram.AND.Use.Case.dia:1404547671
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0003_UnitOfExecutionDelayerWhenAnyChildDependencyIsOnDifferentThread/design/unit.of.execution.delaying.gets.even.more.complex.fml.safljsdlfsdofulkjfdsodfusdlkf.txt:1404553027
-Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0003_UnitOfExecutionDelayerWhenAnyChildDependencyIsOnDifferentThread/src/:1404553051
+Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0003_UnitOfExecutionDelayerWhenAnyChildDependencyIsOnDifferentThread/src/:1427380549
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0003_UnitOfExecutionDelayerWhenAnyChildDependencyIsOnDifferentThread/src/UnitOfExecutionDelayerWhenAnyChildDependencyIsOnDifferentThreadCli.pro:1404549233
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0003_UnitOfExecutionDelayerWhenAnyChildDependencyIsOnDifferentThread/src/bar.cpp:1404548232
 Projects/designEqualsImplementation/design/typicalDesignsAndTheirCorrespondingImplementations/0003_UnitOfExecutionDelayerWhenAnyChildDependencyIsOnDifferentThread/src/bar.h:1404548206
@@ -5105,7 +5111,7 @@ Projects/designEqualsImplementation/design/two.arrows.modes.but.i.should.definit
 Projects/designEqualsImplementation/design/two.objects.should.be.able.to.communicate.even.if.one.is.stream.based.and.other.is.message.based.txt:1379236962
 Projects/designEqualsImplementation/design/verbatim.video.mode.kinda.like.justin.tv.except.entirely.more.awesome.txt:1323574132
 Projects/designEqualsImplementation/design/where.to.go.from.here.is.entirely.up.to.me.pretty.early.on.still.lol.txt:1323495446
-Projects/designEqualsImplementation/src/:1404449995
+Projects/designEqualsImplementation/src/:1427380549
 Projects/designEqualsImplementation/src/ClassesThatRepresentProjectBeingCreated/:1323787135
 Projects/designEqualsImplementation/src/ClassesThatRepresentProjectBeingCreated/designproject.cpp:1323779476
 Projects/designEqualsImplementation/src/ClassesThatRepresentProjectBeingCreated/designproject.h:1323775345
@@ -5170,7 +5176,7 @@ Projects/gitSubmoduleAutoBackupHalper/design/git.fsck.obviously.and.could.also.k
 Projects/gitSubmoduleAutoBackupHalper/design/rapid.prototyping.perfection.but.idfk.how.to.safely.do.pushing.from.within.superproject.submodule.esp.when.theres.multiple.uses.of.that.submodule.txt:1371544384
 Projects/gitSubmoduleAutoBackupHalper/design/readme.before.running.design.considerations.basically.do.DEEPEST.SUBFOLDERS.FIRST.txt:1363796978
 Projects/gitSubmoduleAutoBackupHalper/design/should.have.3x.raid.0.mirroring.drives.for.OS.and.working.area.of.unfolded.git.submodules.txt:1363769132
-Projects/gitSubmoduleAutoBackupHalper/src/:1425120856
+Projects/gitSubmoduleAutoBackupHalper/src/:1427380549
 Projects/gitSubmoduleAutoBackupHalper/src/gitSubmoduleAutoBackupHalper.pro:1371546957
 Projects/gitSubmoduleAutoBackupHalper/src/gitsubmoduleautobackuphalper.cpp:1371547263
 Projects/gitSubmoduleAutoBackupHalper/src/gitsubmoduleautobackuphalper.h:1371547189
@@ -5195,7 +5201,7 @@ Projects/layoutAppendTriggersGuiUpdate/layoutAppendTriggersGuiUpdate/main.cpp:13
 Projects/libAvGraphicsItem2/:1344095614
 Projects/libAvGraphicsItem2/design/:1386045282
 Projects/libAvGraphicsItem2/design/overview.of.thread.separated.connections.no.mutexes.or.wait.conditions.required.txt:1326306251
-Projects/libAvGraphicsItem2/src/:1424789501
+Projects/libAvGraphicsItem2/src/:1427380549
 Projects/libAvGraphicsItem2/src/backend/:1324464673
 Projects/libAvGraphicsItem2/src/backend/audiovideosynchronizer.cpp:1324382622
 Projects/libAvGraphicsItem2/src/backend/audiovideosynchronizer.h:1324382612
@@ -5216,7 +5222,7 @@ Projects/libAvGraphicsItem3/:1344095628
 Projects/libAvGraphicsItem3/design/:1326545331
 Projects/libAvGraphicsItem3/design/Buffers.Overview.Push.To.Init.and.Pull.While.Progressing.wtf.both.dia:1326544897
 Projects/libAvGraphicsItem3/design/Class.Diagram.and.how.I.want.the.libraries.to.be.modularized.dia:1326545331
-Projects/libAvGraphicsItem3/src/:1424787688
+Projects/libAvGraphicsItem3/src/:1427380549
 Projects/libAvGraphicsItem3/src/backend/:1327006061
 Projects/libAvGraphicsItem3/src/backend/libavplayer.cpp:1327003992
 Projects/libAvGraphicsItem3/src/backend/libavplayer.h:1327006061
@@ -5230,19 +5236,19 @@ Projects/libAvGraphicsItem3/src/frontend/videoplayerwidget.h:1327005797
 Projects/libAvGraphicsItem3/src/libAvGraphicsItem3.pro:1327004311
 Projects/libAvGraphicsItem3/src/main.cpp:1327003410
 Solutions/:1417412538
-Solutions/Abc2PessimisticStateMonitorAndRecoverer/:1393096791
+Solutions/Abc2PessimisticStateMonitorAndRecoverer/:1427380549
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/design/:1413188299
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/design/initial.idea.txt:1390932309
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/design/scaling.to.millions.of.monitored.docs.idea.attempt.txt:1413188708
-Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/:1420074004
+Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/:1427380549
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/Abc2PessimisticStateMonitorAndRecoverer.pro:1399666980
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/abc2pessimisticstatemonitorandrecoverer.cpp:1418983376
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/abc2pessimisticstatemonitorandrecoverer.h:1413102432
 Solutions/Abc2PessimisticStateMonitorAndRecoverer/src/main.cpp:1413102367
-Solutions/Abc2WithdrawRequestProcessor/:1417933542
+Solutions/Abc2WithdrawRequestProcessor/:1427380549
 Solutions/Abc2WithdrawRequestProcessor/design/:1417933562
 Solutions/Abc2WithdrawRequestProcessor/design/two.modes.calculate.only.and.execute.txt:1417933571
-Solutions/Abc2WithdrawRequestProcessor/src/:1424496554
+Solutions/Abc2WithdrawRequestProcessor/src/:1427380549
 Solutions/Abc2WithdrawRequestProcessor/src/Abc2WithdrawRequestProcessorCli.pro:1418096286
 Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessor.cpp:1424496551
 Solutions/Abc2WithdrawRequestProcessor/src/abc2withdrawrequestprocessor.h:1424494145
@@ -5253,8 +5259,8 @@ Solutions/Abc2couchbaseKeyAndJsonDefines/:1424496069
 Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.cpp:1418982912
 Solutions/Abc2couchbaseKeyAndJsonDefines/abc2couchbaseandjsonkeydefines.h:1424496069
 Solutions/Abc2dbInitializer/:1393907655
-Solutions/Abc2dbInitializer/src/:1393920575
-Solutions/Abc2dbInitializer/src/cli/:1420079023
+Solutions/Abc2dbInitializer/src/:1427380549
+Solutions/Abc2dbInitializer/src/cli/:1427380549
 Solutions/Abc2dbInitializer/src/cli/Abc2dbInitializercli.pro:1394267475
 Solutions/Abc2dbInitializer/src/cli/abc2dbinitializercli.cpp:1420078612
 Solutions/Abc2dbInitializer/src/cli/abc2dbinitializercli.h:1393913424
@@ -5262,8 +5268,8 @@ Solutions/Abc2dbInitializer/src/cli/main.cpp:1393994374
 Solutions/Abc2dbInitializer/src/lib/:1420078751
 Solutions/Abc2dbInitializer/src/lib/abc2dbinitializer.cpp:1420078751
 Solutions/Abc2dbInitializer/src/lib/abc2dbinitializer.h:1420078725
-Solutions/Abc2getTodaysAdSlot/:1394268588
-Solutions/Abc2getTodaysAdSlot/src/:1419936121
+Solutions/Abc2getTodaysAdSlot/:1427380549
+Solutions/Abc2getTodaysAdSlot/src/:1427380549
 Solutions/Abc2getTodaysAdSlot/src/Abc2getTodaysAdSlot.pro:1419888186
 Solutions/Abc2getTodaysAdSlot/src/gettodaysadslotwresource.cpp:1419891883
 Solutions/Abc2getTodaysAdSlot/src/gettodaysadslotwresource.h:1419891399
@@ -5271,8 +5277,8 @@ Solutions/Abc2getTodaysAdSlot/src/main.cpp:1419887637
 Solutions/Abc2getTodaysAdSlot/src/synchronoustodaysadslotgetter.cpp:1420074400
 Solutions/Abc2getTodaysAdSlot/src/synchronoustodaysadslotgetter.h:1419891580
 Solutions/Abc2hugeBitcoinKeyListPageAdder/:1393916472
-Solutions/Abc2hugeBitcoinKeyListPageAdder/src/:1394268143
-Solutions/Abc2hugeBitcoinKeyListPageAdder/src/cli/:1394269808
+Solutions/Abc2hugeBitcoinKeyListPageAdder/src/:1427380549
+Solutions/Abc2hugeBitcoinKeyListPageAdder/src/cli/:1427380549
 Solutions/Abc2hugeBitcoinKeyListPageAdder/src/cli/Abc2hugeBitcoinKeyListPageAdderCli.pro:1394267975
 Solutions/Abc2hugeBitcoinKeyListPageAdder/src/cli/abc2hugebitcoinkeylistpageaddercli.cpp:1393921817
 Solutions/Abc2hugeBitcoinKeyListPageAdder/src/cli/abc2hugebitcoinkeylistpageaddercli.h:1393921045
@@ -5313,7 +5319,7 @@ Solutions/Anonymous Bitcoin Computing/design/squirb.alias.basically.just.skin.sw
 Solutions/Anonymous Bitcoin Computing/design/the.beauty.of.it.all.is.in.the.get.if.in.cache.and.register.me.for.updates.to.values.call.thingy.or.something.txt:1350412515
 Solutions/Anonymous Bitcoin Computing/design/use.paxos.you.moron.it.isnt.that.tough.of.a.decision.its.still.pretty.scalable.txt:1338547630
 Solutions/Anonymous Bitcoin Computing/design/was.considering.writing.my.own.distributed.db.but.meh.wrapping.couchbase.with.observe.is.sooooo.much.easier.and.i.am.lazy.so.changed.my.mind.back.while.writing.this.hahah.txt:1360590321
-Solutions/Anonymous Bitcoin Computing/src/:1389982101
+Solutions/Anonymous Bitcoin Computing/src/:1427380549
 Solutions/Anonymous Bitcoin Computing/src/AppDb/:1337825795
 Solutions/Anonymous Bitcoin Computing/src/AppDb/Actions/:1336172121
 Solutions/Anonymous Bitcoin Computing/src/AppDb/Actions/createbankaccountaction.cpp:1336172121
@@ -5379,7 +5385,7 @@ Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/IBankServer.xml:13429308
 Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/bankservermessagedispenser.h:1340850629
 Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/ibankserver.h:1340839558
 Solutions/Anonymous Bitcoin Computing/src/RpcBankServer/rpcbankservernetworkmessage.h:1339492978
-Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/:1393101858
+Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/:1427380549
 Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/views/:1334827029
 Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/views/advertising/:1333733713
 Solutions/Anonymous Bitcoin Computing/src/WtFrontEnd/views/advertising/abcadvertisingbuyadspace.cpp:1333733695
@@ -5416,7 +5422,7 @@ Solutions/Anonymous Bitcoin Computing/src/shared/AppClientBankServerProtocol.h:1
 Solutions/Anonymous Bitcoin Computing/src/shared/WtFrontEndAndAppDbProtocol.h:1336171731
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.cpp:1339499716
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.h:1339499197
-Solutions/Anonymous Bitcoin Computing 2/:1426429879
+Solutions/Anonymous Bitcoin Computing 2/:1427380549
 Solutions/Anonymous Bitcoin Computing 2/assets/:1415110445
 Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/:1424492850
 Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/AllTransactionsWithStateOfUncreditted.txt:1419797626
@@ -5456,7 +5462,7 @@ Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or
 Solutions/Anonymous Bitcoin Computing 2/design/the.goods.service.vs.money.transmitter.differentiation.does.not.exist.with.bitcoins.nor.paper.money.but.does.exist.with.debit.credit.cards.EXCEPT.THOSE.HAVE.FEES.UP.THE.ASS.AND.HUGE.BARRIER.TO.ENTRY.txt:1416508764
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
 Solutions/Anonymous Bitcoin Computing 2/design/two.bandwith.exploits.with.charging.withdrawal.fee.instead.of.transaction.fee.txt:1421237210
-Solutions/Anonymous Bitcoin Computing 2/src/:1426430806
+Solutions/Anonymous Bitcoin Computing 2/src/:1427380549
 Solutions/Anonymous Bitcoin Computing 2/src/backend/:1420869222
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
@@ -5540,10 +5546,10 @@ Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:142643
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.h:1420328539
 Solutions/Anonymous Bitcoin Computing 2/src/main.cpp:1422340475
 Solutions/Anonymous Bitcoin Computing 2/tools/:1418885409
-Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/:1418979564
+Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/:1427380549
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/design/:1418886022
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/design/abc2.transaction.creditor.initial.idea.txt:1418886022
-Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/:1424754477
+Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/:1427380549
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/Abc2TransactionCreditor.pro:1418981539
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditor.cpp:1424754296
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditor.h:1424752785
@@ -5558,15 +5564,15 @@ Solutions/BlueBox/Bitcoin Ad Agency/:1344096033
 Solutions/BlueBox/Bitcoin Ad Agency/touched.txt:1344096033
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/:1344096046
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/touched.txt:1344096046
-Solutions/DasButton/:1400808943
-Solutions/DasButton/src/:1409251734
+Solutions/DasButton/:1427380549
+Solutions/DasButton/src/:1427380549
 Solutions/DasButton/src/DasButton.pro:1400834262
 Solutions/DasButton/src/dasbutton.cpp:1401291874
 Solutions/DasButton/src/dasbutton.h:1401291794
 Solutions/DasButton/src/dasbuttoncli.cpp:1400834927
 Solutions/DasButton/src/dasbuttoncli.h:1400834887
 Solutions/DasButton/src/main.cpp:1400844971
-Solutions/NothingIsKnownParadox/:1426599197
+Solutions/NothingIsKnownParadox/:1427380549
 Solutions/NothingIsKnownParadox/design/:1383183503
 Solutions/NothingIsKnownParadox/design/derived.theory.sdafljsdourelkjoiusdflkjsadfoulkwejroudlskfjsdafou.txt:1383183503
 Solutions/NothingIsKnownParadox/design/initial.idea.sldfjsldafjsdflk.txt:1383177212
@@ -5577,7 +5583,7 @@ Solutions/NothingIsKnownParadox/oldSrc/brain.h:1383183026
 Solutions/NothingIsKnownParadox/oldSrc/main.cpp:1383183831
 Solutions/NothingIsKnownParadox/oldSrc/nothingisknownparadox.cpp:1383180873
 Solutions/NothingIsKnownParadox/oldSrc/nothingisknownparadox.h:1383180866
-Solutions/NothingIsKnownParadox/src/:1426651797
+Solutions/NothingIsKnownParadox/src/:1427380549
 Solutions/NothingIsKnownParadox/src/NothingIsKnownParadoxCli.pro:1426596730
 Solutions/NothingIsKnownParadox/src/brain.cpp:1426651667
 Solutions/NothingIsKnownParadox/src/brain.h:1426651608
@@ -5588,8 +5594,8 @@ Solutions/NothingIsKnownParadox/src/nothingisknownparadoxcli.cpp:1426600713
 Solutions/NothingIsKnownParadox/src/nothingisknownparadoxcli.h:1426600654
 Solutions/d3faultPublicLicense/:1400836496
 Solutions/d3faultPublicLicense/tools/:1400836628
-Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/:1400842871
-Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/:1401398015
+Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/:1427380549
+Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/:1427380549
 Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/D3faultPublicLicenseCopyrightHeaderBulkPrependerCli.pro:1400836752
 Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/d3faultpubliclicensecopyrightheaderbulkprepender.cpp:1401271837
 Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/d3faultpubliclicensecopyrightheaderbulkprepender.h:1400843883
@@ -5599,7 +5605,7 @@ Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrep
 Solutions/d3faultPublicLicense/chose.to.not.do.network.clause.but.eh.may.regret.it.later.txt:1387589098
 Solutions/d3faultPublicLicense/d3fault.public.license.v1.txt:1378374962
 Solutions/d3faultPublicLicense/header.prepend.dpl.v3.d3fault.launch.distribution.txt:1400664477
-Solutions/hackyVideoBullshitSite/:1427379852
+Solutions/hackyVideoBullshitSite/:1427380549
 Solutions/hackyVideoBullshitSite/design/:1400229918
 Solutions/hackyVideoBullshitSite/design/dont.use.atomics.for.synchronization.lol.overkill.just.rely.on.fs.buffer.cache.txt:1397469831
 Solutions/hackyVideoBullshitSite/design/hacky.no.embed.fail.optimization.solu.nvm.txt:1394173861
@@ -5608,7 +5614,7 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400803006
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1427380168
+Solutions/hackyVideoBullshitSite/src/:1427380549
 Solutions/hackyVideoBullshitSite/src/backend/:1427305197
 Solutions/hackyVideoBullshitSite/src/backend/adimageapikey.h:1424844210
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1425296020
@@ -5639,8 +5645,8 @@ Solutions/hackyVideoBullshitSite/tools/:1401400769
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/:1400305152
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/design/:1400305184
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/design/initial.idea.including.a.failed.lol.attempt.txt:1400305184
-Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/:1400310726
-Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/:1409249320
+Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/:1427380549
+Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/:1427380549
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/AtomicallyUpdateSymlinkToLatestGitCommit.pro:1400312390
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/atomicallyupdatesymlinktolatestgitcommitcli.cpp:1400312390
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/cli/atomicallyupdatesymlinktolatestgitcommitcli.h:1400312107
@@ -5649,8 +5655,8 @@ Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/atomicallyupdatesymlinktolatestgitcommit.cpp:1400562807
 Solutions/hackyVideoBullshitSite/tools/AtomicallyUpdateSymlinkToLatestGitCommit/src/lib/atomicallyupdatesymlinktolatestgitcommit.h:1400562770
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/:1397023766
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1425100836
-Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1427300049
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/:1427380549
+Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/:1427380549
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/FfmpegSegmentUploaderCli.pro:1426017853
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.cpp:1425102286
 Solutions/hackyVideoBullshitSite/tools/FfmpegSegmentUploader/src/cli/ffmpegsegmentuploadercli.h:1425101238
@@ -5700,7 +5706,7 @@ Solutions/launchASEPbecauseRedAlert/video.bytestream.design.rofl.so.ghetto.and.p
 Solutions/standard.wt.deploy.arguments.to.get.clean.urls.working.properly.txt:1398266138
 licenses/:1398086549
 licenses/license.dpl.txt:1388242176
-scripts/:1427225377
+scripts/:1427380762
 scripts/LiveCDinstallAndConfigExtra/:1338074874
 scripts/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
 scripts/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
@@ -5742,6 +5748,7 @@ scripts/droid.backup.pictures.required.and.optionally.conversation.backup.and.ca
 scripts/droid.conversationBackup.pull.zip.and.shred.sh.bak:1358469443
 scripts/enable.vga.only.monitor.if.connected.sh:1350618566
 scripts/git.binaries.hackery.woot.txt:1424347522
+scripts/git.clean.sldfjlsdjflsdfjlskdjf.txt:1427380762
 scripts/installAllRpmsInThisDir.sh:1324208617
 scripts/laptop.screen.only.sh:1350618576
 scripts/mount.2x.750gb.drives.sh:1350716644
