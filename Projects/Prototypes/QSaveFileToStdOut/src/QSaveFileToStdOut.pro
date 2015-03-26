@@ -10,11 +10,8 @@ QT       -= gui
 TARGET = QSaveFileToStdOut
 CONFIG   += console
 CONFIG   -= app_bundle
-
 TEMPLATE = app
 
-SOURCES += main.cpp \
-    savefileorstdout.cpp
+SOURCES += main.cpp
 
-HEADERS += \
-    savefileorstdout.h
+include(../../../../GloballySharedClasses/savefileorstdout.pri)

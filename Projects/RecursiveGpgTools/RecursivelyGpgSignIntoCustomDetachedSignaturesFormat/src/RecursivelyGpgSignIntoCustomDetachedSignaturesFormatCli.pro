@@ -24,3 +24,4 @@ HEADERS += \
 INCLUDEPATH += ../../shared/
 
 include(recursivelygpgsignintocustomdetachedsignaturesformat.pri)
+include(../../../../GloballySharedClasses/savefileorstdout.pri)

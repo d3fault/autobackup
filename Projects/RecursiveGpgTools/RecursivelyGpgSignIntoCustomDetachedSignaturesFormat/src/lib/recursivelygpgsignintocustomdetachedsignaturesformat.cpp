@@ -6,11 +6,14 @@
 #include <QMapIterator>
 #include <QDateTime>
 
+#include "savefileorstdout.h"
+
 //TODOoptional: make this app write to stdout if no output sigsfile arg is specified. similarly, the verifier should read from stdin if no input sigsfile arg is specified. directory is probably always necessary, HOWEVER it might be good to default to cwd for both this and the verifier when none is provided?
 //TODOoptional: a combination of sign+verify: sign files on fs not in sigfile, verify files in sigfile, report sigs in sigfile that do not exist on filesystem -- it shouldn't be the default because reading/verifying EVERY file would take a long as fuck time
 //TODOoptimization: applies to both this and verifier. if i'm not IO bound but am in fact cpu bound, then QtConcurrent could possibly be used... so long as gpg doesn't care about being called multiple times simultaneously
 RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::RecursivelyGpgSignIntoCustomDetachedSignaturesFormat(QObject *parent)
     : QObject(parent)
+    , m_OutputSigsFile(0)
     , m_RecursiveCustomDetachedSignatures(new RecursiveCustomDetachedSignatures(this))
     , m_GpgProcess(new QProcess(this))
     , m_GpgProcessTextStream(m_GpgProcess)
@@ -25,15 +28,15 @@ RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::RecursivelyGpgSignIntoCust
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::readInAllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem()
 {
-    if(!m_InputAndOutputSigFileTextStream.device()->isOpen()) //not open == doesn't exist yet
+    if(!m_InputSigsFileTextStream.device()->isOpen()) //not open == doesn't exist yet
         return;
 
-    while(!m_InputAndOutputSigFileTextStream.atEnd())
+    while(!m_InputSigsFileTextStream.atEnd())
     {
         QString alreadySignedFilePath;
         QString alreadySignedFileSig;
         qint64 alreadySignedFileUnixTimestamp;
-        if(!m_RecursiveCustomDetachedSignatures->readPathAndSignature(m_InputAndOutputSigFileTextStream, &alreadySignedFilePath, &alreadySignedFileSig, &alreadySignedFileUnixTimestamp))
+        if(!m_RecursiveCustomDetachedSignatures->readPathAndSignature(m_InputSigsFileTextStream, &alreadySignedFilePath, &alreadySignedFileSig, &alreadySignedFileUnixTimestamp))
         {
             emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
             return;
@@ -42,6 +45,7 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::readInAllSigsFromSigF
         ++m_ExistingSigs;
         ++m_TotalSigs;
     }
+    m_InputSigsFileTextStream.device()->close();
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDirEntriesAndEmitFinishedWhenNoMore() //pseudo-recursive (async) -- head
 {
@@ -105,22 +109,21 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
     if(m_AddedSigs > 0)
     {
         //now write the final custom detached signatures file
-        if(m_InputAndOutputSigFileTextStream.device()->isOpen()) //not open == doesn't exist
-            m_InputAndOutputSigFileTextStream.device()->close(); //we had it opened in read only mode
         //I thought about using a QSaveFile here to reduce the chances of being left with a corrupt/etc sigsfile, but I don't think QSaveFile plays nicely with stdout, which I plan on defaulting to if no filename is given. Perhaps QSaveFile::setDirectWriteFallback(true) should (or already does?) facilitate stdout. That problem was noticed only when I realized I didn't have a filename to pass to QSaveFile (and I thought of all the different kinds of devices I _DO_ want to support)
-        if(!m_InputAndOutputSigFileTextStream.device()->open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
+        if(!m_OutputSigsFile->open(QIODevice::WriteOnly | QIODevice::Truncate /* truncate is a noop for SaveFileOrStdOut, but if a regular QFile was passed in as m_OutputSigsFile, then it's necessary */ | QIODevice::Text))
         {
-            emit e("failed to re-open signatures file for writing"); //TODOlol: how to work on iodevices and still know the filename?
+            emit e("failed to open signatures file for writing"); //TODOlol: how to work on iodevices and still know the filename?
             emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
             return;
         }
+        QTextStream outputSigsFileTextStream(m_OutputSigsFile);
         QMapIterator<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> it(m_AllSigsForOutputting);
         while(it.hasNext())
         {
             it.next();
-            m_InputAndOutputSigFileTextStream << it.value();
+            outputSigsFileTextStream << it.value();
         }
-        m_InputAndOutputSigFileTextStream.flush();
+        //TODOmb: as an iodevice, i have no way of flushing, closing, or otherwise QSaveFile::commit'ting here and checking that it actually worked. I think warnings/errors will be emitted by QSaveFile itself when commit fails, but I am unsure (test this). However, if I change the type of m_OutputSigsFile to a anything other than a QIODevice, then I lose portability :(
     }
 
     emit o("(sigs, existing: " + QString::number(m_ExistingSigs) + ", added: " + QString::number(m_AddedSigs) + ", total: " + QString::number(m_TotalSigs) + ")");
@@ -138,37 +141,46 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::spitOutGpgProcessOutp
     emit e(m_GpgProcess->readAllStandardError());
     emit e(m_GpgProcess->readAllStandardOutput());
 }
-void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QString &dirToRecursivelySign, const QString &outputSigFilePath, bool forceResigningOfFilesAlreadyPresentInOutputSigFile, const QStringList &excludeEntries)
+void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QString &dirToRecursivelySign, const QString &sigFilePath_OrEmptyStringForStdOut, const QStringList &excludeEntries)
 {
-    QFile *outputSigFile = new QFile(outputSigFilePath, this);
-    QFileInfo outputSigFileInfo(*outputSigFile);
-    const QString &absolutePathOfDirToRecursivelySign_WithSlashAppended = appendSlashIfNeeded(dirToRecursivelySign);
-    const QString &outputSigsFileAbsolutePath = outputSigFileInfo.absoluteFilePath();
-    QStringList excludeEntriesWithOutputSigsFilePossiblyAddedToExclusionList = excludeEntries; //cow
-    if(outputSigsFileAbsolutePath.startsWith(absolutePathOfDirToRecursivelySign_WithSlashAppended))
+    QIODevice *outputSigsIoDevice = new SaveFileOrStdOut(sigFilePath_OrEmptyStringForStdOut, this); //set up, but don't open because that would make the temp file and we have no way of getting it and adding it to exclusion list. would be more memory efficient to open it now and write to it as we go along (then cancel it if there's an error (owait nvm can't cancel an stdout write)), if there was a way in the QSaveFile api to get the temp filename
+    QFile *inputSigsFile = new QFile(sigFilePath_OrEmptyStringForStdOut, this);
+    QStringList excludeEntriesWithInputSigsFilePossiblyAddedToExclusionList = excludeEntries; //cow
+    if(!sigFilePath_OrEmptyStringForStdOut.isEmpty())
     {
-        //output sigs file is in target dir, so exclude it
-        QString outputSigsFileRelativePath = outputSigsFileAbsolutePath.mid(absolutePathOfDirToRecursivelySign_WithSlashAppended.length());
-        excludeEntriesWithOutputSigsFilePossiblyAddedToExclusionList << outputSigsFileRelativePath;
-    }
-    if(outputSigFileInfo.exists())
-    {
-        if(!outputSigFileInfo.isFile())
+        QFileInfo inputSigsFileInfo(*inputSigsFile);
+        const QString &absolutePathOfDirToRecursivelySign_WithSlashAppended = appendSlashIfNeeded(dirToRecursivelySign);
+        const QString &inputSigsFileAbsolutePath = inputSigsFileInfo.absoluteFilePath();
+        if(inputSigsFileAbsolutePath.startsWith(absolutePathOfDirToRecursivelySign_WithSlashAppended))
         {
-            emit e("sigsfile exists but is not a file");
-            emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
-            return;
+            //input sigs file is in target dir, so exclude it
+            QString inputSigsFileRelativePath = inputSigsFileAbsolutePath.mid(absolutePathOfDirToRecursivelySign_WithSlashAppended.length());
+            excludeEntriesWithInputSigsFilePossiblyAddedToExclusionList << inputSigsFileRelativePath;
         }
-        if(!outputSigFile->open(QIODevice::ReadOnly | QIODevice::Text))
+        if(inputSigsFileInfo.exists())
         {
-            emit e("failed to open sig file for reading: " + outputSigFilePath);
-            emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
-            return;
+            if(!inputSigsFileInfo.isFile())
+            {
+                emit e("sigsfile exists but is not a file");
+                emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
+                return;
+            }
+            if(!inputSigsFile->open(QIODevice::ReadOnly | QIODevice::Text))
+            {
+                emit e("failed to open sig file for reading: " + sigFilePath_OrEmptyStringForStdOut);
+                emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
+                return;
+            }
         }
     }
-    recursivelyGpgSignIntoCustomDetachedSignaturesFormat(dirToRecursivelySign, outputSigFile, forceResigningOfFilesAlreadyPresentInOutputSigFile, excludeEntriesWithOutputSigsFilePossiblyAddedToExclusionList);
+    recursivelyGpgSignIntoCustomDetachedSignaturesFormat(dirToRecursivelySign, inputSigsFile, outputSigsIoDevice, excludeEntriesWithInputSigsFilePossiblyAddedToExclusionList);
 }
-void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QDir &dirToRecursivelySign, QIODevice *outputSigIoDevice, bool forceResigningOfFilesAlreadyPresentInOutputSigFile, const QStringList &excludeEntries) //TODOoptional: --force-resign flag, but non-default. TODOoptional: better than a simple "force-resign" flag, we could store the last modified timestamp on the file path line... and as we iterate, we compare modified timestamps. if they don't match, we re-verify. if the sigs don't match, we notify (and i guess the user could opt to overwriting with the new sig (depends on use case entirely)). if the sig does verify, we 'touch' the file so that it gets it's old timestamp back (alternatively but less likely, we update the last modified timestamp in the sigfile to the one seen on the filesystem... it could be a "whichever is earlier" algorithm... but I think in general I'll want to 'touch' the fs timestamp with the one found in the sigfile)
+void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QDir &dirToRecursivelySign, QIODevice *sigsIoDevice, const QStringList &excludeEntries)
+{
+    recursivelyGpgSignIntoCustomDetachedSignaturesFormat(dirToRecursivelySign, sigsIoDevice, sigsIoDevice, excludeEntries);
+}
+//inputSigsIoDevice and outputSigsIoDevice can be the same device, but don't have to be (TODOoptional: an overload of this method that accepts just one iodevice)
+void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QDir &dirToRecursivelySign, QIODevice *inputSigsIoDevice, QIODevice *outputSigsIoDevice, const QStringList &excludeEntries) //TODOoptional: --force-resign flag, but non-default. TODOoptional: better than a simple "force-resign" flag, we could store the last modified timestamp on the file path line... and as we iterate, we compare modified timestamps. if they don't match, we re-verify. if the sigs don't match, we notify (and i guess the user could opt to overwriting with the new sig (depends on use case entirely)). if the sig does verify, we 'touch' the file so that it gets it's old timestamp back (alternatively but less likely, we update the last modified timestamp in the sigfile to the one seen on the filesystem... it could be a "whichever is earlier" algorithm... but I think in general I'll want to 'touch' the fs timestamp with the one found in the sigfile)
 {
     if(!dirToRecursivelySign.exists())
     {
@@ -176,7 +188,10 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignInt
         emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
         return;
     }
-    m_InputAndOutputSigFileTextStream.setDevice(outputSigIoDevice);
+    m_InputSigsFileTextStream.setDevice(inputSigsIoDevice);
+    //if(m_OutputSigsFile)
+    //    delete m_OutputSigsFile;
+    m_OutputSigsFile = outputSigsIoDevice;
     readInAllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem();
     const QString &absolutePathOfDirToRecursivelySign = dirToRecursivelySign.absolutePath();
     m_GpgProcess->setWorkingDirectory(absolutePathOfDirToRecursivelySign);

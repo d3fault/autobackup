@@ -31,14 +31,19 @@ RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli::RecursivelyGpgSignIntoC
         excludeEntries << argz.takeAt(excludeIndex);
     }
 
-    if(argz.length() != 2)
+    if(argz.isEmpty())
         ERRRRRR
-    QMetaObject::invokeMethod(recursivelyGpgSignIntoCustomDetachedSignaturesFormat, "recursivelyGpgSignIntoCustomDetachedSignaturesFormat", Q_ARG(QString,argz.at(0)), Q_ARG(QString,argz.at(1)), Q_ARG(bool, false), Q_ARG(QStringList, excludeEntries));
+    QString dir = argz.takeFirst();
+    QString sigsFile;
+    if(!argz.isEmpty())
+        sigsFile = argz.takeFirst();
+    QMetaObject::invokeMethod(recursivelyGpgSignIntoCustomDetachedSignaturesFormat, "recursivelyGpgSignIntoCustomDetachedSignaturesFormat", Q_ARG(QString,dir), Q_ARG(QString,sigsFile), Q_ARG(bool, false), Q_ARG(QStringList, excludeEntries));
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli::cliUsage()
 {
-    handleE("Usage: RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli dir sigsFile");
+    handleE("Usage: RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli dir [sigsFile = stdout]");
     handleE("");
+    handleE("If no sigsFile is provided, the sigs are written to stdout");
     handleE(RecursiveGpgTools_EXCLUDE_ARG "\tExclude files. Specified as a path relative to the dir to recursively verify (without a leading './'). You can use this flag multiple times. Note, it only affects files on the filesystem not yet in the sigsfile. It does not suppress the warning 'file x was in sigsfile but not on filesystem'"); //TODOoptional: allow excludings sigs in sigsfile not on fs (to suppress that warning)
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli::handleO(const QString &msg)

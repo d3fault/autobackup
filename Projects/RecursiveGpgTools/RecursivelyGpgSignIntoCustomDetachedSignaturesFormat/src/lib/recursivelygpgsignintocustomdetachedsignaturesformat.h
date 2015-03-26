@@ -10,13 +10,16 @@
 
 #include "recursivecustomdetachedgpgsignatures.h"
 
+class QIODevice;
+
 class RecursivelyGpgSignIntoCustomDetachedSignaturesFormat : public QObject
 {
     Q_OBJECT
 public:
     explicit RecursivelyGpgSignIntoCustomDetachedSignaturesFormat(QObject *parent = 0);
 private:
-    QTextStream m_InputAndOutputSigFileTextStream;
+    QTextStream m_InputSigsFileTextStream;
+    QIODevice *m_OutputSigsFile;
     QHash<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem;
     QMap<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> m_AllSigsForOutputting;
     RecursiveCustomDetachedSignatures *m_RecursiveCustomDetachedSignatures;
@@ -46,8 +49,9 @@ signals:
     void e(const QString &msg);
     void doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(bool success);
 public slots:
-    void recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QString &dirToRecursivelySign, const QString &outputSigFilePath, bool forceResigningOfFilesAlreadyPresentInOutputSigFile = false, const QStringList &excludeEntries = QStringList());
-    void recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QDir &dirToRecursivelySign, QIODevice *outputSigIoDevice, bool forceResigningOfFilesAlreadyPresentInOutputSigFile = false, const QStringList &excludeEntries = QStringList());
+    void recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QString &dirToRecursivelySign, const QString &sigFilePath_OrEmptyStringForStdOut, const QStringList &excludeEntries = QStringList());
+    void recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QDir &dirToRecursivelySign, QIODevice *sigsIoDevice, const QStringList &excludeEntries = QStringList());
+    void recursivelyGpgSignIntoCustomDetachedSignaturesFormat(const QDir &dirToRecursivelySign, QIODevice *inputSigsIoDevice, QIODevice *outputSigsIoDevice, const QStringList &excludeEntries = QStringList());
 private slots:
     void handleGpgProcessError(QProcess::ProcessError processError);
     void handleGpgProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
