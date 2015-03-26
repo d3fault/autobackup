@@ -109,7 +109,6 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
     if(m_AddedSigs > 0)
     {
         //now write the final custom detached signatures file
-        //I thought about using a QSaveFile here to reduce the chances of being left with a corrupt/etc sigsfile, but I don't think QSaveFile plays nicely with stdout, which I plan on defaulting to if no filename is given. Perhaps QSaveFile::setDirectWriteFallback(true) should (or already does?) facilitate stdout. That problem was noticed only when I realized I didn't have a filename to pass to QSaveFile (and I thought of all the different kinds of devices I _DO_ want to support)
         if(!m_OutputSigsFile->open(QIODevice::WriteOnly | QIODevice::Truncate /* truncate is a noop for SaveFileOrStdOut, but if a regular QFile was passed in as m_OutputSigsFile, then it's necessary */ | QIODevice::Text))
         {
             emit e("failed to open signatures file for writing"); //TODOlol: how to work on iodevices and still know the filename?
@@ -124,23 +123,23 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
             outputSigsFileTextStream << it.value();
         }
         outputSigsFileTextStream.flush();
-        //TO DOnemb: as an iodevice, i have no way of flushing, closing, or otherwise QSaveFile::commit'ting here and checking that it actually worked. I think warnings/errors will be emitted by QSaveFile itself when commit fails, but I am unsure (test this). However, if I change the type of m_OutputSigsFile to a anything other than a QIODevice, then I lose portability :( -- really though, before this change to SaveFileOrStdOut I still wasn't using QFileDevice::flush, since I was still using QIODevice. Man wtf QIODevice used to have flush back in the 3.x days, but they removed it guh. It should have just return true for any device where it isn't applicable, instead of being deprecated altogether :(. Back to the point: I'm not any worse off with this change to SaveFileOrStdOut (in fact I'm better off because QSaveFile evades corruption), BUT I really wish I had some more verification that the save was successful... and QIODevice provides none :(...
-        SaveFileOrStdOut *saveFileOrStdoutMaybe = qobject_cast<SaveFileOrStdOut*>(m_OutputSigsFile);
+        //now for the types of io devices that support it, blockingly verify the writes (the network io devices don't fully flush when flush is called, so are pointless (i still kinda wish iodevice had a flush method just to simplify things))
+        SaveFileOrStdOut *saveFileOrStdoutMaybe = qobject_cast<SaveFileOrStdOut*>(m_OutputSigsFile); //lol this totally rekts my elegenance that SaveFileOrStdOut was coded to create. I could/should have just casted to QSaveFile here and not created the SaveFileOrStdOut to begin with -_-. All because QIODevice deprecated flush (although admittedly, flush != commit so nvm I'm dumb). The only thing SaveFileOrStdOut has bought me is automatic handling of "empty filenames", making them become stdout when empty... which IS an if/else block tucked away, so eh it isn't a COMPLETE waste...
         if(saveFileOrStdoutMaybe)
         {
             if(!saveFileOrStdoutMaybe->commitIfSaveFile())
             {
-                emit e("failed to commit the sigsfile to disk: " + saveFileOrStdoutMaybe->fileName());
+                emit e("failed to commit the sigsfile to disk");
                 emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
                 return;
             }
         }
         else
         {
+            //iodevice is not a SaveFileOrStdOut, but maybe the iodevice is a regular file
             QFileDevice *outputSigsAsFileDeviceMaybe = qobject_cast<QFileDevice*>(m_OutputSigsFile);
             if(outputSigsAsFileDeviceMaybe && (!outputSigsAsFileDeviceMaybe->flush()))
             {
-                //old: bleh this still isn't 'commit'... but I can't inherit from both QFile (for stdout) and QSaveFile in order to check via qobject_cast. oh well, it still does buy me SOMETHING, i think... (makes sure there's enough space left on hdd?). I guess shit I might as well qobject_cast to the SaveFileOrStdOut and then call a [pre-destruction] commit (and make sure commit isn't called again in destructor)... but still this cast to QFileDevice isn't so bad either, if the iodevice is a regular file
                 emit e("failed to flush output sigs file device: " + outputSigsAsFileDeviceMaybe->fileName());
                 emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
                 return;

@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
     QStringList arguments = a.arguments();
     arguments.removeFirst();
 
+#if 1 //16 lines -- honestly though 'proxy io device' is pretty ugly solution so the ONE EXTRA LINE (*gasp*) might be worth it... but also lol I can probably condense a lot of these lines/parts xD
     QString fileArg;
     if(!arguments.isEmpty())
         fileArg = arguments.takeFirst();
@@ -26,42 +27,57 @@ int main(int argc, char *argv[])
     }
     QTextStream outputStream(&output);
     outputStream << "yolo" << endl;
+    outputStream.flush();
+    if(!output.commitIfSaveFile())
+    {
+        qDebug("failed to commit save file");
+        return 1;
+    }
+#endif
 
-#if 0
+#if 0 //17 lines
+    QIODevice *ioDevice;
+    if(arguments.isEmpty())
+        ioDevice = new QFile(&a);
+    else
+        ioDevice = new QSaveFile(arguments.takeFirst(), &a);
+    if(!ioDevice->open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qDebug("failed to open iodevice");
+        return 1;
+    }
+    QTextStream dsfkj(ioDevice);
+    dsfkj << "yolo" << endl;
+    dsfkj.flush();
+    if(qobject_cast<QSaveFile*>(ioDevice) && (!static_cast<QSaveFile*>(ioDevice)->commit()))
+    {
+        qDebug("failed to commit");
+        return 1;
+    }
+#endif
+
+#if 0 //21 lines
     bool isSaveFile = false;
     QIODevice *ioDevice;
     if(arguments.isEmpty())
-    {
-        QFile *stdOut = new QFile(&a);
-        if(!stdOut->open(stdout, QIODevice::WriteOnly | QIODevice::Text))
-        {
-            qDebug("failded sdfksdf");
-            return 1;
-        }
-        ioDevice = stdOut;
-    }
+        ioDevice = new QFile(&a);
     else
     {
         isSaveFile = true;
-        QSaveFile *blah = new QSaveFile(arguments.takeFirst(), &a);
-        if(!blah->open(QIODevice::WriteOnly | QIODevice::Text))
-        {
-            qDebug("lsdkjflksdjfsdkljfsdlk");
-            return 1;
-        }
-        ioDevice = blah;
+        ioDevice = new QSaveFile(arguments.takeFirst(), &a);
     }
-
+    if(!ioDevice->open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qDebug("failed to open iodevice");
+        return 1;
+    }
     QTextStream dsfkj(ioDevice);
     dsfkj << "yolo" << endl;
-
-    if(isSaveFile)
+    dsfkj.flush();
+    if(isSaveFile && (!static_cast<QSaveFile*>(ioDevice)->commit()))
     {
-        if(!static_cast<QSaveFile*>(ioDevice)->commit())
-        {
-            qDebug("failed to commit");
-            return 1;
-        }
+        qDebug("failed to commit");
+        return 1;
     }
 #endif
     return 0;
