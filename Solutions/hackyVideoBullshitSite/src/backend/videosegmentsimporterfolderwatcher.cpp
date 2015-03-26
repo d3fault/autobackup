@@ -27,6 +27,16 @@ bool VideoSegmentsImporterFolderWatcher::jitEnsureFolderExists(const QString &ab
     }
     return true;
 }
+QString VideoSegmentsImporterFolderWatcher::ensureMoveWontOverwrite_ByAddingSecondsIfItWouldHave(const QString &folderToMoveTo_WithSlashAppended, long long desiredFilename)
+{
+    QString ret;
+    do
+    {
+        ret = folderToMoveTo_WithSlashAppended + QString::number(desiredFilename) + ".ogg";
+        ++desiredFilename;
+    }while(QFile::exists(ret));
+    return ret;
+}
 void VideoSegmentsImporterFolderWatcher::maybePropagateToNeighbor(const QString &timestampUsedInRename, const QString &localFilenameToPropagate)
 {
     if(!m_PropagateToNeighbor)
@@ -106,27 +116,27 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged()
     {
         const QString &currentEntry = it.next();
         //move entry from watch folder to permanent folder. TODOoptimization: folder-ize videos maybe. isn't there some maximum files in directory limit?
-        const QString &filenameMinusExt = currentEntry.left(currentEntry.lastIndexOf("."));
+        const QString &filenameMinusExt_AkaUnixTimestamp = currentEntry.left(currentEntry.lastIndexOf("."));
         bool convertOk = false;
-        long long filenameMinusExtAsLong = filenameMinusExt.toLongLong(&convertOk);
+        long long filenameMinusExtAsLong_AkaUnixTimestamp = filenameMinusExt_AkaUnixTimestamp.toLongLong(&convertOk);
         if(!convertOk)
         {
             emit e("invalid filename: " + currentEntry);
             continue;
         }
-        const QDateTime &newFilenamesDateTime = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(filenameMinusExtAsLong)*1000).toUTC();
+        const QDateTime &newFilenamesDateTime = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(filenameMinusExtAsLong_AkaUnixTimestamp)*1000).toUTC();
         const int newFilenamesYear = newFilenamesDateTime.date().year();
         const int newFilenamesDayOfYear = newFilenamesDateTime.date().dayOfYear();
         const QString &currentEntryAbsoluteFilePath = m_VideoSegmentsImporterFolderToWatchWithSlashAppended + currentEntry;
 
         //these two must be created with the video already in them (so scratch must be used)
         const QString &yearFolderFinalDest = m_VideoSegmentsImporterFolderToMoveToWithSlashAppended + QString::number(newFilenamesYear) + QDir::separator();
-        const QString &dayFolderFinalDest = yearFolderFinalDest + QString::number(newFilenamesDayOfYear) + QDir::separator();
+        const QString &dayFolderFinalDest_WithSlashAppended = yearFolderFinalDest + QString::number(newFilenamesDayOfYear) + QDir::separator();
 
         //most common case, day folder already exists
-        if(QFile::exists(dayFolderFinalDest))
+        if(QFile::exists(dayFolderFinalDest_WithSlashAppended))
         {
-            const QString &moveToDestinationFilename = dayFolderFinalDest + currentEntry;
+            const QString &moveToDestinationFilename = ensureMoveWontOverwrite_ByAddingSecondsIfItWouldHave(dayFolderFinalDest_WithSlashAppended, filenameMinusExtAsLong_AkaUnixTimestamp); //this is the only rename that needs this check, because the other ones below are to brand new folders (obviously empty). the reason for this check: my morning (hat) script is now using this mechanism, so there's a decent (1/3) chance of filename collision if I'm wearing the hat while using my comp (and I probably won't, but might). this is an ugly as fuck hack, but it's better than silently overwriting :-P (oh turns out rename fails instead of overwriting... but still the mechanism is already coded this way so fuggit (the files would just stay in 'watched' forever in that case lmfao)
             if(!QFile::rename(currentEntryAbsoluteFilePath, moveToDestinationFilename))
             {
                 emit e("failed to move '" + currentEntryAbsoluteFilePath + "' to '" + moveToDestinationFilename + "'");
@@ -134,7 +144,7 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged()
             }
 
             //enqueue for propagation to sibling
-            maybePropagateToNeighbor(filenameMinusExt, moveToDestinationFilename);
+            maybePropagateToNeighbor(filenameMinusExt_AkaUnixTimestamp, moveToDestinationFilename);
             continue;
         }
 
@@ -142,10 +152,10 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged()
         if(QFile::exists(yearFolderFinalDest))
         {
             //day folder needs creating, but video needs to already be in it ("move to atomicity"), so we need to use scratch space
-            const QString &dayFolderInScratchSpace = m_VideoSegmentsImporterFolderScratchSpacePathWithSlashAppended + QString::number(newFilenamesYear) + QDir::separator() + QString::number(newFilenamesDayOfYear) + QDir::separator();
-            if(!jitEnsureFolderExists(dayFolderInScratchSpace))
+            const QString &dayFolderInScratchSpace_WithSlashAppended = m_VideoSegmentsImporterFolderScratchSpacePathWithSlashAppended + QString::number(newFilenamesYear) + QDir::separator() + QString::number(newFilenamesDayOfYear) + QDir::separator();
+            if(!jitEnsureFolderExists(dayFolderInScratchSpace_WithSlashAppended))
                 continue;
-            const QString &absoluteFilePathInScratchSpace = dayFolderInScratchSpace + currentEntry;
+            const QString &absoluteFilePathInScratchSpace = dayFolderInScratchSpace_WithSlashAppended + currentEntry;
             //move to scratch
             if(!QFile::rename(currentEntryAbsoluteFilePath, absoluteFilePathInScratchSpace))
             {
@@ -153,14 +163,14 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged()
                 continue; //don't stop, but do tell
             }
             //move to final
-            if(!QFile::rename(dayFolderInScratchSpace, dayFolderFinalDest))
+            if(!QFile::rename(dayFolderInScratchSpace_WithSlashAppended, dayFolderFinalDest_WithSlashAppended))
             {
-                emit e("failed to move '" + dayFolderInScratchSpace + "' to '" + dayFolderFinalDest + "'");
+                emit e("failed to move '" + dayFolderInScratchSpace_WithSlashAppended + "' to '" + dayFolderFinalDest_WithSlashAppended + "'");
                 continue; //don't stop, but do tell
             }
 
             //enqueue for propagation to sibling
-            maybePropagateToNeighbor(filenameMinusExt, dayFolderFinalDest + currentEntry);
+            maybePropagateToNeighbor(filenameMinusExt_AkaUnixTimestamp, dayFolderFinalDest_WithSlashAppended + currentEntry);
             continue;
         }
 
@@ -185,7 +195,7 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged()
         }
 
         //enqueue for propagation to sibling
-        maybePropagateToNeighbor(filenameMinusExt, dayFolderFinalDest + currentEntry);
+        maybePropagateToNeighbor(filenameMinusExt_AkaUnixTimestamp, dayFolderFinalDest_WithSlashAppended + currentEntry);
         continue;
     }
 }

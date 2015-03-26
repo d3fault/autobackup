@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1427300681
+Documents/minddump/:1427380159
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -2262,6 +2262,7 @@ Documents/minddump/sdofusldfkjsldkjfskljdfsoduflsjfdosduflskjdfodusflk.txt:13894
 Documents/minddump/sdroiualfjlsdfjsdoiuwerljsdaf.txt:1355467880
 Documents/minddump/secure.and.secret.are.boolean.attributes.there.is.no.semi.txt:1324814637
 Documents/minddump/secure.input.only.blob.server.keeping.up.ensuring.via.low.high.wires.txt:1349075164
+Documents/minddump/security.is.probably.impossible.for.the.time.being.sldjflsdkjflskdjflsdkjflksjdklf.txt:1427380159
 Documents/minddump/self.punishment.to.give.incentive.to.code.FASTER.you.are.wasting.life.txt:1339936494
 Documents/minddump/semi.dream.weird.idfk.ajsdfljfouwrojasfljasfouawfjsadfojawrouwaeroiusdflkj.txt:1343315384
 Documents/minddump/seriously.NEED.to.launch.or.else.i.have.wasted.a.life.txt:1343532413
@@ -2421,6 +2422,7 @@ Documents/minddump/sldkjflkdsjfksjdflkjsdlkfjsdlkjflskdjflksdjflksdjfls.txt:1415
 Documents/minddump/sldkjflkjsdfkjsdkjfksldjfklsdjfkljsdkfjlsdkjflksdjflkjlkjsdlfkj.txt:1426379844
 Documents/minddump/sldkjflksdhflksdjflksjdflksdkfljsdlkfjlsdkjfoweurlkjdsfljsdlfjsdlfkjsdlkfjsdfhsdlkfjsdlkfj.txt:1420634045
 Documents/minddump/sldkjflksdjfklsdjflksjdlkfjsdlkfjlsdjflksdjfkljsdlfkjsdlkfjsd.txt:1418638335
+Documents/minddump/sldkjflksdjflksjdflkjslkdfjlskdjflksdjflksjdfkljsdlkfjsldk.txt:1427303260
 Documents/minddump/sldkjflksjdflkjsdfousdflkjsofusdlkfjsdofu.txt:1393098537
 Documents/minddump/sldkjflksjdflksjdfkjsqwedlfkjsdlkfjoiuwerkjdslfksd.txt:1410392526
 Documents/minddump/sldkjflsdjfljswersdfdflkjsdlkfjsldkjflksdjfsdofulksdjfsldkjf.txt:1399490878
@@ -4594,15 +4596,15 @@ Projects/RecursiveFileStringReplaceRenamer/src/lib/recursivefilestringreplaceren
 Projects/RecursiveFileStringReplaceRenamer/src/lib/recursivefilestringreplacerenamer.h:1388247652
 Projects/RecursiveGpgTools/:1426487982
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/:1426417651
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/:1427110838
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/:1427224751
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/:1427367232
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/:1427368025
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli.pro:1426424895
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/main.cpp:1426424959
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/recursivelygpgsignintocustomdetachedsignaturesformatcli.cpp:1427144133
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/recursivelygpgsignintocustomdetachedsignaturesformatcli.h:1427116744
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/:1427224736
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/recursivelygpgsignintocustomdetachedsignaturesformat.cpp:1427224736
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/recursivelygpgsignintocustomdetachedsignaturesformat.h:1427142318
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/:1427368010
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/recursivelygpgsignintocustomdetachedsignaturesformat.cpp:1427368010
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/recursivelygpgsignintocustomdetachedsignaturesformat.h:1427367753
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/:1425008691
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/:1426484748
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/cli/:1427220397
@@ -5597,7 +5599,7 @@ Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrep
 Solutions/d3faultPublicLicense/chose.to.not.do.network.clause.but.eh.may.regret.it.later.txt:1387589098
 Solutions/d3faultPublicLicense/d3fault.public.license.v1.txt:1378374962
 Solutions/d3faultPublicLicense/header.prepend.dpl.v3.d3fault.launch.distribution.txt:1400664477
-Solutions/hackyVideoBullshitSite/:1425208128
+Solutions/hackyVideoBullshitSite/:1427379852
 Solutions/hackyVideoBullshitSite/design/:1400229918
 Solutions/hackyVideoBullshitSite/design/dont.use.atomics.for.synchronization.lol.overkill.just.rely.on.fs.buffer.cache.txt:1397469831
 Solutions/hackyVideoBullshitSite/design/hacky.no.embed.fail.optimization.solu.nvm.txt:1394173861
@@ -5606,8 +5608,8 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400803006
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1426732719
-Solutions/hackyVideoBullshitSite/src/backend/:1426732316
+Solutions/hackyVideoBullshitSite/src/:1427380168
+Solutions/hackyVideoBullshitSite/src/backend/:1427305197
 Solutions/hackyVideoBullshitSite/src/backend/adimageapikey.h:1424844210
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1425296020
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.h:1420970631
@@ -5615,8 +5617,8 @@ Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.cpp:1
 Solutions/hackyVideoBullshitSite/src/backend/lastmodifiedtimestampswatcher.h:1401025268
 Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.cpp:1425295977
 Solutions/hackyVideoBullshitSite/src/backend/nonexpiringstringwresource.h:1425295977
-Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1426732316
-Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1399509052
+Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.cpp:1427305197
+Solutions/hackyVideoBullshitSite/src/backend/videosegmentsimporterfolderwatcher.h:1427304623
 Solutions/hackyVideoBullshitSite/src/frontend/:1426732696
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.cpp:1425106320
 Solutions/hackyVideoBullshitSite/src/frontend/directorybrowsingwtwidget.h:1398743110
@@ -5625,7 +5627,7 @@ Solutions/hackyVideoBullshitSite/src/frontend/hackyvideobullshitsitegui.h:142637
 Solutions/hackyVideoBullshitSite/src/frontend/hvbsshared.h:1424550347
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1424751631
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.h:1401029359
-Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1424858503
+Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1427379936
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1427227073
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.h:1401030044
 Solutions/hackyVideoBullshitSite/src/hvbsresources.qrc:1401115865
@@ -5761,4 +5763,4 @@ scripts/zoom.backup.and.shred.sh:1351237228
 .gitignore:1425055833
 copyright.txt:1388203681
 license.dpl.txt:1388242176
-todo.txt:1427227173
+todo.txt:1427305660

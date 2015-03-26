@@ -107,6 +107,7 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
         //now write the final custom detached signatures file
         if(m_InputAndOutputSigFileTextStream.device()->isOpen()) //not open == doesn't exist
             m_InputAndOutputSigFileTextStream.device()->close(); //we had it opened in read only mode
+        //I thought about using a QSaveFile here to reduce the chances of being left with a corrupt/etc sigsfile, but I don't think QSaveFile plays nicely with stdout, which I plan on defaulting to if no filename is given. Perhaps QSaveFile::setDirectWriteFallback(true) should (or already does?) facilitate stdout. That problem was noticed only when I realized I didn't have a filename to pass to QSaveFile (and I thought of all the different kinds of devices I _DO_ want to support)
         if(!m_InputAndOutputSigFileTextStream.device()->open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
         {
             emit e("failed to re-open signatures file for writing"); //TODOlol: how to work on iodevices and still know the filename?

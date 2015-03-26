@@ -27,6 +27,7 @@ private:
     SftpUploaderAndRenamerQueue *m_SftpUploaderAndRenamerQueue;
 
     bool jitEnsureFolderExists(const QString &absoluteFolderPathToMaybeJitCreate);
+    QString ensureMoveWontOverwrite_ByAddingSecondsIfItWouldHave(const QString &folderToMoveTo_WithSlashAppended, long long desiredFilename);
     void maybePropagateToNeighbor(const QString &timestampUsedInRename, const QString &localFilenameToPropagate);
     void beginStoppingVideoNeighborPropagation(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum newSftpUploaderAndRenamerQueueState);
 

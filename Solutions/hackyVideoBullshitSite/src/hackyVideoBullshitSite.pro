@@ -8,6 +8,7 @@ CONFIG -= app_bundle
 
 #CONFIG += no_keywords #bah, wt is great except it's GPL and fucks with my signals/slots
 #DEFINES += QT_NO_KEYWORDS
+DEFINES += BOOST_SPIRIT_THREADSAFE
 
 SOURCES += main.cpp \
     hackyvideobullshitsite.cpp \
@@ -47,7 +48,7 @@ INCLUDEPATH += ../../../GloballySharedClasses/distributeddatabase/
 INCLUDEPATH += ../../../Projects/LastModifiedTimestampsSorter/src/lib/
 INCLUDEPATH += ../../../Projects/SftpUploaderAndRenamerQueue/src/lib/
 
-LIBS += -lwt -lwthttp -lboost_signals -lboost_filesystem -lboost_system
+LIBS += -lwt -lwthttp -lboost_signals -lboost_filesystem -lboost_system -lboost_thread
 
 include(../../../GloballySharedClasses/objectonthreadhelper.pri)
 include(../../../GloballySharedClasses/lastmodifiedtimestamp.pri)
