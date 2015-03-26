@@ -123,12 +123,34 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
             it.next();
             outputSigsFileTextStream << it.value();
         }
-        //TODOmb: as an iodevice, i have no way of flushing, closing, or otherwise QSaveFile::commit'ting here and checking that it actually worked. I think warnings/errors will be emitted by QSaveFile itself when commit fails, but I am unsure (test this). However, if I change the type of m_OutputSigsFile to a anything other than a QIODevice, then I lose portability :(
+        outputSigsFileTextStream.flush();
+        //TO DOnemb: as an iodevice, i have no way of flushing, closing, or otherwise QSaveFile::commit'ting here and checking that it actually worked. I think warnings/errors will be emitted by QSaveFile itself when commit fails, but I am unsure (test this). However, if I change the type of m_OutputSigsFile to a anything other than a QIODevice, then I lose portability :( -- really though, before this change to SaveFileOrStdOut I still wasn't using QFileDevice::flush, since I was still using QIODevice. Man wtf QIODevice used to have flush back in the 3.x days, but they removed it guh. It should have just return true for any device where it isn't applicable, instead of being deprecated altogether :(. Back to the point: I'm not any worse off with this change to SaveFileOrStdOut (in fact I'm better off because QSaveFile evades corruption), BUT I really wish I had some more verification that the save was successful... and QIODevice provides none :(...
+        SaveFileOrStdOut *saveFileOrStdoutMaybe = qobject_cast<SaveFileOrStdOut*>(m_OutputSigsFile);
+        if(saveFileOrStdoutMaybe)
+        {
+            if(!saveFileOrStdoutMaybe->commitIfSaveFile())
+            {
+                emit e("failed to commit the sigsfile to disk: " + saveFileOrStdoutMaybe->fileName());
+                emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
+                return;
+            }
+        }
+        else
+        {
+            QFileDevice *outputSigsAsFileDeviceMaybe = qobject_cast<QFileDevice*>(m_OutputSigsFile);
+            if(outputSigsAsFileDeviceMaybe && (!outputSigsAsFileDeviceMaybe->flush()))
+            {
+                //old: bleh this still isn't 'commit'... but I can't inherit from both QFile (for stdout) and QSaveFile in order to check via qobject_cast. oh well, it still does buy me SOMETHING, i think... (makes sure there's enough space left on hdd?). I guess shit I might as well qobject_cast to the SaveFileOrStdOut and then call a [pre-destruction] commit (and make sure commit isn't called again in destructor)... but still this cast to QFileDevice isn't so bad either, if the iodevice is a regular file
+                emit e("failed to flush output sigs file device: " + outputSigsAsFileDeviceMaybe->fileName());
+                emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
+                return;
+            }
+        }
     }
 
     //TODOoptional: toggle between o and e if we're outputting to stdout, or perhaps make --quiet implicit when we're outputting to stdout. for now I'll just write all "messages" to e and "sigs" to o. I think ffmpeg writes to stderr in similar cases for similar reasons (because you can tell ffmpeg to write raw vidya bytes to stdout)
     emit e("(sigs, existing: " + QString::number(m_ExistingSigs) + ", added: " + QString::number(m_AddedSigs) + ", total: " + QString::number(m_TotalSigs) + ")");
-    emit e("done recusrively signing directory -- everything OK" + ((m_AddedSigs > 0) ? QString() : QString(" (nothing added)")));
+    emit e("done recursively signing directory -- everything OK" + ((m_AddedSigs > 0) ? QString() : QString(" (nothing added)")));
     emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(true);
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::gpgSignFileAndThenContinueRecursingDir()

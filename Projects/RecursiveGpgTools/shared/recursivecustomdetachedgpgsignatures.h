@@ -11,10 +11,10 @@
 struct RecursiveCustomDetachedSignaturesFileMeta //POD
 {
     RecursiveCustomDetachedSignaturesFileMeta() { }
-    RecursiveCustomDetachedSignaturesFileMeta(const QString &filePath, const QString &gpgSignature, qint64 unixTimestamp)
+    RecursiveCustomDetachedSignaturesFileMeta(const QString &filePath, const QString &gpgSignature, qint64 unixTimestampInSeconds)
         : FilePath(filePath)
         , GpgSignature(gpgSignature)
-        , UnixTimestampInSeconds(unixTimestamp)
+        , UnixTimestampInSeconds(unixTimestampInSeconds)
     { }
 
     QString FilePath;
