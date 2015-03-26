@@ -45,7 +45,6 @@ private:
         return inputString + "/";
     }
 signals:
-    void o(const QString &msg);
     void e(const QString &msg);
     void doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(bool success);
 public slots:

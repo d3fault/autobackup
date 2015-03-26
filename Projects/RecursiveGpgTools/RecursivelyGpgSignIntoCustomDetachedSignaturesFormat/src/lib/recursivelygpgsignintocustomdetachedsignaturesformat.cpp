@@ -126,8 +126,9 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
         //TODOmb: as an iodevice, i have no way of flushing, closing, or otherwise QSaveFile::commit'ting here and checking that it actually worked. I think warnings/errors will be emitted by QSaveFile itself when commit fails, but I am unsure (test this). However, if I change the type of m_OutputSigsFile to a anything other than a QIODevice, then I lose portability :(
     }
 
-    emit o("(sigs, existing: " + QString::number(m_ExistingSigs) + ", added: " + QString::number(m_AddedSigs) + ", total: " + QString::number(m_TotalSigs) + ")");
-    emit o("done recusrively signing directory -- everything OK" + ((m_AddedSigs > 0) ? QString() : QString(" (nothing added)")));
+    //TODOoptional: toggle between o and e if we're outputting to stdout, or perhaps make --quiet implicit when we're outputting to stdout. for now I'll just write all "messages" to e and "sigs" to o. I think ffmpeg writes to stderr in similar cases for similar reasons (because you can tell ffmpeg to write raw vidya bytes to stdout)
+    emit e("(sigs, existing: " + QString::number(m_ExistingSigs) + ", added: " + QString::number(m_AddedSigs) + ", total: " + QString::number(m_TotalSigs) + ")");
+    emit e("done recusrively signing directory -- everything OK" + ((m_AddedSigs > 0) ? QString() : QString(" (nothing added)")));
     emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(true);
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::gpgSignFileAndThenContinueRecursingDir()

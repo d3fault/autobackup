@@ -10,7 +10,6 @@ class RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli : public QObject
 public:
     explicit RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli(QObject *parent = 0);
 private:
-    QTextStream m_StdOut;
     QTextStream m_StdErr;
     bool m_Quitting;
 
@@ -18,7 +17,6 @@ private:
 signals:
     void exitRequested(int exitCode);
 private slots:
-    void handleO(const QString &msg);
     void handleE(const QString &msg);
     void handleDoneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(bool success);
 };
