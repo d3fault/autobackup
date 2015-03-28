@@ -12,7 +12,11 @@ CONFIG   += console
 CONFIG   -= app_bundle
 TEMPLATE = app
 
-SOURCES += cli/main.cpp
+HEADERS += cli/watchsigsfileandpostchangestousenetcli.h
+
+SOURCES += cli/main.cpp \
+    cli/watchsigsfileandpostchangestousenetcli.cpp
 
 include(watchsigsfileandpostchangestousenet.pri)
 include(../../../../RecursiveGpgTools/shared/recursivecustomdetachedgpgsignatures.pri)
+include(../../../../../GloballySharedClasses/standardinputnotifier.pri)

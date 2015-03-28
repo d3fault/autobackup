@@ -162,7 +162,11 @@ void WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFileAndPostChangesToU
     if(!dataDirForKeepingTrackOfAlreadyPostedFiles.exists())
         EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("data dir does not exist:" + dataDirForKeepingTrackOfAlreadyPostedFiles.absolutePath())
 
-    readInSigsFileAndPostAllNewEntries(sigsFilePathToWatch); //start posting right away
+                readInSigsFileAndPostAllNewEntries(sigsFilePathToWatch); //start posting right away
+}
+void WatchSigsFileAndPostChangesToUsenet::quitCleanly()
+{
+    //TODOreq
 }
 void WatchSigsFileAndPostChangesToUsenet::handleSigsFileChanged(const QString &sigsFilePath)
 {

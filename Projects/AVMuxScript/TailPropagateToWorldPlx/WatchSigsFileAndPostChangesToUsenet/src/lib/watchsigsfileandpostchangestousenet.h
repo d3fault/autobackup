@@ -39,6 +39,8 @@ signals:
 public slots:
     void startWatchingSigsFileAndPostChangesToUsenet(const QString &sigsFilePathToWatch, const QString &dirCorrespondingToSigsFile, const QString &dataDirForKeepingTrackOfAlreadyPostedFiles);
      void startWatchingSigsFileAndPostChangesToUsenet(const QString &sigsFilePathToWatch, const QDir &dirCorrespondingToSigsFile, const QDir &dataDirForKeepingTrackOfAlreadyPostedFiles);
+public slots:
+     void quitCleanly();
 private slots:
      void handleSigsFileChanged(const QString &sigsFilePath);
      void handlePostnewsProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
