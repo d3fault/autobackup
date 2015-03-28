@@ -18,7 +18,6 @@ class RecursivelyGpgSignIntoCustomDetachedSignaturesFormat : public QObject
 public:
     explicit RecursivelyGpgSignIntoCustomDetachedSignaturesFormat(QObject *parent = 0);
 private:
-    QTextStream m_InputSigsFileTextStream;
     QIODevice *m_OutputSigsFile;
     QHash<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem;
     QMap<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> m_AllSigsForOutputting;
@@ -34,7 +33,6 @@ private:
     quint64 m_AddedSigs;
     quint64 m_TotalSigs;
 
-    void readInAllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem();
     void recursivelyGpgSignDirEntriesAndEmitFinishedWhenNoMore();
     void gpgSignFileAndThenContinueRecursingDir();
     void spitOutGpgProcessOutput();

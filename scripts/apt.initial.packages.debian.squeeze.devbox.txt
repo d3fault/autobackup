@@ -1,5 +1,5 @@
 wheezy main noX:
-build-essential cmake pkg-config checkinstall automake autoconf libtool valgrind smartmontools libdevmapper1.02.1 fuse-utils ntfs-3g ntfsprogs dosfstools testdisk git curl p7zip-full zip unzip tree strace netcat yasm sox webp opus-tools libopus-dev zlib1g-dev libtheora-dev libcrypto++-dev libcrypto++-doc libevent-dev libcurl4-openssl-dev libssl-dev libgstreamer-plugins-base0.10-dev libxslt1-dev libcap2-bin libasound2-dev libv4l-dev
+build-essential cmake pkg-config checkinstall automake autoconf libtool valgrind smartmontools libdevmapper1.02.1 fuse-utils ntfs-3g ntfsprogs dosfstools testdisk git curl p7zip-full zip unzip tree strace netcat yasm sox webp opus-tools libopus-dev zlib1g-dev libtheora-dev libcrypto++-dev libcrypto++-doc libevent-dev libcurl4-openssl-dev libssl-dev libgstreamer-plugins-base0.10-dev libxslt1-dev libcap2-bin libasound2-dev libv4l-dev rtorrent
 
 wheezy main X:
 smart-notifier gsmartcontrol arduino keepassx xul-ext-noscript mplayer gimp dia inkscape unetbootin virtualbox-ose gv xscreensaver xscreensaver-data-extra

@@ -14,14 +14,11 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 SOURCES += cli/main.cpp \
-    ../../shared/recursivecustomdetachedgpgsignatures.cpp \
     cli/recursivelygpgsignintocustomdetachedsignaturesformatcli.cpp
 
 HEADERS += \
-    ../../shared/recursivecustomdetachedgpgsignatures.h \
     cli/recursivelygpgsignintocustomdetachedsignaturesformatcli.h
 
-INCLUDEPATH += ../../shared/
-
 include(recursivelygpgsignintocustomdetachedsignaturesformat.pri)
+include(../../shared/recursivecustomdetachedgpgsignatures.pri)
 include(../../../../GloballySharedClasses/savefileorstdout.pri)

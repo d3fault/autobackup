@@ -49,7 +49,10 @@ bool GetTodaysAdSlotServer::initializeAndStart(quint16 port, const QString &sslC
     //HTTP: connect(m_Server, SIGNAL(newConnection()), this, SLOT(handleNewConnection()));
     bool ret = m_Server->listen(QHostAddress::Any, port);
     if(!ret)
+    {
+        handleE(m_Server->errorString());
         return ret;
+    }
     if(optionalTorHiddenServiceHttpServerPort_OrZeroIfNotToStartIt != 0)
     {
         m_TorHiddenServiceHttpLocalhostOnlyServer = new TorHiddenServiceHttpLocalhostOnlyServer(this);

@@ -26,27 +26,6 @@ RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::RecursivelyGpgSignIntoCust
     connect(m_GpgProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(handleGpgProcessError(QProcess::ProcessError)));
     connect(m_GpgProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(handleGpgProcessFinished(int,QProcess::ExitStatus)));
 }
-void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::readInAllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem()
-{
-    if(!m_InputSigsFileTextStream.device()->isOpen()) //not open == doesn't exist yet
-        return;
-
-    while(!m_InputSigsFileTextStream.atEnd())
-    {
-        QString alreadySignedFilePath;
-        QString alreadySignedFileSig;
-        qint64 alreadySignedFileUnixTimestamp;
-        if(!m_RecursiveCustomDetachedSignatures->readPathAndSignature(m_InputSigsFileTextStream, &alreadySignedFilePath, &alreadySignedFileSig, &alreadySignedFileUnixTimestamp))
-        {
-            emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
-            return;
-        }
-        m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem.insert(alreadySignedFilePath, RecursiveCustomDetachedSignaturesFileMeta(alreadySignedFilePath, alreadySignedFileSig, alreadySignedFileUnixTimestamp)); //TODOreq: we start off with a hash, but as their existences are verified, we move them into a map... the same map that new files+sigs are being placed into. we want it to be sorted for when we re-write the signature file with the new entries. TODOoptimization: don't re-write the sigs file if no new files were seen (perhaps don't even open it in write mode?)
-        ++m_ExistingSigs;
-        ++m_TotalSigs;
-    }
-    m_InputSigsFileTextStream.device()->close();
-}
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDirEntriesAndEmitFinishedWhenNoMore() //pseudo-recursive (async) -- head
 {
     while(m_DirIterator->hasNext())
@@ -210,11 +189,17 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignInt
         emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
         return;
     }
-    m_InputSigsFileTextStream.setDevice(inputSigsIoDevice);
-    //if(m_OutputSigsFile)
-    //    delete m_OutputSigsFile;
     m_OutputSigsFile = outputSigsIoDevice;
-    readInAllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem();
+    if(inputSigsIoDevice->isOpen()) //not open == doesn't exist yet
+    {
+        if(!m_RecursiveCustomDetachedSignatures->readInAllSigsFromSigFile(inputSigsIoDevice, &m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem)) //so we know which ones to skip as we recurse the filesystem (but we also make sure their last modified timestamps reflect what is on the filesystem :-P)
+        {
+            emit doneRecursivelyGpgSigningIntoCustomDetachedSignaturesFormat(false);
+            return;
+        }
+        m_TotalSigs = m_ExistingSigs = m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem.size();
+        inputSigsIoDevice->close();
+    }
     const QString &absolutePathOfDirToRecursivelySign = dirToRecursivelySign.absolutePath();
     m_GpgProcess->setWorkingDirectory(absolutePathOfDirToRecursivelySign);
     m_CharacterLengthOfAbsolutePathOfTargetDir_IncludingTrailingSlash = absolutePathOfDirToRecursivelySign.length() + 1; //+1 to account for trailing slash

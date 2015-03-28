@@ -1,0 +1,33 @@
+Torrents and Newsgroups
+
+Torrents:
+
+cron @ 24hr
+	first day: grab any file within timestamp range 0-<timestampAt24hrCron>
+	successive days: grab any file within timestamp range <lastTimestamp+1>-<timestampAt24hrCron>
+	
+	simply make torrent of it. a limited allSigs is placed in root of directory hierarchy
+cron @ weekly
+	basically the same as the 24hr cron, but the starting range is always 0
+	...libtorrent can/should be used intelligently to keep us from having to recalculate sha1sums of files in the previous week
+
+
+Newsgroups:
+	
+I'm not sure if I want to do 1x post per day (mirroring the torrent) of if I want to post the files verbatim.
+In any case, I should keep .nzbs around. Ok maybe that's it: Post files verbatim on usenet, but then make .nzbs that correlate with the daily (and weekly/etc) torrents.
+I want my own [moderated] newsgroups, but after researching it a bit it looks like you have to suck admin cock and beg for one. No thanks, boneless it is.
+I'm thinking the message IDs should be b64properly(sha1)@d3fault.net
+I'll use multipart messages; the file contents goes up top and then below it the path+sig custom gpg format. Having the path in there is helpful for reconstructing the hierarchy.
+
+
+
+-Making a libtorrent app might take a few days, whereas the newsgroup poster would only take a few hours.
+-Torrents POINT TO the files, whereas newsgroups need to base64/mime encode the files. However, I can/should/will delete the base64/mime encoded newsgroup message once it posts
+-Each daily .torrent should contain the previous day's .torrent -- the same applies to .nzbs, and they nzb and torrents should contain each other as well. The torrents should be posted on newsgroup, but the nzbs are merely included in torrents. Both should be posted on d3fault.net ofc.
+-Eventually the .nzb files will expire and the .torrent trackers will need to be updated. For that reason maybe I should keep them in a git repo, that way the sha1sum lines will stay the same but the parts that need updating can be updated. Actually come to think of it the .nzb files won't change if I use the sha1@d3fault.net for Message-ID... I'll just need to re-post the files is all. I wonder if- orite just answer my own question. In ~2.7k days or whatever, I should begin downloading headers and ensuring that my files are still there (if not, re-up :-P). I worried that I'd have to download the files entirely, but nope (still maybe I should for integrity checking? maybe I should give each one some parity? nah fuck that for now at least).
+-The pubkey can go in every torrent, right along side the sigs in that torrent (I'm gonna be doing symlink trickery to make it look like my binary hierarchy exactly)...... but where should the pubkey go in the usenet posts? I guess the pubkey is it's own post, and err ehh uhmm idk like each signed posting can somehow reference it? I could add my own header: Signed-by-Gpg-Key: <MessageID-Of-Gpg-Pubkey>, or I could put it down below next to the path+sig
+-The primary overlap between the daily nzb/torrent is that they'll be targetting the exact same range of files.
+-How long do I want to keep a 'daily' torrent active for? I think my bittorrent client might hate me if I have assloads of torrents open (but maybe this is only dependent on my hardware, idfk). For .nzb then it's not relevant since the files go to other server[s]. Speaking of serverS, I should fukken just hack the newsgroup one together asep because I really want replicas more than anything at this point. Yea fuck the .nzb and .torrent for the time being, Ima just do a "post every fucking file" script. sha1@d3fault.net for Message-ID (someone could fuck this up and troll me lol), path+sig as second part of multi-part message, yea ez ez doit faggot.... you need to just whip up something KISS because you want to move onto music fingers. But guh even that simple script needs to know when the timestamp of the last file uploaded. And what if I just haven't sync'd a file and then it is sync'd but with a timestamp before the last file uploaded... then it wouldn't get uploaded blah. Maintain a list of all files uploaded, and their corresponding Message-IDs (evades trolls taking the spot also)? Oh cool I just saw the "References: <MessageID>" header in use, dats how I should reference the pubkey! Fffff "forbidden when new subject is raised" (I could have them all be Re: Pubkey rofl...). Eh back to the point: it's so easy to use a QDirIterator to fucking post a hierarchy recursively lol.... but to be able to post updates is a bit more challenging. I guess the posting app could keep it's own copy of allSigs.txt called postedSigs.txt... then each time it's triggered it does a diff of the allSigs.txt with it's own postedSigs.txt, then blamo we see diffs ez and post them :). But what if I upload 10gb, trigger the posting app (it starts posting), then 5 mins later upload 5mb, which then triggers the posting app (who's still working on the 10gb from earlier). Might double post, might crash, etc. Needs to be handled TODOreq. It's easy for me to use a QFileSystemWatcher on allSigs.txt (and use rsync 'update after' (o nvm looks like a rename-after is the default) or whatever), but that still doesn't help me... or hmm maybe it does (if coded right it could).
+-If I don't specify my own MessageID, I currently have no way of knowing the MessageID generated. Obviously this can be solved, but generating my own is probably easier. qRand() + hash = troll-collisions less likely. I'm pretty sure if I'm reading a file and it gets deleted/moved-onto, my file handle still points to the old version and that file isn't really deleted. I think even .lastModifiedTimestamps in hvbs relies on this behavior (but could be wrong (and they're both rare race conditions anyways)).
+-Hate to say it, but this newsgroups posting/propagation is going to help me sleep at night :). I'm not interesting enough to be pulled... so I'll [pay to] push xD. My newsgroup subscription is 10gb down and unlimited up. Suckers :-P. They're probably just used to leeches and hell maybe they're glad to have free/legit-non-copyright-infringing/non-warez-or-ceep-etc content. Ahh turns out QFileSystemWatcher completely misses move-ontos lolol... but it does respond to touches. Uhhm scratch that idfk how .lastModifiedTimestamps does it (*looks*). Ahh ok move-onto works, but only once and the file needs to be re-added to QFsw... now I remember.

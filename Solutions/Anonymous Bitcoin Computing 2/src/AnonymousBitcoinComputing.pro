@@ -18,7 +18,7 @@
 #8a) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 7777 --api-port 8888
 #HTTPS
 #8bi) openssl dhparam -check -text -5 512 -out dh512.pem
-#8bii) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 80 --ssl-certificate=server.pem --ssl-private-key=server.key --ssl-tmp-dh=dh512.pem --https-address 0.0.0.0 --https-port 443 --api-port 420 --tor-hidden-service-localhost-only-http-server-api-port 9730
+#8bii) Launch with ./wtAppHere --docroot ".;/resources" --http-address 0.0.0.0 --http-port 80 --ssl-certificate=server.pem --ssl-private-key=server.key --ssl-tmp-dh=dh512.pem --https-address 0.0.0.0 --https-port 443 --api-port 420 --tor-hidden-service-localhost-only-http-server-api-port 0
 
 TARGET = AnonymousBitcoinComputing
 TEMPLATE = app

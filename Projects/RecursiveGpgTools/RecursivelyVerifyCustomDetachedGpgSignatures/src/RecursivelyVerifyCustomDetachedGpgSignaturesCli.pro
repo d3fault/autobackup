@@ -14,13 +14,10 @@ CONFIG   -= app_bundle
 TEMPLATE = app
 
 SOURCES += cli/main.cpp \
-    cli/recursivelyverifycustomdetachedgpgsignaturescli.cpp \
-    ../../shared/recursivecustomdetachedgpgsignatures.cpp
+    cli/recursivelyverifycustomdetachedgpgsignaturescli.cpp
 
 HEADERS += \
-    cli/recursivelyverifycustomdetachedgpgsignaturescli.h \
-    ../../shared/recursivecustomdetachedgpgsignatures.h
-
-INCLUDEPATH += ../../shared/
+    cli/recursivelyverifycustomdetachedgpgsignaturescli.h
 
 include(recursivelyverifycustomdetachedgpgsignatures.pri)
+include(../../shared/recursivecustomdetachedgpgsignatures.pri)

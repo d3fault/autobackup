@@ -1,16 +1,31 @@
 #include "recursivecustomdetachedgpgsignatures.h"
 
 #include <QDateTime>
+#include <QTextStream>
 
 #define GPG_END_SIG_DELIMITER "-----END PGP SIGNATURE-----"
 
 #define RecursiveCustomDetachedSignatures_DELIMETER ":"
 #define RecursiveCustomDetachedSignatures_ESCAPED_DELIMETER "\\" RecursiveCustomDetachedSignatures_DELIMETER
-#define RecursiveCustomDetachedSignatures_ILLEGAL_FILENAME_NOT_CONTAINING_COLON "kjxx..../////.\\\\^^^\n\taaaa1   233333584398489''';;\\kthx"
+#define RecursiveCustomDetachedSignatures_ILLEGAL_FILENAME_NOT_CONTAINING_COLON "kjxx..../////.\\\\^^^\n\taaaa1   23333358 324434 sdfsfd sdfsfsfsf sersiously there are no fucking blah characters anymore that are illegal and idfk how to type a null character but i guess the longer i make this, the less likely a collision is to happen 0 4398489''';;\\kthx"
 
 RecursiveCustomDetachedSignatures::RecursiveCustomDetachedSignatures(QObject *parent)
     : QObject(parent)
 { }
+bool RecursiveCustomDetachedSignatures::readInAllSigsFromSigFile(QIODevice *sigsFile, QHash<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> *sigsFromSigFile)
+{
+    QTextStream sigsFileTextStream(sigsFile);
+    while(!sigsFileTextStream.atEnd())
+    {
+        QString alreadySignedFilePath;
+        QString alreadySignedFileSig;
+        qint64 alreadySignedFileUnixTimestamp;
+        if(!readPathAndSignature(sigsFileTextStream, &alreadySignedFilePath, &alreadySignedFileSig, &alreadySignedFileUnixTimestamp))
+            return false;
+        sigsFromSigFile->insert(alreadySignedFilePath, RecursiveCustomDetachedSignaturesFileMeta(alreadySignedFilePath, alreadySignedFileSig, alreadySignedFileUnixTimestamp)); //TODOreq: we start off with a hash, but as their existences are verified, we move them into a map... the same map that new files+sigs are being placed into. we want it to be sorted for when we re-write the signature file with the new entries. TODOoptimization: don't re-write the sigs file if no new files were seen (perhaps don't even open it in write mode?)
+    }
+    return true;
+}
 bool RecursiveCustomDetachedSignatures::readPathAndSignature(QTextStream &customDetachedGpgSignaturesTextStream, QString *out_FilePathToVerify, QString *out_CurrentFileSignature, qint64 *out_CurrentFileUnixTimestamp)
 {
     const QString &origFilePathAndTimestampLine = customDetachedGpgSignaturesTextStream.readLine();
@@ -63,4 +78,8 @@ QTextStream &operator<<(QTextStream &textStream, const RecursiveCustomDetachedSi
     filePath.replace(RecursiveCustomDetachedSignatures_DELIMETER, RecursiveCustomDetachedSignatures_ESCAPED_DELIMETER);
     textStream << filePath << RecursiveCustomDetachedSignatures_DELIMETER << fileMeta.UnixTimestampInSeconds << endl << fileMeta.GpgSignature;
     return textStream;
+}
+bool RecursiveCustomDetachedSignaturesFileMeta::operator==(const RecursiveCustomDetachedSignaturesFileMeta &other) const
+{
+    return ((other.FilePath == FilePath) && (other.GpgSignature == GpgSignature) && (other.UnixTimestampInSeconds == UnixTimestampInSeconds));
 }

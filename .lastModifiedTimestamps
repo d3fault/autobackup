@@ -2833,7 +2833,7 @@ Pictures/unfinished.comic.kaylees.feramones.are.a.sort.of.drug.and.the.weirdest.
 Pictures/works.legality.span.svg:1355298125
 Pictures/yet.another.tangent.explained.and.for.some.reason.always.below.zero.until.launch.makes.sense.in.my.head.svg:1360730935
 Projects/:1426837154
-Projects/AVMuxScript/:1426022175
+Projects/AVMuxScript/:1427483860
 Projects/AVMuxScript/Morning/:1426017664
 Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/:1427380548
 Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/:1427380548
@@ -2851,6 +2851,18 @@ Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/:1427381117
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/:1427393659
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/BackupReplicateDeleteMuxAndUmountCli.pro:1427089056
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/main.cpp:1427393601
+Projects/AVMuxScript/TailPropagateToWorldPlx/:1427488295
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/:1427489841
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/:1427491585
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/cli/:1427488377
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/cli/main.cpp:1427488377
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/lib/:1427500881
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/lib/watchsigsfileandpostchangestousenet.cpp:1427500881
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/lib/watchsigsfileandpostchangestousenet.h:1427500786
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/WatchSigsFileAndPostChangesToUsenetCli.pro:1427491585
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/watchsigsfileandpostchangestousenet.pri:1427488471
+Projects/AVMuxScript/TailPropagateToWorldPlx/design/:1427483882
+Projects/AVMuxScript/TailPropagateToWorldPlx/design/torrents.and.newsgroups.ofc.sdlfjlsdjflskdjflksdjf.txt:1427487573
 Projects/AVMuxScript/design/:1426466748
 Projects/AVMuxScript/design/initial.design.aka.rambling.txt:1425923027
 Projects/AVMuxScript/design/more.rambling.rofl.i.just.cant.fucking.decide.oh.shit.thats.a.problem.just.fucking.decide.man.sdlfjsldjfsldkfjlskdjf.txt:1426573954
@@ -4171,9 +4183,9 @@ Projects/Prototypes/QDataStreamDoesNotHandleShortReads/src/testserver.cpp:134491
 Projects/Prototypes/QDataStreamDoesNotHandleShortReads/src/testserver.h:1344915758
 Projects/Prototypes/QDataStreamDoesNotHandleShortReads/answer.txt:1351840895
 Projects/Prototypes/QSaveFileToStdOut/:1427389051
-Projects/Prototypes/QSaveFileToStdOut/src/:1427402918
+Projects/Prototypes/QSaveFileToStdOut/src/:1427403739
 Projects/Prototypes/QSaveFileToStdOut/src/QSaveFileToStdOut.pro:1427388946
-Projects/Prototypes/QSaveFileToStdOut/src/main.cpp:1427402912
+Projects/Prototypes/QSaveFileToStdOut/src/main.cpp:1427403635
 Projects/Prototypes/QSslTest1/:1329936215
 Projects/Prototypes/QSslTest1/src/:1330088607
 Projects/Prototypes/QSslTest1/src/SecureClient/:1343589488
@@ -4601,19 +4613,19 @@ Projects/RecursiveFileStringReplaceRenamer/src/lib/:1388247652
 Projects/RecursiveFileStringReplaceRenamer/src/lib/recursivefilestringreplacerenamer.cpp:1388247646
 Projects/RecursiveFileStringReplaceRenamer/src/lib/recursivefilestringreplacerenamer.h:1388247652
 Projects/RecursiveGpgTools/:1426487982
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/:1427381073
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/:1427402918
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/:1427491436
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/:1427499995
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/:1427393150
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/main.cpp:1426424959
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/recursivelygpgsignintocustomdetachedsignaturesformatcli.cpp:1427393143
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/recursivelygpgsignintocustomdetachedsignaturesformatcli.h:1427393150
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/:1427402320
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/recursivelygpgsignintocustomdetachedsignaturesformat.cpp:1427402320
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/recursivelygpgsignintocustomdetachedsignaturesformat.h:1427393124
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli.pro:1427390434
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/:1427491229
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/recursivelygpgsignintocustomdetachedsignaturesformat.cpp:1427491229
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/lib/recursivelygpgsignintocustomdetachedsignaturesformat.h:1427490872
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/RecursivelyGpgSignIntoCustomDetachedSignaturesFormatCli.pro:1427491409
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/recursivelygpgsignintocustomdetachedsignaturesformat.pri:1427380917
-Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/:1427381298
-Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/:1427381308
+Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/:1427491497
+Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/:1427500030
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/cli/:1427381209
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/cli/main.cpp:1426418848
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/cli/recursivelyverifycustomdetachedgpgsignaturescli.cpp:1427143821
@@ -4621,11 +4633,12 @@ Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/cli/
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/lib/:1427144999
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/lib/recursivelyverifycustomdetachedgpgsignatures.cpp:1427144999
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/lib/recursivelyverifycustomdetachedgpgsignatures.h:1427144539
-Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/RecursivelyVerifyCustomDetachedGpgSignaturesCli.pro:1427381282
+Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/RecursivelyVerifyCustomDetachedGpgSignaturesCli.pro:1427491485
 Projects/RecursiveGpgTools/RecursivelyVerifyCustomDetachedGpgSignatures/src/recursivelyverifycustomdetachedgpgsignatures.pri:1427381248
-Projects/RecursiveGpgTools/shared/:1427398919
-Projects/RecursiveGpgTools/shared/recursivecustomdetachedgpgsignatures.cpp:1426486268
-Projects/RecursiveGpgTools/shared/recursivecustomdetachedgpgsignatures.h:1427398919
+Projects/RecursiveGpgTools/shared/:1427495256
+Projects/RecursiveGpgTools/shared/recursivecustomdetachedgpgsignatures.cpp:1427495256
+Projects/RecursiveGpgTools/shared/recursivecustomdetachedgpgsignatures.h:1427495242
+Projects/RecursiveGpgTools/shared/recursivecustomdetachedgpgsignatures.pri:1427491351
 Projects/RecursiveGpgTools/subtools/:1426488021
 Projects/RecursiveGpgTools/subtools/gpgVerifyOneSigFromSigsFile.sh:1426490432
 Projects/RecursiveVideoLengthAndSizeCalculator/:1387282069
@@ -5424,7 +5437,7 @@ Solutions/Anonymous Bitcoin Computing/src/shared/AppClientBankServerProtocol.h:1
 Solutions/Anonymous Bitcoin Computing/src/shared/WtFrontEndAndAppDbProtocol.h:1336171731
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.cpp:1339499716
 Solutions/Anonymous Bitcoin Computing/src/shared/ssltcpserver.h:1339499197
-Solutions/Anonymous Bitcoin Computing 2/:1427380549
+Solutions/Anonymous Bitcoin Computing 2/:1427427687
 Solutions/Anonymous Bitcoin Computing 2/assets/:1415110445
 Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/:1424492850
 Solutions/Anonymous Bitcoin Computing 2/assets/JavascriptViews/AllTransactionsWithStateOfUncreditted.txt:1419797626
@@ -5464,8 +5477,8 @@ Solutions/Anonymous Bitcoin Computing 2/design/scale.horizontally.proactively.or
 Solutions/Anonymous Bitcoin Computing 2/design/the.goods.service.vs.money.transmitter.differentiation.does.not.exist.with.bitcoins.nor.paper.money.but.does.exist.with.debit.credit.cards.EXCEPT.THOSE.HAVE.FEES.UP.THE.ASS.AND.HUGE.BARRIER.TO.ENTRY.txt:1416508764
 Solutions/Anonymous Bitcoin Computing 2/design/to.journal.or.not.to.journal.nonsense.notes.aljskdflksdjfouwerlkj.txt:1391477857
 Solutions/Anonymous Bitcoin Computing 2/design/two.bandwith.exploits.with.charging.withdrawal.fee.instead.of.transaction.fee.txt:1421237210
-Solutions/Anonymous Bitcoin Computing 2/src/:1427380549
-Solutions/Anonymous Bitcoin Computing 2/src/backend/:1420869222
+Solutions/Anonymous Bitcoin Computing 2/src/:1427429612
+Solutions/Anonymous Bitcoin Computing 2/src/backend/:1427422152
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.cpp:1393531477
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasegetrequest.h:1393531477
@@ -5473,11 +5486,11 @@ Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialb
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/autoretryingwithexponentialbackoffcouchbasestorerequest.h:1393528690
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.cpp:1413214682
 Solutions/Anonymous Bitcoin Computing 2/src/backend/autoretryingwithexponentialbackoffcouchbaserequests/iautoretryingwithexponentialbackoffcouchbaserequest.h:1393526820
-Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1420869222
+Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.cpp:1427422152
 Solutions/Anonymous Bitcoin Computing 2/src/backend/anonymousbitcoincomputingcouchbasedb.h:1420056288
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.cpp:1413219024
 Solutions/Anonymous Bitcoin Computing 2/src/backend/getandsubscribecacheitem.h:1413240036
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1426430787
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/:1427427661
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/:1426428937
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.cpp:1399670151
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/accounttabs/actuallazyloadedtabwidget.h:1399671286
@@ -5511,13 +5524,13 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/l
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/lettersnumbersonlyregexpvalidatorandinputfilter.h:1416420577
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.cpp:1393160674
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/validatorsandinputfilters/safetextvalidatorandinputfilter.h:1393161161
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1426430787
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.cpp:1427422964
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/anonymousbitcoincomputingwtgui.h:1422340377
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/gettodaysadslothttpsserver.cpp:1420328918
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/gettodaysadslothttpsserver.h:1420328932
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/gettodaysadslotresource.cpp:1419890771
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/gettodaysadslotresource.h:1419886196
-Solutions/Anonymous Bitcoin Computing 2/src/frontend/gettodaysadslotserver.cpp:1420763620
+Solutions/Anonymous Bitcoin Computing 2/src/frontend/gettodaysadslotserver.cpp:1427427661
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/gettodaysadslotserver.h:1420626315
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/gettodaysadslotserverclientconnection.cpp:1425205498
 Solutions/Anonymous Bitcoin Computing 2/src/frontend/gettodaysadslotserverclientconnection.h:1420080172
@@ -5542,7 +5555,7 @@ Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/storecouchb
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/storecouchbasedocumentbykeyrequest.h:1420053323
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/viewquerycouchbasedocumentbykeyrequest.cpp:1416419403
 Solutions/Anonymous Bitcoin Computing 2/src/frontend2backendRequests/viewquerycouchbasedocumentbykeyrequest.h:1415959088
-Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:1424497913
+Solutions/Anonymous Bitcoin Computing 2/src/AnonymousBitcoinComputing.pro:1427427118
 Solutions/Anonymous Bitcoin Computing 2/src/abc2common.h:1422333886
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.cpp:1426430028
 Solutions/Anonymous Bitcoin Computing 2/src/anonymousbitcoincomputing.h:1420328539
@@ -5616,7 +5629,7 @@ Solutions/hackyVideoBullshitSite/design/todo.to.scale.app.beyond.one.server.txt:
 Solutions/hackyVideoBullshitSite/design/unpacking.and.merging.at.launch.and.updating.design.considerations.txt:1400803006
 Solutions/hackyVideoBullshitSite/design/video.importing.wip.design.shizzle.txt:1396897440
 Solutions/hackyVideoBullshitSite/design/way.over.thought.the.design.of.this.bullshit.txt:1394405329
-Solutions/hackyVideoBullshitSite/src/:1427380549
+Solutions/hackyVideoBullshitSite/src/:1427487710
 Solutions/hackyVideoBullshitSite/src/backend/:1427305197
 Solutions/hackyVideoBullshitSite/src/backend/adimageapikey.h:1424844210
 Solutions/hackyVideoBullshitSite/src/backend/adimagegetandsubscribemanager.cpp:1425296020
@@ -5736,7 +5749,7 @@ scripts/win/zoom.cygwin.commands.sh:1320861500
 scripts/win/zoom.sync.with.3x.750gb.drives.bat:1320860540
 scripts/750x1:1321490944
 scripts/750x2:1321489260
-scripts/apt.initial.packages.debian.squeeze.devbox.txt:1426413017
+scripts/apt.initial.packages.debian.squeeze.devbox.txt:1427424290
 scripts/base64theSha1SumOfAFileProperly.sh:1424394103
 scripts/best.rsync.command.txt:1427098358
 scripts/cleanAptEtc.sh:1350618598
