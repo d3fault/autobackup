@@ -5,11 +5,11 @@
 
 class QTabWidget;
 
-class NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow : public QMainWindow
+class NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow(QWidget *parent = 0);
+    NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow(QWidget *parent = 0);
 protected:
     virtual void closeEvent(QCloseEvent *closeEvent);
 private:

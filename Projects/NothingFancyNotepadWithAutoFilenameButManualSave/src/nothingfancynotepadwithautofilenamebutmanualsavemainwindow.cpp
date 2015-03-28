@@ -24,7 +24,7 @@
 //TODOreq: color indication of whether or not a file (or perhaps 'tab') is saved
 //TODOreq: auto save and manual save. the former when doing mind dump, the latter used when writing project designs and wanting good filenames
 //TODOoptional: when a close attempt is detected, iterate all open docs and see if they need to be saved. show a dialog with each unsaved doc. each doc has a radio selection for "auto save" and "manual save". next to manual save and only enabled when relevant is a line edit (or browse button or both?)
-NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow(QWidget *parent)
+NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_MainTabWidget(new QTabWidget())
     , m_CurrentVisibleTabIndex(1)
@@ -72,14 +72,14 @@ NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::NothingFancyNotepadW
 
     connect(m_MainTabWidget, SIGNAL(currentChanged(int)), this, SLOT(handleMainTabWidgetCurrentTabChanged(int)));
 }
-void NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::closeEvent(QCloseEvent *closeEvent)
+void NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::closeEvent(QCloseEvent *closeEvent)
 {
     QSettings settings;
     settings.setValue("windowGeometry", saveGeometry());
     settings.setValue("windowState", saveState());
     QMainWindow::closeEvent(closeEvent);
 }
-void NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::createActions()
+void NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::createActions()
 {
     m_NewFileTabAction = new QAction(tr("New File"), this);
     m_NewFileTabAction->setIcon(style()->standardIcon(QStyle::SP_FileIcon));
@@ -91,7 +91,7 @@ void NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::createActions()
     connect(m_NewFileTabAction, SIGNAL(triggered()), this, SLOT(handleNewFileTabActionTriggered()));
     connect(m_AutoFilenameSaveAction, SIGNAL(triggered()), this, SLOT(handleAutoFilenameSaveActionTriggered()));
 }
-void NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::createToolbars()
+void NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::createToolbars()
 {
     QToolBar *documentOperationsToolbar = addToolBar(tr("Document Operations Toolbar"));
     documentOperationsToolbar->setObjectName("documentOperationsToolbar");
@@ -99,7 +99,7 @@ void NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::createToolbars(
     documentOperationsToolbar->addAction(m_NewFileTabAction);
     documentOperationsToolbar->addAction(m_AutoFilenameSaveAction);
 }
-QString NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::autoFileNameFromContentsAndCurrentTime(const QByteArray &fileContents)
+QString NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::autoFileNameFromContentsAndCurrentTime(const QByteArray &fileContents)
 {
     if(m_FolderizeBaseDir)
     {
@@ -144,13 +144,13 @@ QString NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::autoFileName
         return ret;
     }
 }
-QByteArray NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::myHexHash(const QByteArray &inputByteArray)
+QByteArray NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::myHexHash(const QByteArray &inputByteArray)
 {
     QByteArray contentHash = QCryptographicHash::hash(inputByteArray, QCryptographicHash::Md5);
     QByteArray contentHashHex = contentHash.toHex();
     return contentHashHex;
 }
-void NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::addNewFileTabAndMakeItCurrent()
+void NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::addNewFileTabAndMakeItCurrent()
 {
     NothingFancyPlainTextEdit *newTextEdit = new NothingFancyPlainTextEdit();
     int newTabIndex = m_MainTabWidget->addTab(newTextEdit, QString::number(m_CurrentVisibleTabIndex));
@@ -160,23 +160,23 @@ void NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::addNewFileTabAn
 
     connect(newTextEdit, SIGNAL(textChanged()), this, SLOT(handleMainTextEditChanged()));
 }
-void NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::handleMainTabWidgetCurrentTabChanged(int newIndex)
+void NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::handleMainTabWidgetCurrentTabChanged(int newIndex)
 {
     NothingFancyPlainTextEdit *theTextEditTab = static_cast<NothingFancyPlainTextEdit*>(m_MainTabWidget->widget(newIndex));
     m_AutoFilenameSaveAction->setEnabled(theTextEditTab->textHasBeenEditted());
 }
-void NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::handleMainTextEditChanged()
+void NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::handleMainTextEditChanged()
 {
     if(!m_AutoFilenameSaveAction->isEnabled())
     {
         m_AutoFilenameSaveAction->setEnabled(true);
     }
 }
-void NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::handleNewFileTabActionTriggered()
+void NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::handleNewFileTabActionTriggered()
 {
     addNewFileTabAndMakeItCurrent();
 }
-void NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow::handleAutoFilenameSaveActionTriggered()
+void NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::handleAutoFilenameSaveActionTriggered()
 {
     NothingFancyPlainTextEdit *theTextEditTab = static_cast<NothingFancyPlainTextEdit*>(m_MainTabWidget->currentWidget());
 
