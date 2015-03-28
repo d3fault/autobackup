@@ -95,7 +95,7 @@ void RecursivelyVerifyCustomDetachedGpgSignatures::verifyNextEntryOfCustomDetach
 void RecursivelyVerifyCustomDetachedGpgSignatures::verifyFileSignatureAndThenContinueOntoNextEntryOfCustomDetached()
 {
     QStringList gpgArgs;
-    gpgArgs << "--verify" << "-" << m_FileMetaCurrentlyBeingVerified.FilePath;
+    gpgArgs << "--verify" << "--batch" << "--no-tty"  << "-" << m_FileMetaCurrentlyBeingVerified.FilePath;
     m_GpgProcess->start(GPG_DEFAULT_PATH, gpgArgs, QIODevice::ReadWrite);
     m_GpgProcessTextStream << m_FileMetaCurrentlyBeingVerified.GpgSignature;
     m_GpgProcessTextStream.flush(); //necessary? probably, but idk tbh

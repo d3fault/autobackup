@@ -7,7 +7,7 @@
 
 #define WatchSigsFileAndPostChangesToUsenetCli_SIGSFILE "--sigs-file"
 #define WatchSigsFileAndPostChangesToUsenetCli_FILES_DIR "--files-dir"
-#define WatchSigsFileAndPostChangesToUsenetCli_APP_DATA_DIR "--app-data-dir"
+//#define WatchSigsFileAndPostChangesToUsenetCli_APP_DATA_DIR "--app-data-dir"
 #define WatchSigsFileAndPostChangesToUsenetCli_USER_ARG "--authuser" //If I did modularilize this app and there was a PostFileToUsenetCli, then in there should live teh parsing of these args, and then I could call that parse function from here to save lines/etc. It should parse these args into an object/pod-struct -- makes me wonder if QCommandLineParser has any way to deal with different libs/clis like that, I suppose each one could be passed a pointer to the command line parser (and register callbacks? idfk haven't thought it through much)
 #define WatchSigsFileAndPostChangesToUsenetCli_PASS_ARG "--authpass"
 #define WatchSigsFileAndPostChangesToUsenetCli_PORT_ARG "--port"
@@ -23,7 +23,7 @@ if(stringVariableName##Index > -1) \
     arguments.removeAt(stringVariableName##Index); \
     if(arguments.size() < (stringVariableName##Index+1)) \
         EEEEEEEEEEE_WatchSigsFileAndPostChangesToUsenetCli \
-    userArg = arguments.takeAt(stringVariableName##Index); \
+    stringVariableName = arguments.takeAt(stringVariableName##Index); \
 } \
 else \
     EEEEEEEEEEE_WatchSigsFileAndPostChangesToUsenetCli
@@ -37,7 +37,7 @@ WatchSigsFileAndPostChangesToUsenetCli::WatchSigsFileAndPostChangesToUsenetCli(Q
 
     MANDATORY_ARG_WatchSigsFileAndPostChangesToUsenetCli(sigsFilePathToWatch, WatchSigsFileAndPostChangesToUsenetCli_SIGSFILE)
     MANDATORY_ARG_WatchSigsFileAndPostChangesToUsenetCli(dirCorrespondingToSigsFile, WatchSigsFileAndPostChangesToUsenetCli_FILES_DIR)
-    MANDATORY_ARG_WatchSigsFileAndPostChangesToUsenetCli(dataDirForKeepingTrackOfAlreadyPostedFiles, WatchSigsFileAndPostChangesToUsenetCli_APP_DATA_DIR)
+    //MANDATORY_ARG_WatchSigsFileAndPostChangesToUsenetCli(dataDirForKeepingTrackOfAlreadyPostedFiles, WatchSigsFileAndPostChangesToUsenetCli_APP_DATA_DIR)
     MANDATORY_ARG_WatchSigsFileAndPostChangesToUsenetCli(authUser, WatchSigsFileAndPostChangesToUsenetCli_USER_ARG)
     MANDATORY_ARG_WatchSigsFileAndPostChangesToUsenetCli(authPass, WatchSigsFileAndPostChangesToUsenetCli_PASS_ARG)
     MANDATORY_ARG_WatchSigsFileAndPostChangesToUsenetCli(portString, WatchSigsFileAndPostChangesToUsenetCli_PORT_ARG)
@@ -62,8 +62,7 @@ WatchSigsFileAndPostChangesToUsenetCli::WatchSigsFileAndPostChangesToUsenetCli(Q
     connect(this, &WatchSigsFileAndPostChangesToUsenetCli::exitRequested, qApp, &QCoreApplication::exit, Qt::QueuedConnection);
 
 
-    TODO LEFT OFF
-    //QMetaObject::invokeMethod(watchSigsFileAndPostChangesToUsenet)
+    QMetaObject::invokeMethod(watchSigsFileAndPostChangesToUsenet, "startWatchingSigsFileAndPostChangesToUsenet", Q_ARG(QString, sigsFilePathToWatch), Q_ARG(QString, dirCorrespondingToSigsFile)/*, Q_ARG(QString, dataDirForKeepingTrackOfAlreadyPostedFiles)*/, Q_ARG(QString, authUser), Q_ARG(QString, authPass), Q_ARG(QString, portString), Q_ARG(QString, server));
 }
 void WatchSigsFileAndPostChangesToUsenetCli::cliUsage()
 {
@@ -81,8 +80,8 @@ void WatchSigsFileAndPostChangesToUsenetCli::handleStandardInputReceivedLine(con
 {
     if(userInputLine.toLower() == "q")
     {
-        emit o("quitting once the file currently being posted finishes posting");
-        emit quitCleanlyRequested(); //emit quitRequested(); //oshi-, this time the frontend is requesting a quit from the backend :-P. TODOreq: cleanly shutdown (finish posting current file, serialize posted files for next time). TODOoptional: qq (which should still serialize posted files, just cancel the current one is all (should qq return 1 or 0? i guess 0 but idk))
+        handleO("quitting once the file currently being posted finishes posting");
+        emit quitCleanlyRequested(); //emit quitRequested(); //oshi-, this time the frontend is requesting a quit from the backend :-P. TODOoptional: qq (which should still serialize posted files, just cancel the current one is all (should qq return 1 or 0? i guess 0 but idk))
         disconnect(this, SIGNAL(quitRequested()));
         return;
     }
@@ -91,5 +90,5 @@ void WatchSigsFileAndPostChangesToUsenetCli::handleDoneWatchingSigsFileAndPostin
 {
     if(!success)
         handleE("failed at watching sigs file and posting changes to usenet :(");
-    emit exitRequested(success ? 0 : 1);
+    emit exitRequested(success ? 0 : 1); //i call this the "real world to posix" translation
 }

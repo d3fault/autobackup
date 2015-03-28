@@ -54,7 +54,7 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
                 //last modified timestamp did not change
 
                 //move it to the map for outputting to the new sigs file
-                m_AllSigsForOutputting.insert(it.key(), it.value());
+                m_AllSigsForOutputting.insert(it.key(), it.value()); //we start off with a hash, but as their existences+timestamps are verified, we move them into a map... the same map that new files+sigs are being placed into. we want it to be sorted for when we re-write the signature file with the new entries
                 m_AllSigsFromSigFileSoWeKnowWhichOnesToSkipAsWeRecurseTheFilesystem.erase(it);
             }
             else
@@ -85,7 +85,7 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
         return;
     }
 
-    if(m_AddedSigs > 0)
+    if(m_AddedSigs > 0) //don't re-write the sigs file if no new files were seen (don't even open it in write mode)
     {
         //now write the final custom detached signatures file
         if(!m_OutputSigsFile->open(QIODevice::WriteOnly | QIODevice::Truncate /* truncate is a noop for SaveFileOrStdOut, but if a regular QFile was passed in as m_OutputSigsFile, then it's necessary */ | QIODevice::Text))
@@ -134,7 +134,7 @@ void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::recursivelyGpgSignDir
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::gpgSignFileAndThenContinueRecursingDir()
 {
     QStringList gpgArgs;
-    gpgArgs << "--detach-sign" << "--armor" << "-o" << "-" << m_FileMetaCurrentlyBeingGpgSigned.FilePath;
+    gpgArgs << "--detach-sign" << "--armor" << "--batch" << "--no-tty" << "-o" << "-" << m_FileMetaCurrentlyBeingGpgSigned.FilePath;
     m_GpgProcess->start(GPG_DEFAULT_PATH, gpgArgs, QIODevice::ReadOnly);
 }
 void RecursivelyGpgSignIntoCustomDetachedSignaturesFormat::spitOutGpgProcessOutput()

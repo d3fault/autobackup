@@ -22,7 +22,7 @@ bool RecursiveCustomDetachedSignatures::readInAllSigsFromSigFile(QIODevice *sigs
         qint64 alreadySignedFileUnixTimestamp;
         if(!readPathAndSignature(sigsFileTextStream, &alreadySignedFilePath, &alreadySignedFileSig, &alreadySignedFileUnixTimestamp))
             return false;
-        sigsFromSigFile->insert(alreadySignedFilePath, RecursiveCustomDetachedSignaturesFileMeta(alreadySignedFilePath, alreadySignedFileSig, alreadySignedFileUnixTimestamp)); //TODOreq: we start off with a hash, but as their existences are verified, we move them into a map... the same map that new files+sigs are being placed into. we want it to be sorted for when we re-write the signature file with the new entries. TODOoptimization: don't re-write the sigs file if no new files were seen (perhaps don't even open it in write mode?)
+        sigsFromSigFile->insert(alreadySignedFilePath, RecursiveCustomDetachedSignaturesFileMeta(alreadySignedFilePath, alreadySignedFileSig, alreadySignedFileUnixTimestamp));
     }
     return true;
 }
