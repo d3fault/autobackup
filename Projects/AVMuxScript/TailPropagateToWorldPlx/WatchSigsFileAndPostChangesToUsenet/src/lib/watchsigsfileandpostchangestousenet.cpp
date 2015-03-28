@@ -121,7 +121,8 @@ void WatchSigsFileAndPostChangesToUsenet::postToUsenet(const RecursiveCustomDeta
     //if(!getMimeFromFileProcess(nextFile.FilePath, &mime))
     //    return;
 
-    //TODOreq: message-id
+    //TODOreq: file splitting ('hat' will make large videos every day, and there's also the relics to consider)
+    //TODOreq: message-id (dep file splitting)
 
     QByteArray post("From: d3fault@d3fault.net\r\nNewsgroups: alt.binaries.boneless\r\nOrganization: d3fault\r\nMime-Version 1.0\r\nSubject: d3fault.net/binary/" + nextFile.FilePath.toLatin1() + "\r\nContent-Type: multipart/signed; boundary=" + boundary + "; protocol=\"application/pgp-signature\"\r\n\r\n--" + boundary + "\r\nContent-Type: " + mime + "; name=\"" + fileNameOnly + "\"\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: inline; filename=\"" + fileNameOnly + "\"\r\nContent-MD5: " + contentMd5Base64 + "\r\n\r\n" + body + "\r\n\r\n--" + boundary + "\r\nContent-Type: application/pgp-signature\r\nContent-Disposition: attachment; filename=\"" + fileNameOnly + ".asc\"\r\n\r\n" + nextFile.GpgSignature.toLatin1() + "\r\n\r\n--" + boundary + "\r\n"); //TODOoptional: micalg=???. TODOoptional: customizeable parts of this  from command line ofc lol. TODOmb: Message-ID (even if it's not an sha1 or whatever, it'd still be good to know it so we don't have to query it. We could start with sha1 and then keep trying different values if it doesn't work)
     emit o("Trying to post: " + nextFile.FilePath);
