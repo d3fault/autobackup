@@ -47,14 +47,28 @@ HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *
 
         bool atLeastOneDidntExist = false;
 
-        m_VideoSegmentsImporterFolderToWatch = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
-        if(m_VideoSegmentsImporterFolderToWatch == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
+        int videoSegmentImportFoldersCount = hackyVideoBullshitSiteSettings.beginReadArray("VideoSegmentImportFolders");
+        for(int i = 0; i < videoSegmentImportFoldersCount; ++i)
         {
-            cerr << "error: " HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch " not set" << endl;
-            atLeastOneDidntExist = true;
-            hackyVideoBullshitSiteSettings.setValue(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderToWatch, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
+            hackyVideoBullshitSiteSettings.setArrayIndex(i);
+            QString oneVideoSegmentImportFolder = hackyVideoBullshitSiteSettings.value("AbsolutePathOfVideoSegmentImportFolder", HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
+            if(oneVideoSegmentImportFolder == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
+            {
+                atLeastOneDidntExist = true;
+                cerr << "error: please fill in all occurances of " HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS << endl;
+            }
+            m_VideoSegmentImporterFoldersToWatch.append(appendSlashIfNeeded(oneVideoSegmentImportFolder));
         }
-        m_VideoSegmentsImporterFolderToWatch = appendSlashIfNeeded(m_VideoSegmentsImporterFolderToWatch);
+        hackyVideoBullshitSiteSettings.endArray();
+        if(m_VideoSegmentImporterFoldersToWatch.isEmpty()) //none? give them one sample to edit. TODOoptional: maybe make these optional instead of mandatory.. because the site doesn't hinge on videos being used (although in my case it does!). same with last modified timestamps
+        {
+            atLeastOneDidntExist = true;
+            cerr << "error: please fill in all occurances of " HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS << endl;
+            hackyVideoBullshitSiteSettings.beginWriteArray("VideoSegmentImportFolders");
+            hackyVideoBullshitSiteSettings.setArrayIndex(0);
+            hackyVideoBullshitSiteSettings.setValue("AbsolutePathOfVideoSegmentImportFolder", HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS);
+            hackyVideoBullshitSiteSettings.endArray();
+        }
 
         m_VideoSegmentsImporterFolderScratchSpace = hackyVideoBullshitSiteSettings.value(HackyVideoBullshitSite_SETTINGS_KEY_VideoSegmentsImporterFolderScratchSpace, HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS).toString();
         if(m_VideoSegmentsImporterFolderScratchSpace == HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS)
@@ -236,7 +250,7 @@ void HackyVideoBullshitSite::handleAllBackendObjectsOnThreadsReadyForConnections
     connect(this, SIGNAL(videoSegmentNeighborPropagationFinishedStopContinueStoppingRequested()), m_WtControllerAndStdOutOwnerThread->getObjectPointerForConnectionsOnly(), SLOT(stop()));
 
     //these invokeMethods need to be after ALL backends are ready for connections, or at least until WtControllerAndStdOutOwner is ready for connections (since it is our e/o handler!), because by invoking them when in individual ready for connections might miss e/o signals from them
-    QMetaObject::invokeMethod(m_VideoSegmentsImporterFolderWatcherThread->getObjectPointerForConnectionsOnly(), "initializeAndStart", Q_ARG(QString, m_VideoSegmentsImporterFolderToWatch), Q_ARG(QString, m_VideoSegmentsImporterFolderScratchSpace), Q_ARG(QString, m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo), Q_ARG(QString, m_NeighborPropagationRemoteSftpUploadScratchSpace), Q_ARG(QString, m_NeighborPropagationRemoteDestinationToMoveTo), Q_ARG(QString, m_NeighborPropagationUserHostPathComboSftpArg), Q_ARG(QString, m_SftpProcessPath));
+    QMetaObject::invokeMethod(m_VideoSegmentsImporterFolderWatcherThread->getObjectPointerForConnectionsOnly(), "initializeAndStart", Q_ARG(QStringList, m_VideoSegmentImporterFoldersToWatch), Q_ARG(QString, m_VideoSegmentsImporterFolderScratchSpace), Q_ARG(QString, m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo), Q_ARG(QString, m_NeighborPropagationRemoteSftpUploadScratchSpace), Q_ARG(QString, m_NeighborPropagationRemoteDestinationToMoveTo), Q_ARG(QString, m_NeighborPropagationUserHostPathComboSftpArg), Q_ARG(QString, m_SftpProcessPath));
     QString hvbsWebViewBaseDir = m_HvbsWebBaseDir_NoSlashAppended + "/view";
     QMetaObject::invokeMethod(lastModifiedTimestampsWatcher, "startWatchingLastModifiedTimestampsFiles", Q_ARG(QString, hvbsWebViewBaseDir), Q_ARG(QStringList, m_LastModifiedTimestampsFiles));
 }

@@ -22,6 +22,7 @@
 #define NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow_AutoFilename_Prefix "minddump_"
 #define NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow_AutoFilename_Extension ".txt"
 
+//TODOmb: until modifying/overwriting is implemented, perhaps set the text exitor to read-only after [successful] save? Should still be able to highlight text
 //TODOreq: save as
 //TODOreq: use first keystroke for timestamp (touch after write? in filename at very least (maybe no touch so we get 2x timestamps lewlies)) -- the main reason for this is to support another TODOreq: on close it should ask you if you want to save-all/cancel (a 3rd option is usually discard-all, but ehhhhhh). On such "save-all" uses, 10x (really 'n') documents would get identical timestamps (Buh Osios2 is so much better (keystrokes logged :-P)). Using "timestamp of first keystroke" is a hacky way around that to keep the ordering of the docs relatively in tact (but still not exact because shit i coulda switched tabs like crazy and editted sporatically ofc)
 //TODOreq: use QTemporaryFile for atomic "create only if not exist" (let random chars be in it, fuck it). QSaveFile should only be used when modifying/overwriting (should I change the filename [that has the date/time in it] also????)

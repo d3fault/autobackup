@@ -26,7 +26,7 @@ NewProfileDialog::NewProfileDialog(QWidget *parent, Qt::WindowFlags f)
 
     m_AutoSaveBaseDirRow = new LabelLineEditBrowseButton(tr("Base Dir for Auto-Saving"), LabelLineEditBrowseButton::OpenDirectoryMode);
 
-    m_FolderizeCheckbox = new QCheckBox(tr("Folderize within Base Dir. Year folder, month folder, day folder"));
+    m_FolderizeCheckbox = new QCheckBox(tr("Folderize within Base Dir: Year and Month sub-folders"));
     m_FolderizeCheckbox->setChecked(true);
 
     QHBoxLayout *okCancelRow = new QHBoxLayout();

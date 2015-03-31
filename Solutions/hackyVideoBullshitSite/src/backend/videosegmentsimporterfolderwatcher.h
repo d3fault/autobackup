@@ -18,7 +18,7 @@ public:
     explicit VideoSegmentsImporterFolderWatcher(QObject *parent = 0);
 private:
     QFileSystemWatcher *m_DirectoryWatcher;
-    QString m_VideoSegmentsImporterFolderToWatchWithSlashAppended;
+    QStringList m_VideoSegmentImporterFoldersToWatch;
     QString m_VideoSegmentsImporterFolderScratchSpacePathWithSlashAppended;
     //QDir m_VideoSegmentsImporterFolderScratchSpace;
     QString m_VideoSegmentsImporterFolderToMoveToWithSlashAppended;    
@@ -39,13 +39,13 @@ signals:
     void sftpUploaderAndRenamerQueueStateChangedRequested(SftpUploaderAndRenamerQueue::SftpUploaderAndRenamerQueueStateEnum newSftpUploaderAndRenamerQueueState);
     void videoSegmentsImporterFolderWatcherFinishedPropagatingToNeighbors();
 public slots:
-    void initializeAndStart(const QString &videoSegmentsImporterFolderToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &videoSegmentsImporterFolderToMoveTo, const QString &neighborPropagationRemoteDestinationToUploadTo, const QString &neighborPropagationRemoteDestinationToMoveTo, const QString &neighborPropagationUserHostPathComboSftpArg, const QString &sftpProcessPath);
+    void initializeAndStart(const QStringList &videoSegmentImporterFoldersToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &videoSegmentsImporterFolderToMoveTo, const QString &neighborPropagationRemoteDestinationToUploadTo, const QString &neighborPropagationRemoteDestinationToMoveTo, const QString &neighborPropagationUserHostPathComboSftpArg, const QString &sftpProcessPath);
 
     void stopCleanlyOnceVideoSegmentNeighborPropagatationFinishes();
     void stopCleanlyOnceVideoSegmentNeighborPropagatationFinishesUnlessDc();
     void stopNow();
 private slots:
-    void handleDirectoryChanged();
+    void handleDirectoryChanged(const QString &theDirectoryThatChanged);
     void handleSftpUploaderAndRenamerQueueStarted();
 };
 

@@ -12,7 +12,7 @@ VideoSegmentsImporterFolderWatcher::VideoSegmentsImporterFolderWatcher(QObject *
   , m_PropagateToNeighbor(false)
   , m_SftpUploaderAndRenamerQueue(0)
 {
-    connect(m_DirectoryWatcher, SIGNAL(directoryChanged(QString)), this, SLOT(handleDirectoryChanged()));
+    connect(m_DirectoryWatcher, SIGNAL(directoryChanged(QString)), this, SLOT(handleDirectoryChanged(QString)));
 }
 bool VideoSegmentsImporterFolderWatcher::jitEnsureFolderExists(const QString &absoluteFolderPathToMaybeJitCreate)
 {
@@ -60,9 +60,9 @@ void VideoSegmentsImporterFolderWatcher::beginStoppingVideoNeighborPropagation(S
 
     emit sftpUploaderAndRenamerQueueStateChangedRequested(newSftpUploaderAndRenamerQueueState);
 }
-void VideoSegmentsImporterFolderWatcher::initializeAndStart(const QString &videoSegmentsImporterFolderToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &videoSegmentsImporterFolderToMoveTo, const QString &neighborPropagationRemoteDestinationToUploadTo, const QString &neighborPropagationRemoteDestinationToMoveTo, const QString &neighborPropagationUserHostPathComboSftpArg, const QString &sftpProcessPath)
+void VideoSegmentsImporterFolderWatcher::initializeAndStart(const QStringList &videoSegmentImporterFoldersToWatch, const QString &videoSegmentsImporterFolderScratchSpace, const QString &videoSegmentsImporterFolderToMoveTo, const QString &neighborPropagationRemoteDestinationToUploadTo, const QString &neighborPropagationRemoteDestinationToMoveTo, const QString &neighborPropagationUserHostPathComboSftpArg, const QString &sftpProcessPath)
 {
-    m_VideoSegmentsImporterFolderToWatchWithSlashAppended = appendSlashIfNeeded(videoSegmentsImporterFolderToWatch);
+    m_VideoSegmentImporterFoldersToWatch = videoSegmentImporterFoldersToWatch;
     m_VideoSegmentsImporterFolderScratchSpacePathWithSlashAppended = appendSlashIfNeeded(videoSegmentsImporterFolderScratchSpace);
     //m_VideoSegmentsImporterFolderScratchSpace.setPath(videoSegmentsImporterFolderScratchSpace); //because using folder to watch would trigger more directory changed stuffs (already does when leaving, but that is fine. creating folders in it though would create problems), and the folders need to already have a file in them before they are put in videoSegmentsImporterFolderToMoveTo
     m_VideoSegmentsImporterFolderToMoveToWithSlashAppended = appendSlashIfNeeded(videoSegmentsImporterFolderToMoveTo);
@@ -107,9 +107,9 @@ void VideoSegmentsImporterFolderWatcher::stopNow()
 }
 //moves file added to watch directory to <year>/<day>/
 //creates both year/day folders if needed (moves file into them before moving the folder to the destination (so it's atomic))
-void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged()
+void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged(const QString &theDirectoryThatChanged)
 {
-    QDir theDir(m_VideoSegmentsImporterFolderToWatchWithSlashAppended);
+    QDir theDir(theDirectoryThatChanged);
     const QStringList &theDirEntryList = theDir.entryList(QDir::NoDotAndDotDot | QDir::Files, QDir::Time | QDir::Reversed);
     QListIterator<QString> it(theDirEntryList);
     while(it.hasNext())
@@ -127,7 +127,7 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged()
         const QDateTime &newFilenamesDateTime = QDateTime::fromMSecsSinceEpoch(static_cast<qint64>(filenameMinusExtAsLong_AkaUnixTimestamp)*1000).toUTC();
         const int newFilenamesYear = newFilenamesDateTime.date().year();
         const int newFilenamesDayOfYear = newFilenamesDateTime.date().dayOfYear();
-        const QString &currentEntryAbsoluteFilePath = m_VideoSegmentsImporterFolderToWatchWithSlashAppended + currentEntry;
+        const QString &currentEntryAbsoluteFilePath = appendSlashIfNeeded(theDirectoryThatChanged) + currentEntry;
 
         //these two must be created with the video already in them (so scratch must be used)
         const QString &yearFolderFinalDest = m_VideoSegmentsImporterFolderToMoveToWithSlashAppended + QString::number(newFilenamesYear) + QDir::separator();
@@ -201,30 +201,29 @@ void VideoSegmentsImporterFolderWatcher::handleDirectoryChanged()
 }
 void VideoSegmentsImporterFolderWatcher::handleSftpUploaderAndRenamerQueueStarted()
 {
-    QStringList oldDirectories = m_DirectoryWatcher->directories();
-    if(!oldDirectories.isEmpty())
-        m_DirectoryWatcher->removePaths(m_DirectoryWatcher->directories()); //clear out old stuffz
+    m_DirectoryWatcher->removePaths(m_DirectoryWatcher->directories()); //clear out old stuffz
 
-//addPath returns void in 4.8, bool in 5.x
-#if !(QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-    if(!
-#endif
-            m_DirectoryWatcher->addPath(m_VideoSegmentsImporterFolderToWatchWithSlashAppended)
-#if !(QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
-            )
-#else
-            ;
-#endif
-
-#if !(QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+    Q_FOREACH(const QString &currentDirectory, m_VideoSegmentImporterFoldersToWatch)
     {
-        emit e("VideoSegmentsImporterFolderWatcher: failed to add '" + m_VideoSegmentsImporterFolderToWatchWithSlashAppended + "' to filesystem watcher");
-        return;
+        QFileInfo fileInfo(currentDirectory);
+        if(!fileInfo.isDir())
+        {
+            emit e("Video Segments folder to watch was not dir (or didn't exist): " + currentDirectory);
+            return;
+        }
+        if(!m_DirectoryWatcher->addPath(currentDirectory))
+        {
+            emit e("VideoSegmentsImporterFolderWatcher: failed to add '" + currentDirectory + "' to filesystem watcher");
+            return;
+        }
     }
-#endif
+
 
     emit o("VideoSegmentsImporterFolderWatcher started");
 
     //check for any segments that were uploaded while this app wasn't running (if ffmpeg segment uploader was started first). this isn't a big deal, just an optimization really. it would still handle all the old ones once a new one is seen
-    handleDirectoryChanged(); //comment out this line if you don't want hvbs to "catch up" right at startup (it will instead catch up when next segment is moved to watched folder)
+    Q_FOREACH(const QString &currentDirectory, m_VideoSegmentImporterFoldersToWatch)
+    {
+        handleDirectoryChanged(currentDirectory); //comment out this line if you don't want hvbs to "catch up" right at startup (it will instead catch up when next segment is moved to watched folder)
+    }
 }

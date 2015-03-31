@@ -38,7 +38,7 @@ private:
 
     ObjectOnThreadSynchronizer *m_ObjectOnThreadSynchronizer; //OLDnvm critical: MUST be 'after' any object on threads it synchronizes so that it is destructed before them. at destruction, it calls QThread::quit on them giving us easy async quitting too :)
 
-    QString m_VideoSegmentsImporterFolderToWatch;
+    QStringList m_VideoSegmentImporterFoldersToWatch;
     QString m_VideoSegmentsImporterFolderScratchSpace;
     QString m_AirborneVideoSegmentsBaseDir_aka_VideoSegmentsImporterFolderToMoveTo;
     QString m_HvbsWebBaseDir_NoSlashAppended;
