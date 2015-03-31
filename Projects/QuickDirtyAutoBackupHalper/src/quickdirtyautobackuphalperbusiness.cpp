@@ -58,7 +58,7 @@ void QuickDirtyAutoBackupHalperBusiness::scanForMountedRelevantContainers(QList<
     }
     m_ListOfMountedContainers->clear();
 
-    if(listOfRelevantContainers->size() == 0)
+    if(listOfRelevantContainers->isEmpty())
         return;
 
     QStringList listCommandArgs(m_TypicalTruecryptArgs);
@@ -625,12 +625,14 @@ void QuickDirtyAutoBackupHalperBusiness::start()
 
         m_EasyTree = new EasyTree();
     }
+#if 0 //bleh this app sux but still has my filters for .lastModified :-P
     if(!QFile::exists(m_PathToTruecryptBinary))
     {
         emit d("couldn't find truecrypt");
         emit brokenStateDetected();
         return;
     }
+#endif
     if(!QFile::exists(m_PathToGitBinary))
     {
         emit d("couldn't find git");

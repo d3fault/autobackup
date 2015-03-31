@@ -19,13 +19,13 @@ private:
     quint32 m_CurrentVisibleTabIndex;
 
     QString m_CurrentProfile;
-    QString m_CurrentProfileBaseDir;
+    QString m_CurrentProfileBaseDir_WithSlashAppended;
     bool m_FolderizeBaseDir;
 
     void createActions();
     void createToolbars();
 
-    QString autoFileNameFromContentsAndCurrentTime(const QByteArray &fileContents);
+    bool filePathTemplateFromCurrentDateTime(QString *out_FilePathTemplate);
 
     QByteArray myHexHash(const QByteArray &inputByteArray);
     void addNewFileTabAndMakeItCurrent();

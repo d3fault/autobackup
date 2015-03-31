@@ -3695,7 +3695,7 @@ Projects/LastModifiedTimestampsTools/src/cli/LastModifiedTimestampsToolsCli.pro:
 Projects/LastModifiedTimestampsTools/src/cli/lastmodifiedtimestampstoolscli.cpp:1401629996
 Projects/LastModifiedTimestampsTools/src/cli/lastmodifiedtimestampstoolscli.h:1401629655
 Projects/LastModifiedTimestampsTools/src/cli/main.cpp:1401627943
-Projects/LastModifiedTimestampsTools/src/gui/:1427380548
+Projects/LastModifiedTimestampsTools/src/gui/:1427772541
 Projects/LastModifiedTimestampsTools/src/gui/LastModifiedTimestampsToolsGui.pro:1401628209
 Projects/LastModifiedTimestampsTools/src/gui/lastmodifiedtimestampstoolsgui.cpp:1401629170
 Projects/LastModifiedTimestampsTools/src/gui/lastmodifiedtimestampstoolsgui.h:1401623257
@@ -3759,7 +3759,7 @@ Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1427380548
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/MouseOrMotionOrMySexyFaceViewMaker.pro:1426316518
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/main.cpp:1424682360
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseCursor.qrc:1424756197
-Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmaker.cpp:1427226925
+Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmaker.cpp:1427777696
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmaker.h:1426319809
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmakergui.cpp:1426320388
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmakergui.h:1426318154
@@ -3788,16 +3788,17 @@ Projects/MusicFingers/src/lib/musicfingerssynthesizer.cpp:1426312003
 Projects/MusicFingers/src/lib/musicfingerssynthesizer.h:1426304790
 Projects/MusicFingers/src/musicfingers.pri:1426304643
 Projects/MusicFingers/src/musicfingersserialportintegration.pri:1426284928
-Projects/NothingFancyNotepadWithAutoFilenameButManualSave/:1427380548
-Projects/NothingFancyNotepadWithAutoFilenameButManualSave/design/:1412752309
+Projects/NothingFancyNotepadWithAutoFilenameButManualSave/:1427776814
+Projects/NothingFancyNotepadWithAutoFilenameButManualSave/design/:1427776686
+Projects/NothingFancyNotepadWithAutoFilenameButManualSave/design/filenames.are.stupid.but.what.to.populate.them.with.since.mandatory.sdlfjsldkfjlksdjfklsdjflksdjflkjsdlkfj.txt:1427776686
 Projects/NothingFancyNotepadWithAutoFilenameButManualSave/design/initial.idea.aldfjalsdjflasdkjfosduflsdakjfsdof.txt:1412752309
-Projects/NothingFancyNotepadWithAutoFilenameButManualSave/src/:1427579626
+Projects/NothingFancyNotepadWithAutoFilenameButManualSave/src/:1427783507
 Projects/NothingFancyNotepadWithAutoFilenameButManualSave/src/NothingFancyNotepadWIthAutoFilenameButManualSave.pro:1412763939
 Projects/NothingFancyNotepadWithAutoFilenameButManualSave/src/main.cpp:1427579626
 Projects/NothingFancyNotepadWithAutoFilenameButManualSave/src/newprofiledialog.cpp:1412761947
 Projects/NothingFancyNotepadWithAutoFilenameButManualSave/src/newprofiledialog.h:1412762155
-Projects/NothingFancyNotepadWithAutoFilenameButManualSave/src/nothingfancynotepadwithautofilenamebutmanualsavemainwindow.cpp:1427579623
-Projects/NothingFancyNotepadWithAutoFilenameButManualSave/src/nothingfancynotepadwithautofilenamebutmanualsavemainwindow.h:1427579622
+Projects/NothingFancyNotepadWithAutoFilenameButManualSave/src/nothingfancynotepadwithautofilenamebutmanualsavemainwindow.cpp:1427783481
+Projects/NothingFancyNotepadWithAutoFilenameButManualSave/src/nothingfancynotepadwithautofilenamebutmanualsavemainwindow.h:1427782999
 Projects/NothingFancyNotepadWithAutoFilenameButManualSave/src/nothingfancyplaintextedit.cpp:1412764611
 Projects/NothingFancyNotepadWithAutoFilenameButManualSave/src/nothingfancyplaintextedit.h:1412764600
 Projects/OptionallySecureAsFuckBitcoinBankServer/:1331099023
@@ -4078,7 +4079,7 @@ Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/mainwi
 Projects/Prototypes/MultiClientServerTypesHelloer/:1354036727
 Projects/Prototypes/MultiClientServerTypesHelloer/design/:1354036756
 Projects/Prototypes/MultiClientServerTypesHelloer/design/multi.server.abstraction.hides.all.server.shit.from.protocol.knower.txt:1354036756
-Projects/Prototypes/MultiClientServerTypesHelloer/src/:1389442977
+Projects/Prototypes/MultiClientServerTypesHelloer/src/:1427771351
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/:1370569748
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/MultiClientHelloer.pro:1353785649
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/clientwidget.cpp:1353785667
@@ -4578,7 +4579,7 @@ Projects/Prototypes/timelineFileStore/timelineFileStore/timelinenode.cpp:1320133
 Projects/Prototypes/timelineFileStore/timelineFileStore/timelinenode.h:1320133807
 Projects/Prototypes/timelineFileStore/timelineFileStore/timelinewithfilestore.cpp:1320134193
 Projects/Prototypes/timelineFileStore/timelineFileStore/timelinewithfilestore.h:1320134193
-Projects/QuickDirtyAutoBackupHalper/:1427383948
+Projects/QuickDirtyAutoBackupHalper/:1427783549
 Projects/QuickDirtyAutoBackupHalper/oldOldSrc/:1348865438
 Projects/QuickDirtyAutoBackupHalper/oldOldSrc/QuickDirtyAutoBackupHalper.pro:1348500720
 Projects/QuickDirtyAutoBackupHalper/oldOldSrc/main.cpp:1348500703
@@ -4596,7 +4597,7 @@ Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperbusiness.cp
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperbusiness.h:1348569501
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.cpp:1348566704
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.h:1348565463
-Projects/QuickDirtyAutoBackupHalper/src/:1427383960
+Projects/QuickDirtyAutoBackupHalper/src/:1427783702
 Projects/QuickDirtyAutoBackupHalper/src/QuickDirtyAutoBackupHalper.pro:1387287042
 Projects/QuickDirtyAutoBackupHalper/src/main.cpp:1401631299
 Projects/QuickDirtyAutoBackupHalper/src/mainwidget.cpp:1427225168
@@ -4604,7 +4605,7 @@ Projects/QuickDirtyAutoBackupHalper/src/mainwidget.h:1387287167
 Projects/QuickDirtyAutoBackupHalper/src/qdabh.icon.svg:1350329437
 Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalper.cpp:1349624127
 Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalper.h:1348734985
-Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.cpp:1401723790
+Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.cpp:1427783702
 Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.h:1349623955
 Projects/RecursiveFileStringReplaceRenamer/:1388246494
 Projects/RecursiveFileStringReplaceRenamer/src/:1388247674
@@ -4678,7 +4679,7 @@ Projects/RedParenthesisCloseContextRefresher/src/redparenthesisclosecontextrefre
 Projects/RedParenthesisCloseContextRefresher/src/redparenthesisclosecontextrefresherwidget.cpp:1356250590
 Projects/RedParenthesisCloseContextRefresher/src/redparenthesisclosecontextrefresherwidget.h:1356250266
 Projects/RpcGenerator/:1343597837
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/:1389442978
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/:1427771353
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/:1370686905
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/:1379237269
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/:1370998704
@@ -5755,7 +5756,7 @@ scripts/win/zoom.cygwin.commands.sh:1320861500
 scripts/win/zoom.sync.with.3x.750gb.drives.bat:1320860540
 scripts/750x1:1321490944
 scripts/750x2:1321489260
-scripts/apt.initial.packages.debian.squeeze.devbox.txt:1427424290
+scripts/apt.initial.packages.debian.squeeze.devbox.txt:1427773129
 scripts/base64theSha1SumOfAFileProperly.sh:1424394103
 scripts/best.rsync.command.txt:1427098358
 scripts/cleanAptEtc.sh:1350618598
@@ -5775,7 +5776,7 @@ scripts/laptop.screen.only.sh:1350618576
 scripts/mount.2x.750gb.drives.sh:1350716644
 scripts/new.os.install.cloning.from.the.bare.repo.safely.by.specifying.file.colon.slash.slash.txt:1350441253
 scripts/polaroid.backup.and.shred.sh:1422524231
-scripts/qtCreatorCustomStyle.xml:1350795688
+scripts/qtCreatorCustomStyle.xml:1427771912
 scripts/recursive.gpg.sign.txt:1426425284
 scripts/sony.ic.recorder.backup.and.delete.sh:1401722135
 scripts/sony.ic.recorder.backup.and.delete.sh.bak:1370738506

@@ -1,0 +1,10 @@
+I lost two whole lines of text when my comp died, but I still remember what I was writing even though it's taken me 2+ days to build/migrate:
+
+
+Storing a date/time in a filename is stupid because the fs has metadata for that (unfortunately git is stupid and ignores it, but I work around that and save that meta to a file ;-P).
+Storing the sha1 of the file contents in the filename is stupid when you're committing them to git anyways, since git keeps blob sha1s for you (not quite the same as file, but same thing at the end of the day).
+Mandatory filenames in general are stupid, because usually when I'm dumping my mind I just want to type in something [unique] as fast as possible and move onto the next doc!
+
+So, (and I actually decided this over the past day or so AFTER the comp crash where the last 3 sentences were lost), I'll use folderization(maybe weeks grouped together? idk but days are too few)+simple-prefix(minddump-) and let QTemporaryFolder do the rest.
+
+I think actually this train of thought diverged from the original. It did at some point mention the whole justification of folderization to begin with: keeping the number of files in a given directory from being too ridiculously huge [that certain filesystems won't even be able to open them]. Maybe I should use QTemporaryDir created folders? But rotate them how often? The dir problem isn't as much of an issue (but the redundant data is still eh (year/month does at least allow me to sort easily'ish)) in terms of atomicity/data-loss. If the dir exists, big whoop.

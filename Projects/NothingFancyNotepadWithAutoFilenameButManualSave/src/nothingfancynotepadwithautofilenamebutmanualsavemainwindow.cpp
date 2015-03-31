@@ -12,15 +12,19 @@
 #include <QFileInfo>
 #include <QSettings>
 #include <QTabWidget>
+#include <QTemporaryFile>
 //#include <QBuffer>
 
 #include "newprofiledialog.h"
 #include "nothingfancyplaintextedit.h"
 
 //TODOoptional: could be specifiable in the user profile
-#define NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow_AutoFilename_Prefix "AutoFilenameSaveAt-"
+#define NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow_AutoFilename_Prefix "minddump_"
 #define NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow_AutoFilename_Extension ".txt"
 
+//TODOreq: save as
+//TODOreq: use first keystroke for timestamp (touch after write? in filename at very least (maybe no touch so we get 2x timestamps lewlies)) -- the main reason for this is to support another TODOreq: on close it should ask you if you want to save-all/cancel (a 3rd option is usually discard-all, but ehhhhhh). On such "save-all" uses, 10x (really 'n') documents would get identical timestamps (Buh Osios2 is so much better (keystrokes logged :-P)). Using "timestamp of first keystroke" is a hacky way around that to keep the ordering of the docs relatively in tact (but still not exact because shit i coulda switched tabs like crazy and editted sporatically ofc)
+//TODOreq: use QTemporaryFile for atomic "create only if not exist" (let random chars be in it, fuck it). QSaveFile should only be used when modifying/overwriting (should I change the filename [that has the date/time in it] also????)
 //TODOreq: color indication of whether or not a file (or perhaps 'tab') is saved
 //TODOreq: auto save and manual save. the former when doing mind dump, the latter used when writing project designs and wanting good filenames
 //TODOoptional: when a close attempt is detected, iterate all open docs and see if they need to be saved. show a dialog with each unsaved doc. each doc has a radio selection for "auto save" and "manual save". next to manual save and only enabled when relevant is a line edit (or browse button or both?)
@@ -50,20 +54,20 @@ NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::NothingFancyNotepadW
             close();
         }
         m_CurrentProfile = newProfileDialog.newProfileName();
-        m_CurrentProfileBaseDir = newProfileDialog.newProfileBaseDir();
+        m_CurrentProfileBaseDir_WithSlashAppended = newProfileDialog.newProfileBaseDir();
         m_FolderizeBaseDir = newProfileDialog.folderizeBaseDir();
         settings.setValue("lastUsedProfile", m_CurrentProfile);
 
         settings.beginGroup(m_CurrentProfile);
-        settings.setValue("baseDir", m_CurrentProfileBaseDir);
+        settings.setValue("baseDir", m_CurrentProfileBaseDir_WithSlashAppended);
         settings.setValue("folderizeBaseDir", m_FolderizeBaseDir);
         settings.endGroup();
     }
-    else
+    else //TODOreq: arg and/or file menu item to go to profile manager
     {
         //load profile
         settings.beginGroup(m_CurrentProfile);
-        m_CurrentProfileBaseDir = NewProfileDialog::appendSlashIfNeeded(settings.value("baseDir").toString());
+        m_CurrentProfileBaseDir_WithSlashAppended = NewProfileDialog::appendSlashIfNeeded(settings.value("baseDir").toString());
         m_FolderizeBaseDir = settings.value("folderizeBaseDir").toBool();
         settings.endGroup();
     }
@@ -99,50 +103,50 @@ void NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::createToolbars(
     documentOperationsToolbar->addAction(m_NewFileTabAction);
     documentOperationsToolbar->addAction(m_AutoFilenameSaveAction);
 }
-QString NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::autoFileNameFromContentsAndCurrentTime(const QByteArray &fileContents)
+bool NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::filePathTemplateFromCurrentDateTime(QString *out_FilePathTemplate)
 {
+    QString fileName = NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow_AutoFilename_Prefix + QString::number(QDateTime::currentMSecsSinceEpoch() / static_cast<qint64>(1000));
+    //QByteArray contentHashHex = myHexHash(fileContents);
+    //fileName.append(contentHashHex);
+    fileName.append("_XXXXXX"); //omg wat if the content hash has 6 Xs omg mind = blown (if these 6 Xs are still Xs, we KNOW that 6 chars of the hash are incorrect (and since we know the file contents, we can recalc them lol (but blah this idea sucks because why even store the hash in the filename them if we "can recalc it")). bitcoin proves that there can be series of same characters
+    fileName.append(NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow_AutoFilename_Extension);
     if(m_FolderizeBaseDir)
     {
         QDateTime currentDateTime = QDateTime::currentDateTimeUtc();
-        QString folderizedPath = m_CurrentProfileBaseDir
+        QString folderizedPath = m_CurrentProfileBaseDir_WithSlashAppended
                                 + QString::number(currentDateTime.date().year()) //2014
                                 + QDir::separator()
                                 + currentDateTime.date().toString("MM-MMMM") //01-January
                                 + QDir::separator()
-                                + currentDateTime.date().toString("dd")
-                                + QDir::separator();
+                                ; //+ currentDateTime.date().toString("dd")
+                                //+ QDir::separator();
 
         QFileInfo folderizedPathInfo(folderizedPath);
         bool exists = folderizedPathInfo.exists();
-        if(exists && !folderizedPathInfo.isDir())
+        if(exists)
         {
-            QMessageBox::critical(this, tr("Error"), tr("Expected a folder, but it isn't a folder: '") + folderizedPath + tr("'"));
-            return QString();
+            if(!folderizedPathInfo.isDir())
+            {
+                QMessageBox::critical(this, tr("Error"), tr("Expected a folder, but it isn't a folder: '") + folderizedPath + tr("'"));
+                return false;
+            }
         }
-        if(!exists)
+        else
         {
             QDir folderizedDir(folderizedPath);
             if(!folderizedDir.mkpath(folderizedPath))
             {
-                QMessageBox::critical(this, tr("Error Creating Directories"), tr("Failed to recursively mkdir '") + folderizedPath + tr("'"));
-                return QString();
+                QMessageBox::critical(this, tr("Error Creating Directories"), tr("Failed to mkpath '") + folderizedPath + tr("'"));
+                return false;
             }
         }
-        QByteArray contentHashHex = myHexHash(fileContents);
-        QString ret(folderizedPath + NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow_AutoFilename_Prefix + currentDateTime.time().toString("HH_mm_ss") + "-");
-        ret.append(contentHashHex);
-        ret.append(NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow_AutoFilename_Extension);
-        return ret;
+        (*out_FilePathTemplate) = QString(folderizedPath + fileName);
     }
     else
     {
-        QString ret(m_CurrentProfileBaseDir + NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow_AutoFilename_Prefix + QString::number(QDateTime::currentMSecsSinceEpoch() / static_cast<qint64>(1000)) + "-");
-        //qint16 contentsCrc16 = qChecksum(fileContents.constData(), fileContents.length());
-        QByteArray contentHashHex = myHexHash(fileContents);
-        ret.append(contentHashHex);
-        ret.append(NothingFancyNotepadWIthAutoFilenameButManualSaveMainWindow_AutoFilename_Extension);
-        return ret;
+        (*out_FilePathTemplate) = QString(m_CurrentProfileBaseDir_WithSlashAppended + fileName);
     }
+    return true;
 }
 QByteArray NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::myHexHash(const QByteArray &inputByteArray)
 {
@@ -193,30 +197,43 @@ void NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::handleAutoFilen
 #endif
         QByteArray ourDocByteArray = ourDocString.toUtf8();
 
-        QString absoluteAutoSaveFilePath = autoFileNameFromContentsAndCurrentTime(ourDocByteArray);
-        if(absoluteAutoSaveFilePath.isEmpty())
+        QString filePathTemplate;
+        if(!filePathTemplateFromCurrentDateTime(&filePathTemplate))
+        {
+            QMessageBox::critical(this, tr("Unable to get template for QTemporaryFile"), tr("Failed to get a good template for saving. This should never happen. Copy your file contents into a different text editor (or try saving somewhere else?).  FILE NOT SAVED"));
             return;
+        }
+#if 0 //racy. might exist by the time we get to open
         if(QFile::exists(absoluteAutoSaveFilePath))
         {
             QMessageBox::warning(this, tr("Auto-Filename Already Exists?"), tr("The auto-filename '") + absoluteAutoSaveFilePath + tr("' already exists. This is strange considering it's a combination of the sha1 of the content and the current datetime. This should never happen, but you should know that we did not attempt to overwrite the file, which means that if this is some strange collission that your buffer might not be persisted to disk. Good luck."));
             return;
         }
-        QFile autoFilenameFile(absoluteAutoSaveFilePath);
+        QFile autoFilenameFile(filePathTemplate);
         if(!autoFilenameFile.open(QIODevice::WriteOnly))
         {
-            QMessageBox::critical(this, tr("Error: File Open Failed"), tr("Failed to open for writing: '") + absoluteAutoSaveFilePath + tr("'"));
+            QMessageBox::critical(this, tr("Error: File Open Failed"), tr("Failed to open for writing: '") + filePathTemplate + tr("'"));
             return;
         }
-        if(autoFilenameFile.write(ourDocByteArray) != ourDocByteArray.size())
+#endif
+        QTemporaryFile tempFileButJkWeWantToKeepIt(filePathTemplate);
+        if(!tempFileButJkWeWantToKeepIt.open())
         {
-            QMessageBox::critical(this, tr("Error: Write Failed"), tr("Failed to write the contents of: '") + absoluteAutoSaveFilePath + tr("'"));
+            QMessageBox::critical(this, tr("QTemporaryFile failed to open"), tr("QTemporaryFile failed to open(). This should never happen. Maybe your filesystem is read-only? FILE NOT SAVED"));
             return;
         }
-        if(!autoFilenameFile.flush())
+        if(tempFileButJkWeWantToKeepIt.write(ourDocByteArray) != ourDocByteArray.size())
         {
-            QMessageBox::critical(this, tr("Error: Flush Failed"), tr("Failed to flush the contents of: '") + absoluteAutoSaveFilePath + tr("'"));
+            QMessageBox::critical(this, tr("Error: Write Failed"), tr("Failed to write the contents of: '") + tempFileButJkWeWantToKeepIt.fileName() + tr("'.  FILE NOT SAVED"));
             return;
         }
+        if(!tempFileButJkWeWantToKeepIt.flush())
+        {
+            QMessageBox::critical(this, tr("Error: Flush Failed"), tr("Failed to flush the contents of: '") + tempFileButJkWeWantToKeepIt.fileName() + tr("'. FILE NOT SAVED"));
+            return;
+        }
+        //TODOmb: fsync?
+        tempFileButJkWeWantToKeepIt.setAutoRemove(false); //jk lol
     }
 
     m_AutoFilenameSaveAction->setDisabled(true); //visual feedback of successful save, and whether or not we can save

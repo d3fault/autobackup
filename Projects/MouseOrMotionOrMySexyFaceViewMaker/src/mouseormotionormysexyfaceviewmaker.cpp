@@ -27,6 +27,7 @@ QPainter painter(&m_CurrentPixmapBeingPresented); \
 MY_SEXY_FACE_THUMBNAIL_SNIPPET_KDSFJLSKDJF(painter) \
 emit presentPixmapForViewingRequested(m_CurrentPixmapBeingPresented);
 
+//TODOreq: use the "blinking cursor" graphic only as dimensions, and a cli arg to specify what color to fill it in with. the blinking cursor is styled the same way as the text in qt creator. of course, if no cli arg for the cursor color is specified, we should use the color in the graphic (black, the default, atm)
 //TODOoptional: the mouseOrMotion code could additionally (or solely) be serialized to create a timeline of "doing something on OS" ranges, and I could use those ranges to cut out the duplicate-and-shittier-quality 'my sexy face-ONLY' segments (which do still have justification for being made in general, since that's how I 'live stream'... but the non-OS portions of those segments don't have any need to be stored permanently)
 MouseOrMotionOrMySexyFaceViewMaker::MouseOrMotionOrMySexyFaceViewMaker(QObject *parent)
     : QObject(parent)
