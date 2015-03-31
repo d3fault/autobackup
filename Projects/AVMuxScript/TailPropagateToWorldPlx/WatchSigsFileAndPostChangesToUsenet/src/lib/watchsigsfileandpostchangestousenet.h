@@ -9,6 +9,9 @@
 #include <QScopedPointer>
 #include <QMimeDatabase>
 #include <QProcess>
+#include <QTemporaryDir>
+#include <QDirIterator>
+#include <QFileInfo>
 
 #include "recursivecustomdetachedgpgsignatures.h"
 
@@ -28,6 +31,8 @@ private:
     QSet<RecursiveCustomDetachedSignaturesFileMeta> m_FilesAlreadyPostedOnUsenet;
     QSet<RecursiveCustomDetachedSignaturesFileMeta> m_FilesEnqueuedForPostingToUsenet;
     QScopedPointer<RecursiveCustomDetachedSignaturesFileMeta> m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet;
+    QScopedPointer<QTemporaryDir> m_FileCurrentlyBeingPostedToUsenetVolumesTempDir_OrNullIfFileCurrentlyBeingPostedDidntNeedToBeSplit;
+    QScopedPointer<QDirIterator> m_FileCurrentlyBeingPostedToUsenetVolumesTempDirIterator;
     QMimeDatabase m_MimeDatabase;
     QProcess *m_PostnewsProcess;
     bool m_CleanQuitRequested;
@@ -37,9 +42,14 @@ private:
     void readInSigsFileAndPostAllNewEntries(const QString &sigsFilePath);
     void postAnEnqueuedFileIfNotAlreadyPostingOne_OrQuitIfCleanQuitRequested();
     void postToUsenet(const RecursiveCustomDetachedSignaturesFileMeta &nextFile);
+    void postNextVolumePartInDir_OrContinueOntoNextFullFileIfAllPartsOfCurrentFileHaveBeenPosted();
+    void beginPostingToUsenetAfterBase64encoding(const QFileInfo &fileInfo, const QString &gpgSignature_OrEmptyStringIfNotToAttachOne = QString()/* when we split a file into parts, we put the sig _IN_ the archive, so we don't need to attach the sig [to each part] */, const QString &mimeType_OrEmptyStringIfToFigureItOut = QString());
     QByteArray wrap(const QString &toWrap, int wrapAt);
-    //bool getMimeFromFileProcess(const QString &filePath, QByteArray *out_Mime);
+    QByteArray generateRandomAlphanumericBytes(int numBytesToGenerate);
+    void handleFullFilePostedToUsenet();
     bool rememberFilesAlreadyPostedOnUsenetSoWeKnowWhereToResumeNextTime();
+
+    inline QString appendSlashIfNeeded(const QString &inputString) { if(inputString.endsWith("/")) return inputString; return inputString + "/"; }
 signals:
     void o(const QString &msg);
     void e(const QString &msg);

@@ -69,6 +69,11 @@ NothingFancyNotepadWithAutoFilenameButManualSaveMainWindow::NothingFancyNotepadW
         //load profile
         settings.beginGroup(m_CurrentProfile);
         m_CurrentProfileBaseDir_WithSlashAppended = NewProfileDialog::appendSlashIfNeeded(settings.value("baseDir").toString());
+        QFileInfo baseDirFileInfo(m_CurrentProfileBaseDir_WithSlashAppended);
+        if(!baseDirFileInfo.isDir())
+        {
+            QMessageBox::critical(this, tr("Error with Base Dir"), tr("Either your base dir doesn't exist, or it isn't a dir. Did you change something recently? This is your base dir: " + m_CurrentProfileBaseDir_WithSlashAppended + " -- If you continue and save a file, that base dir will be created")); //TODOmb: force quit instead? safer
+        }
         m_FolderizeBaseDir = settings.value("folderizeBaseDir").toBool();
         settings.endGroup();
     }
