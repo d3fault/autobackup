@@ -12,7 +12,7 @@
 #include <QTimer>
 #include <QtMath>
 
-#define WatchSigsFileAndPostChangesToUsenet_MAX_SINGLE_PART_SIZE_ANDOR_SPLIT_FILE_VOLUME_SIZE 250000 //350kb is what I really want, but gotta take into account the b64 enc xD
+#define WatchSigsFileAndPostChangesToUsenet_MAX_SINGLE_PART_SIZE_ANDOR_SPLIT_FILE_VOLUME_SIZE 400000 //350kb is what I really want, but gotta take into account the b64 enc xD... and also have to take into account the 7z compression (i used to have it at 250kb, but realised my b64 encoded posts ended up being less than 250kb and was leik 'wot' before i remembered compression)!!
 #define WatchSigsFileAndPostChangesToUsenet_SEVENZIP_BIN "7z"
 #define WatchSigsFileAndPostChangesToUsenet_POSTNEWS_BIN "postnews"
 #define WatchSigsFileAndPostChangesToUsenet_MIN_DELAY_BEFORE_RETRYING_MS 5000
@@ -32,7 +32,7 @@ WatchSigsFileAndPostChangesToUsenet::WatchSigsFileAndPostChangesToUsenet(QObject
     connect(m_PostnewsProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(handlePostnewsProcessFinished(int,QProcess::ExitStatus)));
 
     m_RetryWithExponentialBackoffTimer->setSingleShot(true);
-    connect(m_RetryWithExponentialBackoffTimer, SIGNAL(timeout()), this, SLOT(generateMessageIdAndPostToUsenet())); //we don't need a new message id, but eh simplicity is simple
+    connect(m_RetryWithExponentialBackoffTimer, SIGNAL(timeout()), this, SLOT(generateMessageIdAndPostToUsenet())); //we don't need a new message id, but eh simplicity is simple. and generating a new message id might help so whatever...
 }
 bool WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFile(const QString &sigsFilePath)
 {
@@ -98,6 +98,7 @@ void WatchSigsFileAndPostChangesToUsenet::postAnEnqueuedFileIfNotAlreadyPostingO
     }
     if(m_FilesEnqueuedForPostingToUsenet.isEmpty())
     {
+        emit o("post queue is empty");
         checkAlreadyPostedFilesForError();
         return;
     }
@@ -224,7 +225,7 @@ void WatchSigsFileAndPostChangesToUsenet::beginPostingToUsenetAfterBase64encodin
     m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails = postDetails;
     generateMessageIdAndPostToUsenet();
 }
-QByteArray WatchSigsFileAndPostChangesToUsenet::wrap(const QString &toWrap, int wrapAt) //zzz
+QByteArray WatchSigsFileAndPostChangesToUsenet::wrap(const QByteArray &toWrap, int wrapAt) //zzz
 {
     QByteArray ret;
     int toWrapLen = toWrap.length();
@@ -233,7 +234,6 @@ QByteArray WatchSigsFileAndPostChangesToUsenet::wrap(const QString &toWrap, int 
     for(int i = 0; i < toWrapLen; ++i)
     {
         ret.append(toWrap.at(i));
-        ++i;
         if((++currentColumn) == wrapAt)
         {
             ret.append("\n");
@@ -273,10 +273,9 @@ void WatchSigsFileAndPostChangesToUsenet::generateMessageIdAndPostToUsenet()
                     "Message-ID: " + postDetails.MessageId + "\n"
                     //"Organization: d3fault\n"
                     "Organization: " + generateRandomAlphanumericBytes(20) + "\n"
-                    "Mime-Version 1.0\n"
+                    "MIME-Version: 1.0\n"
                     "Content-Type: multipart/mixed;\n"
-                        "\tboundary=\"" + postDetails.Boundary + "\";\n"
-                        //"\tprotocol=\"application/pgp-signature\"\n"
+                        "\tboundary=\"" + postDetails.Boundary + "\"\n"
                     "\n"
                     "This is a multi-part message in MIME format.\n"
                     "\n"
@@ -295,7 +294,7 @@ void WatchSigsFileAndPostChangesToUsenet::generateMessageIdAndPostToUsenet()
     {
         post.append(
                     "Content-Type: application/pgp-signature\n" //TODOoptional: micalg=???
-                    "Content-Disposition: attachment;"
+                    "Content-Disposition: attachment;\n"
                         "\tfilename=\"" + postDetails.FileNameOnly + ".asc\"\n"
                     "\n"
                     + postDetails.GpgSigMaybe + "\n"
@@ -308,8 +307,18 @@ void WatchSigsFileAndPostChangesToUsenet::generateMessageIdAndPostToUsenet()
     QStringList postnewsArgs;
     postnewsArgs << "--verbose" << ("--user=" + m_UsenetAuthUsername) << ("--pass=" + m_UsenetAuthPassword) << ("--port=" + m_PortString) << m_UsenetServer;
     m_PostnewsProcess->start(WatchSigsFileAndPostChangesToUsenet_POSTNEWS_BIN, postnewsArgs);
-    if(!m_PostnewsProcess->write(post))
-        EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("failed to write post to postnews' stdin, the file at: " + postDetails.AbsoluteFilePath);
+    qint64 writtenToPostNewsProcess = 0;
+    while(writtenToPostNewsProcess < post.size())
+    {
+        //qint64 writtenThisTime = m_PostnewsProcess->write((post.constData()+writtenToPostNewsProcess), (post.size()-writtenToPostNewsProcess)); //not KISS (possible off by one in the length?)
+        qint64 writtenThisTime = m_PostnewsProcess->write(post);
+        if(writtenThisTime == -1)
+            EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("failed to write post to postnews' stdin, the file at: " + postDetails.AbsoluteFilePath);
+        if(writtenThisTime == post.size())
+            break;
+        post.remove(0, writtenThisTime); //KISS
+        writtenToPostNewsProcess += writtenThisTime;
+    }
     m_PostnewsProcess->closeWriteChannel();
 }
 void WatchSigsFileAndPostChangesToUsenet::handleFullFilePostedToUsenet() //full as in "all of a file's parts" OR "a single file that was not split into parts"
