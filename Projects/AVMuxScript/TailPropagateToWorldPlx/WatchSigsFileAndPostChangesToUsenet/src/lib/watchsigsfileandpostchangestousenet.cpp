@@ -6,14 +6,16 @@
 #include <QMimeDatabase>
 #include <QProcess>
 #include <QStandardPaths>
-#include <QSaveFile>
 #include <QSetIterator>
 #include <QTemporaryFile>
 #include <QDateTime>
+#include <QTimer>
+#include <QtMath>
 
-#define WatchSigsFileAndPostChangesToUsenet_MAX_SINGLE_PART_SIZE_ANDOR_SPLIT_FILE_VOLUME_SIZE 250000 //350 is what I really want, but gotta take into account the b64 enc xD
+#define WatchSigsFileAndPostChangesToUsenet_MAX_SINGLE_PART_SIZE_ANDOR_SPLIT_FILE_VOLUME_SIZE 250000 //350kb is what I really want, but gotta take into account the b64 enc xD
 #define WatchSigsFileAndPostChangesToUsenet_SEVENZIP_BIN "7z"
 #define WatchSigsFileAndPostChangesToUsenet_POSTNEWS_BIN "postnews"
+#define WatchSigsFileAndPostChangesToUsenet_MIN_DELAY_BEFORE_RETRYING_MS 5000
 #define EEEEEEEE_WatchSigsFileAndPostChangesToUsenet(msg) { emit e(msg); emit doneWatchingSigsFileAndPostingChangesToUsenet(false); return; }
 
 WatchSigsFileAndPostChangesToUsenet::WatchSigsFileAndPostChangesToUsenet(QObject *parent)
@@ -21,13 +23,16 @@ WatchSigsFileAndPostChangesToUsenet::WatchSigsFileAndPostChangesToUsenet(QObject
     , m_SigsFileWatcher(new QFileSystemWatcher(this)) //the best reason for pointers: qobject parenting (which makes moveToThread work). If it's not a pointer (a stack member) and sets 'this' as parent, then it gets double deleted xD
     , m_RecursiveCustomDetachedSignatures(new RecursiveCustomDetachedSignatures(this))
     , m_PostnewsProcess(new QProcess(this))
-
+    , m_RetryWithExponentialBackoffTimer(new QTimer(this))
 {
     m_PostnewsProcess->setProcessChannelMode(QProcess::ForwardedOutputChannel);
 
     connect(m_SigsFileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(handleSigsFileChanged(QString)));
     connect(m_RecursiveCustomDetachedSignatures, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
     connect(m_PostnewsProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(handlePostnewsProcessFinished(int,QProcess::ExitStatus)));
+
+    m_RetryWithExponentialBackoffTimer->setSingleShot(true);
+    connect(m_RetryWithExponentialBackoffTimer, SIGNAL(timeout()), this, SLOT(generateMessageIdAndPostToUsenet())); //we don't need a new message id, but eh simplicity is simple
 }
 bool WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFile(const QString &sigsFilePath)
 {
@@ -39,47 +44,21 @@ bool WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFile(const QString &s
     }
     return true;
 }
-#if 0
-bool WatchSigsFileAndPostChangesToUsenet::readInAlreadyPostedFilesSoWeDontDoublePost()
+bool WatchSigsFileAndPostChangesToUsenet::ensureExistsAndIsExecutable(const QString &binaryToVerify)
 {
-#if 0
-    QSettings alreadyPostedFilesParser(m_AlreadyPostedFilesDataFilePath, QSettings::IniFormat);
-    if(alreadyPostedFilesParser.status() != QSettings::NoError)
+    const QString &binaryFilePath = QStandardPaths::findExecutable(binaryToVerify);
+    if(!binaryFilePath.isEmpty())
     {
-        emit e("There was a QSettings status error when trying to read: " + m_AlreadyPostedFilesDataFilePath + " -- status: " + QString::number(alreadyPostedFilesParser.status()));
-        emit doneWatchingSigsFileAndPostingChangesToUsenet(false);
-        return false;
+        QFileInfo binaryFileInfo(binaryFilePath); //mb not necessary, idk what findExecutable does aside from existence verification
+        if(binaryFileInfo.isExecutable())
+        {
+            return true;
+        }
     }
-    const QStringList &allPostedFilePaths = alreadyPostedFilesParser.childKeys();
-    m_FilesAlreadyPostedOnUsenet_AndTheirMessageIDs.clear();
-    Q_FOREACH(const QString &currentPostedFilePath, allPostedFilePaths)
-    {
-        m_FilesAlreadyPostedOnUsenet_AndTheirMessageIDs.insert(currentPostedFilePath, alreadyPostedFilesParser.value(currentPostedFilePath).toStringList()); //TO DOnereq: I have no reason to READ the message IDs back into memory... except right now to KISS I am rewriting the entire data file and for that reason I have to... hmm wait nope I can check/add-to the QSettings ON DEMAND fuck this. TO DOnereq
-    }
-#endif
-#if 0
-    if(!QFile::exists(m_AlreadyPostedFilesAllSigsIshFilePath))
-        return true; //first run, doesn't exist
-    QFile alreadyPostedFilesFile(m_AlreadyPostedFilesAllSigsIshFilePath);
-    if(!alreadyPostedFilesFile.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        //if open for reading fails, open for writing probably will too. or that could mean that next time this app is launched we can't read this file, so blah error out quick
-        emit e("failed to open for reading the list of already posted files... file: " + m_AlreadyPostedFilesAllSigsIshFilePath);
-        emit doneWatchingSigsFileAndPostingChangesToUsenet(false);
-        return false;
-    }
-    QHash<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> alreadyPostedFiles;
-    if(!m_RecursiveCustomDetachedSignatures->readInAllSigsFromSigFile(&alreadyPostedFilesFile, &alreadyPostedFiles))
-    {
-        emit e("failed to read in list of already posted files... file: " + m_AlreadyPostedFilesAllSigsIshFilePath);
-        emit doneWatchingSigsFileAndPostingChangesToUsenet(false);
-        return false;
-    }
-    m_FilesAlreadyPostedOnUsenet_AndTheirMessageIDs = alreadyPostedFiles.values().toSet();
-#endif
-    return true;
+    emit e("could not find executable, or it didn't have executable bit set: " + binaryToVerify);
+    emit doneWatchingSigsFileAndPostingChangesToUsenet(false);
+    return false;
 }
-#endif
 void WatchSigsFileAndPostChangesToUsenet::readInSigsFileAndPostAllNewEntries(const QString &sigsFilePath)
 {
     QFile sigsFileToWatch(sigsFilePath);
@@ -100,16 +79,7 @@ void WatchSigsFileAndPostChangesToUsenet::readInSigsFileAndPostAllNewEntries(con
     if(!checkAlreadyPostedFilesForError())
         return;
 
-    //QSet<RecursiveCustomDetachedSignaturesFileMeta> sigsFromFileAsSet = sigsFromSigFile.values().toSet();
-    //sigsFromFileAsSet.subtract(m_FilesAlreadyPostedOnUsenet_AndTheirMessageIDs.keys().toSet()); //TODOoptimization: I either have to keep the entire fs hierarchy+sigs in memory (only a few mb at the moment, but it will grow!!!), or I have to read them from disk every time the sigsfile being watched changes... idfk. There are clever ways to solve that problem ofc (and it's worth noting we don't NEED the sigs of the already posted files in memory, only need the file paths (this alone is probably ~80% of that memory now freed xD))...
-    //QHash<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> sigsAlreadyPostedOrEnqueuedForPosting;
-    /*QMutableHashIterator<QString, RecursiveCustomDetachedSignaturesFileMeta> newSigsIterator(sigsFromSigFile);
-    while(newSigsIterator.hasNext())
-    {
-        newSigsIterator.next();
-        if(sigsAlreadyPostedOrEnqueuedForPosting.contains(newSigsIterator.key()))
-            newSigsIterator.remove(); //already enqueued for posting or posted, so don't double enqueue/post
-    }*/
+    //TODOoptimization: OLD BUT STILL SEMI-RELEVANT (old as fuck posted files should be moved out of sight): I either have to keep the entire fs hierarchy+sigs in memory (only a few mb at the moment, but it will grow!!!), or I have to read them from disk every time the sigsfile being watched changes... idfk. There are clever ways to solve that problem ofc (and it's worth noting we don't NEED the sigs of the already posted files in memory, only need the file paths (this alone is probably ~80% of that memory now freed xD))...
 
     //at this point, sigsFromSigFile only contains new entries. so enqueue them
     m_FilesEnqueuedForPostingToUsenet.unite(sigsFromSigFile); //arbitrary posting order (QHash), fuck it. too lazy to sort by timestamp
@@ -135,8 +105,7 @@ void WatchSigsFileAndPostChangesToUsenet::postAnEnqueuedFileIfNotAlreadyPostingO
     postToUsenet(nextFile);
 }
 //TODOoptimization: compress next file while current file is posting
-//TODooptional: retry with exponential backoff (OT: sftp uploader should too)
-//TODOoptional: parity. spent way too much time researching/considering yEnc+parity etc. fuck it
+//TODOoptional: parity. spent way too much time researching/considering yEnc+parity etc. fuck it, 7z it is
 void WatchSigsFileAndPostChangesToUsenet::postToUsenet(const RecursiveCustomDetachedSignaturesFileMeta &nextFile) //TODOreq: relative path isn't being posted anywhere, maybe I should just not care and keep that stuff to the .nzb only?
 {
     m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.reset(new RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs(nextFile));
@@ -363,38 +332,7 @@ bool WatchSigsFileAndPostChangesToUsenet::checkAlreadyPostedFilesForError()
     }
     return true;
 }
-#if 0 //qsettings is so amazing i am so dumb for not using it waaaay more. it should be called QPersistentData[File], QSettings makes it sound like it's "config" stuff ONLY
-bool WatchSigsFileAndPostChangesToUsenet::rememberFilesAlreadyPostedOnUsenetSoWeKnowWhereToResumeNextTime()
-{
-    //TODOoptimization: noop/return-true if no NEW files have been posted
-    //TODOoptional: when recursive gpg signer makes the file, it's sorted by the filepath. I have no need to sort it like that (but could easily), so I won't (THINK OF THE CLOCK CYCLES!!)
-    QSaveFile saveFile(m_AlreadyPostedFilesDataFilePath);
-    if(!saveFile.open(QIODevice::WriteOnly | QIODevice::Text))
-    {
-        emit e("failed to open for writing the list of already posted files to disk for next time: " + m_AlreadyPostedFilesDataFilePath);
-        emit doneWatchingSigsFileAndPostingChangesToUsenet(false);
-        return false;
-    }
-
-    QTextStream saveFileStream(&saveFile);
-    QHashIterator<QString /* relative file path */, RecursiveCustomDetachedSignaturesFileMeta> postedFilesIterator(m_FilesAlreadyPostedOnUsenet_AndTheirMessageIDs);
-    while(postedFilesIterator.hasNext())
-    {
-        postedFilesIterator.next();
-        const RecursiveCustomDetachedSignaturesFileMeta &currentPathAndSig = postedFilesIterator. even saving should be done right away via QSettings! but there is a downside: possibility of corruption since not using qsavefile (but actually come to think of it, i think qsavefile is used behind the scenes!!)
-        saveFileStream << currentPathAndSig; //TODOoptimization: we really only need the path, not the sigs... fuckit since I want to use qset.subtract/etc because it looks sexy and i never have before (new = fun)
-    }
-    saveFileStream.flush();
-    if(!saveFile.commit())
-    {
-        emit e("failed to commit list of already posted files to disk for next time: " + m_AlreadyPostedFilesDataFilePath);
-        emit doneWatchingSigsFileAndPostingChangesToUsenet(false);
-        return false;
-    }
-    emit o("successfully committed list of already posted files to disk for next time");
-    return true;
-}
-#endif
+//TODOoptional: when recursive gpg signer makes the file, it's sorted by the filepath. I have no need to sort it like that (but could easily), so I won't (THINK OF THE CLOCK CYCLES!!)
 void WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFileAndPostChangesToUsenet(const QString &sigsFilePathToWatch, const QString &dirCorrespondingToSigsFile/*, const QString &dataDirForKeepingTrackOfAlreadyPostedFiles*/, const QString &authUser, const QString &authPass, const QString &portString, const QString &server)
 {
     QDir dirCorrespondingToSigsFileInstance(dirCorrespondingToSigsFile); //I know QDir has implicit conversion from QString, but I don't think the old connect syntax can do implicit conversion. The new connect syntax can, but then I lose overloads I think :-/, maybe wrong here fuckit
@@ -408,6 +346,7 @@ void WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFileAndPostChangesToU
     m_PortString = portString;
     m_UsenetServer = server;
     m_CleanQuitRequested = false;
+    m_NumFailedPostAttemptsInArow = 0; //quint64 so we can retry with exponential backoff until the end of time! aww nvm QTimer overflows long before that :(
 
     m_SigsFileWatcher->removePaths(m_SigsFileWatcher->files());
     if(!startWatchingSigsFile(sigsFilePathToWatch))
@@ -429,6 +368,12 @@ void WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFileAndPostChangesToU
     //it's cleared in the assign statement in readInAlreadyPostedFilesSoWeDontDoublePost: m_FilesAlreadyPostedOnUsenet.clear();
     //if(!readInAlreadyPostedFilesSoWeDontDoublePost())
     //    return;
+
+    //check postnews and 7z are executable
+    if(!ensureExistsAndIsExecutable(WatchSigsFileAndPostChangesToUsenet_POSTNEWS_BIN))
+        return;
+    if(!ensureExistsAndIsExecutable(WatchSigsFileAndPostChangesToUsenet_SEVENZIP_BIN))
+        return;
 
     readInSigsFileAndPostAllNewEntries(sigsFilePathToWatch); //start posting right away
 }
@@ -453,8 +398,18 @@ void WatchSigsFileAndPostChangesToUsenet::handlePostnewsProcessFinished(int exit
         generateMessageIdAndPostToUsenet(); //re-post, that is
         return;
     }
-    if(exitCode != 0 || exitStatus != QProcess::NormalExit) //TODOreq: regardless of the error type, retry with exponential backoff. I'll see it failing and intervene
-        EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("postnews exitted abnormally with exit code: " + QString::number(exitCode))
+    //TODOoptional: arg for max retries in a row before giving up completely. maybe i should use this by default and just set it to something pretty damn high (taking into account the exponential'ness (so like 30 rofl <3 exponents))
+    if(exitCode != 0 || exitStatus != QProcess::NormalExit)
+    {
+        //regardless of the error type, retry with exponential backoff. I'll see it failing and intervene
+        ++m_NumFailedPostAttemptsInArow;
+        int mult = qPow(2, m_NumFailedPostAttemptsInArow);
+        int sleepForMs = WatchSigsFileAndPostChangesToUsenet_MIN_DELAY_BEFORE_RETRYING_MS * mult;
+        m_RetryWithExponentialBackoffTimer->start(sleepForMs);
+        emit e("post failed, retrying in " + QString::number(sleepForMs/1000) + " seconds...");
+        return;
+    }
+    m_NumFailedPostAttemptsInArow = 0;
 
     m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->SuccessfullyPostedMessageIDs.append(QString::fromLatin1(m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails.MessageId));
 

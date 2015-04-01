@@ -38,6 +38,8 @@ struct RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs //POD
     UsenetPostDetails PostInProgressDetails;
 };
 
+class QTimer;
+
 class WatchSigsFileAndPostChangesToUsenet : public QObject
 {
     Q_OBJECT
@@ -52,17 +54,18 @@ private:
     QDir m_DirCorrespondingToSigsFile;
     QScopedPointer<QSettings> m_AlreadyPostedFiles;
     RecursiveCustomDetachedSignatures *m_RecursiveCustomDetachedSignatures;
-    //QHash<QString /* relative file path*/, QStringList /* MessageIDs */> m_FilesAlreadyPostedOnUsenet_AndTheirMessageIDs;
     QHash<QString /* relative file path*/, RecursiveCustomDetachedSignaturesFileMeta> m_FilesEnqueuedForPostingToUsenet;
     QScopedPointer<RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs> m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet;
     QScopedPointer<QTemporaryDir> m_FileCurrentlyBeingPostedToUsenetVolumesTempDir_OrNullIfFileCurrentlyBeingPostedDidntNeedToBeSplit;
     QScopedPointer<QDirIterator> m_FileCurrentlyBeingPostedToUsenetVolumesTempDirIterator;
     QMimeDatabase m_MimeDatabase;
     QProcess *m_PostnewsProcess;
+    QTimer *m_RetryWithExponentialBackoffTimer;
+    int m_NumFailedPostAttemptsInArow;
     bool m_CleanQuitRequested;
 
     bool startWatchingSigsFile(const QString &sigsFilePath);
-    //bool readInAlreadyPostedFilesSoWeDontDoublePost();
+    bool ensureExistsAndIsExecutable(const QString &binaryToVerify);
     void readInSigsFileAndPostAllNewEntries(const QString &sigsFilePath);
     void postAnEnqueuedFileIfNotAlreadyPostingOne_OrQuitIfCleanQuitRequested();
     void postToUsenet(const RecursiveCustomDetachedSignaturesFileMeta &nextFile);
@@ -70,9 +73,7 @@ private:
     void beginPostingToUsenetAfterBase64encoding(const QFileInfo &fileInfo, const QString &gpgSignature_OrEmptyStringIfNotToAttachOne = QString()/* when we split a file into parts, we put the sig _IN_ the archive, so we don't need to attach the sig [to each part] */, const QString &mimeType_OrEmptyStringIfToFigureItOut = QString());
     QByteArray wrap(const QString &toWrap, int wrapAt);
     QByteArray generateRandomAlphanumericBytes(int numBytesToGenerate);
-    void generateMessageIdAndPostToUsenet();
     void handleFullFilePostedToUsenet();
-    //bool rememberFilesAlreadyPostedOnUsenetSoWeKnowWhereToResumeNextTime();
     bool checkAlreadyPostedFilesForError();
 
     inline QString appendSlashIfNeeded(const QString &inputString) { if(inputString.endsWith("/")) return inputString; return inputString + "/"; }
@@ -87,6 +88,7 @@ public slots:
      void quitCleanly();
 private slots:
      void handleSigsFileChanged(const QString &sigsFilePath);
+     void generateMessageIdAndPostToUsenet();
      void handlePostnewsProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
 };
 

@@ -6,6 +6,7 @@
 #include <QDateTime>
 
 //TODOoptional: take out 5 second wait thing since it's stupid and does nothing anyways (no connection = still passes). really the only way i can find out if it's connected is by seeing if an upload/rename completes. HOWEVER this is only optional because it's only visual (i mean aside from the stupid 5 second wait itself) and doesn't break anything else
+//TODooptional: retry with exponential backoff
 
 bool SftpUploaderAndRenamerQueue::m_HaveRunConstructorOncePerApp = false; //TODOblah: not thread-safe. OWNED
 
