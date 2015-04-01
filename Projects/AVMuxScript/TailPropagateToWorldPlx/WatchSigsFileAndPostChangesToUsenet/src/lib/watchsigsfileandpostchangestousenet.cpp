@@ -1,5 +1,6 @@
 #include "watchsigsfileandpostchangestousenet.h"
 
+#include <QSettings>
 #include <QMutableHashIterator>
 #include <QCryptographicHash>
 #include <QMimeDatabase>
@@ -38,8 +39,25 @@ bool WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFile(const QString &s
     }
     return true;
 }
+#if 0
 bool WatchSigsFileAndPostChangesToUsenet::readInAlreadyPostedFilesSoWeDontDoublePost()
 {
+#if 0
+    QSettings alreadyPostedFilesParser(m_AlreadyPostedFilesDataFilePath, QSettings::IniFormat);
+    if(alreadyPostedFilesParser.status() != QSettings::NoError)
+    {
+        emit e("There was a QSettings status error when trying to read: " + m_AlreadyPostedFilesDataFilePath + " -- status: " + QString::number(alreadyPostedFilesParser.status()));
+        emit doneWatchingSigsFileAndPostingChangesToUsenet(false);
+        return false;
+    }
+    const QStringList &allPostedFilePaths = alreadyPostedFilesParser.childKeys();
+    m_FilesAlreadyPostedOnUsenet_AndTheirMessageIDs.clear();
+    Q_FOREACH(const QString &currentPostedFilePath, allPostedFilePaths)
+    {
+        m_FilesAlreadyPostedOnUsenet_AndTheirMessageIDs.insert(currentPostedFilePath, alreadyPostedFilesParser.value(currentPostedFilePath).toStringList()); //TO DOnereq: I have no reason to READ the message IDs back into memory... except right now to KISS I am rewriting the entire data file and for that reason I have to... hmm wait nope I can check/add-to the QSettings ON DEMAND fuck this. TO DOnereq
+    }
+#endif
+#if 0
     if(!QFile::exists(m_AlreadyPostedFilesAllSigsIshFilePath))
         return true; //first run, doesn't exist
     QFile alreadyPostedFilesFile(m_AlreadyPostedFilesAllSigsIshFilePath);
@@ -57,9 +75,11 @@ bool WatchSigsFileAndPostChangesToUsenet::readInAlreadyPostedFilesSoWeDontDouble
         emit doneWatchingSigsFileAndPostingChangesToUsenet(false);
         return false;
     }
-    m_FilesAlreadyPostedOnUsenet = alreadyPostedFiles.values().toSet();
+    m_FilesAlreadyPostedOnUsenet_AndTheirMessageIDs = alreadyPostedFiles.values().toSet();
+#endif
     return true;
 }
+#endif
 void WatchSigsFileAndPostChangesToUsenet::readInSigsFileAndPostAllNewEntries(const QString &sigsFilePath)
 {
     QFile sigsFileToWatch(sigsFilePath);
@@ -68,8 +88,20 @@ void WatchSigsFileAndPostChangesToUsenet::readInSigsFileAndPostAllNewEntries(con
     QHash<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> sigsFromSigFile;
     if(!m_RecursiveCustomDetachedSignatures->readInAllSigsFromSigFile(&sigsFileToWatch, &sigsFromSigFile))
         EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("failed to read in all sigs from file:" + sigsFilePath);
-    QSet<RecursiveCustomDetachedSignaturesFileMeta> sigsFromFileAsSet = sigsFromSigFile.values().toSet();
-    sigsFromFileAsSet.subtract(m_FilesAlreadyPostedOnUsenet); //TODOoptimization: I either have to keep the entire fs hierarchy+sigs in memory (only a few mb at the moment, but it will grow!!!), or I have to read them from disk every time the sigsfile being watched changes... idfk. There are clever ways to solve that problem ofc (and it's worth noting we don't NEED the sigs of the already posted files in memory, only need the file paths (this alone is probably ~80% of that memory now freed xD))...
+
+    //now remove the files already enqueued or posted
+    QMutableHashIterator<QString, RecursiveCustomDetachedSignaturesFileMeta> newSigsIterator(sigsFromSigFile);
+    while(newSigsIterator.hasNext())
+    {
+        newSigsIterator.next();
+        if(m_FilesEnqueuedForPostingToUsenet.contains(newSigsIterator.key()) || m_AlreadyPostedFiles->contains(newSigsIterator.key()))
+            newSigsIterator.remove();
+    }
+    if(!checkAlreadyPostedFilesForError())
+        return;
+
+    //QSet<RecursiveCustomDetachedSignaturesFileMeta> sigsFromFileAsSet = sigsFromSigFile.values().toSet();
+    //sigsFromFileAsSet.subtract(m_FilesAlreadyPostedOnUsenet_AndTheirMessageIDs.keys().toSet()); //TODOoptimization: I either have to keep the entire fs hierarchy+sigs in memory (only a few mb at the moment, but it will grow!!!), or I have to read them from disk every time the sigsfile being watched changes... idfk. There are clever ways to solve that problem ofc (and it's worth noting we don't NEED the sigs of the already posted files in memory, only need the file paths (this alone is probably ~80% of that memory now freed xD))...
     //QHash<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> sigsAlreadyPostedOrEnqueuedForPosting;
     /*QMutableHashIterator<QString, RecursiveCustomDetachedSignaturesFileMeta> newSigsIterator(sigsFromSigFile);
     while(newSigsIterator.hasNext())
@@ -80,7 +112,7 @@ void WatchSigsFileAndPostChangesToUsenet::readInSigsFileAndPostAllNewEntries(con
     }*/
 
     //at this point, sigsFromSigFile only contains new entries. so enqueue them
-    m_FilesEnqueuedForPostingToUsenet.unite(sigsFromFileAsSet); //arbitrary posting order (QSet), fuck it. too lazy to sort by timestamp
+    m_FilesEnqueuedForPostingToUsenet.unite(sigsFromSigFile); //arbitrary posting order (QHash), fuck it. too lazy to sort by timestamp
     postAnEnqueuedFileIfNotAlreadyPostingOne_OrQuitIfCleanQuitRequested();
 }
 void WatchSigsFileAndPostChangesToUsenet::postAnEnqueuedFileIfNotAlreadyPostingOne_OrQuitIfCleanQuitRequested()
@@ -89,12 +121,16 @@ void WatchSigsFileAndPostChangesToUsenet::postAnEnqueuedFileIfNotAlreadyPostingO
         return;
     if(m_CleanQuitRequested)
     {
-        if(rememberFilesAlreadyPostedOnUsenetSoWeKnowWhereToResumeNextTime()) //if it fails, it emits doneWatchingSigsFileAndPostingChangesToUsenet(false); -- i originally was passing this method as the arg of doneWatchingSigsFileAndPostingChangesToUsenet... but i remembered that I want to call rememberFilesAlreadyPostedOnUsenetSoWeKnowWhereToResumeNextTime whenever the post queue becomes empty TODOreq (because the system could crash at any moment (or more likely, i forget to cleanly shut this app down before a reboot) :-P)
-            emit doneWatchingSigsFileAndPostingChangesToUsenet(true);
+        if(!checkAlreadyPostedFilesForError())
+            return;
+        emit doneWatchingSigsFileAndPostingChangesToUsenet(true);
         return;
     }
     if(m_FilesEnqueuedForPostingToUsenet.isEmpty())
+    {
+        checkAlreadyPostedFilesForError();
         return;
+    }
     const RecursiveCustomDetachedSignaturesFileMeta &nextFile = *(m_FilesEnqueuedForPostingToUsenet.begin());
     postToUsenet(nextFile);
 }
@@ -103,10 +139,11 @@ void WatchSigsFileAndPostChangesToUsenet::postAnEnqueuedFileIfNotAlreadyPostingO
 //TODOoptional: parity. spent way too much time researching/considering yEnc+parity etc. fuck it
 void WatchSigsFileAndPostChangesToUsenet::postToUsenet(const RecursiveCustomDetachedSignaturesFileMeta &nextFile) //TODOreq: relative path isn't being posted anywhere, maybe I should just not care and keep that stuff to the .nzb only?
 {
-    m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.reset(new RecursiveCustomDetachedSignaturesFileMeta(nextFile));
-    QFileInfo fileInfo(nextFile.FilePath);
+    m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.reset(new RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs(nextFile));
+    QFileInfo fileInfo(m_DirCorrespondingToSigsFile.absolutePath() + QDir::separator() + nextFile.FilePath);
+    const QString &absoluteFilePath = fileInfo.absoluteFilePath();
     if(!fileInfo.isReadable())
-        EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("file not readable: " + nextFile.FilePath);
+        EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("file not readable: " + absoluteFilePath);
     const QString &fileNameOnly = fileInfo.fileName();
     if(fileInfo.size() > WatchSigsFileAndPostChangesToUsenet_MAX_SINGLE_PART_SIZE_ANDOR_SPLIT_FILE_VOLUME_SIZE)
     {
@@ -121,7 +158,7 @@ void WatchSigsFileAndPostChangesToUsenet::postToUsenet(const RecursiveCustomDeta
         QString sevenZipVolumeBaseFilePath = sevenZipOutDir_WithSlashAppended + fileNameOnly + ".7z";
         QString sevenZipVolumeSizeArg = "-v" + QString::number(WatchSigsFileAndPostChangesToUsenet_MAX_SINGLE_PART_SIZE_ANDOR_SPLIT_FILE_VOLUME_SIZE);
         QString sigFilePath = sevenZipOutDir_WithSlashAppended + fileNameOnly + ".asc";
-        QFile sigFile(sigFilePath); //7-zip can read from stdin, but only 1 file blah, so I have to write this to disk xD. TODOreq: don't 'post' this when iterating the sevenZipOutputDir (since it's already IN the archive)
+        QFile sigFile(sigFilePath); //7-zip can read from stdin, but only 1 file blah, so I have to write this to disk xD. TO DOnereq: don't 'post' this sig file when iterating the sevenZipOutputDir (since it's already IN the archive)
         if(!sigFile.open(QIODevice::WriteOnly | QIODevice::Text))
             EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("failed to write sig to disk for 7-zipping alongside: " + nextFile.FilePath)
         QTextStream sigFileStream(&sigFile);
@@ -130,7 +167,7 @@ void WatchSigsFileAndPostChangesToUsenet::postToUsenet(const RecursiveCustomDeta
         if(!sigFile.flush())
             EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("failed to flush sig file written to disk for 7-zipping alongside: " + nextFile.FilePath)
         sigFile.close(); //it'll get cleaned up when the temp dir is
-        sevenZipArgs << "a" << sevenZipVolumeBaseFilePath << nextFile.FilePath << sigFilePath << sevenZipVolumeSizeArg << "-t7z" << "-m0=lzma" << "-mx=1";
+        sevenZipArgs << "a" << sevenZipVolumeBaseFilePath << absoluteFilePath << sigFilePath << sevenZipVolumeSizeArg << "-t7z" << "-m0=lzma" << "-mx=1";
         sevenZipProcess.start(WatchSigsFileAndPostChangesToUsenet_SEVENZIP_BIN, sevenZipArgs, QIODevice::ReadOnly);
         if(!sevenZipProcess.waitForStarted(-1))
             EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("7-zip failed to start with args: " + sevenZipArgs.join(", "))
@@ -188,7 +225,7 @@ void WatchSigsFileAndPostChangesToUsenet::beginPostingToUsenetAfterBase64encodin
         const QByteArray &fileContents = file.readAll(); //1x full copy in memory
         const QByteArray &fileContentsBase64 = fileContents.toBase64(); //2x full copies in memory
         body = wrap(fileContentsBase64, 72); //3x full copies in memory
-        fileContentsMd5 = QCryptographicHash::hash(fileContents, QCryptographicHash::Sha1);
+        fileContentsMd5 = QCryptographicHash::hash(fileContents, QCryptographicHash::Md5);
     }//2 of the full copies in memory go out of scope <3
 
     QByteArray contentMd5Base64 = fileContentsMd5.toBase64();
@@ -208,17 +245,16 @@ void WatchSigsFileAndPostChangesToUsenet::beginPostingToUsenetAfterBase64encodin
     else
         mime = m_MimeDatabase.mimeTypeForFile(fileInfo).name().toLatin1();
 
-    //TODOreq: file splitting ('hat' will make large videos every day, and there's also the relics to consider)
-    //TODOreq: message-id (dep file splitting)
+    //TODOreq: message-id. retrying
 
-    QByteArray messageID = generateRandomAlphanumericBytes(qrand() % 10) + "@" + generateRandomAlphanumericBytes(qrand() % 15);
+    m_MessageIdCurrentlyPostingWith = generateRandomAlphanumericBytes(qrand() % 10) + "@" + generateRandomAlphanumericBytes(qrand() % 15);
     QByteArray post(
                     //"From: d3fault@d3fault.net\r\n"
                     "From: " + generateRandomAlphanumericBytes(qrand() % 12) + " <" + generateRandomAlphanumericBytes(qrand() % 12) + "@" + generateRandomAlphanumericBytes(qrand() % 15) + ".com>\r\n"
                     "Newsgroups: alt.binaries.boneless\r\n"
                     //"Subject: d3fault.net/binary/" + nextFile.FilePath.toLatin1() + "\r\n"
                     "Subject: " + generateRandomAlphanumericBytes(qrand() % 32) + "\r\n"
-                    "Message-ID: <" + messageID + ">\r\n"
+                    "Message-ID: <" + m_MessageIdCurrentlyPostingWith + ">\r\n"
                     //"Organization: d3fault\r\n"
                     "Organization: " + generateRandomAlphanumericBytes(qrand() % 20) + "\r\n"
                     "Mime-Version 1.0\r\n"
@@ -274,57 +310,75 @@ QByteArray WatchSigsFileAndPostChangesToUsenet::wrap(const QString &toWrap, int 
 QByteArray WatchSigsFileAndPostChangesToUsenet::generateRandomAlphanumericBytes(int numBytesToGenerate)
 {
     static qint64 nonce = 0; //TO DOnemb: global nonce? -- not thread safe (err, re-entrant), but doesn't matter <3
-    //QByteArray randomSeed("-whatever_the-laws_of-physics_allow-" + currentDateTime + QString::number(nonce++).toLatin1()); //Underscores are necesary because gpg sigs would accidentally have a boundary in them. //fileContentsMd5.toHex(); //heh -- TODOreq: consider randomizing this and from field and subject (especially subject, since apparently subjects are filtered guh i can't guarantee my filenames won't contain filtered words). newsgroups are structured like pyramids, therefore are censored/etc (maybe time will tell me that this posting was all a waste of time)
+    //QByteArray randomSeed("-whatever_the-laws_of-physics_allow-" + currentDateTime + QString::number(nonce++).toLatin1()); //Underscores are necesary because gpg sigs would accidentally have a boundary in them. //fileContentsMd5.toHex(); //heh -- TO DOnereq: consider randomizing this and from field and subject (especially subject, since apparently subjects are filtered guh i can't guarantee my filenames won't contain filtered words). newsgroups are structured like pyramids, therefore are censored/etc (maybe time will tell me that this posting was all a waste of time)
     //QByteArray random = QCryptographicHash::hash(randomSeed, QCryptographicHash::Sha512);
     static const char alphaNumericRange[] = "0123456789"
                                             "abcdefghijklmnopqrstuvwxyz"
                                             "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     qsrand(QDateTime::currentMSecsSinceEpoch()-(nonce++)); //woot "using" network latency + cpu compress latency + disk latency to seed the prn lel
     QByteArray ret;
-    while(ret.size() < numBytesToGenerate)
+    int numBytesToGenerateActual = qMax(4, numBytesToGenerate); //generate 4 bytes minimum
+    while(ret.size() < numBytesToGenerateActual)
     {
         ret.append(alphaNumericRange[qrand() % (sizeof(alphaNumericRange)-1)]);
     }
     return ret;
 }
-void WatchSigsFileAndPostChangesToUsenet::handleFullFilePostedToUsenet() //full as in "all of a file's parts" OR "a single file that was not split into parts". TODOreq: single file calls this when done
+void WatchSigsFileAndPostChangesToUsenet::handleFullFilePostedToUsenet() //full as in "all of a file's parts" OR "a single file that was not split into parts"
 {
-    RecursiveCustomDetachedSignaturesFileMeta postedFile(*m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.data());
+    const RecursiveCustomDetachedSignaturesFileMeta &postedFile = m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->FileMeta;
     emit o("file posted to usenet: " + postedFile.FilePath);
-    m_FilesEnqueuedForPostingToUsenet.remove(postedFile);
-    m_FilesAlreadyPostedOnUsenet.insert(postedFile);
+    m_FilesEnqueuedForPostingToUsenet.remove(postedFile.FilePath);
+    //m_FilesAlreadyPostedOnUsenet_AndTheirMessageIDs.insert(postedFile.FilePath, m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->MessageIDs);
+    //QSettings alreadyPostedFilesSerializer(m_AlreadyPostedFiles, QSettings::IniFormat); //TODOblah: the only thing that should happen when the queue "goes empty" is that we call sync and check the status of the settings :)
+    m_AlreadyPostedFiles->setValue(postedFile.FilePath, m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->MessageIDs);
     m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.reset();
     postAnEnqueuedFileIfNotAlreadyPostingOne_OrQuitIfCleanQuitRequested();
 }
+bool WatchSigsFileAndPostChangesToUsenet::checkAlreadyPostedFilesForError()
+{
+    m_AlreadyPostedFiles->sync();
+    if(m_AlreadyPostedFiles->status() != QSettings::NoError)
+    {
+        //TODOmb: maybe set a flag so that no more posts are attempted. this is eh racy, we could get a write error at the same time as a sigs file change detected. we're already fucked at that point tho so maybe who cares?
+        emit e("Error syncing/flushing (QSettings) the already posted files (either for initial reading, or for saving for next time) to: " + m_AlreadyPostedFiles->fileName() + " error status: " + QString::number(m_AlreadyPostedFiles->status()));
+        emit doneWatchingSigsFileAndPostingChangesToUsenet(false);
+        return false;
+    }
+    return true;
+}
+#if 0 //qsettings is so amazing i am so dumb for not using it waaaay more. it should be called QPersistentData[File], QSettings makes it sound like it's "config" stuff ONLY
 bool WatchSigsFileAndPostChangesToUsenet::rememberFilesAlreadyPostedOnUsenetSoWeKnowWhereToResumeNextTime()
 {
     //TODOoptimization: noop/return-true if no NEW files have been posted
     //TODOoptional: when recursive gpg signer makes the file, it's sorted by the filepath. I have no need to sort it like that (but could easily), so I won't (THINK OF THE CLOCK CYCLES!!)
-    QSaveFile saveFile(m_AlreadyPostedFilesAllSigsIshFilePath);
+    QSaveFile saveFile(m_AlreadyPostedFilesDataFilePath);
     if(!saveFile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
-        emit e("failed to open for writing the list of already posted files to disk for next time: " + m_AlreadyPostedFilesAllSigsIshFilePath);
+        emit e("failed to open for writing the list of already posted files to disk for next time: " + m_AlreadyPostedFilesDataFilePath);
         emit doneWatchingSigsFileAndPostingChangesToUsenet(false);
         return false;
     }
 
     QTextStream saveFileStream(&saveFile);
-    QSetIterator<RecursiveCustomDetachedSignaturesFileMeta> postedFilesIterator(m_FilesAlreadyPostedOnUsenet);
+    QHashIterator<QString /* relative file path */, RecursiveCustomDetachedSignaturesFileMeta> postedFilesIterator(m_FilesAlreadyPostedOnUsenet_AndTheirMessageIDs);
     while(postedFilesIterator.hasNext())
     {
-        const RecursiveCustomDetachedSignaturesFileMeta &currentPathAndSig = postedFilesIterator.next();
+        postedFilesIterator.next();
+        const RecursiveCustomDetachedSignaturesFileMeta &currentPathAndSig = postedFilesIterator. even saving should be done right away via QSettings! but there is a downside: possibility of corruption since not using qsavefile (but actually come to think of it, i think qsavefile is used behind the scenes!!)
         saveFileStream << currentPathAndSig; //TODOoptimization: we really only need the path, not the sigs... fuckit since I want to use qset.subtract/etc because it looks sexy and i never have before (new = fun)
     }
     saveFileStream.flush();
     if(!saveFile.commit())
     {
-        emit e("failed to commit list of already posted files to disk for next time: " + m_AlreadyPostedFilesAllSigsIshFilePath);
+        emit e("failed to commit list of already posted files to disk for next time: " + m_AlreadyPostedFilesDataFilePath);
         emit doneWatchingSigsFileAndPostingChangesToUsenet(false);
         return false;
     }
     emit o("successfully committed list of already posted files to disk for next time");
     return true;
 }
+#endif
 void WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFileAndPostChangesToUsenet(const QString &sigsFilePathToWatch, const QString &dirCorrespondingToSigsFile/*, const QString &dataDirForKeepingTrackOfAlreadyPostedFiles*/, const QString &authUser, const QString &authPass, const QString &portString, const QString &server)
 {
     QDir dirCorrespondingToSigsFileInstance(dirCorrespondingToSigsFile); //I know QDir has implicit conversion from QString, but I don't think the old connect syntax can do implicit conversion. The new connect syntax can, but then I lose overloads I think :-/, maybe wrong here fuckit
@@ -344,20 +398,21 @@ void WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFileAndPostChangesToU
         return;
     if(!dirCorrespondingToSigsFile.exists())
         EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("dir corresponding to sigsfile does not exist:" + dirCorrespondingToSigsFile.absolutePath())
+    m_DirCorrespondingToSigsFile = dirCorrespondingToSigsFile;
 
     //if(!dataDirForKeepingTrackOfAlreadyPostedFiles.exists())
     //    EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("data dir does not exist:" + dataDirForKeepingTrackOfAlreadyPostedFiles.absolutePath())
-    //m_AlreadyPostedFilesAllSigsIshFileName = dirCorrespondingToSigsFile.absolutePath() + QDir::separator() + "WatchSigsFileAndPostChangesToUsenet_AlreadyPostedFiles_Db.ini"; //TODOoptional: how to use the same dir as qsettings :(? woot QStandardPaths::AppDataLocation -- mfw QStandardPaths::findExecutable TODOoptional use it to 'find' postnews and bins in other apps (but then again, might as well let QProcess do it fuckit why do more work for nothing) :-D. TODOreq: make specifying the dir (OR PERHAPS I SHOULD DO FILE ITSELF? not dir (dir implied ofc)) optional
+    //m_AlreadyPostedFilesAllSigsIshFileName = dirCorrespondingToSigsFile.absolutePath() + QDir::separator() + "WatchSigsFileAndPostChangesToUsenet_AlreadyPostedFiles_Db.ini"; //TODOoptional: how to use the same dir as qsettings :(? woot QStandardPaths::AppDataLocation -- mfw QStandardPaths::findExecutable TODOoptional use it to 'find' postnews and bins in other apps (but then again, might as well let QProcess do it fuckit why do more work for nothing) :-D. TODOmb: make specifying the file optional
     const QDir &pathToAppLocalDataDirWhichMightNotExist = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
     if(!pathToAppLocalDataDirWhichMightNotExist.exists())
     {
         if(!pathToAppLocalDataDirWhichMightNotExist.mkpath(pathToAppLocalDataDirWhichMightNotExist.absolutePath()))
             EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("failed to make app local data dir: " + pathToAppLocalDataDirWhichMightNotExist.absolutePath())
     }
-    m_AlreadyPostedFilesAllSigsIshFilePath = pathToAppLocalDataDirWhichMightNotExist.absolutePath() + QDir::separator() + "WatchSigsFileAndPostChangesToUsenet_AlreadyPostedFiles_UNSORTED-BTW_Db.ini";
+    m_AlreadyPostedFiles.reset(new QSettings(pathToAppLocalDataDirWhichMightNotExist.absolutePath() + QDir::separator() + "AlreadyPostedFiles_AndTheirMessageIDs_Db.ini", QSettings::IniFormat));
     //it's cleared in the assign statement in readInAlreadyPostedFilesSoWeDontDoublePost: m_FilesAlreadyPostedOnUsenet.clear();
-    if(!readInAlreadyPostedFilesSoWeDontDoublePost())
-        return;
+    //if(!readInAlreadyPostedFilesSoWeDontDoublePost())
+    //    return;
 
     readInSigsFileAndPostAllNewEntries(sigsFilePathToWatch); //start posting right away
 }
@@ -378,6 +433,8 @@ void WatchSigsFileAndPostChangesToUsenet::handlePostnewsProcessFinished(int exit
     //TODOreq: detect/handle "441 Posting Failed. Message-ID is not unique E1" with exit code of 2
     if(exitCode != 0 || exitStatus != QProcess::NormalExit)
         EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("postnews exitted abnormally with exit code: " + QString::number(exitCode))
+
+    m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->MessageIDs.append(QString::fromLatin1(m_MessageIdCurrentlyPostingWith));
 
     if(!m_FileCurrentlyBeingPostedToUsenetVolumesTempDir_OrNullIfFileCurrentlyBeingPostedDidntNeedToBeSplit.isNull())
     {

@@ -5,6 +5,7 @@
 
 #include <QDir>
 #include <QFileSystemWatcher>
+#include <QSettings>
 #include <QSet>
 #include <QScopedPointer>
 #include <QMimeDatabase>
@@ -14,6 +15,18 @@
 #include <QFileInfo>
 
 #include "recursivecustomdetachedgpgsignatures.h"
+
+//struct WatchSigsFileAndPostChangesToUsenet_CurrentlyBeingUploadedType //lol for lack of a better name
+struct RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs //POD
+{
+    RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs(const RecursiveCustomDetachedSignaturesFileMeta &fileMeta)
+        : FileMeta(fileMeta)
+    { }
+    RecursiveCustomDetachedSignaturesFileMeta FileMeta;
+    QStringList MessageIDs;
+};
+
+Q_DECLARE_METATYPE(QList<QByteArray>)
 
 class WatchSigsFileAndPostChangesToUsenet : public QObject
 {
@@ -26,19 +39,21 @@ private:
     QString m_PortString;
     QString m_UsenetServer;
     QFileSystemWatcher *m_SigsFileWatcher;
-    QString m_AlreadyPostedFilesAllSigsIshFilePath;
+    QDir m_DirCorrespondingToSigsFile;
+    QScopedPointer<QSettings> m_AlreadyPostedFiles;
     RecursiveCustomDetachedSignatures *m_RecursiveCustomDetachedSignatures;
-    QSet<RecursiveCustomDetachedSignaturesFileMeta> m_FilesAlreadyPostedOnUsenet;
-    QSet<RecursiveCustomDetachedSignaturesFileMeta> m_FilesEnqueuedForPostingToUsenet;
-    QScopedPointer<RecursiveCustomDetachedSignaturesFileMeta> m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet;
+    //QHash<QString /* relative file path*/, QStringList /* MessageIDs */> m_FilesAlreadyPostedOnUsenet_AndTheirMessageIDs;
+    QHash<QString /* relative file path*/, RecursiveCustomDetachedSignaturesFileMeta> m_FilesEnqueuedForPostingToUsenet;
+    QScopedPointer<RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs> m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet;
     QScopedPointer<QTemporaryDir> m_FileCurrentlyBeingPostedToUsenetVolumesTempDir_OrNullIfFileCurrentlyBeingPostedDidntNeedToBeSplit;
     QScopedPointer<QDirIterator> m_FileCurrentlyBeingPostedToUsenetVolumesTempDirIterator;
     QMimeDatabase m_MimeDatabase;
+    QByteArray m_MessageIdCurrentlyPostingWith;
     QProcess *m_PostnewsProcess;
     bool m_CleanQuitRequested;
 
     bool startWatchingSigsFile(const QString &sigsFilePath);
-    bool readInAlreadyPostedFilesSoWeDontDoublePost();
+    //bool readInAlreadyPostedFilesSoWeDontDoublePost();
     void readInSigsFileAndPostAllNewEntries(const QString &sigsFilePath);
     void postAnEnqueuedFileIfNotAlreadyPostingOne_OrQuitIfCleanQuitRequested();
     void postToUsenet(const RecursiveCustomDetachedSignaturesFileMeta &nextFile);
@@ -47,7 +62,8 @@ private:
     QByteArray wrap(const QString &toWrap, int wrapAt);
     QByteArray generateRandomAlphanumericBytes(int numBytesToGenerate);
     void handleFullFilePostedToUsenet();
-    bool rememberFilesAlreadyPostedOnUsenetSoWeKnowWhereToResumeNextTime();
+    //bool rememberFilesAlreadyPostedOnUsenetSoWeKnowWhereToResumeNextTime();
+    bool checkAlreadyPostedFilesForError();
 
     inline QString appendSlashIfNeeded(const QString &inputString) { if(inputString.endsWith("/")) return inputString; return inputString + "/"; }
 signals:
