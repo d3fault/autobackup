@@ -72,7 +72,7 @@ private:
     void postNextVolumePartInDir_OrContinueOntoNextFullFileIfAllPartsOfCurrentFileHaveBeenPosted();
     void beginPostingToUsenetAfterBase64encoding(const QFileInfo &fileInfo, const QString &gpgSignature_OrEmptyStringIfNotToAttachOne = QString()/* when we split a file into parts, we put the sig _IN_ the archive, so we don't need to attach the sig [to each part] */, const QString &mimeType_OrEmptyStringIfToFigureItOut = QString());
     QByteArray wrap(const QString &toWrap, int wrapAt);
-    QByteArray generateRandomAlphanumericBytes(int numBytesToGenerate);
+    QByteArray generateRandomAlphanumericBytes(int maxBytesToGenerate, int minBytesToGenerate = 10);
     void handleFullFilePostedToUsenet();
     bool checkAlreadyPostedFilesForError();
 

@@ -13,7 +13,7 @@
 #define WatchSigsFileAndPostChangesToUsenetCli_PORT_ARG "--port"
 #define WatchSigsFileAndPostChangesToUsenetCli_SERVER_ARG "--server"
 
-#define EEEEEEEEEEE_WatchSigsFileAndPostChangesToUsenetCli { cliUsage(); QMetaObject::invokeMethod(qApp, "exit", Qt::QueuedConnection, Q_ARG(int, 1)); return; }
+#define EEEEEEEEEEE_WatchSigsFileAndPostChangesToUsenetCli { cliUsage(); emit exitRequested(1); return; }
 
 #define MANDATORY_ARG_WatchSigsFileAndPostChangesToUsenetCli(stringVariableName, cliArg) \
 QString stringVariableName; \
@@ -33,7 +33,10 @@ WatchSigsFileAndPostChangesToUsenetCli::WatchSigsFileAndPostChangesToUsenetCli(Q
     , m_StdOut(stdout)
     , m_StdErr(stderr)
 {
+    connect(this, &WatchSigsFileAndPostChangesToUsenetCli::exitRequested, qApp, &QCoreApplication::exit, Qt::QueuedConnection);
+
     QStringList arguments = qApp->arguments();
+    arguments.takeFirst(); //app filename
 
     MANDATORY_ARG_WatchSigsFileAndPostChangesToUsenetCli(sigsFilePathToWatch, WatchSigsFileAndPostChangesToUsenetCli_SIGSFILE)
     MANDATORY_ARG_WatchSigsFileAndPostChangesToUsenetCli(dirCorrespondingToSigsFile, WatchSigsFileAndPostChangesToUsenetCli_FILES_DIR)
@@ -59,8 +62,6 @@ WatchSigsFileAndPostChangesToUsenetCli::WatchSigsFileAndPostChangesToUsenetCli(Q
     StandardInputNotifier *standardInputNotifier = new StandardInputNotifier(this);
     connect(standardInputNotifier, SIGNAL(standardInputReceivedLine(QString)), this, SLOT(handleStandardInputReceivedLine(QString)));
 
-    connect(this, &WatchSigsFileAndPostChangesToUsenetCli::exitRequested, qApp, &QCoreApplication::exit, Qt::QueuedConnection);
-
 
     QMetaObject::invokeMethod(watchSigsFileAndPostChangesToUsenet, "startWatchingSigsFileAndPostChangesToUsenet", Q_ARG(QString, sigsFilePathToWatch), Q_ARG(QString, dirCorrespondingToSigsFile)/*, Q_ARG(QString, dataDirForKeepingTrackOfAlreadyPostedFiles)*/, Q_ARG(QString, authUser), Q_ARG(QString, authPass), Q_ARG(QString, portString), Q_ARG(QString, server));
 }
@@ -82,9 +83,10 @@ void WatchSigsFileAndPostChangesToUsenetCli::handleStandardInputReceivedLine(con
     {
         handleO("quitting once the file currently being posted finishes posting");
         emit quitCleanlyRequested(); //emit quitRequested(); //oshi-, this time the frontend is requesting a quit from the backend :-P. TODOoptional: qq (which should still serialize posted files, just cancel the current one is all (should qq return 1 or 0? i guess 0 but idk))
-        disconnect(this, SIGNAL(quitRequested()));
+        disconnect(this, SIGNAL(quitCleanlyRequested()));
         return;
     }
+    //TODOmb: query the data file's LOCATION?
 }
 void WatchSigsFileAndPostChangesToUsenetCli::handleDoneWatchingSigsFileAndPostingChangesToUsenet(bool success)
 {

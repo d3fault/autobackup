@@ -198,14 +198,11 @@ void WatchSigsFileAndPostChangesToUsenet::beginPostingToUsenetAfterBase64encodin
     }//2 of the full copies in memory go out of scope <3
 
     QByteArray contentMd5Base64 = fileContentsMd5.toBase64();
-    QByteArray boundary;
+    QByteArray boundary = "-";
     QByteArray gpgSigBA = gpgSignature_OrEmptyStringIfNotToAttachOne.toLatin1();
 
-    do
-    {
-        boundary = generateRandomAlphanumericBytes(qrand() % 10);
-
-    }while(body.contains(boundary) || ((!gpgSignature_OrEmptyStringIfNotToAttachOne.isEmpty()) && gpgSigBA.contains(boundary)));
+    while(body.contains(boundary) || ((!gpgSignature_OrEmptyStringIfNotToAttachOne.isEmpty()) && gpgSigBA.contains(boundary)))
+        boundary = generateRandomAlphanumericBytes(15, 2);
 
     QByteArray fileNameOnly = fileInfo.fileName().toLatin1();
     QByteArray mime;
@@ -213,8 +210,6 @@ void WatchSigsFileAndPostChangesToUsenet::beginPostingToUsenetAfterBase64encodin
         mime = mimeType_OrEmptyStringIfToFigureItOut.toLatin1();
     else
         mime = m_MimeDatabase.mimeTypeForFile(fileInfo).name().toLatin1();
-
-    //TODOreq: message-id. retrying
 
     UsenetPostDetails postDetails;
     postDetails.Boundary = boundary;
@@ -241,13 +236,13 @@ QByteArray WatchSigsFileAndPostChangesToUsenet::wrap(const QString &toWrap, int 
         ++i;
         if((++currentColumn) == wrapAt)
         {
-            ret.append("\r\n");
+            ret.append("\n");
             currentColumn = 1; //might overflow! oh wait so will i ;-P
         }
     }
     return ret;
 }
-QByteArray WatchSigsFileAndPostChangesToUsenet::generateRandomAlphanumericBytes(int numBytesToGenerate)
+QByteArray WatchSigsFileAndPostChangesToUsenet::generateRandomAlphanumericBytes(int maxBytesToGenerate, int minBytesToGenerate)
 {
     static qint64 nonce = 0; //TO DOnemb: global nonce? -- not thread safe (err, re-entrant), but doesn't matter <3
     //QByteArray randomSeed("-whatever_the-laws_of-physics_allow-" + currentDateTime + QString::number(nonce++).toLatin1()); //Underscores are necesary because gpg sigs would accidentally have a boundary in them. //fileContentsMd5.toHex(); //heh -- TO DOnereq: consider randomizing this and from field and subject (especially subject, since apparently subjects are filtered guh i can't guarantee my filenames won't contain filtered words). newsgroups are structured like pyramids, therefore are censored/etc (maybe time will tell me that this posting was all a waste of time)
@@ -257,8 +252,9 @@ QByteArray WatchSigsFileAndPostChangesToUsenet::generateRandomAlphanumericBytes(
                                             "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     qsrand(QDateTime::currentMSecsSinceEpoch()-(nonce++)); //woot "using" network latency + cpu compress latency + disk latency to seed the prn lel
     QByteArray ret;
-    int numBytesToGenerateActual = qMax(4, numBytesToGenerate); //generate 4 bytes minimum
-    while(ret.size() < numBytesToGenerateActual)
+    //int numBytesToGenerateActual = qMax(4, maxBytesToGenerate); //generate 4 bytes minimum
+    int numBytesToGenerate = (qrand() % (maxBytesToGenerate-minBytesToGenerate))+minBytesToGenerate;
+    while(ret.size() < numBytesToGenerate)
     {
         ret.append(alphaNumericRange[qrand() % (sizeof(alphaNumericRange)-1)]);
     }
@@ -266,38 +262,45 @@ QByteArray WatchSigsFileAndPostChangesToUsenet::generateRandomAlphanumericBytes(
 }
 void WatchSigsFileAndPostChangesToUsenet::generateMessageIdAndPostToUsenet()
 {
-    m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails.MessageId = generateRandomAlphanumericBytes(qrand() % 10) + "@" + generateRandomAlphanumericBytes(qrand() % 15);
+    m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails.MessageId = "<" + generateRandomAlphanumericBytes(15) + "@" + generateRandomAlphanumericBytes(25) + ".com>";
     const UsenetPostDetails &postDetails = m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails;
     QByteArray post(
-                    //"From: d3fault@d3fault.net\r\n"
-                    "From: " + generateRandomAlphanumericBytes(qrand() % 12) + " <" + generateRandomAlphanumericBytes(qrand() % 12) + "@" + generateRandomAlphanumericBytes(qrand() % 15) + ".com>\r\n"
-                    "Newsgroups: alt.binaries.boneless\r\n"
-                    //"Subject: d3fault.net/binary/" + nextFile.FilePath.toLatin1() + "\r\n"
-                    "Subject: " + generateRandomAlphanumericBytes(qrand() % 32) + "\r\n"
-                    "Message-ID: <" + postDetails.MessageId + ">\r\n"
-                    //"Organization: d3fault\r\n"
-                    "Organization: " + generateRandomAlphanumericBytes(qrand() % 20) + "\r\n"
-                    "Mime-Version 1.0\r\n"
-                    "Content-Type: multipart/signed; boundary=" + postDetails.Boundary + "; protocol=\"application/pgp-signature\"\r\n"
-                    "\r\n"
-                    "--" + postDetails.Boundary + "\r\n"
-                    "Content-Type: " + postDetails.Mime + "; name=\"" + postDetails.FileNameOnly + "\"\r\n"
-                    "Content-Transfer-Encoding: base64\r\n"
-                    "Content-Disposition: inline; filename=\"" + postDetails.FileNameOnly + "\"\r\n"
-                    "Content-MD5: " + postDetails.ContentMd5Base64 + "\r\n"
-                    "\r\n"
-                    + postDetails.Body + "\r\n"
-                    "\r\n"
-                    "--" + postDetails.Boundary + "\r\n");
+                    //"From: d3fault@d3fault.net\n"
+                    "From: " + generateRandomAlphanumericBytes(15) + " <" + generateRandomAlphanumericBytes(15) + "@" + generateRandomAlphanumericBytes(25) + ".com>\n"
+                    "Newsgroups: alt.binaries.boneless\n"
+                    //"Subject: d3fault.net/binary/" + nextFile.FilePath.toLatin1() + "\n"
+                    "Subject: " + generateRandomAlphanumericBytes(32) + "\n"
+                    "Message-ID: " + postDetails.MessageId + "\n"
+                    //"Organization: d3fault\n"
+                    "Organization: " + generateRandomAlphanumericBytes(20) + "\n"
+                    "Mime-Version 1.0\n"
+                    "Content-Type: multipart/mixed;\n"
+                        "\tboundary=\"" + postDetails.Boundary + "\";\n"
+                        //"\tprotocol=\"application/pgp-signature\"\n"
+                    "\n"
+                    "This is a multi-part message in MIME format.\n"
+                    "\n"
+                    "--" + postDetails.Boundary + "\n"
+                    "Content-Type: " + postDetails.Mime + ";\n"
+                        "\tname=\"" + postDetails.FileNameOnly + "\"\n"
+                    "Content-Transfer-Encoding: base64\n"
+                    "Content-Disposition: inline;\n"
+                        "\tfilename=\"" + postDetails.FileNameOnly + "\"\n"
+                    "Content-MD5: " + postDetails.ContentMd5Base64 + "\n"
+                    "\n"
+                    + postDetails.Body + "\n"
+                    "\n"
+                    "--" + postDetails.Boundary + "\n");
     if(postDetails.AttachGpgSig)
     {
         post.append(
-                    "Content-Type: application/pgp-signature\r\n" //TODOoptional: micalg=???
-                    "Content-Disposition: attachment; filename=\"" + postDetails.FileNameOnly + ".asc\"\r\n"
-                    "\r\n"
-                    + postDetails.GpgSigMaybe + "\r\n"
-                    "\r\n"
-                    "--" + postDetails.Boundary + "\r\n"
+                    "Content-Type: application/pgp-signature\n" //TODOoptional: micalg=???
+                    "Content-Disposition: attachment;"
+                        "\tfilename=\"" + postDetails.FileNameOnly + ".asc\"\n"
+                    "\n"
+                    + postDetails.GpgSigMaybe + "\n"
+                    //hack: i think the gpg sig has an extra newline (in that byte array) as it is... "\n"
+                    "--" + postDetails.Boundary + "\n"
                    ); //TODOoptional: customizeable parts of this  from command line ofc lol. TODOmb: Message-ID (even if it's not an sha1 or whatever, it'd still be good to know it so we don't have to query it. We could start with sha1 and then keep trying different values if it doesn't work)
     }
     emit o("Trying to post: " + postDetails.AbsoluteFilePath);
