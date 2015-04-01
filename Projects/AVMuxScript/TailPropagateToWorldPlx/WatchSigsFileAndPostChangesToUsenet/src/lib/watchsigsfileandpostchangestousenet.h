@@ -16,17 +16,27 @@
 
 #include "recursivecustomdetachedgpgsignatures.h"
 
-//struct WatchSigsFileAndPostChangesToUsenet_CurrentlyBeingUploadedType //lol for lack of a better name
+struct UsenetPostDetails //POD
+{
+    QByteArray Boundary;
+    QByteArray MessageId;
+    QByteArray Mime;
+    QByteArray FileNameOnly;
+    QByteArray ContentMd5Base64;
+    QByteArray Body;
+    bool AttachGpgSig;
+    QByteArray GpgSigMaybe;
+    QString AbsoluteFilePath;
+};
 struct RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs //POD
 {
     RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs(const RecursiveCustomDetachedSignaturesFileMeta &fileMeta)
         : FileMeta(fileMeta)
     { }
     RecursiveCustomDetachedSignaturesFileMeta FileMeta;
-    QStringList MessageIDs;
+    QStringList SuccessfullyPostedMessageIDs;
+    UsenetPostDetails PostInProgressDetails;
 };
-
-Q_DECLARE_METATYPE(QList<QByteArray>)
 
 class WatchSigsFileAndPostChangesToUsenet : public QObject
 {
@@ -48,7 +58,6 @@ private:
     QScopedPointer<QTemporaryDir> m_FileCurrentlyBeingPostedToUsenetVolumesTempDir_OrNullIfFileCurrentlyBeingPostedDidntNeedToBeSplit;
     QScopedPointer<QDirIterator> m_FileCurrentlyBeingPostedToUsenetVolumesTempDirIterator;
     QMimeDatabase m_MimeDatabase;
-    QByteArray m_MessageIdCurrentlyPostingWith;
     QProcess *m_PostnewsProcess;
     bool m_CleanQuitRequested;
 
@@ -61,6 +70,7 @@ private:
     void beginPostingToUsenetAfterBase64encoding(const QFileInfo &fileInfo, const QString &gpgSignature_OrEmptyStringIfNotToAttachOne = QString()/* when we split a file into parts, we put the sig _IN_ the archive, so we don't need to attach the sig [to each part] */, const QString &mimeType_OrEmptyStringIfToFigureItOut = QString());
     QByteArray wrap(const QString &toWrap, int wrapAt);
     QByteArray generateRandomAlphanumericBytes(int numBytesToGenerate);
+    void generateMessageIdAndPostToUsenet();
     void handleFullFilePostedToUsenet();
     //bool rememberFilesAlreadyPostedOnUsenetSoWeKnowWhereToResumeNextTime();
     bool checkAlreadyPostedFilesForError();

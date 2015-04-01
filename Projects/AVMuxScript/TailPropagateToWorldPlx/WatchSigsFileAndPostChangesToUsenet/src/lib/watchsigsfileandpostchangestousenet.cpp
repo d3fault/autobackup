@@ -23,7 +23,7 @@ WatchSigsFileAndPostChangesToUsenet::WatchSigsFileAndPostChangesToUsenet(QObject
     , m_PostnewsProcess(new QProcess(this))
 
 {
-    m_PostnewsProcess->setProcessChannelMode(QProcess::ForwardedChannels);
+    m_PostnewsProcess->setProcessChannelMode(QProcess::ForwardedOutputChannel);
 
     connect(m_SigsFileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(handleSigsFileChanged(QString)));
     connect(m_RecursiveCustomDetachedSignatures, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
@@ -247,47 +247,18 @@ void WatchSigsFileAndPostChangesToUsenet::beginPostingToUsenetAfterBase64encodin
 
     //TODOreq: message-id. retrying
 
-    m_MessageIdCurrentlyPostingWith = generateRandomAlphanumericBytes(qrand() % 10) + "@" + generateRandomAlphanumericBytes(qrand() % 15);
-    QByteArray post(
-                    //"From: d3fault@d3fault.net\r\n"
-                    "From: " + generateRandomAlphanumericBytes(qrand() % 12) + " <" + generateRandomAlphanumericBytes(qrand() % 12) + "@" + generateRandomAlphanumericBytes(qrand() % 15) + ".com>\r\n"
-                    "Newsgroups: alt.binaries.boneless\r\n"
-                    //"Subject: d3fault.net/binary/" + nextFile.FilePath.toLatin1() + "\r\n"
-                    "Subject: " + generateRandomAlphanumericBytes(qrand() % 32) + "\r\n"
-                    "Message-ID: <" + m_MessageIdCurrentlyPostingWith + ">\r\n"
-                    //"Organization: d3fault\r\n"
-                    "Organization: " + generateRandomAlphanumericBytes(qrand() % 20) + "\r\n"
-                    "Mime-Version 1.0\r\n"
-                    "Content-Type: multipart/signed; boundary=" + boundary + "; protocol=\"application/pgp-signature\"\r\n"
-                    "\r\n"
-                    "--" + boundary + "\r\n"
-                    "Content-Type: " + mime + "; name=\"" + fileNameOnly + "\"\r\n"
-                    "Content-Transfer-Encoding: base64\r\n"
-                    "Content-Disposition: inline; filename=\"" + fileNameOnly + "\"\r\n"
-                    "Content-MD5: " + contentMd5Base64 + "\r\n"
-                    "\r\n"
-                    + body + "\r\n"
-                    "\r\n"
-                    "--" + boundary + "\r\n");
-    if(!gpgSignature_OrEmptyStringIfNotToAttachOne.isEmpty())
-    {
-        post.append(
-                    "Content-Type: application/pgp-signature\r\n" //TODOoptional: micalg=???
-                    "Content-Disposition: attachment; filename=\"" + fileNameOnly + ".asc\"\r\n"
-                    "\r\n"
-                    + gpgSigBA + "\r\n"
-                    "\r\n"
-                    "--" + boundary + "\r\n"
-                   ); //TODOoptional: customizeable parts of this  from command line ofc lol. TODOmb: Message-ID (even if it's not an sha1 or whatever, it'd still be good to know it so we don't have to query it. We could start with sha1 and then keep trying different values if it doesn't work)
-    }
-    emit o("Trying to post: " + absoluteFilePath);
+    UsenetPostDetails postDetails;
+    postDetails.Boundary = boundary;
+    postDetails.Mime = mime;
+    postDetails.FileNameOnly = fileNameOnly;
+    postDetails.ContentMd5Base64 = contentMd5Base64;
+    postDetails.Body = body;
+    postDetails.AttachGpgSig = (!gpgSignature_OrEmptyStringIfNotToAttachOne.isEmpty());
+    postDetails.GpgSigMaybe = gpgSigBA;
+    postDetails.AbsoluteFilePath = absoluteFilePath;
 
-    QStringList postnewsArgs;
-    postnewsArgs << "--verbose" << ("--user=" + m_UsenetAuthUsername) << ("--pass=" + m_UsenetAuthPassword) << ("--port=" + m_PortString) << m_UsenetServer;
-    m_PostnewsProcess->start(WatchSigsFileAndPostChangesToUsenet_POSTNEWS_BIN, postnewsArgs);
-    if(!m_PostnewsProcess->write(post))
-        EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("failed to write post to postnews' stdin, the file at: " + absoluteFilePath);
-    m_PostnewsProcess->closeWriteChannel();
+    m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails = postDetails;
+    generateMessageIdAndPostToUsenet();
 }
 QByteArray WatchSigsFileAndPostChangesToUsenet::wrap(const QString &toWrap, int wrapAt) //zzz
 {
@@ -324,6 +295,51 @@ QByteArray WatchSigsFileAndPostChangesToUsenet::generateRandomAlphanumericBytes(
     }
     return ret;
 }
+void WatchSigsFileAndPostChangesToUsenet::generateMessageIdAndPostToUsenet()
+{
+    m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails.MessageId = generateRandomAlphanumericBytes(qrand() % 10) + "@" + generateRandomAlphanumericBytes(qrand() % 15);
+    const UsenetPostDetails &postDetails = m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails;
+    QByteArray post(
+                    //"From: d3fault@d3fault.net\r\n"
+                    "From: " + generateRandomAlphanumericBytes(qrand() % 12) + " <" + generateRandomAlphanumericBytes(qrand() % 12) + "@" + generateRandomAlphanumericBytes(qrand() % 15) + ".com>\r\n"
+                    "Newsgroups: alt.binaries.boneless\r\n"
+                    //"Subject: d3fault.net/binary/" + nextFile.FilePath.toLatin1() + "\r\n"
+                    "Subject: " + generateRandomAlphanumericBytes(qrand() % 32) + "\r\n"
+                    "Message-ID: <" + postDetails.MessageId + ">\r\n"
+                    //"Organization: d3fault\r\n"
+                    "Organization: " + generateRandomAlphanumericBytes(qrand() % 20) + "\r\n"
+                    "Mime-Version 1.0\r\n"
+                    "Content-Type: multipart/signed; boundary=" + postDetails.Boundary + "; protocol=\"application/pgp-signature\"\r\n"
+                    "\r\n"
+                    "--" + postDetails.Boundary + "\r\n"
+                    "Content-Type: " + postDetails.Mime + "; name=\"" + postDetails.FileNameOnly + "\"\r\n"
+                    "Content-Transfer-Encoding: base64\r\n"
+                    "Content-Disposition: inline; filename=\"" + postDetails.FileNameOnly + "\"\r\n"
+                    "Content-MD5: " + postDetails.ContentMd5Base64 + "\r\n"
+                    "\r\n"
+                    + postDetails.Body + "\r\n"
+                    "\r\n"
+                    "--" + postDetails.Boundary + "\r\n");
+    if(postDetails.AttachGpgSig)
+    {
+        post.append(
+                    "Content-Type: application/pgp-signature\r\n" //TODOoptional: micalg=???
+                    "Content-Disposition: attachment; filename=\"" + postDetails.FileNameOnly + ".asc\"\r\n"
+                    "\r\n"
+                    + postDetails.GpgSigMaybe + "\r\n"
+                    "\r\n"
+                    "--" + postDetails.Boundary + "\r\n"
+                   ); //TODOoptional: customizeable parts of this  from command line ofc lol. TODOmb: Message-ID (even if it's not an sha1 or whatever, it'd still be good to know it so we don't have to query it. We could start with sha1 and then keep trying different values if it doesn't work)
+    }
+    emit o("Trying to post: " + postDetails.AbsoluteFilePath);
+
+    QStringList postnewsArgs;
+    postnewsArgs << "--verbose" << ("--user=" + m_UsenetAuthUsername) << ("--pass=" + m_UsenetAuthPassword) << ("--port=" + m_PortString) << m_UsenetServer;
+    m_PostnewsProcess->start(WatchSigsFileAndPostChangesToUsenet_POSTNEWS_BIN, postnewsArgs);
+    if(!m_PostnewsProcess->write(post))
+        EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("failed to write post to postnews' stdin, the file at: " + postDetails.AbsoluteFilePath);
+    m_PostnewsProcess->closeWriteChannel();
+}
 void WatchSigsFileAndPostChangesToUsenet::handleFullFilePostedToUsenet() //full as in "all of a file's parts" OR "a single file that was not split into parts"
 {
     const RecursiveCustomDetachedSignaturesFileMeta &postedFile = m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->FileMeta;
@@ -331,7 +347,7 @@ void WatchSigsFileAndPostChangesToUsenet::handleFullFilePostedToUsenet() //full 
     m_FilesEnqueuedForPostingToUsenet.remove(postedFile.FilePath);
     //m_FilesAlreadyPostedOnUsenet_AndTheirMessageIDs.insert(postedFile.FilePath, m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->MessageIDs);
     //QSettings alreadyPostedFilesSerializer(m_AlreadyPostedFiles, QSettings::IniFormat); //TODOblah: the only thing that should happen when the queue "goes empty" is that we call sync and check the status of the settings :)
-    m_AlreadyPostedFiles->setValue(postedFile.FilePath, m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->MessageIDs);
+    m_AlreadyPostedFiles->setValue(postedFile.FilePath, m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->SuccessfullyPostedMessageIDs);
     m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.reset();
     postAnEnqueuedFileIfNotAlreadyPostingOne_OrQuitIfCleanQuitRequested();
 }
@@ -430,11 +446,17 @@ void WatchSigsFileAndPostChangesToUsenet::handleSigsFileChanged(const QString &s
 }
 void WatchSigsFileAndPostChangesToUsenet::handlePostnewsProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    //TODOreq: detect/handle "441 Posting Failed. Message-ID is not unique E1" with exit code of 2
-    if(exitCode != 0 || exitStatus != QProcess::NormalExit)
+    const QString &postNewsStdErr = m_PostnewsProcess->readAllStandardError();
+    emit e(postNewsStdErr); //"forwarded channels" -- but we want to parse it also :)
+    if(exitCode == 2 && postNewsStdErr.contains("441 Posting Failed. Message-ID is not unique E1"))
+    {
+        generateMessageIdAndPostToUsenet(); //re-post, that is
+        return;
+    }
+    if(exitCode != 0 || exitStatus != QProcess::NormalExit) //TODOreq: regardless of the error type, retry with exponential backoff. I'll see it failing and intervene
         EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("postnews exitted abnormally with exit code: " + QString::number(exitCode))
 
-    m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->MessageIDs.append(QString::fromLatin1(m_MessageIdCurrentlyPostingWith));
+    m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->SuccessfullyPostedMessageIDs.append(QString::fromLatin1(m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails.MessageId));
 
     if(!m_FileCurrentlyBeingPostedToUsenetVolumesTempDir_OrNullIfFileCurrentlyBeingPostedDidntNeedToBeSplit.isNull())
     {
