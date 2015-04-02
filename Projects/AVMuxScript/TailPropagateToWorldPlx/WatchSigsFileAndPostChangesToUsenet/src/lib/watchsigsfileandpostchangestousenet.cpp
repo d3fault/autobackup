@@ -12,12 +12,13 @@
 #include <QTimer>
 #include <QtMath>
 
-#define WatchSigsFileAndPostChangesToUsenet_MAX_SINGLE_PART_SIZE_ANDOR_SPLIT_FILE_VOLUME_SIZE 400000 //350kb is what I really want, but gotta take into account the b64 enc xD... and also have to take into account the 7z compression (i used to have it at 250kb, but realised my b64 encoded posts ended up being less than 250kb and was leik 'wot' before i remembered compression)!!
+#define WatchSigsFileAndPostChangesToUsenet_MAX_SINGLE_PART_SIZE_ANDOR_SPLIT_FILE_VOLUME_SIZE 350000 //7-zip compression practically neutralizes the effects of base64 encoding :-P
 #define WatchSigsFileAndPostChangesToUsenet_SEVENZIP_BIN "7z"
 #define WatchSigsFileAndPostChangesToUsenet_POSTNEWS_BIN "postnews"
 #define WatchSigsFileAndPostChangesToUsenet_MIN_DELAY_BEFORE_RETRYING_MS 5000
 #define EEEEEEEE_WatchSigsFileAndPostChangesToUsenet(msg) { emit e(msg); emit doneWatchingSigsFileAndPostingChangesToUsenet(false); return; }
 
+//TODOmb: attach copyright.txt file (just like sig (so either after body, or in the 7z)), perhaps referencing licence.dpl.txt via Message-ID (the http url is good enough imo). For text files it adds quite a bit of redundancy (but luckily it is tucked away hidden as an attachment). News servers might reject posts containing it automatically (may even be auto-detected as spam (false positives happen all the time)). In any case, there would be no reason to fudge the From field like I'm doing (to avoid filters) if I end up attaching a copyright.txt -- Alternatively, I could point to the copyright.txt via Message-ID (which in turn points to the dpl as Message-ID (and http url)) just to lessen the redundancy
 WatchSigsFileAndPostChangesToUsenet::WatchSigsFileAndPostChangesToUsenet(QObject *parent)
     : QObject(parent)
     , m_SigsFileWatcher(new QFileSystemWatcher(this)) //the best reason for pointers: qobject parenting (which makes moveToThread work). If it's not a pointer (a stack member) and sets 'this' as parent, then it gets double deleted xD
@@ -34,13 +35,16 @@ WatchSigsFileAndPostChangesToUsenet::WatchSigsFileAndPostChangesToUsenet(QObject
     m_RetryWithExponentialBackoffTimer->setSingleShot(true);
     connect(m_RetryWithExponentialBackoffTimer, SIGNAL(timeout()), this, SLOT(generateMessageIdAndPostToUsenet())); //we don't need a new message id, but eh simplicity is simple. and generating a new message id might help so whatever...
 }
-bool WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFile(const QString &sigsFilePath)
+bool WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFileIfNotAlreadyWatching(const QString &sigsFilePath)
 {
-    if(!m_SigsFileWatcher->addPath(sigsFilePath))
+    if(!m_SigsFileWatcher->files().contains(sigsFilePath)) //wtf? my testing showed that 'move' makes the file no longer watched... but testing again later showed different. fuck it, not that expensive to check if we're watching it
     {
-        emit e("failed to start watching sigsfile: " + sigsFilePath);
-        emit doneWatchingSigsFileAndPostingChangesToUsenet(false);
-        return false;
+        if(!m_SigsFileWatcher->addPath(sigsFilePath))
+        {
+            emit e("failed to start watching sigsfile: " + sigsFilePath);
+            emit doneWatchingSigsFileAndPostingChangesToUsenet(false);
+            return false;
+        }
     }
     return true;
 }
@@ -89,13 +93,6 @@ void WatchSigsFileAndPostChangesToUsenet::postAnEnqueuedFileIfNotAlreadyPostingO
 {
     if(!m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.isNull())
         return;
-    if(m_CleanQuitRequested)
-    {
-        if(!checkAlreadyPostedFilesForError())
-            return;
-        emit doneWatchingSigsFileAndPostingChangesToUsenet(true);
-        return;
-    }
     if(m_FilesEnqueuedForPostingToUsenet.isEmpty())
     {
         emit o("post queue is empty");
@@ -262,6 +259,12 @@ QByteArray WatchSigsFileAndPostChangesToUsenet::generateRandomAlphanumericBytes(
 }
 void WatchSigsFileAndPostChangesToUsenet::generateMessageIdAndPostToUsenet()
 {
+    if(m_CleanQuitRequested)
+    {
+        if(checkAlreadyPostedFilesForError())
+            emit doneWatchingSigsFileAndPostingChangesToUsenet(true);
+        return;
+    }
     m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails.MessageId = "<" + generateRandomAlphanumericBytes(15) + "@" + generateRandomAlphanumericBytes(25) + ".com>";
     const UsenetPostDetails &postDetails = m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails;
     QByteArray post(
@@ -269,7 +272,7 @@ void WatchSigsFileAndPostChangesToUsenet::generateMessageIdAndPostToUsenet()
                     "From: " + generateRandomAlphanumericBytes(15) + " <" + generateRandomAlphanumericBytes(15) + "@" + generateRandomAlphanumericBytes(25) + ".com>\n"
                     "Newsgroups: alt.binaries.boneless\n"
                     //"Subject: d3fault.net/binary/" + nextFile.FilePath.toLatin1() + "\n"
-                    "Subject: " + generateRandomAlphanumericBytes(32) + "\n"
+                    "Subject: " + generateRandomAlphanumericBytes(32) + "\n" //TODOmb: use the same subject for all of a split file's parts
                     "Message-ID: " + postDetails.MessageId + "\n"
                     //"Organization: d3fault\n"
                     "Organization: " + generateRandomAlphanumericBytes(20) + "\n"
@@ -361,7 +364,7 @@ void WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFileAndPostChangesToU
     m_NumFailedPostAttemptsInArow = 0; //quint64 so we can retry with exponential backoff until the end of time! aww nvm QTimer overflows long before that :(
 
     m_SigsFileWatcher->removePaths(m_SigsFileWatcher->files());
-    if(!startWatchingSigsFile(sigsFilePathToWatch))
+    if(!startWatchingSigsFileIfNotAlreadyWatching(sigsFilePathToWatch))
         return;
     if(!dirCorrespondingToSigsFile.exists())
         EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("dir corresponding to sigsfile does not exist:" + dirCorrespondingToSigsFile.absolutePath())
@@ -397,7 +400,7 @@ void WatchSigsFileAndPostChangesToUsenet::quitCleanly()
 }
 void WatchSigsFileAndPostChangesToUsenet::handleSigsFileChanged(const QString &sigsFilePath)
 {
-    if(!startWatchingSigsFile(sigsFilePath))
+    if(!startWatchingSigsFileIfNotAlreadyWatching(sigsFilePath))
         return;
     readInSigsFileAndPostAllNewEntries(sigsFilePath);
 }

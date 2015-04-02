@@ -64,7 +64,7 @@ private:
     int m_NumFailedPostAttemptsInArow;
     bool m_CleanQuitRequested;
 
-    bool startWatchingSigsFile(const QString &sigsFilePath);
+    bool startWatchingSigsFileIfNotAlreadyWatching(const QString &sigsFilePath);
     bool ensureExistsAndIsExecutable(const QString &binaryToVerify);
     void readInSigsFileAndPostAllNewEntries(const QString &sigsFilePath);
     void postAnEnqueuedFileIfNotAlreadyPostingOne_OrQuitIfCleanQuitRequested();

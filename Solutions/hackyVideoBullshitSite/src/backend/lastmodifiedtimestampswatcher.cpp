@@ -64,7 +64,10 @@ bool LastModifiedTimestampsWatcher::addAndReadLastModifiedTimestampsFile(const Q
         emit e("TOTAL SYSTEM FAILURE: you did not use 'move [symlink] atomics' for last modified timestamp file: " + lastModifiedTimestampsFile); //TODOoptional: error out etcz
         return false;
     }
-    m_LastModifiedTimestampsFilesWatcher->addPath(lastModifiedTimestampsFile);
+    if(!m_LastModifiedTimestampsFilesWatcher->files().contains(lastModifiedTimestampsFile))
+    {
+        m_LastModifiedTimestampsFilesWatcher->addPath(lastModifiedTimestampsFile);
+    }
 
     LastModifiedTimestampsSorter lastModifiedTimestampsSorter(this);
     int totalPathsCount = 0;
