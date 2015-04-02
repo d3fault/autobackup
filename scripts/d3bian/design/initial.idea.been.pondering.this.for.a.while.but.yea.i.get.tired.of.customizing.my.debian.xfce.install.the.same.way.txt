@@ -1,0 +1,15 @@
+root:
+-install all packages
+-edit '/usr/share/gvfs/mounts/network.mount', setting AutoMount to false
+-edit '/etc/lightdm/lightdm.conf', setting autologin-user=d3fault and autologin-user-timeout=0 (username should be dynamic? maybe just an ls of /home and error out if more than one dir?)
+-create 'update/upgrade' script (taking into account jessie/sid 'install' upgrades)
+
+INSTALL user:
+-run everything once to get default configs created in home directory? everything = ??? need list i guess
+-apply the patch. ez
+
+CREATE user:
+-run everything once to get default configs created in home directory? everything = ??? need list i guess
+-git add/commit home directory
+-config everything (need list (because recreating the script))
+-git add/commit home directory again. the diff from the previous commit is what we want (and we discard everything from that first commit (useless))

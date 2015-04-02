@@ -26,13 +26,14 @@ WatchSigsFileAndPostChangesToUsenet::WatchSigsFileAndPostChangesToUsenet(QObject
     , m_PostnewsProcess(new QProcess(this))
     , m_RetryWithExponentialBackoffTimer(new QTimer(this))
 {
+    //qRegisterMetaType<MessageIdAndUnixTimestampInSecondsTypedef>("MessageIdAndUnixTimestampInSecondsTypedef");
+
     m_PostnewsProcess->setProcessChannelMode(QProcess::ForwardedOutputChannel);
+    m_RetryWithExponentialBackoffTimer->setSingleShot(true);
 
     connect(m_SigsFileWatcher, SIGNAL(fileChanged(QString)), this, SLOT(handleSigsFileChanged(QString)));
     connect(m_RecursiveCustomDetachedSignatures, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
     connect(m_PostnewsProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(handlePostnewsProcessFinished(int,QProcess::ExitStatus)));
-
-    m_RetryWithExponentialBackoffTimer->setSingleShot(true);
     connect(m_RetryWithExponentialBackoffTimer, SIGNAL(timeout()), this, SLOT(generateMessageIdAndPostToUsenet())); //we don't need a new message id, but eh simplicity is simple. and generating a new message id might help so whatever...
 }
 bool WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFileIfNotAlreadyWatching(const QString &sigsFilePath)
@@ -68,35 +69,40 @@ void WatchSigsFileAndPostChangesToUsenet::readInSigsFileAndPostAllNewEntries(con
     QFile sigsFileToWatch(sigsFilePath);
     if(!sigsFileToWatch.open(QIODevice::ReadOnly | QIODevice::Text))
         EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("failed to open sigs file for reading: " + sigsFilePath)
-    QHash<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> sigsFromSigFile;
-    if(!m_RecursiveCustomDetachedSignatures->readInAllSigsFromSigFile(&sigsFileToWatch, &sigsFromSigFile))
+    QHash<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> sigsFromSigsFile;
+    if(!m_RecursiveCustomDetachedSignatures->readInAllSigsFromSigFile(&sigsFileToWatch, &sigsFromSigsFile))
         EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("failed to read in all sigs from file:" + sigsFilePath);
 
     //now remove the files already enqueued or posted
-    QMutableHashIterator<QString, RecursiveCustomDetachedSignaturesFileMeta> newSigsIterator(sigsFromSigFile);
-    while(newSigsIterator.hasNext())
+    QMutableHashIterator<QString, RecursiveCustomDetachedSignaturesFileMeta> sigsFromSigsFileIterator(sigsFromSigsFile);
+    while(sigsFromSigsFileIterator.hasNext())
     {
-        newSigsIterator.next();
-        if(m_FilesEnqueuedForPostingToUsenet.contains(newSigsIterator.key()) || m_AlreadyPostedFiles->contains(newSigsIterator.key()))
-            newSigsIterator.remove();
+        sigsFromSigsFileIterator.next();
+        if(m_FilesEnqueuedForPostingToUsenet.contains(sigsFromSigsFileIterator.key()) || m_AlreadyPostedFiles->contains(sigsFromSigsFileIterator.key()))
+            sigsFromSigsFileIterator.remove();
     }
-    if(!checkAlreadyPostedFilesForError())
+    if(!checkAlreadyPostedFilesFileForError())
         return;
 
     //TODOoptimization: OLD BUT STILL SEMI-RELEVANT (old as fuck posted files should be moved out of sight): I either have to keep the entire fs hierarchy+sigs in memory (only a few mb at the moment, but it will grow!!!), or I have to read them from disk every time the sigsfile being watched changes... idfk. There are clever ways to solve that problem ofc (and it's worth noting we don't NEED the sigs of the already posted files in memory, only need the file paths (this alone is probably ~80% of that memory now freed xD))...
 
     //at this point, sigsFromSigFile only contains new entries. so enqueue them
-    m_FilesEnqueuedForPostingToUsenet.unite(sigsFromSigFile); //arbitrary posting order (QHash), fuck it. too lazy to sort by timestamp
+    m_FilesEnqueuedForPostingToUsenet.unite(sigsFromSigsFile); //arbitrary posting order (QHash), fuck it. too lazy to sort by timestamp
     postAnEnqueuedFileIfNotAlreadyPostingOne_OrQuitIfCleanQuitRequested();
 }
 void WatchSigsFileAndPostChangesToUsenet::postAnEnqueuedFileIfNotAlreadyPostingOne_OrQuitIfCleanQuitRequested()
 {
     if(!m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.isNull())
         return;
+    if(m_CleanQuitRequested)
+    {
+        doCleanQuitTasks();
+        return;
+    }
     if(m_FilesEnqueuedForPostingToUsenet.isEmpty())
     {
         emit o("post queue is empty");
-        checkAlreadyPostedFilesForError();
+        checkAlreadyPostedFilesFileForError();
         return;
     }
     const RecursiveCustomDetachedSignaturesFileMeta &nextFile = *(m_FilesEnqueuedForPostingToUsenet.begin());
@@ -261,8 +267,7 @@ void WatchSigsFileAndPostChangesToUsenet::generateMessageIdAndPostToUsenet()
 {
     if(m_CleanQuitRequested)
     {
-        if(checkAlreadyPostedFilesForError())
-            emit doneWatchingSigsFileAndPostingChangesToUsenet(true);
+        doCleanQuitTasks();
         return;
     }
     m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails.MessageId = "<" + generateRandomAlphanumericBytes(15) + "@" + generateRandomAlphanumericBytes(25) + ".com>";
@@ -332,10 +337,18 @@ void WatchSigsFileAndPostChangesToUsenet::handleFullFilePostedToUsenet() //full 
     //m_FilesAlreadyPostedOnUsenet_AndTheirMessageIDs.insert(postedFile.FilePath, m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->MessageIDs);
     //QSettings alreadyPostedFilesSerializer(m_AlreadyPostedFiles, QSettings::IniFormat); //TODOblah: the only thing that should happen when the queue "goes empty" is that we call sync and check the status of the settings :)
     m_AlreadyPostedFiles->setValue(postedFile.FilePath, m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->SuccessfullyPostedMessageIDs);
+    //QVariant messageIDsAndPostTimes;
+    //messageIDsAndPostTimes.setValue(m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->SuccessfullyPostedMessageIDsAndTheirEstimatedPostUnixTimestampInSeconds);
+    //m_AlreadyPostedFiles->setValue(postedFile.FilePath, messageIDsAndPostTimes);
     m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.reset();
     postAnEnqueuedFileIfNotAlreadyPostingOne_OrQuitIfCleanQuitRequested();
 }
-bool WatchSigsFileAndPostChangesToUsenet::checkAlreadyPostedFilesForError()
+void WatchSigsFileAndPostChangesToUsenet::doCleanQuitTasks()
+{
+    if(checkAlreadyPostedFilesFileForError()) //emits doneWatchingSigsFileAndPostingChangesToUsenet(false) on error
+        emit doneWatchingSigsFileAndPostingChangesToUsenet(true);
+}
+bool WatchSigsFileAndPostChangesToUsenet::checkAlreadyPostedFilesFileForError()
 {
     m_AlreadyPostedFiles->sync();
     if(m_AlreadyPostedFiles->status() != QSettings::NoError)
@@ -427,6 +440,8 @@ void WatchSigsFileAndPostChangesToUsenet::handlePostnewsProcessFinished(int exit
     m_NumFailedPostAttemptsInArow = 0;
 
     m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->SuccessfullyPostedMessageIDs.append(QString::fromLatin1(m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails.MessageId));
+    //m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->SuccessfullyPostedMessageIDsAndTheirEstimatedPostUnixTimestampInSeconds.append(qMakePair(m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails.MessageId, QDateTime::currentMSecsSinceEpoch() / 1000)); //Thought about just storing the date, but looking at what QSettings uses to serialize that, unixtime is actually smaller xD (I guess I could do unixtime for the DATE to get even smaller, but I'm too lazy to figure out the math for that)
+
 
     if(!m_FileCurrentlyBeingPostedToUsenetVolumesTempDir_OrNullIfFileCurrentlyBeingPostedDidntNeedToBeSplit.isNull())
     {

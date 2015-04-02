@@ -2861,14 +2861,14 @@ Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/BackupReplicate
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/main.cpp:1427393601
 Projects/AVMuxScript/TailPropagateToWorldPlx/:1427488295
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/:1427832579
-Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/:1427998053
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/:1428003814
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/cli/:1427909334
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/cli/main.cpp:1427546349
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/cli/watchsigsfileandpostchangestousenetcli.cpp:1427909334
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/cli/watchsigsfileandpostchangestousenetcli.h:1427502847
-Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/lib/:1427997918
-Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/lib/watchsigsfileandpostchangestousenet.cpp:1427997918
-Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/lib/watchsigsfileandpostchangestousenet.h:1427920069
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/lib/:1428003726
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/lib/watchsigsfileandpostchangestousenet.cpp:1428003726
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/lib/watchsigsfileandpostchangestousenet.h:1428003716
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/WatchSigsFileAndPostChangesToUsenetCli.pro:1427501275
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/watchsigsfileandpostchangestousenet.pri:1427488471
 Projects/AVMuxScript/TailPropagateToWorldPlx/design/:1427483882
@@ -5734,7 +5734,7 @@ Solutions/launchASEPbecauseRedAlert/video.bytestream.design.rofl.so.ghetto.and.p
 Solutions/standard.wt.deploy.arguments.to.get.clean.urls.working.properly.txt:1398266138
 licenses/:1398086549
 licenses/license.dpl.txt:1388242176
-scripts/:1427380762
+scripts/:1428000417
 scripts/LiveCDinstallAndConfigExtra/:1338074874
 scripts/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
 scripts/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
@@ -5747,6 +5747,9 @@ scripts/aptOfflinePackageManagement/genUpgradeDebUrls.sh:1378373179
 scripts/aptOfflinePackageManagement/how2offlineAptPackageManagement.txt:1408536575
 scripts/customLaunchers/:1350497963
 scripts/customLaunchers/dia.integrated.and.no.splash.sh:1350498196
+scripts/d3bian/:1428000421
+scripts/d3bian/design/:1428000469
+scripts/d3bian/design/initial.idea.been.pondering.this.for.a.while.but.yea.i.get.tired.of.customizing.my.debian.xfce.install.the.same.way.txt:1428000469
 scripts/win/:1383901959
 scripts/win/.directory:1349691596
 scripts/win/dismount.3x.750gb.drives.bat:1319976778

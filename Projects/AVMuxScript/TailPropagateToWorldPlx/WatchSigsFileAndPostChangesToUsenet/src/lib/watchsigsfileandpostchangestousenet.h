@@ -28,6 +28,7 @@ struct UsenetPostDetails //POD
     QByteArray GpgSigMaybe;
     QString AbsoluteFilePath;
 };
+//typedef QPair<QByteArray, qint64> MessageIdAndUnixTimestampInSecondsTypedef;
 struct RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs //POD
 {
     RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs(const RecursiveCustomDetachedSignaturesFileMeta &fileMeta)
@@ -35,8 +36,10 @@ struct RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs //POD
     { }
     RecursiveCustomDetachedSignaturesFileMeta FileMeta;
     QStringList SuccessfullyPostedMessageIDs;
+    //QList<MessageIdAndUnixTimestampInSecondsTypedef> SuccessfullyPostedMessageIDsAndTheirEstimatedPostUnixTimestampInSeconds;
     UsenetPostDetails PostInProgressDetails;
 };
+//Q_DECLARE_METATYPE(MessageIdAndUnixTimestampInSecondsTypedef)
 
 class QTimer;
 
@@ -74,7 +77,8 @@ private:
     QByteArray wrap(const QByteArray &toWrap, int wrapAt);
     QByteArray generateRandomAlphanumericBytes(int maxBytesToGenerate, int minBytesToGenerate = 10);
     void handleFullFilePostedToUsenet();
-    bool checkAlreadyPostedFilesForError();
+    void doCleanQuitTasks();
+    bool checkAlreadyPostedFilesFileForError();
 
     inline QString appendSlashIfNeeded(const QString &inputString) { if(inputString.endsWith("/")) return inputString; return inputString + "/"; }
 signals:
