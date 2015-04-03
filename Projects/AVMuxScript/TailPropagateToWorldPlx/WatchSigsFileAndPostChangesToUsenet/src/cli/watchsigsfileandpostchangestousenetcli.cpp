@@ -93,7 +93,7 @@ void WatchSigsFileAndPostChangesToUsenetCli::handleStandardInputReceivedLine(con
     {
         if(userInputLineLowered.size() > 2 && userInputLineLowered.at(1) == QStringLiteral(" "))
         {
-            emit printMessageIDsForRelativeFilePathRequested(userInputLineLowered.mid(2));
+            emit printMessageIDsForRelativeFilePathRequested(userInputLine.mid(2));
         }
         else
         {
