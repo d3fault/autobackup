@@ -169,7 +169,7 @@ void WatchSigsFileAndPostChangesToUsenet::postToUsenet(const RecursiveCustomDeta
     else if(fileInfo.size() > 0)
     {
         //post as single file with sig attachment
-        beginPostingToUsenetAfterBase64encoding(fileInfo, generateRandomAlphanumericBytes(WatchSigsFileAndPostChangesToUsenet_POST_SUBJECT_MAXLEN), nextFile.GpgSignature);
+        beginPostingToUsenetAfterBase64encoding(fileInfo, generateRandomAlphanumericBytes(WatchSigsFileAndPostChangesToUsenet_POST_SUBJECT_MAXLEN), nextFile.GpgSignature.toLatin1());
         return;
     }
     else //file size < 1
@@ -200,7 +200,7 @@ void WatchSigsFileAndPostChangesToUsenet::postNextVolumePartInDir_OrContinueOnto
             continue;
         QByteArray partSubject = (m_SplitPartSubjectPrefix + " (" + QString::number(m_CurrentPartInSplitUpload).toLatin1() + "/" + QString::number(m_NumPartsInCurrentSplitUpload).toLatin1() + ")");
         ++m_CurrentPartInSplitUpload;
-        beginPostingToUsenetAfterBase64encoding(currentFileInfo, partSubject, QString("application/x-7z-compressed"));
+        beginPostingToUsenetAfterBase64encoding(currentFileInfo, partSubject, QByteArray(), QString("application/x-7z-compressed"));
         return;
     }
     //done with all this file's parts
@@ -209,7 +209,7 @@ void WatchSigsFileAndPostChangesToUsenet::postNextVolumePartInDir_OrContinueOnto
     //and then continue onto the next ACTUAL file
     handleFullFilePostedToUsenet();
 }
-void WatchSigsFileAndPostChangesToUsenet::beginPostingToUsenetAfterBase64encoding(const QFileInfo &fileInfo, const QByteArray &subject, const QString &gpgSignature_OrEmptyStringIfNotToAttachOne, const QString &mimeType_OrEmptyStringIfToFigureItOut) //TODOoptional: when bored on rainy day, post all the MyBrain-PublicFiles.tc files individually
+void WatchSigsFileAndPostChangesToUsenet::beginPostingToUsenetAfterBase64encoding(const QFileInfo &fileInfo, const QByteArray &subject, const QByteArray &gpgSignature_OrEmptyStringIfNotToAttachOne, const QString &mimeType_OrEmptyStringIfToFigureItOut) //TODOoptional: when bored on rainy day, post all the MyBrain-PublicFiles.tc files individually
 {
     const QString &absoluteFilePath = fileInfo.absoluteFilePath();
     QFile file(absoluteFilePath);
@@ -228,7 +228,7 @@ void WatchSigsFileAndPostChangesToUsenet::beginPostingToUsenetAfterBase64encodin
 
     QByteArray contentMd5Base64 = fileContentsMd5.toBase64();
     QByteArray boundary = "-";
-    QByteArray gpgSigBA = gpgSignature_OrEmptyStringIfNotToAttachOne.toLatin1();
+    QByteArray gpgSigBA = gpgSignature_OrEmptyStringIfNotToAttachOne;
 
     while(body.contains(boundary) || gpgSigBA.contains(boundary) || m_CopyrightAttachmentContents_OrEmptyIfNotToAttachOne.contains(boundary))
         boundary = generateRandomAlphanumericBytes(15, 2);
