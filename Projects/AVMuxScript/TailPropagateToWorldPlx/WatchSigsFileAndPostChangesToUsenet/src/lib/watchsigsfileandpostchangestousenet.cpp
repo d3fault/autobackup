@@ -26,8 +26,8 @@ WatchSigsFileAndPostChangesToUsenet::WatchSigsFileAndPostChangesToUsenet(QObject
     , m_PostnewsProcess(new QProcess(this))
     , m_RetryWithExponentialBackoffTimer(new QTimer(this))
 {
-    qRegisterMetaType<UsenetPostTimestampInSecondsAndMessageIDs>();
-    qRegisterMetaTypeStreamOperators<UsenetPostTimestampInSecondsAndMessageIDs>();
+    qRegisterMetaType<p>();
+    qRegisterMetaTypeStreamOperators<p>();
 
     m_PostnewsProcess->setProcessChannelMode(QProcess::ForwardedOutputChannel);
     m_RetryWithExponentialBackoffTimer->setSingleShot(true);
@@ -416,10 +416,11 @@ void WatchSigsFileAndPostChangesToUsenet::printMessageIDsForRelativeFilePath(con
             return;
         }
     }
-    const QStringList &messageIDs = m_AlreadyPostedFiles->value(relativeFilePath).toStringList();
-    if(!messageIDs.isEmpty())
+    const QVariant &timestampAndMessageIDs_AsVariant = m_AlreadyPostedFiles->value(relativeFilePath);
+    if(!timestampAndMessageIDs_AsVariant.isNull()) //was gonna check the timestmap was not zero, but i think this works better :-P (WHAT IF A TIME MACHINE IS INVENTED AND THE TIMESTAMP ZERO DOES HAPPEN!?!? (more likely: overflow))
     {
-        emit o("All Message-IDs for '" + relativeFilePath + "' -- " + messageIDs.join(","));
+        const p &messageIDs = timestampAndMessageIDs_AsVariant.value<p>();
+        emit o("All Message-IDs for '" + relativeFilePath + "', which was posted at about: '" + QDateTime::fromMSecsSinceEpoch(messageIDs.PostTimestampInSeconds*1000).toString() + "' -- " + messageIDs.MessageIDs.join(","));
         return;
     }
     if(m_FilesEnqueuedForPostingToUsenet.contains(relativeFilePath))
@@ -483,13 +484,13 @@ void WatchSigsFileAndPostChangesToUsenet::handlePostnewsProcessFinished(int exit
     }
     handleFullFilePostedToUsenet();
 }
-QDataStream &operator<<(QDataStream &out, const UsenetPostTimestampInSecondsAndMessageIDs &myObj)
+QDataStream &operator<<(QDataStream &out, const p &myObj)
 {
     out << myObj.PostTimestampInSeconds;
     out << myObj.MessageIDs;
     return out;
 }
-QDataStream &operator>>(QDataStream &in, UsenetPostTimestampInSecondsAndMessageIDs &myObj)
+QDataStream &operator>>(QDataStream &in, p &myObj)
 {
     in >> myObj.PostTimestampInSeconds;
     in >> myObj.MessageIDs;

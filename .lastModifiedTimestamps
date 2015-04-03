@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1428024508
+Documents/minddump/:1428089786
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1427999309
+Documents/minddump/dreams/:1428089473
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -209,6 +209,7 @@ Documents/minddump/dreams/sdkfjslkdjflksdjfklsjdflkjdsfkljdsfjdofulskdjfosduflsk
 Documents/minddump/dreams/sdkjflsdkjflksdjflksdjflkjslfkjsdlkfjsldkfjlksdjflkjeworulksdjfousldkfjldskf.txt:1419070646
 Documents/minddump/dreams/sdkjflskjdflskjdfosudfljsdfousdfljsfdoulkjeroiusdlfkjsdofuo.txt:1391895285
 Documents/minddump/dreams/sdlafjlasjflsajdfsdufowieurlkasjdfouasfdljouwerlkjsdoafuslfdjkaslf.txt:1381489684
+Documents/minddump/dreams/sdlfjsdlkjflksdjfklsjdkfljskdljflksdjflksjdfjsdflkjlkjsdf.txt:1428089473
 Documents/minddump/dreams/sdlfjsldjflsdjflskdjflkjsdflkjsdlkfjsdf.txt:1401173176
 Documents/minddump/dreams/sdlfjsldkjflksjdfkljsdlkfjksldjflsjdflkjsdklfjklsdjfksjdfklsjdfkljsdklfjsdklf.txt:1416329133
 Documents/minddump/dreams/sdlfkjlsdjflksdjflksdjflksdjflksdjflksjdfkljsdlkfjsdlkfjsdlk.txt:1415169897
@@ -2119,6 +2120,7 @@ Documents/minddump/sdkjfalskjdflkasdjflksadjflksjdfsodifjksjdfsdfulsdkjfosudflkj
 Documents/minddump/sdkjflksadjflksjdfkljsdlkfjsdkljfklsdjfoweyrlkjdsflkjsdf.txt:1416951637
 Documents/minddump/sdkjflksjflkjsdflkjsdfousdlfkjsdlfkjsdofusldkjfsdoufouwerl.txt:1391726576
 Documents/minddump/sdkjflskdjflksdjfkjsdflkjsdfhigh.on.mania.slfkjsdfoul.txt:1394231512
+Documents/minddump/sdkjfskdjfksdljfklsjdfkljerhlskjfdlksdjfklsdjflksjdflk.txt:1428089786
 Documents/minddump/sdkjfslkdjfklsdjfklsjdfklsjdkfljwersodiflksdjf.txt:1405328663
 Documents/minddump/sdklfjlskjdfkjlsdfousdfljksdfusdfouoewrulkjsdfousdf.txt:1384325091
 Documents/minddump/sdklfjsdjfsdlkjfsdlkjfsdlkjfowuerlkjsdfsdjowejkfsd.txt:1360824949
@@ -2862,14 +2864,14 @@ Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/BackupReplicate
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/main.cpp:1428010355
 Projects/AVMuxScript/TailPropagateToWorldPlx/:1427488295
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/:1427832579
-Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/:1428041819
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/:1428089841
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/cli/:1428022125
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/cli/main.cpp:1427546349
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/cli/watchsigsfileandpostchangestousenetcli.cpp:1428022125
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/cli/watchsigsfileandpostchangestousenetcli.h:1428021234
-Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/lib/:1428041719
-Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/lib/watchsigsfileandpostchangestousenet.cpp:1428041719
-Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/lib/watchsigsfileandpostchangestousenet.h:1428041719
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/lib/:1428087216
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/lib/watchsigsfileandpostchangestousenet.cpp:1428087216
+Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/lib/watchsigsfileandpostchangestousenet.h:1428087137
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/WatchSigsFileAndPostChangesToUsenetCli.pro:1427501275
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/watchsigsfileandpostchangestousenet.pri:1427488471
 Projects/AVMuxScript/TailPropagateToWorldPlx/design/:1427483882
@@ -4598,7 +4600,7 @@ Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperbusiness.cp
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperbusiness.h:1348569501
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.cpp:1348566704
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.h:1348565463
-Projects/QuickDirtyAutoBackupHalper/src/:1428042412
+Projects/QuickDirtyAutoBackupHalper/src/:1428042968
 Projects/QuickDirtyAutoBackupHalper/src/QuickDirtyAutoBackupHalper.pro:1387287042
 Projects/QuickDirtyAutoBackupHalper/src/main.cpp:1401631299
 Projects/QuickDirtyAutoBackupHalper/src/mainwidget.cpp:1428042200

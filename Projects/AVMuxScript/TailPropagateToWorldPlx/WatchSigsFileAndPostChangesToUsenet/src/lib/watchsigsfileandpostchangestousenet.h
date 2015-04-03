@@ -28,19 +28,20 @@ struct UsenetPostDetails //POD
     QByteArray GpgSigMaybe;
     QString AbsoluteFilePath;
 };
-struct UsenetPostTimestampInSecondsAndMessageIDs
+struct p //this used to be called "UsenetPostTimestampInSecondsAndMessageIDs", but QSettings is storing the name of the type in the QVariant, buh (I guess it has to, but still... heh think of the bytes!!!)
 {
-    UsenetPostTimestampInSecondsAndMessageIDs()
+    p()
+        : PostTimestampInSeconds(0)
     { }
-    UsenetPostTimestampInSecondsAndMessageIDs(qint64 postTimestampInSeconds)
+    p(qint64 postTimestampInSeconds)
         : PostTimestampInSeconds(postTimestampInSeconds)
     { }
     qint64 PostTimestampInSeconds;
     QByteArrayList MessageIDs;
 };
-Q_DECLARE_METATYPE(UsenetPostTimestampInSecondsAndMessageIDs)
-QDataStream &operator<<(QDataStream &out, const UsenetPostTimestampInSecondsAndMessageIDs &myObj);
-QDataStream &operator>>(QDataStream &in, UsenetPostTimestampInSecondsAndMessageIDs &myObj);
+Q_DECLARE_METATYPE(p)
+QDataStream &operator<<(QDataStream &out, const p &myObj);
+QDataStream &operator>>(QDataStream &in, p &myObj);
 struct CurrentFileBeingUploadedToUsenetInfo //POD
 {
     CurrentFileBeingUploadedToUsenetInfo(const RecursiveCustomDetachedSignaturesFileMeta &fileMeta, qint64 postTimestampInSeconds)
@@ -49,7 +50,7 @@ struct CurrentFileBeingUploadedToUsenetInfo //POD
     { }
     RecursiveCustomDetachedSignaturesFileMeta FileMeta;
     //QStringList SuccessfullyPostedMessageIDs;
-    UsenetPostTimestampInSecondsAndMessageIDs PostTimestampInSeconds_And_SuccessfullyPostedMessageIDs;
+    p PostTimestampInSeconds_And_SuccessfullyPostedMessageIDs;
     UsenetPostDetails PostInProgressDetails;
 };
 
