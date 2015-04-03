@@ -33,8 +33,8 @@
 #define allReplicas \
 QList<QPair<QString /* replica mount point */, QString /* replica binary root */> > replicas; \
 replicas << qMakePair(QString("/mnt/sdc"), QString("/mnt/sdc" + QString(destPathBinaryRoot))); \
-replicas << qMakePair(QString("/mnt/toshibaB"), QString("/mnt/toshibaB" + QString(destPathBinaryRoot)));
-//replicas << qMakePair(QString("/mnt/blackCavalry"), QString("/mnt/blackCavalry" + QString(destPathBinaryRoot)));
+replicas << qMakePair(QString("/media/toshibaB"), QString("/media/toshibaB" + QString(destPathBinaryRoot)));
+//replicas << qMakePair(QString("/media/blackCavalry"), QString("/media/blackCavalry" + QString(destPathBinaryRoot)));
 #define airGapReplicaTempDirForMuxedCopiesRelativeToMountPoint "/temp/forMorningScript"
 
 #define muxerSyncerBinaryFilePath "/home/d3fault/text/Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/build-DirectoriesOfAudioAndVideoFilesMuxerSyncerCli-Desktop_Qt_5_4_1_GCC_64bit-Release/DirectoriesOfAudioAndVideoFilesMuxerSyncerCli"

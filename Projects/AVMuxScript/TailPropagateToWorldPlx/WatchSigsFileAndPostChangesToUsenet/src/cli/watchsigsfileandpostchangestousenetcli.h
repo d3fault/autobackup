@@ -16,6 +16,8 @@ private:
 
     void cliUsage();
 signals:
+    void printMessageIDsForRelativeFilePathRequested(const QString &relativeFilePath);
+    void printMessageIdCurrentlyBeingPostedRequested();
     void quitCleanlyRequested();
     void exitRequested(int exitCode);
 private slots:

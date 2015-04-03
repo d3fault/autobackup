@@ -13,3 +13,7 @@ CREATE user:
 -git add/commit home directory
 -config everything (need list (because recreating the script))
 -git add/commit home directory again. the diff from the previous commit is what we want (and we discard everything from that first commit (useless))
+
+CREATE user config list:
+-Power manager = all never. yes spin down hard disks
+

@@ -89,6 +89,8 @@ public slots:
     void startWatchingSigsFileAndPostChangesToUsenet(const QString &sigsFilePathToWatch, const QString &dirCorrespondingToSigsFile/*, const QString &dataDirForKeepingTrackOfAlreadyPostedFiles*/, const QString &authUser, const QString &authPass, const QString &portString, const QString &server);
      void startWatchingSigsFileAndPostChangesToUsenet(const QString &sigsFilePathToWatch, const QDir &dirCorrespondingToSigsFile/*, const QDir &dataDirForKeepingTrackOfAlreadyPostedFiles*/, const QString &authUser, const QString &authPass, const QString &portString, const QString &server);
 public slots:
+     void printMessageIDsForRelativeFilePath(const QString &relativeFilePath);
+     void printMessageIdCurrentlyBeingPosted();
      void quitCleanly();
 private slots:
      void handleSigsFileChanged(const QString &sigsFilePath);

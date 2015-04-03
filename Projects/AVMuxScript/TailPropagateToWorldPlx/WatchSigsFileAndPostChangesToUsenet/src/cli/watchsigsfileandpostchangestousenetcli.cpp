@@ -57,6 +57,8 @@ WatchSigsFileAndPostChangesToUsenetCli::WatchSigsFileAndPostChangesToUsenetCli(Q
     connect(watchSigsFileAndPostChangesToUsenet, SIGNAL(o(QString)), this, SLOT(handleO(QString)));
     connect(watchSigsFileAndPostChangesToUsenet, SIGNAL(e(QString)), this, SLOT(handleE(QString)));
     connect(watchSigsFileAndPostChangesToUsenet, SIGNAL(doneWatchingSigsFileAndPostingChangesToUsenet(bool)), this, SLOT(handleDoneWatchingSigsFileAndPostingChangesToUsenet(bool)));
+    connect(this, SIGNAL(printMessageIDsForRelativeFilePathRequested(QString)), watchSigsFileAndPostChangesToUsenet, SLOT(printMessageIDsForRelativeFilePath(QString)));
+    connect(this, SIGNAL(printMessageIdCurrentlyBeingPostedRequested()), watchSigsFileAndPostChangesToUsenet, SLOT(printMessageIdCurrentlyBeingPosted()));
     connect(this, SIGNAL(quitCleanlyRequested()), watchSigsFileAndPostChangesToUsenet, SLOT(quitCleanly()));
 
     StandardInputNotifier *standardInputNotifier = new StandardInputNotifier(this);
@@ -79,12 +81,29 @@ void WatchSigsFileAndPostChangesToUsenetCli::handleE(const QString &msg)
 }
 void WatchSigsFileAndPostChangesToUsenetCli::handleStandardInputReceivedLine(const QString &userInputLine)
 {
-    if(userInputLine.toLower() == "q")
+    const QString &userInputLineLowered = userInputLine.toLower();
+    if(userInputLineLowered == "q")
     {
         handleO("quitting once the file currently being posted finishes posting");
         emit quitCleanlyRequested(); //emit quitRequested(); //oshi-, this time the frontend is requesting a quit from the backend :-P. TODOoptional: qq (which should still serialize posted files, just cancel the current one is all (should qq return 1 or 0? i guess 0 but idk))
         disconnect(this, SIGNAL(quitCleanlyRequested()));
         return;
+    }
+    if(userInputLineLowered.startsWith("m"))
+    {
+        if(userInputLineLowered.size() > 2 && userInputLineLowered.at(1) == QStringLiteral(" "))
+        {
+            emit printMessageIDsForRelativeFilePathRequested(userInputLineLowered.mid(2));
+        }
+        else
+        {
+            emit printMessageIdCurrentlyBeingPostedRequested(); //I was gonna do "previous" message ID (to get one that's already been posted), but it's much simpler [on my backend] to get the current one. With part sizes of 350kb, it won't take long for this 'current' message ID to become the 'previous' (and why I want it: so I can verify manually that this app is still working [and that my shit isn't getting SILENTLY filtered guh]))
+        }
+        return;
+    }
+    if(userInputLineLowered == "h")
+    {
+        handleO(QStringLiteral("Selections:\n\tM - Get Message-ID currently being posted\n\tM [relative file path] - Get all known MessageIDs for the specifies file path\n\tH - This Help\n\tQ - Quit Cleanly\n"));
     }
     //TODOmb: query the data file's LOCATION?
 }

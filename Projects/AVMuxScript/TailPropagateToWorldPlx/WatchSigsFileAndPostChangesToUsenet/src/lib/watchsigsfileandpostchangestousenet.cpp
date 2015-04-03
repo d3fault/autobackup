@@ -70,7 +70,7 @@ void WatchSigsFileAndPostChangesToUsenet::readInSigsFileAndPostAllNewEntries(con
     if(!sigsFileToWatch.open(QIODevice::ReadOnly | QIODevice::Text))
         EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("failed to open sigs file for reading: " + sigsFilePath)
     QHash<QString /*file path*/, RecursiveCustomDetachedSignaturesFileMeta /*file meta*/> sigsFromSigsFile;
-    if(!m_RecursiveCustomDetachedSignatures->readInAllSigsFromSigFile(&sigsFileToWatch, &sigsFromSigsFile))
+    if(!m_RecursiveCustomDetachedSignatures->readInAllSigsFromSigFile(&sigsFileToWatch, &sigsFromSigsFile)) //TODOoptimization: could read them in one by one and compare against the queue and already posted ones right after reading a single entry. would lessen memory usage, but might be slower since the read head jumps around (needz moar ssd)
         EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("failed to read in all sigs from file:" + sigsFilePath);
 
     //now remove the files already enqueued or posted
@@ -404,6 +404,41 @@ void WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFileAndPostChangesToU
         return;
 
     readInSigsFileAndPostAllNewEntries(sigsFilePathToWatch); //start posting right away
+}
+void WatchSigsFileAndPostChangesToUsenet::printMessageIDsForRelativeFilePath(const QString &relativeFilePath)
+{
+    if(!m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.isNull())
+    {
+        const RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs &currentPost = *m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet;
+        if(currentPost.FileMeta.FilePath == relativeFilePath)
+        {
+            //well would you look at that, it's the one currently being posted!
+            emit o("'" + relativeFilePath + "' is currently being uploaded. The Message-ID currently being uploaded is " + currentPost.PostInProgressDetails.MessageId + " and all of it's previoiusly uploaded Message-IDs (for split files) are: " + currentPost.SuccessfullyPostedMessageIDs.join(","));
+            return;
+        }
+    }
+    const QStringList &messageIDs = m_AlreadyPostedFiles->value(relativeFilePath).toStringList();
+    if(!messageIDs.isEmpty())
+    {
+        emit o("All Message-IDs for '" + relativeFilePath + "' -- " + messageIDs.join(","));
+        return;
+    }
+    if(m_FilesEnqueuedForPostingToUsenet.contains(relativeFilePath))
+    {
+        emit o("'" + relativeFilePath + "' is still in the upload queue, so it doesn't have any Message-IDs yet");
+        return;
+    }
+    emit o("There is no record of '" + relativeFilePath + "'");
+}
+void WatchSigsFileAndPostChangesToUsenet::printMessageIdCurrentlyBeingPosted()
+{
+    if(m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.isNull())
+    {
+        emit o("Not currently posting to usenet"); //TODOmb: show a random one, or even allow them to request the Message-ID[s] for a specific relative file path
+        return;
+    }
+    const UsenetPostDetails &currentPostDetails = m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails;
+    emit o("Currently posting '" + currentPostDetails.AbsoluteFilePath + "' with Message-ID: " + currentPostDetails.MessageId + " (note: the file may be split up into multiple parts, so querying the Message-ID again might show the same file with a different Message-ID)");
 }
 void WatchSigsFileAndPostChangesToUsenet::quitCleanly()
 {
