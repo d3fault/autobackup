@@ -16,6 +16,7 @@
 #define WatchSigsFileAndPostChangesToUsenet_SEVENZIP_BIN "7z"
 #define WatchSigsFileAndPostChangesToUsenet_POSTNEWS_BIN "postnews"
 #define WatchSigsFileAndPostChangesToUsenet_MIN_DELAY_BEFORE_RETRYING_MS 5000
+#define WatchSigsFileAndPostChangesToUsenet_POST_SUBJECT_MAXLEN 32
 #define EEEEEEEE_WatchSigsFileAndPostChangesToUsenet(msg) { emit e(msg); emit doneWatchingSigsFileAndPostingChangesToUsenet(false); return; }
 
 //TODOmb: attach copyright.txt file (just like sig (so either after body, or in the 7z)), perhaps referencing licence.dpl.txt via Message-ID (the http url is good enough imo). For text files it adds quite a bit of redundancy (but luckily it is tucked away hidden as an attachment). News servers might reject posts containing it automatically (may even be auto-detected as spam (false positives happen all the time)). In any case, there would be no reason to fudge the From field like I'm doing (to avoid filters) if I end up attaching a copyright.txt -- Alternatively, I could point to the copyright.txt via Message-ID (which in turn points to the dpl as Message-ID (and http url)) just to lessen the redundancy
@@ -111,7 +112,7 @@ void WatchSigsFileAndPostChangesToUsenet::postAnEnqueuedFileIfNotAlreadyPostingO
 }
 //TODOoptimization: compress next file while current file is posting. or even post multiple files simultaneously, since my newsgroup server gives me like 20 or 50 connections. i was KISS at first obviously
 //TODOoptional: parity. spent way too much time researching/considering yEnc+parity etc. fuck it, 7z it is
-void WatchSigsFileAndPostChangesToUsenet::postToUsenet(const RecursiveCustomDetachedSignaturesFileMeta &nextFile) //TODOreq: relative path isn't being posted anywhere, maybe I should just not care and keep that stuff to the .nzb only?
+void WatchSigsFileAndPostChangesToUsenet::postToUsenet(const RecursiveCustomDetachedSignaturesFileMeta &nextFile) //TODOreq: relative path isn't being posted anywhere, maybe I should just not care and keep that stuff to the .nzb only? i wish the content-disposition mime field allowed relative paths :(
 {
     m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.reset(new CurrentFileBeingUploadedToUsenetInfo(nextFile, QDateTime::currentMSecsSinceEpoch()/1000)); //we just want to know roughly when we started uploading a file. if it's split, we want to know roughly when the first one was updated. doesn't need to be exact, and it's better to err on the side of "too early". this will eventually be used to determine when the files need to be re-uploaded to usenet (2000+ days). this doesn't account for compression/splitting time, fuck it :P
     QFileInfo fileInfo(m_DirCorrespondingToSigsFile.absolutePath() + QDir::separator() + nextFile.FilePath);
@@ -168,7 +169,7 @@ void WatchSigsFileAndPostChangesToUsenet::postToUsenet(const RecursiveCustomDeta
     else if(fileInfo.size() > 0)
     {
         //post as single file with sig attachment
-        beginPostingToUsenetAfterBase64encoding(fileInfo, nextFile.GpgSignature);
+        beginPostingToUsenetAfterBase64encoding(fileInfo, generateRandomAlphanumericBytes(WatchSigsFileAndPostChangesToUsenet_POST_SUBJECT_MAXLEN), nextFile.GpgSignature);
         return;
     }
     else //file size < 1
@@ -181,14 +182,24 @@ void WatchSigsFileAndPostChangesToUsenet::postToUsenet(const RecursiveCustomDeta
 void WatchSigsFileAndPostChangesToUsenet::postNextVolumePartInDir_OrContinueOntoNextFullFileIfAllPartsOfCurrentFileHaveBeenPosted()
 {
     if(m_FileCurrentlyBeingPostedToUsenetVolumesTempDirIterator.isNull())
+    {
+        //this signifies the start of a new multi-part file post, so this is where we generate the subject to be shared among all file parts
+        QDir fileCounterHackDir(m_FileCurrentlyBeingPostedToUsenetVolumesTempDir_OrNullIfFileCurrentlyBeingPostedDidntNeedToBeSplit->path());
+        QStringList fileCounterHackFiles = fileCounterHackDir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
+        m_NumPartsInCurrentSplitUpload = fileCounterHackFiles.size()-1; //minus one to account for the sig file lol hack
+        m_CurrentPartInSplitUpload = 1;
+        m_SplitPartSubjectPrefix = generateRandomAlphanumericBytes(WatchSigsFileAndPostChangesToUsenet_POST_SUBJECT_MAXLEN);
+
         m_FileCurrentlyBeingPostedToUsenetVolumesTempDirIterator.reset(new QDirIterator(m_FileCurrentlyBeingPostedToUsenetVolumesTempDir_OrNullIfFileCurrentlyBeingPostedDidntNeedToBeSplit->path(), (QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden)));
+    }
     while(m_FileCurrentlyBeingPostedToUsenetVolumesTempDirIterator->hasNext())
     {
         m_FileCurrentlyBeingPostedToUsenetVolumesTempDirIterator->next();
         const QFileInfo &currentFileInfo = m_FileCurrentlyBeingPostedToUsenetVolumesTempDirIterator->fileInfo();
         if(!currentFileInfo.isFile() || currentFileInfo.suffix().toLower() == "asc" /*TODOoptional: hack that this asc check is here*/)
             continue;
-        beginPostingToUsenetAfterBase64encoding(currentFileInfo, QString(), QString("application/x-7z-compressed"));
+        QByteArray partSubject = (m_SplitPartSubjectPrefix + " (" + QString::number(m_CurrentPartInSplitUpload).toLatin1() + "/" + QString::number(m_NumPartsInCurrentSplitUpload).toLatin1() + ")");
+        beginPostingToUsenetAfterBase64encoding(currentFileInfo, partSubject, QString("application/x-7z-compressed"));
         return;
     }
     //done with all this file's parts
@@ -197,7 +208,7 @@ void WatchSigsFileAndPostChangesToUsenet::postNextVolumePartInDir_OrContinueOnto
     //and then continue onto the next ACTUAL file
     handleFullFilePostedToUsenet();
 }
-void WatchSigsFileAndPostChangesToUsenet::beginPostingToUsenetAfterBase64encoding(const QFileInfo &fileInfo, const QString &gpgSignature_OrEmptyStringIfNotToAttachOne, const QString &mimeType_OrEmptyStringIfToFigureItOut) //TODOoptional: when bored on rainy day, post all the MyBrain-PublicFiles.tc files individually
+void WatchSigsFileAndPostChangesToUsenet::beginPostingToUsenetAfterBase64encoding(const QFileInfo &fileInfo, const QByteArray &subject, const QString &gpgSignature_OrEmptyStringIfNotToAttachOne, const QString &mimeType_OrEmptyStringIfToFigureItOut) //TODOoptional: when bored on rainy day, post all the MyBrain-PublicFiles.tc files individually
 {
     const QString &absoluteFilePath = fileInfo.absoluteFilePath();
     QFile file(absoluteFilePath);
@@ -229,6 +240,7 @@ void WatchSigsFileAndPostChangesToUsenet::beginPostingToUsenetAfterBase64encodin
         mime = m_MimeDatabase.mimeTypeForFile(fileInfo).name().toLatin1();
 
     UsenetPostDetails postDetails;
+    postDetails.Subject = subject;
     postDetails.Boundary = boundary;
     postDetails.Mime = mime;
     postDetails.FileNameOnly = fileNameOnly;
@@ -290,7 +302,7 @@ void WatchSigsFileAndPostChangesToUsenet::generateMessageIdAndPostToUsenet()
                     "From: " + generateRandomAlphanumericBytes(15) + " <" + generateRandomAlphanumericBytes(15) + "@" + generateRandomAlphanumericBytes(25) + ".com>\n"
                     "Newsgroups: alt.binaries.boneless\n"
                     //"Subject: d3fault.net/binary/" + nextFile.FilePath.toLatin1() + "\n"
-                    "Subject: " + generateRandomAlphanumericBytes(32) + "\n" //TODOmb: use the same subject for all of a split file's parts
+                    "Subject: " + postDetails.Subject + "\n" //TODOmb: use the same subject for all of a split file's parts
                     "Message-ID: " + postDetails.MessageId + "\n"
                     //"Organization: d3fault\n"
                     "Organization: " + generateRandomAlphanumericBytes(20) + "\n"
@@ -403,7 +415,7 @@ void WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFileAndPostChangesToU
     if(!copyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile.isEmpty())
     {
         //verify it's existence and read it in. for the single part posts, we need a copy in memory. but for the multi-part posts, we need the filename to shove it in the 7z archive
-        QFileInfo copyrightAttachmentFileInfo(copyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile); //TODOreq: make sure the target file being put in the 7z doesn't have a filename conflict with "copyright.txt" (rare but could happen)
+        QFileInfo copyrightAttachmentFileInfo(copyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile); //TO DOnereq: make sure the target file being put in the 7z doesn't have a filename conflict with "copyright.txt" (rare but could happen)
         m_CopyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile = copyrightAttachmentFileInfo.canonicalFilePath(); //we want to give 7zip something simple to work with
         if(!copyrightAttachmentFileInfo.isFile())
             EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("copyright attachment either doesn't exist or isn't a file: " + copyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile)

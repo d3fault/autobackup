@@ -18,6 +18,7 @@
 
 struct UsenetPostDetails //POD
 {
+    QByteArray Subject;
     QByteArray Boundary;
     QByteArray MessageId;
     QByteArray Mime;
@@ -68,6 +69,9 @@ private:
     QString m_UsenetServer;
     QString m_CopyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile;
     QByteArray m_CopyrightAttachmentContents_OrEmptyIfNotToAttachOne;
+    int m_NumPartsInCurrentSplitUpload;
+    int m_CurrentPartInSplitUpload;
+    QByteArray m_SplitPartSubjectPrefix;
     QFileSystemWatcher *m_SigsFileWatcher;
     QDir m_DirCorrespondingToSigsFile;
     QScopedPointer<QSettings> m_AlreadyPostedFiles;
@@ -88,7 +92,7 @@ private:
     void postAnEnqueuedFileIfNotAlreadyPostingOne_OrQuitIfCleanQuitRequested();
     void postToUsenet(const RecursiveCustomDetachedSignaturesFileMeta &nextFile);
     void postNextVolumePartInDir_OrContinueOntoNextFullFileIfAllPartsOfCurrentFileHaveBeenPosted();
-    void beginPostingToUsenetAfterBase64encoding(const QFileInfo &fileInfo, const QString &gpgSignature_OrEmptyStringIfNotToAttachOne = QString()/* when we split a file into parts, we put the sig _IN_ the archive, so we don't need to attach the sig [to each part] */, const QString &mimeType_OrEmptyStringIfToFigureItOut = QString());
+    void beginPostingToUsenetAfterBase64encoding(const QFileInfo &fileInfo, const QByteArray &subject, const QString &gpgSignature_OrEmptyStringIfNotToAttachOne = QString()/* when we split a file into parts, we put the sig _IN_ the archive, so we don't need to attach the sig [to each part] */, const QString &mimeType_OrEmptyStringIfToFigureItOut = QString());
     QByteArray wrap(const QByteArray &toWrap, int wrapAt);
     QByteArray generateRandomAlphanumericBytes(int maxBytesToGenerate, int minBytesToGenerate = 10);
     void handleFullFilePostedToUsenet();
