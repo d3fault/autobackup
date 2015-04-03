@@ -199,6 +199,7 @@ void WatchSigsFileAndPostChangesToUsenet::postNextVolumePartInDir_OrContinueOnto
         if(!currentFileInfo.isFile() || currentFileInfo.suffix().toLower() == "asc" /*TODOoptional: hack that this asc check is here*/)
             continue;
         QByteArray partSubject = (m_SplitPartSubjectPrefix + " (" + QString::number(m_CurrentPartInSplitUpload).toLatin1() + "/" + QString::number(m_NumPartsInCurrentSplitUpload).toLatin1() + ")");
+        ++m_CurrentPartInSplitUpload;
         beginPostingToUsenetAfterBase64encoding(currentFileInfo, partSubject, QString("application/x-7z-compressed"));
         return;
     }
