@@ -391,7 +391,7 @@ void QuickDirtyAutoBackupHalperBusiness::start3secondShutdownTimerDispatchingUpd
     }
     emit dismounted(); //so the gui is up to date if they happen to hit cancel shutdown button
 }
-void QuickDirtyAutoBackupHalperBusiness::actuallyCommitToListOfMountedContainers(const QString &commitMsg, const QString &workingDirString, const QString &subDirOnMountPointToBareGitRepo, const QString &dirStructureFileNameString, QStringList *filenameIgnoreList, QStringList *filenameEndsWithIgnoreList, QStringList *dirnameIgnoreList, QStringList *dirnameEndsWithIgnoreList, bool pushEvenWhenNothingToCommit)
+void QuickDirtyAutoBackupHalperBusiness::actuallyCommitToListOfMountedContainers(const QString &commitMsg, const QString &workingDirString, const QString &subDirOnMountPointToBareGitRepo, const QString &dirStructureFileNameString, QStringList *filenameIgnoreList, QStringList *filenameEndsWithIgnoreList, QStringList *dirnameIgnoreList, QStringList *dirnameEndsWithIgnoreList, bool pushEvenWhenNothingToCommit, bool signCommit)
 {
     QString tempHackyEnsureEndInSlashString;
     tempHackyEnsureEndInSlashString.append(workingDirString);
@@ -459,6 +459,7 @@ nothing to commit (working directory clean)
         m_FileIgnoreListForTreeOnlyWithTheDirStructureFileIncluded->append(*filenameIgnoreList); //cat on the passed in list
         m_FileIgnoreListForTreeOnlyWithTheDirStructureFileIncluded->append(dirStructureFileNameString); //tell tree to ignore the file it generates. TODOoptional: perhaps a delete after the commit would be handy so we don't have to deal with renaming problems? if i rename the dir structure file, the old one will continue to exist (and will NOT be ignored, so it will be added to the renamed dir structure file. big whoop)
 
+        emit d("writing dir structure file...");
         m_EasyTree->generateTreeText(workingDirString, &dirStructureFile, EasyTree::DontCalculateMd5Sums, dirnameIgnoreList, m_FileIgnoreListForTreeOnlyWithTheDirStructureFileIncluded, filenameEndsWithIgnoreList, dirnameEndsWithIgnoreList, EasyTree::SimplifiedLastModifiedTimestamps);
 
         if(!dirStructureFile.flush())
@@ -505,7 +506,10 @@ nothing to commit (working directory clean)
 
         //git commit using commit message
         QStringList gitCommitArgs;
-        gitCommitArgs << "commit" << "-am" << commitMsg;
+        gitCommitArgs << "commit" << "-a";
+        if(signCommit)
+            gitCommitArgs << "-S";
+        gitCommitArgs << "-m" << commitMsg;
         m_Process->start(m_PathToGitBinary, gitCommitArgs, QIODevice::ReadOnly | QIODevice::Text);
         if(!m_Process->waitForStarted(999999999))
         {
@@ -1011,7 +1015,7 @@ void QuickDirtyAutoBackupHalperBusiness::dismount()
         return;
     }
 }
-void QuickDirtyAutoBackupHalperBusiness::commit(const QString &commitMsg, QList<QPair<QString, QString> > *tcContainerAndPasswordPathsFromGui, const QString &workingDirString, const QString &subDirOnMountPointToBareGitRepo, const QString &dirStructureFileNameString, QStringList *filenameIgnoreList, QStringList *filenameEndsWithIgnoreList, QStringList *dirnameIgnoreList, QStringList *dirnameEndsWithIgnoreList, bool pushEvenWhenNothingToCommit)
+void QuickDirtyAutoBackupHalperBusiness::commit(const QString &commitMsg, QList<QPair<QString, QString> > *tcContainerAndPasswordPathsFromGui, const QString &workingDirString, const QString &subDirOnMountPointToBareGitRepo, const QString &dirStructureFileNameString, QStringList *filenameIgnoreList, QStringList *filenameEndsWithIgnoreList, QStringList *dirnameIgnoreList, QStringList *dirnameEndsWithIgnoreList, bool pushEvenWhenNothingToCommit, bool signCommit)
 {
     //the entire commit should happen within this method. we should use QProcess's blocking functions
     if(!verifyAllAreMounted(tcContainerAndPasswordPathsFromGui))
@@ -1080,7 +1084,7 @@ void QuickDirtyAutoBackupHalperBusiness::commit(const QString &commitMsg, QList<
             //TODOoptinal: verify the existence of files that indicate it's a bare repo dir. HOOKS file etc. i can just get the entryList or do a m_FileInfo.setFile ... and then .exists()
         }
 
-        actuallyCommitToListOfMountedContainers(commitMsg, workingDirString, subDirOnMountPointToBareGitRepo, dirStructureFileNameString, filenameIgnoreList, filenameEndsWithIgnoreList, dirnameIgnoreList, dirnameEndsWithIgnoreList, pushEvenWhenNothingToCommit);
+        actuallyCommitToListOfMountedContainers(commitMsg, workingDirString, subDirOnMountPointToBareGitRepo, dirStructureFileNameString, filenameIgnoreList, filenameEndsWithIgnoreList, dirnameIgnoreList, dirnameEndsWithIgnoreList, pushEvenWhenNothingToCommit, signCommit);
         //TODOreq/___NOTE____: no code should come after the above line. it sometimes does 'return' in error cases after emitting brokenStateDetected. a better solution would be to check a bool but fuck it for now~
     }
     else

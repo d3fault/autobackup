@@ -26,7 +26,8 @@ WatchSigsFileAndPostChangesToUsenet::WatchSigsFileAndPostChangesToUsenet(QObject
     , m_PostnewsProcess(new QProcess(this))
     , m_RetryWithExponentialBackoffTimer(new QTimer(this))
 {
-    //qRegisterMetaType<MessageIdAndUnixTimestampInSecondsTypedef>("MessageIdAndUnixTimestampInSecondsTypedef");
+    qRegisterMetaType<UsenetPostTimestampInSecondsAndMessageIDs>();
+    qRegisterMetaTypeStreamOperators<UsenetPostTimestampInSecondsAndMessageIDs>();
 
     m_PostnewsProcess->setProcessChannelMode(QProcess::ForwardedOutputChannel);
     m_RetryWithExponentialBackoffTimer->setSingleShot(true);
@@ -112,7 +113,7 @@ void WatchSigsFileAndPostChangesToUsenet::postAnEnqueuedFileIfNotAlreadyPostingO
 //TODOoptional: parity. spent way too much time researching/considering yEnc+parity etc. fuck it, 7z it is
 void WatchSigsFileAndPostChangesToUsenet::postToUsenet(const RecursiveCustomDetachedSignaturesFileMeta &nextFile) //TODOreq: relative path isn't being posted anywhere, maybe I should just not care and keep that stuff to the .nzb only?
 {
-    m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.reset(new RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs(nextFile));
+    m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.reset(new CurrentFileBeingUploadedToUsenetInfo(nextFile, QDateTime::currentMSecsSinceEpoch()/1000)); //we just want to know roughly when we started uploading a file. if it's split, we want to know roughly when the first one was updated. doesn't need to be exact, and it's better to err on the side of "too early". this will eventually be used to determine when the files need to be re-uploaded to usenet (2000+ days). this doesn't account for compression/splitting time, fuck it :P
     QFileInfo fileInfo(m_DirCorrespondingToSigsFile.absolutePath() + QDir::separator() + nextFile.FilePath);
     const QString &absoluteFilePath = fileInfo.absoluteFilePath();
     if(!fileInfo.isReadable())
@@ -334,12 +335,10 @@ void WatchSigsFileAndPostChangesToUsenet::handleFullFilePostedToUsenet() //full 
     const RecursiveCustomDetachedSignaturesFileMeta &postedFile = m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->FileMeta;
     emit o("file posted to usenet: " + postedFile.FilePath);
     m_FilesEnqueuedForPostingToUsenet.remove(postedFile.FilePath);
-    //m_FilesAlreadyPostedOnUsenet_AndTheirMessageIDs.insert(postedFile.FilePath, m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->MessageIDs);
-    //QSettings alreadyPostedFilesSerializer(m_AlreadyPostedFiles, QSettings::IniFormat); //TODOblah: the only thing that should happen when the queue "goes empty" is that we call sync and check the status of the settings :)
-    m_AlreadyPostedFiles->setValue(postedFile.FilePath, m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->SuccessfullyPostedMessageIDs);
-    //QVariant messageIDsAndPostTimes;
-    //messageIDsAndPostTimes.setValue(m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->SuccessfullyPostedMessageIDsAndTheirEstimatedPostUnixTimestampInSeconds);
-    //m_AlreadyPostedFiles->setValue(postedFile.FilePath, messageIDsAndPostTimes);
+    //m_AlreadyPostedFiles->setValue(postedFile.FilePath, m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->SuccessfullyPostedMessageIDs);
+    QVariant postTimeAndMessageIDs_AsVariant;
+    postTimeAndMessageIDs_AsVariant.setValue(m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostTimestampInSeconds_And_SuccessfullyPostedMessageIDs);
+    m_AlreadyPostedFiles->setValue(postedFile.FilePath, postTimeAndMessageIDs_AsVariant);
     m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.reset();
     postAnEnqueuedFileIfNotAlreadyPostingOne_OrQuitIfCleanQuitRequested();
 }
@@ -409,11 +408,11 @@ void WatchSigsFileAndPostChangesToUsenet::printMessageIDsForRelativeFilePath(con
 {
     if(!m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.isNull())
     {
-        const RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs &currentPost = *m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet;
+        const CurrentFileBeingUploadedToUsenetInfo &currentPost = *m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet;
         if(currentPost.FileMeta.FilePath == relativeFilePath)
         {
             //well would you look at that, it's the one currently being posted!
-            emit o("'" + relativeFilePath + "' is currently being uploaded. The Message-ID currently being uploaded is " + currentPost.PostInProgressDetails.MessageId + " and all of it's previoiusly uploaded Message-IDs (for split files) are: " + currentPost.SuccessfullyPostedMessageIDs.join(","));
+            emit o("'" + relativeFilePath + "' is currently being uploaded. The Message-ID currently being uploaded is " + currentPost.PostInProgressDetails.MessageId + " and all of it's previoiusly uploaded Message-IDs (for split files) are: " + currentPost.PostTimestampInSeconds_And_SuccessfullyPostedMessageIDs.MessageIDs.join(","));
             return;
         }
     }
@@ -474,8 +473,7 @@ void WatchSigsFileAndPostChangesToUsenet::handlePostnewsProcessFinished(int exit
     }
     m_NumFailedPostAttemptsInArow = 0;
 
-    m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->SuccessfullyPostedMessageIDs.append(QString::fromLatin1(m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails.MessageId));
-    //m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->SuccessfullyPostedMessageIDsAndTheirEstimatedPostUnixTimestampInSeconds.append(qMakePair(m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails.MessageId, QDateTime::currentMSecsSinceEpoch() / 1000)); //Thought about just storing the date, but looking at what QSettings uses to serialize that, unixtime is actually smaller xD (I guess I could do unixtime for the DATE to get even smaller, but I'm too lazy to figure out the math for that)
+    m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostTimestampInSeconds_And_SuccessfullyPostedMessageIDs.MessageIDs.append(m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet->PostInProgressDetails.MessageId);
 
 
     if(!m_FileCurrentlyBeingPostedToUsenetVolumesTempDir_OrNullIfFileCurrentlyBeingPostedDidntNeedToBeSplit.isNull())
@@ -484,4 +482,16 @@ void WatchSigsFileAndPostChangesToUsenet::handlePostnewsProcessFinished(int exit
         return;
     }
     handleFullFilePostedToUsenet();
+}
+QDataStream &operator<<(QDataStream &out, const UsenetPostTimestampInSecondsAndMessageIDs &myObj)
+{
+    out << myObj.PostTimestampInSeconds;
+    out << myObj.MessageIDs;
+    return out;
+}
+QDataStream &operator>>(QDataStream &in, UsenetPostTimestampInSecondsAndMessageIDs &myObj)
+{
+    in >> myObj.PostTimestampInSeconds;
+    in >> myObj.MessageIDs;
+    return in;
 }

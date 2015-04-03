@@ -1,19 +1,47 @@
+General Considerations:
+-offline vs. online boxen (different packages?) -- maybe gather user input (and instruct user on how to update /lists/) for offline package management vs. online=download-directly-ez
+-pretty vs. no-pretty
+-no-X (implies no-pretty ofc)
+-bash vs. Qt (Qt is easier/better, but bash has less/no dependencies (maybe bootstrap with bash into Qt?)
+
 root:
 -install all packages
 -edit '/usr/share/gvfs/mounts/network.mount', setting AutoMount to false
 -edit '/etc/lightdm/lightdm.conf', setting autologin-user=d3fault and autologin-user-timeout=0 (username should be dynamic? maybe just an ls of /home and error out if more than one dir?)
--create 'update/upgrade' script (taking into account jessie/sid 'install' upgrades)
+-create 'update/upgrade' script (taking into account jessie/sid 'install' upgrades, perhaps also taking into account offline package management (hmm?))
 
 INSTALL user:
--run everything once to get default configs created in home directory? everything = ??? need list i guess
+-Install Qt SDK (mb Wt/ffmpeg also?)
+-run everything once to get default configs created in home directory <-- would be better if i didn't have to. however, some apps might check for the mere presence of a config file before filling it in with defaults. if I don't 'run everything once', the diff/patch has to contain those full default config files (ffff), not just the customizations to the defaults
 -apply the patch. ez
 
 CREATE user:
--run everything once to get default configs created in home directory? everything = ??? need list i guess
+-run everything once to get default configs created in home directory <-- before running the app for the first time, see if it already has config files (maybe apt made them), in which case the "INSTALL user" section doesn't need to 'run that app' [to get the default config]
 -git add/commit home directory
--config everything (need list (because recreating the script))
+-config everything
 -git add/commit home directory again. the diff from the previous commit is what we want (and we discard everything from that first commit (useless))
 
-CREATE user config list:
+CREATE user config list (the INSTALL user run list will be derived from this list, but not every entry needs to be run once before the diff is applied):
+-All the non-qt-specific git configurations on "setting up gerrit" (no: commit template, sanity hook, etc). Maybe set global user/email and text editor to nano (fuck vim/emacs)
 -Power manager = all never. yes spin down hard disks
-
+-Clone /text/, or this already done before running the script? "the script" + git could be only two things needed on thumb drive during a format. If clone /text/, molest it too.
+-Backgrounds+Screensaver = Copy the ccPixabay from /binary/ to ~/temp/backgrounds and make .list file. (screensaver never auto), decay screensaver at slightly faster fps
+-Settings->Appearance->Xfce Dusk
+-Settings->Window Manager->Metabox
+-The Xfce panel at the bottom (should I start with 'one empty' or 'default'? I guess it doesn't matter as long as it's consistent. PERHAPS just write the file entirely instead of diffing it (special exception, or maybe that's how I should do all these configs)...). Also 26 pixels high (or whatever MouseMotionSexyFace has (they could both use same #define lel))
+-Settings->File Manager->Details View, no thumbs
+-.pro -> Qt Creator -> mousepad
+-GIMP->single window mode
+-Dia->Don't compress save files
+-Qt Creator custom style, word wrap, always save files before build, MAYBE Qt creator tabs instead of 5 spaces (because WHY!?!?)
+-Mousepad->word wrap
+-Ristretto->no thumbnails
+-Terminal->Scrollback=30,000 and no scroll on output (transparency maybe (perhaps a script-wide --pretty or --no-pretty (idk which to default to) that affects backgrounds/window-manager-tweaks-transparency/screensaver(black if --no-pretty))
+-Settings->Keyboard->Cursor, uncheck "show blinking"
+-Settings->Desktop->Icons (uncheck all)
+-Settings->Preferred Applications->Utilities->Thunar + Xfce Terminal
+-Iceweasel+extensions (online box has moar!): "/usr/bin/firefox -CreateProfile default" so "INSTALL user" doesn't have to run iceweasel to get default config. firefox.prefs.additions.txt has a lot of this, but it's not too hard to redo manually
+-KeepassX->BACKUPS GET YOU KILLED
+-Mixer->Master->100% Volume (this might be too dependent on soundcard (but diffing might account for that :-P))
+-Maybe xfce 'app button' = my giant grin face pic?
+-bmp/jpg/gif/png->Ristretto

@@ -59,6 +59,7 @@ private:
     QPushButton *m_ClearCommitMessageButton;
     QLineEdit *m_CommitMessageLineEdit;
     QCheckBox *m_PushEvenWhenNothingToCommitCheckbox;
+    QCheckBox *m_SignCommitCheckbox;
     QCheckBox *m_CommitIfNeededBeforeShuttingDownCheckbox;
     QPushButton *m_CommitAfterMountingIfNeededButton;
     QPushButton *m_ShutdownAfterDismountingIfNeededButton;
@@ -84,7 +85,7 @@ signals:
     void persistRequested(QList<QPair<QString,QString> > *deviceAndPasswordPaths);
     void mountRequested(QList<QPair<QString,QString> > *deviceAndPasswordPaths, bool mountAsReadOnly);
     //there is no dismountRequested, we are connected directly to the button's clicked() signal
-    void commitRequested(const QString &commitMsg, QList<QPair<QString,QString> > *deviceAndPasswordPaths, const QString &workingDirString, const QString &subDirOnMountPointToBareGitRepo, const QString &dirStructureFileNameString, QStringList *filenameIgnoreList, QStringList *filenameEndsWithIgnoreList, QStringList *dirnameIgnoreList, QStringList *dirnameEndsWithIgnoreList, bool pushEvenWhenNothingToCommit);
+    void commitRequested(const QString &commitMsg, QList<QPair<QString,QString> > *deviceAndPasswordPaths, const QString &workingDirString, const QString &subDirOnMountPointToBareGitRepo, const QString &dirStructureFileNameString, QStringList *filenameIgnoreList, QStringList *filenameEndsWithIgnoreList, QStringList *dirnameIgnoreList, QStringList *dirnameEndsWithIgnoreList, bool pushEvenWhenNothingToCommit, bool signCommit);
     void shutdownRequested();
     void cancelShutdownRequested();
 private slots:

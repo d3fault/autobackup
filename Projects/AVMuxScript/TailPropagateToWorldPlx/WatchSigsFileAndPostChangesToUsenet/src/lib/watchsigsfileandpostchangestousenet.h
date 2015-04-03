@@ -28,18 +28,30 @@ struct UsenetPostDetails //POD
     QByteArray GpgSigMaybe;
     QString AbsoluteFilePath;
 };
-//typedef QPair<QByteArray, qint64> MessageIdAndUnixTimestampInSecondsTypedef;
-struct RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs //POD
+struct UsenetPostTimestampInSecondsAndMessageIDs
 {
-    RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs(const RecursiveCustomDetachedSignaturesFileMeta &fileMeta)
+    UsenetPostTimestampInSecondsAndMessageIDs()
+    { }
+    UsenetPostTimestampInSecondsAndMessageIDs(qint64 postTimestampInSeconds)
+        : PostTimestampInSeconds(postTimestampInSeconds)
+    { }
+    qint64 PostTimestampInSeconds;
+    QByteArrayList MessageIDs;
+};
+Q_DECLARE_METATYPE(UsenetPostTimestampInSecondsAndMessageIDs)
+QDataStream &operator<<(QDataStream &out, const UsenetPostTimestampInSecondsAndMessageIDs &myObj);
+QDataStream &operator>>(QDataStream &in, UsenetPostTimestampInSecondsAndMessageIDs &myObj);
+struct CurrentFileBeingUploadedToUsenetInfo //POD
+{
+    CurrentFileBeingUploadedToUsenetInfo(const RecursiveCustomDetachedSignaturesFileMeta &fileMeta, qint64 postTimestampInSeconds)
         : FileMeta(fileMeta)
+        , PostTimestampInSeconds_And_SuccessfullyPostedMessageIDs(postTimestampInSeconds)
     { }
     RecursiveCustomDetachedSignaturesFileMeta FileMeta;
-    QStringList SuccessfullyPostedMessageIDs;
-    //QList<MessageIdAndUnixTimestampInSecondsTypedef> SuccessfullyPostedMessageIDsAndTheirEstimatedPostUnixTimestampInSeconds;
+    //QStringList SuccessfullyPostedMessageIDs;
+    UsenetPostTimestampInSecondsAndMessageIDs PostTimestampInSeconds_And_SuccessfullyPostedMessageIDs;
     UsenetPostDetails PostInProgressDetails;
 };
-//Q_DECLARE_METATYPE(MessageIdAndUnixTimestampInSecondsTypedef)
 
 class QTimer;
 
@@ -58,7 +70,7 @@ private:
     QScopedPointer<QSettings> m_AlreadyPostedFiles;
     RecursiveCustomDetachedSignatures *m_RecursiveCustomDetachedSignatures;
     QHash<QString /* relative file path*/, RecursiveCustomDetachedSignaturesFileMeta> m_FilesEnqueuedForPostingToUsenet;
-    QScopedPointer<RecursiveCustomDetachedSignaturesFileMetaAndListOfMessageIDs> m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet;
+    QScopedPointer<CurrentFileBeingUploadedToUsenetInfo> m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet;
     QScopedPointer<QTemporaryDir> m_FileCurrentlyBeingPostedToUsenetVolumesTempDir_OrNullIfFileCurrentlyBeingPostedDidntNeedToBeSplit;
     QScopedPointer<QDirIterator> m_FileCurrentlyBeingPostedToUsenetVolumesTempDirIterator;
     QMimeDatabase m_MimeDatabase;

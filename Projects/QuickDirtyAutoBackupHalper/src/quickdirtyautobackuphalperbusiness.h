@@ -76,7 +76,7 @@ private:
     bool verifyAllAreMounted(QList<QPair<QString,QString> > *listToVerify);
     void dismountEverythingRegardlessOfItBeingMineOrNot();
     void start3secondShutdownTimerDispatchingUpdatesAtEachSecondInterval();
-    void actuallyCommitToListOfMountedContainers(const QString &commitMsg, const QString &workingDirString, const QString &subDirOnMountPointToBareGitRepo, const QString &dirStructureFileNameString, QStringList *filenameIgnoreList, QStringList *filenameEndsWithIgnoreList, QStringList *dirnameIgnoreList, QStringList *dirnameEndsWithIgnoreList, bool pushEvenWhenNothingToCommit);
+    void actuallyCommitToListOfMountedContainers(const QString &commitMsg, const QString &workingDirString, const QString &subDirOnMountPointToBareGitRepo, const QString &dirStructureFileNameString, QStringList *filenameIgnoreList, QStringList *filenameEndsWithIgnoreList, QStringList *dirnameIgnoreList, QStringList *dirnameEndsWithIgnoreList, bool pushEvenWhenNothingToCommit, bool signCommit);
     void actualShutdown();
     bool m_StillUsingOurOwnAllocatedInternalList;
     QFileInfo m_FileInfo;
@@ -103,7 +103,7 @@ public slots:
     void persist(QList<QPair<QString,QString> > *tcContainerAndPasswordPathsToPersist);
     void mount(QList<QPair<QString,QString> > *tcContainerAndPasswordPathsToMount, bool mountAsReadOnly);
     void dismount();
-    void commit(const QString &commitMsg, QList<QPair<QString,QString> > *tcContainerAndPasswordPathsFromGui, const QString &workingDirString, const QString &subDirOnMountPointToBareGitRepo, const QString &dirStructureFileNameString, QStringList *filenameIgnoreList, QStringList *filenameEndsWithIgnoreList, QStringList *dirnameIgnoreList, QStringList *dirnameEndsWithIgnoreList, bool pushEvenWhenNothingToCommit);
+    void commit(const QString &commitMsg, QList<QPair<QString,QString> > *tcContainerAndPasswordPathsFromGui, const QString &workingDirString, const QString &subDirOnMountPointToBareGitRepo, const QString &dirStructureFileNameString, QStringList *filenameIgnoreList, QStringList *filenameEndsWithIgnoreList, QStringList *dirnameIgnoreList, QStringList *dirnameEndsWithIgnoreList, bool pushEvenWhenNothingToCommit, bool signCommit);
     void shutdown();
     void cancelShutdown();
 private slots:

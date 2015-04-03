@@ -17,3 +17,4 @@ Hottee: "working dir(s)", on start first check currentDateTime >= 2015, then cre
 num unique visitors (wt unique id?) per day
 headers comments/etc -> source, update copyright.txt
 night script has 'delete sources' commented out, uncomment after a few weeks of testing
+os cap dupes on server (use timeline?)

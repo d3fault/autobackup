@@ -128,7 +128,7 @@ void mainWidget::connectToBusiness()
     connect(this, SIGNAL(persistRequested(QList<QPair<QString,QString> >*)), m_Business, SLOT(persist(QList<QPair<QString,QString> >*)));
     connect(this, SIGNAL(mountRequested(QList<QPair<QString,QString> >*,bool)), m_Business, SLOT(mount(QList<QPair<QString,QString> >*,bool)));
     connect(m_DismountTcRowsButton, SIGNAL(clicked()), m_Business, SLOT(dismount()));
-    connect(this, SIGNAL(commitRequested(QString,QList<QPair<QString,QString> >*,QString,QString,QString,QStringList*,QStringList*,QStringList*,QStringList*,bool)), m_Business, SLOT(commit(QString,QList<QPair<QString,QString> >*,QString,QString,QString,QStringList*,QStringList*,QStringList*,QStringList*,bool)));
+    connect(this, SIGNAL(commitRequested(QString,QList<QPair<QString,QString> >*,QString,QString,QString,QStringList*,QStringList*,QStringList*,QStringList*,bool,bool)), m_Business, SLOT(commit(QString,QList<QPair<QString,QString> >*,QString,QString,QString,QStringList*,QStringList*,QStringList*,QStringList*,bool,bool)));
     connect(this, SIGNAL(shutdownRequested()), m_Business, SLOT(shutdown()));
     connect(this, SIGNAL(cancelShutdownRequested()), m_Business, SLOT(cancelShutdown()));
 
@@ -163,6 +163,7 @@ void mainWidget::setupGui()
 
     m_PushEvenWhenNothingToCommitCheckbox = new QCheckBox("git push even when nothing to commit");
     m_PushEvenWhenNothingToCommitCheckbox->setChecked(true);
+    m_SignCommitCheckbox = new QCheckBox("Sign commit");
     m_CommitIfNeededBeforeShuttingDownCheckbox = new QCheckBox("Commit if needed before shutting down"); //before dismounting is implied. we get to see the results of the git commit/push in our debug output with 3 seconds of reading time + cancelling the shutdown and fixing the commit/push'ing if needed
     m_CommitIfNeededBeforeShuttingDownCheckbox->setChecked(true);
 
@@ -214,6 +215,7 @@ void mainWidget::setupGui()
 
     QHBoxLayout *autoCommitAndPushControlsHBox = new QHBoxLayout();
     autoCommitAndPushControlsHBox->addWidget(m_PushEvenWhenNothingToCommitCheckbox);
+    autoCommitAndPushControlsHBox->addWidget(m_SignCommitCheckbox);
     autoCommitAndPushControlsHBox->addWidget(m_CommitIfNeededBeforeShuttingDownCheckbox);
     m_Layout->addLayout(autoCommitAndPushControlsHBox);
 
@@ -272,6 +274,7 @@ void mainWidget::handleReadOnlyCheckToggled(bool checked)
     m_DirnameEndsWithIgnoreLineEdit->setEnabled(!checked);
     m_WorkingDirectoryLineEdit->setEnabled(!checked);
     m_PushToGitIgnoreButton->setEnabled(!checked);
+    m_SignCommitCheckbox->setEnabled(!checked);
     m_PushEvenWhenNothingToCommitCheckbox->setEnabled(!checked);
     m_CommitIfNeededBeforeShuttingDownCheckbox->setEnabled(!checked);
     //TOD ONEreq: disable the 'commit if necessary' m_CommitIfNeededBeforeShuttingDownCheckbox next to shutdown when read-only. it might still be checked though so we need to make sure we emit the m_CommitIfNeededBeforeShuttingDownCheckbox::isChecked && m_CommitIfNeededBeforeShuttingDownCheckbox::isEnabled value... (overriding the isChecked) before sending a signal to backend. or i could do m_CommitIfNeededBeforeShuttingDownCheckbox::isChecked && !ReadOnly::isChecked, but it's the same since we setEnabled to true whenever checked changes. still, best not to rely on gui enable/disabled state and better to rely on checked state of read only. just seems proper'er
@@ -403,7 +406,7 @@ void mainWidget::handleCommitButtonClicked()
         commitMessage.replace(m_DateTimeSpecialString, QDateTime::currentDateTime().toString()); //TODOreq: would be better if I did this one line before calling commitProcess.start()... because I noticed (and lol'd) that there's a few seconds (and growing) difference between the special string in commit message and the git-specific one (but who gives a shit). On the other hand, it makes for a funnily interesting statistic (and when I upgrade computers, it should shrink/regrow etc :-P) (TODOreq: graph this before death)
     }
 
-    emit commitRequested(commitMessage, m_DeviceAndPasswordPathsToBePopulatedJustBeforeMountRequestedOrPersistRequestedOrCommit, workingDirString, mountedSubDirToBareRepoString, dirStructureFileNameString, m_FilenameIgnoreList, m_FilenameEndsWithIgnoreList, m_DirnameIgnoreList, m_DirnameEndsWithIgnoreList, m_PushEvenWhenNothingToCommitCheckbox->isChecked()); //an emit instead of invokeMethod because of the existene of "connectToBusiness". it's just proper'er (one less error message potentially)
+    emit commitRequested(commitMessage, m_DeviceAndPasswordPathsToBePopulatedJustBeforeMountRequestedOrPersistRequestedOrCommit, workingDirString, mountedSubDirToBareRepoString, dirStructureFileNameString, m_FilenameIgnoreList, m_FilenameEndsWithIgnoreList, m_DirnameIgnoreList, m_DirnameEndsWithIgnoreList, m_PushEvenWhenNothingToCommitCheckbox->isChecked(), m_SignCommitCheckbox->isChecked()); //an emit instead of invokeMethod because of the existene of "connectToBusiness". it's just proper'er (one less error message potentially)
 }
 void mainWidget::handleShutdownButtonClicked()
 {
