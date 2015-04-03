@@ -109,7 +109,7 @@ void WatchSigsFileAndPostChangesToUsenet::postAnEnqueuedFileIfNotAlreadyPostingO
     const RecursiveCustomDetachedSignaturesFileMeta &nextFile = *(m_FilesEnqueuedForPostingToUsenet.begin());
     postToUsenet(nextFile);
 }
-//TODOoptimization: compress next file while current file is posting
+//TODOoptimization: compress next file while current file is posting. or even post multiple files simultaneously, since my newsgroup server gives me like 20 or 50 connections. i was KISS at first obviously
 //TODOoptional: parity. spent way too much time researching/considering yEnc+parity etc. fuck it, 7z it is
 void WatchSigsFileAndPostChangesToUsenet::postToUsenet(const RecursiveCustomDetachedSignaturesFileMeta &nextFile) //TODOreq: relative path isn't being posted anywhere, maybe I should just not care and keep that stuff to the .nzb only?
 {
@@ -130,7 +130,19 @@ void WatchSigsFileAndPostChangesToUsenet::postToUsenet(const RecursiveCustomDeta
         sevenZipProcess.setProcessChannelMode(QProcess::ForwardedChannels);
         QStringList sevenZipArgs;
         QString sevenZipVolumeBaseFilePath = sevenZipOutDir_WithSlashAppended + fileNameOnly + ".7z";
+        sevenZipArgs << "a" << sevenZipVolumeBaseFilePath << absoluteFilePath;
         QString sevenZipVolumeSizeArg = "-v" + QString::number(WatchSigsFileAndPostChangesToUsenet_MAX_SINGLE_PART_SIZE_ANDOR_SPLIT_FILE_VOLUME_SIZE);
+        if(!m_CopyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile.isEmpty())
+        {
+            if(m_CopyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile.endsWith("/" + fileNameOnly))
+            {
+                //TODOoptional: filename conflict! for now just omit the copyright attachment lel
+            }
+            else
+            {
+                sevenZipArgs << m_CopyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile;
+            }
+        }
         QString sigFilePath = sevenZipOutDir_WithSlashAppended + fileNameOnly + ".asc";
         QFile sigFile(sigFilePath); //7-zip can read from stdin, but only 1 file blah, so I have to write this to disk xD. TO DOnereq: don't 'post' this sig file when iterating the sevenZipOutputDir (since it's already IN the archive)
         if(!sigFile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -141,7 +153,7 @@ void WatchSigsFileAndPostChangesToUsenet::postToUsenet(const RecursiveCustomDeta
         if(!sigFile.flush())
             EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("failed to flush sig file written to disk for 7-zipping alongside: " + nextFile.FilePath)
         sigFile.close(); //it'll get cleaned up when the temp dir is
-        sevenZipArgs << "a" << sevenZipVolumeBaseFilePath << absoluteFilePath << sigFilePath << sevenZipVolumeSizeArg << "-t7z" << "-m0=lzma" << "-mx=1";
+        sevenZipArgs << sigFilePath << sevenZipVolumeSizeArg << "-t7z" << "-m0=lzma" << "-mx=1";
         sevenZipProcess.start(WatchSigsFileAndPostChangesToUsenet_SEVENZIP_BIN, sevenZipArgs, QIODevice::ReadOnly);
         if(!sevenZipProcess.waitForStarted(-1))
             EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("7-zip failed to start with args: " + sevenZipArgs.join(", "))
@@ -206,7 +218,7 @@ void WatchSigsFileAndPostChangesToUsenet::beginPostingToUsenetAfterBase64encodin
     QByteArray boundary = "-";
     QByteArray gpgSigBA = gpgSignature_OrEmptyStringIfNotToAttachOne.toLatin1();
 
-    while(body.contains(boundary) || ((!gpgSignature_OrEmptyStringIfNotToAttachOne.isEmpty()) && gpgSigBA.contains(boundary)))
+    while(body.contains(boundary) || gpgSigBA.contains(boundary) || m_CopyrightAttachmentContents_OrEmptyIfNotToAttachOne.contains(boundary))
         boundary = generateRandomAlphanumericBytes(15, 2);
 
     QByteArray fileNameOnly = fileInfo.fileName().toLatin1();
@@ -301,6 +313,19 @@ void WatchSigsFileAndPostChangesToUsenet::generateMessageIdAndPostToUsenet()
                     "--" + postDetails.Boundary + "\n");
     if(postDetails.AttachGpgSig)
     {
+        if(!m_CopyrightAttachmentContents_OrEmptyIfNotToAttachOne.isEmpty()) //hack, we're relying on AttachGpgSig to tell us whether or not we're in multi-part (7z) or single-part mode (the copyright text is in the 7z if in multi-part)
+        {
+            post.append(
+                        "Content-Type: text/plain\n"
+                        "Content-Disposition: attachment;\n" //thought long and hard about whether or not to include this with every post (but I _WANT_ to let people know they have the right to copy (conditions apply see my anus for details))!! and when I realized it'd be an attachment and hidden from view most of the time, I decided yesh :-P. Also decided to un-fudge the From field since it'd be easy af to filter out based on this copyright (although hmm header vs body (moar bandwidth = moar cost = less likely to be filtered out (yep nvm re-fudging)) hmmm)
+                            "\tfilename=copyright.txt\n"
+                        "\n"
+                        + m_CopyrightAttachmentContents_OrEmptyIfNotToAttachOne + "\n"
+                        "\n"
+                        "--" + postDetails.Boundary + "\n"
+                       );
+        }
+
         post.append(
                     "Content-Type: application/pgp-signature\n" //TODOoptional: micalg=???
                     "Content-Disposition: attachment;\n"
@@ -360,13 +385,13 @@ bool WatchSigsFileAndPostChangesToUsenet::checkAlreadyPostedFilesFileForError()
     return true;
 }
 //TODOoptional: when recursive gpg signer makes the file, it's sorted by the filepath. I have no need to sort it like that (but could easily), so I won't (THINK OF THE CLOCK CYCLES!!)
-void WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFileAndPostChangesToUsenet(const QString &sigsFilePathToWatch, const QString &dirCorrespondingToSigsFile/*, const QString &dataDirForKeepingTrackOfAlreadyPostedFiles*/, const QString &authUser, const QString &authPass, const QString &portString, const QString &server)
+void WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFileAndPostChangesToUsenet(const QString &sigsFilePathToWatch, const QString &dirCorrespondingToSigsFile/*, const QString &dataDirForKeepingTrackOfAlreadyPostedFiles*/, const QString &authUser, const QString &authPass, const QString &portString, const QString &server, const QString &copyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile)
 {
     QDir dirCorrespondingToSigsFileInstance(dirCorrespondingToSigsFile); //I know QDir has implicit conversion from QString, but I don't think the old connect syntax can do implicit conversion. The new connect syntax can, but then I lose overloads I think :-/, maybe wrong here fuckit
     //QDir dataDirForKeepingTrackOfAlreadyPostedFilesInstance(dataDirForKeepingTrackOfAlreadyPostedFiles);
-    startWatchingSigsFileAndPostChangesToUsenet(sigsFilePathToWatch, dirCorrespondingToSigsFileInstance/*, dataDirForKeepingTrackOfAlreadyPostedFilesInstance*/, authUser, authPass, portString, server);
+    startWatchingSigsFileAndPostChangesToUsenet(sigsFilePathToWatch, dirCorrespondingToSigsFileInstance/*, dataDirForKeepingTrackOfAlreadyPostedFilesInstance*/, authUser, authPass, portString, server, copyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile);
 }
-void WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFileAndPostChangesToUsenet(const QString &sigsFilePathToWatch /*this was a QIODevice, but QFsw can't watch an iodevice (readyRead() misleads an amateur :-P)*/, const QDir &dirCorrespondingToSigsFile/*, const QDir &dataDirForKeepingTrackOfAlreadyPostedFiles*/, const QString &authUser, const QString &authPass, const QString &portString, const QString &server)
+void WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFileAndPostChangesToUsenet(const QString &sigsFilePathToWatch /*this was a QIODevice, but QFsw can't watch an iodevice (readyRead() misleads an amateur :-P)*/, const QDir &dirCorrespondingToSigsFile/*, const QDir &dataDirForKeepingTrackOfAlreadyPostedFiles*/, const QString &authUser, const QString &authPass, const QString &portString, const QString &server, const QString &copyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile)
 {
     m_UsenetAuthUsername = authUser;
     m_UsenetAuthPassword = authPass;
@@ -374,6 +399,21 @@ void WatchSigsFileAndPostChangesToUsenet::startWatchingSigsFileAndPostChangesToU
     m_UsenetServer = server;
     m_CleanQuitRequested = false;
     m_NumFailedPostAttemptsInArow = 0; //quint64 so we can retry with exponential backoff until the end of time! aww nvm QTimer overflows long before that :(
+    m_CopyrightAttachmentContents_OrEmptyIfNotToAttachOne.clear();
+    if(!copyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile.isEmpty())
+    {
+        //verify it's existence and read it in. for the single part posts, we need a copy in memory. but for the multi-part posts, we need the filename to shove it in the 7z archive
+        QFileInfo copyrightAttachmentFileInfo(copyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile); //TODOreq: make sure the target file being put in the 7z doesn't have a filename conflict with "copyright.txt" (rare but could happen)
+        m_CopyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile = copyrightAttachmentFileInfo.canonicalFilePath(); //we want to give 7zip something simple to work with
+        if(!copyrightAttachmentFileInfo.isFile())
+            EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("copyright attachment either doesn't exist or isn't a file: " + copyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile)
+        QFile copyrightAttachmentFile(copyrightAttachmentFileInfo.absoluteFilePath());
+        if(!copyrightAttachmentFile.open(QIODevice::ReadOnly))
+            EEEEEEEE_WatchSigsFileAndPostChangesToUsenet("failed to open copyright attachment file for reading: " + copyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile)
+        m_CopyrightAttachmentContents_OrEmptyIfNotToAttachOne = copyrightAttachmentFile.readAll();
+    }
+    else
+        m_CopyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile.clear();
 
     m_SigsFileWatcher->removePaths(m_SigsFileWatcher->files());
     if(!startWatchingSigsFileIfNotAlreadyWatching(sigsFilePathToWatch))

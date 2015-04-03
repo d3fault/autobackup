@@ -66,6 +66,8 @@ private:
     QString m_UsenetAuthPassword;
     QString m_PortString;
     QString m_UsenetServer;
+    QString m_CopyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile;
+    QByteArray m_CopyrightAttachmentContents_OrEmptyIfNotToAttachOne;
     QFileSystemWatcher *m_SigsFileWatcher;
     QDir m_DirCorrespondingToSigsFile;
     QScopedPointer<QSettings> m_AlreadyPostedFiles;
@@ -99,8 +101,8 @@ signals:
     void e(const QString &msg);
     void doneWatchingSigsFileAndPostingChangesToUsenet(bool success);
 public slots:
-    void startWatchingSigsFileAndPostChangesToUsenet(const QString &sigsFilePathToWatch, const QString &dirCorrespondingToSigsFile/*, const QString &dataDirForKeepingTrackOfAlreadyPostedFiles*/, const QString &authUser, const QString &authPass, const QString &portString, const QString &server);
-     void startWatchingSigsFileAndPostChangesToUsenet(const QString &sigsFilePathToWatch, const QDir &dirCorrespondingToSigsFile/*, const QDir &dataDirForKeepingTrackOfAlreadyPostedFiles*/, const QString &authUser, const QString &authPass, const QString &portString, const QString &server);
+    void startWatchingSigsFileAndPostChangesToUsenet(const QString &sigsFilePathToWatch, const QString &dirCorrespondingToSigsFile/*, const QString &dataDirForKeepingTrackOfAlreadyPostedFiles*/, const QString &authUser, const QString &authPass, const QString &portString, const QString &server, const QString &copyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile = QString());
+     void startWatchingSigsFileAndPostChangesToUsenet(const QString &sigsFilePathToWatch, const QDir &dirCorrespondingToSigsFile/*, const QDir &dataDirForKeepingTrackOfAlreadyPostedFiles*/, const QString &authUser, const QString &authPass, const QString &portString, const QString &server, const QString &copyrighAttachmentFilePath_OrEmptyStringIfNotToAttachAcopyrightFile = QString());
 public slots:
      void printMessageIDsForRelativeFilePath(const QString &relativeFilePath);
      void printMessageIdCurrentlyBeingPosted();

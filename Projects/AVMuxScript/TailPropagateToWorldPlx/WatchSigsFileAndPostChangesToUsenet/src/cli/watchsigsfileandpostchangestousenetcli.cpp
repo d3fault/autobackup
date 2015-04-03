@@ -12,10 +12,11 @@
 #define WatchSigsFileAndPostChangesToUsenetCli_PASS_ARG "--authpass"
 #define WatchSigsFileAndPostChangesToUsenetCli_PORT_ARG "--port"
 #define WatchSigsFileAndPostChangesToUsenetCli_SERVER_ARG "--server"
+#define WatchSigsFileAndPostChangesToUsenetCli_COPYRIGHT_ATTACHMENT_FILEPATH_ARG "--copyright-attachment"
 
 #define EEEEEEEEEEE_WatchSigsFileAndPostChangesToUsenetCli { cliUsage(); emit exitRequested(1); return; }
 
-#define MANDATORY_ARG_WatchSigsFileAndPostChangesToUsenetCli(stringVariableName, cliArg) \
+#define ARG_WatchSigsFileAndPostChangesToUsenetCli(stringVariableName, cliArg, argIsMandatory) \
 QString stringVariableName; \
 int stringVariableName##Index = arguments.indexOf(cliArg); \
 if(stringVariableName##Index > -1) \
@@ -25,8 +26,15 @@ if(stringVariableName##Index > -1) \
         EEEEEEEEEEE_WatchSigsFileAndPostChangesToUsenetCli \
     stringVariableName = arguments.takeAt(stringVariableName##Index); \
 } \
-else \
+else if(argIsMandatory) \
     EEEEEEEEEEE_WatchSigsFileAndPostChangesToUsenetCli
+
+#define MANDATORY_ARG_WatchSigsFileAndPostChangesToUsenetCli(stringVariableName, cliArg) \
+ARG_WatchSigsFileAndPostChangesToUsenetCli(stringVariableName, cliArg, true)
+
+#define OPTIONAL_ARG_WatchSigsFileAndPostChangesToUsenetCli(stringVariableName, cliArg) \
+ARG_WatchSigsFileAndPostChangesToUsenetCli(stringVariableName, cliArg, false)
+
 
 WatchSigsFileAndPostChangesToUsenetCli::WatchSigsFileAndPostChangesToUsenetCli(QObject *parent)
     : QObject(parent)
@@ -45,6 +53,8 @@ WatchSigsFileAndPostChangesToUsenetCli::WatchSigsFileAndPostChangesToUsenetCli(Q
     MANDATORY_ARG_WatchSigsFileAndPostChangesToUsenetCli(authPass, WatchSigsFileAndPostChangesToUsenetCli_PASS_ARG)
     MANDATORY_ARG_WatchSigsFileAndPostChangesToUsenetCli(portString, WatchSigsFileAndPostChangesToUsenetCli_PORT_ARG)
     MANDATORY_ARG_WatchSigsFileAndPostChangesToUsenetCli(server, WatchSigsFileAndPostChangesToUsenetCli_SERVER_ARG)
+
+    OPTIONAL_ARG_WatchSigsFileAndPostChangesToUsenetCli(copyrighAttachmentFilePath, WatchSigsFileAndPostChangesToUsenetCli_COPYRIGHT_ATTACHMENT_FILEPATH_ARG)
 
     //TODOoptional: make sure port is a number (but we still want it as a string lol so fuck it)
     if(!arguments.empty())
@@ -65,7 +75,7 @@ WatchSigsFileAndPostChangesToUsenetCli::WatchSigsFileAndPostChangesToUsenetCli(Q
     connect(standardInputNotifier, SIGNAL(standardInputReceivedLine(QString)), this, SLOT(handleStandardInputReceivedLine(QString)));
 
 
-    QMetaObject::invokeMethod(watchSigsFileAndPostChangesToUsenet, "startWatchingSigsFileAndPostChangesToUsenet", Q_ARG(QString, sigsFilePathToWatch), Q_ARG(QString, dirCorrespondingToSigsFile)/*, Q_ARG(QString, dataDirForKeepingTrackOfAlreadyPostedFiles)*/, Q_ARG(QString, authUser), Q_ARG(QString, authPass), Q_ARG(QString, portString), Q_ARG(QString, server));
+    QMetaObject::invokeMethod(watchSigsFileAndPostChangesToUsenet, "startWatchingSigsFileAndPostChangesToUsenet", Q_ARG(QString, sigsFilePathToWatch), Q_ARG(QString, dirCorrespondingToSigsFile)/*, Q_ARG(QString, dataDirForKeepingTrackOfAlreadyPostedFiles)*/, Q_ARG(QString, authUser), Q_ARG(QString, authPass), Q_ARG(QString, portString), Q_ARG(QString, server), Q_ARG(QString, copyrighAttachmentFilePath));
 }
 void WatchSigsFileAndPostChangesToUsenetCli::cliUsage()
 {
