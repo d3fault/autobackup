@@ -8,6 +8,7 @@ root:
 -install all packages
 -edit '/usr/share/gvfs/mounts/network.mount', setting AutoMount to false
 -edit '/etc/lightdm/lightdm.conf', setting autologin-user=d3fault and autologin-user-timeout=0 (username should be dynamic? maybe just an ls of /home and error out if more than one dir?)
+-max number of open files
 -create 'update/upgrade' script (taking into account jessie/sid 'install' upgrades, perhaps also taking into account offline package management (hmm?))
 
 INSTALL user:
@@ -36,7 +37,7 @@ CREATE user config list (the INSTALL user run list will be derived from this lis
 -Qt Creator custom style, word wrap, always save files before build, MAYBE Qt creator tabs instead of 5 spaces (because WHY!?!?)
 -Mousepad->word wrap
 -Ristretto->no thumbnails
--Terminal->Scrollback=30,000 and no scroll on output (transparency maybe (perhaps a script-wide --pretty or --no-pretty (idk which to default to) that affects backgrounds/window-manager-tweaks-transparency/screensaver(black if --no-pretty))
+-Terminal->Scrollback=30,000 ; no scroll on output ; desktop = borderless terminal (transparency maybe (perhaps a script-wide --pretty or --no-pretty (idk which to default to) that affects backgrounds/window-manager-tweaks-transparency/screensaver(black if --no-pretty))
 -Settings->Keyboard->Cursor, uncheck "show blinking"
 -Settings->Desktop->Icons (uncheck all)
 -Settings->Preferred Applications->Utilities->Thunar + Xfce Terminal

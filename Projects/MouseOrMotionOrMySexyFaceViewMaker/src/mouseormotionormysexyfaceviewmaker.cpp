@@ -29,6 +29,7 @@ emit presentPixmapForViewingRequested(m_CurrentPixmapBeingPresented);
 
 //TODOreq: on the short term, the easiest way to get back to being able to cam my devbox/sexy-face is by modding this to save the "made view", via some cli arg or whatever. Not sure if I should mux the video file immediately or just save some PNGs and mux the video later (would be higher quality to mux LATER (not screencap my sexy face xD)). In any case, this solution has a "24 hour delay" involved, heh. But it still kinda relates to (and basically IS) that derived idea in the design folder... so doing this properly could take some time ffff
 //TODOreq: use the "blinking cursor" graphic only as dimensions, and a cli arg to specify what color to fill it in with. the blinking cursor is styled the same way as the text in qt creator. of course, if no cli arg for the cursor color is specified, we should use the color in the graphic (black, the default, atm)
+//^^I could also quite easily have two instances running, one on devbox and the other on online box, so I could finally cam online box actions. Just need to suck in the frames from the devbox and mux them all together (AGAIN, this is implicitly covered in the derived idea. guh, fingers vs. this (I guess I could do fingers for a little and THEN do this (except I want to cam creation of fingers (sounds like a familiar dependency that's cost me years of my life (*cough* Abc2whichHasntEarnedMeApenny *cough* (lel))))). Since I usually only use one box at a time (at least typing/mouse wise (sometimes compiling/etc on other machines), it works out nicely. My brain is NOT multi-core :(
 //TODOoptional: the mouseOrMotion code could additionally (or solely) be serialized to create a timeline of "doing something on OS" ranges, and I could use those ranges to cut out the duplicate-and-shittier-quality 'my sexy face-ONLY' segments (which do still have justification for being made in general, since that's how I 'live stream'... but the non-OS portions of those segments don't have any need to be stored permanently)
 MouseOrMotionOrMySexyFaceViewMaker::MouseOrMotionOrMySexyFaceViewMaker(QObject *parent)
     : QObject(parent)
@@ -39,7 +40,6 @@ MouseOrMotionOrMySexyFaceViewMaker::MouseOrMotionOrMySexyFaceViewMaker(QObject *
     , m_MousePixmapToDraw(":/mouseCursor.svg")
     , m_ThereWasMotionRecently(false)
     //, m_DrawMySexyFaceFullscreenAsSoonAsFramesAreRead(false)
-    , m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks(":/qtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.png")
     , m_HaveFrameOfMySexyFace(false)
     , m_ShowingMySexyFace(false) /*the worst default ever*/
     , m_TogglingMinimumsTimerIsStarted(false)
@@ -192,7 +192,7 @@ void MouseOrMotionOrMySexyFaceViewMaker::zoomInIfNeeded()
         m_CurrentPixmapBeingPresented = m_CurrentPixmapBeingPresented.scaled(m_ViewSize);
     }
 }
-void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int captureFps, int motionDetectionFps, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution, int optionalRequiredPrimaryScreenWidth_OrNegativeOneIfNotSupplied)
+void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int captureFps, int motionDetectionFps, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution, int optionalRequiredPrimaryScreenWidth_OrNegativeOneIfNotSupplied, const QString &qtBlinkingCursorColor_OrEmptyStringIfToLeaveBlack)
 {
     if(!m_Initialized)
     {
@@ -213,6 +213,20 @@ void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceVie
             emit e("primary screen resolution was not what was expected");
             emit quitRequested();
             return;
+        }
+    }
+
+    m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.load(":/qtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.png");
+    if(!qtBlinkingCursorColor_OrEmptyStringIfToLeaveBlack.isEmpty())
+    {
+        QColor newQtBlinkingCursorColor(qtBlinkingCursorColor_OrEmptyStringIfToLeaveBlack);
+        if(!newQtBlinkingCursorColor.isValid())
+        {
+            emit e("WARNING: Your specified color for the blinking Qt Creator cursor was invalid. Leaving at default of black. This will probably cause the Qt Creator blinking cursor to be detected as motion");
+        }
+        else
+        {
+            m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.fill(newQtBlinkingCursorColor);
         }
     }
 

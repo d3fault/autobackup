@@ -11,6 +11,8 @@
 #include "objectonthreadgroup.h"
 #endif
 
+#define MouseOrMotionOrMySexyFaceViewMakerGui_OVERRIDE_QT_BLINKING_CURSOR_COLOR_ARG "--qt-blinking-cursor-color"
+
 MouseOrMotionOrMySexyFaceViewMakerGui::MouseOrMotionOrMySexyFaceViewMakerGui(QObject *parent)
     : QObject(parent)
     , m_Gui(new MouseOrMotionOrMySexyFaceViewMakerWidget(m_ViewSize))
@@ -46,6 +48,22 @@ MouseOrMotionOrMySexyFaceViewMakerGui::MouseOrMotionOrMySexyFaceViewMakerGui(QOb
             handleQuitRequested();
             return;
         }
+    }
+
+    QString qtBlinkingCursorColor_OrEmptyStringIfToLeaveBlack;
+    int qtBlinkingCursorColorIndex = arguments.indexOf(MouseOrMotionOrMySexyFaceViewMakerGui_OVERRIDE_QT_BLINKING_CURSOR_COLOR_ARG);
+    if(qtBlinkingCursorColorIndex > -1)
+    {
+        arguments.removeAt(qtBlinkingCursorColorIndex);
+        if(arguments.size() <= qtBlinkingCursorColorIndex)
+        {
+            qDebug(MouseOrMotionOrMySexyFaceViewMakerGui_OVERRIDE_QT_BLINKING_CURSOR_COLOR_ARG " must be followed by a value");
+            handleQuitRequested();
+            return;
+        }
+        qtBlinkingCursorColor_OrEmptyStringIfToLeaveBlack = arguments.takeAt(qtBlinkingCursorColorIndex);
+        if(qtBlinkingCursorColor_OrEmptyStringIfToLeaveBlack.toLower() == "d3fault")
+            qtBlinkingCursorColor_OrEmptyStringIfToLeaveBlack = "#d5d5d5"; //heh
     }
 
     //optional arguments parsing (ordered)

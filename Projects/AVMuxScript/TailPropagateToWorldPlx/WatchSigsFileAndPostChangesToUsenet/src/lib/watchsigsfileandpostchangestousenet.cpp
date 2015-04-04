@@ -483,7 +483,7 @@ void WatchSigsFileAndPostChangesToUsenet::printMessageIDsForRelativeFilePath(con
     }
     emit o("There is no record of '" + relativeFilePath + "'");
 }
-void WatchSigsFileAndPostChangesToUsenet::printMessageIdCurrentlyBeingPosted()
+void WatchSigsFileAndPostChangesToUsenet::printMessageIdCurrentlyBeingPosted() //TODOreq: it might still be being zipped, in which case the byte array is empty (i guess I could generate it earlier heh). This also applies to querying via relative path
 {
     if(m_FileCurrentlyBeingPostedToUsenet_OrNullIfNotCurrentlyPostingAFileToUsenet.isNull())
     {

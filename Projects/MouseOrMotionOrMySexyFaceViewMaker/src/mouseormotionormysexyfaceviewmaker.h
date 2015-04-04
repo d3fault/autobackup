@@ -69,7 +69,7 @@ signals:
     void detectedMySexyFaceStreamIsFrozen();
     void quitRequested();
 public slots:
-    void startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int captureFps, int motionDetectionFps, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution, int optionalRequiredPrimaryScreenWidth_OrNegativeOneIfNotSupplied);
+    void startMakingMouseOrMotionOrMySexyFaceViews(const QSize &viewSize, int captureFps, int motionDetectionFps, int bottomPixelRowsToIgnore, const QString &cameraDevice, const QSize &cameraResolution, int optionalRequiredPrimaryScreenWidth_OrNegativeOneIfNotSupplied, const QString &qtBlinkingCursorColor_OrEmptyStringIfToLeaveBlack = QString());
     void setMouseOrMotionOrMySexyFaceViewMode();
     //void setMouseOrLastMouseViewMode();
     void setMySexyFaceViewMode();
