@@ -1,3 +1,5 @@
+NOTE: jessie comes out soon as fuck, so might as well wait
+
 General Considerations:
 -offline vs. online boxen (different packages?) -- maybe gather user input (and instruct user on how to update /lists/) for offline package management vs. online=download-directly-ez
 -pretty vs. no-pretty

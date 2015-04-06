@@ -13,45 +13,7 @@ MusicFingersCli::MusicFingersCli(QObject *parent)
     , m_StdOut(stdout)
     , m_StdErr(stderr)
 {
-    QList<QSerialPortInfo> availPorts = QSerialPortInfo::availablePorts();
-    QSerialPortInfo chosenSerialPortInfo;
-    if(availPorts.isEmpty())
-    {
-        qWarning() << "No serial ports available";
-        return;
-    }
-    else if(availPorts.size() > 1)
-    {
-        handleO("Choose your serial port (empty line or 'q' exits):");
-        handleO("");
-        int currentPortIndex = 0;
-        Q_FOREACH(const QSerialPortInfo &currentPort, availPorts)
-        {
-            handleO("\t" + QString::number(currentPortIndex) + " - " + currentPort.portName() + " (" + currentPort.description() + " (" + currentPort.systemLocation() + "))");
-            ++currentPortIndex;
-        }
-        handleO("");
-
-        QTextStream stdIn(stdin);
-        QString line;
-        do
-        {
-            line = stdIn.readLine();
-
-        }while(!serialPortSelectionIsValid(line, availPorts.size()));
-
-        if(line.isNull() || line.isEmpty() || line.toLower().startsWith("q"))
-        {
-            quit();
-            return;
-        }
-        int chosenSerialPortIndex = line.toInt(); //already sanitized, will convert
-        chosenSerialPortInfo = availPorts.at(chosenSerialPortIndex);
-    }
-    else //exactly 1 serial port
-    {
-        chosenSerialPortInfo = availPorts.at(0);
-    }
+    CHOOSE_MUSIC_FINGERS_SERIAL_PORT_INFO_OR_ELSEANDRETURN(chosenSerialPortInfo, quit())
 
     MusicFingersSerialPortIntegration *musicFingersSerialPortIntegration = new MusicFingersSerialPortIntegration(chosenSerialPortInfo, this);
     connect(musicFingersSerialPortIntegration, SIGNAL(e(QString)), this, SLOT(handleE(QString)));
@@ -76,27 +38,6 @@ void MusicFingersCli::cliUsage()
 {
     handleE("invalid user input: valid values are 0-9");
 }
-bool MusicFingersCli::serialPortSelectionIsValid(const QString &serialPortSelection, int numSerialPorts)
-{
-    if(serialPortSelection.isNull() || serialPortSelection.isEmpty() || serialPortSelection.toLower().startsWith("q"))
-    {
-        return true;
-    }
-    int enteredNum = -1;
-    bool convertOk = false;
-    enteredNum = serialPortSelection.toInt(&convertOk);
-    if(!convertOk)
-    {
-        handleE("invalid input. enter a number");
-        return false;
-    }
-    if(enteredNum < 0 || enteredNum > (numSerialPorts-1))
-    {
-        handleE("invalid input. no serial port at that index");
-        return false;
-    }
-    return true;
-}
 void MusicFingersCli::handleStandardInputLineReceived(const QString &line)
 {
     if(line == "q")
@@ -106,7 +47,7 @@ void MusicFingersCli::handleStandardInputLineReceived(const QString &line)
     }
     bool convertOk = false;
     int fingerIndexToQueryValueOf = line.toInt(&convertOk);
-    if((!convertOk) || (!MusicFingers::isValidFingerId(fingerIndexToQueryValueOf)))
+    if((!convertOk) || (!Finger::isValidFingerId(fingerIndexToQueryValueOf)))
     {
         cliUsage();
         return;

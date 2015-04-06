@@ -20,32 +20,34 @@ public:
       , LeftRing_A1 = 1
       ,  A1_LeftRing = LeftRing_A1
 
-      , LeftMiddle_A2
+      , LeftMiddle_A2 = 2
       , A2_LeftMiddle = LeftMiddle_A2
 
-      , LeftIndex_A3
+      , LeftIndex_A3 = 3
       , A3_LeftIndex
 
-      , LeftThumb_A4
+      , LeftThumb_A4 = 4
       , A4_LeftThumb = LeftThumb_A4
 
-      , RightThumb_A5
+      , RightThumb_A5 = 5
       , A5_RightThumb = RightThumb_A5
 
-      , RightIndex_A6
+      , RightIndex_A6 = 6
       , A6_RightIndex = RightIndex_A6
 
-      , RightMiddle_A7
+      , RightMiddle_A7 = 7
       , A7_RightMiddle = RightMiddle_A7
 
-      , RightRing_A8
+      , RightRing_A8 = 8
       , A8_RightRing = RightRing_A8
 
-      , RightPinky_A9
+      , RightPinky_A9 = 9
       , A9_RightPinky = RightPinky_A9
     };
 
     Finger(FingerEnum finger, int initialPosition, QObject *parent = Q_NULLPTR);
+    static bool isValidFingerId(int fingerId);
+    static FingerEnum fingerIdToFingerEnum(int fingerId);
 
     void animatedMoveFingerPosition(int newPosition);
 

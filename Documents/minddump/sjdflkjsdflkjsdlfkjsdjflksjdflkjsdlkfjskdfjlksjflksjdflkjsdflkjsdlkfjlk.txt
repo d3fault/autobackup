@@ -1,0 +1,1 @@
+I'm sitting here thinking long and hard about whether or not "MusicFingersSerialPortIntegration <--> STK Demo via stdin" is a Project or a Prototype. I'm fucking stupid.

@@ -20,6 +20,23 @@ MusicFingersSerialPortIntegration::MusicFingersSerialPortIntegration(const QSeri
 {
     privateConstructor();
 }
+bool MusicFingersSerialPortIntegration::serialPortSelectionIsValid(const QString &serialPortSelection, int numSerialPorts)
+{
+    int enteredNum = -1;
+    bool convertOk = false;
+    enteredNum = serialPortSelection.toInt(&convertOk);
+    if(!convertOk)
+    {
+        //emit e("invalid input. enter a number");
+        return false;
+    }
+    if(enteredNum < 0 || enteredNum > (numSerialPorts-1))
+    {
+        //emit e("invalid input. no serial port at that index");
+        return false;
+    }
+    return true;
+}
 MusicFingersSerialPortIntegration::~MusicFingersSerialPortIntegration()
 { }
 void MusicFingersSerialPortIntegration::privateConstructor()
@@ -45,7 +62,7 @@ void MusicFingersSerialPortIntegration::processLineOfFingerMovementProtocol(cons
         emit e("line: " + lineOfFingerMovementProtocol);
         return;
     }
-    if(!MusicFingers::isValidFingerId(fingerId))
+    if(!Finger::isValidFingerId(fingerId))
     {
         emit e("invalid finger id in first part (left side of colon) of the lineOfFingerMovementProtocol");
         emit e("line: " + lineOfFingerMovementProtocol);
@@ -67,7 +84,7 @@ void MusicFingersSerialPortIntegration::processLineOfFingerMovementProtocol(cons
         emit e("line: " + lineOfFingerMovementProtocol);
         return;
     }
-    emit fingerMoved(MusicFingers::fingerIdToFingerEnum(fingerId), fingerPosition);
+    emit fingerMoved(Finger::fingerIdToFingerEnum(fingerId), fingerPosition);
 }
 void MusicFingersSerialPortIntegration::handleSerialPortReadyRead()
 {

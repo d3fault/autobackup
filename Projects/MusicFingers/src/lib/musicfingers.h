@@ -22,8 +22,6 @@ class MusicFingers : public QObject
     Q_OBJECT
 public:
     explicit MusicFingers(QObject *parent = 0);
-    static bool isValidFingerId(int fingerId);
-    static Finger::FingerEnum fingerIdToFingerEnum(int fingerId);
 private:
     QAudioOutput *m_AudioOutput;
     MusicFingersSynthesizer *m_MusicFingersSynthesizer;
