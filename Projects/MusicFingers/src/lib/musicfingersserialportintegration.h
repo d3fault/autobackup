@@ -7,7 +7,7 @@
 
 #include "musicfingers.h"
 
-#define CHOOSE_MUSIC_FINGERS_SERIAL_PORT_INFO_OR_ELSEANDRETURN(serialPortInfoVarName, orElse) \
+#define CHOOSE_MUSIC_FINGERS_SERIAL_PORT_INFO_OR_DOELSEANDRETURN(serialPortInfoVarName, orElse) \
 QList<QSerialPortInfo> availPorts = QSerialPortInfo::availablePorts(); \
 QSerialPortInfo serialPortInfoVarName; \
 if(availPorts.isEmpty()) \

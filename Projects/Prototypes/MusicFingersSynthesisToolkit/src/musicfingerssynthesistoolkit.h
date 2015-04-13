@@ -14,6 +14,8 @@ public:
 private:
     QTextStream m_StdOut;
     QTextStream m_StdErr;
+
+    void switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(int channelAkaVoiceGroup, int instrumentIndex);
 signals:
     void exitRequested(int exitCode);
 public slots:
