@@ -35,7 +35,7 @@ MUSIC_FINGER_GLOBALS(A11)
 
 
 #define MUSIC_FINGERS_CALIBRATE(pin) \
-sensorValue = analogRead(A##pin); \
+sensorValue = analogRead(pin); \
 if(sensorValue > MUSIC_FINGERS_MAX_SENSOR_VALUE_VAR(pin)) \
 { \
   MUSIC_FINGERS_MAX_SENSOR_VALUE_VAR(pin) = sensorValue; \
@@ -52,7 +52,7 @@ if(MUSIC_FINGERS_NEW_SENSOR_VALUE_VAR(pin) < (MUSIC_FINGERS_OLD_SENSOR_VALUE_VAR
 { \
   Serial.print(pinQuoted); \
   Serial.print(":"); \
-  int sensorValueMappedAkaCalibrated = map(USIC_FINGERS_NEW_SENSOR_VALUE_VAR(pin), MUSIC_FINGERS_MIN_SENSOR_VALUE_VAR(pin), MUSIC_FINGERS_MAX_SENSOR_VALUE_VAR(pin), 0, MUSIC_FINGERS_CALIBRATION_MAX); /* 0-127 corresponds to the typical synthesis toolkit min/max ranges it accepts for the frequency on stdin....*/ \
+  int sensorValueMappedAkaCalibrated = map(MUSIC_FINGERS_NEW_SENSOR_VALUE_VAR(pin), MUSIC_FINGERS_MIN_SENSOR_VALUE_VAR(pin), MUSIC_FINGERS_MAX_SENSOR_VALUE_VAR(pin), 0, MUSIC_FINGERS_CALIBRATION_MAX); /* 0-127 corresponds to the typical synthesis toolkit min/max ranges it accepts for the frequency on stdin....*/ \
   sensorValueMappedAkaCalibrated = constrain(sensorValueMappedAkaCalibrated, 0, MUSIC_FINGERS_CALIBRATION_MAX); \
   Serial.println(sensorValueMappedAkaCalibrated); /*TODOoptimization: pretty sure i don't need newlines, but I can't be fucked atm. edit: newlines cost just as much as any other delimiter, so what gives? i think now that i have a colon-separated-protocol, this optimization can no longer happen*/ \
   MUSIC_FINGERS_OLD_SENSOR_VALUE_VAR(pin) = MUSIC_FINGERS_NEW_SENSOR_VALUE_VAR(pin); \

@@ -8,6 +8,8 @@
 
 SftpUploadAndRenameAllVideoSegmentsInFolderCli::SftpUploadAndRenameAllVideoSegmentsInFolderCli(QObject *parent)
     : QObject(parent)
+    , m_StdOut(stdout)
+    , m_StdErr(stderr)
 {
     SftpUploadAndRenameAllVideoSegmentsInFolder *sftpUploadAndRenameAllVideoSegmentsInFolder = new SftpUploadAndRenameAllVideoSegmentsInFolder(this);
     connect(sftpUploadAndRenameAllVideoSegmentsInFolder, SIGNAL(o(QString)), this, SLOT(handleO(QString)));

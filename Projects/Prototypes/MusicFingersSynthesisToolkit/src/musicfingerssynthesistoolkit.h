@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTextStream>
+#include <QHash>
 
 #include "finger.h"
 
@@ -12,9 +13,11 @@ class MusicFingersSynthesisToolkit : public QObject
 public:
     explicit MusicFingersSynthesisToolkit(QObject *parent = 0);
 private:
+    QHash<Finger::FingerEnum, bool> m_FingerIsBeingPlucked;
     QTextStream m_StdOut;
     QTextStream m_StdErr;
 
+    int channelAkaGroupToPluckFrequency(int channelAkaGroup);
     void switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(int channelAkaVoiceGroup, int instrumentIndex);
 signals:
     void exitRequested(int exitCode);

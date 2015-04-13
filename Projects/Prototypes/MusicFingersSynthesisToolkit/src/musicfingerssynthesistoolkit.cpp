@@ -11,11 +11,27 @@ MusicFingersSynthesisToolkit::MusicFingersSynthesisToolkit(QObject *parent)
     : QObject(parent)
     , m_StdOut(stdout)
     , m_StdErr(stderr)
-{ }
+{
+    m_FingerIsBeingPlucked.insert(Finger::LeftPinky_A0, false);
+    m_FingerIsBeingPlucked.insert(Finger::LeftRing_A1, false);
+    m_FingerIsBeingPlucked.insert(Finger::A2_LeftMiddle, false);
+    m_FingerIsBeingPlucked.insert(Finger::A3_LeftIndex, false);
+    m_FingerIsBeingPlucked.insert(Finger::A4_LeftThumb, false);
+    m_FingerIsBeingPlucked.insert(Finger::A5_RightThumb, false);
+    m_FingerIsBeingPlucked.insert(Finger::A6_RightIndex, false);
+    m_FingerIsBeingPlucked.insert(Finger::A7_RightMiddle, false);
+    m_FingerIsBeingPlucked.insert(Finger::A8_RightRing, false);
+    m_FingerIsBeingPlucked.insert(Finger::A9_RightPinky, false);
+}
+int MusicFingersSynthesisToolkit::channelAkaGroupToPluckFrequency(int channelAkaGroup)
+{
+    return (35+(channelAkaGroup*5));
+}
 void MusicFingersSynthesisToolkit::switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(int channelAkaVoiceGroup, int instrumentIndex)
 {
     m_StdOut << "ProgramChange 0 " << channelAkaVoiceGroup << " " << instrumentIndex << endl;
-    m_StdOut << "NoteOn 0 " << channelAkaVoiceGroup << " 64 64" << endl;
+    //m_StdOut << "NoteOn 0 " << channelAkaVoiceGroup << " 64 64" << endl;
+    m_StdOut << "PitchChange 0 " << channelAkaVoiceGroup << channelAkaGroupToPluckFrequency(channelAkaVoiceGroup) << endl;
 }
 void MusicFingersSynthesisToolkit::startSynthesizingToStkToolkitStdinFromMusicFingersSerialPort()
 {
@@ -35,16 +51,16 @@ void MusicFingersSynthesisToolkit::startSynthesizingToStkToolkitStdinFromMusicFi
 
 
     //set all 10 instruments up and turn them all on :-D
-    m_StdOut << "NoteOn 0 0 64 64" << endl; //Channel 0 doesn't need "ProgramChange" because it is specified as a mandatory cli arg
-    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(1, 3); //Channel 1, Flute
-    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(2, 5); //Channel 2, Blown Bottle
-    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(3, 6); //Channel 3, Bowed String
-    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(4, 14); //Channel 4, Heavy Metal
-    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(5, 15); //Channel 5, Percussive Flute
-    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(6, 16); //Channel 6, B3 Organ
-    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(7, 17); //Channel 7, FM Voice
-    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(8, 20); //Channel 8, Simple
-    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(9, 2); //Channel 9, Saxofony (had:Saxophony xD)
+    //m_StdOut << "NoteOn 0 0 64 64" << endl; //Channel 0 doesn't need "ProgramChange" because it is specified as a mandatory cli arg
+    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(1, 7); //Channel 1, Flute
+    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(2, 7); //Channel 2, Blown Bottle
+    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(3, 7); //Channel 3, Bowed String
+    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(4, 7); //Channel 4, Heavy Metal
+    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(5, 7); //Channel 5, Percussive Flute
+    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(6, 7); //Channel 6, B3 Organ
+    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(7, 7); //Channel 7, FM Voice
+    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(8, 7); //Channel 8, Simple
+    switchChannelAkaVoiceGroupToInstrumentAndTurnNoteOn(9, 7); //Channel 9, Saxofony (had:Saxophony xD)
 }
 void MusicFingersSynthesisToolkit::handleO(const QString &msg)
 {
@@ -59,6 +75,25 @@ void MusicFingersSynthesisToolkit::handleE(const QString &msg)
 void MusicFingersSynthesisToolkit::handleFingerMoved(Finger::FingerEnum finger, int position)
 {
     //hmm, do i want to control stk-demo or do I want to just output skini.... I guess I should choose the latter since it's inherently more modular
-    m_StdOut << "PitchChange 0 " << QString::number(finger) /*TODOoptional: fingerToFingerIndex*/ << " " << position << endl;
-    m_StdOut.flush(); //send that bitch NOW
+    //m_StdOut << "PitchChange 0 " << QString::number(finger) /*TODOoptional: fingerToFingerIndex*/ << " " << position << endl;
+    if(position >= 64)
+    {
+        //off
+        if(m_FingerIsBeingPlucked.value(finger))
+        {
+            m_FingerIsBeingPlucked.insert(finger, false);
+            m_StdOut << "NoteOff 0 " << QString::number(finger) << " " << channelAkaGroupToPluckFrequency((int)finger) << " 127" << endl;
+            m_StdOut.flush(); //send that bitch NOW
+        }
+    }
+    else
+    {
+        //on if not on
+        if(!m_FingerIsBeingPlucked.value(finger))
+        {
+            m_FingerIsBeingPlucked.insert(finger, true);
+            m_StdOut << "NoteOn 0 " << QString::number(finger) << " " << channelAkaGroupToPluckFrequency((int)finger) << " 64" << endl;
+            m_StdOut.flush(); //send that bitch NOW
+        }
+    }
 }

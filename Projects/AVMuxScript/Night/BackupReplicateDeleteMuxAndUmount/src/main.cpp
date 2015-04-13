@@ -13,28 +13,33 @@
 
 
 //MANDATORY config -- NOTE: do not use paths with spaces:
-#define videoSourceMountPoint "/mnt/videoSource"
-#define videoSource videoSourceMountPoint "/goOutsideVids"
+#define videoSourceMountPoint "/media/videoSource"
+#define destPathBinaryRoot "/binary"
 
-#define audioSourceMountPoint "/mnt/audioSource"
+//--hat
+#define hatVideoSource videoSourceMountPoint "/goOutsideVids"
+#define hatVideoDest destPathBinaryRoot "/Videos/FirstPerson/Hat"
+
+//--desk
+#define deskVideoSource videoSourceMountPoint "/home/user/deskVids"
+#define deskVideoDest destPathBinaryRoot "/Videos/ThirdPerson/Desk"
+
+#define audioSourceMountPoint "/media/audioSource"
 #define audioSource audioSourceMountPoint "/VOICE/FOLDER01"
 
 #define videoFps "16" /* this must be kept in sync with whatever the capture device is using. Don't change this value mid-day. only change it in between days (ie, at morning before recording, or at night _after_ running this script). I considered keeping it in sync with the value in DirectoriesOfAudioAndVideoFilesMuxerSyncer, but opted not to (my master copies will be 16fps, the web/muxed ones 10fps) */
 
-#define destPathBinaryRoot "/binary"
-#define outsidePathRelativeToMountPoint destPathBinaryRoot "/Videos/FirstPerson/Hat"
 #define allSigsFileName "allSigs.txt" //.asc? it's custom so nah
 #define sigsFilePathRelativeToMountPoint destPathBinaryRoot "/" allSigsFileName
 
 #define backupMountPoint "/mnt/sdb"
-#define backupDestOutsideBase backupMountPoint outsidePathRelativeToMountPoint
 
 //NOTE: the _last_ replica in this list is used as the "air gap" drive (passed to morning script). no replicas are necessary, and no mux/sync'ing is done if none are available
 #define allReplicas \
 QList<QPair<QString /* replica mount point */, QString /* replica binary root */> > replicas; \
 replicas << qMakePair(QString("/mnt/sdc"), QString("/mnt/sdc" + QString(destPathBinaryRoot))); \
-replicas << qMakePair(QString("/media/toshibaB"), QString("/media/toshibaB" + QString(destPathBinaryRoot)));
-//replicas << qMakePair(QString("/media/blackCavalry"), QString("/media/blackCavalry" + QString(destPathBinaryRoot)));
+/*replicas << qMakePair(QString("/media/toshibaB"), QString("/media/toshibaB" + QString(destPathBinaryRoot))); */ \
+replicas << qMakePair(QString("/media/blackCavalry"), QString("/media/blackCavalry" + QString(destPathBinaryRoot)));
 #define airGapReplicaTempDirForMuxedCopiesRelativeToMountPoint "/temp/forMorningScript"
 
 #define muxerSyncerBinaryFilePath "/home/d3fault/text/Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/build-DirectoriesOfAudioAndVideoFilesMuxerSyncerCli-Desktop_Qt_5_4_1_GCC_64bit-Release/DirectoriesOfAudioAndVideoFilesMuxerSyncerCli"
@@ -512,6 +517,33 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
 {
     QCoreApplication a(argc, argv);
 
+    QStringList arguments = a.arguments();
+    arguments.removeFirst(); //app file path
+
+    if(arguments.size() != 1)
+    {
+        qDebug() << "You must specify either --hat or --desk"; //lol typo: --hate
+        return 1;
+    }
+    QString hatOrDeskArg = arguments.at(0).toLower(); //TODOreq: audio cannot crossover between hat and desk atm, but should be able to (one audio 'stream', the hat or desk vid turns off and the other turns off (while audio stays on the entire time)). atm it must be all hat or all desk. TODOreq: also, audio that doesn't overlap with ANY video will currently be backed up to either --desk or --hat mode, whatever we just happen to be running. I think audio should get it's own backup location (I do have /Audio/, after all), BUT I still want to be able to indicate that they are associated with videos.... so wtf? Maybe a simple symlink would solve all of this (but then recursive gpg signer needs to be able to handle symlinks, and so does usenet poster), or maybe just a text file saying which audio files intersect? idfk)
+    QString videoSource; //TODOoptional: right now i only have one audio source for both desk and hat. maybe there would be separate ones in the future
+    QString outsidePathRelativeToMountPoint;
+    if(hatOrDeskArg == "--hat")
+    {
+        videoSource = hatVideoSource;
+        outsidePathRelativeToMountPoint = hatVideoDest;
+    }
+    else if(hatOrDeskArg == "--desk")
+    {
+        videoSource = deskVideoSource;
+        outsidePathRelativeToMountPoint = deskVideoDest;
+    }
+    if(videoSource.isEmpty() || outsidePathRelativeToMountPoint.isEmpty())
+    {
+        qDebug() << "You must specify either --hat or --desk"; //lol typo: --hate
+        return 1;
+    }
+
     QFileInfo muxerSyncerBinaryFileInfo(muxerSyncerBinaryFilePath);
     if((!muxerSyncerBinaryFileInfo.exists()) || (!muxerSyncerBinaryFileInfo.isExecutable()))
     {
@@ -560,6 +592,7 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     RETURN_ONE_IF_DIR_IS_NOT_GOOD(videoSource)
     RETURN_ONE_IF_DIR_IS_NOT_GOOD(audioSource)
     RETURN_ONE_IF_VIDEOSOURCE_DIR_HAS_ANY_NONFILES_OR_NONH264FILES(videoSource) //handling sub-directories is a pain, so not going to allow it for now
+    QString backupDestOutsideBase = backupMountPoint + outsidePathRelativeToMountPoint;
     RETURN_ONE_IF_DIR_IS_NOT_GOOD(backupDestOutsideBase)
     //do the same, but for the replicas
     replicasIterator.toFront();
@@ -616,7 +649,7 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     //============DO THE ACTUAL BACKUP=========
     RETURN_ONE_IF_RSYNC_COPY_CMD_FAILS(audioSource, backupDestAudioDir_WithSlashAppended)
     //RETURN_ONE_IF_RSYNC_COPY_CMD_FAILS(videoSource, backupDestVideoDir_WithSlashAppended)
-    RETURN_ONE_IF_ANY_FILE_IN_VIDEOSOURCE_FAILS_TO_COPYMUX(videoSource, backupDestVideoDir_WithSlashAppended, 0) //because ffprobe can't do raw h264, i mux and copy the video files (into mkv) at the same time. doing this allows me to change the hardcoded fps in the future without losing the fps for the vids made in the past
+    RETURN_ONE_IF_ANY_FILE_IN_VIDEOSOURCE_FAILS_TO_COPYMUX(videoSource, backupDestVideoDir_WithSlashAppended, 0) //because ffprobe can't do raw h264, i mux and copy the video files (into mkv) at the same time. doing this also allows me to change the hardcoded fps in the future without losing the fps for the vids made in the past (but muxing into mkv is a required step, since ffprobe (a step of mux/sync) can't use raw h264 as input (there is no fps flag))
     RETURN_ONE_IF_TOUCHING_ALL_VIDEO_FILES_IN_DIR_USING_TIMESTAMPS_PARSED_FROM_FILENAMES_FAILS(backupDestVideoDir_WithSlashAppended)
 
     //backup the audio delays file next to the a and v folders
@@ -726,6 +759,7 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
         return 1;
     }
 
+    //TODOreq: touch the mux/sync'd files [based on filename], since hvbs relies on that for sorting now
 
     //unmount
     //the air gap drive gets unmounted when the shared pointer goes out of scope

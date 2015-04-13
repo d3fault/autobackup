@@ -633,12 +633,17 @@ void DirectoriesOfAudioAndVideoFilesMuxerSyncer::handleAudioDelaysOutputFilePath
     //custom datastream? custom textstream? naaawwww qsettings ftw
     QSettings audioDelaysOutputFile(audioDelaysOutputSaveFilaPath, QSettings::IniFormat);
     QHashIterator<QString /* video fileName */, qint64 /* chosen audio delay ms */> audioDelaysIterator(m_InteractivelyCalculatedAudioDelays);
+    bool atLeastOne = false;
     while(audioDelaysIterator.hasNext())
     {
+        atLeastOne = true;
         audioDelaysIterator.next();
         audioDelaysOutputFile.setValue(audioDelaysIterator.key(), audioDelaysIterator.value());
     }
-    emit o("successfully wrote audio delays to: " + audioDelaysOutputSaveFilaPath);
+    if(atLeastOne)
+        emit o("successfully wrote audio delays to: " + audioDelaysOutputSaveFilaPath);
+    else
+        emit o("didn't write any audio delays");
     emit doneMuxingAndSyncingDirectoryOfAudioWithDirectoryOfVideo(true);
 }
 bool AudioFileMeta::operator==(const AudioFileMeta &audioFileMeta) const

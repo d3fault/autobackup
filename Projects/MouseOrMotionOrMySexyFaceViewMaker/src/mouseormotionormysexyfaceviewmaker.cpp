@@ -200,12 +200,14 @@ void MouseOrMotionOrMySexyFaceViewMaker::startMakingMouseOrMotionOrMySexyFaceVie
         emit quitRequested();
         return;
     }
+#if 0 //TODOreq: "there's only one screen. continue?"
     if(QGuiApplication::screens().size() == 1)
     {
         emit e("there's only one screen");
         emit quitRequested();
         return;
     }
+#endif
     if(optionalRequiredPrimaryScreenWidth_OrNegativeOneIfNotSupplied > -1)
     {
         if(m_ScreenResolutionX != optionalRequiredPrimaryScreenWidth_OrNegativeOneIfNotSupplied)

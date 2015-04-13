@@ -56,8 +56,10 @@ void SftpUploadAndRenameAllVideoSegmentsInFolder::handleSftpUploaderAndRenamerQu
                 emit e("failed to split filename at hyphen: " + currentFile.fileName());
                 return;
             }
+            QStringList fileNameSplitAtDots = fileNameSplitAtHyphen.at(0).split("."); //might be a noop if no dots :-P
+            QString unixTimestampPartAkaLastPart = fileNameSplitAtDots.last();
             bool convertOk = false;
-            unixTimestampSeconds = fileNameSplitAtHyphen.first().toLongLong(&convertOk);
+            unixTimestampSeconds = unixTimestampPartAkaLastPart.toLongLong(&convertOk);
             if(!convertOk)
             {
                 emit e("failed to parse unix timestamp from left side of hyphen in filename: " + currentFile.fileName());
