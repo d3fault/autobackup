@@ -18,15 +18,15 @@ if(availPorts.isEmpty()) \
 } \
 else if(availPorts.size() > 1) \
 { \
-    handleO("Choose your serial port (empty line or 'q' exits):"); \
-    handleO(""); \
+    handleE("Choose your serial port (empty line or 'q' exits):"); \
+    handleE(""); \
     int currentPortIndex = 0; \
     Q_FOREACH(const QSerialPortInfo &currentPort, availPorts) \
     { \
-        handleO("\t" + QString::number(currentPortIndex) + " - " + currentPort.portName() + " (" + currentPort.description() + " (" + currentPort.systemLocation() + "))"); \
+        handleE("\t" + QString::number(currentPortIndex) + " - " + currentPort.portName() + " (" + currentPort.description() + " (" + currentPort.systemLocation() + "))"); \
         ++currentPortIndex; \
     } \
-    handleO(""); \
+    handleE(""); \
     QTextStream stdIn(stdin); \
     QString line; \
     do \

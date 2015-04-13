@@ -1,4 +1,5 @@
 int sensorValue = 0;
+#define MUSIC_FINGERS_CALIBRATION_MAX 127
 
 #define MUSIC_FINGRERS_ANALOG_PIN_VAR(pin) analogInPin_##pin
 #define MUSIC_FINGERS_NEW_SENSOR_VALUE_VAR(pin) pin##_newSensorValue
@@ -10,7 +11,7 @@ int sensorValue = 0;
 const int MUSIC_FINGRERS_ANALOG_PIN_VAR(pin) = pin; \
 int MUSIC_FINGERS_NEW_SENSOR_VALUE_VAR(pin) = 0; \
 int MUSIC_FINGERS_OLD_SENSOR_VALUE_VAR(pin) = 0; \
-int MUSIC_FINGERS_MIN_SENSOR_VALUE_VAR(pin) = 0; \
+int MUSIC_FINGERS_MIN_SENSOR_VALUE_VAR(pin) = 1024; \
 int MUSIC_FINGERS_MAX_SENSOR_VALUE_VAR(pin) = 0;
 
 
@@ -35,8 +36,8 @@ if(MUSIC_FINGERS_NEW_SENSOR_VALUE_VAR(pin) < (MUSIC_FINGERS_OLD_SENSOR_VALUE_VAR
 { \
   Serial.print(pinQuoted); \
   Serial.print(":"); \
-  int sensorValueMappedAkaCalibrated = map(USIC_FINGERS_NEW_SENSOR_VALUE_VAR(pin), MUSIC_FINGERS_MIN_SENSOR_VALUE_VAR(pin), MUSIC_FINGERS_MAX_SENSOR_VALUE_VAR(pin), 0 127); /* 0-127 corresponds to the typical synthesis toolkit min/max ranges it accepts for the frequency on stdin....*/ \
-  sensorValueMappedAkaCalibrated = constrain(sensorValueMappedAkaCalibrated, 0 127); \
+  int sensorValueMappedAkaCalibrated = map(USIC_FINGERS_NEW_SENSOR_VALUE_VAR(pin), MUSIC_FINGERS_MIN_SENSOR_VALUE_VAR(pin), MUSIC_FINGERS_MAX_SENSOR_VALUE_VAR(pin), 0, MUSIC_FINGERS_CALIBRATION_MAX); /* 0-127 corresponds to the typical synthesis toolkit min/max ranges it accepts for the frequency on stdin....*/ \
+  sensorValueMappedAkaCalibrated = constrain(sensorValueMappedAkaCalibrated, 0, MUSIC_FINGERS_CALIBRATION_MAX); \
   Serial.println(sensorValueMappedAkaCalibrated); /*TODOoptimization: pretty sure i don't need newlines, but I can't be fucked atm*/ \
   MUSIC_FINGERS_OLD_SENSOR_VALUE_VAR(pin) = MUSIC_FINGERS_NEW_SENSOR_VALUE_VAR(pin); \
 }
@@ -53,8 +54,8 @@ void setup()
   digitalWrite(13, HIGH);
   while(millis() < 5000)
   {
-    MUSIC_FINGERS_CALIBRATE(0)
-    //MUSIC_FINGERS_CALIBRATE(1)
+    MUSIC_FINGERS_CALIBRATE(A0)
+    //MUSIC_FINGERS_CALIBRATE(A1)
   }
   digitalWrite(13, LOW);
   //END Calibrate

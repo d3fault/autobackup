@@ -25,6 +25,8 @@ void MusicFingersSynthesisToolkit::startSynthesizingToStkToolkitStdinFromMusicFi
         return;
     }
     connect(musicFingersSerialPortIntegration, SIGNAL(fingerMoved(Finger::FingerEnum,int)), this, SLOT(handleFingerMoved(Finger::FingerEnum,int)));
+
+    m_StdOut << "NoteOn 0 0 64 64" << endl;
 }
 void MusicFingersSynthesisToolkit::handleO(const QString &msg)
 {
@@ -34,10 +36,11 @@ void MusicFingersSynthesisToolkit::handleO(const QString &msg)
 void MusicFingersSynthesisToolkit::handleE(const QString &msg)
 {
     m_StdErr << msg;
+    m_StdErr.flush();
 }
 void MusicFingersSynthesisToolkit::handleFingerMoved(Finger::FingerEnum finger, int position)
 {
     //hmm, do i want to control stk-demo or do I want to just output skini.... I guess I should choose the latter since it's inherently more modular
-    m_StdOut << "PitchChange 0 " << QString::number(finger) /*TODOoptional: fingerToFingerIndex*/ << " " << position;
+    m_StdOut << "PitchChange 0 " << QString::number(finger) /*TODOoptional: fingerToFingerIndex*/ << " " << position << endl;
     m_StdOut.flush(); //send that bitch
 }
