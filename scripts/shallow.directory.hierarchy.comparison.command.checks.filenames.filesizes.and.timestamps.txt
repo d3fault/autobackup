@@ -1,0 +1,2 @@
+cd into each dir to be compared (otherwise absolute paths are used, which fucks up the comparison) and type:
+find . -printf "%p-%s-%t\n" | sort | sha1sum

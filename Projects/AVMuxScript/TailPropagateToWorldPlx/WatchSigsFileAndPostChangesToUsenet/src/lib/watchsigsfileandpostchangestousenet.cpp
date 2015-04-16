@@ -19,6 +19,7 @@
 #define WatchSigsFileAndPostChangesToUsenet_POST_SUBJECT_MAXLEN 32
 #define EEEEEEEE_WatchSigsFileAndPostChangesToUsenet(msg) { emit e(msg); emit doneWatchingSigsFileAndPostingChangesToUsenet(false); return; }
 
+//TODOreq: there's a 'last modified timestamp' field for one of those mime attribute shits. use it
 //TODOmb: attach copyright.txt file (just like sig (so either after body, or in the 7z)), perhaps referencing licence.dpl.txt via Message-ID (the http url is good enough imo). For text files it adds quite a bit of redundancy (but luckily it is tucked away hidden as an attachment). News servers might reject posts containing it automatically (may even be auto-detected as spam (false positives happen all the time)). In any case, there would be no reason to fudge the From field like I'm doing (to avoid filters) if I end up attaching a copyright.txt -- Alternatively, I could point to the copyright.txt via Message-ID (which in turn points to the dpl as Message-ID (and http url)) just to lessen the redundancy
 WatchSigsFileAndPostChangesToUsenet::WatchSigsFileAndPostChangesToUsenet(QObject *parent)
     : QObject(parent)

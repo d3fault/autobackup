@@ -1,27 +1,31 @@
 #include "musicfingerssynthesistoolkit.h"
 
 #include <QCoreApplication>
+#include <QDateTime>
 
 #include "musicfingersserialportintegration.h"
 
+#define MIN_PLUCKED_TOGGLE_MS 30 //sort of like debounce, but for determining whether or not to send a NoteOff immediately after a NoteOn
+
 //TODOreq: the 'plucked' vs. 'continuous' instruments need to be handled differently. obviously, the rate at which i bend my finger should change the velocity/attack (or whatever it's called) of the pluck. maybe it also affects the velocity/attack of the continuous ones too (i hadn't really planned on changing that at all, but only changing the frequency/pitch/whatever-its-called(are they the same thing? /musicnoob)). ALTERNATIVELY, I could simply have the 'plucked' ones be [re-]plucked once every N ms automatically (idfk)
 //TODOoptional: easing curves
+//TODOoptional: saxofone mode (one finger controls velocity or some such, the other fingers 'cover the holes')
 //decided that since this is most likely going to be a hacked together piece of shit, it should be a prototype (but in all fairness, life itself is a hacked together piece of shit [and there's still no `proper`)
 MusicFingersSynthesisToolkit::MusicFingersSynthesisToolkit(QObject *parent)
     : QObject(parent)
     , m_StdOut(stdout)
     , m_StdErr(stderr)
 {
-    m_FingerIsBeingPlucked.insert(Finger::LeftPinky_A0, false);
-    m_FingerIsBeingPlucked.insert(Finger::LeftRing_A1, false);
-    m_FingerIsBeingPlucked.insert(Finger::A2_LeftMiddle, false);
-    m_FingerIsBeingPlucked.insert(Finger::A3_LeftIndex, false);
-    m_FingerIsBeingPlucked.insert(Finger::A4_LeftThumb, false);
-    m_FingerIsBeingPlucked.insert(Finger::A5_RightThumb, false);
-    m_FingerIsBeingPlucked.insert(Finger::A6_RightIndex, false);
-    m_FingerIsBeingPlucked.insert(Finger::A7_RightMiddle, false);
-    m_FingerIsBeingPlucked.insert(Finger::A8_RightRing, false);
-    m_FingerIsBeingPlucked.insert(Finger::A9_RightPinky, false);
+    m_FingersPluckedAt_OrZeroIfNotPlucked.insert(Finger::LeftPinky_A0, 0);
+    m_FingersPluckedAt_OrZeroIfNotPlucked.insert(Finger::LeftRing_A1, 0);
+    m_FingersPluckedAt_OrZeroIfNotPlucked.insert(Finger::A2_LeftMiddle, 0);
+    m_FingersPluckedAt_OrZeroIfNotPlucked.insert(Finger::A3_LeftIndex, 0);
+    m_FingersPluckedAt_OrZeroIfNotPlucked.insert(Finger::A4_LeftThumb, 0);
+    m_FingersPluckedAt_OrZeroIfNotPlucked.insert(Finger::A5_RightThumb, 0);
+    m_FingersPluckedAt_OrZeroIfNotPlucked.insert(Finger::A6_RightIndex, 0);
+    m_FingersPluckedAt_OrZeroIfNotPlucked.insert(Finger::A7_RightMiddle, 0);
+    m_FingersPluckedAt_OrZeroIfNotPlucked.insert(Finger::A8_RightRing, 0);
+    m_FingersPluckedAt_OrZeroIfNotPlucked.insert(Finger::A9_RightPinky, 0);
 }
 int MusicFingersSynthesisToolkit::channelAkaGroupToPluckFrequency(int channelAkaGroup)
 {
@@ -78,22 +82,44 @@ void MusicFingersSynthesisToolkit::handleFingerMoved(Finger::FingerEnum finger, 
     //m_StdOut << "PitchChange 0 " << QString::number(finger) /*TODOoptional: fingerToFingerIndex*/ << " " << position << endl;
     if(position >= 64)
     {
-        //off
-        if(m_FingerIsBeingPlucked.value(finger))
+        //NoteOff if on and (plucked at > MIN_PLUCKED_TOGGLE_MS)
+        qint64 fingerPluckedAt_OrZeroIfNotPlucked = m_FingersPluckedAt_OrZeroIfNotPlucked.value(finger);
+        if(fingerPluckedAt_OrZeroIfNotPlucked == 0) //not on, nothing to do
+            return;
+        if((QDateTime::currentMSecsSinceEpoch()-fingerPluckedAt_OrZeroIfNotPlucked) > MIN_PLUCKED_TOGGLE_MS)
         {
-            m_FingerIsBeingPlucked.insert(finger, false);
+            //note has been on long enough
+            m_FingersPluckedAt_OrZeroIfNotPlucked.insert(finger, 0);
             m_StdOut << "NoteOff 0 " << QString::number(finger) << " " << channelAkaGroupToPluckFrequency((int)finger) << " 127" << endl;
-            m_StdOut.flush(); //send that bitch NOW
+            m_StdOut.flush();
         }
+#if 0 //old, not using MIN_PLUCKED_TOGGLE_MS
+        if(m_FingersPluckedAt_OrZeroIfNotPlucked.value(finger))
+        {
+            m_FingersPluckedAt_OrZeroIfNotPlucked.insert(finger, false);
+            m_StdOut << "NoteOff 0 " << QString::number(finger) << " " << channelAkaGroupToPluckFrequency((int)finger) << " 127" << endl;
+            m_StdOut.flush();
+        }
+#endif
     }
     else
     {
-        //on if not on
-        if(!m_FingerIsBeingPlucked.value(finger))
+        //NoteOn if not already on
+        qint64 fingerPluckedAt_OrZeroIfNotPlucked = m_FingersPluckedAt_OrZeroIfNotPlucked.value(finger);
+        if(fingerPluckedAt_OrZeroIfNotPlucked == 0)
         {
-            m_FingerIsBeingPlucked.insert(finger, true);
+            //not on, turn on
+            m_FingersPluckedAt_OrZeroIfNotPlucked.insert(finger, QDateTime::currentMSecsSinceEpoch());
             m_StdOut << "NoteOn 0 " << QString::number(finger) << " " << channelAkaGroupToPluckFrequency((int)finger) << " 64" << endl;
-            m_StdOut.flush(); //send that bitch NOW
+            m_StdOut.flush();
         }
+#if 0 //old, not using MIN_PLUCKED_TOGGLE_MS
+        if(!m_FingersPluckedAt_OrZeroIfNotPlucked.value(finger))
+        {
+            m_FingersPluckedAt_OrZeroIfNotPlucked.insert(finger, true);
+            m_StdOut << "NoteOn 0 " << QString::number(finger) << " " << channelAkaGroupToPluckFrequency((int)finger) << " 64" << endl;
+            m_StdOut.flush();
+        }
+#endif
     }
 }

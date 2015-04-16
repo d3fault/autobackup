@@ -7,6 +7,7 @@
 
 #include "musicfingers.h"
 
+//TODOreq: if one one port's name/desc (idk which) contains the word 'arduino', use that one instead of prompting. but if more than one contain that word, still prompt
 #define CHOOSE_MUSIC_FINGERS_SERIAL_PORT_INFO_OR_DOELSEANDRETURN(serialPortInfoVarName, orElse) \
 QList<QSerialPortInfo> availPorts = QSerialPortInfo::availablePorts(); \
 QSerialPortInfo serialPortInfoVarName; \

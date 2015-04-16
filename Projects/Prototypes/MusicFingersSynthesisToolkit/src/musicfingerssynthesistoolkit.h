@@ -13,7 +13,7 @@ class MusicFingersSynthesisToolkit : public QObject
 public:
     explicit MusicFingersSynthesisToolkit(QObject *parent = 0);
 private:
-    QHash<Finger::FingerEnum, bool> m_FingerIsBeingPlucked;
+    QHash<Finger::FingerEnum, qint64 /*plucked at msec since epoch*/> m_FingersPluckedAt_OrZeroIfNotPlucked;
     QTextStream m_StdOut;
     QTextStream m_StdErr;
 
