@@ -17,7 +17,7 @@
 #define destPathBinaryRoot "/binary"
 
 //--hat
-#define hatVideoSource videoSourceMountPoint "/goOutsideVids"
+#define hatVideoSource videoSourceMountPoint "/home/user/hatVids"
 #define hatVideoDest destPathBinaryRoot "/Videos/FirstPerson/Hat"
 
 //--desk
@@ -352,6 +352,7 @@ replicaDirs << aSharedPointer;
     } \
     theAudioDelaysFile.close(); /*we only wanted it to be created (UNIQUELY), didn't want it to be opened*/ \
     interactiveMuxerSyncerArgs << audioSource << tempPathForTruncatedMuxedVideosForAudioDelaysFileCalculation << "--interactively-calculate-audio-delays-to-file" << theAudioDelaysFile.fileName(); \
+    interactiveMuxerSyncerArgs << "--truncate-videos-to-ms" << "15000"; \
     muxerSyncerProcess.start(muxerSyncerBinaryFilePath, interactiveMuxerSyncerArgs); \
     if(!muxerSyncerProcess.waitForStarted(-1)) \
     { \
@@ -485,7 +486,9 @@ void setPermissionsToReadOnlyAndGiveWarningIfItFails(const QString &absolutePath
 
 //TODOoptional: when to recursively gpg verify? here's an idea: a serialized list of all entries and when they were last gpg verified (note: the list itself is signed and verified after/before every use of it). at the end of this "import+mux" script, we (NOPE: look at the time. if it's before I'd be waking up by a few hours) recursively gpg verify maybe as many of those entries as possible for about ~30 minutes (obviously don't SIGKILL the gpg verify at 30 minutes... it can go over that) -- stop of course if all of them were verified in that time (will happen with small dirs). the "source" (either main backup dir or one of the replicas) used for the gpg verify is selected at random (different random selection for every entry). Using ~30 minutes after a "sync+mux at night" script is smart because then I never have to sit and wait for the gpg verifying to finish, I'll be asleep. Failed verifications need to be presented somewhere (maybe at the start of the next night's sync? or some morning time notification (beginning of morning script?)). This idea should probably be an entirely different app, and the command chain in bash is this: "BackupReplicateDeleteMuxAndUmountCli && RecursivelyGpgVerifyForAbout30MinsAndKeepRecordOfShit && xfce4-session-logout --fast --halt" (yes, i want to NOT shut down when when _anything_ fails (maybe i'll play a sound using more bash shit))
 
-//TODOoptional: truncate the timestamp millseconds from the allSigs.txt right after it is generated/updated, because rsync doesn't transfer them, which causes my 'shallow directory hierarchy comparison script' to not calculate identical hashes of the dir trees
+//TODOoptional: truncate the timestamp millseconds from the allSigs.txt right after it is generated/updated, because rsync doesn't transfer them, which causes my 'shallow directory hierarchy comparison script' to not calculate identical hashes of the dir trees. alternatively, the shallow directory comparison could not compare the ms part
+
+//TODOreq: audio files without any intersecting video could go in /Audio/VoiceRecordings/daySyncedAt-timestamp (and that folder should only be created if there's at least one audio file going in it ofc)
 
 //This import/backup script is (had:becoming) a pain in my ass, I need/want to go outside!!! But then I remember that my going [with the hat on] outside is pointless if I can't come back home and import it!!! Hah!
 
@@ -742,6 +745,9 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
     QStringList muxSyncArgs;
     muxSyncArgs << backupDestAudioDir_WithSlashAppended << backupDestVideoDir_WithSlashAppended << airGapTempDestPath << "--use-audio-delays-from-file" << audioDelaysFileName;
 #define MUX_SYNCER_ADD_FFMPEG_ARG "--add-ffmpeg-arg"
+#if 0 //rotate 180 degrees (aka vflip)
+    muxSyncArgs << MUX_SYNCER_ADD_FFMPEG_ARG << "-vf" << MUX_SYNCER_ADD_FFMPEG_ARG << "transpose=2,transpose=2";
+#endif
     muxSyncArgs << MUX_SYNCER_ADD_FFMPEG_ARG << "-acodec" << MUX_SYNCER_ADD_FFMPEG_ARG << "opus" << MUX_SYNCER_ADD_FFMPEG_ARG << "-b:a" << MUX_SYNCER_ADD_FFMPEG_ARG << "32k" << MUX_SYNCER_ADD_FFMPEG_ARG << "-ac" <<  MUX_SYNCER_ADD_FFMPEG_ARG << "1" << MUX_SYNCER_ADD_FFMPEG_ARG << "-s" << MUX_SYNCER_ADD_FFMPEG_ARG << "720x480" << MUX_SYNCER_ADD_FFMPEG_ARG << "-b:v" << MUX_SYNCER_ADD_FFMPEG_ARG << "275k" << MUX_SYNCER_ADD_FFMPEG_ARG << "-vcodec" << MUX_SYNCER_ADD_FFMPEG_ARG << "theora" << MUX_SYNCER_ADD_FFMPEG_ARG << "-r" << MUX_SYNCER_ADD_FFMPEG_ARG << "10" << MUX_SYNCER_ADD_FFMPEG_ARG << "-f" << MUX_SYNCER_ADD_FFMPEG_ARG << "segment" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_time" << MUX_SYNCER_ADD_FFMPEG_ARG << "180" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_list_size" << MUX_SYNCER_ADD_FFMPEG_ARG << "999999999" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_wrap" << MUX_SYNCER_ADD_FFMPEG_ARG << "999999999" << MUX_SYNCER_ADD_FFMPEG_ARG << "-segment_list" << MUX_SYNCER_ADD_FFMPEG_ARG << QString(airGapTempDestPath + "/%VIDEOBASENAME%-segmentEntryList.txt") << MUX_SYNCER_ADD_FFMPEG_ARG << "-reset_timestamps" << MUX_SYNCER_ADD_FFMPEG_ARG << "1" << "--mux-to-ext" << "-%d.ogg";
     //TODOreq: lutyuv brightness? being outside maybe not necessary (idfk) -- also: noir for night time shenigans (a realtime preview would come in handy too)!
     muxSyncProcess.start(muxerSyncerBinaryFilePath, muxSyncArgs);

@@ -10,10 +10,6 @@
 
 #define MUSIC_FINGERS_SAMPLE_RATE 44100
 
-#define MUSIC_FINGERS_MIN_POSITION 0
-#define MUSIC_FINGERS_MAX_POSITION 1023
-#define FINGERS_INITIAL_POSITION ((MUSIC_FINGERS_MAX_POSITION/2)+1) //Divided by two to put it "in the middle", plus one to put it at "key NOT pressed"
-
 class QAudioOutput;
 class QIODevice;
 

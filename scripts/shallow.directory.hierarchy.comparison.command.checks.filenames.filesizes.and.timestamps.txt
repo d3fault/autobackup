@@ -1,2 +1,3 @@
+TODOoptional: make the timestamp spat out from the find command not include the millseconds, since rsync doesn't transfer them
 cd into each dir to be compared (otherwise absolute paths are used, which fucks up the comparison) and type:
 find . -printf "%p-%s-%t\n" | sort | sha1sum

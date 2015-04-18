@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1429165869
+Documents/minddump/:1429168636
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1429165195
+Documents/minddump/dreams/:1429357910
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -143,6 +143,7 @@ Documents/minddump/dreams/lksjdflkasdfouwelkrjoiudsflkjsdoiufkljwouerlkjoudsflkj
 Documents/minddump/dreams/lsajdflsjflkjsdlkfjslkjfklsdjflksjdfousdfjofdusdkjfewroiu.txt:1394232550
 Documents/minddump/dreams/lsdfjlkasjdfkjsdlkfjksdfjjdsfljsdlfkjlkjewroufdl.txt:1398714422
 Documents/minddump/dreams/lsdhflsdjflkdsjfodsuflkjweofuslkdfjosidufsdlkf.txt:1402862755
+Documents/minddump/dreams/lsdjflksjdfkljsdlkfjksldjfklsjdflkjsdlkfjlskdjflksdjfklsjdflkjsdlkfjsdlkfjlskd.txt:1429357910
 Documents/minddump/dreams/lsdjflsdjflkjsdflkjsdklfjlsdkjflksdjflksdjflkoiuewrlkjdsflk.txt:1418388861
 Documents/minddump/dreams/lsdkajflsdkjfoduwerljsdowererufalsdjfosuflsdfoiuew.txt:1391095454
 Documents/minddump/dreams/lsdkfjlksjdflkjslkfjskldjfklsjlkfjsdklfjslkdjfklsdflk.txt:1425281760
@@ -2438,6 +2439,7 @@ Documents/minddump/sldkfjslkdjfskjdflksjdflkjsdfoudflkjsdfjkl.txt:1361983161
 Documents/minddump/sldkfjslkfjsldkjfoisudflkjsdfousdflkjweorulkdjfosudfslkdf.txt:1381113677
 Documents/minddump/sldkfjslkjdflksdjflkjsldfkjslkdjfklsdjfjsdlkfjsdlfkjslkj.txt:1426577530
 Documents/minddump/sldkfskljdfkjsdflkjsdflkjsdflkjsfdsfdlkj.txt:1361109442
+Documents/minddump/sldkjfksdjfksdjflksdjflksdjfkljsdklfjsdklfjsdlkjfskdljfklsj.txt:1429168636
 Documents/minddump/sldkjflaksjflkjsdfalkfjlksdjflksdjfeklwroufdlksf.free.bsd.jails.using.cpp.is.what.you.want.txt:1399584857
 Documents/minddump/sldkjflkdsjfksjdflkjsdlkfjsdlkjflskdjflksdjflksdjfls.txt:1415262236
 Documents/minddump/sldkjflkjsdfkjsdkjfksldjfklsdjfkljsdkfjlsdkjflksdjflkjlkjsdlfkj.txt:1426379844
@@ -2870,9 +2872,9 @@ Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/Sft
 Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/sftpuploadandrenameallvideosegmentsinfolder.pri:1427300106
 Projects/AVMuxScript/Night/:1427393545
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/:1428921487
-Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/:1429001044
+Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/:1429353422
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/BackupReplicateDeleteMuxAndUmountCli.pro:1427089056
-Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/main.cpp:1429001041
+Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/main.cpp:1429353398
 Projects/AVMuxScript/TailPropagateToWorldPlx/:1427488295
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/:1428929952
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/:1428101299
@@ -3223,7 +3225,7 @@ Projects/DesignEqualsImplementation2/src/libclangpch.h:1409068915
 Projects/DesignEqualsImplementation2/src/signalemissionorslotinvocationcontextvariables.cpp:1409796472
 Projects/DesignEqualsImplementation2/src/signalemissionorslotinvocationcontextvariables.h:1409796463
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/:1428920854
-Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/:1428931433
+Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/:1429353425
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/cli/:1427138873
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/cli/directoriesofaudioandvideofilesmuxersyncercli.cpp:1427138873
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/cli/directoriesofaudioandvideofilesmuxersyncercli.h:1426978913
@@ -3788,18 +3790,18 @@ Projects/MusicFingers/assets/:1424881312
 Projects/MusicFingers/assets/ArduinoWriteChangesOnA0toSerial/:1428920701
 Projects/MusicFingers/assets/ArduinoWriteChangesOnA0toSerial/ArduinoWriteChangesOnA0toSerial.ino:1428920701
 Projects/MusicFingers/src/:1428303545
-Projects/MusicFingers/src/cli/:1428310204
+Projects/MusicFingers/src/cli/:1429355191
 Projects/MusicFingers/src/cli/MusicFingersCli.pro:1426284942
 Projects/MusicFingers/src/cli/main.cpp:1424887225
 Projects/MusicFingers/src/cli/musicfingerscli.cpp:1428309920
 Projects/MusicFingers/src/cli/musicfingerscli.h:1426283088
-Projects/MusicFingers/src/lib/:1429166117
+Projects/MusicFingers/src/lib/:1429355173
 Projects/MusicFingers/src/lib/finger.cpp:1428893432
-Projects/MusicFingers/src/lib/finger.h:1428893179
-Projects/MusicFingers/src/lib/musicfingers.cpp:1428309950
-Projects/MusicFingers/src/lib/musicfingers.h:1428309952
+Projects/MusicFingers/src/lib/finger.h:1429353502
+Projects/MusicFingers/src/lib/musicfingers.cpp:1429355173
+Projects/MusicFingers/src/lib/musicfingers.h:1429353502
 Projects/MusicFingers/src/lib/musicfingersserialportintegration.cpp:1428309895
-Projects/MusicFingers/src/lib/musicfingersserialportintegration.h:1429166117
+Projects/MusicFingers/src/lib/musicfingersserialportintegration.h:1429353470
 Projects/MusicFingers/src/lib/musicfingerssynthesizer.cpp:1426312003
 Projects/MusicFingers/src/lib/musicfingerssynthesizer.h:1426304790
 Projects/MusicFingers/src/musicfingers.pri:1426304643
@@ -4128,7 +4130,7 @@ Projects/Prototypes/MusicFingersBackendTesterGui/src/musicfingersbackendtestergu
 Projects/Prototypes/MusicFingersBackendTesterGui/src/musicfingersbackendtesterwidget.cpp:1426284766
 Projects/Prototypes/MusicFingersBackendTesterGui/src/musicfingersbackendtesterwidget.h:1426279680
 Projects/Prototypes/MusicFingersSynthesisToolkit/:1428890621
-Projects/Prototypes/MusicFingersSynthesisToolkit/src/:1429167460
+Projects/Prototypes/MusicFingersSynthesisToolkit/src/:1429353522
 Projects/Prototypes/MusicFingersSynthesisToolkit/src/MusicFingersSynthesisToolkitCli.pro:1428310019
 Projects/Prototypes/MusicFingersSynthesisToolkit/src/main.cpp:1428310141
 Projects/Prototypes/MusicFingersSynthesisToolkit/src/musicfingerssynthesistoolkit.cpp:1429167398
@@ -5682,7 +5684,7 @@ Solutions/hackyVideoBullshitSite/src/frontend/hvbsshared.h:1424550347
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.cpp:1424751631
 Solutions/hackyVideoBullshitSite/src/frontend/timelinewtwidget.h:1401029359
 Solutions/hackyVideoBullshitSite/src/hackyVideoBullshitSite.pro:1427379936
-Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1427816866
+Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.cpp:1429353660
 Solutions/hackyVideoBullshitSite/src/hackyvideobullshitsite.h:1427816423
 Solutions/hackyVideoBullshitSite/src/hvbsresources.qrc:1401115865
 Solutions/hackyVideoBullshitSite/src/lastmodifiedtimestampsandpaths.h:1401009546
@@ -5806,7 +5808,7 @@ scripts/polaroid.backup.and.shred.sh:1422524231
 scripts/qtCreatorCustomStyle.xml:1427771912
 scripts/rasperryPiVideoCaptureScript.sh:1428911257
 scripts/recursive.gpg.sign.txt:1426425284
-scripts/shallow.directory.hierarchy.comparison.command.checks.filenames.filesizes.and.timestamps.txt:1429000637
+scripts/shallow.directory.hierarchy.comparison.command.checks.filenames.filesizes.and.timestamps.txt:1429167964
 scripts/sony.ic.recorder.backup.and.delete.sh:1401722135
 scripts/sony.ic.recorder.backup.and.delete.sh.bak:1370738506
 scripts/soxRecPipedToOpusEncodeCommand.txt:1376137084

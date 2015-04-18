@@ -21,6 +21,8 @@
 
 #define HVBS_PLACEHOLDERPATHFOREDITTINGINSETTINGS "/-!-!-!-!-!-!-!-placeholder/path-!-!-!-!-!-!-!"
 
+//TODOreq: do WResource downloads fail if the user navigates away from the item being downloaded? I think the resource has the "download love" button as a parent, which means it'd get deleted+renewed when they go to another page (applies to both timeline view and 'front page video segment' view). i think i only ever tested the download functionality with small files, so i never saw this issue
+//TODOoptional: fullscreen should be kept when going from video segment to video segment. not sure this is even possible
 //TODOoptional: beneath the video on the front page I could show the 'latest 100' docs... either inline'd or just linked
 HackyVideoBullshitSite::HackyVideoBullshitSite(int argc, char *argv[], QObject *parent)
     : QObject(parent)
