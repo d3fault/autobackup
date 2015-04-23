@@ -6,6 +6,7 @@
 #include <QTemporaryDir>
 #include <QProcess>
 #include <QRgb>
+#include <QHash>
 #include <QList>
 
 class DetermineIntensePartsOfAudio : public QObject
@@ -19,8 +20,9 @@ private:
     QProcess *m_SoxProcess;
     QString m_SoxSpectrogramOutputPngFilePath;
 
-    int calculateNumIntenseParts(const QImage &soxSpectrogramImage, const QRgb currentThreshold);
-    QList<quint64> determineIntensePartsOfAudio(const QImage &soxSpectrogramImage, const QRgb threshold, const int spectrogramPixelsPerSecondOfAudio);
+    QHash<int, QRgb> calculateAverageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram(const QImage &soxSpectrogramImage);
+    int calculateNumIntenseParts(const QHash<int, QRgb> &averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram, const int spectrogramWidth, const QRgb currentThreshold);
+    QList<quint64> determineIntensePartsOfAudio(const QHash<int, QRgb> &averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram, const int spectrogramWidth, const QRgb threshold, const int spectrogramPixelsPerSecondOfAudio);
     quint64 determineMsTimestampForXpixelOnSpectrogram(const int xPixelOnSpectrogramToDetermineTimestampOf, const int spectrogramPixelsPerSecondOfAudio);
 signals:
     void e(const QString &msg);

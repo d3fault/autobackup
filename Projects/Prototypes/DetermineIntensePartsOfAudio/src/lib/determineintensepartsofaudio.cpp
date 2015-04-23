@@ -6,6 +6,10 @@
 #define DetermineIntensePartsOfAudio_spectrogramPixelsPerSecondOfAudio 300 //TODOreq: sent to spectrogram process call, and also used when analyzing the resulting png (maybe this should be an arg)
 #define DetermineIntensePartsOfAudio_songDurationMilliseconds 5000 //TODOreq: ffprobe -- or actually we could even calculate it by using the width of the spectrogram and performing a calculation with spectrogramPixelsPerSecondOfAudio (one less dependency is one less dependency)
 
+
+#define DetermineIntensePartsOfAudio_SOX_Q_ARG "3" //if changing this, use a color picker on the resulting images to change the below define along with it (aka: don't change). //TODOreq: cross platform? does sox on every platform use this color whenever -q is 3?
+#define DetermineIntensePartsOfAudio_SOX_Q_ARG_RESULTS_IN_COLOR_TO_FILTER_OUT "#4000ff"
+
 //Audio file -> Sox spectrogram -> custom png analyzer to determine timestamps of most 'intense' parts
 DetermineIntensePartsOfAudio::DetermineIntensePartsOfAudio(QObject *parent)
     : QObject(parent)
@@ -14,24 +18,42 @@ DetermineIntensePartsOfAudio::DetermineIntensePartsOfAudio(QObject *parent)
     m_SoxProcess->setProcessChannelMode(QProcess::MergedChannels);
     connect(m_SoxProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(handleSoxProcessFinished(int,QProcess::ExitStatus)));
 }
-int DetermineIntensePartsOfAudio::calculateNumIntenseParts(const QImage &soxSpectrogramImage, const QRgb currentThreshold)
+QHash<int, QRgb> DetermineIntensePartsOfAudio::calculateAverageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram(const QImage &soxSpectrogramImage)
+{
+    QHash<int, QRgb> averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram;
+    int imageWidth = soxSpectrogramImage.width();
+    int imageHeight = soxSpectrogramImage.height();
+    QRgb filterOutColor = QColor(DetermineIntensePartsOfAudio_SOX_Q_ARG_RESULTS_IN_COLOR_TO_FILTER_OUT).rgb();
+    for(int x = 0; x < imageWidth; ++x)
+    {
+        quint64 averageIntensityForAllFrequenciesAtThatPointInTime = 0;
+        int heightToUseForAveraging = 0;
+        for(int y = 0; y < imageHeight; ++y)
+        {
+
+            QRgb colorAtCurrentPixel = soxSpectrogramImage.pixel(x, y);
+            if(colorAtCurrentPixel != filterOutColor) //filter out 4000ff (which changes based on -q). there's also 'black' i _could_ filter out, but it's basically a noop to do so (since black == zero (racist))
+            {
+                averageIntensityForAllFrequenciesAtThatPointInTime += colorAtCurrentPixel;
+                ++heightToUseForAveraging;
+            }
+        }
+        if(heightToUseForAveraging > 0) //don't divide by zero xD
+            averageIntensityForAllFrequenciesAtThatPointInTime /= heightToUseForAveraging;
+        averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram.insert(x, static_cast<QRgb>(averageIntensityForAllFrequenciesAtThatPointInTime));
+    }
+    return averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram;
+}
+int DetermineIntensePartsOfAudio::calculateNumIntenseParts(const QHash<int, QRgb> &averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram, const int spectrogramWidth, const QRgb currentThreshold)
 {
     //TODOprobably: have a minimum amount of x pixels (time) that is considered a single "part", instead of just a single pixel. aka group together somehow (average together? idfk) -- some consideration needs to be given into the fact that there might be one continuous/long "intense" part (think:a trumpet being blown for 5 seconds). technically all 5 seconds of that trumpet SHOULD be one 'part'. would we want to report the start timestamp of that intense part, the end, or the start + duration? DETERMINING _DYNAMICALLY_ length'd 'parts' sounds like a bitch (but is surely possible ('edge' detection algorithms (in images, but oh look at that our audio is represented as an image :-D) already exist, it's just a matter of figuring out how to use one)) -- but maybe initially and to KISS, i should just use a simplier (lol typo, keeping it) 'parts' model of some N number of pixels wide
 
     int numIntenseParts = 0;
-    int imageWidth = soxSpectrogramImage.width();
-    int imageHeight = soxSpectrogramImage.height();
-    for(int x = 0; x < imageWidth; ++x)
+    for(int x = 0; x < spectrogramWidth; ++x)
     {
-        //calculate average intensity for all frequencies (y) at that point in time (x). TODOoptimization: this isn't going to change in between each call to calculateNumIntenseParts
-        QRgb averageIntensityForAllFrequenciesAtThatPointInTime = 0;
-        for(int y = 0; y < imageHeight; ++y)
-        {
-            averageIntensityForAllFrequenciesAtThatPointInTime += soxSpectrogramImage.pixel(x, y);
-        }
-        averageIntensityForAllFrequenciesAtThatPointInTime /= imageHeight;
+        QRgb averageIntensityForAllFrequenciesAtThatPointInTime = averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram.value(x);
 
-        //does that averaged intensity meet the threshold? if so, increase the number of intense parts
+        //does that average intensity meet the threshold? if so, increase the number of intense parts
         if(averageIntensityForAllFrequenciesAtThatPointInTime > currentThreshold)
         {
             ++numIntenseParts;
@@ -39,24 +61,16 @@ int DetermineIntensePartsOfAudio::calculateNumIntenseParts(const QImage &soxSpec
     }
     return numIntenseParts;
 }
-QList<quint64> DetermineIntensePartsOfAudio::determineIntensePartsOfAudio(const QImage &soxSpectrogramImage, const QRgb threshold, const int spectrogramPixelsPerSecondOfAudio)
+QList<quint64> DetermineIntensePartsOfAudio::determineIntensePartsOfAudio(const QHash<int, QRgb> &averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram, const int spectrogramWidth, const QRgb threshold, const int spectrogramPixelsPerSecondOfAudio)
 {
     //TODOoptional: merge this method with calculateNumIntenseParts, as they are very similar
 
     QList<quint64> msTimestampsOfIntensePartsOfAudio;
-    int imageWidth = soxSpectrogramImage.width();
-    int imageHeight = soxSpectrogramImage.height();
-    for(int x = 0; x < imageWidth; ++x)
+    for(int x = 0; x < spectrogramWidth; ++x)
     {
-        //calculate average intensity for all frequencies (y) at that point in time (x). TODOoptimization: this has already been calculated in calculateNumIntenseParts
-        QRgb averageIntensityForAllFrequenciesAtThatPointInTime = 0;
-        for(int y = 0; y < imageHeight; ++y)
-        {
-            averageIntensityForAllFrequenciesAtThatPointInTime += soxSpectrogramImage.pixel(x, y);
-        }
-        averageIntensityForAllFrequenciesAtThatPointInTime /= imageHeight;
+        QRgb averageIntensityForAllFrequenciesAtThatPointInTime = averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram.value(x);
 
-        //does that averaged intensity meet the threshold? if so, append it. TODOreq: factor in m_MaxIntensePartsPerSecond (related TODOmb: should I factor in m_MaxIntensePartsPerSecond in calculateNumIntenseParts as well? (it would implicitly decrease the num intense parts ofc))
+        //does that averaged intensity meet the threshold? if so, append it. TODOreq: factor in m_MaxIntensePartsPerSecond (related TODOmb: should I factor in m_MaxIntensePartsPerSecond in calculateNumIntenseParts as well? (it would implicitly decrease the num intense parts ofc). i am leaning towards YES to this) -- I think the algorithm I want to use to implement this is "find the MOST intense point, then rule out intense points for surrounding it, then repat for the SECOND MOST intense point, and so on until either targetIntensePartsInThisSong is found (likely), or no more intense parts can be found (unlikely/probably-impossible when there's a dynamic threshold -- but could happen if the user manually specified a threshold)
         if(averageIntensityForAllFrequenciesAtThatPointInTime > threshold)
         {
             msTimestampsOfIntensePartsOfAudio.append(determineMsTimestampForXpixelOnSpectrogram(x, spectrogramPixelsPerSecondOfAudio));
@@ -70,7 +84,7 @@ quint64 DetermineIntensePartsOfAudio::determineMsTimestampForXpixelOnSpectrogram
     //(1000 * 1) / 100 = 10ms
     return (1000 * xPixelOnSpectrogramToDetermineTimestampOf) / spectrogramPixelsPerSecondOfAudio; //learned cross multiplication in the third grade
 }
-void DetermineIntensePartsOfAudio::startDeterminingIntensePartsOfAudio(const QString &audioFilePath, const int maxIntensePartsPerSecond)
+void DetermineIntensePartsOfAudio::startDeterminingIntensePartsOfAudio(const QString &audioFilePath, const int maxIntensePartsPerSecond /*TODOmb: maybe call it 'min distance between intense parts' (in milliseconds) */)
 {
     m_MaxIntensePartsPerSecond = maxIntensePartsPerSecond;
     if(m_TemporaryDir.isNull())
@@ -86,7 +100,7 @@ void DetermineIntensePartsOfAudio::startDeterminingIntensePartsOfAudio(const QSt
     }
     //sox ark.wav -n remix 1-2 rate 3k spectrogram -r -h -w Rectangular -X 250 -s -o output.png
     QStringList soxSpectrogramArgs;
-    soxSpectrogramArgs << audioFilePath << "-n" << "remix" << "1-2" /* TODOoptional: determine num channels via ffprobe, or maybe some other way to mix all channels down to one channel*/ << "rate" << "3k" << "spectrogram" << "-r" << "-h" << "-w" << "Rectangular" << "-X" << QString::number(DetermineIntensePartsOfAudio_spectrogramPixelsPerSecondOfAudio) << "-s" << "-o" << m_SoxSpectrogramOutputPngFilePath;
+    soxSpectrogramArgs << audioFilePath << "-n" << "remix" << "1-2" /* TODOoptional: determine num channels via ffprobe, or maybe some other way to mix all channels down to one channel*/ << "rate" << "3k" << "spectrogram" << "-r" << "-h" << "-w" << "Rectangular" << "-X" << QString::number(DetermineIntensePartsOfAudio_spectrogramPixelsPerSecondOfAudio) << "-s" << "-q" << DetermineIntensePartsOfAudio_SOX_Q_ARG << "-o" << m_SoxSpectrogramOutputPngFilePath;
     m_SoxProcess->start("sox", soxSpectrogramArgs, QIODevice::ReadOnly);
     if(!m_SoxProcess->waitForStarted(-1)) //either this or I have to listen for QProcess::error ... this is easier (and I still don't know if finished can ever be emitted when an error does also... but i think yes! (however i also think that if it starts, then the finished signal will always be emitted))
     {
@@ -117,13 +131,15 @@ void DetermineIntensePartsOfAudio::handleSoxProcessFinished(int exitCode, QProce
     const int targetIntensePartsInThisSong = (m_MaxIntensePartsPerSecond * songDurationSeconds) / 2; //TODOreq: try uncommenting above 'times two' formula, i'm not sure which I want
     //start with everything qualifying as intense part and then remove until hit target, or vice versa? I suppose it doesn't matter
     QRgb currentThreshold = QColor(255, 255, 255).rgb(); //start with (most probably) nothing qualifying as an intense part, then decrease the threshold until target num intense parts is met. TODOreq: for the default mode of operation, yes it is a good idea to dynamically calculate the threshold, but the user should be able to specify the threshold as an arg as well (overriding the dynamic calculation). the user specifying it would probably (after some trial and error) give much better results
-    while(calculateNumIntenseParts(soxSpectrogramImage, currentThreshold) < targetIntensePartsInThisSong)
+    QHash<int, QRgb> averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram = calculateAverageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram(soxSpectrogramImage);
+    int soxSpectrogramWidth = soxSpectrogramImage.width();
+    while(calculateNumIntenseParts(averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram, soxSpectrogramWidth, currentThreshold) < targetIntensePartsInThisSong)
     {
-        --currentThreshold; //TODOoptimization: maybe -= 5 (etc) to speed things up?
+        currentThreshold -= 1000; //TODOoptimization: maybe -= 5 (etc) to speed things up?
     }
     //at this point, currentThreshold points to a threshold that makes us slightly exceed (because hitting it exactly would be unlikely) targetIntensePartsInThisSong
 
     //Now determine the most intense parts of the audio, using that threshold, and also making sure not to exceed m_MaxIntensePartsPerSecond
-    QList<quint64> msTimestampsOfIntensePartsOfAudio = determineIntensePartsOfAudio(soxSpectrogramImage, currentThreshold, DetermineIntensePartsOfAudio_spectrogramPixelsPerSecondOfAudio);
+    QList<quint64> msTimestampsOfIntensePartsOfAudio = determineIntensePartsOfAudio(averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram, soxSpectrogramWidth, currentThreshold, DetermineIntensePartsOfAudio_spectrogramPixelsPerSecondOfAudio);
     emit doneDeterminingIntensePartsOfAudio(true, msTimestampsOfIntensePartsOfAudio);
 }
