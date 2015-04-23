@@ -3773,7 +3773,7 @@ Projects/MouseAndOrMotionViewMaker/src/mouseandormotionviewmakerwidget.h:1396112
 Projects/MouseOrMotionOrMySexyFaceViewMaker/:1428115462
 Projects/MouseOrMotionOrMySexyFaceViewMaker/design/:1427818120
 Projects/MouseOrMotionOrMySexyFaceViewMaker/design/initial.idea.for.a.derivative.but.obviously.ill.leave.this.one.as.is.sldfkjsdlkfjsdlkjf.txt:1427818120
-Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1428931399
+Projects/MouseOrMotionOrMySexyFaceViewMaker/src/:1429800430
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/MouseOrMotionOrMySexyFaceViewMaker.pro:1426316518
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/main.cpp:1424682360
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseCursor.qrc:1424756197
@@ -3949,7 +3949,7 @@ Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge
 Projects/ProjectGoOutside/i.could.use.this.as.a.name.of.my.stream.channel.show.or.whatever.its.called.txt:1355727455
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
 Projects/ProjectGoOutside/wasdf.com.home.for.fingers.software.and.setup.but.also.for.controlling.windows.linux.etc.TITLE.FOR.DOMAIN.txt:1341829441
-Projects/Prototypes/:1428303786
+Projects/Prototypes/:1429794669
 Projects/Prototypes/AdDoublesRawMathLaunchSim/:1427380548
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/:1427380548
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/AdDoublesRawMathLaunchSim.pro:1390329374
@@ -4061,6 +4061,17 @@ Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/main.cpp:139024293
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/setvaluebykeyrequestfromwt.h:1389720128
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.cpp:1389777479
 Projects/Prototypes/Couchbase/WtCouchbaseKeySetAndGetTest/src/wtkeysetandgetwidget.h:1389777895
+Projects/Prototypes/DetermineIntensePartsOfAudio/:1429795301
+Projects/Prototypes/DetermineIntensePartsOfAudio/src/:1429807890
+Projects/Prototypes/DetermineIntensePartsOfAudio/src/cli/:1429807331
+Projects/Prototypes/DetermineIntensePartsOfAudio/src/cli/determineintensepartsofaudiocli.cpp:1429807331
+Projects/Prototypes/DetermineIntensePartsOfAudio/src/cli/determineintensepartsofaudiocli.h:1429804429
+Projects/Prototypes/DetermineIntensePartsOfAudio/src/cli/main.cpp:1429803562
+Projects/Prototypes/DetermineIntensePartsOfAudio/src/lib/:1429806912
+Projects/Prototypes/DetermineIntensePartsOfAudio/src/lib/determineintensepartsofaudio.cpp:1429806912
+Projects/Prototypes/DetermineIntensePartsOfAudio/src/lib/determineintensepartsofaudio.h:1429806814
+Projects/Prototypes/DetermineIntensePartsOfAudio/src/DetermineIntensePartsOfAudioCli.pro:1429805810
+Projects/Prototypes/DetermineIntensePartsOfAudio/src/determineintensepartsofaudio.pri:1429794823
 Projects/Prototypes/DhtAppDownloadCompileStubExample/:1427380549
 Projects/Prototypes/DhtAppDownloadCompileStubExample/src/:1427380549
 Projects/Prototypes/DhtAppDownloadCompileStubExample/src/DhtAppDownloadCompileStubExampleCli.pro:1409904081
