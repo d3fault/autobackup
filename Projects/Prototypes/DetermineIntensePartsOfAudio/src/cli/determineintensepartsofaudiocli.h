@@ -12,7 +12,7 @@ signals:
     void exitRequested(int exitCode);
 private slots:
     void handleE(const QString &msg);
-    void handleDeterminingIntensePartsOfAudioFinished(bool success, QList<quint64> msTimestampsOfIntensePartsOfAudio);
+    void handleDeterminingIntensePartsOfAudioFinished(bool success, QList<qint64> msTimestampsOfIntensePartsOfAudio);
 };
 
 #endif // DETERMINEINTENSEPARTSOFAUDIOCLI_H
