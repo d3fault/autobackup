@@ -1,10 +1,9 @@
-NOTE: jessie comes out soon as fuck, so might as well wait
-
 General Considerations:
 -offline vs. online boxen (different packages?) -- maybe gather user input (and instruct user on how to update /lists/) for offline package management vs. online=download-directly-ez
 -pretty vs. no-pretty
 -no-X (implies no-pretty ofc)
 -bash vs. Qt (Qt is easier/better, but bash has less/no dependencies (maybe bootstrap with bash into Qt?)
+-maybe a --d3fault flag that sets up specific-to-me shit such as fstab (and maybe whether or not any of my git repo is cloned and binary (backgrounds) are used). future versions could do --profile=<user>, and if there's a network connection download the user-specific shit from some git repo or whatever (ideally a fukken dht <3)
 
 root:
 -install all packages
@@ -12,7 +11,8 @@ root:
 -edit '/etc/lightdm/lightdm.conf', setting autologin-user=d3fault and autologin-user-timeout=0 (username should be dynamic? maybe just an ls of /home and error out if more than one dir?)
 -max number of open files
 -disable system beep
--create 'update/upgrade' script (taking into account jessie/sid 'install' upgrades, perhaps also taking into account offline package management (hmm?))
+-create 'update/upgrade' script (taking into account testing/sid 'install' upgrades, perhaps also taking into account offline package management (hmm?))
+-edit '/etc/default/grub', setting GRUB_TIMEOUT=1; update-grub
 
 INSTALL user:
 -Install Qt SDK (mb Wt/ffmpeg also?)
@@ -27,7 +27,7 @@ CREATE user:
 
 CREATE user config list (the INSTALL user run list will be derived from this list, but not every entry needs to be run once before the diff is applied):
 -All the non-qt-specific git configurations on "setting up gerrit" (no: commit template, sanity hook, etc). Maybe set global user/email and text editor to nano (fuck vim/emacs)
--Power manager = all never. yes spin down hard disks
+-Power manager = all never. yes spin down hard disks (spin down hard disks is not managed by xfce anymore. `hdparm -C /dev/device` tells me whether or not the drive has spun down at least (so figure out what is the default!))
 -Clone /text/, or this already done before running the script? "the script" + git could be only two things needed on thumb drive during a format. If clone /text/, molest it too.
 -Backgrounds+Screensaver = Copy the ccPixabay from /binary/ to ~/temp/backgrounds and make .list file. (screensaver never auto), decay screensaver at slightly faster fps
 -Settings->Appearance->Xfce Dusk
@@ -37,15 +37,15 @@ CREATE user config list (the INSTALL user run list will be derived from this lis
 -.pro -> Qt Creator -> mousepad
 -GIMP->single window mode
 -Dia->Don't compress save files
--Qt Creator custom style, word wrap, always save files before build, set terminal to xcfe4 terminal, MAYBE Qt creator tabs instead of 5 spaces (because WHY!?!?)
+-Qt Creator custom style, word wrap, always save files before build, set terminal to xcfe4 terminal, maybe set default build dir to somewhere else (but there could be dir name conflicts so idk), MAYBE Qt creator tabs instead of 5 spaces (because WHY!?!?)
 -Mousepad->word wrap
 -Ristretto->no thumbnails
 -Terminal->Scrollback=30,000 ; no scroll on output ; desktop = borderless terminal (transparency maybe (perhaps a script-wide --pretty or --no-pretty (idk which to default to) that affects backgrounds/window-manager-tweaks-transparency/screensaver(black if --no-pretty))
 -Settings->Keyboard->Cursor, uncheck "show blinking"
 -Settings->Desktop->Icons (uncheck all)
 -Settings->Preferred Applications->Utilities->Thunar + Xfce Terminal
--Iceweasel+extensions (online box has moar!): "/usr/bin/firefox -CreateProfile default" so "INSTALL user" doesn't have to run iceweasel to get default config. firefox.prefs.additions.txt has a lot of this, but it's not too hard to redo manually
--KeepassX->BACKUPS GET YOU KILLED
+-Iceweasel, general config, extensions+config-each (online box has moar extensions!): "/usr/bin/firefox -CreateProfile default" so "INSTALL user" doesn't have to run iceweasel to get default config.  firefox.prefs.additions.txt has a lot of this, but it's not too hard to redo manually. Maybe noscript whitelists and adblock additional blacklists.
+-KeepassX->BACKUPS GET YOU KILLED. online box could also setup 'email' 'phone' and 'generic-always-in-privacy-mode' profiles (each config'd same way, aside from privacy mode stuffs), plus creation of a script to start all 3 that CAN be run by user at startup (but shouldn't be auto-started ofc)
 -Mixer->Master->100% Volume (this might be too dependent on soundcard (but diffing might account for that :-P))
 -Maybe xfce 'app button' = my giant grin face pic?
 -bmp/jpg/gif/png->Ristretto

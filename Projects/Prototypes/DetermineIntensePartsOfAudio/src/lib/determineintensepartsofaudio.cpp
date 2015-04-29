@@ -6,10 +6,11 @@
 
 #define DetermineIntensePartsOfAudio_spectrogramPixelsPerSecondOfAudio 300 //sent to spectrogram process call, and also used when analyzing the resulting png (maybe this should be an arg)
 #define DetermineIntensePartsOfAudio_songDurationMilliseconds 5000 //TODOreq: ffprobe -- or actually we could even calculate it by using the width of the spectrogram and performing a calculation with spectrogramPixelsPerSecondOfAudio (one less dependency is one less dependency)
+#define DetermineIntensePartsOfAudio_ConsiderAnythingLessThanThisColorToBeSilentAndIgnoreIt "00ffe7"
 
 
-#define DetermineIntensePartsOfAudio_SOX_Q_ARG "3" //if changing this, use a color picker on the resulting images to change the below define along with it (aka: don't change)
-#define DetermineIntensePartsOfAudio_SOX_Q_ARG_RESULTS_IN_COLOR_TO_FILTER_OUT "#4000ff" //TODOreq: cross platform? does sox on every platform use this color whenever -q (defined directly above) is 3?
+//#define DetermineIntensePartsOfAudio_SOX_Q_ARG "3" //if changing this, use a color picker on the resulting images to change the below define along with it (aka: don't change)
+//#define DetermineIntensePartsOfAudio_SOX_Q_ARG_RESULTS_IN_COLOR_TO_FILTER_OUT "#4000ff" //TODOreq: cross platform? does sox on every platform use this color whenever -q (defined directly above) is 3?
 
 //Audio file -> Sox spectrogram -> custom png analyzer to determine timestamps of most 'intense' parts
 DetermineIntensePartsOfAudio::DetermineIntensePartsOfAudio(QObject *parent)
@@ -24,7 +25,8 @@ QMultiMap<QRgb, int> DetermineIntensePartsOfAudio::calculateAverageIntensitiesFo
     QMultiMap<QRgb, int> averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram;
     int imageWidth = soxSpectrogramImage.width();
     int imageHeight = soxSpectrogramImage.height();
-    QRgb filterOutColor = QColor(DetermineIntensePartsOfAudio_SOX_Q_ARG_RESULTS_IN_COLOR_TO_FILTER_OUT).rgb();
+    //QRgb filterOutColor = QColor(DetermineIntensePartsOfAudio_SOX_Q_ARG_RESULTS_IN_COLOR_TO_FILTER_OUT).rgb();
+    QRgb considerAnythingLessThanThisColorToBeSilentAndIgnoreIt = QColor(DetermineIntensePartsOfAudio_ConsiderAnythingLessThanThisColorToBeSilentAndIgnoreIt).rgb();
     for(int x = 0; x < imageWidth; ++x)
     {
         qint64 averageIntensityForAllFrequenciesAtThatPointInTime = 0;
@@ -33,7 +35,8 @@ QMultiMap<QRgb, int> DetermineIntensePartsOfAudio::calculateAverageIntensitiesFo
         {
 
             QRgb colorAtCurrentPixel = soxSpectrogramImage.pixel(x, y);
-            if(colorAtCurrentPixel != filterOutColor) //filter out 4000ff (which changes based on -q). there's also 'black' i _could_ filter out, but it's basically a noop to do so (since black == zero (racist))
+            //if(colorAtCurrentPixel != filterOutColor) //filter out 4000ff (which changes based on -q). there's also 'black' i _could_ filter out, but it's basically a noop to do so (since black == zero (racist))
+            if(colorAtCurrentPixel > considerAnythingLessThanThisColorToBeSilentAndIgnoreIt)
             {
                 averageIntensityForAllFrequenciesAtThatPointInTime += colorAtCurrentPixel;
                 ++heightToUseForAveraging;
@@ -142,7 +145,7 @@ void DetermineIntensePartsOfAudio::startDeterminingIntensePartsOfAudio(const QSt
     }
     //sox ark.wav -n remix 1-2 rate 3k spectrogram -r -h -w Rectangular -X 250 -s -o output.png
     QStringList soxSpectrogramArgs;
-    soxSpectrogramArgs << audioFilePath << "-n" << "remix" << "1-2" /* TODOoptional: determine num channels via ffprobe, or maybe some other way to mix all channels down to one channel*/ << "rate" << "3k" << "spectrogram" << "-r" << "-h" << "-w" << "Rectangular" << "-X" << QString::number(DetermineIntensePartsOfAudio_spectrogramPixelsPerSecondOfAudio) << "-s" << "-q" << DetermineIntensePartsOfAudio_SOX_Q_ARG << "-o" << m_SoxSpectrogramOutputPngFilePath;
+    soxSpectrogramArgs << audioFilePath << "-n" << "remix" << "1-2" /* TODOoptional: determine num channels via ffprobe, or maybe some other way to mix all channels down to one channel*/ << "rate" << "3k" << "spectrogram" << "-r" << "-h" << "-w" << "Rectangular" << "-X" << QString::number(DetermineIntensePartsOfAudio_spectrogramPixelsPerSecondOfAudio) << "-s" << /*"-q" << DetermineIntensePartsOfAudio_SOX_Q_ARG <<*/ "-o" << m_SoxSpectrogramOutputPngFilePath;
     m_SoxProcess->start("sox", soxSpectrogramArgs, QIODevice::ReadOnly);
     if(!m_SoxProcess->waitForStarted(-1)) //either this or I have to listen for QProcess::error ... this is easier (and I still don't know if finished can ever be emitted when an error does also... but i think yes! (however i also think that if it starts, then the finished signal will always be emitted))
     {
@@ -173,15 +176,23 @@ void DetermineIntensePartsOfAudio::handleSoxProcessFinished(int exitCode, QProce
     const int targetNumIntensePartsInThisSong = (maxIntensePartsPerSecond * songDurationSeconds) * 2;
     //const int targetNumIntensePartsInThisSong = (maxIntensePartsPerSecond * songDurationSeconds) / 2; //TODOreq: try uncommenting above 'times two' formula, i'm not sure which I want
     //start with everything qualifying as intense part and then remove until hit target, or vice versa? I suppose it doesn't matter
-    QRgb currentThreshold = QColor(255, 255, 255).rgb(); //start with (most probably) nothing qualifying as an intense part, then decrease the threshold until target num intense parts is met. TODOreq: for the default mode of operation, yes it is a good idea to dynamically calculate the threshold, but the user should be able to specify the threshold as an arg as well (overriding the dynamic calculation). the user specifying it would probably (after some trial and error) give much better results
     QMultiMap<QRgb, int> averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram = calculateAverageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram(soxSpectrogramImage);
+    if(averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram.isEmpty())
+    {
+        emit e("the averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram map is empty, so something is probably fucked");
+        emit doneDeterminingIntensePartsOfAudio(false);
+        return;
+    }
+    QRgb currentThreshold = averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram.lastKey(); //optimization to set our initial starting point for the dynamically detected threshold to the highest (aka 'last' in the map) intensity/color/number in the audio/image. i was starting at 255,255,255 (max) and then decreasing (initially by 1, then by 1000)... but wtf is the point?
+    //QRgb currentThreshold = QColor(255, 255, 255).rgb(); //start with (most probably) nothing qualifying as an intense part, then decrease the threshold until target num intense parts is met. TODOreq: for the default mode of operation, yes it is a good idea to dynamically calculate the threshold, but the user should be able to specify the threshold as an arg as well (overriding the dynamic calculation). the user specifying it would probably (after some trial and error) give much better results
     //Determine the most intense parts of the audio over and over, lowing the threshold until we meet or exceed targetNumIntensePartsInThisSong
     QList<qint64> msTimestampsOfIntensePartsOfAudio;
     //while(calculateNumIntenseParts(averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram, soxSpectrogramWidth, currentThreshold) < targetNumIntensePartsInThisSong)
     do
     {
         msTimestampsOfIntensePartsOfAudio = determineIntensePartsOfAudio(averageIntensitiesForAllFrequenciesAtAllPointsInTimeInSpectrogram, currentThreshold, DetermineIntensePartsOfAudio_spectrogramPixelsPerSecondOfAudio, targetNumIntensePartsInThisSong);
-        currentThreshold -= 1000; //TODOoptimization: maybe -= 5 (etc) to speed things up?
+        //currentThreshold -= 1000; //TODOoptimization: maybe -= 5 (etc) to speed things up?
+        currentThreshold -= 1;
 
     }while(msTimestampsOfIntensePartsOfAudio.size() < targetNumIntensePartsInThisSong);
     //at this point, currentThreshold points to a threshold that makes us slightly exceed (because hitting it exactly would be unlikely) targetIntensePartsInThisSong
