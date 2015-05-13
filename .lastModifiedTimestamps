@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1429168636
+Documents/minddump/:1431419245
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1634,6 +1634,7 @@ Documents/minddump/lskdfjklsdjflkjsdlkfjslkdfjlskdjflksjdlfkjslkdfjskldjfklsdjfl
 Documents/minddump/lskdfjlkasjdflksdjflksjdflkjsdfljsdklfjsdklfjoowureksdf.txt:1410242885
 Documents/minddump/lskdfjlksdjflksjdflkjsdlkfjlksdfjlksdjfsjdfewruoiusfkljsdf.txt:1396676790
 Documents/minddump/lskdfjlksjdfljlskdfjklsdjfowulerkjousdlfkjsdofusdlfk.txt:1409773828
+Documents/minddump/lskdfjlskfjlskdjflskdjflksdjflsdkjflskdjflsdkfjsdlfkj.txt:1431419245
 Documents/minddump/lskdfjsdfouswerwerqdfdlfjosudfljsdofulkjwerou.txt:1392701356
 Documents/minddump/lskdjfkjsdfkljsdfousdflkjsfousldfkjsodufkjsdlfk.txt:1392533595
 Documents/minddump/lskdjfklajsdfkljsadklfjslkdjflksdjflksjdfkljsdklfj.txt:1414656275
@@ -2268,6 +2269,7 @@ Documents/minddump/sdlkfjsldkjfklsjdfowiuerkjdslfkjsdlkfjskldjfjklkjfdlsd.txt:14
 Documents/minddump/sdlkfjslfjsldfjoweurljsfdousdlfjdsofusdlfjsdofiulsdfjsoduifsldkfj.txt:1381309721
 Documents/minddump/sdlkfjslkdfjslkjdfsdouflsdjfouwerljoudsflkjsdfousdfeowru.txt:1391832848
 Documents/minddump/sdlkfjslkdjflksdjfouwelkjrousdflkjsdofusdlkfjsoduflskdjfouwer.txt:1383121675
+Documents/minddump/sdlkfsdkflsdflsdflkdsfjsdfsdlfjsldfksdkflksdf.txt:1430645961
 Documents/minddump/sdlkfsdljflskdjflksdjflksjdfkljsdklfjsdklfjslkdjfouwerlk.txt:1417399024
 Documents/minddump/sdlkjfasdofiuasdofjasdlfkjasdofuapr.txt:1328223293
 Documents/minddump/sdlkjflkjsdfosduflkjsdofulwejrouasldkfjosudflkjousdflksdfoiu.txt:1383806210
@@ -2787,7 +2789,7 @@ OldStaticMeta/VariousTreeingsDuringHugeArchivePurge/externals.which.is.which.txt
 OldStaticMeta/VariousTreeingsDuringHugeArchivePurge/k3.wpl:1264978231
 OldStaticMeta/abandoned.binary.git.log.txt:1427184456
 OldStaticMeta/my.brain.hashes.at.launch.txt:1424346028
-Pictures/:1424668283
+Pictures/:1431416502
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon2.svg:1348378068
@@ -2835,6 +2837,7 @@ Pictures/Microsoft.sitting.on.Nokias.head.i.was.gonna.add.puppet.strings.but.i.l
 Pictures/Screenshot - 02062014 - 10\:56\:17 PM.png.7z:1391752762
 Pictures/Screenshot - 12162012 - 01\:32\:46 AM.png:1355646947
 Pictures/alien.species.interaction.or.even.humanless.surrogate.solution.svg:1367324786
+Pictures/daddy.issues.101.this.has.been.a.shyte.launch.svg:1431416571
 Pictures/dpl.dicks.everywhere.license.comparison.gave.up.but.you.get.the.point.svg:1356964724
 Pictures/encrypted.files.asdfkjaslkfjlskadjfklasdjfsa.svg:1414621381
 Pictures/failed.attempt.at.solving.or.understanding.gfs.and.how.to.use.it.as.a.kv.store.svg:1360734271
@@ -3949,7 +3952,7 @@ Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge
 Projects/ProjectGoOutside/i.could.use.this.as.a.name.of.my.stream.channel.show.or.whatever.its.called.txt:1355727455
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
 Projects/ProjectGoOutside/wasdf.com.home.for.fingers.software.and.setup.but.also.for.controlling.windows.linux.etc.TITLE.FOR.DOMAIN.txt:1341829441
-Projects/Prototypes/:1429794669
+Projects/Prototypes/:1431495635
 Projects/Prototypes/AdDoublesRawMathLaunchSim/:1427380548
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/:1427380548
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/AdDoublesRawMathLaunchSim.pro:1390329374
@@ -4024,6 +4027,9 @@ Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/mainwid
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/mainwidget.h:1340375359
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/testdriver.cpp:1340400146
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/testdriver.h:1340399397
+Projects/Prototypes/CleanroomWWW/:1431495638
+Projects/Prototypes/CleanroomWWW/design/:1431495679
+Projects/Prototypes/CleanroomWWW/design/initial.idea.basic.look.shown.and.core.features.described.svg:1431495715
 Projects/Prototypes/Couchbase/:1415170103
 Projects/Prototypes/Couchbase/CouchbaseNotepad/:1427380549
 Projects/Prototypes/Couchbase/CouchbaseNotepad/design/:1413069202
@@ -4108,7 +4114,7 @@ Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/mainwi
 Projects/Prototypes/MultiClientServerTypesHelloer/:1354036727
 Projects/Prototypes/MultiClientServerTypesHelloer/design/:1354036756
 Projects/Prototypes/MultiClientServerTypesHelloer/design/multi.server.abstraction.hides.all.server.shit.from.protocol.knower.txt:1354036756
-Projects/Prototypes/MultiClientServerTypesHelloer/src/:1427771351
+Projects/Prototypes/MultiClientServerTypesHelloer/src/:1430352457
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/:1370569748
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/MultiClientHelloer.pro:1353785649
 Projects/Prototypes/MultiClientServerTypesHelloer/src/MultiClientHelloer/clientwidget.cpp:1353785667
@@ -4618,7 +4624,7 @@ Projects/Prototypes/timelineFileStore/timelineFileStore/timelinenode.cpp:1320133
 Projects/Prototypes/timelineFileStore/timelineFileStore/timelinenode.h:1320133807
 Projects/Prototypes/timelineFileStore/timelineFileStore/timelinewithfilestore.cpp:1320134193
 Projects/Prototypes/timelineFileStore/timelineFileStore/timelinewithfilestore.h:1320134193
-Projects/QuickDirtyAutoBackupHalper/:1427816948
+Projects/QuickDirtyAutoBackupHalper/:1431498001
 Projects/QuickDirtyAutoBackupHalper/oldOldSrc/:1348865438
 Projects/QuickDirtyAutoBackupHalper/oldOldSrc/QuickDirtyAutoBackupHalper.pro:1348500720
 Projects/QuickDirtyAutoBackupHalper/oldOldSrc/main.cpp:1348500703
@@ -4636,7 +4642,7 @@ Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperbusiness.cp
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperbusiness.h:1348569501
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.cpp:1348566704
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.h:1348565463
-Projects/QuickDirtyAutoBackupHalper/src/:1428042968
+Projects/QuickDirtyAutoBackupHalper/src/:1431497994
 Projects/QuickDirtyAutoBackupHalper/src/QuickDirtyAutoBackupHalper.pro:1387287042
 Projects/QuickDirtyAutoBackupHalper/src/main.cpp:1401631299
 Projects/QuickDirtyAutoBackupHalper/src/mainwidget.cpp:1428042200
@@ -4718,7 +4724,7 @@ Projects/RedParenthesisCloseContextRefresher/src/redparenthesisclosecontextrefre
 Projects/RedParenthesisCloseContextRefresher/src/redparenthesisclosecontextrefresherwidget.cpp:1356250590
 Projects/RedParenthesisCloseContextRefresher/src/redparenthesisclosecontextrefresherwidget.h:1356250266
 Projects/RpcGenerator/:1343597837
-Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/:1427771353
+Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/:1430352459
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/:1370686905
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/:1379237269
 Projects/RpcGenerator/CompilingExamplesToExtractTemplateFrom/BankClient/src/AutoGeneratedRpcBankServerClientCode/:1370998704
@@ -5782,7 +5788,7 @@ scripts/customLaunchers/:1350497963
 scripts/customLaunchers/dia.integrated.and.no.splash.sh:1350498196
 scripts/d3bian/:1428000421
 scripts/d3bian/design/:1428000469
-scripts/d3bian/design/initial.idea.been.pondering.this.for.a.while.but.yea.i.get.tired.of.customizing.my.debian.xfce.install.the.same.way.txt:1430328660
+scripts/d3bian/design/initial.idea.been.pondering.this.for.a.while.but.yea.i.get.tired.of.customizing.my.debian.xfce.install.the.same.way.txt:1430354230
 scripts/win/:1383901959
 scripts/win/.directory:1349691596
 scripts/win/dismount.3x.750gb.drives.bat:1319976778
@@ -5796,7 +5802,7 @@ scripts/win/my.shutdown.bat:1320779187
 scripts/win/old.passwords.kdb:1320056131
 scripts/win/zoom.cygwin.commands.sh:1320861500
 scripts/win/zoom.sync.with.3x.750gb.drives.bat:1320860540
-scripts/apt.initial.packages.debian.txt:1430328444
+scripts/apt.initial.packages.debian.txt:1430354816
 scripts/base64theSha1SumOfAFileProperly.sh:1424394103
 scripts/best.rsync.command.txt:1427098358
 scripts/cleanAptEtc.sh:1350618598

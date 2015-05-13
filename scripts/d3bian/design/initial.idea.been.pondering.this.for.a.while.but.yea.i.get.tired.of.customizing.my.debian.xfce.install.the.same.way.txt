@@ -7,10 +7,9 @@ General Considerations:
 
 root:
 -install all packages
--edit '/usr/share/gvfs/mounts/network.mount', setting AutoMount to false
 -edit '/etc/lightdm/lightdm.conf', setting autologin-user=d3fault and autologin-user-timeout=0 (username should be dynamic? maybe just an ls of /home and error out if more than one dir?)
 -max number of open files
--disable system beep
+-disable system beep: echo "blacklist pcspkr" >> /etc/modprobe.d/blacklist.conf && modprobe -r pcspkr
 -create 'update/upgrade' script (taking into account testing/sid 'install' upgrades, perhaps also taking into account offline package management (hmm?))
 -edit '/etc/default/grub', setting GRUB_TIMEOUT=1; update-grub
 
@@ -33,7 +32,7 @@ CREATE user config list (the INSTALL user run list will be derived from this lis
 -Settings->Appearance->Xfce Dusk
 -Settings->Window Manager->Metabox
 -The Xfce panel at the bottom (should I start with 'one empty' or 'default'? I guess it doesn't matter as long as it's consistent. PERHAPS just write the file entirely instead of diffing it (special exception, or maybe that's how I should do all these configs)...). Also 26 pixels high (or whatever MouseMotionSexyFace has (they could both use same #define lel))
--Settings->File Manager->Details View, no thumbs
+-Settings->File Manager->Details View (maybe just set this in thunar once actually), no thumbs, full/consice date format
 -.pro -> Qt Creator -> mousepad
 -GIMP->single window mode
 -Dia->Don't compress save files
