@@ -1,0 +1,1 @@
+The default view should be half "realtime timeline" and half "clicky the nexty to move onto next (chronological) item". Both views (which are combined into a single view) are of extreme importance.
