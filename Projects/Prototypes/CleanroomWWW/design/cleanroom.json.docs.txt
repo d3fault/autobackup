@@ -1,0 +1,7 @@
+Main 'data' doc (ie, "a /b/ post"):
+data_<sha1hex>
+{
+	submitter : <submitter-username>,
+	timestamp : 999999999999,
+	data : <b64data>
+}

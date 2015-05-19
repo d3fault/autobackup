@@ -6,7 +6,7 @@ abc2
 
 do:
 server migration
-music fingers -> libsox synth (pluck/sin) -> speakers
+last 100 timeline entries titles (had:git commits) beneath video stream in hvbs
 
 abc explain vids -- that and/or step by step tutorials (images), obviously preferably both
 "not serving this"

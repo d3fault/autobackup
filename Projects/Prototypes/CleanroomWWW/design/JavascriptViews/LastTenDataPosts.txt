@@ -1,0 +1,18 @@
+Map:
+
+function(doc, meta)
+{
+    if(meta.id.lastIndexOf("data_",0) === 0)
+    {
+        var timestamp = 0;
+        if(doc.timestamp)
+        {
+            timestamp = doc.timestamp;
+        }
+        emit(timestamp, null);
+    }
+}
+
+Reduce: None
+
+Query option: descending=true (mb '1' instead of 'true'), limit=10 etc... the b-tree skipping algo should be used for any pages etc

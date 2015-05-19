@@ -1,0 +1,280 @@
+Do I want "registration requests" (which include a video of the person reading a random string) to be stored in "data_<sha1>" docs along with the rest? I know I don't NEED that to be the case, but as I add more similar docs it may turn into the case where I wish I had put everything in "data_<sha1>" docs to begin with. This all relates to the "master timeline plan" that I'm far from finishing, so is kind of hard to answer. I know I could go either way (with relative ease, too), but determining NOW which one is better is an order of magnitude more difficult than simply going either direction and riding it out. This stuff can be abstracted to daily life stuff lol problems.
+
+Cognitive dissonance:
+a) I want to just make a KISS timeline db for this simple app
+b) I see the design changes that are smart, take time to implement, and that I might end up having to implment later anyways (which would also most likely mean rewriting code gah!): proper replaying+abstract timeline db
+
+I really think couchbase might solve this problem inherently (invisibly) using json doc store: a simple "data_<sha1>" doc for EVERY doc in the bucket is pretty easy to implement really, even between multiple applications. you basically just tack on tags to limit the scope down. you hack tags on wherever you need. you don't have to perfect the 'schema' before you begin. <-- Still my mind must prototype the design before I begin to code!!!
+
+Here's two theoretical (prolly not gonna use em but idk) usages of "data_<sha1>" + tags
+
+First the minimum:
+data_aaaaaaaaaaaaaaaaaaaaa
+{
+	submitter : <submitter>,
+	timestamp : <timestamp>,
+	data : <b64data>
+}
+
+0)
+data_bbbbbbbbbbbbbbbbbbbbb
+{
+	forApp : "cleanroom",
+	appSubCategory : "registrationRequest",
+
+	submitter : <submitter>,
+	timestamp : <timestamp>,
+	data : <b64data>
+}
+
+1)
+data_cccccccccccccccccccc
+{
+	forApp : "cleanroom",
+	appSubCategory : "/b/-esq post",
+
+	submitter : <submitter>,
+	timestamp : <timestamp>,
+	data : <b64data>
+}
+
+
+of course "forApp" : "cleanroom" could be implied per-bucket (that's what buckets are for, but eh if there's multiple apps using the data then nvm)
+
+Perhaps leaving the 'forApp' out of it and just calling it a 'type' : 'cleanroom-submission' is good enough (also is forward proof to the desktop version)
+
+
+On one hand this app is stupid easy
+On the other, this decision is important for future proofzing (but gah I've already shown that the decision itself is much harder than the impls)
+
+Should the sha1 in the key be all of the json in the doc (incl tags and submitter/timestamp), or just the b64data?
+
+MUTATION-BASED (replayable implied) TIMELINE DB IS THE BEST WAY TO GO. However, is it KISS enough to be used in this app?
+Mutation-based + checksummed-at-every-change is of course even better. Oh, how the requirements explode.
+
+
+Ok decided: since this is a relatively simple app and practically throw-away, and since couchbase's json docs really shine and impress me in subtle ways that I usually can't predict, and since they encourage a tagging based system, and since tagging based systems aren't that difficult to code or adapt, I'm going to use one "data_<sha1>" key prefix and a 'type' tag.
+
+OT: Oh just realized the 'license' json key also (since it's a cleanroom, a license is mandatory for every doc)
+
+
+OT-as-FUCK TODOoptional: An "always mark my submissions with IANAL" user config (must be off by default? probably best to make them specify whether or not they want to be known as a lawyer, at registration?), so people can talk about law stuff without worrying about getting raped. Obviously, people who ARE lawyers would stand out (inversely). Maybe make the specifying of whether or not they're a lawyer completely optional for every and every post. They can either not specify (the default), specify they aren't, or specify they are. For each post, but also a '[remember] for future posts' config.
+
+
+I should make a no-minimum timeline and then each [application] view is just a [json/couchbase] view.
+My genesis node...
+data_
+{
+}
+
+becomes data_{}
+which hashes into (including recombining):
+data_9e748cfcf147c0d9669da1887d1fad3d4c4fb5b3
+{
+}
+
+but I like:
+
+data_
+{ }
+
+better so ima use the sha1 of that instead:
+data_57741407980d2c9c111e2545c946161d43b91311
+{ }
+
+and the view (or none):
+jsfunction(doc, meta)
+{
+	if(keyStartsWith("data_"))
+	{
+		//[app view] specific processing would go here in sibling [app+json] views.. perhaps 'emit;return;'ing before the below emit with the "null,null" is encountered
+		emit(null,null);
+	}
+}
+
+
+I'm unsure whether to say "that view is worthless" (because too much) or "that should be the default view".
+Perhaps a more sophisticated answer: "that should be the default view when there are no plugins loaded (when exactly 1 plugin, load that one's default view. else, ask which and be able to set a default plugin if more than 0 (had:1) ofc)".
+
+Before I forget, ima just paste this here:
+int main(int argc, char *argv[])
+{
+    QCoreApplication app(argc, argv);
+
+    QByteArray a;
+
+    {
+        QTextStream s(&a);
+        s << "data_" << endl << "{ }";
+        s.flush();
+    }
+    //qDebug() << "hash: " << QCryptographicHash::hash(QByteArray("data_{}"), QCryptographicHash::Sha1);
+    //qDebug() << "hex: " << QCryptographicHash::hash(QByteArray("data_{}"), QCryptographicHash::Sha1).toHex();
+    //qDebug() << a;
+    qDebug() << QCryptographicHash::hash(a, QCryptographicHash::Sha1).toHex(); //emits 57741407980d2c9c111e2545c946161d43b91311
+    return 0;
+}
+
+
+So now I'm tempted to make an abstract/proper "plugin runner with default view", but before I do I'm going to follow a tangent thought:
+I am an event loop, my senses/etc are input events and my actions/etc are output events. A biologically implemented event loop can interface near losslessly with a virtual timeline db by using the "sha1 of the entry, the timestamp, and the username" all 3 in the key of the json doc (and that could be the only keytype allowed in the db (had:bucket)). Using ONLY the hash in the key does not account for collissions from different users (but it doesn't have to?). Regardless, I could [...thoughts drift off...]
+
+I think that actually an sha1 (only) does already account for the timestamp and username. If it is OC it does. It's still helpful to record the timestamp/username but from a mathematical point of view, the contents that create the sha1 to begin with have both "time and effort [by a human that uses <username>]" put into them. So they are recorded but not represented the same way.
+
+
+So like, since I want code (had:type) : 'cleanroom-submission', I can just NOT code that pluginrunner-with-default-view until later (and perhaps 'cleanroom-submission' code makes good copypasta). It is almost the same application, but is much simpler because it has a specific/simple/tangible view.
+
+Somewhere in there I wanted to mention "an application is just a collection of views, and a view is a programmed front end (Wt/Qt/Cli/Mobile) and a database query ('couchbase view'-esq). They are both "views" in their own worlds. I have just merged them. To dodge ambiguity, I shall call it a ID3faultAppView instead.
+class ID3faultAppView
+{
+	virtual IProgrammedView *programmedView() const=0;
+	virtual void ID3faultAppViewGlue(IProgrammedView *programmedView, ICouchbaseQueryInclQueryArgs *databaseView) const=0; //connect front-end to back-end. maybe the db transformations live here?
+	virtual ICouchbaseQueryInclQueryArgs *databaseView() const=0;
+}
+
+I think I might be getting too ahead of myself with that, even though it would be trivial to make compiling.
+
+
+It's weird because when you get way down into it, you're using such simple primitives. It can get kind of hard to pull the big pieces back together.
+
+
+class ID3faultAppView
+{
+	virtual IProgrammedView *programmedView() const=0;
+	virtual void ID3faultAppViewGlue(IProgrammedLib *programmedLib, *IProgrammedView *programmedView, ICouchbaseQueryInclQueryArgs *databaseView) const=0; //connect front-end to back-end. maybe the db transformations live here?
+	virtual void IProgrammedLib() const=0;
+	virtual ICouchbaseQueryInclQueryArgs *databaseView() const=0;
+}
+
+Somehow/somewhere, you have to indicate that multiple views commonly (had:sometimes) (but not always) share the same instance of a programmedLib. I suppose the safest/best solution to that is to have an "application" view where each "view", by default, does not share any of it's instances. But at the top of that view, in the toolbox, is a button that says "share programmedLibs between views if libcounts-of-that-libtype in respective views match". Perhaps using that button and then manual corrections later (remembering those corrections is also a TODOreq but eh so fucking distant).
+
+See here's the problem:
+0) Attempt simple item viewer app
+1) Get way too into the timeline db design
+2) Get way too into the ultimate programming environment design (sup)
+3) ??????
+4) Profit
+
+
+class /b/-esq-frontpageView : ID3faultAppView
+{
+
+}
+
+...or something.
+
+
+
+Life is <T0D0req: fill in something here>... or something.
+						^life is mostly spent on/in this something on the right side of the 'or'
+
+data_<calc-self-like-genesis>
+{
+	"type" : "or something"
+}
+^^^For the undetermined type
+
+We live in the couchbase view that emits every key that startsWith "data_". Unclassified colliding chaos. Presumably truly randomly but I'd accept the answer of pseudorandom and be happy with it (apparent randomness != pseudo randomness, but to the observer they are equal).
+
+Timestamps could maybe be optional, but since it's a computer submitting the data, one is always available.
+
+
+I keep failing to consider whether or not the timestamp+username are included in the bytearray that has it's sha1 calculated, which changes things drastically. I keep flip flopping from in-key to use-tags.
+0) username and timestamp in key, not included in sha1 calc
+1) username and timestamp as tags, not included in sha1 calc
+2) username and timestamp as tags, included in sha1 calc (the entire doc body would be used in the sha1 calc)
+3) optional username and/or timestamp
+
+observations of above:
+-username optional would make sense for an abstract timeline db, but not for a cleanroom www db
+-a digital timeline always has the time available to it at the time of submission, so we might as well keep it (in key name or tag?)
+-i think the answer is (2)
+
+a) nextDocId = sha1sum(currentLatestDocBody + currentLatestKey)
+b) neighbors poll (in the get and subscribe manner) for the existence of each others' nextDocId doc. each node has it's own session-timeline-for-accepting-SUBMISSIONS. this way, submissions (the core feature of the front page) can be observed quickly (close enough to instantly) and in an efficient/scalable(for now) manner
+
+however, event driven [distributed] is a better solution than polling. which brings in the trustability issue: idfk what i want in an abstract timeline db, and i know I need every node to be trustable (to each other) in the cleanroom www db.
+
+
+I want to be "always deployed", I want it to be like that. Binaries on the site, not just theory. I want a Pluginrunner-as-described-above-but-in-addition-to-autmotically-deploying-itself-on-mywebsite-leik-nao-and-for-lots-of-operatingsystems. That of course brings in the "test area integration" design+code (out of necessity), and fuck me to do THAT 'properly'.
+
+Cross fucking compiling is easy when you have ssh and are a programmer. Legit cross compiling (not simply using ssh and compiling on the target) is also getting easier.
+
+I am an event loop. I want to express myself on a digital timeline.
+So:
+data_<sha1ofEntireDocBodyNotJustTheB64Data>
+{
+	t : <timestamp>
+	u : <cleanroom-username>
+	d : <b64data>
+}
+
+I _COULD_ consider implementations where there is no username or where the username isn't used in the hash in the key name, but since I feel I can only properly express myself in a cleanroom, and since copyrights(lefts) are only enforceable when non-anonymous (why copyright even accounts for anonymous works is beyond me), Usernames are mandatory for this timeline of this domain (which resulted from the creation of the app 'cleanroom www'). Collisions are hereby extremely unlikely (except when the hash runs out ofc). Collisions could probably safely be ignored as "the user's machine went down, came up again, and sent the same message twice", but idfk tbh.
+
+Re: "testing area etc"
+While I admit it's a good idea, the complexity of doing it RIGHT (and immediately) is beyond the scope of what should be the 1.0 requirements. To put it another way: I had better test thouroughly manually/hackily (improperly) before "using" (or at the very least, have a good 'output only' (replayable) backup plan) any of my changes to "cleanroom www", because MY OWN DATA is dependent upon it (and shouldn't be. see: Osios2, fml tangents).
+
+data_<sha1ofEntireDocBodyNotJustTheB64Data>
+{
+	t : <timestamp>
+	u : <cleanroom-username>
+	d : <b64data>
+	[type] : "D3faultApplicationMessage"
+	[app] : "Cleanroom"
+	[app-method] : "doc submit"
+	[app-method-argc] : 1
+	[app-method-arg0] : <b64data>
+
+} //type is optional. type of D3faultApplicationMessage makes app and app-method mandatory (argc is implied 0 if it doesn't exist)
+
+I could make t,u,d optional unless 'app' == 'Cleanroom', BUT there are an infinite amount of undefined things I COULD do, so wtf is it worth it considering it when my requirement is just CleanroomWWW. My grandpa Wieler said it best: "without goals you're just running into walls all the time". He said it differently than how I interpret it: "infinite directions means it's extremely easy to explore infinite tangents and get nothing tangible accomplished". Life is too much, and there is not enough time. I really not only wish frozing will work, but I wish I was already there. Then there would be enough time to explore (I only hope I don't get bored).
+Back on track with beginning of that paragraph: since the timeline db is meant for cleanroom www, t,u,d are mandatory. But actually that doesn't make sense, they should become mandatory once "app" is "Cleanroom". The significantly cheap cost of implementing portability in a abstract timeline is too tempting :-P.
+
+Should the couchbase 'bucket' be the cleanroom-specific timeline entries, or should the set of docs with "app" == "Cleanroom"? If the former, what should RegistrationRequests be stored as? data_<sha1sum> ?? But then now we've gone inside ourselves. The problem has eaten itself (which means I don't fully understand the problem). This "deployed" launch is technologically difficult. Metaphorically, it's like a 20-stringed kite where I need to pull each of the 20 strings simultaneously (only 2 hands fml) and at precise amounts of pressure.
+I need to KISS, which means I need to minimize, which means I need to trim lots (but still keep in mind when designing (the two contradict each other, I know (welcome to programming))).
+An automatically recompiling/relaunching/session-state-saving-and-restoring plugin runner with no default [READ] view (so every node is seen), but with a toolbar-accessable (-ible?) [WRITE] view called "submit document". The tool offers to download binaries of itself (though the one offering to do the download may be, and is by default, configured differently so as to [in-]directly offer the binary of itself up for download. Ideally, with a p2p implementation, every node would offer itself for download. I want the db to live on a private couchbase cluster initially, but that's only because the dht problem is too fucking huge to solve first (and yet it must before a single proper design can/should be synthesized).
+KISS means hacks/sloppy/ugly/rushed/BUGGY. Still, the dht problem is a great example of KISS/hacks (private couchbase db) being worth it.
+
+data_<sha1ofEntireDocBodyNotJustTheB64Data>
+{
+	t : <timestamp>
+	u : <cleanroom-username>
+	d : <b64data>
+	[type] : "D3faultApplicationMessage"
+	[app] : "this"
+	[app-method] : "patchAndRecompileAndRestart" /*restart only after asking user, maybe even don't patch until asking user*/
+	[app-method-argc] : 1
+	[app-method-arg0] : <b64data_aka_sourceCodePatch>
+
+} //would be trivial to sign/authenticate (using 1 hardcoded master public key that's in the app resources) ofc
+
+Ok, I figured some shit out: the CleanroomWWW is just a single [app] view to the Cleanroom database. But "Cleanroom" itself really refers to the DATABASE itself. The DATABASE is a "clean database". It does not contain copyrighted works that aren't licensed at >= DPL. Therefore, t,u,d (and 'l' for license!) should be mandatory for EVERY doc. The fact that [type] indirectly specifies [Cleanroom] and the fact that "Cleanroom" depends, in a different manner, on t,u,d... makes the problem confusing in a circular reasoning kind of way.
+
+Maybe app-method-arg0 should be invisible and 'd' should be it (since lol they are the same). app-method-arg1/etc would still exist.
+
+By keeping t,u,d,l the only mandatory keys, we can retain 100% backwards compatibility with outdated versions of the software (given a p2p implementation).
+100% backwards compatibility and infinite forwards compatibility is cheap to code and valuable to have. It's funny because it is also 'nothing'. To explain what I mean, Couchbase solves it with a null json doc: "key { }". If your app only expects that, you have 100% backwards compatibility with the network. Adding t,u,d,l as requirements does not change that (simple: discard docs missing them. don't allow them 'in the system').
+
+So since Cleanroom [app] is EFFECTIVELY the view of everything in that Cleanroom [db]...
+Or at the very least, I am now deciding it to be (so that means RegistrationRequests are public? guess so), t,u,d,l are the only mandatory keys to be shown on the frontpage (or to be accepted into the db, but that's a front-end user-input filtering task in addition to a select-for-user-output couchbase view).
+
+What I'm having trouble determining:
+If t,u,d,l are the only mandatory fields, why in my example above do I have [type], [app], [app-method], etc??? They seem redundant, and aren't necessarily so (but in this configuration, they are (I could change designs)). However in this case, I want to discard them since every doc allowed in the CLEANROOM bucket/system must have t,u,d,l. Whether I introduce [type], [app], etc is a problem to be solved in a view DIFFERENT from the frontpage/cleanroom-/b/-esq-content-stream view.
+
+The target of CleanRoom is the expression, interchange, possible-combination, and possible-derivation of deriveable copyrightable (aka >= copylefted) works.
+
+A[n app] view that incorporates [type], [app], etc is outside the scope of CleanRoom.
+
+However, what is the <cleanroom-user> for the user's registration request document? ffffff
+
+Lel chicken and egg problem. We run into this kinda shiz all the time in codan. Solvable.
+Hmm, maybe a special 'this' username for registration requests or other docs that originate 'from the system' and not from any particular user (although this does originate from a user, that user is not yet registered/existent xD lul).
+
+I want to revisit the "I am an event loop that wants to express-onto/interact-with a digital timeline" -> KISS factor
+
+AHA, revisitting that didn't help directly but I think I've figured it out now: registration requests CAN'T be in the Cleanroom-System/Bucket/Db because they aren't able to meet the requirements of being in the Cleanroom system: t,u,d,l... where 'u' is a cleanroom-verified (with video) user. The registration request (video etc) should definitely be imported at/after registration is successful, but that's a side note. How do I want registration to take place?
+
+HAHAHAHA
+It seems to me there's a Cleanroom Db and  CleanroomDb. See the difference? A single space.
+Cleanroom Db = A QSettings-esq (still distributed ideally (first version can be literal QSettings impl just to KISS), so it's own couchbase bucket) private/internal-ish-except-to-admin list of 'registration requests', among other things.
+CleanroomDb = A public information database where all information therein is able to be derived from.
