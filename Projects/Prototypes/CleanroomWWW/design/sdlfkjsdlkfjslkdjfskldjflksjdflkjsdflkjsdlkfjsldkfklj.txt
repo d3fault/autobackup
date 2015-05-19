@@ -1,0 +1,7 @@
+first of all, does a 'cleanroom session' indicate a logged in user or even a guest user?
+
+
+I might be getting too carried away with this IApplication stuff, sadly.
+
+
+There is a difference between "cleanroom session (the survival of the db)" and "cleanroom application session", especially considering desktop vs. wt. desktop opens/closes frantically but simply disconnects/reconnects from/to the cleanroom server. I suppose how I normally code Gui apps is <lost>

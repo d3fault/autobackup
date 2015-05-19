@@ -1,0 +1,11 @@
+TO DOnereq:
+CleanRoomWWW
+{
+	CleanRoom;
+	QList<CleanRoomSession> m_CleanRoomSessions; //managed by wt
+}
+CleanRoomGui
+{
+	CleanRoom;
+	CleanRoomSession; //desktop clients only need one session. of course, it is trivial to use a list of sessions even on the desktop
+}

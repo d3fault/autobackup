@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1431593489
+Documents/minddump/:1432043685
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1176,6 +1176,7 @@ Documents/minddump/head.pulling.me.in.too.many.directions.priotizing.is.probably
 Documents/minddump/heros.alsdjflkjsadlkfjsdkl.txt:1415257364
 Documents/minddump/how.do.you.EXPORT.from.hidden.os.lol.txt:1320057239
 Documents/minddump/how.to.code.and.when.to.optimize.i.am.an.idiot.sdafouwelrjosdufsldkf.txt:1390926461
+Documents/minddump/how.to.run.your.very.own.illuminati.in.2.easy.steps.txt:1432027600
 Documents/minddump/howto.use.todo.effectively.txt:1320052350
 Documents/minddump/hsdfljsdflkjsdfhlkwjerouisdlfkjdofusdlkfjsdou.txt:1401982747
 Documents/minddump/hsdlfjsdlkfjldsjflsdkjfouwerlkjsdhflsdkfjodfulk.txt:1402201692
@@ -1586,6 +1587,7 @@ Documents/minddump/lsdkjflkjsadfousadfljsdofuldjfosewrweudflsjdfosudfljewro.txt:
 Documents/minddump/lsdkjflkjsdflskdjflksjdfljksflkjsfdsouewrlk.txt:1361424874
 Documents/minddump/lsdkjflkjsdlkfjslksfdfsdfdfjslkdjflksdjflkjdsflksjd.txt:1424611283
 Documents/minddump/lsdkjflkjsflkjaslkjdfasdofuosduflsdjfosudflsjdfousdfljsdfljk.txt:1393712491
+Documents/minddump/lsdkjflksdjflksdjfklsdjflsjdflkjsdlfksldjflskdjflksdjflk.txt:1432029509
 Documents/minddump/lsdkjflksdjflksdjflksjdfouwerljsodfsdlfhsldfjdslfjdsfsdofulk.txt:1408258030
 Documents/minddump/lsdkjflksdjfouierlkjfousidfk.txt:1355188053
 Documents/minddump/lsdkjflksjdfkjsdlfkjsdlkjflksdjflksjdlfkjsdlkfjsdlkfjlskjflkjsdlf.txt:1419431815
@@ -2459,6 +2461,7 @@ Documents/minddump/sldkjflsdjflsjdflkjsdflkjsdlkfjdslkfjsldkfjlsdkfjlskdjflksdjf
 Documents/minddump/sldkjflsdkjfklsdjfkjskdlfjskldjfklsdjfklsjdfklsjdfkljsdlkfjdlkfhoewrlkdhsflksdj.txt:1420325357
 Documents/minddump/sldkjflskdjfkljsdfosudflkjsofusdlkfjsdoiuflsdjfosdufklj.txt:1393873580
 Documents/minddump/sldkjflskdjfkljsdjfsjsdfoiu.txt:1355730456
+Documents/minddump/sldkjflskdjflksdjflksjdflkjsdlfjslkdfjlksdjflksjdflksjdflk.txt:1432043685
 Documents/minddump/sldkjflskdjflskdjfoiuwelrkjosdiuflskdjfouwelrkjouflskdjfouiwelrkjouisdflk.txt:1381341605
 Documents/minddump/sldkjflskjdfkljsdlfjweuorjskjdflksdjfousdflksjdfouisdf.txt:1409757709
 Documents/minddump/sldkjflskjflkasjfkljslkfjaslkjfsldkjflsdkweroiuf.txt:1399488802
@@ -4045,7 +4048,7 @@ Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/mainwid
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/testdriver.cpp:1340400146
 Projects/Prototypes/Benchmarks/LocksVsSignalsVsStackImplicitlyShared/src/testdriver.h:1340399397
 Projects/Prototypes/CleanroomWWW/:1432022997
-Projects/Prototypes/CleanroomWWW/design/:1432022584
+Projects/Prototypes/CleanroomWWW/design/:1432040433
 Projects/Prototypes/CleanroomWWW/design/JavascriptViews/:1432006706
 Projects/Prototypes/CleanroomWWW/design/JavascriptViews/LastTenDataPosts.txt:1432006678
 Projects/Prototypes/CleanroomWWW/design/cleanroom.json.docs.txt:1432006541
@@ -4054,13 +4057,16 @@ Projects/Prototypes/CleanroomWWW/design/cleanroom.use.case.register.step1of2.bas
 Projects/Prototypes/CleanroomWWW/design/cleanroom.use.case.register.step2of2.video.with.random.bytes.recited.submission.dia:1431589083
 Projects/Prototypes/CleanroomWWW/design/cleanroom.use.case.submit.doc.dia:1432006843
 Projects/Prototypes/CleanroomWWW/design/cleanroom.use.case.verifying.registration.requests.dia:1431590904
+Projects/Prototypes/CleanroomWWW/design/got.lost.in.the.sessions.impl.but.also.thought.about.a.lot.too.txt:1432039114
+Projects/Prototypes/CleanroomWWW/design/sdklfjslkdfjslkdjflksdjflksjdflksjdflkjsdflkjsdfkljslkdfjksldfjsdf.txt:1432031201
+Projects/Prototypes/CleanroomWWW/design/sdlfkjsdlkfjslkdjfskldjflksjdflkjsdflkjsdlkfjsldkfklj.txt:1432040433
 Projects/Prototypes/CleanroomWWW/design/tons.of.design.considerations.about.basically.everything.in.existence.but.tried.to.focus.on.cleanroom.txt:1432022584
 Projects/Prototypes/CleanroomWWW/oldDesignThatWasntKISSsinceItOutsourcedBandwidthLoadToUntrusted/:1431576571
 Projects/Prototypes/CleanroomWWW/oldDesignThatWasntKISSsinceItOutsourcedBandwidthLoadToUntrusted/cleanroom.core.highlevel.interactions.dia:1431576015
 Projects/Prototypes/CleanroomWWW/oldDesignThatWasntKISSsinceItOutsourcedBandwidthLoadToUntrusted/cleanroom.hello.use.case.i.think.this.idea.might.fail.because.the.round.robin.slave.selection.can.be.gamed.dia:1431576571
 Projects/Prototypes/CleanroomWWW/oldDesignThatWasntKISSsinceItOutsourcedBandwidthLoadToUntrusted/i.wanted.this.to.be.KISS.ASAP.but.i.can.tell.already.that.it.isnt.going.to.be.so.perhaps.now.isnt.the.time.for.this.project.fml.txt:1431498971
 Projects/Prototypes/CleanroomWWW/oldDesignThatWasntKISSsinceItOutsourcedBandwidthLoadToUntrusted/initial.idea.basic.look.shown.and.core.features.described.svg:1431495715
-Projects/Prototypes/CleanroomWWW/src/:1432026801
+Projects/Prototypes/CleanroomWWW/src/:1432040436
 Projects/Prototypes/CleanroomWWW/src/gui/:1432022762
 Projects/Prototypes/CleanroomWWW/src/gui/web/:1432026446
 Projects/Prototypes/CleanroomWWW/src/gui/web/cleanroomwww.cpp:1432026446
@@ -4688,7 +4694,7 @@ Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperbusiness.cp
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperbusiness.h:1348569501
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.cpp:1348566704
 Projects/QuickDirtyAutoBackupHalper/oldSrc/quickdirtyautobackuphalperwidget.h:1348565463
-Projects/QuickDirtyAutoBackupHalper/src/:1432026826
+Projects/QuickDirtyAutoBackupHalper/src/:1432027156
 Projects/QuickDirtyAutoBackupHalper/src/QuickDirtyAutoBackupHalper.pro:1387287042
 Projects/QuickDirtyAutoBackupHalper/src/main.cpp:1401631299
 Projects/QuickDirtyAutoBackupHalper/src/mainwidget.cpp:1428042200

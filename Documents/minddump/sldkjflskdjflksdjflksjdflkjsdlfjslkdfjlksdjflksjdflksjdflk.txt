@@ -1,0 +1,3 @@
+Programmer's joke: In order to implement a proper application, your application should be modular. In order to implement a modular application, your application needs to be properly designed.
+
+Not all designs need to be modular ofc. But in general, a module is more modular when it's modular.

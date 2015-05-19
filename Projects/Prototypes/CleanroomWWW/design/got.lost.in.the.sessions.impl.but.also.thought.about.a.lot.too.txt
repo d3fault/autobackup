@@ -1,0 +1,115 @@
+class ICleanRoomSessionGatherer
+{
+public:
+	ICleanRoomSessionGatherer(QObject *applicationQObjectPtrToInvokeMetaMethodOn, QMetaMethod metaMethodToInvokeOnNewApplicationSession);
+	void start()
+	{
+		//checkInherited();
+		initializeAndStart();
+		//do initialization shit and start up whatever is needed for that particular session gatherer. hmm it makes more sense if I call it initializeAndStart
+	}
+protected:
+	//virtual void checkInherited()=0;
+	virtual void initializeAndStart(/*forgot i call it... had: boost::optional<args> */)=0;
+	virtual void registerApiCallWithSessionGatherer(QObject *objectTheApiCallLivesOn, QMetaMethod apiCall)=0;
+private:
+	QObject *m_ApplicationQObjectPtrToInvokeMetaMethodOn;
+	//QMetaMethod m_MetaMethodToApplicationMethods;
+	QMetaMethod m_MetaMethodToInvokeOnNewApplicationSession;
+}
+
+class WwwSessionSupplier : public ICleanRoomSessionGatherer
+{
+protected:
+	void registerApiCallWithSessionGatherer(QObject *objectTheApiCallLivesOn, QMetaMethod apiCall)
+	{
+		/*m_ObjectTheApiCallLivesOn = objectTheApiCallLivesOn;
+		m_ApiCall*/
+		m_ApiCalls.insert(objectTheApiCallLivesOn->objectTypeQStringFromMetaMethod(), apiCall);
+	}
+}
+
+class CleanRoomWWW : public ICleanRoomSessionGatherer
+{
+protected:
+	virtual void initializeAndStart()
+	{
+		//initialize wt frontend and start it
+	}
+private:
+	void handleNewWtSession()
+	{
+		m_MetaMethodToInvokeOnNewApplicationSession.invoke(m_ApplicationQObjectPtrToInvokeMetaMethodOnWhenNewSession, Qt::QueuedConnection /* auto might work but queued just to be safe */, Q_ARG(QByteArray,uniqueSessionId));
+	}
+}
+
+class SessionSupplier
+{
+public:	
+	SessionSupplier()
+	{
+		registerSupplier(m_WwwSessionSupplier);
+		//etc
+	}
+	void registerSupplier(ISessionSupplier isessionSupplier)
+	{
+		m_RegisteredSessionGatherers.append(isessionSupplier);
+	}
+	advertiseApiCallToAllRegisteredSupplierTypes(QObject *objectTheApiCallLivesOn /*applicationTheApiCallLivesIn*/, QMetaMethod apiCall)
+	{
+		Q_FOREACH(ICleanRoomSessionGatherer currentSessionGatherer, m_RegisteredSessionGatherers)
+		{
+			currentSessionGatherer.registerApiCallWithSessionGatherer(objectTheApiCallLivesOn, apiCall);
+		}
+	}
+	void beginGatheringSessions()
+	{
+		Q_FOREACH(ICleanRoomSessionGatherer currentSessionGatherer, m_RegisteredSessionGatherers)
+		{
+			currentSessionGatherer.beginGatheringSessions();
+		}
+	}
+	WwwSessionSupplier m_WwwSessionSupplier; //wt impl
+	//GuiSessionSupplier m_GuiSessionSupplier; //qt gui impl
+	//CliSessionSupplier m_CliSessionSupplier; //qt cli impl
+}
+
+class IApplication : public QObject
+{
+	Q_OBJECT
+public:
+	IApplication(QObject *parent = 0)
+		: m_SessionSupplier(new SessionSupplier(this))
+	{ }
+protected:
+	void initializeAndStartApplication(argc, argv)
+	{
+		//SessionManager manager;
+		//manager.gather(); //desktop supplies-sessions (had:reacts) instantly to this (it's still a signal/slot emit/invoke), wt supplies-sessions (had:reacts) whenever users connect
+		if(m_SessionSupplier.registeredSessionSupplierTypes().isEmpty())
+		{
+			//error
+			emit e("error: m_SessionSupplier.registeredSessionSupplierTypes().isEmpty() == true and mustn't");
+			emit finishedApplication(false);
+			return;
+		}
+		m_SessionSupplier.beginGatheringSessions();
+	}
+	SessionSupplier *m_SessionSupplier;
+	void registerApiCall(QMetaMethod apiCallToRegister)
+	{
+		m_SessionSupplier.advertiseApiCallToAllRegisteredSupplierTypes(this, apiCallToRegister);
+	}
+}
+
+class CleanRoomApplication : public IApplication
+{
+	CleanRoomApplication() : IApplication()
+	{
+		registerApiCall(metaMethod(cleanRoomFrontPageQuery));
+		registerApiCall(metaMethod(cleanRoomRegisterNewUser));
+		registerApiCall(metaMethod(cleanRoomLogin_MB:AkaStartNewCleanRoomUserSession));
+		registerApiCall(metaMethod(cleanRoomDataSubmission));
+		m_SessionSupplier.initializeAndStart(argc, argv);
+	}
+}
