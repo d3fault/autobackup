@@ -13,9 +13,11 @@ CONFIG   += console
 CONFIG   -= app_bundle
 TEMPLATE = app
 
-HEADERS += gui/web/cleanroomwww.h
+HEADERS += gui/web/cleanroomwww.h \
+    gui/web/cleanroomwtsessionprovider.h
 
 SOURCES += gui/web/main.cpp \
-    gui/web/cleanroomwww.cpp
+    gui/web/cleanroomwww.cpp \
+    gui/web/cleanroomwtsessionprovider.cpp
 
 include(cleanroom.pri)
