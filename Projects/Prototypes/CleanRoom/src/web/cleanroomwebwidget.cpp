@@ -1,7 +1,5 @@
 #include "cleanroomwebwidget.h"
 
-#include <QSharedPointer>
-
 #include <boost/bind.hpp>
 
 #include "cleanroomfrontpagedefaultviewrequestfromwt.h"
@@ -11,10 +9,14 @@ class CleanRoomSession;
 void CleanRoomWebWidget::handleCleanRoomSessionStarted(CleanRoomSession *session)
 {
     m_Session = session;
-    QSharedPointer<CleanRoomFrontPageDefaultViewRequestFromWt> *frontPageDefaultViewRequest(new CleanRoomFrontPageDefaultViewRequestFromWt(m_Session, boost::bind(&CleanRoomWebWidget::handleFrontPageDefaultViewReceived, static_cast<CleanRoomWebWidget*>(this), _1)));
+    std::string wtSessionId; //TODOreq: ez
+    new CleanRoomFrontPageDefaultViewRequestFromWt(m_Session, wtSessionId, boost::bind(&CleanRoomWebWidget::handleFrontPageDefaultViewReceived, this, _1));
     //boost::bind(boost::bind(&CleanRoomWebWidget::handleFrontPageDefaultViewReceived, static_cast<CleanRoomWebWidget*>(this), _1, _2, _3), couchbaseStoreKeyInput, lcbOpSuccess, dbError);
 }
-void CleanRoomWebWidget::handleFrontPageDefaultViewReceived(QStringList frontPageDocs)
+//void CleanRoomWebWidget::handleFrontPageDefaultViewReceived(QStringList frontPageDocs)
+void CleanRoomWebWidget::handleFrontPageDefaultViewReceived(QVariantList frontPageDocsVariantList)
 {
+    QStringList frontPageDocs = frontPageDocsVariantList.first().toStringList(); //TODOmb: is there a more elegant way/place to do this? i'd prefer my method arg is the QStringList
+
     //TODOreq: ez
 }

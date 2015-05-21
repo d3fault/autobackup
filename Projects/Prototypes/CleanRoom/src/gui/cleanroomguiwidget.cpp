@@ -1,7 +1,5 @@
 #include "cleanroomguiwidget.h"
 
-#include <QSharedPointer>
-
 #include "cleanroomfrontpagedefaultviewrequestfromqt.h"
 
 CleanRoomGuiWidget::CleanRoomGuiWidget(QWidget *parent)
@@ -10,10 +8,12 @@ CleanRoomGuiWidget::CleanRoomGuiWidget(QWidget *parent)
 void CleanRoomGuiWidget::handleCleanRoomSessionStarted(CleanRoomSession *session)
 {
     m_Session = session;
-    QSharedPointer<CleanRoomFrontPageDefaultViewRequestFromQt> *frontPageDefaultViewRequest(new CleanRoomFrontPageDefaultViewRequestFromQt(m_Session, SLOT(handleFrontPageDefaultViewReceived(QList<QString>))));
+    new CleanRoomFrontPageDefaultViewRequestFromQt(m_Session, this, SLOT(handleFrontPageDefaultViewReceived(QList<QString>)));
 }
-void CleanRoomGuiWidget::handleFrontPageDefaultViewReceived(QStringList frontPageDocs)
+//void CleanRoomGuiWidget::handleFrontPageDefaultViewReceived(QStringList frontPageDocs)
+void CleanRoomGuiWidget::handleFrontPageDefaultViewReceived(QVariantList frontPageDocsVariantList)
 {
+    QStringList frontPageDocs = frontPageDocsVariantList.first().toStringList();
+
     //TODOreq: ez
 }
-

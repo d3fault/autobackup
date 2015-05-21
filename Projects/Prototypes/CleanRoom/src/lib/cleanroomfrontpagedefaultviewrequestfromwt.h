@@ -1,19 +1,64 @@
 #ifndef CLEANROOMFRONTPAGEDEFAULTVIEWREQUESTFROMWT_H
 #define CLEANROOMFRONTPAGEDEFAULTVIEWREQUESTFROMWT_H
 
+#include "icleanroomfrontpagedefaultviewrequest.h"
+
 #include <QStringList>
 
 #include <boost/function.hpp>
 
 class CleanRoomSession;
 
-class CleanRoomFrontPageDefaultViewRequestFromWt
+class CleanRoomFrontPageDefaultViewRequestFromWt : ICleanRoomFrontPageDefaultViewRequest
 {
 public:
-    CleanRoomFrontPageDefaultViewRequestFromWt(CleanRoomSession *session, boost::function<QStringList/*front page docs*/> wApplicationCallback);
+    CleanRoomFrontPageDefaultViewRequestFromWt(CleanRoomSession *session, const std::string &wtSessionId, boost::function<void (QVariantList/*front page docs*/)> wApplicationCallback);
+    void respondActual(QVariantList responseArgs);
 private:
-    CleanRoomSession *m_Session;
-    boost::function<QStringList/*front page docs*/> m_WApplicationCallback;
+    std::string m_WtSessionId;
+    boost::function<void (QVariantList/*front page docs*/)> m_WApplicationCallback;
 };
 
 #endif // CLEANROOMFRONTPAGEDEFAULTVIEWREQUESTFROMWT_H
+
+
+#if 0
+#include <QCoreApplication>
+
+#include <QVariant>
+#include <QDebug>
+
+#include <boost/shared_ptr.hpp>
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+
+class SomeClass
+{
+public:
+    void someMethod(QVariantList list)
+    {
+        qDebug() << list;
+    }
+};
+
+int main(int argc, char *argv[])
+{
+    QCoreApplication a(argc, argv);
+
+    QVariantList someList;
+    someList.append(QString("yolo"));
+
+#if 1
+    boost::shared_ptr<SomeClass> someClass(new SomeClass());
+    boost::function<void (QVariantList)> f = boost::bind(&SomeClass::someMethod, someClass, _1);
+    f(someList);
+#else //compiles also, but doesn't use bind
+    boost::function<void (SomeClass*,QVariantList)> someFunction;
+    someFunction = &SomeClass::someMethod;
+    SomeClass someClass;
+    someFunction(&someClass, someList);
+#endif
+
+    return 0;
+}
+#endif
