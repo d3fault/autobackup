@@ -16,6 +16,8 @@ public:
 private:
     CleanRoom *m_CleanRoom;
     QScopedPointer<CleanRoomGuiWidget> m_Gui;
+signals:
+    void initializeAndStartCleanRoomRequested();
 private slots:
     void handleCleanRoomReadyForSessions();
 };

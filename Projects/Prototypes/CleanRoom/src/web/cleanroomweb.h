@@ -12,6 +12,8 @@ public:
     explicit CleanRoomWeb(QObject *parent = 0);
 private:
     CleanRoom *m_CleanRoom;
+signals:
+    void initializeAndStartRequested();
 private slots:
     void handleCleanRoomReadyForSessions();
 };

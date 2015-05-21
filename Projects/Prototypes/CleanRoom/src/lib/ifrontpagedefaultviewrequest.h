@@ -9,12 +9,16 @@
 
 class CleanRoom;
 
-class IFrontPageDefaultViewRequest : public ICleanRoomRequest
+class IFrontPageDefaultViewRequest : public QObject, public ICleanRoomRequest
 {
+    Q_OBJECT
 public:
-    IFrontPageDefaultViewRequest(CleanRoom *cleanRoom)
-        : ICleanRoomRequest(cleanRoom)
-    { }
+    IFrontPageDefaultViewRequest(CleanRoom *cleanRoom, QObject *parent = 0)
+        : QObject(parent)
+        , ICleanRoomRequest(cleanRoom)
+    {
+        connect(this, SIGNAL(frontPageDefaultViewRequested(IFrontPageDefaultViewRequest*)), cleanRoom, SLOT(getFrontPageDefaultView(IFrontPageDefaultViewRequest*)));
+    }
     void invokeSlotThatHandlesRequest();
     virtual void respond(QStringList frontPageDocs)=0;
 #if 0
@@ -24,6 +28,8 @@ public:
         QStringList frontPageDocs = responseArgsAsVariantList.first();
     }
 #endif
+signals:
+    void frontPageDefaultViewRequested(IFrontPageDefaultViewRequest *request);
 };
 
 #endif // IFRONTPAGEDEFAULTVIEWREQUEST_H

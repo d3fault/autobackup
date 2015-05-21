@@ -1,7 +1,5 @@
 #include "cleanroomweb.h"
 
-#include <QVariantList>
-
 #include <boost/bind.hpp>
 
 #include "cleanroom.h"
@@ -17,10 +15,8 @@ public:
         m_Session = session;
         m_Session->requestNewCleanRoomFrontPageDefaultView(m_WtSessionId, boost::bind(&CleanRoomWebWidget::handleFrontPageDefaultViewReceived, this, _1));
     }
-    void handleFrontPageDefaultViewReceived(QVariantList frontPageDocsInVariantList)
+    void handleFrontPageDefaultViewReceived(QStringList frontPageDocs)
     {
-        QStringList frontPageDocs = frontPageDocsInVariantList.first().toStringList();
-
         //TODOreq: ez
     }
 private:
@@ -33,7 +29,10 @@ CleanRoomWeb::CleanRoomWeb(QObject *parent)
     , m_CleanRoom(new CleanRoom(this))
 {
     connect(m_CleanRoom, SIGNAL(readyForSessions()), this, SLOT(handleCleanRoomReadyForSessions()));
-    QMetaObject::invokeMethod(m_CleanRoom, "initializeAndStart");
+
+    connect(this, SIGNAL(initializeAndStartRequested()), m_CleanRoom, SLOT(initializeAndStart()));
+    emit initializeAndStartRequested();
+    //QMetaObject::invokeMethod(m_CleanRoom, "initializeAndStart");
 }
 void CleanRoomWeb::handleCleanRoomReadyForSessions()
 {

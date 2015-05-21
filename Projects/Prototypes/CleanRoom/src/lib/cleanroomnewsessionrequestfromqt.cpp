@@ -11,5 +11,6 @@ void CleanRoomNewSessionRequestFromQt::regainContextPossiblyInOtherThread_aka_re
 #endif
 void CleanRoomNewSessionRequestFromQt::respond(CleanRoomSession *session)
 {
-    QMetaObject::invokeMethod(m_ObjectToRespondTo, m_SlotCallback.c_str(), Q_ARG(CleanRoomSession*, session)); //TODOreq: use signals/slots instead
+    emit newSessionResponseRequested(session);
+    //QMetaObject::invokeMethod(m_ObjectToRespondTo, m_SlotCallback.c_str(), Q_ARG(CleanRoomSession*, session)); //TODOreq: use signals/slots instead
 }

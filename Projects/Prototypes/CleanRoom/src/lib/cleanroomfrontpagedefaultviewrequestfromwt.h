@@ -12,12 +12,12 @@ class CleanRoom;
 class CleanRoomFrontPageDefaultViewRequestFromWt : public IFrontPageDefaultViewRequest
 {
 public:
-    CleanRoomFrontPageDefaultViewRequestFromWt(CleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (QVariantList/*front page docs*/)> wApplicationCallback);
+    CleanRoomFrontPageDefaultViewRequestFromWt(CleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (QStringList/*front page docs*/)> wApplicationCallback);
     //void regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs);
     void respond(QStringList frontPageDocs);
 private:
     std::string m_WtSessionId;
-    boost::function<void (QVariantList/*front page docs*/)> m_WApplicationCallback;
+    boost::function<void (QStringList/*front page docs*/)> m_WApplicationCallback;
 };
 
 #endif // CLEANROOMFRONTPAGEDEFAULTVIEWREQUESTFROMWT_H

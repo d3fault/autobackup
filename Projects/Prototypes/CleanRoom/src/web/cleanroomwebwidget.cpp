@@ -17,9 +17,7 @@ void CleanRoomWebWidget::handleCleanRoomSessionStarted(CleanRoomSession *session
     //boost::bind(boost::bind(&CleanRoomWebWidget::handleFrontPageDefaultViewReceived, static_cast<CleanRoomWebWidget*>(this), _1, _2, _3), couchbaseStoreKeyInput, lcbOpSuccess, dbError);
 }
 //void CleanRoomWebWidget::handleFrontPageDefaultViewReceived(QStringList frontPageDocs)
-void CleanRoomWebWidget::handleFrontPageDefaultViewReceived(QVariantList frontPageDocsVariantList)
+void CleanRoomWebWidget::handleFrontPageDefaultViewReceived(QStringList frontPageDocs)
 {
-    QStringList frontPageDocs = frontPageDocsVariantList.first().toStringList(); //TODOmb: is there a more elegant way/place to do this? i'd prefer my method arg is the QStringList
-
     //TODOreq: ez
 }

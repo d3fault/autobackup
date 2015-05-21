@@ -14,7 +14,7 @@ private:
     CleanRoomSession *m_Session;
 
     void handleCleanRoomSessionStarted(CleanRoomSession *session);
-    void handleFrontPageDefaultViewReceived(QVariantList frontPageDocsVariantList);
+    void handleFrontPageDefaultViewReceived(QStringList frontPageDocs);
 };
 
 #endif // CLEANROOMWEBWIDGET_H

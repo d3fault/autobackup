@@ -26,7 +26,7 @@ public:
     static void createNewSession(CleanRoom *cleanRoom, QObject *objectToCallbackTo, const char *callbackSlot);
     static void createNewSession(CleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (CleanRoomSession*)> wApplicationCallback);
     void requestNewCleanRoomFrontPageDefaultView(QObject *objectToCallbackTo, const char *callbackSlot);
-    void requestNewCleanRoomFrontPageDefaultView(const std::string &wtSessionId, boost::function<void (QVariantList)> wApplicationCallback);
+    void requestNewCleanRoomFrontPageDefaultView(const std::string &wtSessionId, boost::function<void (QStringList)> wApplicationCallback);
 private:
     CleanRoom *m_CleanRoom;
     static void invokeRequest(ICleanRoomRequest *requestToInvoke)

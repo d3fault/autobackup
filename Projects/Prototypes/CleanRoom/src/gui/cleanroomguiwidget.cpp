@@ -11,7 +11,7 @@ void CleanRoomGuiWidget::handleNewSessionCreated(CleanRoomSession* session)
 {
     //m_Session = sessionInVariantList.first().value<CleanRoomSession*>();
     m_Session = session;
-    m_Session->requestNewCleanRoomFrontPageDefaultView(this, "handleFrontPageDefaultViewReceived");
+    m_Session->requestNewCleanRoomFrontPageDefaultView(this, SLOT(handleFrontPageDefaultViewReceived(QStringList)));
     //show();
 
     //CleanRoomFrontPageDefaultViewRequestFromQt *request = new CleanRoomFrontPageDefaultViewRequestFromQt(m_Session, this, SLOT(handleFrontPageDefaultViewReceived(QList<QString>)));
