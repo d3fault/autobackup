@@ -1,0 +1,434 @@
+diff --git a/Projects/Prototypes/CleanRoom/reverts/revertEhThinkIMayHaveTakenAWrongTurnSomewhere.diffOf67e84e8d3bb7ac1410ae8f5ed61f196770f02efe b/Projects/Prototypes/CleanRoom/reverts/revertEhThinkIMayHaveTakenAWrongTurnSomewhere.diffOf67e84e8d3bb7ac1410ae8f5ed61f196770f02efe
+new file mode 100644
+index 0000000..07ec4ed
+--- /dev/null
++++ b/Projects/Prototypes/CleanRoom/reverts/revertEhThinkIMayHaveTakenAWrongTurnSomewhere.diffOf67e84e8d3bb7ac1410ae8f5ed61f196770f02efe
+@@ -0,0 +1,288 @@
++diff --git a/Projects/Prototypes/CleanRoom/src/CleanRoomGui.pro b/Projects/Prototypes/CleanRoom/src/CleanRoomGui.pro
++index 630cd2e..ccb6d82 100644
++--- a/Projects/Prototypes/CleanRoom/src/CleanRoomGui.pro
+++++ b/Projects/Prototypes/CleanRoom/src/CleanRoomGui.pro
++@@ -9,9 +9,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
++ TARGET = CleanRoomGui
++ TEMPLATE = app
++ 
++-HEADERS += gui/cleanroomguiwidget.h
+++HEADERS += gui/cleanroomguiwidget.h \
+++    gui/cleanroomgui.h
++ 
++ SOURCES += gui/main.cpp \
++-    gui/cleanroomguiwidget.cpp
+++    gui/cleanroomguiwidget.cpp \
+++    gui/cleanroomgui.cpp
++ 
++ include(cleanroom.pri)
++diff --git a/Projects/Prototypes/CleanRoom/src/cleanroom.pri b/Projects/Prototypes/CleanRoom/src/cleanroom.pri
++index ef70a98..ff48660 100644
++--- a/Projects/Prototypes/CleanRoom/src/cleanroom.pri
+++++ b/Projects/Prototypes/CleanRoom/src/cleanroom.pri
++@@ -4,9 +4,12 @@ HEADERS += $$PWD/lib/cleanroomfrontpagedefaultviewrequestfromqt.h \
++     $$PWD/lib/cleanroom.h \
++     $$PWD/lib/ifrontpagedefaultviewrequest.h \
++     $$PWD/lib/icleanroomrequest.h \
++-    $$PWD/lib/cleanroomsession.h
+++    $$PWD/lib/cleanroomsession.h \
+++    $$PWD/lib/threadsafeqwidgetnotifier.h \
+++    $$PWD/lib/ithreadsafefrontendnotifier.h
++ SOURCES += $$PWD/lib/cleanroomfrontpagedefaultviewrequestfromqt.cpp \
++     $$PWD/lib/cleanroomfrontpagedefaultviewrequestfromwt.cpp \
++     $$PWD/lib/cleanroom.cpp \
++     $$PWD/lib/ifrontpagedefaultviewrequest.cpp \
++-    $$PWD/lib/cleanroomsession.cpp
+++    $$PWD/lib/cleanroomsession.cpp \
+++    $$PWD/lib/threadsafeqwidgetnotifier.cpp
++diff --git a/Projects/Prototypes/CleanRoom/src/gui/cleanroomguiwidget.cpp b/Projects/Prototypes/CleanRoom/src/gui/cleanroomguiwidget.cpp
++index 9ce9667..51b5793 100644
++--- a/Projects/Prototypes/CleanRoom/src/gui/cleanroomguiwidget.cpp
+++++ b/Projects/Prototypes/CleanRoom/src/gui/cleanroomguiwidget.cpp
++@@ -1,12 +1,21 @@
++ #include "cleanroomguiwidget.h"
++ 
+++#include <QDebug>
+++
++ //#include "cleanroomfrontpagedefaultviewrequestfromqt.h"
++ 
++ #include "cleanroomsession.h"
++ 
++ CleanRoomGuiWidget::CleanRoomGuiWidget(QWidget *parent)
++     : QWidget(parent)
+++    , m_MyNotifier(0)
++ { }
+++IThreadSafeFrontEndNotifier *CleanRoomGuiWidget::threadSafeFrontEndNotifier()
+++{
+++    if(!m_MyNotifier)
+++        m_MyNotifier = CleanRoomSession::getNewThreadSafeQWidgetNotifier(this, SLOT(handleCleanRoomSessionStarted(CleanRoomSession*)), this);
+++    return m_MyNotifier;
+++}
++ void CleanRoomGuiWidget::handleCleanRoomSessionStarted(CleanRoomSession *session)
++ {
++     m_Session = session;
++@@ -22,6 +31,7 @@ void CleanRoomGuiWidget::handleCleanRoomSessionStarted(CleanRoomSession *session
++ void CleanRoomGuiWidget::handleFrontPageDefaultViewReceived(QVariantList frontPageDocsVariantList)
++ {
++     QStringList frontPageDocs = frontPageDocsVariantList.first().toStringList();
+++    qDebug() << frontPageDocs;
++ 
++     //TODOreq: ez
++ }
++diff --git a/Projects/Prototypes/CleanRoom/src/gui/cleanroomguiwidget.h b/Projects/Prototypes/CleanRoom/src/gui/cleanroomguiwidget.h
++index a189bc9..6551910 100644
++--- a/Projects/Prototypes/CleanRoom/src/gui/cleanroomguiwidget.h
+++++ b/Projects/Prototypes/CleanRoom/src/gui/cleanroomguiwidget.h
++@@ -5,6 +5,9 @@
++ 
++ #include <QVariantList>
++ 
+++#include "ithreadsafefrontendnotifier.h"
+++
+++class IThreadSafeFrontEndNotifier;
++ class CleanRoomSession;
++ 
++ class CleanRoomGuiWidget : public QWidget
++@@ -12,7 +15,9 @@ class CleanRoomGuiWidget : public QWidget
++     Q_OBJECT
++ public:
++     explicit CleanRoomGuiWidget(QWidget *parent = 0);
+++    IThreadSafeFrontEndNotifier *threadSafeFrontEndNotifier();
++ private:
+++    IThreadSafeFrontEndNotifier *m_MyNotifier;
++     CleanRoomSession *m_Session;
++ private slots:
++     void handleCleanRoomSessionStarted(CleanRoomSession *session);
++diff --git a/Projects/Prototypes/CleanRoom/src/gui/main.cpp b/Projects/Prototypes/CleanRoom/src/gui/main.cpp
++index 4a7c3ee..a2c61d0 100644
++--- a/Projects/Prototypes/CleanRoom/src/gui/main.cpp
+++++ b/Projects/Prototypes/CleanRoom/src/gui/main.cpp
++@@ -1,4 +1,13 @@
+++#include <QCoreApplication>
+++
+++#include "cleanroomgui.h"
+++
++ int main(int argc, char *argv[])
++ {
++-    return 0;
+++    QCoreApplication a(argc, argv);
+++
+++    CleanRoomGui gui;
+++    Q_UNUSED(gui)
+++
+++    return a.exec();
++ }
++diff --git a/Projects/Prototypes/CleanRoom/src/lib/cleanroom.cpp b/Projects/Prototypes/CleanRoom/src/lib/cleanroom.cpp
++index befed2c..776cc21 100644
++--- a/Projects/Prototypes/CleanRoom/src/lib/cleanroom.cpp
+++++ b/Projects/Prototypes/CleanRoom/src/lib/cleanroom.cpp
++@@ -1,18 +1,23 @@
++ #include "cleanroom.h"
++ 
+++#include "cleanroomsession.h"
++ #include "icleanroomrequest.h"
++ 
++ CleanRoom::CleanRoom(QObject *parent)
++     : QObject(parent)
++ { }
++-void CleanRoom::getFrontPageDefaultViewBegin(/*TODOreq: args? like 'request' or 'response path' etc...*/)
+++void CleanRoom::handleNewCleanRoomSessionRequested(IThreadSafeFrontEndNotifier *frontEndNotifier)
+++{
+++    /*CleanRoomSession *newSession = */new CleanRoomSession(this, frontEndNotifier);
+++}
+++void CleanRoom::getFrontPageDefaultView(ICleanRoomRequest *request/*TODOreq: args? none in this case but still*/)
++ {
++     //NOTE: this prototype says "fuck the db". rationale: the business <--> db comm is another layer of api calling/communication that just kinda fucks with my head too much
++ 
++     //eventually the db gives us the frontPageDocs: in finishedGettingFrontPageDefaultView, but we synthesize/fake that here
++     QStringList frontPageDocs;
++     frontPageDocs << "woot doc";
++-    finishedGettingFrontPageDefaultView();
+++    finishedGettingFrontPageDefaultView(request, frontPageDocs);
++ }
++ void CleanRoom::finishedGettingFrontPageDefaultView(ICleanRoomRequest *request, QStringList frontPageDocs)
++ {
++diff --git a/Projects/Prototypes/CleanRoom/src/lib/cleanroom.h b/Projects/Prototypes/CleanRoom/src/lib/cleanroom.h
++index 52b66f8..8530051 100644
++--- a/Projects/Prototypes/CleanRoom/src/lib/cleanroom.h
+++++ b/Projects/Prototypes/CleanRoom/src/lib/cleanroom.h
++@@ -4,6 +4,7 @@
++ #include <QObject>
++ 
++ class ICleanRoomRequest;
+++class IThreadSafeFrontEndNotifier;
++ 
++ class CleanRoom : public QObject
++ {
++@@ -11,7 +12,8 @@ class CleanRoom : public QObject
++ public:
++     explicit CleanRoom(QObject *parent = 0);
++ public slots:
++-    void getFrontPageDefaultViewBegin(/*TODOreq: args? like 'request' or 'response path' etc...*/);
+++    void handleNewCleanRoomSessionRequested(IThreadSafeFrontEndNotifier *frontEndNotifier);
+++    void getFrontPageDefaultView(ICleanRoomRequest *request);
++     void finishedGettingFrontPageDefaultView(ICleanRoomRequest *request, QStringList frontPageDocs);
++ };
++ 
++diff --git a/Projects/Prototypes/CleanRoom/src/lib/cleanroomfrontpagedefaultviewrequestfromqt.cpp b/Projects/Prototypes/CleanRoom/src/lib/cleanroomfrontpagedefaultviewrequestfromqt.cpp
++index e3e8c47..6ff6503 100644
++--- a/Projects/Prototypes/CleanRoom/src/lib/cleanroomfrontpagedefaultviewrequestfromqt.cpp
+++++ b/Projects/Prototypes/CleanRoom/src/lib/cleanroomfrontpagedefaultviewrequestfromqt.cpp
++@@ -10,5 +10,6 @@ CleanRoomFrontPageDefaultViewRequestFromQt::CleanRoomFrontPageDefaultViewRequest
++ }
++ void CleanRoomFrontPageDefaultViewRequestFromQt::regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs)
++ {
++-    QMetaObject::invokeMethod(m_ObjectCallback, m_SlotCallback.c_str(), Q_ARG(QVariantList, responseArgs));
+++    m_Session->frontEndNotifier()->notifyFrontEnd(m_SlotCallback.c_str(), responseArgs);
+++    //QMetaObject::invokeMethod(m_ObjectCallback, m_SlotCallback.c_str(), Q_ARG(QVariantList, responseArgs));
++ }
++diff --git a/Projects/Prototypes/CleanRoom/src/lib/cleanroomsession.cpp b/Projects/Prototypes/CleanRoom/src/lib/cleanroomsession.cpp
++index 0e72d5f..fdcb5b2 100644
++--- a/Projects/Prototypes/CleanRoom/src/lib/cleanroomsession.cpp
+++++ b/Projects/Prototypes/CleanRoom/src/lib/cleanroomsession.cpp
++@@ -1,8 +1,14 @@
++ #include "cleanroomsession.h"
++ 
+++#include "threadsafeqwidgetnotifier.h"
+++
++ #include "cleanroomfrontpagedefaultviewrequestfromqt.h"
++ #include "cleanroomfrontpagedefaultviewrequestfromwt.h"
++ 
+++IThreadSafeFrontEndNotifier *CleanRoomSession::getNewThreadSafeQWidgetNotifier(QObject *qobjectToNotify, const char *newSessionCallbackSlot, QObject *parent)
+++{
+++    return new ThreadSafeQWidgetNotifier(qobjectToNotify, newSessionCallbackSlot, parent);
+++}
++ void CleanRoomSession::requestNewCleanRoomFrontPageDefaultView(QObject *objectToCallbackTo, const char *callbackSlot)
++ {
++     CleanRoomFrontPageDefaultViewRequestFromQt *request = new CleanRoomFrontPageDefaultViewRequestFromQt(this, objectToCallbackTo, callbackSlot);
++diff --git a/Projects/Prototypes/CleanRoom/src/lib/cleanroomsession.h b/Projects/Prototypes/CleanRoom/src/lib/cleanroomsession.h
++index ed491fa..df2850b 100644
++--- a/Projects/Prototypes/CleanRoom/src/lib/cleanroomsession.h
+++++ b/Projects/Prototypes/CleanRoom/src/lib/cleanroomsession.h
++@@ -3,6 +3,7 @@
++ 
++ #include <boost/function.hpp>
++ 
+++#include "ithreadsafefrontendnotifier.h"
++ #include "icleanroomrequest.h"
++ 
++ class QObject;
++@@ -12,21 +13,29 @@ class CleanRoom;
++ class CleanRoomFrontPageDefaultViewRequestFromQt;
++ class CleanRoomFrontPageDefaultViewRequestFromWt;
++ 
++-
++ class CleanRoomSession
++ {
++ public:
++-    CleanRoomSession(CleanRoom *cleanRoom)
+++    CleanRoomSession(CleanRoom *cleanRoom, IThreadSafeFrontEndNotifier *frontEndNotifier)
++         : m_CleanRoom(cleanRoom)
++-    { }
+++        , m_FrontEndNotifier(frontEndNotifier)
+++    {
+++        m_FrontEndNotifier->notifyFrontEndOfNewSession(this);
+++    }
++     CleanRoom *cleanRoom() const
++     {
++         return m_CleanRoom;
++     }
+++    IThreadSafeFrontEndNotifier *frontEndNotifier() const
+++    {
+++        return m_FrontEndNotifier;
+++    }
+++    static IThreadSafeFrontEndNotifier *getNewThreadSafeQWidgetNotifier(QObject *qobjectToNotify, const char *newSessionCallbackSlot, QObject *parent = 0);
++     void requestNewCleanRoomFrontPageDefaultView(QObject *objectToCallbackTo, const char *callbackSlot);
++     void requestNewCleanRoomFrontPageDefaultView(const std::string &wtSessionId, boost::function<void (QVariantList)> wApplicationCallback);
++ private:
++     CleanRoom *m_CleanRoom;
+++    IThreadSafeFrontEndNotifier *m_FrontEndNotifier;
++     static void invokeRequest(ICleanRoomRequest *requestToInvoke)
++     {
++         requestToInvoke->invokeSlotThatHandlesRequest();
++diff --git a/Projects/Prototypes/CleanRoom/src/lib/icleanroomrequest.h b/Projects/Prototypes/CleanRoom/src/lib/icleanroomrequest.h
++index 029e8b0..346919a 100644
++--- a/Projects/Prototypes/CleanRoom/src/lib/icleanroomrequest.h
+++++ b/Projects/Prototypes/CleanRoom/src/lib/icleanroomrequest.h
++@@ -3,7 +3,7 @@
++ 
++ #include <QVariant>
++ 
++-class CleanRoomSession;
+++#include "cleanroomsession.h"
++ 
++ class ICleanRoomRequest
++ {
++@@ -18,17 +18,18 @@ public:
++     {
++         QVariantList responseArgs;
++         responseArgs.append(responseArg0);
++-        regainContextPossiblyInOtherThread_aka_respondActual(responseArgs);
+++        m_Session->frontEndNotifier()->notifyFrontEnd(responseArgs);
+++        //regainContextPossiblyInOtherThread_aka_respondActual(responseArgs);
++     }
++     void respond(QVariant responseArg0, QVariant responseArg1) //etc up to ~10
++     {
++         QVariantList responseArgs;
++         responseArgs.append(responseArg0);
++         responseArgs.append(responseArg1);
++-        regainContextPossiblyInOtherThread_aka_respondActual(responseArgs);
+++        //regainContextPossiblyInOtherThread_aka_respondActual(responseArgs);
++     }
++     virtual void invokeSlotThatHandlesRequest()=0;
++-    virtual void regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs)=0;
+++    //virtual void regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs)=0;
++ protected:
++     CleanRoomSession *m_Session;
++ };
++diff --git a/Projects/Prototypes/CleanRoom/src/lib/ifrontpagedefaultviewrequest.cpp b/Projects/Prototypes/CleanRoom/src/lib/ifrontpagedefaultviewrequest.cpp
++index f469d13..ed9b4b3 100644
++--- a/Projects/Prototypes/CleanRoom/src/lib/ifrontpagedefaultviewrequest.cpp
+++++ b/Projects/Prototypes/CleanRoom/src/lib/ifrontpagedefaultviewrequest.cpp
++@@ -2,5 +2,5 @@
++ 
++ void IFrontPageDefaultViewRequest::invokeSlotThatHandlesRequest()
++ {
++-    QMetaObject::invokeMethod(m_Session->cleanRoom(), "getFrontPageDefaultView" /* derp m_SlotThatHandlesRequest*//*, Q_ARG(QString, ifThereWasArequestParamThisWouldBeIt*/);
+++    QMetaObject::invokeMethod(m_Session->cleanRoom(), "getFrontPageDefaultView", Q_ARG(ICleanRoomRequest*, static_cast<ICleanRoomRequest*>(this)));
++ }
+diff --git a/Projects/Prototypes/CleanRoom/src/gui/cleanroomgui.cpp b/Projects/Prototypes/CleanRoom/src/gui/cleanroomgui.cpp
+new file mode 100644
+index 0000000..819697c
+--- /dev/null
++++ b/Projects/Prototypes/CleanRoom/src/gui/cleanroomgui.cpp
+@@ -0,0 +1,18 @@
++#include "cleanroomgui.h"
++
++#include "cleanroom.h"
++
++CleanRoomGui::CleanRoomGui(QObject *parent)
++    : QObject(parent)
++{
++    CleanRoom *cleanRoom = new CleanRoom(this);
++    connect(cleanRoom, SIGNAL(readyForSessions()), this, SLOT(handleCleanRoomReadyForSessions()));
++    connect(this, SIGNAL(newCleanRoomSessionRequested(IThreadSafeFrontEndNotifier*)), cleanRoom, SLOT(handleNewCleanRoomSessionRequested(IThreadSafeFrontEndNotifier*)));
++}
++void CleanRoomGui::handleCleanRoomReadyForSessions()
++{
++    m_Gui.reset(new CleanRoomGuiWidget());
++    emit newCleanRoomSessionRequested(m_Gui->threadSafeFrontEndNotifier());
++}
++
++
+diff --git a/Projects/Prototypes/CleanRoom/src/gui/cleanroomgui.h b/Projects/Prototypes/CleanRoom/src/gui/cleanroomgui.h
+new file mode 100644
+index 0000000..2149ed6
+--- /dev/null
++++ b/Projects/Prototypes/CleanRoom/src/gui/cleanroomgui.h
+@@ -0,0 +1,23 @@
++#ifndef CLEANROOMGUI_H
++#define CLEANROOMGUI_H
++
++#include <QObject>
++
++#include <QScopedPointer>
++
++#include "cleanroomguiwidget.h"
++
++class CleanRoomGui : public QObject
++{
++    Q_OBJECT
++public:
++    explicit CleanRoomGui(QObject *parent = 0);
++private:
++    QScopedPointer<CleanRoomGuiWidget> m_Gui;
++signals:
++    void newCleanRoomSessionRequested(IThreadSafeFrontEndNotifier *frontEndNotifier);
++private slots:
++    void handleCleanRoomReadyForSessions();
++};
++
++#endif // CLEANROOMGUI_H
+diff --git a/Projects/Prototypes/CleanRoom/src/lib/ithreadsafefrontendnotifier.h b/Projects/Prototypes/CleanRoom/src/lib/ithreadsafefrontendnotifier.h
+new file mode 100644
+index 0000000..8e8e198
+--- /dev/null
++++ b/Projects/Prototypes/CleanRoom/src/lib/ithreadsafefrontendnotifier.h
+@@ -0,0 +1,24 @@
++#ifndef ITHREADSAFEFRONTENDNOTIFIER_H
++#define ITHREADSAFEFRONTENDNOTIFIER_H
++
++#include <QVariant>
++
++class CleanRoomSession;
++
++class IThreadSafeFrontEndNotifier //TODOoptional: use CleanRoom in class name (and with inheriters), or abstract the CleanRoom out of the session
++{
++public:
++    IThreadSafeFrontEndNotifier(void *objectToNotify)
++        : m_ObjectToNotify(objectToNotify)
++    { }
++    virtual void notifyFrontEndOfNewSession(CleanRoomSession *newSession)=0;
++    virtual void notifyFrontEnd(const char *slotCallback, QVariantList responseArgs)=0;
++private:
++    void *m_ObjectToNotify;
++    void *objectToNotify() const
++    {
++        return m_ObjectToNotify;
++    }
++};
++
++#endif // ITHREADSAFEFRONTENDNOTIFIER_H
+diff --git a/Projects/Prototypes/CleanRoom/src/lib/threadsafeqwidgetnotifier.cpp b/Projects/Prototypes/CleanRoom/src/lib/threadsafeqwidgetnotifier.cpp
+new file mode 100644
+index 0000000..3c7bdb3
+--- /dev/null
++++ b/Projects/Prototypes/CleanRoom/src/lib/threadsafeqwidgetnotifier.cpp
+@@ -0,0 +1,22 @@
++#include "threadsafeqwidgetnotifier.h"
++
++ThreadSafeQWidgetNotifier::ThreadSafeQWidgetNotifier(QObject *qobjectToNotify, const char *newSessionCallbackSlot, QObject *parent)
++    : QObject(parent)
++    , IThreadSafeFrontEndNotifier(qobjectToNotify)
++{
++    connect(this, SIGNAL(newSessionResponseRequested(CleanRoomSession*)), qobjectToNotify, newSessionCallbackSlot);
++    //we don't know callback alost until time of api request (in this design) - connect(this, SIGNAL(notifyFrontEndRequested(QVariantList)), qobjectToNotify, callbackSlot);
++}
++void ThreadSafeQWidgetNotifier::notifyFrontEndOfNewSession(CleanRoomSession *newSession)
++{
++    emit newSessionResponseRequested(newSession);
++}
++void ThreadSafeQWidgetNotifier::notifyFrontEnd(const char *slotCallback, QVariantList responseArgs)
++{
++    QMetaObject::invokeMethod(objectToNotify(), slotCallback, Q_ARG(QVariantList, responseArgs));
++    //emit notifyFrontEndRequested(responseArgs);
++}
++QObject *ThreadSafeQWidgetNotifier::objectToNotify()
++{
++    return static_cast<QObject*>(objectToNotify());
++}
+diff --git a/Projects/Prototypes/CleanRoom/src/lib/threadsafeqwidgetnotifier.h b/Projects/Prototypes/CleanRoom/src/lib/threadsafeqwidgetnotifier.h
+new file mode 100644
+index 0000000..acadb37
+--- /dev/null
++++ b/Projects/Prototypes/CleanRoom/src/lib/threadsafeqwidgetnotifier.h
+@@ -0,0 +1,23 @@
++#ifndef THREADSAFEQWIDGETNOTIFIER_H
++#define THREADSAFEQWIDGETNOTIFIER_H
++
++#include "qobject.h"
++#include "ithreadsafefrontendnotifier.h"
++
++class CleanRoomSession;
++
++class ThreadSafeQWidgetNotifier : public QObject, public IThreadSafeFrontEndNotifier
++{
++    Q_OBJECT
++public:
++    explicit ThreadSafeQWidgetNotifier(QObject *qobjectToNotify, const char *newSessionCallbackSlot, QObject *parent = 0);
++    void notifyFrontEndOfNewSession(CleanRoomSession *newSession);
++    void notifyFrontEnd(const char *slotCallback, QVariantList responseArgs);
++private:
++    QObject *objectToNotify();
++signals:
++    void newSessionResponseRequested(CleanRoomSession *newSession);
++    void notifyFrontEndRequested(QVariantList responseArgs);
++};
++
++#endif // THREADSAFEQWIDGETNOTIFIER_H
