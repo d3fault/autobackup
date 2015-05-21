@@ -7,4 +7,6 @@ HEADERS += $$PWD/lib/cleanroomfrontpagedefaultviewrequestfromqt.h \
     $$PWD/lib/cleanroomsession.h
 SOURCES += $$PWD/lib/cleanroomfrontpagedefaultviewrequestfromqt.cpp \
     $$PWD/lib/cleanroomfrontpagedefaultviewrequestfromwt.cpp \
-    $$PWD/lib/cleanroom.cpp
+    $$PWD/lib/cleanroom.cpp \
+    $$PWD/lib/ifrontpagedefaultviewrequest.cpp \
+    $$PWD/lib/cleanroomsession.cpp

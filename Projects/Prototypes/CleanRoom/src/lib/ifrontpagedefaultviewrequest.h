@@ -14,10 +14,7 @@ public:
     IFrontPageDefaultViewRequest(CleanRoomSession *session)
         : ICleanRoomRequest(session)
     { }
-    void invokeSlotThatHandlesRequest()
-    {
-        QMetaObject::invokeMethod(m_Session->cleanRoom(), "getFrontPageDefaultView" /* derp m_SlotThatHandlesRequest*//*, Q_ARG(QString, ifThereWasArequestParamThisWouldBeIt*/);
-    }
+    void invokeSlotThatHandlesRequest();
 #if 0
     void convertResponseArgsFromVariantListToApiSpecificTypes/*_AndThenCallThisSlotWithThemAwwShitNvmIcantBoostWtThatWay*/(QVariantList responseArgsAsVariantList)
     {

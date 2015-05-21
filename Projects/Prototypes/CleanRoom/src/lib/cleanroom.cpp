@@ -9,7 +9,10 @@ void CleanRoom::getFrontPageDefaultViewBegin(/*TODOreq: args? like 'request' or 
 {
     //NOTE: this prototype says "fuck the db". rationale: the business <--> db comm is another layer of api calling/communication that just kinda fucks with my head too much
 
-    //eventually the db gives us the frontPageDocs: in finishedGettingFrontPageDefaultView
+    //eventually the db gives us the frontPageDocs: in finishedGettingFrontPageDefaultView, but we synthesize/fake that here
+    QStringList frontPageDocs;
+    frontPageDocs << "woot doc";
+    finishedGettingFrontPageDefaultView();
 }
 void CleanRoom::finishedGettingFrontPageDefaultView(ICleanRoomRequest *request, QStringList frontPageDocs)
 {
