@@ -8,7 +8,7 @@ CleanRoomGui::CleanRoomGui(QObject *parent)
     , m_CleanRoom(new CleanRoom(this))
 {
     connect(m_CleanRoom, SIGNAL(readyForSessions()), this, SLOT(handleCleanRoomReadyForSessions()));
-    QMetaObject::invokeMethod(m_CleanRoom, "initializeAndStart", Qt::QueuedConnection /* queued because i'm still constructing TODOreq:wtf? i have this here because valgrind memory profiling crashes and i want to see if this fixes it*/);
+    QMetaObject::invokeMethod(m_CleanRoom, "initializeAndStart");
 }
 void CleanRoomGui::handleCleanRoomReadyForSessions()
 {

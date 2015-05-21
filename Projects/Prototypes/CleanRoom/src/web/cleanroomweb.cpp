@@ -12,7 +12,7 @@ class WApplication
 class CleanRoomWebWidget : public WApplication
 {
 public:
-    void handleNewSessionCreated(CleanRoomSession* session)
+    void handleNewSessionCreated(CleanRoomSession *session)
     {
         m_Session = session;
         m_Session->requestNewCleanRoomFrontPageDefaultView(m_WtSessionId, boost::bind(&CleanRoomWebWidget::handleFrontPageDefaultViewReceived, this, _1));
