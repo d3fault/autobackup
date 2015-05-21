@@ -1,18 +1,28 @@
 #include "cleanroom.h"
 
+#include "cleanroomsession.h"
 #include "icleanroomrequest.h"
 
 CleanRoom::CleanRoom(QObject *parent)
     : QObject(parent)
 { }
-void CleanRoom::getFrontPageDefaultViewBegin(/*TODOreq: args? like 'request' or 'response path' etc...*/)
+void CleanRoom::initializeAndStart()
+{
+    //wait for db to initialize asynchronously, etc, then:
+    emit readyForSessions();
+}
+void CleanRoom::newSession(ICleanRoomRequest *request)
+{
+    request->respond(QVariant::fromValue(new CleanRoomSession(this)));
+}
+void CleanRoom::getFrontPageDefaultView(ICleanRoomRequest *request)
 {
     //NOTE: this prototype says "fuck the db". rationale: the business <--> db comm is another layer of api calling/communication that just kinda fucks with my head too much
 
     //eventually the db gives us the frontPageDocs: in finishedGettingFrontPageDefaultView, but we synthesize/fake that here
     QStringList frontPageDocs;
     frontPageDocs << "woot doc";
-    finishedGettingFrontPageDefaultView();
+    finishedGettingFrontPageDefaultView(request, frontPageDocs);
 }
 void CleanRoom::finishedGettingFrontPageDefaultView(ICleanRoomRequest *request, QStringList frontPageDocs)
 {

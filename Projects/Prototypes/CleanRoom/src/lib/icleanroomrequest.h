@@ -3,13 +3,13 @@
 
 #include <QVariant>
 
-class CleanRoomSession;
+class CleanRoom;
 
 class ICleanRoomRequest
 {
 public:
-    ICleanRoomRequest(CleanRoomSession *session)
-        : m_Session(session)
+    ICleanRoomRequest(CleanRoom *cleanRoom)
+        : m_CleanRoom(cleanRoom)
         //, m_SlotThatHandlesRequest(slotThatHandlesRequest)
     {
         //QMetaObject::invokeMethod(session->cleanRoom(), slotToRequest);
@@ -30,7 +30,7 @@ public:
     virtual void invokeSlotThatHandlesRequest()=0;
     virtual void regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs)=0;
 protected:
-    CleanRoomSession *m_Session;
+    CleanRoom *m_CleanRoom;
 };
 
 #endif // ICLEANROOMREQUEST_H

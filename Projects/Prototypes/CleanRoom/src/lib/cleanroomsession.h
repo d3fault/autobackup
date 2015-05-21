@@ -23,6 +23,8 @@ public:
     {
         return m_CleanRoom;
     }
+    static void createNewSession(CleanRoom *cleanRoom, QObject *objectToCallbackTo, const char *callbackSlot);
+    static void createNewSession(CleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (CleanRoomSession*)> wApplicationCallback);
     void requestNewCleanRoomFrontPageDefaultView(QObject *objectToCallbackTo, const char *callbackSlot);
     void requestNewCleanRoomFrontPageDefaultView(const std::string &wtSessionId, boost::function<void (QVariantList)> wApplicationCallback);
 private:
@@ -32,6 +34,7 @@ private:
         requestToInvoke->invokeSlotThatHandlesRequest();
     }
 };
+Q_DECLARE_METATYPE(CleanRoomSession*)
 
 #endif // CLEANROOMSESSION
 

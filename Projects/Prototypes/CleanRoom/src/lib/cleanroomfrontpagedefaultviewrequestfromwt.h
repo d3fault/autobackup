@@ -7,12 +7,12 @@
 
 #include <boost/function.hpp>
 
-class CleanRoomSession;
+class CleanRoom;
 
 class CleanRoomFrontPageDefaultViewRequestFromWt : public IFrontPageDefaultViewRequest
 {
 public:
-    CleanRoomFrontPageDefaultViewRequestFromWt(CleanRoomSession *session, const std::string &wtSessionId, boost::function<void (QVariantList/*front page docs*/)> wApplicationCallback);
+    CleanRoomFrontPageDefaultViewRequestFromWt(CleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (QVariantList/*front page docs*/)> wApplicationCallback);
     void regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs);
 private:
     std::string m_WtSessionId;

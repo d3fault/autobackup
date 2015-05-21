@@ -2,8 +2,8 @@
 
 #include <QVariant>
 
-CleanRoomFrontPageDefaultViewRequestFromQt::CleanRoomFrontPageDefaultViewRequestFromQt(CleanRoomSession *session, QObject *objectCallback, const QString &slotCallback)
-    : IFrontPageDefaultViewRequest(session)
+CleanRoomFrontPageDefaultViewRequestFromQt::CleanRoomFrontPageDefaultViewRequestFromQt(CleanRoom *cleanRoom, QObject *objectCallback, const QString &slotCallback)
+    : IFrontPageDefaultViewRequest(cleanRoom)
     , m_ObjectCallback(objectCallback)
 {
     m_SlotCallback = slotCallback.toStdString();

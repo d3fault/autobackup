@@ -2,9 +2,7 @@
 
 #include <boost/bind.hpp>
 
-#include "cleanroomfrontpagedefaultviewrequestfromwt.h"
-
-class CleanRoomSession;
+#include "cleanroomsession.h"
 
 void CleanRoomWebWidget::handleCleanRoomSessionStarted(CleanRoomSession *session)
 {

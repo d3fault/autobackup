@@ -9,9 +9,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = CleanRoomGui
 TEMPLATE = app
 
-HEADERS += gui/cleanroomguiwidget.h
+HEADERS += gui/cleanroomguiwidget.h \
+    gui/cleanroomgui.h
 
 SOURCES += gui/main.cpp \
-    gui/cleanroomguiwidget.cpp
+    gui/cleanroomguiwidget.cpp \
+    gui/cleanroomgui.cpp
 
 include(cleanroom.pri)

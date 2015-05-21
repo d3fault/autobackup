@@ -9,9 +9,11 @@ TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
 
-HEADERS += web/cleanroomwebwidget.h
+HEADERS += web/cleanroomwebwidget.h \
+    web/cleanroomweb.h
 
 SOURCES += web/main.cpp \
-    web/cleanroomwebwidget.cpp
+    web/cleanroomwebwidget.cpp \
+    web/cleanroomweb.cpp
 
 include(cleanroom.pri)

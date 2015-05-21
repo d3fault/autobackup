@@ -10,8 +10,12 @@ class CleanRoom : public QObject
     Q_OBJECT
 public:
     explicit CleanRoom(QObject *parent = 0);
+signals:
+    void readyForSessions();
 public slots:
-    void getFrontPageDefaultViewBegin(/*TODOreq: args? like 'request' or 'response path' etc...*/);
+    void initializeAndStart();
+    void newSession(ICleanRoomRequest *request);
+    void getFrontPageDefaultView(ICleanRoomRequest *request);
     void finishedGettingFrontPageDefaultView(ICleanRoomRequest *request, QStringList frontPageDocs);
 };
 

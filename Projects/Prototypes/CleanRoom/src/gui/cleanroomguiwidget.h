@@ -15,7 +15,7 @@ public:
 private:
     CleanRoomSession *m_Session;
 private slots:
-    void handleCleanRoomSessionStarted(CleanRoomSession *session);
+    void handleNewSessionCreated(CleanRoomSession *session);
     void handleFrontPageDefaultViewReceived(QVariantList frontPageDocsVariantList);
 };
 

@@ -8,7 +8,7 @@ class CleanRoomSession;
 class CleanRoomFrontPageDefaultViewRequestFromQt : public IFrontPageDefaultViewRequest
 {
 public:
-    CleanRoomFrontPageDefaultViewRequestFromQt(CleanRoomSession *session, QObject *objectCallback, const QString &slotCallback);
+    CleanRoomFrontPageDefaultViewRequestFromQt(CleanRoom *cleanRoom, QObject *objectCallback, const QString &slotCallback);
     void regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs);
 private:
     QObject *m_ObjectCallback;

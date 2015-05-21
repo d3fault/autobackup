@@ -6,13 +6,14 @@
 //#include <QVariantList>
 
 #include "cleanroom.h"
-#include "cleanroomsession.h"
+
+class CleanRoom;
 
 class IFrontPageDefaultViewRequest : public ICleanRoomRequest
 {
 public:
-    IFrontPageDefaultViewRequest(CleanRoomSession *session)
-        : ICleanRoomRequest(session)
+    IFrontPageDefaultViewRequest(CleanRoom *cleanRoom)
+        : ICleanRoomRequest(cleanRoom)
     { }
     void invokeSlotThatHandlesRequest();
 #if 0

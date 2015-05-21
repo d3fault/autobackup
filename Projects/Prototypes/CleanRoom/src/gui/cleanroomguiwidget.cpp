@@ -1,17 +1,18 @@
 #include "cleanroomguiwidget.h"
 
-//#include "cleanroomfrontpagedefaultviewrequestfromqt.h"
+#include <QDebug>
 
 #include "cleanroomsession.h"
 
 CleanRoomGuiWidget::CleanRoomGuiWidget(QWidget *parent)
     : QWidget(parent)
 { }
-void CleanRoomGuiWidget::handleCleanRoomSessionStarted(CleanRoomSession *session)
+void CleanRoomGuiWidget::handleNewSessionCreated(CleanRoomSession* session)
 {
+    //m_Session = sessionInVariantList.first().value<CleanRoomSession*>();
     m_Session = session;
-
-    m_Session->requestNewCleanRoomFrontPageDefaultView(this, SLOT(handleFrontPageDefaultViewReceived(QList<QString>)));
+    m_Session->requestNewCleanRoomFrontPageDefaultView(this, "handleFrontPageDefaultViewReceived");
+    show();
 
     //CleanRoomFrontPageDefaultViewRequestFromQt *request = new CleanRoomFrontPageDefaultViewRequestFromQt(m_Session, this, SLOT(handleFrontPageDefaultViewReceived(QList<QString>)));
     //request->invokeSlotThatHandlesRequest();
@@ -22,6 +23,7 @@ void CleanRoomGuiWidget::handleCleanRoomSessionStarted(CleanRoomSession *session
 void CleanRoomGuiWidget::handleFrontPageDefaultViewReceived(QVariantList frontPageDocsVariantList)
 {
     QStringList frontPageDocs = frontPageDocsVariantList.first().toStringList();
+    qDebug() << "front end received: " << frontPageDocs;
 
     //TODOreq: ez
 }
