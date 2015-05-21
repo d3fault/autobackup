@@ -3,8 +3,8 @@
 
 #include <QObject>
 
-#include "cleanroomcommon.h"
-#include "cleanroomsession.h"
+#include "cleanroomdoc.h"
+#include "icleanroomsession.h"
 
 #define CleanRoomHandleNewSession handleNewSession
 
@@ -20,7 +20,8 @@ public:
 private:    
     CleanRoomDb *m_Db;
 
-    void showDefaultStaticallyLinkedPlugin(CleanRoomSession cleanRoomSession);
+    //void showDefaultStaticallyLinkedPlugin(CleanRoomSession cleanRoomSession);
+    void connectToAndFromCleanRoomSession(ICleanRoomSession *cleanRoomSession);
 signals: //private
     void submitCleanRoomDocumentToDbBeginRequested(qint64 timestamp, const CleanRoomUsername &username, const CleanRoomLicenseShorthandIdentifier &licenseShorthandIdentifier, const QByteArray &data);
 signals: //public
@@ -29,7 +30,9 @@ public slots:
     void submitCleanRoomDocumentBegin(qint64 timestamp, const CleanRoomUsername &username, const CleanRoomLicenseShorthandIdentifier &licenseShorthandIdentifier, const QByteArray &data);
 private slots:
     void handleDbFinishedSubmittingCleanRoomDocument(bool success, const QString &documentKey_aka_Sha1);
-    void CleanRoomHandleNewSession(CleanRoomSession cleanRoomSession);
+    void CleanRoomHandleNewSession(ICleanRoomSession *cleanRoomSession);
+    void getAndSubscribeToFrontPageBegin(ICleanRoomSession *sessionToGetAndSubscribeToFrontPage);
+    void handleDbFinishedQueryingFrontPageView(ICleanRoomSession *cleanRoomSession, QList<CleanRoomDoc> frontPageDocs);
 };
 
 #endif // CLEANROOM_H

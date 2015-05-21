@@ -3,3 +3,7 @@
 CleanRoomSession::CleanRoomSession(QObject *parent)
     : QObject(parent)
 { }
+void CleanRoomSession::requestDefaultView()
+{
+
+}
