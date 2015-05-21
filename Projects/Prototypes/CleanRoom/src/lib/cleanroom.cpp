@@ -1,6 +1,6 @@
 #include "cleanroom.h"
 
-#include "icleanroomfrontpagedefaultviewrequest.h"
+#include "icleanroomrequest.h"
 
 CleanRoom::CleanRoom(QObject *parent)
     : QObject(parent)
@@ -11,7 +11,7 @@ void CleanRoom::getFrontPageDefaultViewBegin(/*TODOreq: args? like 'request' or 
 
     //eventually the db gives us the frontPageDocs: in finishedGettingFrontPageDefaultView
 }
-void CleanRoom::finishedGettingFrontPageDefaultView(ICleanRoomFrontPageDefaultViewRequest *request, QStringList frontPageDocs)
+void CleanRoom::finishedGettingFrontPageDefaultView(ICleanRoomRequest *request, QStringList frontPageDocs)
 {
     //somehow, we propagate those frontPageDocs to the front-ends. tons of ways to do it, but I want minimal/elegant/KISS xD
     //some things to consider:
@@ -21,5 +21,5 @@ void CleanRoom::finishedGettingFrontPageDefaultView(ICleanRoomFrontPageDefaultVi
 
     //maybe OT: it sounds like good design to not have the CleanRoom 'business' object know about sessions at all. it just sounds more modular i suppose. maybe someone wants to use the business without instantiating a 'session'. idfk, maybe it's fine to have a 'session' be mandatory. still, 'typical' api usage usually does not involve/require the use of 'sessions'. the only reason my 'widgets gui' has a session is because my 'web gui' needs them
 
-    request->respond(frontPageDocs);
+    request->respond(QVariant::fromValue(frontPageDocs));
 }

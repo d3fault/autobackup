@@ -1,7 +1,7 @@
 #ifndef CLEANROOMFRONTPAGEDEFAULTVIEWREQUESTFROMWT_H
 #define CLEANROOMFRONTPAGEDEFAULTVIEWREQUESTFROMWT_H
 
-#include "icleanroomfrontpagedefaultviewrequest.h"
+#include "ifrontpagedefaultviewrequest.h"
 
 #include <QStringList>
 
@@ -9,11 +9,11 @@
 
 class CleanRoomSession;
 
-class CleanRoomFrontPageDefaultViewRequestFromWt : ICleanRoomFrontPageDefaultViewRequest
+class CleanRoomFrontPageDefaultViewRequestFromWt : public IFrontPageDefaultViewRequest
 {
 public:
     CleanRoomFrontPageDefaultViewRequestFromWt(CleanRoomSession *session, const std::string &wtSessionId, boost::function<void (QVariantList/*front page docs*/)> wApplicationCallback);
-    void respondActual(QVariantList responseArgs);
+    void regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs);
 private:
     std::string m_WtSessionId;
     boost::function<void (QVariantList/*front page docs*/)> m_WApplicationCallback;

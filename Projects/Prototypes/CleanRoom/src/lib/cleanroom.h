@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-class ICleanRoomFrontPageDefaultViewRequest;
+class ICleanRoomRequest;
 
 class CleanRoom : public QObject
 {
@@ -12,7 +12,7 @@ public:
     explicit CleanRoom(QObject *parent = 0);
 public slots:
     void getFrontPageDefaultViewBegin(/*TODOreq: args? like 'request' or 'response path' etc...*/);
-    void finishedGettingFrontPageDefaultView(ICleanRoomFrontPageDefaultViewRequest *request, QStringList frontPageDocs);
+    void finishedGettingFrontPageDefaultView(ICleanRoomRequest *request, QStringList frontPageDocs);
 };
 
 #endif // CLEANROOM_H

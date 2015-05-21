@@ -1,18 +1,18 @@
 #ifndef CLEANROOMFRONTPAGEDEFAULTVIEWREQUESTFROMQT_H
 #define CLEANROOMFRONTPAGEDEFAULTVIEWREQUESTFROMQT_H
 
-#include "icleanroomfrontpagedefaultviewrequest.h"
+#include "ifrontpagedefaultviewrequest.h"
 
 class CleanRoomSession;
 
-class CleanRoomFrontPageDefaultViewRequestFromQt : public ICleanRoomFrontPageDefaultViewRequest
+class CleanRoomFrontPageDefaultViewRequestFromQt : public IFrontPageDefaultViewRequest
 {
 public:
-    CleanRoomFrontPageDefaultViewRequestFromQt(CleanRoomSession *session, QObject *objectCallback, const char *slotCallback);
-    void respondActual(QVariantList responseArgs);
+    CleanRoomFrontPageDefaultViewRequestFromQt(CleanRoomSession *session, QObject *objectCallback, const QString &slotCallback);
+    void regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs);
 private:
     QObject *m_ObjectCallback;
-    const char *m_SlotCallback;
+    std::string m_SlotCallback;
 };
 
 #endif // CLEANROOMFRONTPAGEDEFAULTVIEWREQUESTFROMQT_H
