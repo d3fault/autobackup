@@ -17,7 +17,7 @@ public:
         : QObject(parent)
         , ICleanRoomRequest(cleanRoom)
     {
-        connect(this, SIGNAL(frontPageDefaultViewRequested(IFrontPageDefaultViewRequest*)), cleanRoom, SLOT(getFrontPageDefaultView(IFrontPageDefaultViewRequest*)));
+        connect(this, &IFrontPageDefaultViewRequest::frontPageDefaultViewRequested, cleanRoom, &CleanRoom::getFrontPageDefaultView);
     }
     void invokeSlotThatHandlesRequest();
     virtual void respond(QStringList frontPageDocs)=0;

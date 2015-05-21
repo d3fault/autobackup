@@ -10,7 +10,7 @@ class CleanRoomFrontPageDefaultViewRequestFromQt : public IFrontPageDefaultViewR
 {
     Q_OBJECT
 public:
-    CleanRoomFrontPageDefaultViewRequestFromQt(CleanRoom *cleanRoom, QObject *objectCallback, const QString &slotCallback, QObject *parent = 0);
+    CleanRoomFrontPageDefaultViewRequestFromQt(CleanRoom *cleanRoom, QObject *objectCallback, const char *slotCallback, QObject *parent = 0);
     //void regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs);
     void respond(QStringList frontPageDocs);
 private:

@@ -28,9 +28,8 @@ CleanRoomWeb::CleanRoomWeb(QObject *parent)
     : QObject(parent)
     , m_CleanRoom(new CleanRoom(this))
 {
-    connect(m_CleanRoom, SIGNAL(readyForSessions()), this, SLOT(handleCleanRoomReadyForSessions()));
-
-    connect(this, SIGNAL(initializeAndStartRequested()), m_CleanRoom, SLOT(initializeAndStart()));
+    connect(m_CleanRoom, &CleanRoom::readyForSessions, this, &CleanRoomWeb::handleCleanRoomReadyForSessions);
+    connect(this, &CleanRoomWeb::initializeAndStartRequested, m_CleanRoom, &CleanRoom::initializeAndStart);
     emit initializeAndStartRequested();
     //QMetaObject::invokeMethod(m_CleanRoom, "initializeAndStart");
 }

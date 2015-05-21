@@ -7,10 +7,10 @@ CleanRoomGui::CleanRoomGui(QObject *parent)
     : QObject(parent)
     , m_CleanRoom(new CleanRoom(this))
 {
-    connect(m_CleanRoom, SIGNAL(readyForSessions()), this, SLOT(handleCleanRoomReadyForSessions()));
+    connect(m_CleanRoom, &CleanRoom::readyForSessions, this, &CleanRoomGui::handleCleanRoomReadyForSessions);
 
     //QMetaObject::invokeMethod(m_CleanRoom, "initializeAndStart");
-    connect(this, SIGNAL(initializeAndStartCleanRoomRequested()), m_CleanRoom, SLOT(initializeAndStart()));
+    connect(this, &CleanRoomGui::initializeAndStartCleanRoomRequested, m_CleanRoom, &CleanRoom::initializeAndStart);
     emit initializeAndStartCleanRoomRequested();
 }
 void CleanRoomGui::handleCleanRoomReadyForSessions()

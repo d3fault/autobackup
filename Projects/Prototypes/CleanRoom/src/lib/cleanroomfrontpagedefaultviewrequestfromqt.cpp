@@ -2,13 +2,13 @@
 
 #include <QVariant>
 
-CleanRoomFrontPageDefaultViewRequestFromQt::CleanRoomFrontPageDefaultViewRequestFromQt(CleanRoom *cleanRoom, QObject *objectCallback, const QString &slotCallback, QObject *parent)
+CleanRoomFrontPageDefaultViewRequestFromQt::CleanRoomFrontPageDefaultViewRequestFromQt(CleanRoom *cleanRoom, QObject *objectCallback, const char *slotCallback, QObject *parent)
     : IFrontPageDefaultViewRequest(cleanRoom, parent)
     //, m_ObjectCallback(objectCallback)
     //, m_SlotCallback(slotCallback.toStdString())
 {
-    std::string slotCallbackStdString = slotCallback.toStdString();
-    QObject::connect(this, SIGNAL(frontPageDefaultViewResponseRequested(QStringList)), objectCallback, slotCallbackStdString.c_str());
+    //std::string slotCallbackStdString = slotCallback.toStdString();
+    QObject::connect(this, SIGNAL(frontPageDefaultViewResponseRequested(QStringList)), objectCallback, slotCallback);
 }
 #if 0
 void CleanRoomFrontPageDefaultViewRequestFromQt::regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs)

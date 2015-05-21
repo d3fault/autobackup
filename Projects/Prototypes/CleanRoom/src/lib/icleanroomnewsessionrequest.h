@@ -16,7 +16,7 @@ public:
         : QObject(parent)
         , ICleanRoomRequest(cleanRoom)
     {
-        connect(this, SIGNAL(newSessionRequested(ICleanRoomNewSessionRequest*)), cleanRoom, SLOT(newSession(ICleanRoomNewSessionRequest*))); //TODOreq:later: Qt5 syntax signals/slots connections for compile time checking
+        connect(this, &ICleanRoomNewSessionRequest::newSessionRequested, cleanRoom, &CleanRoom::newSession); //TODOreq:later: Qt5 syntax signals/slots connections for compile time checking
     }
     void invokeSlotThatHandlesRequest()
     {
