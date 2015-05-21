@@ -2,10 +2,10 @@
 
 #include "cleanroom.h"
 
-FrontPageDefaultViewCleanRoomSessionRequest::FrontPageDefaultViewCleanRoomSessionRequest(ICleanRoomSession *session)
+FrontPageDefaultViewCleanRoomSessionRequest::FrontPageDefaultViewCleanRoomSessionRequest(CleanRoomSession *session)
     : ICleanRoomSessionRequest(session)
 { }
 void FrontPageDefaultViewCleanRoomSessionRequest::processRequest()
 {
-    cleanRoom()->getFrontPageDefaultViewBegin(this);
+    //cleanRoom()->getFrontPageDefaultViewBegin(this);
 }

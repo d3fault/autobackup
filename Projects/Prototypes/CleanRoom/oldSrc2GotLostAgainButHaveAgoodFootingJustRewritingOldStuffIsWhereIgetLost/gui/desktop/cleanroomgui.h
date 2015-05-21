@@ -13,9 +13,11 @@ class CleanRoomGui : public QObject
 public:
     explicit CleanRoomGui(QObject *parent = 0);
 private:
+    CleanRoom *m_CleanRoom;
     QScopedPointer<CleanRoomWidget> m_Gui;
 private slots:
     void handleCleanRoomReadyForSessions();
+    //void handleCleanRoomFinishedGettingFrontPageDefaultView(QList<QString> frontPageDocs);
 };
 
 #endif // CLEANROOMGUI_H

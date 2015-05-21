@@ -6,7 +6,7 @@
 class FrontPageDefaultViewCleanRoomSessionRequest : public ICleanRoomSessionRequest
 {
 public:
-    FrontPageDefaultViewCleanRoomSessionRequest(ICleanRoomSession *session);
+    FrontPageDefaultViewCleanRoomSessionRequest(CleanRoomSession *session);
     void processRequest();
 };
 
