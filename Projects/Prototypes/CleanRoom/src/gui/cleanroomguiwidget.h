@@ -14,7 +14,7 @@ public:
     explicit CleanRoomGuiWidget(QWidget *parent = 0);
 private:
     CleanRoomSession *m_Session;
-private slots:
+public slots:
     void handleNewSessionCreated(CleanRoomSession *session);
     void handleFrontPageDefaultViewReceived(QStringList frontPageDocs);
 };

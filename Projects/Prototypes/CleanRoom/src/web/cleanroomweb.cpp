@@ -38,5 +38,5 @@ void CleanRoomWeb::handleCleanRoomReadyForSessions()
     //activate wt, wait for sessions, then do:
     std::string wtSessionId;
     CleanRoomWebWidget *wApplication;
-    CleanRoomSession::createNewSession(m_CleanRoom, wtSessionId, boost::bind(&CleanRoomWebWidget::handleNewSessionCreated, wApplication, _1));
+    CleanRoomSession::requestNewSession(m_CleanRoom, wtSessionId, boost::bind(&CleanRoomWebWidget::handleNewSessionCreated, wApplication, _1));
 }
