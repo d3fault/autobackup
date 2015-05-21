@@ -16,6 +16,7 @@ public:
         : ICleanRoomRequest(cleanRoom)
     { }
     void invokeSlotThatHandlesRequest();
+    virtual void respond(QStringList frontPageDocs)=0;
 #if 0
     void convertResponseArgsFromVariantListToApiSpecificTypes/*_AndThenCallThisSlotWithThemAwwShitNvmIcantBoostWtThatWay*/(QVariantList responseArgsAsVariantList)
     {

@@ -14,6 +14,7 @@ public:
     {
         //QMetaObject::invokeMethod(session->cleanRoom(), slotToRequest);
     }
+#if 0
     void respond(QVariant responseArg0)
     {
         QVariantList responseArgs;
@@ -27,8 +28,9 @@ public:
         responseArgs.append(responseArg1);
         regainContextPossiblyInOtherThread_aka_respondActual(responseArgs);
     }
+#endif
     virtual void invokeSlotThatHandlesRequest()=0;
-    virtual void regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs)=0;
+    //virtual void regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs)=0;
 protected:
     CleanRoom *m_CleanRoom;
 };

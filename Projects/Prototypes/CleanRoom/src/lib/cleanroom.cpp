@@ -2,6 +2,8 @@
 
 #include "cleanroomsession.h"
 #include "icleanroomrequest.h"
+#include "icleanroomnewsessionrequest.h"
+#include "ifrontpagedefaultviewrequest.h"
 
 CleanRoom::CleanRoom(QObject *parent)
     : QObject(parent)
@@ -11,11 +13,11 @@ void CleanRoom::initializeAndStart()
     //wait for db to initialize asynchronously, etc, then:
     emit readyForSessions();
 }
-void CleanRoom::newSession(ICleanRoomRequest *request)
+void CleanRoom::newSession(ICleanRoomNewSessionRequest *request)
 {
-    request->respond(QVariant::fromValue(new CleanRoomSession(this)));
+    request->respond(new CleanRoomSession(this));
 }
-void CleanRoom::getFrontPageDefaultView(ICleanRoomRequest *request)
+void CleanRoom::getFrontPageDefaultView(IFrontPageDefaultViewRequest *request)
 {
     //NOTE: this prototype says "fuck the db". rationale: the business <--> db comm is another layer of api calling/communication that just kinda fucks with my head too much
 
@@ -24,7 +26,7 @@ void CleanRoom::getFrontPageDefaultView(ICleanRoomRequest *request)
     frontPageDocs << "woot doc";
     finishedGettingFrontPageDefaultView(request, frontPageDocs);
 }
-void CleanRoom::finishedGettingFrontPageDefaultView(ICleanRoomRequest *request, QStringList frontPageDocs)
+void CleanRoom::finishedGettingFrontPageDefaultView(IFrontPageDefaultViewRequest *request, QStringList frontPageDocs)
 {
     //somehow, we propagate those frontPageDocs to the front-ends. tons of ways to do it, but I want minimal/elegant/KISS xD
     //some things to consider:
@@ -34,5 +36,5 @@ void CleanRoom::finishedGettingFrontPageDefaultView(ICleanRoomRequest *request, 
 
     //maybe OT: it sounds like good design to not have the CleanRoom 'business' object know about sessions at all. it just sounds more modular i suppose. maybe someone wants to use the business without instantiating a 'session'. idfk, maybe it's fine to have a 'session' be mandatory. still, 'typical' api usage usually does not involve/require the use of 'sessions'. the only reason my 'widgets gui' has a session is because my 'web gui' needs them
 
-    request->respond(QVariant::fromValue(frontPageDocs));
+    request->respond(frontPageDocs);
 }

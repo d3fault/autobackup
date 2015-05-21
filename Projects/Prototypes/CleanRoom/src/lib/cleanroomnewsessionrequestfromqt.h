@@ -11,7 +11,8 @@ public:
         , m_ObjectToRespondTo(objectToRespondTo)
         , m_SlotCallback(slotCallback)
     { }
-    void regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs);
+    //void regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs);
+    void respond(CleanRoomSession *session);
 private:
     QObject *m_ObjectToRespondTo;
     std::string m_SlotCallback;

@@ -13,7 +13,8 @@ class CleanRoomFrontPageDefaultViewRequestFromWt : public IFrontPageDefaultViewR
 {
 public:
     CleanRoomFrontPageDefaultViewRequestFromWt(CleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (QVariantList/*front page docs*/)> wApplicationCallback);
-    void regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs);
+    //void regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs);
+    void respond(QStringList frontPageDocs);
 private:
     std::string m_WtSessionId;
     boost::function<void (QVariantList/*front page docs*/)> m_WApplicationCallback;

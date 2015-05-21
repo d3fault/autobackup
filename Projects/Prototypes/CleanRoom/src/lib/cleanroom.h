@@ -3,7 +3,9 @@
 
 #include <QObject>
 
-class ICleanRoomRequest;
+//class ICleanRoomRequest;
+class ICleanRoomNewSessionRequest;
+class IFrontPageDefaultViewRequest;
 
 class CleanRoom : public QObject
 {
@@ -14,9 +16,9 @@ signals:
     void readyForSessions();
 public slots:
     void initializeAndStart();
-    void newSession(ICleanRoomRequest *request);
-    void getFrontPageDefaultView(ICleanRoomRequest *request);
-    void finishedGettingFrontPageDefaultView(ICleanRoomRequest *request, QStringList frontPageDocs);
+    void newSession(ICleanRoomNewSessionRequest *request);
+    void getFrontPageDefaultView(IFrontPageDefaultViewRequest *request);
+    void finishedGettingFrontPageDefaultView(IFrontPageDefaultViewRequest *request, QStringList frontPageDocs);
 };
 
 #endif // CLEANROOM_H

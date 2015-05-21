@@ -4,6 +4,8 @@
 #include "cleanroom.h"
 #include "icleanroomrequest.h"
 
+class CleanRoomSession;
+
 class ICleanRoomNewSessionRequest : public ICleanRoomRequest
 {
 public:
@@ -12,8 +14,14 @@ public:
     { }
     void invokeSlotThatHandlesRequest()
     {
-        QMetaObject::invokeMethod(m_CleanRoom, "newSession", Q_ARG(ICleanRoomRequest*, this));
+        QMetaObject::invokeMethod(m_CleanRoom, "newSession", Q_ARG(ICleanRoomNewSessionRequest*, this));
     }
+    virtual void respond(CleanRoomSession *newSession)=0;
+#if 0
+    {
+        QMetaObject::invokeMethod(m_)
+    }
+#endif
 };
 
 #endif // ICLEANROOMNEWSESSIONREQUEST
