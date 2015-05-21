@@ -7,16 +7,9 @@
 void CleanRoomWebWidget::handleCleanRoomSessionStarted(CleanRoomSession *session)
 {
     m_Session = session;
-    std::string wtSessionId; //TODOreq: ez
-
+    std::string wtSessionId; //TODOreq
     m_Session->requestNewCleanRoomFrontPageDefaultView(wtSessionId, boost::bind(&CleanRoomWebWidget::handleFrontPageDefaultViewReceived, this, _1));
-
-    //CleanRoomFrontPageDefaultViewRequestFromWt *request = new CleanRoomFrontPageDefaultViewRequestFromWt(m_Session, wtSessionId, boost::bind(&CleanRoomWebWidget::handleFrontPageDefaultViewReceived, this, _1));
-    //request->invokeSlotThatHandlesRequest();
-
-    //boost::bind(boost::bind(&CleanRoomWebWidget::handleFrontPageDefaultViewReceived, static_cast<CleanRoomWebWidget*>(this), _1, _2, _3), couchbaseStoreKeyInput, lcbOpSuccess, dbError);
 }
-//void CleanRoomWebWidget::handleFrontPageDefaultViewReceived(QStringList frontPageDocs)
 void CleanRoomWebWidget::handleFrontPageDefaultViewReceived(QStringList frontPageDocs)
 {
     //TODOreq: ez

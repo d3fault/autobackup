@@ -3,8 +3,6 @@
 
 #include <QWidget>
 
-#include <QVariantList>
-
 class CleanRoomSession;
 
 class CleanRoomGuiWidget : public QWidget

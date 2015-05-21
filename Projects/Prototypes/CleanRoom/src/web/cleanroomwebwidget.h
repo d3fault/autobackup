@@ -1,7 +1,7 @@
 #ifndef CLEANROOMWEBWIDGET_H
 #define CLEANROOMWEBWIDGET_H
 
-#include <QVariant>
+#include <QStringList>
 
 class WApplication
 { };

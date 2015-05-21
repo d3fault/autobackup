@@ -15,7 +15,6 @@ public:
         , m_WtSessionId(wtSessionId)
         , m_WApplicationCallback(wApplicationCallback)
     { }
-    //void regainContextPossiblyInOtherThread_aka_respondActual(QVariantList responseArgs);
     void respond(CleanRoomSession *session);
 private:
     std::string m_WtSessionId;

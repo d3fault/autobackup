@@ -1,6 +1,8 @@
 #ifndef CLEANROOMSESSION
 #define CLEANROOMSESSION
 
+#include <QStringList>
+
 #include <boost/function.hpp>
 
 #include "icleanroomrequest.h"
@@ -8,10 +10,6 @@
 class QObject;
 
 class CleanRoom;
-
-class CleanRoomFrontPageDefaultViewRequestFromQt;
-class CleanRoomFrontPageDefaultViewRequestFromWt;
-
 
 class CleanRoomSession
 {
@@ -31,10 +29,9 @@ private:
     CleanRoom *m_CleanRoom;
     static void invokeRequest(ICleanRoomRequest *requestToInvoke)
     {
-        requestToInvoke->invokeSlotThatHandlesRequest();
+        requestToInvoke->processRequest();
     }
 };
-Q_DECLARE_METATYPE(CleanRoomSession*)
 
 #endif // CLEANROOMSESSION
 
