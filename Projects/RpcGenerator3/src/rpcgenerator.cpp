@@ -19,6 +19,16 @@
 RpcGenerator::RpcGenerator(QObject *parent)
     : QObject(parent)
 { }
+QString RpcGenerator::frontLetterToLower(const QString &stringInput)
+{
+    QString ret = stringInput;
+    if(ret.isEmpty())
+        return ret;
+    QString firstLetter = ret.at(0);
+    ret.remove(0, 1);
+    ret.insert(0, firstLetter.toLower());
+    return ret;
+}
 QString RpcGenerator::frontLetterToUpper(const QString &stringInput)
 {
     QString ret = stringInput;
@@ -29,17 +39,21 @@ QString RpcGenerator::frontLetterToUpper(const QString &stringInput)
     ret.insert(0, firstLetter.toUpper());
     return ret;
 }
-QString RpcGenerator::apiHeaderFileName(QString apiName)
+QString RpcGenerator::classHeaderFileName(QString apiName)
 {
     return apiName.toLower() + ".h";
 }
-QString RpcGenerator::apiSourceFileName(QString apiName)
+QString RpcGenerator::classSourceFileName(QString apiName)
 {
     return apiName.toLower() + ".cpp";
 }
+QString RpcGenerator::apiCallToRequestBaseName(ApiCall *apiCall)
+{
+    return apiCall->ParentApi->ApiName + frontLetterToUpper(apiCall->ApiCallSlotName) + "Request";
+}
 QString RpcGenerator::apiCallToRequestInterfaceTypeName(ApiCall *apiCall)
 {
-    return "I" + apiCall->ParentApi->ApiName + frontLetterToUpper(apiCall->ApiCallSlotName) + "Request";
+    return "I" + apiCallToRequestBaseName(apiCall);
 }
 QString RpcGenerator::apiCallToRequestInterfaceHeaderInclude(ApiCall *apiCall)
 {
@@ -49,14 +63,14 @@ QString RpcGenerator::apiCallToForwardDefinitionRawCpp(ApiCall *apiCall)
 {
     return "class " + apiCallToRequestInterfaceTypeName(apiCall) + ";";
 }
-QString RpcGenerator::apiCallArgNamesToCommaSeparatedList(ApiCall *apiCall, bool requestIfTrue, bool makeRequestPointerFirstParameter, bool emitTypes)
+QString RpcGenerator::apiCallArgNamesToCommaSeparatedList(ApiCall *apiCall, bool requestIfTrue, bool makeRequestPointerFirstParameter, bool emitTypes, bool emitNames)
 {
     QStringList apiCallArgsRawCpp;
     if(makeRequestPointerFirstParameter)
         apiCallArgsRawCpp.append(apiCallToRequestInterfaceTypeName(apiCall) + " *request");
     Q_FOREACH(ApiCallArg apiCallArg, (requestIfTrue ? apiCall->RequestArgs : apiCall->ResponseArgs))
     {
-        apiCallArgsRawCpp.append(apiCallArgToCpp(&apiCallArg, emitTypes));
+        apiCallArgsRawCpp.append(apiCallArgToCpp(&apiCallArg, emitTypes, emitNames));
     }
     return apiCallArgsRawCpp.join(", ");
 }
@@ -72,11 +86,23 @@ QString RpcGenerator::apiCallToRawCppDeclaration(ApiCall *apiCall, bool requestI
     QString ret("    void " + apiCallToMethodCppSignature(apiCall, requestIfTrue) + ";");
     return ret;
 }
-QString RpcGenerator::apiCallArgToCpp(ApiCallArg *apiCallArg, bool emitTypes)
+QString RpcGenerator::apiCallArgToCpp(ApiCallArg *apiCallArg, bool emitTypes, bool emitNames)
 {
-    if(emitTypes)
-        return apiCallArg->ApiCallArgType + " " + apiCallArg->ApiCallArgName;
-    return apiCallArg->ApiCallArgName;
+    QString ret;
+    if(!emitTypes)
+    {
+        ret.append(apiCallArg->ApiCallArgType);
+    }
+    if((!emitTypes) && (!emitNames))
+    {
+        if(!apiCallArg->ApiCallArgType.endsWith(" *")) //we want points to be next to the variable name, unless the pointer is next to the type
+            ret.append(" ");
+    }
+    if(!emitNames)
+    {
+        ret.append(apiCallArg->ApiCallArgName);
+    }
+    return ret;
 }
 QString RpcGenerator::apiCallToApiDefinitionRawCpp(ApiCall *apiCall, bool requestIfTrue)
 {
@@ -88,7 +114,7 @@ QString RpcGenerator::apiCallToApiDefinitionRawCpp(ApiCall *apiCall, bool reques
     }
     else
     {
-        ret.append("request->respond(" + apiCallArgNamesToCommaSeparatedList(apiCall, false, false, false) + ");");
+        ret.append("request->respond(" + apiCallArgNamesToCommaSeparatedList(apiCall, false, false, true, false) + ");");
     }
     ret.append("\n}");
     return ret;
@@ -116,7 +142,7 @@ GeneratedFile RpcGenerator::generateApiHeaderFile(Api *api, QDir outputDir)
     beforeAndAfterStrings.insert("%API_CALL_RESPONSES_DECLARATIONS%", allApiCallResponseDeclarationsRawCpp.join("\n"));
 
 
-    GeneratedFile generatedFile(fileToString(":/cleanroom.h"), outputDir.path() + QDir::separator() + apiHeaderFileName(api->ApiName), beforeAndAfterStrings);
+    GeneratedFile generatedFile(fileToString(":/cleanroom.h"), outputDir.path() + QDir::separator() + classHeaderFileName(api->ApiName), beforeAndAfterStrings);
     generatedFile.replaceTemplateBeforesWithAfters();
     return generatedFile;
 }
@@ -138,10 +164,33 @@ GeneratedFile RpcGenerator::generateApiSourceFile(Api *api, QDir outputDir)
     beforeAndAfterStrings.insert("%API_CALLS_DEFINITIONS%", allApiCallsDefinitions.join("\n"));
     beforeAndAfterStrings.insert("%API_CALLS_RESPONSE_DEFINITIONS%", allApiCallResponsesDefinitions.join("\n"));
 
-    GeneratedFile generatedFile(fileToString(":/cleanroom.cpp"), outputDir.path() + QDir::separator() + apiSourceFileName(api->ApiName), beforeAndAfterStrings);
+    GeneratedFile generatedFile(fileToString(":/cleanroom.cpp"), outputDir.path() + QDir::separator() + classSourceFileName(api->ApiName), beforeAndAfterStrings);
     generatedFile.replaceTemplateBeforesWithAfters();
     return generatedFile;
 
+}
+GeneratedFile RpcGenerator::generateApiCallRequestFromQtHeader(ApiCall *apiCall, QDir outputDir)
+{
+    TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings = initialBeforeAndAfterStrings(apiCall->ParentApi);
+    appendApiCallBeforeAndAfterStrings(&beforeAndAfterStrings, apiCall);
+
+    beforeAndAfterStrings.insert("%API_CALL_REQUEST_INTERFACE_HEADER_INCLUDE%", apiCallToRequestInterfaceHeaderInclude(apiCall));
+    beforeAndAfterStrings.insert("%API_CALL_SLOT_NAME_TO_UPPER%", apiCall->ApiCallSlotName.toUpper());
+
+    GeneratedFile generatedFile(fileToString(":/cleanroomfrontpagedefaultviewrequestfromqt.h"), outputDir.path() + QDir::separator() + classHeaderFileName(apiCallToRequestBaseName(apiCall) + "fromqt"), beforeAndAfterStrings);
+    generatedFile.replaceTemplateBeforesWithAfters();
+    return generatedFile;
+}
+GeneratedFile RpcGenerator::generateApiCallRequestFromQtSource(ApiCall *apiCall, QDir outputDir)
+{
+    TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings = initialBeforeAndAfterStrings(apiCall->ParentApi);
+    appendApiCallBeforeAndAfterStrings(&beforeAndAfterStrings, apiCall);
+
+    beforeAndAfterStrings.insert("%API_CALL_REQUEST_FROM_QT_HEADER_FILENAME%", classHeaderFileName(apiCallToRequestBaseName(apiCall) + "fromqt"));
+
+    GeneratedFile generatedFile(fileToString(":/cleanroomfrontpagedefaultviewrequestfromqt.cpp"), outputDir.path() + QDir::separator() + classSourceFileName(apiCallToRequestBaseName(apiCall) + "fromqt"), beforeAndAfterStrings);
+    generatedFile.replaceTemplateBeforesWithAfters();
+    return generatedFile;
 }
 TemplateBeforeAndAfterStrings_Type RpcGenerator::initialBeforeAndAfterStrings(Api *api)
 {
@@ -150,16 +199,42 @@ TemplateBeforeAndAfterStrings_Type RpcGenerator::initialBeforeAndAfterStrings(Ap
     beforeAndAfterStrings.insert("%API_NAME%", api->ApiName);
     beforeAndAfterStrings.insert("%API_NAME_LOWERCASE%", api->ApiName.toLower());
     beforeAndAfterStrings.insert("%API_NAME_UPPERCASE%", api->ApiName.toUpper());
+    beforeAndAfterStrings.insert("%API_AS_VARIABLE_NAME%", frontLetterToLower(api->ApiName));
 
     return beforeAndAfterStrings;
+}
+void RpcGenerator::appendApiCallBeforeAndAfterStrings(TemplateBeforeAndAfterStrings_Type *beforeAndAfterStrings, ApiCall *apiCall)
+{
+    beforeAndAfterStrings->insert("%API_CALL_TO_REQUEST_BASE_NAME%", apiCallToRequestBaseName(apiCall));
+    beforeAndAfterStrings->insert("%API_CALL_SLOT_NAME%", apiCall->ApiCallSlotName);
+    beforeAndAfterStrings->insert("%API_CALL_RESPONSE_ARGS_AS_COMMA_SEPARATED_LIST_EXCLUDING_REQUEST_POINTER%", apiCallArgNamesToCommaSeparatedList(apiCall, false, false, false));
+    beforeAndAfterStrings->insert("%API_CALL_RESPONSE_ARGS_AS_COMMA_SEPARATED_LIST_EXLCUDING_REQUEST_POINTER_AND_TYPENAMES%", apiCallArgNamesToCommaSeparatedList(apiCall, false, false, true));
+    beforeAndAfterStrings->insert("%API_CALL_RESPONSE_ARGS_AS_COMMA_SEPARATED_LIST_EXLCUDING_REQUEST_POINTER_AND_VARNAMES%", apiCallArgNamesToCommaSeparatedList(apiCall, false, false, false, true));
+}
+void RpcGenerator::writeApiCallFiles(FilesToWriteType *filesToWrite, ApiCall *apiCall, QDir outputDir)
+{
+    //Qt
+    filesToWrite->insert(generateApiCallRequestFromQtHeader(apiCall, outputDir));
+    filesToWrite->insert(generateApiCallRequestFromQtSource(apiCall, outputDir));
+
+    //Wt
+    //filesToWrite->insert(generateApiCallRequestFromWtHeader(apiCall, outputDir));
+    //filesToWrite->insert(generateApiCallRequestFromWtSource(apiCall, outputDir));
 }
 bool RpcGenerator::generateRpcActual(Api *api, QString outputPath)
 {
     QDir outputDir(outputPath);
     FilesToWriteType filesToWrite;
 
+    //Main API "Business"
     filesToWrite.insert(generateApiHeaderFile(api, outputDir));
     filesToWrite.insert(generateApiSourceFile(api, outputDir));
+
+    //Per-API-Call Objects
+    Q_FOREACH(ApiCall apiCall, api->ApiCalls)
+    {
+        writeApiCallFiles(&filesToWrite, &apiCall, outputDir);
+    }
 
     if(!writeFiles(filesToWrite))
         EEEEEEEEEE_RETURN_RpcGenerator("failed to write some files", false)
@@ -204,8 +279,8 @@ void RpcGenerator::generateRpc()
         EEEEEEEEEE_RpcGenerator("unable to get temp dir")
     QString outputPath = tempDir.path();
 
-    Api api("CleanRoom");
-    api.createApiCall("getFrontPageDefaultView", QList<ApiCallArg>(), QList<ApiCallArg>() << ApiCallArg("QStringList", "frontPageDocs"));
+    Api api("SomeBusiness");
+    api.createApiCall("loginPlx", QList<ApiCallArg>() << ApiCallArg("char *", "loginUser") << ApiCallArg("QByteArray", "passwordHash"), QList<ApiCallArg>() << ApiCallArg("bool", "loginSuccess") << ApiCallArg("QString", "sessionId"));
     if(!generateRpcActual(&api, outputPath))
         EEEEEEEEEE_RpcGenerator("failed to generate")
 

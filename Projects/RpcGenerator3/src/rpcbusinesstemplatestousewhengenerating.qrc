@@ -2,5 +2,7 @@
 <qresource>
     <file alias="cleanroom.h">../assets/apitemplates/cleanroom.h</file>
     <file alias="cleanroom.cpp">../assets/apitemplates/cleanroom.cpp</file>
+    <file alias="cleanroomfrontpagedefaultviewrequestfromqt.h">../assets/apitemplates/cleanroomfrontpagedefaultviewrequestfromqt.h</file>
+    <file alias="cleanroomfrontpagedefaultviewrequestfromqt.cpp">../assets/apitemplates/cleanroomfrontpagedefaultviewrequestfromqt.cpp</file>
 </qresource>
 </RCC>

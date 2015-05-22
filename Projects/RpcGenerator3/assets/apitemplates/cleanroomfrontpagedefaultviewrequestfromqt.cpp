@@ -1,11 +1,11 @@
-#include "%API_NAME_LOWERCASE%frontpagedefaultviewrequestfromqt.h"
+#include "%API_CALL_REQUEST_FROM_QT_HEADER_FILENAME%"
 
-%API_NAME%FrontPageDefaultViewRequestFromQt::%API_NAME%FrontPageDefaultViewRequestFromQt(%API_NAME% *cleanRoom, QObject *objectCallback, const char *slotCallback)
-    : I%API_NAME%FrontPageDefaultViewRequest(cleanRoom)
+%API_CALL_TO_REQUEST_BASE_NAME%FromQt::%API_CALL_TO_REQUEST_BASE_NAME%FromQt(%API_NAME% *%API_AS_VARIABLE_NAME%, QObject *objectCallback, const char *slotCallback)
+    : I%API_CALL_TO_REQUEST_BASE_NAME%(%API_AS_VARIABLE_NAME%)
 {
-    QObject::connect(this, SIGNAL(frontPageDefaultViewResponseRequested(QStringList)), objectCallback, slotCallback);
+    QObject::connect(this, SIGNAL(%API_CALL_SLOT_NAME%ResponseRequested(%API_CALL_RESPONSE_ARGS_AS_COMMA_SEPARATED_LIST_EXLCUDING_REQUEST_POINTER_AND_VARNAMES%)), objectCallback, slotCallback);
 }
-void %API_NAME%FrontPageDefaultViewRequestFromQt::respond(QStringList frontPageDocs)
+void %API_CALL_TO_REQUEST_BASE_NAME%FromQt::respond(%API_CALL_RESPONSE_ARGS_AS_COMMA_SEPARATED_LIST_EXCLUDING_REQUEST_POINTER%)
 {
-    emit frontPageDefaultViewResponseRequested(frontPageDocs);
+    emit %API_CALL_SLOT_NAME%ResponseRequested(%API_CALL_RESPONSE_ARGS_AS_COMMA_SEPARATED_LIST_EXLCUDING_REQUEST_POINTER_AND_TYPENAMES%);
 }

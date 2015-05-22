@@ -1,18 +1,18 @@
-#ifndef %API_NAME_UPPERCASE%FRONTPAGEDEFAULTVIEWREQUESTFROMQT_H
-#define %API_NAME_UPPERCASE%FRONTPAGEDEFAULTVIEWREQUESTFROMQT_H
+#ifndef %API_NAME_UPPERCASE%%API_CALL_SLOT_NAME_TO_UPPER%REQUESTFROMQT_H
+#define %API_NAME_UPPERCASE%%API_CALL_SLOT_NAME_TO_UPPER%REQUESTFROMQT_H
 
-#include "i%API_NAME_LOWERCASE%frontpagedefaultviewrequest.h"
+%API_CALL_REQUEST_INTERFACE_HEADER_INCLUDE%
 
 class %API_NAME%Session;
 
-class %API_NAME%FrontPageDefaultViewRequestFromQt : public I%API_NAME%FrontPageDefaultViewRequest
+class %API_CALL_TO_REQUEST_BASE_NAME%FromQt : public I%API_CALL_TO_REQUEST_BASE_NAME%
 {
     Q_OBJECT
 public:
-    %API_NAME%FrontPageDefaultViewRequestFromQt(%API_NAME% *cleanRoom, QObject *objectCallback, const char *slotCallback);
-    void respond(QStringList frontPageDocs);
+    %API_CALL_TO_REQUEST_BASE_NAME%FromQt(%API_NAME% *%API_AS_VARIABLE_NAME%, QObject *objectCallback, const char *slotCallback);
+    void respond(%API_CALL_RESPONSE_ARGS_AS_COMMA_SEPARATED_LIST_EXCLUDING_REQUEST_POINTER%);
 signals:
-    void frontPageDefaultViewResponseRequested(QStringList frontPageDocs);
+    void %API_CALL_SLOT_NAME%ResponseRequested(%API_CALL_RESPONSE_ARGS_AS_COMMA_SEPARATED_LIST_EXCLUDING_REQUEST_POINTER%);
 };
 
-#endif // %API_NAME_UPPERCASE%FRONTPAGEDEFAULTVIEWREQUESTFROMQT_H
+#endif // %API_NAME_UPPERCASE%%API_CALL_SLOT_NAME_TO_UPPER%REQUESTFROMQT_H

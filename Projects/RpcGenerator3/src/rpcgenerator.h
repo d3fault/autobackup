@@ -50,22 +50,29 @@ class RpcGenerator : public QObject
 public:
     explicit RpcGenerator(QObject *parent = 0);
 private:
+    static QString frontLetterToLower(const QString &stringInput);
     static QString frontLetterToUpper(const QString &stringInput);
-    static QString apiHeaderFileName(QString apiName);
-    static QString apiSourceFileName(QString apiName);
+    static QString classHeaderFileName(QString apiName);
+    static QString classSourceFileName(QString apiName);
+    static QString apiCallToRequestBaseName(ApiCall *apiCall);
     static QString apiCallToRequestInterfaceTypeName(ApiCall *apiCall);
     static QString apiCallToRequestInterfaceHeaderInclude(ApiCall *apiCall);
     static QString apiCallToForwardDefinitionRawCpp(ApiCall *apiCall);
-    static QString apiCallArgNamesToCommaSeparatedList(ApiCall *apiCall, bool requestIfTrue, bool makeRequestPointerFirstParameter = true, bool emitTypes = true);
+    static QString apiCallArgNamesToCommaSeparatedList(ApiCall *apiCall, bool requestIfTrue, bool makeRequestPointerFirstParameter = true, bool emitTypes = false, bool emitNames = false);
     static QString apiCallToMethodCppSignature(ApiCall *apiCall, bool requestIfTrue, bool makeRequestPointerFirstParameter = true);
     static QString apiCallToRawCppDeclaration(ApiCall *apiCall, bool requestIfTrue);
-    static QString apiCallArgToCpp(ApiCallArg *apiCallArg, bool emitTypes = true);
+    static QString apiCallArgToCpp(ApiCallArg *apiCallArg, bool emitTypes = true, bool emitNames = false);
     static QString apiCallToApiDefinitionRawCpp(ApiCall *apiCall, bool requestIfTrue);
 
     GeneratedFile generateApiHeaderFile(Api* api, QDir outputDir);
     GeneratedFile generateApiSourceFile(Api* api, QDir outputDir);
 
+    GeneratedFile generateApiCallRequestFromQtHeader(ApiCall *apiCall, QDir outputDir);
+    GeneratedFile generateApiCallRequestFromQtSource(ApiCall *apiCall, QDir outputDir);
+
     TemplateBeforeAndAfterStrings_Type initialBeforeAndAfterStrings(Api *api);
+    void appendApiCallBeforeAndAfterStrings(TemplateBeforeAndAfterStrings_Type *beforeAndAfterStrings, ApiCall *apiCall);
+    void writeApiCallFiles(FilesToWriteType *filesToWrite, ApiCall *apiCall, QDir outputDir);
 
     bool generateRpcActual(Api *api, QString outputPath);
     QString fileToString(QString filePath);
