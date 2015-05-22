@@ -1,2 +1,6 @@
-<RCC/>
-
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file alias="cleanroom.h">../assets/apitemplates/cleanroom.h</file>
+    <file alias="cleanroom.cpp">../assets/apitemplates/cleanroom.cpp</file>
+</qresource>
+</RCC>

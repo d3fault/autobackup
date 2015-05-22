@@ -50,13 +50,22 @@ class RpcGenerator : public QObject
 public:
     explicit RpcGenerator(QObject *parent = 0);
 private:
+    static QString frontLetterToUpper(const QString &stringInput);
     static QString apiHeaderFileName(QString apiName);
-    static QString classNameToHeaderIncludeGuard(QString apiName);
-    static QString apiCallToCpp(ApiCall *apiCall, bool requestIfTrue);
-    static QString apiCallArgToCpp(ApiCallArg *apiCallArg);
+    static QString apiSourceFileName(QString apiName);
+    static QString apiCallToRequestInterfaceTypeName(ApiCall *apiCall);
+    static QString apiCallToRequestInterfaceHeaderInclude(ApiCall *apiCall);
+    static QString apiCallToForwardDefinitionRawCpp(ApiCall *apiCall);
+    static QString apiCallArgNamesToCommaSeparatedList(ApiCall *apiCall, bool requestIfTrue, bool makeRequestPointerFirstParameter = true, bool emitTypes = true);
+    static QString apiCallToMethodCppSignature(ApiCall *apiCall, bool requestIfTrue, bool makeRequestPointerFirstParameter = true);
+    static QString apiCallToRawCppDeclaration(ApiCall *apiCall, bool requestIfTrue);
+    static QString apiCallArgToCpp(ApiCallArg *apiCallArg, bool emitTypes = true);
+    static QString apiCallToApiDefinitionRawCpp(ApiCall *apiCall, bool requestIfTrue);
 
     GeneratedFile generateApiHeaderFile(Api* api, QDir outputDir);
     GeneratedFile generateApiSourceFile(Api* api, QDir outputDir);
+
+    TemplateBeforeAndAfterStrings_Type initialBeforeAndAfterStrings(Api *api);
 
     bool generateRpcActual(Api *api, QString outputPath);
     QString fileToString(QString filePath);

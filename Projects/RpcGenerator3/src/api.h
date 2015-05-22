@@ -12,13 +12,16 @@ struct ApiCallArg
     QString ApiCallArgType;
     QString ApiCallArgName;
 };
+class Api;
 struct ApiCall
 {
-    ApiCall(const QString &apiCallSlotName, const QList<ApiCallArg> &requestArgs = QList<ApiCallArg>(), const QList<ApiCallArg> &responseArgs = QList<ApiCallArg>())
-        : ApiCallSlotName(apiCallSlotName)
+    ApiCall(Api *api, const QString &apiCallSlotName, const QList<ApiCallArg> &requestArgs = QList<ApiCallArg>(), const QList<ApiCallArg> &responseArgs = QList<ApiCallArg>())
+        : ParentApi(api)
+        , ApiCallSlotName(apiCallSlotName)
         , RequestArgs(requestArgs)
         , ResponseArgs(responseArgs)
     { }
+    Api *ParentApi;
     QString ApiCallSlotName;
     QList<ApiCallArg> RequestArgs;
     QList<ApiCallArg> ResponseArgs;
@@ -32,7 +35,7 @@ struct Api
     QList<ApiCall> ApiCalls;
     void createApiCall(const QString &apiCallSlotName, const QList<ApiCallArg> &requestArgs = QList<ApiCallArg>(), const QList<ApiCallArg> &responseArgs = QList<ApiCallArg>())
     {
-        ApiCall apiCall(apiCallSlotName, requestArgs, responseArgs);
+        ApiCall apiCall(this, apiCallSlotName, requestArgs, responseArgs);
         ApiCalls.append(apiCall);
     }
 };

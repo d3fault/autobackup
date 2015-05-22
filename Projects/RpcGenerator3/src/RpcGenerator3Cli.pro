@@ -21,5 +21,4 @@ HEADERS += rpcgenerator.h \
     rpcgeneratorcli.h \
     api.h
 
-RESOURCES += \
-    rpcbusinesstemplatestousewhengenerating.qrc
+RESOURCES += rpcbusinesstemplatestousewhengenerating.qrc

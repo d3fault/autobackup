@@ -19,59 +19,139 @@
 RpcGenerator::RpcGenerator(QObject *parent)
     : QObject(parent)
 { }
+QString RpcGenerator::frontLetterToUpper(const QString &stringInput)
+{
+    QString ret = stringInput;
+    if(ret.isEmpty())
+        return ret;
+    QString firstLetter = ret.at(0);
+    ret.remove(0, 1);
+    ret.insert(0, firstLetter.toUpper());
+    return ret;
+}
 QString RpcGenerator::apiHeaderFileName(QString apiName)
 {
     return apiName.toLower() + ".h";
 }
-QString RpcGenerator::classNameToHeaderIncludeGuard(QString apiName)
+QString RpcGenerator::apiSourceFileName(QString apiName)
 {
-    return apiName.toUpper() + "_H";
+    return apiName.toLower() + ".cpp";
 }
-QString RpcGenerator::apiCallToCpp(ApiCall *apiCall, bool requestIfTrue)
+QString RpcGenerator::apiCallToRequestInterfaceTypeName(ApiCall *apiCall)
 {
-    QString ret("void " + apiCall->ApiCallSlotName + QString(requestIfTrue ? "" : "Finished"));
+    return "I" + apiCall->ParentApi->ApiName + frontLetterToUpper(apiCall->ApiCallSlotName) + "Request";
+}
+QString RpcGenerator::apiCallToRequestInterfaceHeaderInclude(ApiCall *apiCall)
+{
+    return "#include \"" + apiCallToRequestInterfaceTypeName(apiCall).toLower() + ".h\"";
+}
+QString RpcGenerator::apiCallToForwardDefinitionRawCpp(ApiCall *apiCall)
+{
+    return "class " + apiCallToRequestInterfaceTypeName(apiCall) + ";";
+}
+QString RpcGenerator::apiCallArgNamesToCommaSeparatedList(ApiCall *apiCall, bool requestIfTrue, bool makeRequestPointerFirstParameter, bool emitTypes)
+{
     QStringList apiCallArgsRawCpp;
+    if(makeRequestPointerFirstParameter)
+        apiCallArgsRawCpp.append(apiCallToRequestInterfaceTypeName(apiCall) + " *request");
     Q_FOREACH(ApiCallArg apiCallArg, (requestIfTrue ? apiCall->RequestArgs : apiCall->ResponseArgs))
     {
-        apiCallArgsRawCpp.append(apiCallArgToCpp(&apiCallArg));
+        apiCallArgsRawCpp.append(apiCallArgToCpp(&apiCallArg, emitTypes));
     }
-    ret.append("(" + apiCallArgsRawCpp.join(", ") + ");");
+    return apiCallArgsRawCpp.join(", ");
+}
+QString RpcGenerator::apiCallToMethodCppSignature(ApiCall *apiCall, bool requestIfTrue, bool makeRequestPointerFirstParameter)
+{
+    QString ret(apiCall->ApiCallSlotName + QString(requestIfTrue ? "" : "Finished"));
+    QString apiCallArgsAsCommaSeparatedList = apiCallArgNamesToCommaSeparatedList(apiCall, requestIfTrue, makeRequestPointerFirstParameter);
+    ret.append("(" + apiCallArgsAsCommaSeparatedList + ")");
     return ret;
 }
-QString RpcGenerator::apiCallArgToCpp(ApiCallArg *apiCallArg)
+QString RpcGenerator::apiCallToRawCppDeclaration(ApiCall *apiCall, bool requestIfTrue)
 {
-    return apiCallArg->ApiCallArgType + " " + apiCallArg->ApiCallArgName;
+    QString ret("    void " + apiCallToMethodCppSignature(apiCall, requestIfTrue) + ";");
+    return ret;
+}
+QString RpcGenerator::apiCallArgToCpp(ApiCallArg *apiCallArg, bool emitTypes)
+{
+    if(emitTypes)
+        return apiCallArg->ApiCallArgType + " " + apiCallArg->ApiCallArgName;
+    return apiCallArg->ApiCallArgName;
+}
+QString RpcGenerator::apiCallToApiDefinitionRawCpp(ApiCall *apiCall, bool requestIfTrue)
+{
+    QString methodSignatureForDefinition = apiCall->ParentApi->ApiName + "::" + apiCallToMethodCppSignature(apiCall, requestIfTrue);
+    QString ret("void " + methodSignatureForDefinition + "\n{\n    ");
+    if(requestIfTrue)
+    {
+        ret.append("qFatal(\"" + methodSignatureForDefinition + " not yet implemented\");");
+    }
+    else
+    {
+        ret.append("request->respond(" + apiCallArgNamesToCommaSeparatedList(apiCall, false, false, false) + ");");
+    }
+    ret.append("\n}");
+    return ret;
 }
 GeneratedFile RpcGenerator::generateApiHeaderFile(Api *api, QDir outputDir)
 {
-    TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings;
-
-    beforeAndAfterStrings.insert("%API_NAME%", api->ApiName);
-    beforeAndAfterStrings.insert("%API_NAME_INCLUDE_GUARD%", classNameToHeaderIncludeGuard(api->ApiName));
+    TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings = initialBeforeAndAfterStrings(api);
 
     //API Calls (request slots)
+    QStringList allApiCallForwardDeclarations;
     QStringList allApiCallsDeclarationsRawCpp;
     Q_FOREACH(ApiCall apiCall, api->ApiCalls)
     {
-        allApiCallsDeclarationsRawCpp.append(apiCallToCpp(&apiCall, true));
+        allApiCallForwardDeclarations.append(apiCallToForwardDefinitionRawCpp(&apiCall));
+        allApiCallsDeclarationsRawCpp.append(apiCallToRawCppDeclaration(&apiCall, true));
     }
+    beforeAndAfterStrings.insert("%API_CALLS_FORWARD_DECLARATIONS%", allApiCallForwardDeclarations.join("\n"));
     beforeAndAfterStrings.insert("%API_CALLS_DECLARATIONS%", allApiCallsDeclarationsRawCpp.join("\n"));
     //API Responses (response pseudo-"signals", which are both Wt and Qt compatible)
     QStringList allApiCallResponseDeclarationsRawCpp;
     Q_FOREACH(ApiCall apiCall, api->ApiCalls)
     {
-        allApiCallResponseDeclarationsRawCpp.append(apiCallToCpp(&apiCall, false));
+        allApiCallResponseDeclarationsRawCpp.append(apiCallToRawCppDeclaration(&apiCall, false));
     }
+    beforeAndAfterStrings.insert("%API_CALL_RESPONSES_DECLARATIONS%", allApiCallResponseDeclarationsRawCpp.join("\n"));
 
 
-    GeneratedFile generatedFile(fileToString(":/apiHeaderFileTemplate.t"), outputDir.path() + QDir::separator() + apiHeaderFileName(api->ApiName), beforeAndAfterStrings);
+    GeneratedFile generatedFile(fileToString(":/cleanroom.h"), outputDir.path() + QDir::separator() + apiHeaderFileName(api->ApiName), beforeAndAfterStrings);
     generatedFile.replaceTemplateBeforesWithAfters();
     return generatedFile;
 }
 GeneratedFile RpcGenerator::generateApiSourceFile(Api *api, QDir outputDir)
 {
-    //TODOreq
-    //return GeneratedFile()
+    TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings = initialBeforeAndAfterStrings(api);
+
+    //API Calls (request slots)
+    QStringList allApiCallsHeaderIncludes;
+    QStringList allApiCallsDefinitions;
+    QStringList allApiCallResponsesDefinitions;
+    Q_FOREACH(ApiCall apiCall, api->ApiCalls)
+    {
+        allApiCallsHeaderIncludes.append(apiCallToRequestInterfaceHeaderInclude(&apiCall));
+        allApiCallsDefinitions.append(apiCallToApiDefinitionRawCpp(&apiCall, true));
+        allApiCallResponsesDefinitions.append(apiCallToApiDefinitionRawCpp(&apiCall, false));
+    }
+    beforeAndAfterStrings.insert("%API_CALLS_HEADER_INCLUDES%", allApiCallsHeaderIncludes.join("\n"));
+    beforeAndAfterStrings.insert("%API_CALLS_DEFINITIONS%", allApiCallsDefinitions.join("\n"));
+    beforeAndAfterStrings.insert("%API_CALLS_RESPONSE_DEFINITIONS%", allApiCallResponsesDefinitions.join("\n"));
+
+    GeneratedFile generatedFile(fileToString(":/cleanroom.cpp"), outputDir.path() + QDir::separator() + apiSourceFileName(api->ApiName), beforeAndAfterStrings);
+    generatedFile.replaceTemplateBeforesWithAfters();
+    return generatedFile;
+
+}
+TemplateBeforeAndAfterStrings_Type RpcGenerator::initialBeforeAndAfterStrings(Api *api)
+{
+    TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings;
+
+    beforeAndAfterStrings.insert("%API_NAME%", api->ApiName);
+    beforeAndAfterStrings.insert("%API_NAME_LOWERCASE%", api->ApiName.toLower());
+    beforeAndAfterStrings.insert("%API_NAME_UPPERCASE%", api->ApiName.toUpper());
+
+    return beforeAndAfterStrings;
 }
 bool RpcGenerator::generateRpcActual(Api *api, QString outputPath)
 {
