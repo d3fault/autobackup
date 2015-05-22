@@ -9,8 +9,8 @@ class %API_NAME%NewSessionRequestFromQt : public I%API_NAME%NewSessionRequest
 {
     Q_OBJECT
 public:
-    %API_NAME%NewSessionRequestFromQt(%API_NAME% *cleanRoom, QObject *objectToRespondTo, const char *slotCallback, QObject *parent = 0)
-        : I%API_NAME%NewSessionRequest(cleanRoom, parent)
+    %API_NAME%NewSessionRequestFromQt(%API_NAME% *%API_AS_VARIABLE_NAME%, QObject *objectToRespondTo, const char *slotCallback, QObject *parent = 0)
+        : I%API_NAME%NewSessionRequest(%API_AS_VARIABLE_NAME%, parent)
         , m_ObjectToRespondTo(objectToRespondTo)
     {
         QObject::connect(this, SIGNAL(newSessionResponseRequested(%API_NAME%Session*)), objectToRespondTo, slotCallback);

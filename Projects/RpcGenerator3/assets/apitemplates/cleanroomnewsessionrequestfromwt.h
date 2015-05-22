@@ -10,8 +10,8 @@ class %API_NAME%Session;
 class %API_NAME%NewSessionRequestFromWt : public I%API_NAME%NewSessionRequest
 {
 public:
-    %API_NAME%NewSessionRequestFromWt(%API_NAME% *cleanRoom, const std::string &wtSessionId, boost::function<void (%API_NAME%Session*)> wApplicationCallback)
-        : I%API_NAME%NewSessionRequest(cleanRoom)
+    %API_NAME%NewSessionRequestFromWt(%API_NAME% *%API_AS_VARIABLE_NAME%, const std::string &wtSessionId, boost::function<void (%API_NAME%Session*)> wApplicationCallback)
+        : I%API_NAME%NewSessionRequest(%API_AS_VARIABLE_NAME%)
         , m_WtSessionId(wtSessionId)
         , m_WApplicationCallback(wApplicationCallback)
     { }

@@ -1,6 +1,6 @@
-#include "i%API_NAME_LOWERCASE%frontpagedefaultviewrequest.h"
+%API_CALL_REQUEST_INTERFACE_HEADER_INCLUDE%
 
-void I%API_NAME%FrontPageDefaultViewRequest::processRequest()
+void I%API_NAME%%API_CALL_TO_REQUEST_BASE_NAME%::processRequest()
 {
     emit frontPageDefaultViewRequested(this);
 }

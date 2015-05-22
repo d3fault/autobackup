@@ -70,6 +70,8 @@ private:
     GeneratedFile generateApiCallRequestFromQtHeader(ApiCall *apiCall, QDir outputDir);
     GeneratedFile generateApiCallRequestFromQtSource(ApiCall *apiCall, QDir outputDir);
 
+    GeneratedFile generateApiCallRequestFromWtHeader(ApiCall *apiCall, QDir outputDir);
+
     TemplateBeforeAndAfterStrings_Type initialBeforeAndAfterStrings(Api *api);
     void appendApiCallBeforeAndAfterStrings(TemplateBeforeAndAfterStrings_Type *beforeAndAfterStrings, ApiCall *apiCall);
     void writeApiCallFiles(FilesToWriteType *filesToWrite, ApiCall *apiCall, QDir outputDir);

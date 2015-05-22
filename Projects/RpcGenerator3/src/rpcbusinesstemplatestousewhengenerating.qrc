@@ -4,5 +4,6 @@
     <file alias="cleanroom.cpp">../assets/apitemplates/cleanroom.cpp</file>
     <file alias="cleanroomfrontpagedefaultviewrequestfromqt.h">../assets/apitemplates/cleanroomfrontpagedefaultviewrequestfromqt.h</file>
     <file alias="cleanroomfrontpagedefaultviewrequestfromqt.cpp">../assets/apitemplates/cleanroomfrontpagedefaultviewrequestfromqt.cpp</file>
+    <file alias="cleanroomfrontpagedefaultviewrequestfromwt.h">../assets/apitemplates/cleanroomfrontpagedefaultviewrequestfromwt.h</file>
 </qresource>
 </RCC>

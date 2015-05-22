@@ -1,7 +1,7 @@
 #ifndef %API_NAME_UPPERCASE%FRONTPAGEDEFAULTVIEWREQUESTFROMWT_H
 #define %API_NAME_UPPERCASE%FRONTPAGEDEFAULTVIEWREQUESTFROMWT_H
 
-#include "i%API_NAME_LOWERCASE%frontpagedefaultviewrequest.h"
+%API_CALL_REQUEST_INTERFACE_HEADER_INCLUDE%
 
 #include <QStringList>
 
@@ -9,10 +9,10 @@
 
 class %API_NAME%;
 
-class %API_NAME%FrontPageDefaultViewRequestFromWt : public I%API_NAME%FrontPageDefaultViewRequest
+class %API_NAME%%API_CALL_TO_REQUEST_BASE_NAME%FromWt : public I%API_NAME%%API_CALL_TO_REQUEST_BASE_NAME%
 {
 public:
-    %API_NAME%FrontPageDefaultViewRequestFromWt(%API_NAME% *cleanRoom, const std::string &wtSessionId, boost::function<void (QStringList/*frontPageDocs*/)> wApplicationCallback);
+    %API_NAME%%API_CALL_TO_REQUEST_BASE_NAME%FromWt(%API_NAME% *%API_AS_VARIABLE_NAME%, const std::string &wtSessionId, boost::function<void (QStringList/*frontPageDocs*/)> wApplicationCallback);
     void respond(QStringList frontPageDocs);
 private:
     std::string m_WtSessionId;

@@ -14,15 +14,15 @@ class %API_NAME%;
 class %API_NAME%Session
 {
 public:
-    %API_NAME%Session(%API_NAME% *cleanRoom)
-        : m_%API_NAME%(cleanRoom)
+    %API_NAME%Session(%API_NAME% *%API_AS_VARIABLE_NAME%)
+        : m_%API_NAME%(%API_AS_VARIABLE_NAME%)
     { }
-    %API_NAME% *cleanRoom() const
+    %API_NAME% *%API_AS_VARIABLE_NAME%() const
     {
         return m_%API_NAME%;
     }
-    static void requestNewSession(%API_NAME% *cleanRoom, QObject *objectToCallbackTo, const char *callbackSlot);
-    static void requestNewSession(%API_NAME% *cleanRoom, const std::string &wtSessionId, boost::function<void (%API_NAME%Session*)> wApplicationCallback);
+    static void requestNewSession(%API_NAME% *%API_AS_VARIABLE_NAME%, QObject *objectToCallbackTo, const char *callbackSlot);
+    static void requestNewSession(%API_NAME% *%API_AS_VARIABLE_NAME%, const std::string &wtSessionId, boost::function<void (%API_NAME%Session*)> wApplicationCallback);
     void requestNew%API_NAME%FrontPageDefaultView(QObject *objectToCallbackTo, const char *callbackSlot);
     void requestNew%API_NAME%FrontPageDefaultView(const std::string &wtSessionId, boost::function<void (QStringList)> wApplicationCallback);
 private:
