@@ -1,0 +1,22 @@
+bootstrap.bat
+bootstrap.sh
+
+calls
+qbs (compiles if necessary, then runs)
+
+int main(int argc, char *argv[])
+{
+	RpcGenerator rpcGenerator;
+	rpcGenerator.generateRpc<SomeBusiness>(TODOreq:cwd); //SomeBusiness inherits IApi
+	//then qbs on that generated target to compile/run
+}
+
+
+
+one unit of those bootstrap-able application bases is called a "project"
+ProjectManagerGui/Cli should be made, is very simple: generates projects based on Api definitions. Saves those API definitions locally. Is also responsible for backing up? Maybe it pushes it's activity log to DocumentTimeline itself? Seems like a reverse/circular dependency, but the modulure nature of the applications might allow it.
+I should put "edit me" areas in the generated source. The Rpc Generator can suck in edits (perhaps generated docs are referred to by a hash somewhere in the file), oh shit actually I don't need special "write in between these lines" comments if I am storing the state of the file from one Rpc Generation to the next. I can have predefined "editable" areas of a doc (all of the doc!), but detect when they modify something they shouldn't (such as a generated method definition) and warn+error (but don't discard the buffer ofc) on QtCreator-close->ImportChanges
+
+ProjectManager publishing it's changes to DocumentTimeline is my goal at this point. All API changes should be serialized. Maybe using nagles, but that's an implementation-detail/optimization.
+
+ProjectManager should control the lifetime of my Qt Creator app for when I edit the Project (generated rpc code)

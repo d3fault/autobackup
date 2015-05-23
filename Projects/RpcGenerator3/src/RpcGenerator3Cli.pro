@@ -15,12 +15,10 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     rpcgenerator.cpp \
-    rpcgeneratorcli.cpp \
-    apicall.cpp
+    rpcgeneratorcli.cpp
 
 HEADERS += rpcgenerator.h \
     rpcgeneratorcli.h \
-    api.h \
-    apicall.h
+    api.h
 
 RESOURCES += rpcbusinesstemplatestousewhengenerating.qrc

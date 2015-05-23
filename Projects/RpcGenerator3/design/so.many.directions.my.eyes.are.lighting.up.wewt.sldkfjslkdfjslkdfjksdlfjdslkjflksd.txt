@@ -1,0 +1,3 @@
+Document Timeline obviously has a "generic timeline" `file selection wizard`... which may or may not become fancy functioning/looking. In AutoDrilldown GUI, the QByteArray request arg type should use the same `file selection wizard` for satisfying it's request arg type in the AutoDrilldown GUI.
+
+It might be possible to have the AutoDrilldown and WhatIwantAndWillHardcodeFor for DocumentTimeline be identical, but that would just be lulz. There are probably lots of cases where AutoDrilldown GUI will be exactly what the API wants. I just thought up a counter-argument for them being identical. The loginPassword string wouldn't be a 'password' line edit, just a regular one. Unless of course I created a new type, PasswordString or just Password.

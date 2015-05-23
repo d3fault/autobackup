@@ -3,8 +3,6 @@
 
 #include <QString>
 
-#include "apicall.h"
-
 struct ApiCallArg
 {
     ApiCallArg(QString apiCallArgType, QString apiCallArgName)
@@ -14,9 +12,23 @@ struct ApiCallArg
     QString ApiCallArgType;
     QString ApiCallArgName;
 };
+class Api;
+struct ApiCall
+{
+    ApiCall(Api *api, const QString &apiCallSlotName, const QList<ApiCallArg> &requestArgs = QList<ApiCallArg>(), const QList<ApiCallArg> &responseArgs = QList<ApiCallArg>())
+        : ParentApi(api)
+        , ApiCallSlotName(apiCallSlotName)
+        , RequestArgs(requestArgs)
+        , ResponseArgs(responseArgs)
+    { }
+    Api *ParentApi;
+    QString ApiCallSlotName;
+    QList<ApiCallArg> RequestArgs;
+    QList<ApiCallArg> ResponseArgs;
+};
 struct Api
 {
-    Api(QString apiName = QString("Unnamed Api"))
+    Api(QString apiName)
         : ApiName(apiName)
     { }
     QString ApiName;

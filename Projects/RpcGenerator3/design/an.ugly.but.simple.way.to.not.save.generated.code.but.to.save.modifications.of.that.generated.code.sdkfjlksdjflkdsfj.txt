@@ -1,0 +1,2 @@
+FileFormat: SerializedApiAndImplPatches
+Forward proof smart importing (error on generated api modification as described in previous doc) would be better, but this file format would be trivial to create and use on the short term. I'm just hesitant af to 'save' any generated code (yet I still want/need to modify them and save those changes!!).
