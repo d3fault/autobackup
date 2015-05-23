@@ -1,0 +1,5 @@
+What do botnets, operating systems, and app stores all have in common? They are all effectively "plugin runners". Plugins (called 'applications' in OS world, but the differences are nil) are retrieved (usually remotely) and then run.
+
+Qt is the ultimate 'plugin' generator (not to be confused with Qt's `actual` plugin API, which yea is pretty cool too). You code generic plugins, Qt codes/maintains the comm layer between your plugins and all of the most popular plugin runners.
+
+I want to code a botnet... I'm just going to get users' permission before I install... so it'll just be called an "application".

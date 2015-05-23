@@ -1,0 +1,23 @@
+it feels like I'm somehow going backwards
+is it ironic, the first thing I want to use my Rpc Generator for is CleanRoom. having lots of considerations on modifying it. perhaps "NudeRoom". I think NudeRoom is a good idea, but both CleanRoom and NudeRoom should both be tags on a more generic "IRoom". class IRoom { /*protected: virtual void*/ I_am_a_b_esq_ContentStream *m_Docs; /*"I" for interface, not for "me". } ... or maybe class IHaveDocStream { void read(...args...); void write(...args...); } ... or maybe just DocStream and both CleanRoom and NudeRoom haveA it. (note to the otuside worlders: "haveA" it is more or less the same thing as "have it", but it's implying that it's being using by a C++ class)
+
+Fuck it man gonna stick to KISS and abstract later. I'm now sitting here and trying really hard to think of what KISS _IS_. It might be "DocStream". DocumentTimeline. DocumentTimeline, and CleanRoom is a tag and NudeRoom is a sub-tag of CleanRoom. Another way to say it: NudeRoom depends on CleanRoom. I'm not sure which way of saying it is better. They also kinda seem like complete opposites, in a way I haven't thought out very far.
+Yet another way to say it: NudeRoom is the collection of everyone with the nuderoom and cleanroom tags. At least the way I want it. And since I control the domain (is purely virtual), woot.
+
+Ok enough rambling I am really giddy about wanting to test this rpc generator out.
+
+The counter-thought: what if the intent of CleanRoom is that every doc therein is >= dpl? that is the intent is what I mean. So DocumentTimeline is the more abstract version of CleanRoom, but I've not thought out whether or not or what I want to allow on the DocumentTimeline, if something else besides from CleanRoom documents were to be on it. I am in the undefined land.
+
+If I'm thinking instead IDocumentTimeline, then it's different since there would only (initially) be the CleanRoom impl.
+
+Ok I think I see what I'm missing: I need to have "a collection of document timelines". each impl of that interface could use neighbor nodes on the network to store backups.
+
+I guess what I'm saying is "auto document timeline presence announcement", which is basically saying a rpc generator mod.
+class IUniversalDocumentTimeline;
+typedef CleanRoom IUniversalDocumentTimeline; //yet, I know I could write that backwards. but that's not what I intend with it. I'm saying "from now on, UniversalDocumentTimeline is what cleanroom will be.
+Most users are too stupid to read TOS etc, so I should take advantage of that. I don't mean take advantage of it by them posting copyright infringing material (though that will happen, guh (only saying guh because I'm the guy who has to remove it), what I mean is that I hope they would create and post some good quality OC and then regret releasing it under >= DPL because I mean damn seriously nobody's a fucking lawyer you could get someone to agree to kill their mom in the TOS of any TOS that's publically accessable),
+
+Back to the point...
+Since it's universal, that part of the name is redundant. DocumentTimeline. I highly doubt that domain's free, but I'm going to check before putting this on my online box.
+Regardless, I can/will still build it and use it and [attempt-to] claim trademark on it.
+So now here I go.

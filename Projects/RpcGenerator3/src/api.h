@@ -1,6 +1,7 @@
 #ifndef API
 #define API
 
+#include <QSharedPointer>
 #include <QString>
 
 struct ApiCallArg
@@ -15,20 +16,20 @@ struct ApiCallArg
 class Api;
 struct ApiCall
 {
-    ApiCall(Api *api, const QString &apiCallSlotName, const QList<ApiCallArg> &requestArgs = QList<ApiCallArg>(), const QList<ApiCallArg> &responseArgs = QList<ApiCallArg>())
+    ApiCall(QSharedPointer<Api> api, const QString &apiCallSlotName, const QList<ApiCallArg> &requestArgs = QList<ApiCallArg>(), const QList<ApiCallArg> &responseArgs = QList<ApiCallArg>())
         : ParentApi(api)
         , ApiCallSlotName(apiCallSlotName)
         , RequestArgs(requestArgs)
         , ResponseArgs(responseArgs)
     { }
-    Api *ParentApi;
+    QSharedPointer<Api> *ParentApi;
     QString ApiCallSlotName;
     QList<ApiCallArg> RequestArgs;
     QList<ApiCallArg> ResponseArgs;
 };
 struct Api
 {
-    Api(QString apiName)
+    Api(QString apiName = QString("Unnamed Api"))
         : ApiName(apiName)
     { }
     QString ApiName;

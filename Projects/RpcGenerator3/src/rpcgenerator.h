@@ -89,19 +89,19 @@ private:
     GeneratedFile generateApiCallRequestFromWtSource(ApiCall *apiCall, QDir outputDir);
 
     //Session
-    GeneratedFile generateApiSessionHeaderFile(Api *api, QDir outputDir);
-    GeneratedFile generateApiSessionSourceFile(Api *api, QDir outputDir);
+    GeneratedFile generateApiSessionHeaderFile(QSharedPointer<Api> api, QDir outputDir);
+    GeneratedFile generateApiSessionSourceFile(QSharedPointer<Api> api, QDir outputDir);
     //New Session Request Interface
-    GeneratedFile generateNewSessionRequestInterface(Api *api, QDir outputDir);
+    GeneratedFile generateNewSessionRequestInterface(QSharedPointer<Api> api, QDir outputDir);
     //New Session Request
-    GeneratedFile generateNewSessionRequestFromHeaderFile(Api *api, QDir outputDir, const QString &qtOrWtFileNameSuffix);
-    GeneratedFile generateNewSessionRequestFromSourceFile(Api *api, QDir outputDir, const QString &qtOrWtFileNameSuffix);
+    GeneratedFile generateNewSessionRequestFromHeaderFile(QSharedPointer<Api> api, QDir outputDir, const QString &qtOrWtFileNameSuffix);
+    GeneratedFile generateNewSessionRequestFromSourceFile(QSharedPointer<Api> api, QDir outputDir, const QString &qtOrWtFileNameSuffix);
 
-    TemplateBeforeAndAfterStrings_Type initialBeforeAndAfterStrings(Api *api);
+    TemplateBeforeAndAfterStrings_Type initialBeforeAndAfterStrings(QSharedPointer<Api> api);
     void appendApiCallBeforeAndAfterStrings(TemplateBeforeAndAfterStrings_Type *beforeAndAfterStrings, ApiCall *apiCall);
     void writeApiCallFiles(FilesToWriteType *filesToWrite, ApiCall *apiCall, QDir outputDir);
 
-    bool generateRpcActual(Api *api, QString outputPath);
+    bool generateRpcActual(QSharedPointer<Api> api, QString outputPath);
     QString fileToString(QString filePath);
     bool writeFiles(FilesToWriteType filesToWrite);
     bool writeFile(QString filePath, QString fileContents);

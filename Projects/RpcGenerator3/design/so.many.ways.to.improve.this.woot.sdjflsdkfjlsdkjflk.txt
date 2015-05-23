@@ -1,0 +1,7 @@
+There's so many things I could add to Rpc Generator 3.
+
+-I could make the request target able to be specified as a boost::function
+-I could do libevent request/response context types
+-I could do QAbstractSocket request/response types (also QLocalServer/Socket, since it's practically identical) -- but network implies timing out the requests heh so it'd be difficult
+
+The fact that the request context 'types' (just Qt atm) and response context 'types' (Qt/boost atm) don't have to match is extremely powerful.

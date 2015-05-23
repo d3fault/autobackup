@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDir>
+#include <QSharedPointer>
 
 #include "api.h"
 
@@ -18,9 +19,82 @@
 
 //this is hacked together as fast as possible. ugly and lots of places elegance and efficiencies can be improved (dgaf)
 //TODOmb: generate matching .pri file
+//typedef QList<ApiCallArg>() VoidApiCallArg;
+#define NoApiCallArgs QList<ApiCallArg>()
 RpcGenerator::RpcGenerator(QObject *parent)
     : QObject(parent)
 { }
+class GeneratableApis //temporary solution until I can use (had:parse) some user input
+{
+public:
+    GeneratableApis()
+    {
+        generateCleanRoomApi();
+        generateDocumentTimelineApi();
+    }
+    QSharedPointer<Api> apiByName(QString apiName, bool *apiFoundOptionalErrorResultCode = 0)
+    {
+        QHash<QString, QSharedPointer<Api> >::const_iterator apiMaybe = m_Apis.find(apiName);
+        if(apiMaybe == m_Apis.end())
+        {
+            if(apiFoundOptionalErrorResultCode)
+                *apiFoundOptionalErrorResultCode = false;
+            QSharedPointer<Api> api(new Api());
+            return api;
+        }
+        if(apiFoundOptionalErrorResultCode)
+            *apiFoundOptionalErrorResultCode = true;
+        return *apiMaybe;
+    }
+#if 0
+    Api someBusiness() const
+    {
+        return m_Apis.value("CleanRoom"/*TODOreq: single definition mode xD*/);
+    }
+#endif
+private:
+    QHash<QString, QSharedPointer<Api> > m_Apis;
+
+    void generateCleanRoomApi()
+    {
+        //QSharedPointer<Api> api(QSharedPointer<Api>(new QSharedPointer)("CleanRoom"));
+        QSharedPointer<Api> api(new Api("CleanRoom"));
+        api->createApiCall("frontPageDefaultView", NoApiCallArgs, QList<ApiCallArg>() << ApiCallArg("QStringList", "frontPageDocs"));
+        m_Apis.insert(api->ApiName, api);
+    }
+    void generateDocumentTimelineApi()
+    {
+        QSharedPointer<Api> api(new Api("DocumentTimeline"));
+        api->createApiCall("getLatestDocuments", NoApiCallArgs, QList<ApiCallArg>() << ApiCallArg("QStringList", "getLatestDocuments"));
+        //api->createApiCall("registerAttemptVideoSubmitted", QList<ApiCallArg>() << ApiCallArg("QString", "desiredUsername") << ApiCallArg("QByteArray", "registrationAttemptSubmissionVideo"), QList<ApiCallArg>() << ApiCallArg("bool", "regi"));
+        api->createApiCall("submitRegistrationAttemptVideo", QList<ApiCallArg>() << ApiCallArg("QString", "desiredUsername") << ApiCallArg("QByteArray", "registrationAttemptSubmissionVideo"), QList<ApiCallArg>() << ApiCallArg("bool", "registrationAttemptVideoSubmissionSuccessful"));
+        api->createApiCall("login", QList<ApiCallArg>() << ApiCallArg("QString", "username") << ApiCallArg("QString", "password"));
+        api->createApiCall("post", QList<ApiCallArg>() << ApiCallArg("QByteArray", "document"), QList<ApiCallArg>() << ApiCallArg("bool", "postedSuccessfully") << ApiCallArg("QByteArray", "documentKey"));
+        api->createApiCall("logout");
+        m_Apis.insert(api->ApiName, api);
+    }
+};
+void RpcGenerator::generateRpc()
+{
+    QTemporaryDir tempDir;
+    if(!tempDir.isValid())
+        EEEEEEEEEE_RpcGenerator("unable to get temp dir")
+    QString outputPath = tempDir.path();
+
+    //ApiApi = GeneratableApis /*GeneratableApisApis*/;
+    GeneratableApis apis;
+    bool foundApi = false;
+    QSharedPointer<Api> api = apis.apiByName("DocumentTimeline", &foundApi); //TODOmb: a Api api<T>() compile time checking for api existence
+    if(!foundApi)
+        EEEEEEEEEE_RpcGenerator("failed to find api by name")
+
+    if(!generateRpcActual(api, outputPath))
+        EEEEEEEEEE_RpcGenerator("failed to generate")
+
+    tempDir.setAutoRemove(false);
+    emit o("successfully generated rpc to: " + outputPath);
+    emit rpcGenerated(true, outputPath);
+}
 QString RpcGenerator::frontLetterToLower(const QString &stringInput)
 {
     QString ret = stringInput;
@@ -170,7 +244,7 @@ QString RpcGenerator::apiCallRequestInterfaceArgMemberNamesWithLeadingCommaspace
     }
     return ret;
 }
-GeneratedFile RpcGenerator::generateApiHeaderFile(Api *api, QDir outputDir)
+GeneratedFile RpcGenerator::generateApiHeaderFile(QSharedPointer<Api> api, QDir outputDir)
 {
     TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings = initialBeforeAndAfterStrings(api);
 
@@ -197,7 +271,7 @@ GeneratedFile RpcGenerator::generateApiHeaderFile(Api *api, QDir outputDir)
     generatedFile.replaceTemplateBeforesWithAfters();
     return generatedFile;
 }
-GeneratedFile RpcGenerator::generateApiSourceFile(Api *api, QDir outputDir)
+GeneratedFile RpcGenerator::generateApiSourceFile(QSharedPointer<Api> api, QDir outputDir)
 {
     TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings = initialBeforeAndAfterStrings(api);
 
@@ -220,7 +294,7 @@ GeneratedFile RpcGenerator::generateApiSourceFile(Api *api, QDir outputDir)
     return generatedFile;
 
 }
-GeneratedFile RpcGenerator::generateApiRequestInterface(Api *api, QDir outputDir)
+GeneratedFile RpcGenerator::generateApiRequestInterface(QSharedPointer<Api> api, QDir outputDir)
 {
     //this request interface doesn't really do anything at all (since I'm a code gen), but I like it because it's sexy. It could even just be IRequest instead of IBusinessRequest (tons of design opportunities using an IRequest), but whatever. Leaving as IBusinessRequest because I don't have any compelling reason to change it [yet] (KISS)
 
@@ -285,7 +359,7 @@ GeneratedFile RpcGenerator::generateApiCallRequestFromWtSource(ApiCall *apiCall,
     generatedFile.replaceTemplateBeforesWithAfters();
     return generatedFile;
 }
-GeneratedFile RpcGenerator::generateApiSessionHeaderFile(Api *api, QDir outputDir)
+GeneratedFile RpcGenerator::generateApiSessionHeaderFile(QSharedPointer<Api> api, QDir outputDir)
 {
     TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings = initialBeforeAndAfterStrings(api);
 
@@ -304,7 +378,7 @@ GeneratedFile RpcGenerator::generateApiSessionHeaderFile(Api *api, QDir outputDi
     generatedFile.replaceTemplateBeforesWithAfters();
     return generatedFile;
 }
-GeneratedFile RpcGenerator::generateApiSessionSourceFile(Api *api, QDir outputDir)
+GeneratedFile RpcGenerator::generateApiSessionSourceFile(QSharedPointer<Api> api, QDir outputDir)
 {
     TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings = initialBeforeAndAfterStrings(api);
 
@@ -329,7 +403,7 @@ GeneratedFile RpcGenerator::generateApiSessionSourceFile(Api *api, QDir outputDi
     generatedFile.replaceTemplateBeforesWithAfters();
     return generatedFile;
 }
-GeneratedFile RpcGenerator::generateNewSessionRequestInterface(Api *api, QDir outputDir)
+GeneratedFile RpcGenerator::generateNewSessionRequestInterface(QSharedPointer<Api> api, QDir outputDir)
 {
     TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings = initialBeforeAndAfterStrings(api);
 
@@ -337,7 +411,7 @@ GeneratedFile RpcGenerator::generateNewSessionRequestInterface(Api *api, QDir ou
     generatedFile.replaceTemplateBeforesWithAfters();
     return generatedFile;
 }
-GeneratedFile RpcGenerator::generateNewSessionRequestFromHeaderFile(Api *api, QDir outputDir, const QString &qtOrWtFileNameSuffix)
+GeneratedFile RpcGenerator::generateNewSessionRequestFromHeaderFile(QSharedPointer<Api> api, QDir outputDir, const QString &qtOrWtFileNameSuffix)
 {
     TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings = initialBeforeAndAfterStrings(api);
 
@@ -345,7 +419,7 @@ GeneratedFile RpcGenerator::generateNewSessionRequestFromHeaderFile(Api *api, QD
     generatedFile.replaceTemplateBeforesWithAfters();
     return generatedFile;
 }
-GeneratedFile RpcGenerator::generateNewSessionRequestFromSourceFile(Api *api, QDir outputDir, const QString &qtOrWtFileNameSuffix)
+GeneratedFile RpcGenerator::generateNewSessionRequestFromSourceFile(QSharedPointer<Api> api, QDir outputDir, const QString &qtOrWtFileNameSuffix)
 {
     TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings = initialBeforeAndAfterStrings(api);
 
@@ -353,7 +427,7 @@ GeneratedFile RpcGenerator::generateNewSessionRequestFromSourceFile(Api *api, QD
     generatedFile.replaceTemplateBeforesWithAfters();
     return generatedFile;
 }
-TemplateBeforeAndAfterStrings_Type RpcGenerator::initialBeforeAndAfterStrings(Api *api)
+TemplateBeforeAndAfterStrings_Type RpcGenerator::initialBeforeAndAfterStrings(QSharedPointer<Api> api)
 {
     TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings;
 
@@ -396,7 +470,7 @@ void RpcGenerator::writeApiCallFiles(FilesToWriteType *filesToWrite, ApiCall *ap
     filesToWrite->insert(generateApiCallRequestFromWtHeader(apiCall, outputDir));
     filesToWrite->insert(generateApiCallRequestFromWtSource(apiCall, outputDir));
 }
-bool RpcGenerator::generateRpcActual(Api *api, QString outputPath)
+bool RpcGenerator::generateRpcActual(QSharedPointer<Api> api, QString outputPath)
 {
     QDir outputDir(outputPath);
     FilesToWriteType filesToWrite;
@@ -464,28 +538,6 @@ bool RpcGenerator::writeFile(QString filePath, QString fileContents)
     QTextStream stream(&file);
     stream << fileContents;
     return true;
-}
-void RpcGenerator::generateRpc()
-{
-    QTemporaryDir tempDir;
-    if(!tempDir.isValid())
-        EEEEEEEEEE_RpcGenerator("unable to get temp dir")
-    QString outputPath = tempDir.path();
-
-#if 1
-    Api api("SomeBusiness");
-    api.createApiCall("loginPlx", QList<ApiCallArg>() << ApiCallArg("char *", "loginUser") << ApiCallArg("QByteArray", "passwordHash"), QList<ApiCallArg>() << ApiCallArg("bool", "loginSuccess") << ApiCallArg("QString", "sessionId"));
-#else
-    Api api("CleanRoom");
-    api.createApiCall("frontPageDefaultView", QList<ApiCallArg>(), QList<ApiCallArg>() << ApiCallArg("QStringList", "frontPageDocs"));
-#endif
-
-    if(!generateRpcActual(&api, outputPath))
-        EEEEEEEEEE_RpcGenerator("failed to generate")
-
-    tempDir.setAutoRemove(false);
-    emit o("successfully generated rpc to: " + outputPath);
-    emit rpcGenerated(true, outputPath);
 }
 void GeneratedFile::replaceTemplateBeforesWithAfters()
 {
