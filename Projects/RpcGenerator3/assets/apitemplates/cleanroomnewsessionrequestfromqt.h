@@ -9,7 +9,7 @@ class %API_NAME%NewSessionRequestFromQt : public I%API_NAME%NewSessionRequest
 {
     Q_OBJECT
 public:
-    %API_NAME%NewSessionRequestFromQt(%API_NAME% *%API_AS_VARIABLE_NAME%, QObject *objectToRespondTo, const char *slotCallback, QObject *parent = 0)
+    %API_NAME%NewSessionRequestFromQt(I%API_NAME% *%API_AS_VARIABLE_NAME%, QObject *objectToRespondTo, const char *slotCallback, QObject *parent = 0)
         : I%API_NAME%NewSessionRequest(%API_AS_VARIABLE_NAME%, parent)
         , m_ObjectToRespondTo(objectToRespondTo)
     {

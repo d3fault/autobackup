@@ -1,0 +1,4 @@
+Auto-db is similarly easy. Connect to AutoDrillDown front-end(s) (had:"the two" instead of "to Aut...ends(s)") and you sometimes get lucky and get "api-specification == desired-fully-functioning-gui-application". At the very fucking least, they give you something to work with. They also give you something to visualize. They also give you something to instantiate.
+
+
+At the very best, all you can ever do is make a really sick fucking api that some coder will use. Most regulars won't use your api so will miss out. Multi-plugin db backends, with json/etc being a hardcoded(compile time checked) minimum. Db plugins should be lossless (or at least, attempt to be (get fancy with sha1 verification of all data access (might as well do it in javascript because then I also achieve (retain sounds better(?), though they both seem to fit) a little bit of anonymity for end users)))

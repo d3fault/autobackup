@@ -1,0 +1,2 @@
+compile time compile time checking of the generated rpc code.
+or I guess I mean to say "generate time compile time checking of the generated rpc code"

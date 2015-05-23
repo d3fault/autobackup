@@ -12,10 +12,10 @@ class I%API_NAME%NewSessionRequest : public QObject, public I%API_NAME%Request
 {
     Q_OBJECT
 public:
-    I%API_NAME%NewSessionRequest(%API_NAME% *%API_AS_VARIABLE_NAME%, QObject *parent = 0)
+    I%API_NAME%NewSessionRequest(I%API_NAME% *%API_AS_VARIABLE_NAME%, QObject *parent = 0)
         : QObject(parent)
     {
-        connect(this, &I%API_NAME%NewSessionRequest::newSessionRequested, %API_AS_VARIABLE_NAME%, &%API_NAME%::newSession);
+        connect(this, &I%API_NAME%NewSessionRequest::newSessionRequested, %API_AS_VARIABLE_NAME%, &I%API_NAME%::newSession);
     }
     void processRequest()
     {
