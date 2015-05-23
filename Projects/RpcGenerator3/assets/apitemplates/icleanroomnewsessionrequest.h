@@ -4,7 +4,7 @@
 #include <QObject>
 #include "i%API_NAME_LOWERCASE%request.h"
 
-#include "%API_NAME_LOWERCASE%.h"
+#include "i%API_NAME_LOWERCASE%.h"
 
 class %API_NAME%Session;
 

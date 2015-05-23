@@ -93,7 +93,7 @@ QString RpcGenerator::apiCallToRequestInterfaceTypeName(ApiCall *apiCall)
 }
 QString RpcGenerator::apiCallToRequestInterfaceHeaderInclude(ApiCall *apiCall)
 {
-    return "#include \"" + apiCallToRequestInterfaceTypeName(apiCall).toLower() + ".h\"";
+    return "#include \"i" + apiCallToRequestInterfaceTypeName(apiCall).toLower() + ".h\"";
 }
 QString RpcGenerator::apiCallToForwardDefinitionRawCpp(ApiCall *apiCall)
 {
@@ -204,55 +204,38 @@ QString RpcGenerator::apiCallRequestInterfaceArgMemberNamesWithLeadingCommaspace
     }
     return ret;
 }
-GeneratedFile RpcGenerator::generateApiHeaderFile(Api *api, QDir outputDir)
+GeneratedFile RpcGenerator::generateApiInterfaceHeaderFile(Api *api, QDir outputDir)
 {
     TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings = initialBeforeAndAfterStrings(api);
 
-    //API Calls (request slots)
-    QStringList allApiCallForwardDeclarations;
-    QStringList allApiCallsDeclarationsRawCpp;
-    Q_FOREACH(ApiCall apiCall, api->ApiCalls)
-    {
-        allApiCallForwardDeclarations.append(apiCallToForwardDefinitionRawCpp(&apiCall));
-        allApiCallsDeclarationsRawCpp.append(apiCallToRawCppDeclaration(&apiCall, true));
-    }
-    beforeAndAfterStrings.insert("%API_CALLS_FORWARD_DECLARATIONS%", allApiCallForwardDeclarations.join("\n"));
-    beforeAndAfterStrings.insert("%API_CALLS_DECLARATIONS%", allApiCallsDeclarationsRawCpp.join("\n"));
-    //API Responses (response pseudo-"signals", which are both Wt and Qt compatible)
-    QStringList allApiCallResponseDeclarationsRawCpp;
-    Q_FOREACH(ApiCall apiCall, api->ApiCalls)
-    {
-        allApiCallResponseDeclarationsRawCpp.append(apiCallToRawCppDeclaration(&apiCall, false));
-    }
-    beforeAndAfterStrings.insert("%API_CALL_RESPONSES_DECLARATIONS%", allApiCallResponseDeclarationsRawCpp.join("\n"));
+    GeneratedFile generatedFile(fileToString(":/icleanroom.h"), outputDir.path() + QDir::separator() + "i" + classHeaderFileName(api->ApiName), beforeAndAfterStrings);
+    generatedFile.replaceTemplateBeforesWithAfters();
+    return generatedFile;
+}
+GeneratedFile RpcGenerator::generateApiInterfaceSourceFile(Api *api, QDir outputDir)
+{
+    TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings = initialBeforeAndAfterStrings(api);
 
+    GeneratedFile generatedFile(fileToString(":/icleanroom.cpp"), outputDir.path() + QDir::separator() + "i" + classSourceFileName(api->ApiName), beforeAndAfterStrings);
+    generatedFile.replaceTemplateBeforesWithAfters();
+    return generatedFile;
+
+}
+GeneratedFile RpcGenerator::generateApiSkeletonImplementationHeaderFile(Api *api, QDir outputDir)
+{
+    TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings = initialBeforeAndAfterStrings(api);
 
     GeneratedFile generatedFile(fileToString(":/cleanroom.h"), outputDir.path() + QDir::separator() + classHeaderFileName(api->ApiName), beforeAndAfterStrings);
     generatedFile.replaceTemplateBeforesWithAfters();
     return generatedFile;
 }
-GeneratedFile RpcGenerator::generateApiSourceFile(Api *api, QDir outputDir)
+GeneratedFile RpcGenerator::generateApiSkeletonImplementationSourceFile(Api *api, QDir outputDir)
 {
     TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings = initialBeforeAndAfterStrings(api);
-
-    //API Calls (request slots)
-    QStringList allApiCallsHeaderIncludes;
-    QStringList allApiCallsDefinitions;
-    QStringList allApiCallResponsesDefinitions;
-    Q_FOREACH(ApiCall apiCall, api->ApiCalls)
-    {
-        allApiCallsHeaderIncludes.append(apiCallToRequestInterfaceHeaderInclude(&apiCall));
-        allApiCallsDefinitions.append(apiCallToApiDefinitionRawCpp(&apiCall, true));
-        allApiCallResponsesDefinitions.append(apiCallToApiDefinitionRawCpp(&apiCall, false));
-    }
-    beforeAndAfterStrings.insert("%API_CALLS_HEADER_INCLUDES%", allApiCallsHeaderIncludes.join("\n"));
-    beforeAndAfterStrings.insert("%API_CALLS_DEFINITIONS%", allApiCallsDefinitions.join("\n"));
-    beforeAndAfterStrings.insert("%API_CALLS_RESPONSE_DEFINITIONS%", allApiCallResponsesDefinitions.join("\n"));
 
     GeneratedFile generatedFile(fileToString(":/cleanroom.cpp"), outputDir.path() + QDir::separator() + classSourceFileName(api->ApiName), beforeAndAfterStrings);
     generatedFile.replaceTemplateBeforesWithAfters();
     return generatedFile;
-
 }
 GeneratedFile RpcGenerator::generateApiRequestInterface(Api *api, QDir outputDir)
 {
@@ -342,23 +325,6 @@ GeneratedFile RpcGenerator::generateApiSessionSourceFile(Api *api, QDir outputDi
 {
     TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings = initialBeforeAndAfterStrings(api);
 
-    QString apiCallRequestHeaderIncludes;
-    QString apiCallMethodsOnSessionObjectSource;
-    Q_FOREACH(ApiCall apiCall, api->ApiCalls)
-    {
-        //Request includes
-        apiCallRequestHeaderIncludes.append("\n#include \"" + apiCallToRequestBaseName(&apiCall).toLower() + "fromqt.h\"");
-        apiCallRequestHeaderIncludes.append("\n#include \"" + apiCallToRequestBaseName(&apiCall).toLower() + "fromwt.h\"");
-
-        //FromQt overload
-        apiCallMethodsOnSessionObjectSource.append(apiCallToApiCallRequestMethodDefinitionInSessionSource(&apiCall, true));
-
-        //FromWt overload
-        apiCallMethodsOnSessionObjectSource.append(apiCallToApiCallRequestMethodDefinitionInSessionSource(&apiCall, false));
-    }
-    beforeAndAfterStrings.insert("%API_CALL_REQUEST_HEADER_INCLUDES%", apiCallRequestHeaderIncludes);
-    beforeAndAfterStrings.insert("%API_CALL_METHODS_ON_SESSION_OBJECT_SOURCE%", apiCallMethodsOnSessionObjectSource);
-
     GeneratedFile generatedFile(fileToString(":/cleanroomsession.cpp"), outputDir.path() + QDir::separator() + api->ApiName.toLower() + "session.cpp", beforeAndAfterStrings);
     generatedFile.replaceTemplateBeforesWithAfters();
     return generatedFile;
@@ -395,6 +361,56 @@ TemplateBeforeAndAfterStrings_Type RpcGenerator::initialBeforeAndAfterStrings(Ap
     beforeAndAfterStrings.insert("%API_NAME_LOWERCASE%", api->ApiName.toLower());
     beforeAndAfterStrings.insert("%API_NAME_UPPERCASE%", api->ApiName.toUpper());
     beforeAndAfterStrings.insert("%API_AS_VARIABLE_NAME%", frontLetterToLower(api->ApiName));
+
+    //API Calls Header Includes
+    QString apiCallRequestHeaderIncludes;
+    QString apiCallMethodsOnSessionObjectSource;
+    Q_FOREACH(ApiCall apiCall, api->ApiCalls)
+    {
+        //Request includes
+        apiCallRequestHeaderIncludes.append("\n#include \"" + apiCallToRequestBaseName(&apiCall).toLower() + "fromqt.h\"");
+        apiCallRequestHeaderIncludes.append("\n#include \"" + apiCallToRequestBaseName(&apiCall).toLower() + "fromwt.h\"");
+
+        //FromQt overload
+        apiCallMethodsOnSessionObjectSource.append(apiCallToApiCallRequestMethodDefinitionInSessionSource(&apiCall, true));
+
+        //FromWt overload
+        apiCallMethodsOnSessionObjectSource.append(apiCallToApiCallRequestMethodDefinitionInSessionSource(&apiCall, false));
+    }
+    beforeAndAfterStrings.insert("%API_CALL_REQUEST_HEADER_INCLUDES%", apiCallRequestHeaderIncludes);
+    beforeAndAfterStrings.insert("%API_CALL_METHODS_ON_SESSION_OBJECT_SOURCE%", apiCallMethodsOnSessionObjectSource);
+
+    //API Calls (request slots)
+    QStringList allApiCallsHeaderIncludes;
+    QStringList allApiCallsDefinitions;
+    QStringList allApiCallResponsesDefinitions;
+    Q_FOREACH(ApiCall apiCall, api->ApiCalls)
+    {
+        allApiCallsHeaderIncludes.append(apiCallToRequestInterfaceHeaderInclude(&apiCall));
+        allApiCallsDefinitions.append(apiCallToApiDefinitionRawCpp(&apiCall, true));
+        allApiCallResponsesDefinitions.append(apiCallToApiDefinitionRawCpp(&apiCall, false));
+    }
+    beforeAndAfterStrings.insert("%API_CALLS_HEADER_INCLUDES%", allApiCallsHeaderIncludes.join("\n"));
+    beforeAndAfterStrings.insert("%API_CALLS_DEFINITIONS%", allApiCallsDefinitions.join("\n"));
+    //beforeAndAfterStrings.insert("%API_CALLS_RESPONSE_DEFINITIONS%", allApiCallResponsesDefinitions.join("\n"));
+
+    //API Calls (request slots)
+    QStringList allApiCallForwardDeclarations;
+    QStringList allApiCallsDeclarationsRawCpp;
+    Q_FOREACH(ApiCall apiCall, api->ApiCalls)
+    {
+        allApiCallForwardDeclarations.append(apiCallToForwardDefinitionRawCpp(&apiCall));
+        allApiCallsDeclarationsRawCpp.append(apiCallToRawCppDeclaration(&apiCall, true));
+    }
+    beforeAndAfterStrings.insert("%API_CALLS_FORWARD_DECLARATIONS%", allApiCallForwardDeclarations.join("\n"));
+    beforeAndAfterStrings.insert("%API_CALLS_DECLARATIONS%", allApiCallsDeclarationsRawCpp.join("\n"));
+    //API Responses (response pseudo-"signals", which are both Wt and Qt compatible)
+    QStringList allApiCallResponseDeclarationsRawCpp;
+    Q_FOREACH(ApiCall apiCall, api->ApiCalls)
+    {
+        allApiCallResponseDeclarationsRawCpp.append(apiCallToRawCppDeclaration(&apiCall, false));
+    }
+    beforeAndAfterStrings.insert("%API_CALL_RESPONSES_DECLARATIONS%", allApiCallResponseDeclarationsRawCpp.join("\n"));
 
     return beforeAndAfterStrings;
 }
@@ -435,10 +451,19 @@ bool RpcGenerator::generateRpcActual(Api *api, QString outputPath)
     QDir outputDir(outputPath);
     FilesToWriteType filesToWrite;
 
-    //Main API "Business"
-    filesToWrite.insert(generateApiHeaderFile(api, outputDir));
-    filesToWrite.insert(generateApiSourceFile(api, outputDir));
+    //Main API "Business" Interface
+    filesToWrite.insert(generateApiInterfaceHeaderFile(api, outputDir));
+    filesToWrite.insert(generateApiInterfaceSourceFile(api, outputDir));
 
+    //Main API "Business" Skeleton Implementation
+    GeneratedFile maybeNotWriting_generatedApiSkeletontationImplementationHeaderFile = generateApiSkeletonImplementationHeaderFile(api, outputDir);
+    if(!QFile::exists(maybeNotWriting_generatedApiSkeletontationImplementationHeaderFile.GeneratedFilePath))
+        filesToWrite.insert(maybeNotWriting_generatedApiSkeletontationImplementationHeaderFile); //am writing skeleton header -- if you know you haven't modified the header, you can delete the stale generated header so that the fresh one is updated. Then, Qt Creator can add method skeleton code in the sourcefile using a right-click action on the method declaration in the freshly generated headerfile
+    GeneratedFile maybeNotWriting_generatedApiSkeletontationImplementationSourceFile = generateApiSkeletonImplementationSourceFile(api, outputDir);;
+    if(!QFile::exists(maybeNotWriting_generatedApiSkeletontationImplementationSourceFile.GeneratedFilePath))
+        filesToWrite.insert(maybeNotWriting_generatedApiSkeletontationImplementationSourceFile); //am writing skeleton source
+
+    //Api Request Interface
     filesToWrite.insert(generateApiRequestInterface(api, outputDir));
 
     //Per-API-Call Objects

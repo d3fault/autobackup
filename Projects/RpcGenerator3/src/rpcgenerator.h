@@ -69,9 +69,13 @@ private:
     static QString apiCallRequestArgsToRequestInterfaceHeaderDefinitions(ApiCall *apiCall);
     static QString apiCallRequestInterfaceArgMemberNamesWithLeadingCommaspaceIfAndArgs(ApiCall *apiCall);
 
-    //Qt Business
-    GeneratedFile generateApiHeaderFile(Api* api, QDir outputDir);
-    GeneratedFile generateApiSourceFile(Api* api, QDir outputDir);
+    //Qt Business Interface
+    GeneratedFile generateApiInterfaceHeaderFile(Api* api, QDir outputDir);
+    GeneratedFile generateApiInterfaceSourceFile(Api* api, QDir outputDir);
+
+    //Qt Business Skeleton Implementation
+    GeneratedFile generateApiSkeletonImplementationHeaderFile(Api* api, QDir outputDir);
+    GeneratedFile generateApiSkeletonImplementationSourceFile(Api* api, QDir outputDir);
 
     //API Request Interface
     GeneratedFile generateApiRequestInterface(Api* api, QDir outputDir);

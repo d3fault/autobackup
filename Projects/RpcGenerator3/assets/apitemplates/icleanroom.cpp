@@ -17,5 +17,3 @@ void I%API_NAME%::newSession(I%API_NAME%NewSessionRequest *request)
 {
     request->respond(new %API_NAME%Session(this));
 }
-%API_CALLS_DEFINITIONS%
-%API_CALLS_RESPONSE_DEFINITIONS%
