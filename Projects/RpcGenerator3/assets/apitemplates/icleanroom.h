@@ -19,8 +19,6 @@ public slots:
     void newSession(I%API_NAME%NewSessionRequest *request);
 
 %API_CALLS_DECLARATIONS%
-
-/* old: %API_CALL_RESPONSES_DECLARATIONS% */
 };
 
 #endif // I%API_NAME_UPPERCASE%_H
