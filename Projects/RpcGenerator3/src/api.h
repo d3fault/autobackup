@@ -1,8 +1,9 @@
 #ifndef API
 #define API
 
-#include <QSharedPointer>
 #include <QString>
+
+#include "apicall.h"
 
 struct ApiCallArg
 {
@@ -12,20 +13,6 @@ struct ApiCallArg
     { }
     QString ApiCallArgType;
     QString ApiCallArgName;
-};
-class Api;
-struct ApiCall
-{
-    ApiCall(QSharedPointer<Api> api, const QString &apiCallSlotName, const QList<ApiCallArg> &requestArgs = QList<ApiCallArg>(), const QList<ApiCallArg> &responseArgs = QList<ApiCallArg>())
-        : ParentApi(api)
-        , ApiCallSlotName(apiCallSlotName)
-        , RequestArgs(requestArgs)
-        , ResponseArgs(responseArgs)
-    { }
-    QSharedPointer<Api> *ParentApi;
-    QString ApiCallSlotName;
-    QList<ApiCallArg> RequestArgs;
-    QList<ApiCallArg> ResponseArgs;
 };
 struct Api
 {
