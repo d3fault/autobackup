@@ -1,0 +1,3 @@
+Business object should be passed around using shared pointers, ensuring only one exists (no accidental copies) and proper memory management (business object is destroyed simply when the last object using it is itself destroyed). Communication to that business object should always be through a mechanism that is thread-safe when it needs to be (Qt's signals/slots achieve this).
+
+Types sent to/from the business object as arguments (request args and response args) for that communication should be implicitly shared. Implicit sharing is clean af and you get to use regular copy semantics while still achieving thread-safe data access + modification (you just have to propagate the modification copies).

@@ -63,14 +63,39 @@ private:
     static QString apiCallToRawCppDeclaration(ApiCall *apiCall, bool requestIfTrue);
     static QString apiCallArgToCpp(ApiCallArg *apiCallArg, bool emitTypes = true, bool emitNames = false);
     static QString apiCallToApiDefinitionRawCpp(ApiCall *apiCall, bool requestIfTrue);
+    static QString apiCallToApiCallRequestMethodDeclarationInSessionHeader(ApiCall *apiCall, const QString &boostOrQtCallbackArgs, bool includeApiNamePrefix = false);
+    static QString apiCallToApiCallRequestMethodDefinitionInSessionSource(ApiCall *apiCall, bool trueIfQt_falseIfWt);
+    static QString apiCallToConstructorInitializationCpp(ApiCall *apiCall);
+    static QString apiCallRequestArgsToRequestInterfaceHeaderDefinitions(ApiCall *apiCall);
+    static QString apiCallRequestInterfaceArgMemberNamesWithLeadingCommaspaceIfAndArgs(ApiCall *apiCall);
 
+    //Qt Business
     GeneratedFile generateApiHeaderFile(Api* api, QDir outputDir);
     GeneratedFile generateApiSourceFile(Api* api, QDir outputDir);
 
+    //API Request Interface
+    GeneratedFile generateApiRequestInterface(Api* api, QDir outputDir);
+
+    //API Request Interfaces
+    GeneratedFile generateApiCallRequestInterfaceHeader(ApiCall *apiCall, QDir outputDir);
+    GeneratedFile generateApiCallRequestInterfaceSource(ApiCall *apiCall, QDir outputDir);
+
+    //Qt API Requests
     GeneratedFile generateApiCallRequestFromQtHeader(ApiCall *apiCall, QDir outputDir);
     GeneratedFile generateApiCallRequestFromQtSource(ApiCall *apiCall, QDir outputDir);
 
+    //Wt API Requests
     GeneratedFile generateApiCallRequestFromWtHeader(ApiCall *apiCall, QDir outputDir);
+    GeneratedFile generateApiCallRequestFromWtSource(ApiCall *apiCall, QDir outputDir);
+
+    //Session
+    GeneratedFile generateApiSessionHeaderFile(Api *api, QDir outputDir);
+    GeneratedFile generateApiSessionSourceFile(Api *api, QDir outputDir);
+    //New Session Request Interface
+    GeneratedFile generateNewSessionRequestInterface(Api *api, QDir outputDir);
+    //New Session Request
+    GeneratedFile generateNewSessionRequestFromHeaderFile(Api *api, QDir outputDir, const QString &qtOrWtFileNameSuffix);
+    GeneratedFile generateNewSessionRequestFromSourceFile(Api *api, QDir outputDir, const QString &qtOrWtFileNameSuffix);
 
     TemplateBeforeAndAfterStrings_Type initialBeforeAndAfterStrings(Api *api);
     void appendApiCallBeforeAndAfterStrings(TemplateBeforeAndAfterStrings_Type *beforeAndAfterStrings, ApiCall *apiCall);

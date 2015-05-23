@@ -2,5 +2,5 @@
 
 void ICleanRoomFrontPageDefaultViewRequest::processRequest()
 {
-    emit frontPageDefaultViewRequested(this);
+    emit frontPageDefaultViewRequested(this, m_SomeArg0);
 }

@@ -16,7 +16,7 @@ signals:
 public slots:
     void initializeAndStart();
     void newSession(ICleanRoomNewSessionRequest *request);
-    void getFrontPageDefaultView(ICleanRoomFrontPageDefaultViewRequest *request);
+    void getFrontPageDefaultView(ICleanRoomFrontPageDefaultViewRequest *request, double someArg0);
     void finishedGettingFrontPageDefaultView(ICleanRoomFrontPageDefaultViewRequest *request, QStringList frontPageDocs);
 };
 

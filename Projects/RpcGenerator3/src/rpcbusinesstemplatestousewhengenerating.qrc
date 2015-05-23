@@ -5,5 +5,16 @@
     <file alias="cleanroomfrontpagedefaultviewrequestfromqt.h">../assets/apitemplates/cleanroomfrontpagedefaultviewrequestfromqt.h</file>
     <file alias="cleanroomfrontpagedefaultviewrequestfromqt.cpp">../assets/apitemplates/cleanroomfrontpagedefaultviewrequestfromqt.cpp</file>
     <file alias="cleanroomfrontpagedefaultviewrequestfromwt.h">../assets/apitemplates/cleanroomfrontpagedefaultviewrequestfromwt.h</file>
+    <file alias="cleanroomfrontpagedefaultviewrequestfromwt.cpp">../assets/apitemplates/cleanroomfrontpagedefaultviewrequestfromwt.cpp</file>
+    <file alias="cleanroomsession.h">../assets/apitemplates/cleanroomsession.h</file>
+    <file alias="cleanroomsession.cpp">../assets/apitemplates/cleanroomsession.cpp</file>
+    <file alias="icleanroomnewsessionrequest.h">../assets/apitemplates/icleanroomnewsessionrequest.h</file>
+    <file alias="cleanroomnewsessionrequestfromqt.h">../assets/apitemplates/cleanroomnewsessionrequestfromqt.h</file>
+    <file alias="cleanroomnewsessionrequestfromqt.cpp">../assets/apitemplates/cleanroomnewsessionrequestfromqt.cpp</file>
+    <file alias="cleanroomnewsessionrequestfromwt.h">../assets/apitemplates/cleanroomnewsessionrequestfromwt.h</file>
+    <file alias="cleanroomnewsessionrequestfromwt.cpp">../assets/apitemplates/cleanroomnewsessionrequestfromwt.cpp</file>
+    <file alias="icleanroomfrontpagedefaultviewrequest.h">../assets/apitemplates/icleanroomfrontpagedefaultviewrequest.h</file>
+    <file alias="icleanroomfrontpagedefaultviewrequest.cpp">../assets/apitemplates/icleanroomfrontpagedefaultviewrequest.cpp</file>
+    <file alias="icleanroomrequest.h">../assets/apitemplates/icleanroomrequest.h</file>
 </qresource>
 </RCC>

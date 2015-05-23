@@ -10,7 +10,7 @@ CleanRoomGuiWidget::CleanRoomGuiWidget(QWidget *parent)
 void CleanRoomGuiWidget::handleNewSessionCreated(CleanRoomSession* session)
 {
     m_Session = session;
-    m_Session->requestNewCleanRoomFrontPageDefaultView(this, SLOT(handleFrontPageDefaultViewReceived(QStringList)));
+    m_Session->requestNewCleanRoomFrontPageDefaultView(this, SLOT(handleFrontPageDefaultViewReceived(QStringList)), 69420);
 }
 void CleanRoomGuiWidget::handleFrontPageDefaultViewReceived(QStringList frontPageDocs)
 {

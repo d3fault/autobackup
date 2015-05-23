@@ -2,8 +2,8 @@
 
 #include <boost/bind.hpp>
 
-CleanRoomFrontPageDefaultViewRequestFromWt::CleanRoomFrontPageDefaultViewRequestFromWt(CleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (QStringList)> wApplicationCallback)
-    : ICleanRoomFrontPageDefaultViewRequest(cleanRoom)
+CleanRoomFrontPageDefaultViewRequestFromWt::CleanRoomFrontPageDefaultViewRequestFromWt(CleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (QStringList)> wApplicationCallback, double someArg0)
+    : ICleanRoomFrontPageDefaultViewRequest(cleanRoom, someArg0)
     , m_WtSessionId(wtSessionId)
     , m_WApplicationCallback(wApplicationCallback)
 { }

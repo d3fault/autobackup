@@ -17,14 +17,10 @@ public:
     CleanRoomSession(CleanRoom *cleanRoom)
         : m_CleanRoom(cleanRoom)
     { }
-    CleanRoom *cleanRoom() const
-    {
-        return m_CleanRoom;
-    }
     static void requestNewSession(CleanRoom *cleanRoom, QObject *objectToCallbackTo, const char *callbackSlot);
     static void requestNewSession(CleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (CleanRoomSession*)> wApplicationCallback);
-    void requestNewCleanRoomFrontPageDefaultView(QObject *objectToCallbackTo, const char *callbackSlot);
-    void requestNewCleanRoomFrontPageDefaultView(const std::string &wtSessionId, boost::function<void (QStringList)> wApplicationCallback);
+    void requestNewCleanRoomFrontPageDefaultView(QObject *objectToCallbackTo, const char *callbackSlot, double someArg0);
+    void requestNewCleanRoomFrontPageDefaultView(const std::string &wtSessionId, boost::function<void (QStringList)> wApplicationCallback, double someArg0);
 private:
     CleanRoom *m_CleanRoom;
     static void invokeRequest(ICleanRoomRequest *requestToInvoke)
