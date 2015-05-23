@@ -3,7 +3,7 @@
 
 #include "icleanroom.h"
 
-class ICleanRoomFrontPageDefaultViewRequest;
+//class ICleanRoomFrontPageDefaultViewRequest;
 
 class CleanRoom : public ICleanRoom
 {

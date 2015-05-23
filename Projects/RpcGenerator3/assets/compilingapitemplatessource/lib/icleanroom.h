@@ -3,8 +3,9 @@
 
 #include <QObject>
 
+#include "icleanroomfrontpagedefaultviewrequest.h"
+
 class ICleanRoomNewSessionRequest;
-class ICleanRoomFrontPageDefaultViewRequest;
 
 class ICleanRoom : public QObject
 {

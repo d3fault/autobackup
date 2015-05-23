@@ -3,8 +3,9 @@
 
 #include <QObject>
 
+%API_CALL_REQUEST_HEADER_INCLUDES%
+
 class I%API_NAME%NewSessionRequest;
-%API_CALLS_FORWARD_DECLARATIONS%
 
 class I%API_NAME% : public QObject
 {

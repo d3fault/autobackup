@@ -1,6 +1,6 @@
 #include "cleanroom.h"
 
-#include "icleanroomfrontpagedefaultviewrequest.h"
+//#include "icleanroomfrontpagedefaultviewrequest.h"
 
 CleanRoom::CleanRoom(QObject *parent)
     : ICleanRoom(parent)

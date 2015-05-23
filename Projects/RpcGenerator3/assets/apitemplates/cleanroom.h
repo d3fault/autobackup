@@ -3,8 +3,6 @@
 
 #include "i%API_NAME_LOWERCASE%.h"
 
-%API_CALLS_FORWARD_DECLARATIONS%
-
 class %API_NAME% : public I%API_NAME%
 {
     Q_OBJECT

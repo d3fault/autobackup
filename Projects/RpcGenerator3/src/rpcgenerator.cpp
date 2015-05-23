@@ -353,6 +353,38 @@ GeneratedFile RpcGenerator::generateNewSessionRequestFromSourceFile(Api *api, QD
     generatedFile.replaceTemplateBeforesWithAfters();
     return generatedFile;
 }
+GeneratedFile RpcGenerator::generateApiPriFile(Api *api, QDir outputDir, const FilesToWriteType &filesToWrite)
+{
+    QString priContents;
+    priContents.append("INCLUDEPATH += $$PWD\n");
+    QStringList headersAppends;
+    QStringList sourcesAppends;
+    bool firstHeader = true;
+    bool firstSource = true;
+    Q_FOREACH(FileToWriteType fileToWrite, filesToWrite)
+    {
+        QFileInfo fileInfo(fileToWrite.GeneratedFilePath);
+        QString fileSuffixLowered = fileInfo.suffix().toLower();
+        if(fileSuffixLowered == "h" || fileSuffixLowered == "hpp" || fileSuffixLowered == "hxx")
+        {
+            headersAppends.append(QString(firstHeader ? "HEADERS += " : "    ") + "$$PWD/" + fileInfo.fileName()); //TODOoptimization: don't require fileinfo to get filename
+            firstHeader = false;
+        }
+        if(fileSuffixLowered == "c" || fileSuffixLowered == "cpp" || fileSuffixLowered == "cxx")
+        {
+            sourcesAppends.append(QString(firstSource ? "SOURCES += " : "    ") + "$$PWD/" + fileInfo.fileName());
+            firstSource = false;
+        }
+    }
+    QString headersAppendsString = headersAppends.join(" \\\n");
+    headersAppendsString.append("\n");
+    QString sourcesAppendsString = sourcesAppends.join(" \\\n");
+    sourcesAppendsString.append("\n");
+    priContents.append(headersAppendsString + sourcesAppendsString);
+
+    GeneratedFile priFile(priContents, outputDir.path() + QDir::separator() + api->ApiName.toLower() + ".pri");
+    return priFile;
+}
 TemplateBeforeAndAfterStrings_Type RpcGenerator::initialBeforeAndAfterStrings(Api *api)
 {
     TemplateBeforeAndAfterStrings_Type beforeAndAfterStrings;
@@ -484,6 +516,9 @@ bool RpcGenerator::generateRpcActual(Api *api, QString outputPath)
     filesToWrite.insert(generateNewSessionRequestFromHeaderFile(api, outputDir, "wt"));
     filesToWrite.insert(generateNewSessionRequestFromSourceFile(api, outputDir, "wt"));
 
+
+    //.pri File
+    filesToWrite.insert(generateApiPriFile(api, outputDir, filesToWrite));
     if(!writeFiles(filesToWrite))
         EEEEEEEEEE_RETURN_RpcGenerator("failed to write some files", false)
     return true;

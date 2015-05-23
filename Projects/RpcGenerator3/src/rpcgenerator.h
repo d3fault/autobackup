@@ -101,6 +101,9 @@ private:
     GeneratedFile generateNewSessionRequestFromHeaderFile(Api *api, QDir outputDir, const QString &qtOrWtFileNameSuffix);
     GeneratedFile generateNewSessionRequestFromSourceFile(Api *api, QDir outputDir, const QString &qtOrWtFileNameSuffix);
 
+    //.pri File
+    GeneratedFile generateApiPriFile(Api *api, QDir outputDir, const FilesToWriteType &filesToWrite);
+
     TemplateBeforeAndAfterStrings_Type initialBeforeAndAfterStrings(Api *api);
     void appendApiCallBeforeAndAfterStrings(TemplateBeforeAndAfterStrings_Type *beforeAndAfterStrings, ApiCall *apiCall);
     void writeApiCallFiles(FilesToWriteType *filesToWrite, ApiCall *apiCall, QDir outputDir);
