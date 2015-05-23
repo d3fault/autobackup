@@ -9,7 +9,7 @@ class CleanRoomFrontPageDefaultViewRequestFromQt : public ICleanRoomFrontPageDef
 {
     Q_OBJECT
 public:
-    CleanRoomFrontPageDefaultViewRequestFromQt(CleanRoom *cleanRoom, QObject *objectCallback, const char *slotCallback, double someArg0);
+    CleanRoomFrontPageDefaultViewRequestFromQt(ICleanRoom *cleanRoom, QObject *objectCallback, const char *slotCallback, double someArg0);
     void respond(QStringList frontPageDocs);
 signals:
     void frontPageDefaultViewResponseRequested(QStringList frontPageDocs);

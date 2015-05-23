@@ -8,8 +8,8 @@ CleanRoomGui::CleanRoomGui(QObject *parent)
     : QObject(parent)
     , m_CleanRoom(new CleanRoom(this))
 {
-    connect(m_CleanRoom, &CleanRoom::readyForSessions, this, &CleanRoomGui::handleCleanRoomReadyForSessions);
-    connect(this, &CleanRoomGui::initializeAndStartCleanRoomRequested, m_CleanRoom, &CleanRoom::initializeAndStart);
+    connect(m_CleanRoom, &ICleanRoom::readyForSessions, this, &CleanRoomGui::handleCleanRoomReadyForSessions);
+    connect(this, &CleanRoomGui::initializeAndStartCleanRoomRequested, m_CleanRoom, &ICleanRoom::initializeAndStart);
     emit initializeAndStartCleanRoomRequested();
 }
 void CleanRoomGui::handleCleanRoomReadyForSessions()

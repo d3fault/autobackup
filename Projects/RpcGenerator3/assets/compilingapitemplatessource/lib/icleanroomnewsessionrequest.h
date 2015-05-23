@@ -4,7 +4,7 @@
 #include <QObject>
 #include "icleanroomrequest.h"
 
-#include "cleanroom.h"
+#include "icleanroom.h"
 
 class CleanRoomSession;
 
@@ -12,10 +12,10 @@ class ICleanRoomNewSessionRequest : public QObject, public ICleanRoomRequest
 {
     Q_OBJECT
 public:
-    ICleanRoomNewSessionRequest(CleanRoom *cleanRoom, QObject *parent = 0)
+    ICleanRoomNewSessionRequest(ICleanRoom *cleanRoom, QObject *parent = 0)
         : QObject(parent)
     {
-        connect(this, &ICleanRoomNewSessionRequest::newSessionRequested, cleanRoom, &CleanRoom::newSession);
+        connect(this, &ICleanRoomNewSessionRequest::newSessionRequested, cleanRoom, &ICleanRoom::newSession);
     }
     void processRequest()
     {

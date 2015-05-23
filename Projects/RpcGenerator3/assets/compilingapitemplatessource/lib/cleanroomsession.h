@@ -9,20 +9,20 @@
 
 class QObject;
 
-class CleanRoom;
+class ICleanRoom;
 
 class CleanRoomSession
 {
 public:
-    CleanRoomSession(CleanRoom *cleanRoom)
+    CleanRoomSession(ICleanRoom *cleanRoom)
         : m_CleanRoom(cleanRoom)
     { }
-    static void requestNewSession(CleanRoom *cleanRoom, QObject *objectToCallbackTo, const char *callbackSlot);
-    static void requestNewSession(CleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (CleanRoomSession*)> wApplicationCallback);
+    static void requestNewSession(ICleanRoom *cleanRoom, QObject *objectToCallbackTo, const char *callbackSlot);
+    static void requestNewSession(ICleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (CleanRoomSession*)> wApplicationCallback);
     void requestNewCleanRoomFrontPageDefaultView(QObject *objectToCallbackTo, const char *callbackSlot, double someArg0);
     void requestNewCleanRoomFrontPageDefaultView(const std::string &wtSessionId, boost::function<void (QStringList)> wApplicationCallback, double someArg0);
 private:
-    CleanRoom *m_CleanRoom;
+    ICleanRoom *m_CleanRoom;
     static void invokeRequest(ICleanRoomRequest *requestToInvoke)
     {
         requestToInvoke->processRequest();

@@ -9,7 +9,7 @@ class CleanRoomNewSessionRequestFromQt : public ICleanRoomNewSessionRequest
 {
     Q_OBJECT
 public:
-    CleanRoomNewSessionRequestFromQt(CleanRoom *cleanRoom, QObject *objectToRespondTo, const char *slotCallback, QObject *parent = 0)
+    CleanRoomNewSessionRequestFromQt(ICleanRoom *cleanRoom, QObject *objectToRespondTo, const char *slotCallback, QObject *parent = 0)
         : ICleanRoomNewSessionRequest(cleanRoom, parent)
         , m_ObjectToRespondTo(objectToRespondTo)
     {

@@ -6,7 +6,7 @@
 
 #include "cleanroomguiwidget.h"
 
-class CleanRoom;
+class ICleanRoom;
 
 class CleanRoomGui : public QObject
 {
@@ -14,7 +14,7 @@ class CleanRoomGui : public QObject
 public:
     explicit CleanRoomGui(QObject *parent = 0);
 private:
-    CleanRoom *m_CleanRoom;
+    ICleanRoom *m_CleanRoom;
     QScopedPointer<CleanRoomGuiWidget> m_Gui;
 signals:
     void initializeAndStartCleanRoomRequested();

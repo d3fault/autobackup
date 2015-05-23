@@ -10,7 +10,7 @@ class CleanRoomSession;
 class CleanRoomNewSessionRequestFromWt : public ICleanRoomNewSessionRequest
 {
 public:
-    CleanRoomNewSessionRequestFromWt(CleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (CleanRoomSession*)> wApplicationCallback)
+    CleanRoomNewSessionRequestFromWt(ICleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (CleanRoomSession*)> wApplicationCallback)
         : ICleanRoomNewSessionRequest(cleanRoom)
         , m_WtSessionId(wtSessionId)
         , m_WApplicationCallback(wApplicationCallback)

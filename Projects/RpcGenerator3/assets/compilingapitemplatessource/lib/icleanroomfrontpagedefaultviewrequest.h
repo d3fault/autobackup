@@ -4,17 +4,17 @@
 #include <QObject>
 #include "icleanroomrequest.h"
 
-#include "cleanroom.h"
+#include "icleanroom.h"
 
 class ICleanRoomFrontPageDefaultViewRequest : public QObject, public ICleanRoomRequest
 {
     Q_OBJECT
 public:
-    ICleanRoomFrontPageDefaultViewRequest(CleanRoom *cleanRoom, double someArg0, QObject *parent = 0)
+    ICleanRoomFrontPageDefaultViewRequest(ICleanRoom *cleanRoom, double someArg0, QObject *parent = 0)
         : QObject(parent)
         , m_SomeArg0(someArg0)
     {
-        connect(this, &ICleanRoomFrontPageDefaultViewRequest::frontPageDefaultViewRequested, cleanRoom, &CleanRoom::getFrontPageDefaultView);
+        connect(this, &ICleanRoomFrontPageDefaultViewRequest::frontPageDefaultViewRequested, cleanRoom, &ICleanRoom::getFrontPageDefaultView);
     }
     void processRequest();
     virtual void respond(QStringList frontPageDocs)=0;

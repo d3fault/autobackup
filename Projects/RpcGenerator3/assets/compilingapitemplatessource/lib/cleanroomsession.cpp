@@ -6,12 +6,12 @@
 #include "cleanroomfrontpagedefaultviewrequestfromqt.h"
 #include "cleanroomfrontpagedefaultviewrequestfromwt.h"
 
-void CleanRoomSession::requestNewSession(CleanRoom *cleanRoom, QObject *objectToCallbackTo, const char *callbackSlot)
+void CleanRoomSession::requestNewSession(ICleanRoom *cleanRoom, QObject *objectToCallbackTo, const char *callbackSlot)
 {
     CleanRoomNewSessionRequestFromQt *request = new CleanRoomNewSessionRequestFromQt(cleanRoom, objectToCallbackTo, callbackSlot);
     invokeRequest(request);
 }
-void CleanRoomSession::requestNewSession(CleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (CleanRoomSession*)> wApplicationCallback)
+void CleanRoomSession::requestNewSession(ICleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (CleanRoomSession*)> wApplicationCallback)
 {
     CleanRoomNewSessionRequestFromWt *request = new CleanRoomNewSessionRequestFromWt(cleanRoom, wtSessionId, wApplicationCallback);
     invokeRequest(request);
