@@ -1,0 +1,1 @@
+my understanding of it: "10 virtual calls duration more" ain't shit compared to a cross-thread call

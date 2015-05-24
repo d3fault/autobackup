@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1432409720
+Documents/minddump/:1432427767
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -2231,6 +2231,7 @@ Documents/minddump/sdlfkjsdklfjasdlfkjsdflkjsdfosdfulkjwerwrefsfeowrukjdfousdflk
 Documents/minddump/sdlfkjsdkljflksjdaflkjsdfsdufosdufoisudfwoeurlksjdafousdflksjd.txt:1391115360
 Documents/minddump/sdlfkjsdlfkjsdfoiuewrlkjodfuf.txt:1356246842
 Documents/minddump/sdlfkjsdlfkjsdofulkjewroulkjdfsousdfljksdfouwelrkjoudflkjsdfou.txt:1370676703
+Documents/minddump/sdlfkjsdlkfjlksdjflksdjkfljsflksjdflkjslkdfkjldsjflskdfjlskdfj.txt:1432427767
 Documents/minddump/sdlfkjsdlkfjlsdkjflsdkfjsdlkjfsdflkjdsflkjsdf.txt:1362134015
 Documents/minddump/sdlfkjsdlkfjsdlkfjlskdjflsdkjflksdjfslkdjfsofuwelrkj.txt:1362310031
 Documents/minddump/sdlfkjsdlkfjsldkjflksdjfklsjdflkjsdkfljsdklfjlsdkjflksdjf.txt:1420631720
@@ -5060,7 +5061,7 @@ Projects/RpcGenerator/design/use.case.ugly.disconnect.detected.on.server.through
 Projects/RpcGenerator/design/when.not.using.all.action.dispensers.opt.to.ignore.error.and.also.a.primitive.design.for.making.sure.all.broadcast.signals.are.being.listened.to.txt:1370575570
 Projects/RpcGenerator3/:1432379285
 Projects/RpcGenerator3/assets/:1432424634
-Projects/RpcGenerator3/assets/apitemplates/:1432425037
+Projects/RpcGenerator3/assets/apitemplates/:1432432543
 Projects/RpcGenerator3/assets/apitemplates/cleanroom.cpp:1432414573
 Projects/RpcGenerator3/assets/apitemplates/cleanroom.h:1432414584
 Projects/RpcGenerator3/assets/apitemplates/cleanroom.pri:1432410952
@@ -5074,14 +5075,14 @@ Projects/RpcGenerator3/assets/apitemplates/cleanroomnewsessionrequestfromqt.h:14
 Projects/RpcGenerator3/assets/apitemplates/cleanroomnewsessionrequestfromwt.cpp:1432251784
 Projects/RpcGenerator3/assets/apitemplates/cleanroomnewsessionrequestfromwt.h:1432408194
 Projects/RpcGenerator3/assets/apitemplates/cleanroomsession.cpp:1432408194
-Projects/RpcGenerator3/assets/apitemplates/cleanroomsession.h:1432408780
+Projects/RpcGenerator3/assets/apitemplates/cleanroomsession.h:1432432530
 Projects/RpcGenerator3/assets/apitemplates/icleanroom.cpp:1432412535
-Projects/RpcGenerator3/assets/apitemplates/icleanroom.h:1432425037
+Projects/RpcGenerator3/assets/apitemplates/icleanroom.h:1432431935
 Projects/RpcGenerator3/assets/apitemplates/icleanroomfrontpagedefaultviewrequest.cpp:1432423632
 Projects/RpcGenerator3/assets/apitemplates/icleanroomfrontpagedefaultviewrequest.h:1432414210
 Projects/RpcGenerator3/assets/apitemplates/icleanroomnewsessionrequest.h:1432409911
 Projects/RpcGenerator3/assets/apitemplates/icleanroomrequest.h:1432251622
-Projects/RpcGenerator3/assets/compilingapitemplatessource/:1432414435
+Projects/RpcGenerator3/assets/compilingapitemplatessource/:1432432580
 Projects/RpcGenerator3/assets/compilingapitemplatessource/gui/:1432403082
 Projects/RpcGenerator3/assets/compilingapitemplatessource/gui/cleanroomgui.cpp:1432402927
 Projects/RpcGenerator3/assets/compilingapitemplatessource/gui/cleanroomgui.h:1432403082
@@ -5116,19 +5117,20 @@ Projects/RpcGenerator3/assets/compilingapitemplatessource/web/main.cpp:143221894
 Projects/RpcGenerator3/assets/compilingapitemplatessource/CleanRoomGui.pro:1432213379
 Projects/RpcGenerator3/assets/compilingapitemplatessource/CleanRoomWeb.pro:1432218920
 Projects/RpcGenerator3/assets/compilingapitemplatessource/cleanroom.pri:1432402889
-Projects/RpcGenerator3/design/:1432408689
+Projects/RpcGenerator3/design/:1432427925
 Projects/RpcGenerator3/design/an.ugly.but.simple.way.to.not.save.generated.code.but.to.save.modifications.of.that.generated.code.sdkfjlksdjflkdsfj.txt:1432394142
 Projects/RpcGenerator3/design/bootstrap.and.projectmanager.etc.etc.sldkfjlkdsfjklsdfjklsdjfklsjdlf.txt:1432393550
 Projects/RpcGenerator3/design/generate.time.compile.time.checking.of.the.generated.rpc.code.alsdjflskjflksjdflkasjdfkljskldfjskl.txt:1432408689
 Projects/RpcGenerator3/design/libclang.incorporation.is.obvious.and.so.is.design.equals.in.general.although.design.equals.is.much.more.ambitious.txt:1432407523
+Projects/RpcGenerator3/design/slkdjflksjdfksjdfkjsdkfjsldkfjslkdjfklsdjfkljsdfkljsflkjsdlkfjslkdfj.txt:1432427925
 Projects/RpcGenerator3/design/so.many.directions.my.eyes.are.lighting.up.wewt.sldkfjslkdfjslkdfjksdlfjdslkjflksd.txt:1432395269
 Projects/RpcGenerator3/design/so.many.ways.to.improve.this.woot.sdjflsdkfjlsdkjflk.txt:1432379322
-Projects/RpcGenerator3/src/:1432424256
+Projects/RpcGenerator3/src/:1432432578
 Projects/RpcGenerator3/src/RpcGenerator3Cli.pro:1432392292
 Projects/RpcGenerator3/src/api.h:1432392758
 Projects/RpcGenerator3/src/main.cpp:1432241271
 Projects/RpcGenerator3/src/rpcbusinesstemplatestousewhengenerating.qrc:1432411247
-Projects/RpcGenerator3/src/rpcgenerator.cpp:1432424256
+Projects/RpcGenerator3/src/rpcgenerator.cpp:1432432309
 Projects/RpcGenerator3/src/rpcgenerator.h:1432423497
 Projects/RpcGenerator3/src/rpcgeneratorcli.cpp:1432251016
 Projects/RpcGenerator3/src/rpcgeneratorcli.h:1432243966
@@ -5812,7 +5814,7 @@ Solutions/Anonymous Bitcoin Computing 2/tools/:1418885409
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/:1427380549
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/design/:1418886022
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/design/abc2.transaction.creditor.initial.idea.txt:1418886022
-Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/:1427380549
+Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/:1432430135
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/Abc2TransactionCreditor.pro:1418981539
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditor.cpp:1424754296
 Solutions/Anonymous Bitcoin Computing 2/tools/Abc2TransactionCreditor/src/abc2transactioncreditor.h:1424752785
@@ -5828,7 +5830,7 @@ Solutions/BlueBox/Bitcoin Ad Agency/touched.txt:1344096033
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/:1344096046
 Solutions/BlueBox/Ice Api (incl. Auto-Suggest Interface)/touched.txt:1344096046
 Solutions/DasButton/:1427380549
-Solutions/DasButton/src/:1427380549
+Solutions/DasButton/src/:1432430578
 Solutions/DasButton/src/DasButton.pro:1400834262
 Solutions/DasButton/src/dasbutton.cpp:1401291874
 Solutions/DasButton/src/dasbutton.h:1401291794

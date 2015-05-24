@@ -18,7 +18,7 @@ public slots:
     void initializeAndStart();
     void newSession(I%API_NAME%NewSessionRequest *request);
 
-%API_CALLS_DECLARATIONS%
+%API_CALLS_PURE_VIRTUAL_DECLARATIONS% //TODOreq: needs to be pure virtual declarations here
 };
 
 #endif // I%API_NAME_UPPERCASE%_H

@@ -1,7 +1,7 @@
 #ifndef %API_NAME_UPPERCASE%SESSION
 #define %API_NAME_UPPERCASE%SESSION
 
-//TODOreq: #include <QStringList>
+#include <QVariant> //TODOreq: proper includes for the request/response arg types
 
 #include <boost/function.hpp>
 
