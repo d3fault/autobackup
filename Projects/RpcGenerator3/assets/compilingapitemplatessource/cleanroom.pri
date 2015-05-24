@@ -8,7 +8,9 @@ HEADERS += $$PWD/lib/cleanroomfrontpagedefaultviewrequestfromqt.h \
     $$PWD/lib/cleanroomnewsessionrequestfromwt.h \
     $$PWD/lib/icleanroomfrontpagedefaultviewrequest.h \
     $$PWD/lib/icleanroom.h \
-    $$PWD/lib/cleanroom.h
+    $$PWD/lib/cleanroom.h \
+    $$PWD/lib/cleanroomdb.h \
+    $$PWD/lib/cleanroomdoc.h
 SOURCES += $$PWD/lib/cleanroomfrontpagedefaultviewrequestfromqt.cpp \
     $$PWD/lib/cleanroomfrontpagedefaultviewrequestfromwt.cpp \
     $$PWD/lib/cleanroomsession.cpp \
@@ -16,4 +18,6 @@ SOURCES += $$PWD/lib/cleanroomfrontpagedefaultviewrequestfromqt.cpp \
     $$PWD/lib/cleanroomnewsessionrequestfromwt.cpp \
     $$PWD/lib/icleanroomfrontpagedefaultviewrequest.cpp \
     $$PWD/lib/icleanroom.cpp \
-    $$PWD/lib/cleanroom.cpp
+    $$PWD/lib/cleanroom.cpp \
+    $$PWD/lib/cleanroomdb.cpp \
+    $$PWD/lib/cleanroomdoc.cpp

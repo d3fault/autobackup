@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include <QLabel>
+
 class CleanRoomSession;
 
 class CleanRoomGuiWidget : public QWidget
@@ -12,6 +14,7 @@ public:
     explicit CleanRoomGuiWidget(QWidget *parent = 0);
 private:
     CleanRoomSession *m_Session;
+    QList<QLabel*> m_LatestCleanRoomDocsGuiWidget;
 public slots:
     void handleNewSessionCreated(CleanRoomSession *session);
     void handleFrontPageDefaultViewReceived(QStringList frontPageDocs);
