@@ -1,3 +1,5 @@
+#include <QVariant>
+
 #include "cleanroomsession.h"
 
 #include "cleanroomnewsessionrequestfromqt.h"

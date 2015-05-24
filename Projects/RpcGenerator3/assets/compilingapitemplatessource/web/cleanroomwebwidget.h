@@ -11,9 +11,11 @@ class CleanRoomSession;
 class CleanRoomWebWidget : public WApplication
 {
 private:
+    friend class CleanRoomWeb;
     CleanRoomSession *m_Session;
 
     void handleCleanRoomSessionStarted(CleanRoomSession *session);
+
     void handleFrontPageDefaultViewReceived(QStringList frontPageDocs);
 };
 

@@ -5,24 +5,7 @@
 #include "cleanroom.h"
 #include "cleanroomsession.h"
 
-class WApplication
-{ };
-class CleanRoomWebWidget : public WApplication
-{
-public:
-    void handleNewSessionCreated(CleanRoomSession *session)
-    {
-        m_Session = session;
-        m_Session->requestNewCleanRoomFrontPageDefaultView(m_WtSessionId, boost::bind(&CleanRoomWebWidget::handleFrontPageDefaultViewReceived, this, _1));
-    }
-    void handleFrontPageDefaultViewReceived(QStringList frontPageDocs)
-    {
-        //TODOreq: ez
-    }
-private:
-    std::string m_WtSessionId;
-    CleanRoomSession *m_Session;
-};
+#include "cleanroomwebwidget.h"
 
 CleanRoomWeb::CleanRoomWeb(QObject *parent)
     : QObject(parent)
@@ -38,5 +21,5 @@ void CleanRoomWeb::handleCleanRoomReadyForSessions()
     //activate wt, wait for sessions, then do:
     std::string wtSessionId;
     CleanRoomWebWidget *wApplication;
-    CleanRoomSession::requestNewSession(m_CleanRoom, wtSessionId, boost::bind(&CleanRoomWebWidget::handleNewSessionCreated, wApplication, _1));
+    CleanRoomSession::requestNewSession(m_CleanRoom, wtSessionId, boost::bind(&CleanRoomWebWidget::handleCleanRoomSessionStarted, wApplication, _1));
 }
