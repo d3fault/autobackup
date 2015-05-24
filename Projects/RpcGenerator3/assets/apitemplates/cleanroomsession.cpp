@@ -1,3 +1,4 @@
+%RPC_AUTO_GENERATED_FILE_WARNING%
 #include "%API_NAME_LOWERCASE%session.h"
 
 #include "%API_NAME_LOWERCASE%newsessionrequestfromqt.h"

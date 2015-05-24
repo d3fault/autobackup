@@ -1,7 +1,8 @@
+%RPC_AUTO_GENERATED_FILE_WARNING%
 #ifndef %API_NAME_UPPERCASE%SESSION
 #define %API_NAME_UPPERCASE%SESSION
 
-#include <QVariant> //TODOreq: proper includes for the request/response arg types
+#include <QVariant>
 
 #include <boost/function.hpp>
 

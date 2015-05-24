@@ -1,7 +1,7 @@
 #ifndef CLEANROOMSESSION
 #define CLEANROOMSESSION
 
-#include <QStringList>
+#include <QVariant> //TODOreq: proper includes for the request/response arg types. but actually I _THINK_ QVariant does provide compile time type checking so maybe this include QVariant is actually good-enough/elegant
 
 #include <boost/function.hpp>
 

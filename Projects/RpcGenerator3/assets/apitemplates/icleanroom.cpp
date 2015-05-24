@@ -1,3 +1,4 @@
+%RPC_AUTO_GENERATED_FILE_WARNING%
 #include "i%API_NAME_LOWERCASE%.h"
 
 #include "%API_NAME_LOWERCASE%session.h"

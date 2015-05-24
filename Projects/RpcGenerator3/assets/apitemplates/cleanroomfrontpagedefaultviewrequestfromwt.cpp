@@ -1,3 +1,4 @@
+%RPC_AUTO_GENERATED_FILE_WARNING%
 #include "%API_CALL_TO_REQUEST_BASE_NAME_TO_LOWERCASE%fromwt.h"
 
 #include <boost/bind.hpp>

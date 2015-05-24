@@ -1,3 +1,4 @@
+%RPC_AUTO_GENERATED_FILE_WARNING%
 #include "%API_NAME_LOWERCASE%newsessionrequestfromwt.h"
 
 #include <boost/bind.hpp>
