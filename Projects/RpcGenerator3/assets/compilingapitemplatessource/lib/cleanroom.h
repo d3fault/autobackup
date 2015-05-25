@@ -15,7 +15,7 @@ private:
 public slots:
     void getFrontPageDefaultView(ICleanRoomFrontPageDefaultViewRequest *request, double someArg0);
 private slots:
-    void handlePostCleanRoomDocFinished(ICleanRoomFrontPageDefaultViewRequest *request, bool dbError, bool postCleanRoomDocSuccess_aka_LcbOp, QByteArray dbKey_aka_Sha1);
+    void handleGetLatestCleanRoomDocsFinished(ICleanRoomFrontPageDefaultViewRequest *requestWeWereMerelyForwardingLikeUserDataAkaCookiePointer, bool dbError, bool postCleanRoomDocSuccess_aka_LcbOp, QStringList frontPageDocs); //not rpc generated code
 };
 
 #endif // CLEANROOM_H

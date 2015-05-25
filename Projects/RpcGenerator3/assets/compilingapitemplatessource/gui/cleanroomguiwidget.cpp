@@ -5,14 +5,12 @@
 
 #include "cleanroomsession.h"
 
-#define CLEAN_ROOM_FRONT_PAGE_DOCS 10
-
 CleanRoomGuiWidget::CleanRoomGuiWidget(QWidget *parent)
     : QWidget(parent)
 {
     QVBoxLayout *myLayout = new QVBoxLayout();
 
-    for(int i = 0; i < CLEAN_ROOM_FRONT_PAGE_DOCS; ++i)
+    for(int i = 0; i < NUM_CLEAN_ROOM_DOCS_ON_FRONT_PAGE; ++i)
     {
         QLabel *newLabel = new QLabel();
         myLayout->addWidget(newLabel);
@@ -30,7 +28,7 @@ void CleanRoomGuiWidget::handleFrontPageDefaultViewReceived(QStringList frontPag
 {
     //qDebug() << "front end received: " << frontPageDocs;
     //TODOreq: ez
-    int max = CLEAN_ROOM_FRONT_PAGE_DOCS;
+    int max = NUM_CLEAN_ROOM_DOCS_ON_FRONT_PAGE;
     int numDocs = qMin(frontPageDocs.size(), max);
     for(int i = 0; i < numDocs; ++i)
     {

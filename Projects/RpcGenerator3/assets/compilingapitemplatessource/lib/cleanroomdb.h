@@ -4,7 +4,7 @@
 
 #include <QObject>
 
-#include <QSet>
+#include <QMultiMap>
 
 #include "cleanroomdoc.h"
 
@@ -16,14 +16,15 @@ class CleanRoomDb : public QObject
 public:
     explicit CleanRoomDb(QObject *parent = 0);
 
-    void postCleanRoomDoc(ICleanRoomFrontPageDefaultViewRequest *requestWeAreMerelyForwardingLikeUserDataAkaCookiePointer, QByteArray cleanRoomDoc);
+    void getLatestCleanRoomDocs(ICleanRoomFrontPageDefaultViewRequest *requestWeAreMerelyForwardingAroundInDbLikeUserDataAkaCookiePointer, int numLatestDocsToGet);
+    void postCleanRoomDoc(QByteArray data);
 private:
     //QSettings m_Db;
     //QVariantHash m_Db;
     //QSet<CleanRoomDoc> m_Db;
-    QSet<QByteArray> m_Db;
+    QMultiMap<QDateTime, QByteArray> m_Db;
 signals:
-    void postCleanRoomDocFinished(ICleanRoomFrontPageDefaultViewRequest *requestWeAreMerelyForwardingLikeUserDataAkaCookiePointer, bool dbError, bool postCleanRoomDocSuccess_aka_LcbOp, QByteArray dbKey_aka_Sha1);
+    void getLatestCleanRoomDocsFinished(ICleanRoomFrontPageDefaultViewRequest *requestWeAreMerelyForwardingAroundInDbLikeUserDataAkaCookiePointer, bool dbError, bool postCleanRoomDocSuccess_aka_LcbOp, QStringList latestCleanRoomDocs);
 };
 
 #endif // CLEANROOMDB_H

@@ -9,6 +9,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = CleanRoomGui
 TEMPLATE = app
 
+DEFINES += NUM_CLEAN_ROOM_DOCS_ON_FRONT_PAGE=10
+
 HEADERS += gui/cleanroomguiwidget.h \
     gui/cleanroomgui.h
 
