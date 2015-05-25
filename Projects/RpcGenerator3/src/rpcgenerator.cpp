@@ -22,6 +22,7 @@
 
 #define PRO_COMPILATION_VERIFICATION_MAIN_SOURCE_FILENAME "compilationverificationprojectmain.cpp"
 
+//TODOreq: "list of files to be overwritten" pre-generate-wizard. each file has a checkbox, and is checked by default. user has final say on what is overwritten. "what makes sense" is of not for us to decide. But I suppose obviously with none checked then proceeding should be impossible...
 //this is hacked together as fast as possible. ugly and lots of places elegance and efficiencies can be improved (dgaf)
 //TODOmb: generate matching .pri file
 RpcGenerator::RpcGenerator(QObject *parent)
@@ -29,7 +30,7 @@ RpcGenerator::RpcGenerator(QObject *parent)
 { }
 void RpcGenerator::generateRpc()
 {
-    QTemporaryDir tempDir;
+    QTemporaryDir tempDir("/run/shm/RpcGenerated-");
     if(!tempDir.isValid())
         EEEEEEEEEE_RpcGenerator("unable to get temp dir")
     QString outputPath = tempDir.path();

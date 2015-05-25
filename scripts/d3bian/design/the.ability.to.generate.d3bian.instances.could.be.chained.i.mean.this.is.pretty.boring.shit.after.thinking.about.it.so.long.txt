@@ -1,0 +1,5 @@
+I could make a script that installs all of my defaults ("d3fault's defaults" (have thought of this quote/name many times, but not relating to this doc in general)) in a vm, and it gets it's data from it's host os (which is normally a vm itself in this scenario) (until of course the root os running natively (which is (but doesn't have to be) running identical to each of the recursive vms)). There is no point to it.
+
+
+was filename for this doc:
+the.script.could.very.easily.be.infinitely.recursive. but honestly it's probably more efficient to have the vms all be neighbors and having a native os as their host.

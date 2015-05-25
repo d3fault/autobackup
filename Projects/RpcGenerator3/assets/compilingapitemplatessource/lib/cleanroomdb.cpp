@@ -10,12 +10,13 @@ CleanRoomDb::CleanRoomDb(QObject *parent)
 { }
 void CleanRoomDb::postCleanRoomDoc(ICleanRoomFrontPageDefaultViewRequest *requestWeAreMerelyForwardingLikeUserDataAkaCookiePointer, QByteArray cleanRoomDoc /*TODOreqmb: make CleanRoomDoc implicitly shared*/)
 {
-    QSet<QByteArray>::const_iterator it = m_Db.constFind(cleanRoomDoc);
-    if(it == m_Db.end())
+    //QSet<QByteArray>::const_iterator it = m_Db.constFind(cleanRoomDoc);
+    //if(it == m_Db.end())
+    if(!m_Db.contains(cleanRoomDoc))
     {
         m_Db.insert(cleanRoomDoc);
-        emit postCleanRoomDocFinished(requestWeAreMerelyForwardingLikeUserDataAkaCookiePointer, false, false, CleanRoomDoc::cleanRoomDocHash(cleanRoomDoc));
+        emit postCleanRoomDocFinished(requestWeAreMerelyForwardingLikeUserDataAkaCookiePointer, false, true, CleanRoomDoc::cleanRoomDocHash(cleanRoomDoc));
         return;
     }
-    emit postCleanRoomDocFinished(requestWeAreMerelyForwardingLikeUserDataAkaCookiePointer, false, true, CleanRoomDoc::cleanRoomDocHash(cleanRoomDoc)); //I could even jump the gun and call request.respond here/now! It would certainly be more efficient to do so... but fucks with my head/design too much so idfk
+    emit postCleanRoomDocFinished(requestWeAreMerelyForwardingLikeUserDataAkaCookiePointer, false, false, CleanRoomDoc::cleanRoomDocHash(cleanRoomDoc)); //I could even jump the gun and call request.respond here/now! It would certainly be more efficient to do so... but fucks with my head/design too much so idfk. It would work recursively like that if it was an IRequest. IRequest makes a promise that "respond(...args...)" is thread safe. With Qt, it uses AutoConnection. With Wt, WServer::post. More kinds can/will be added. Oh look I finally found a[n extremely good] use for IRequest (as of writing, I abstract to I<Business>Request)
 }

@@ -34,7 +34,7 @@ struct CleanRoomDoc
     QByteArray cleanRoomDocHash() const
     {
         QByteArray docJson = toJson(QJsonDocument::Compact);
-        return QCryptographicHash::hash(docJson, QCryptographicHash::Sha1); //TODOoptimization: buffer
+        return QCryptographicHash::hash(docJson, QCryptographicHash::Sha1).toHex(); //TODOoptimization: buffer
     }
     static CleanRoomDoc *fromJson(QByteArray cleanRoomDocJson)
     {
