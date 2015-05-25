@@ -16,7 +16,7 @@ void CleanRoomDb::getLatestCleanRoomDocs(ICleanRoomFrontPageDefaultViewRequest *
     int numDocsGotSoFar = 0;
     QMapIterator<QDateTime, QByteArray> it(m_Db);
     QStringList ret;
-    while(it.hasNext() && ((++numDocsGotSoFar) < numLatestDocsToGet))
+    while(it.hasNext() && ((++numDocsGotSoFar) <= numLatestDocsToGet))
     {
         it.next();
         ret.append(QString(it.value()));

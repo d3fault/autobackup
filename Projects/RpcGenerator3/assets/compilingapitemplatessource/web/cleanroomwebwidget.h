@@ -3,16 +3,18 @@
 
 #include <QStringList>
 
-class WApplication
-{ };
-
 class CleanRoomSession;
 
 class CleanRoomWebWidget : public WApplication
 {
+public:
+    CleanRoomWebWidget(const WEnvironment &myEnv);
+    static WApplication *cleanRoomWebWidgetEntryPoint(const WEnvironment &myEnv);
 private:
     friend class CleanRoomWeb;
     CleanRoomSession *m_Session;
+
+    QList<WLabel*> m_CleanRoomDocsWidgets;
 
     void handleCleanRoomSessionStarted(CleanRoomSession *session);
 

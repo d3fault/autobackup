@@ -14,7 +14,7 @@ CleanRoomGuiWidget::CleanRoomGuiWidget(QWidget *parent)
     {
         QLabel *newLabel = new QLabel();
         myLayout->addWidget(newLabel);
-        m_LatestCleanRoomDocsGuiWidget.insert(i, newLabel);
+        m_CleanRoomDocsWidgets.insert(i, newLabel);
     }
 
     setLayout(myLayout);
@@ -32,6 +32,6 @@ void CleanRoomGuiWidget::handleFrontPageDefaultViewReceived(QStringList frontPag
     int numDocs = qMin(frontPageDocs.size(), max);
     for(int i = 0; i < numDocs; ++i)
     {
-        m_LatestCleanRoomDocsGuiWidget.at(i)->setText(frontPageDocs.at(i));
+        m_CleanRoomDocsWidgets.at(i)->setText(frontPageDocs.at(i));
     }
 }

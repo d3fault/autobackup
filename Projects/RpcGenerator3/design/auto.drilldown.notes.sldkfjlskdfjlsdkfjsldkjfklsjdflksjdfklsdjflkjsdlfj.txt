@@ -1,0 +1,43 @@
+Auto drilldown:
+A template class (for compile time checking woot) where you ask a method to give you a certain T inheriter depending on the method arg type provided....
+
+So something along the lines of:
+
+<template T>
+T* newDefaultRepresentationFor<ResponseArgType0, ResponseArgType1, etc>() //caller takes ownership
+
+
+I don't think a pure virtual needs to be defined (could be wrong). I think really the gui code using that template function should be generated, and then it's up to me to to implement it before trying to compile
+
+
+hmm I think I'm missing some actually...
+
+
+<template T>
+class Base
+{
+public:
+	T* newDefaultRepresentationFor<ResponseArgType0, ResponseArgType1, etc>()=0; //caller takes ownership
+}
+class WtBase : public Base<WtWidget>
+{
+public:
+	T* newDefaultRepresentationFor<ResponseArgType0, ResponseArgType1, etc>()
+	{
+		return new WLabel(responseArgItself? i think we can pass it back uninitialized actually);
+	}
+}
+<template T>
+class QtBase : public Base<QWidget>
+{
+public:
+	QWidget* newDefaultRepresentationFor<ResponseArgType0, ResponseArgType1, etc>()
+	{
+		return new QWLabel(responseArgItself? i think we can pass it back uninitialized actually);
+	}
+}
+
+
+^looks more accurate, but I'd like to have compile time method resolving if I can (might as well inline them too ;-P xD). I guess they don't need to inherit from a common base tbh...
+
+There should maybe also be a [runtime usable?]: QWidget *typeStringToWidgetRepresenter(QString typeString); //and of course corresponding Wt version. having it be QString->QWidget* based would allow users of Rpc Generator to add translations of their own. Adding a compile time checked type->QWidget* conversions would probably requiring editting+recompiling Rpc Generator itself (nothing wrong with that [to me] ;-P)

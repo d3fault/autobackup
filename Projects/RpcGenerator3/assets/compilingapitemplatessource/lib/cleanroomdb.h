@@ -22,7 +22,7 @@ private:
     //QSettings m_Db;
     //QVariantHash m_Db;
     //QSet<CleanRoomDoc> m_Db;
-    QMultiMap<QDateTime, QByteArray> m_Db;
+    QMultiMap<QDateTime, QByteArray> m_Db; //multi-map doesn't handle "same datetime" (key in this case) situations very well, but it's ok it's just mimicking how couchbase will work anyways. in couchbase, i'll be using a javascript-view/map in order to get the docs sorted by date
 signals:
     void getLatestCleanRoomDocsFinished(ICleanRoomFrontPageDefaultViewRequest *requestWeAreMerelyForwardingAroundInDbLikeUserDataAkaCookiePointer, bool dbError, bool postCleanRoomDocSuccess_aka_LcbOp, QStringList latestCleanRoomDocs);
 };

@@ -1,0 +1,1 @@
+I just misread "multitenancy" as "multilatency". Multilatency describes Qt::AutoConnection :-D
