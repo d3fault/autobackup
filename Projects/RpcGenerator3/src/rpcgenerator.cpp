@@ -62,8 +62,8 @@ void RpcGenerator::generateRpc()
 
     api.createApiCall("getLatestDocuments"
                           , NoApiCallArgs
-                          , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "getLatestDocumentsSuccess") << ApiTypeAndVarName("QList<QDateTime>", "latestDocumentsTimestamps") << ApiTypeAndVarName("QList<QString>", "latestDocumentsUsernames") << ApiTypeAndVarName("QList<QByteArray>", "latestDocumentsDatas") << ApiTypeAndVarName("QList<QString>", "latestDocumentsLicenseIdentifiers")
-                          , QStringList() << "<QDateTime>"
+                          , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "getLatestDocumentsSuccess") << ApiTypeAndVarName("QList<QByteArray>", "latestDocuments")
+                          //, QStringList() << "<QDateTime>"
                           //, QStringList() << "<QDateTime>"
                       );
     /*api.createApiCall("getLatestDocuments"

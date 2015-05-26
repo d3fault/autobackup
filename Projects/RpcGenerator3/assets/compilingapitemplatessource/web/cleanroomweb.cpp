@@ -34,7 +34,6 @@ CleanRoomWeb::~CleanRoomWeb()
         {
             m_WtServer->stop();
         }
-        m_WtServer.reset();
     }
 }
 void CleanRoomWeb::handleCleanRoomReadyForSessions()
