@@ -10,9 +10,16 @@
 #include <QSettings>
 #include <QCryptographicHash>
 
+#include "documenttimelinecommon.h"
+
+#define DocumentTimeline_ORGANIZATION "DocumentTimelineOrganization"
+#define DocumentTimeline_APPLICATION "DocumentTimeline"
+#define DocumentTimelineRegistrationAttempts_APPLICATION DocumentTimeline_APPLICATION "RegistrationAttempts"
+
 DocumentTimeline::DocumentTimeline(QObject *parent)
     : IDocumentTimeline(parent)
-    , m_DocumentTimelineDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, "DocumentTimelineOrganization", "DocumentTimeline", this))
+    , m_DocumentTimelineRegistrationAttemptsDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, DocumentTimeline_ORGANIZATION, DocumentTimelineRegistrationAttempts_APPLICATION, this))
+    , m_DocumentTimelineDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, DocumentTimeline_ORGANIZATION, DocumentTimeline_APPLICATION, this))
 {
     QStringList docKeys = m_DocumentTimelineDb->childKeys();
     if(docKeys.isEmpty())
@@ -23,7 +30,8 @@ DocumentTimeline::DocumentTimeline(QObject *parent)
             QJsonObject newDebugTestDocJsonObject;
             newDebugTestDocJsonObject.insert("t", QString::number(QDateTime::currentMSecsSinceEpoch()));
             newDebugTestDocJsonObject.insert("u", "d3fault_" + QString::number(i));
-            newDebugTestDocJsonObject.insert("d", "poopLoL_" + QString::number(i));
+            QString dataB64 = QString(QString("poopLoL_" + QString::number(i)).toUtf8().toBase64());
+            newDebugTestDocJsonObject.insert("d", dataB64);
             newDebugTestDocJsonObject.insert("l", "DPL3+");
             QJsonDocument newDebugTestJsonDoc = QJsonDocument(newDebugTestDocJsonObject);
             QByteArray newDebugTestDoc = newDebugTestJsonDoc.toJson(QJsonDocument::Compact);
@@ -64,7 +72,21 @@ void DocumentTimeline::getLatestDocuments(IDocumentTimelineGetLatestDocumentsReq
 }
 void DocumentTimeline::declareIntentToAttemptRegistration(IDocumentTimelineDeclareIntentToAttemptRegistrationRequest *request, QString fullName, QString desiredUsername, QString password, bool acceptedCLA, QString fullNameSignature)
 {
-    qFatal("DocumentTimeline::declareIntentToAttemptRegistration(IDocumentTimelineDeclareIntentToAttemptRegistrationRequest *request, QString fullName, QString desiredUsername, QString password, bool acceptedCLA, QString fullNameSignature) not yet implemented");
+    if(m_DocumentTimelineRegistrationAttemptsDb->contains(desiredUsername))
+    {
+        request->respond(false, QString());
+        return;
+    }
+    QJsonObject registrationAttemptDeclarationJsonObject;
+    registrationAttemptDeclarationJsonObject.insert("fullName", fullName);
+    registrationAttemptDeclarationJsonObject.insert("passwordHashB64", password);
+    registrationAttemptDeclarationJsonObject.insert("passwordSaltB64", "TODOreq: blah");
+    registrationAttemptDeclarationJsonObject.insert("acceptedContributorLicenseAgreement", acceptedCLA);
+    registrationAttemptDeclarationJsonObject.insert("fullNameSignature", fullNameSignature);
+    QJsonDocument jsonDocument(registrationAttemptDeclarationJsonObject);
+    QString json(jsonDocument.toJson(QJsonDocument::Compact));
+    m_DocumentTimelineRegistrationAttemptsDb->setValue(desiredUsername, json);
+    request->respond(true, "TODOreq: some hash of their registration attempt details (and some crypto randomness probably) or something");
 }
 void DocumentTimeline::submitRegistrationAttemptVideo(IDocumentTimelineSubmitRegistrationAttemptVideoRequest *request, QString desiredUsername, QString password, QByteArray registrationAttemptSubmissionVideo)
 {

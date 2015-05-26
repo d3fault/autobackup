@@ -1,3 +1,5 @@
+#include <Wt/WMessageBox>
+using namespace Wt;
 #include "documenttimelineweb.h"
 
 #include <QCoreApplication>

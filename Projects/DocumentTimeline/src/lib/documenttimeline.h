@@ -15,6 +15,7 @@ class DocumentTimeline : public IDocumentTimeline
 public:
     explicit DocumentTimeline(QObject *parent = 0);
 private:
+    QSettings *m_DocumentTimelineRegistrationAttemptsDb;
     QSettings *m_DocumentTimelineDb;
 
     static QByteArray documentJsonToHexHash(const QByteArray &documentJson);

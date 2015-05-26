@@ -13,23 +13,22 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-DEFINES += NUM_DOCUMENT_TIMELINE_DOCS_ON_FRONT_PAGE=100
-
 INCLUDEPATH += ui/web/
+
+HEADERS += ui/web/documenttimelineweb.h \
+    ui/web/documenttimelinewebwidget.h \
+    ui/web/documenttimelinedocwebwidget.h \
+    ui/web/qbytearraywmemoryresource.h \
+    ui/web/documenttimelineregisterwebdialogwidget.h
 
 SOURCES += ui/web/main.cpp \
     ui/web/documenttimelineweb.cpp \
     ui/web/documenttimelinewebwidget.cpp \
     ui/web/documenttimelinedocwebwidget.cpp \
-    ui/web/qbytearraywmemoryresource.cpp
+    ui/web/qbytearraywmemoryresource.cpp \
+    ui/web/documenttimelineregisterwebdialogwidget.cpp
+
+LIBS += -lwt -lwthttp -lboost_signals #TODOreq: compile time opt into -lboost_signals2 instead of 1
 
 include(lib/documenttimeline.pri)
-
-HEADERS += ui/web/documenttimelineweb.h \
-    ui/web/documenttimelinewebwidget.h \
-    ui/web/documenttimelinedocwebwidget.h \
-    ui/web/qbytearraywmemoryresource.h
-
-LIBS += -lwt -lwthttp
-
 include(../../../GloballySharedClasses/standardinputnotifier.pri)

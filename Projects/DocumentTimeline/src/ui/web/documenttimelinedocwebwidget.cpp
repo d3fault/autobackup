@@ -115,7 +115,7 @@ void DocumentTimelineDocWebWidget::visualize_TUDL_Mimetyped_DocAsBestYouCanBased
     }
     if(docMimeData.hasHtml() || docMimeData.hasText())
     {
-        WLabel *doc = new WLabel(QString(QByteArray::fromBase64(jsonDocObject.value("d").toString().toUtf8())).toStdString(), m_DocWidgetPlaceholder);
+        /*WLabel *doc = */new WLabel(QString(QByteArray::fromBase64(jsonDocObject.value("d").toString().toUtf8())).toStdString(), m_DocWidgetPlaceholder);
         return;
     }
     ///*WLabel *fallbackToPlaintextLabel = */new WLabel(QString(QByteArray::fromBase64(jsonDocObject.value("d").toString().toUtf8())).toStdString(), m_DocWidgetPlaceholder);
