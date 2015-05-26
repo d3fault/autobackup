@@ -1,0 +1,10 @@
+A Wt-esq web widget toolkit, but coded in Qt, could use implicit sharing for every static web element, even ones that can be dynamic (ajax) with a single line of code. The "html element" or "web widget" (whichever you call it) is just a reference count against the same html element (or web widget) that every end-user has a by-value reference to in their widget tree.
+
+However, I'm not sure if there would be an overall performance gain. It would save memory but would maybe come to a crawl because of the huge increase of atomic [de]refs.
+However, making the Session implicitly shared and none of it's sub-items implicitly shared (unsure about this actually), we can serve the overwhelming vast majority of reads (compared to writes) using a single, implicitly shared (1 atomic [de]ref per connection is close enough to 'nothing') session object.
+
+If I'm referring to a "high level widget" aka "application view", then it IS worth it to make a widget implicitly shared. But as it stands, there's hundreds/perhaps-thousands of "widgets" that go into rendering some fucking html with ajax.
+
+Maybe, then, I should use Wt's html-templates system. An "application view" can be an html-template.
+
+But bah I don't think it's implicitly shared so bah, this is all theoretical if Wt were written with/in/using Qt (which I know I could do, but don't have the time to do)

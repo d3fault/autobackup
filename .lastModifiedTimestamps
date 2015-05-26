@@ -3417,7 +3417,7 @@ Projects/IcePick/src/lib/:1431941696
 Projects/IcePick/src/lib/icepick.cpp:1431941696
 Projects/IcePick/src/lib/icepick.h:1431941502
 Projects/IcePick/src/IcePickGui.pro:1431928734
-Projects/Ideas/:1427095631
+Projects/Ideas/:1432634305
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -3730,6 +3730,7 @@ Projects/Ideas/what.to.do.with.d3fault.domain.for.the.time.being.txt:1338788716
 Projects/Ideas/why.cant.i.hold.all.these.packets.call.for.help.message.txt:1339321983
 Projects/Ideas/why.the.fuck.NOT.dont.be.a.pussy.you.pussy.txt:1341458265
 Projects/Ideas/woriuasflkjsdfowiuerlskdjfosdfiuwlekrjoiuslkweroiuflk.txt.d3fault.dht.txt:1339487879
+Projects/Ideas/wt.coded.in.qt.could.use.implicitly.shared.sessions.even.though.im.not.quite.sure.how.thatd.work.txt:1432634266
 Projects/Ideas/wt.rewrite.static.dynamic.interleaved.notes.cow.too.but.idfk.txt:1400366220
 Projects/Ideas/yea.just.keep.passing.laws.that.will.solve.everything.sadlfjsdfusdofi.txt:1383726452
 Projects/Ideas/yes.or.no.input.and.20.questions.game.software.mode.txt:1322679432
@@ -5138,12 +5139,12 @@ Projects/RpcGenerator3/design/rpc.generator.3.todo.txt:1432621068
 Projects/RpcGenerator3/design/slkdjflksjdfksjdfkjsdkfjsldkfjslkdjfklsdjfkljsdfkljsflkjsdlkfjslkdfj.txt:1432427925
 Projects/RpcGenerator3/design/so.many.directions.my.eyes.are.lighting.up.wewt.sldkfjslkdfjslkdfjksdlfjdslkjflksd.txt:1432395269
 Projects/RpcGenerator3/design/so.many.ways.to.improve.this.woot.sdjflsdkfjlsdkjflk.txt:1432379322
-Projects/RpcGenerator3/src/:1432630612
+Projects/RpcGenerator3/src/:1432632770
 Projects/RpcGenerator3/src/RpcGenerator3Cli.pro:1432392292
 Projects/RpcGenerator3/src/api.h:1432629856
 Projects/RpcGenerator3/src/main.cpp:1432241271
 Projects/RpcGenerator3/src/rpcbusinesstemplatestousewhengenerating.qrc:1432411247
-Projects/RpcGenerator3/src/rpcgenerator.cpp:1432630568
+Projects/RpcGenerator3/src/rpcgenerator.cpp:1432632770
 Projects/RpcGenerator3/src/rpcgenerator.h:1432630473
 Projects/RpcGenerator3/src/rpcgeneratorcli.cpp:1432251016
 Projects/RpcGenerator3/src/rpcgeneratorcli.h:1432243966
