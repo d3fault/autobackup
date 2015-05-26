@@ -13,37 +13,53 @@ DocumentTimelineRegisterWebDialogWidget::DocumentTimelineRegisterWebDialogWidget
     setModal(false);
     setClosable(true);
 
+    WString fullNameString("Full Name");
+    WLabel *fullNameLabel = new WLabel(fullNameString + ":", contents());
     m_FullNameLineEdit = new WLineEdit(contents());
-    m_FullNameLineEdit->setEmptyText("Full Name");
+    m_FullNameLineEdit->setEmptyText(fullNameString);
 
     new WBreak(contents());
 
+    WString desiredUsernameString("Desired Username");
+    WLabel *desiredUsernameLabel = new WLabel(desiredUsernameString + ":", contents());
     m_DesiredUsernameLineEdit = new WLineEdit(contents());
-    m_DesiredUsernameLineEdit->setEmptyText("Desired Username");
+    m_DesiredUsernameLineEdit->setEmptyText(desiredUsernameString);
 
     new WBreak(contents());
 
+    WString passwordString("Password");
+    WLabel *passwordLabel = new WLabel(passwordString + ":", contents());
     m_PasswordLineEdit = new WLineEdit(contents());
     m_PasswordLineEdit->setEchoMode(WLineEdit::Password);
-    m_PasswordLineEdit->setEmptyText("Password");
+    m_PasswordLineEdit->setEmptyText(passwordString);
 
     new WBreak(contents());
 
+    WString confirmPasswordString("Confirm Password");
+    WLabel *confirmPasswordLabel = new WLabel(confirmPasswordString + ":", contents());
     m_ConfirmPasswordLineEdit = new WLineEdit(contents());
-    m_PasswordLineEdit->setEchoMode(WLineEdit::Password);
-    m_PasswordLineEdit->setEmptyText("Confirm Password");
+    m_ConfirmPasswordLineEdit->setEchoMode(WLineEdit::Password);
+    m_ConfirmPasswordLineEdit->setEmptyText(confirmPasswordString);
 
-    new WLabel("TODOreq: CLA text goes here", contents());
+    new WBreak(contents());
+
+    new WLabel("TODOreq: CLA goes here", contents());
+
+    new WBreak(contents());
 
     m_AcceptedCLACheckBox = new WCheckBox("I Accept", contents());
 
     new WBreak(contents());
 
+    WString fullNameSiguatureString("Full Name Signature");
+    WLabel *fullNameSignatureLabel = new WLabel(fullNameSiguatureString + ":", contents());
     m_FullNameSignatureLineEdit = new WLineEdit(contents());
-    m_FullNameSignatureLineEdit->setEmptyText("Full Name Signature");
+    m_FullNameSignatureLineEdit->setEmptyText(fullNameSiguatureString);
 
     new WBreak(contents());
 
+    WPushButton *cancelButton = new WPushButton("Cancel", contents());
+    cancelButton->clicked().connect(this, &DocumentTimelineRegisterWebDialogWidget::reject);
     WPushButton *submitButton = new WPushButton("Submit", contents());
     submitButton->clicked().connect(this, &DocumentTimelineRegisterWebDialogWidget::handleSubmitClicked);
 }
@@ -79,7 +95,6 @@ DocumentTimelineRegisterWebDialogWidget::~DocumentTimelineRegisterWebDialogWidge
 {
     deleteMessageBoxIfInstantiated();
 }
-
 void DocumentTimelineRegisterWebDialogWidget::handleSubmitClicked()
 {
     if(registerSubmissionDetailsAreValid())
@@ -93,6 +108,7 @@ void DocumentTimelineRegisterWebDialogWidget::handleSubmitClicked()
         m_MessageBox->setText("Some of your registration details were invalid. Please correct them before continuing");
         m_MessageBox->setModal(false);
         m_MessageBox->finished().connect(this, &DocumentTimelineRegisterWebDialogWidget::handleMessageBoxFinished);
+        m_MessageBox->show();
     }
 }
 bool DocumentTimelineRegisterWebDialogWidget::registerSubmissionDetailsAreValid() const
@@ -101,6 +117,7 @@ bool DocumentTimelineRegisterWebDialogWidget::registerSubmissionDetailsAreValid(
 }
 void DocumentTimelineRegisterWebDialogWidget::handleMessageBoxFinished(WDialog::DialogCode dialogCode)
 {
+    Q_UNUSED(dialogCode)
     deleteMessageBoxIfInstantiated();
 }
 void DocumentTimelineRegisterWebDialogWidget::deleteMessageBoxIfInstantiated()

@@ -16,6 +16,8 @@ DocumentTimelineWebWidget::DocumentTimelineWebWidget(const WEnvironment &environ
     , m_RegisterWidget(NULL)
     , m_MessageBox(NULL)
 {
+    setCssTheme("polished");
+
     WAnchor *registerAnchor = new WAnchor(WLink(WLink::InternalPath, DocumentTimelineWebWidget_INTERNAL_PATH_REGISTER), DocumentTimelineWebWidget_REGISTER, root());
     registerAnchor->setMargin(WLength(DocumentTimelineWebWidget_MARGIN_PX, WLength::Pixel));
     registerAnchor->setFloatSide(Wt::Right);
@@ -32,7 +34,7 @@ DocumentTimelineWebWidget::DocumentTimelineWebWidget(const WEnvironment &environ
     else
         this->deferRendering();
 
-    this->internalPathChanged().connect(this, &DocumentTimelineWebWidget::handleInternalPathChanged);
+    this->internalPathChanged().connect(this, &DocumentTimelineWebWidget::handleInternalPathChanged); //TODOreq: navigating to /register directly should work, but we don't have a DocumentTimeline session yet so.... ffff
 
     DocumentTimelineSession::requestNewSession(s_DocumentTimeline, this->sessionId(), boost::bind(&DocumentTimelineWebWidget::handleDocumentTimelineSessionStarted, this, _1));
 }
@@ -56,6 +58,7 @@ void DocumentTimelineWebWidget::handleInternalPathChanged(const std::string &new
             delete m_RegisterWidget;
         m_RegisterWidget = new DocumentTimelineRegisterWebDialogWidget();
         m_RegisterWidget->finished().connect(this, &DocumentTimelineWebWidget::handleRegisterWidgetFinished);
+        m_RegisterWidget->show();
         return;
     }
 }
@@ -87,9 +90,11 @@ void DocumentTimelineWebWidget::setMessageBoxMessage(const WString &caption, con
     m_MessageBox->setCaption(caption);
     m_MessageBox->setText(text);
     m_MessageBox->finished().connect(this, &DocumentTimelineWebWidget::handleMessageBoxFinished);
+    m_MessageBox->show();
 }
 void DocumentTimelineWebWidget::handleMessageBoxFinished(WDialog::DialogCode dialogCode)
 {
+    Q_UNUSED(dialogCode)
     deletMessageBoxIfInstantiated();
 }
 void DocumentTimelineWebWidget::deletMessageBoxIfInstantiated()
