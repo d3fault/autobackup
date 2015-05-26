@@ -1,3 +1,5 @@
+#include <Wt/WServer>
+using namespace Wt;
 #ifndef CLEANROOMWEB_H
 #define CLEANROOMWEB_H
 
@@ -15,7 +17,7 @@ class CleanRoomWeb : public QObject
 {
     Q_OBJECT
 public:
-    explicit CleanRoomWeb(QObject *parent = 0);
+    explicit CleanRoomWeb(int argc, char *argv[], QObject *parent = 0);
     virtual ~CleanRoomWeb();
 private:
     CleanRoom *m_CleanRoom;

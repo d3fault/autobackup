@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    CleanRoomWeb web;
+    CleanRoomWeb web(argc, argv);
     Q_UNUSED(web)
 
     return a.exec();

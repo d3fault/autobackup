@@ -19,3 +19,5 @@ SOURCES += web/main.cpp \
     web/cleanroomweb.cpp
 
 include(cleanroom.pri)
+
+LIBS += -lwt -lwthttp

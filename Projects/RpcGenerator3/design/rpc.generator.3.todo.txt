@@ -1,0 +1,1 @@
+The compiling api template source is out of sync with the template. The current codebase+template is functional, but does not attempt to address front-ends (auto drilldown). The compiling api template sources (both qt gui widget and wt web widget) is in an optimal place (compiling, WORKING with both qt and wt) to abstract the two gui types for making auto drilldown.

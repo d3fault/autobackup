@@ -19,7 +19,8 @@ void CleanRoomDb::getLatestCleanRoomDocs(ICleanRoomFrontPageDefaultViewRequest *
     while(it.hasNext() && ((++numDocsGotSoFar) <= numLatestDocsToGet))
     {
         it.next();
-        ret.append(QString(it.value()));
+        QScopedPointer<CleanRoomDoc> doc = CleanRoomDoc::fromJson(it.value());
+        ret.append(doc->Timestamp.toString() + " - " + doc->Username + " - " + doc->LicenseIdentifier + " - " + doc->Data);
     }
     bool lcbOpSuccess = (ret.size() == numLatestDocsToGet);
     emit getLatestCleanRoomDocsFinished(requestWeAreMerelyForwardingAroundInDbLikeUserDataAkaCookiePointer, false, lcbOpSuccess, ret); //I could even jump the gun and call request.respond here/now! It would certainly be more efficient to do so... but fucks with my head/design too much so idfk. It would work recursively like that if it was an IRequest. IRequest makes a promise that "respond(...args...)" is thread safe. With Qt, it uses AutoConnection. With Wt, WServer::post. More kinds can/will be added. Oh look I finally found a[n extremely good] use for IRequest (as of writing, I abstract to I<Business>Request)

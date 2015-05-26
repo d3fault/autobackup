@@ -12,11 +12,12 @@ using namespace Wt;
 
 #include "cleanroomwebwidget.h"
 
-CleanRoomWeb::CleanRoomWeb(QObject *parent)
+CleanRoomWeb::CleanRoomWeb(int argc, char *argv[], QObject *parent)
     : QObject(parent)
     , m_CleanRoom(new CleanRoom(this))
 {
-    m_WtServer.reset(new WServer(QCoreApplication::arguments().first()));
+    QString firstArg = QCoreApplication::arguments().first();
+    m_WtServer.reset(new WServer(firstArg.toStdString()));
     m_WtServer->setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
     m_WtServer->addEntryPoint(Application, &CleanRoomWebWidget::cleanRoomWebWidgetEntryPoint);
 
@@ -40,12 +41,6 @@ void CleanRoomWeb::handleCleanRoomReadyForSessions()
 {
     if(m_WtServer.isNull() || m_WtServer->isRunning())
         return;
+    CleanRoomWebWidget::s_CleanRoom = m_CleanRoom; //TODOoptional: I know there's a way to do it better than this (without a static), but I'm too lazy to do it atm
     m_WtServer->start();
-
-#if 0 //TODOreq:
-    //activate wt, wait for sessions, then, when there's a new session do:
-    std::string wtSessionId;
-    CleanRoomWebWidget *wApplication;
-    CleanRoomSession::requestNewSession(m_CleanRoom, wtSessionId, boost::bind(&CleanRoomWebWidget::handleCleanRoomSessionStarted, wApplication, _1));
-#endif
 }
