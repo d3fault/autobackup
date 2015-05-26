@@ -2,9 +2,9 @@
 #ifndef %API_NAME_UPPERCASE%SESSION
 #define %API_NAME_UPPERCASE%SESSION
 
-#include <QVariant>
-
 #include <boost/function.hpp>
+
+%ALL_API_CALLS_ADDITIONAL_INCLUDES_FOR_REQUEST_AND_RESPONSE_ARGS%
 
 #include "i%API_NAME_LOWERCASE%request.h"
 
