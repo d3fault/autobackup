@@ -7,11 +7,17 @@
 
 #include "idocumenttimeline.h"
 
+class QSettings;
+
 class DocumentTimeline : public IDocumentTimeline
 {
     Q_OBJECT
 public:
     explicit DocumentTimeline(QObject *parent = 0);
+private:
+    QSettings *m_DocumentTimelineDb;
+
+    static QByteArray documentJsonToHexHash(const QByteArray &documentJson);
 public slots:
     void getLatestDocuments(IDocumentTimelineGetLatestDocumentsRequest *request);
     void declareIntentToAttemptRegistration(IDocumentTimelineDeclareIntentToAttemptRegistrationRequest *request, QString fullName, QString desiredUsername, QString password, bool acceptedCLA, QString fullNameSignature);
