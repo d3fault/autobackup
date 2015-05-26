@@ -11,8 +11,8 @@ using namespace Wt;
 
 ICleanRoom *CleanRoomWebWidget::s_CleanRoom = NULL;
 
-CleanRoomWebWidget::CleanRoomWebWidget(const WEnvironment &myEnv, WtLibVersion version)
-    : WApplication(myEnv, version)
+CleanRoomWebWidget::CleanRoomWebWidget(const WEnvironment &environment, WtLibVersion version)
+    : WApplication(environment, version)
 {
     for(int i = 0; i < NUM_CLEAN_ROOM_DOCS_ON_FRONT_PAGE; ++i)
     {

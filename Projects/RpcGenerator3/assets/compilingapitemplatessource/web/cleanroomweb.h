@@ -6,11 +6,6 @@ using namespace Wt;
 #include <QObject>
 #include <QSharedPointer>
 
-namespace Wt
-{
-    class WServer;
-}
-
 class CleanRoom;
 
 class CleanRoomWeb : public QObject

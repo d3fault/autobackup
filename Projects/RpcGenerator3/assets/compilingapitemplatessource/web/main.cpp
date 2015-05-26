@@ -1,3 +1,4 @@
+#include <Wt/WServer>
 #include <QCoreApplication>
 
 #include "cleanroomweb.h"

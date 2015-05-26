@@ -19,7 +19,7 @@ void CleanRoomDb::getLatestCleanRoomDocs(ICleanRoomFrontPageDefaultViewRequest *
     while(it.hasNext() && ((++numDocsGotSoFar) <= numLatestDocsToGet))
     {
         it.next();
-        QScopedPointer<CleanRoomDoc> doc = CleanRoomDoc::fromJson(it.value());
+        QScopedPointer<CleanRoomDoc> doc(CleanRoomDoc::fromJson(it.value()));
         ret.append(doc->Timestamp.toString() + " - " + doc->Username + " - " + doc->LicenseIdentifier + " - " + doc->Data);
     }
     bool lcbOpSuccess = (ret.size() == numLatestDocsToGet);
