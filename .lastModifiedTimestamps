@@ -5068,7 +5068,7 @@ Projects/RpcGenerator/design/use.case.ugly.disconnect.detected.on.server.through
 Projects/RpcGenerator/design/when.not.using.all.action.dispensers.opt.to.ignore.error.and.also.a.primitive.design.for.making.sure.all.broadcast.signals.are.being.listened.to.txt:1370575570
 Projects/RpcGenerator3/:1432379285
 Projects/RpcGenerator3/assets/:1432549520
-Projects/RpcGenerator3/assets/apitemplates/:1432626955
+Projects/RpcGenerator3/assets/apitemplates/:1432629571
 Projects/RpcGenerator3/assets/apitemplates/cleanroom.cpp:1432433509
 Projects/RpcGenerator3/assets/apitemplates/cleanroom.h:1432433509
 Projects/RpcGenerator3/assets/apitemplates/cleanroom.pri:1432410952
@@ -5076,7 +5076,7 @@ Projects/RpcGenerator3/assets/apitemplates/cleanroom.pro:1432251810
 Projects/RpcGenerator3/assets/apitemplates/cleanroomfrontpagedefaultviewrequestfromqt.cpp:1432433536
 Projects/RpcGenerator3/assets/apitemplates/cleanroomfrontpagedefaultviewrequestfromqt.h:1432433509
 Projects/RpcGenerator3/assets/apitemplates/cleanroomfrontpagedefaultviewrequestfromwt.cpp:1432626810
-Projects/RpcGenerator3/assets/apitemplates/cleanroomfrontpagedefaultviewrequestfromwt.h:1432433509
+Projects/RpcGenerator3/assets/apitemplates/cleanroomfrontpagedefaultviewrequestfromwt.h:1432629340
 Projects/RpcGenerator3/assets/apitemplates/cleanroomnewsessionrequestfromqt.cpp:1432433568
 Projects/RpcGenerator3/assets/apitemplates/cleanroomnewsessionrequestfromqt.h:1432433510
 Projects/RpcGenerator3/assets/apitemplates/cleanroomnewsessionrequestfromwt.cpp:1432626955
@@ -5086,7 +5086,7 @@ Projects/RpcGenerator3/assets/apitemplates/cleanroomsession.h:1432433509
 Projects/RpcGenerator3/assets/apitemplates/icleanroom.cpp:1432433568
 Projects/RpcGenerator3/assets/apitemplates/icleanroom.h:1432433509
 Projects/RpcGenerator3/assets/apitemplates/icleanroomfrontpagedefaultviewrequest.cpp:1432433568
-Projects/RpcGenerator3/assets/apitemplates/icleanroomfrontpagedefaultviewrequest.h:1432433509
+Projects/RpcGenerator3/assets/apitemplates/icleanroomfrontpagedefaultviewrequest.h:1432629571
 Projects/RpcGenerator3/assets/apitemplates/icleanroomnewsessionrequest.h:1432433509
 Projects/RpcGenerator3/assets/apitemplates/icleanroomrequest.h:1432433509
 Projects/RpcGenerator3/assets/compilingapitemplatessource/:1432626829
@@ -5138,12 +5138,12 @@ Projects/RpcGenerator3/design/rpc.generator.3.todo.txt:1432621068
 Projects/RpcGenerator3/design/slkdjflksjdfksjdfkjsdkfjsldkfjslkdjfklsdjfkljsdfkljsflkjsdlkfjslkdfj.txt:1432427925
 Projects/RpcGenerator3/design/so.many.directions.my.eyes.are.lighting.up.wewt.sldkfjslkdfjslkdfjksdlfjdslkjflksd.txt:1432395269
 Projects/RpcGenerator3/design/so.many.ways.to.improve.this.woot.sdjflsdkfjlsdkjflk.txt:1432379322
-Projects/RpcGenerator3/src/:1432626969
+Projects/RpcGenerator3/src/:1432629878
 Projects/RpcGenerator3/src/RpcGenerator3Cli.pro:1432392292
-Projects/RpcGenerator3/src/api.h:1432624003
+Projects/RpcGenerator3/src/api.h:1432629856
 Projects/RpcGenerator3/src/main.cpp:1432241271
 Projects/RpcGenerator3/src/rpcbusinesstemplatestousewhengenerating.qrc:1432411247
-Projects/RpcGenerator3/src/rpcgenerator.cpp:1432625073
+Projects/RpcGenerator3/src/rpcgenerator.cpp:1432629831
 Projects/RpcGenerator3/src/rpcgenerator.h:1432624705
 Projects/RpcGenerator3/src/rpcgeneratorcli.cpp:1432251016
 Projects/RpcGenerator3/src/rpcgeneratorcli.h:1432243966

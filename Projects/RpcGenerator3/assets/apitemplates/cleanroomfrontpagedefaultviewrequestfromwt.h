@@ -4,8 +4,6 @@
 
 %API_CALL_REQUEST_INTERFACE_HEADER_INCLUDE%
 
-#include <QStringList>
-
 #include <boost/function.hpp>
 
 class I%API_NAME%;
