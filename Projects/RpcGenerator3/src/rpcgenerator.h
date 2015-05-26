@@ -10,7 +10,7 @@
 
 class Api;
 class ApiCall;
-class ApiCallArg;
+class ApiTypeAndVarName;
 
 #define TemplateBeforeAndAfter_Type QString /*before*/, QString /*after */
 typedef QHash<TemplateBeforeAndAfter_Type> TemplateBeforeAndAfterStrings_Type;
@@ -61,7 +61,7 @@ private:
     static QString apiCallArgNamesToCommaSeparatedList(ApiCall *apiCall, bool requestIfTrue, bool makeRequestPointerFirstParameter = true, bool emitTypes = false, bool emitNames = false);
     static QString apiCallToMethodCppSignature(ApiCall *apiCall, bool requestIfTrue, bool makeRequestPointerFirstParameter = true);
     static QString apiCallToRawCppDeclaration(ApiCall *apiCall, bool requestIfTrue);
-    static QString apiCallArgToCpp(ApiCallArg *apiCallArg, bool emitTypes = true, bool emitNames = false);
+    static QString apiCallArgToCpp(ApiTypeAndVarName *apiCallArg, bool emitTypes = true, bool emitNames = false);
     static QString apiCallToApiDefinitionRawCpp(ApiCall *apiCall, bool requestIfTrue);
     static QString apiCallToApiCallRequestMethodDeclarationInSessionHeader(ApiCall *apiCall, const QString &boostOrQtCallbackArgs, QString includeApiNamePrefix = QString());
     static QString apiCallToApiCallRequestMethodDefinitionInSessionSource(ApiCall *apiCall, bool trueIfQt_falseIfWt);

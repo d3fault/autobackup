@@ -1,0 +1,42 @@
+class ILife
+{
+protected:
+	virtual void doFunctionInLife()=0;
+};
+class IStevenCurtisWielerII : ILife
+{
+protected:
+	virtual void doFunctionInLife()
+	{
+		while(!haveEnoughResourcesToAquireWomen() /*woman?*/)
+			aquireResources();
+		Q_FOREACH(Woman *woman, allWomen())
+		{
+			date(woman);
+			if(like(woman))
+			{
+				commitTo(woman);
+				break;
+			}
+		}
+		while(true)
+		{
+			if(!haveEnoughResourcesToSupportFamily())
+			{
+				aquireResources();
+				continue;
+			}
+			spendTimeWithFamilyIfTheresTime();
+			fuckIfTheresTime();			
+		}
+	}
+};
+class D3fault : public IStevenCurtisWielerII
+{
+protected:
+	virtual void doFunctionInLife() //override (<3 consciousness && free-will)
+	{
+		while(true)
+			doTaskFromListAtIndex(qRand());
+	}
+};

@@ -3,19 +3,19 @@
 
 #include <QString>
 
-struct ApiCallArg
+struct ApiTypeAndVarName
 {
-    ApiCallArg(QString apiCallArgType, QString apiCallArgName)
-        : ApiCallArgType(apiCallArgType)
-        , ApiCallArgName(apiCallArgName)
+    ApiTypeAndVarName(QString apiCallArgType, QString apiCallArgName)
+        : ApiTypeAndVarNameType(apiCallArgType)
+        , ApiTypeAndVarNameName(apiCallArgName)
     { }
-    QString ApiCallArgType;
-    QString ApiCallArgName;
+    QString ApiTypeAndVarNameType;
+    QString ApiTypeAndVarNameName;
 };
 class Api;
 struct ApiCall
 {
-    ApiCall(Api *api, const QString &apiCallSlotName, const QList<ApiCallArg> &requestArgs = QList<ApiCallArg>(), const QList<ApiCallArg> &responseArgs = QList<ApiCallArg>())
+    ApiCall(Api *api, const QString &apiCallSlotName, const QList<ApiTypeAndVarName> &requestArgs = QList<ApiTypeAndVarName>(), const QList<ApiTypeAndVarName> &responseArgs = QList<ApiTypeAndVarName>())
         : ParentApi(api)
         , ApiCallSlotName(apiCallSlotName)
         , RequestArgs(requestArgs)
@@ -23,8 +23,8 @@ struct ApiCall
     { }
     Api *ParentApi;
     QString ApiCallSlotName;
-    QList<ApiCallArg> RequestArgs;
-    QList<ApiCallArg> ResponseArgs;
+    QList<ApiTypeAndVarName> RequestArgs;
+    QList<ApiTypeAndVarName> ResponseArgs;
 };
 struct Api
 {
@@ -33,7 +33,7 @@ struct Api
     { }
     QString ApiName;
     QList<ApiCall> ApiCalls;
-    void createApiCall(const QString &apiCallSlotName, const QList<ApiCallArg> &requestArgs = QList<ApiCallArg>(), const QList<ApiCallArg> &responseArgs = QList<ApiCallArg>())
+    void createApiCall(const QString &apiCallSlotName, const QList<ApiTypeAndVarName> &requestArgs = QList<ApiTypeAndVarName>(), const QList<ApiTypeAndVarName> &responseArgs = QList<ApiTypeAndVarName>())
     {
         ApiCall apiCall(this, apiCallSlotName, requestArgs, responseArgs);
         ApiCalls.append(apiCall);
