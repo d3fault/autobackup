@@ -115,7 +115,7 @@ void DocumentTimelineWebWidget::handleRegisterSubmitVideoWidgetFinished(WDialog:
         return;
     if(dialogCode == WDialog::Accepted)
     {
-        m_Session->requestNewDocumentTimelineSubmitRegistrationAttemptVideo(this->sessionId(), boost::bind(&DocumentTimelineWebWidget::handleDocumentTimelineSubmitRegistrationAttemptVideoFinished, this, _1), m_RegisterSubmitVideoWidget->desiredUsername(), m_RegisterSubmitVideoWidget->password(), filePathToQByteArray(m_RegisterSubmitVideoWidget->filePathOfJustUploadedRegistrationAttemptVideo()));
+        m_Session->requestNewDocumentTimelineSubmitRegistrationAttemptVideo(this->sessionId(), boost::bind(&DocumentTimelineWebWidget::handleDocumentTimelineSubmitRegistrationAttemptVideoFinished, this, _1), m_RegisterSubmitVideoWidget->desiredUsername(), m_RegisterSubmitVideoWidget->password(), m_RegisterSubmitVideoWidget->filePathOfJustUploadedRegistrationAttemptVideo());
         requestPending();
     }
     m_RegisterSubmitVideoWidget.reset();

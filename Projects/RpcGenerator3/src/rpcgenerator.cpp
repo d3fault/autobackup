@@ -104,11 +104,11 @@ void RpcGenerator::generateRpc()
 
     api.createApiCall("registrationVideoApprover_getOldestNotDoneRegistrationAttempsVideo"
                             , NoApiCallArgs
-                            , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "getOldestNotDoneRegistrationAttemptVideoSuccess") << ApiTypeAndVarName("QString", "username") << ApiTypeAndVarName("QByteArray", "registrationAttemptVideo") << ApiTypeAndVarName("QString", "dataUserMustHaveRecitedInRegistrationAttemptVideo")
+                            , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "getOldestNotDoneRegistrationAttemptVideoSuccess") << ApiTypeAndVarName("QString", "usernameAttemptingToRegister") << ApiTypeAndVarName("QByteArray", "registrationAttemptVideo") << ApiTypeAndVarName("QString", "dataUserMustHaveRecitedInRegistrationAttemptVideo")
                       );
 
     api.createApiCall("registrationVideoAttemptApprover_acceptOrRejectRegistrationAttemptVideo"
-                            , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "acceptIfTrue_rejectIfFalse") << ApiTypeAndVarName("QString", "username")
+                            , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "acceptIfTrue_rejectIfFalse") << ApiTypeAndVarName("QString", "usernameAttemptingToRegister")
                             , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "acceptOrRejectRegistrationAttemptVideoSuccess")
                       );
 

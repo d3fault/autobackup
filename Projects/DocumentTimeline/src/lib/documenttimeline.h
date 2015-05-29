@@ -8,6 +8,7 @@
 #include "idocumenttimeline.h"
 
 #include <QFile>
+#include <QCryptographicHash>
 
 class QSettings;
 
@@ -19,6 +20,8 @@ public:
 private:
     QSettings *m_DocumentTimelineDocumentTimelineDeclarationsOfIntentToAttemptRegistrationDb;
     QSettings *m_DocumentTimelineRegistrationAttemptsDb;
+    QSettings *m_DocumentTimelineRegistrationAttemptsApprovalsOrRejectionsDb;
+    QSettings *m_DocumentTimelineRegisteredUsersDb;
     QSettings *m_DocumentTimelineDb;
 
     static QByteArray documentJsonToHexHash(const QByteArray &documentJson);
@@ -30,6 +33,14 @@ private:
             return QByteArray();
         return file.readAll();
     }
+    static inline QString b64hashSaltedPassword(QString password, QString passwordSalt)
+    {
+        QString passwordSalted = password + passwordSalt; //woot
+        QByteArray passwordSaltedAsByteArrayForHashing = passwordSalted.toUtf8();
+        QByteArray passwordSaltedSha1 = QCryptographicHash::hash(passwordSaltedAsByteArrayForHashing, QCryptographicHash::Sha1);
+        QString ret(passwordSaltedSha1.toBase64());
+        return ret;
+    }
 public slots:
     void getLatestDocuments(IDocumentTimelineGetLatestDocumentsRequest *request);
     void declareIntentToAttemptRegistration(IDocumentTimelineDeclareIntentToAttemptRegistrationRequest *request, QString fullName, QString desiredUsername, QString password, bool acceptedCLA, QString fullNameSignature);
@@ -37,7 +48,7 @@ public slots:
     void login(IDocumentTimelineLoginRequest *request, QString username, QString password);
     void post(IDocumentTimelinePostRequest *request, QString username, QByteArray data, QString licenseIdentifier);
     void registrationVideoApprover_getOldestNotDoneRegistrationAttempsVideo(IDocumentTimelineRegistrationVideoApprover_getOldestNotDoneRegistrationAttempsVideoRequest *request);
-    void registrationVideoAttemptApprover_acceptOrRejectRegistrationAttemptVideo(IDocumentTimelineRegistrationVideoAttemptApprover_acceptOrRejectRegistrationAttemptVideoRequest *request, bool acceptIfTrue_rejectIfFalse, QString username);
+    void registrationVideoAttemptApprover_acceptOrRejectRegistrationAttemptVideo(IDocumentTimelineRegistrationVideoAttemptApprover_acceptOrRejectRegistrationAttemptVideoRequest *request, bool acceptIfTrue_rejectIfFalse, QString usernameAttemptingToRegister);
     void logout(IDocumentTimelineLogoutRequest *request);
 };
 
