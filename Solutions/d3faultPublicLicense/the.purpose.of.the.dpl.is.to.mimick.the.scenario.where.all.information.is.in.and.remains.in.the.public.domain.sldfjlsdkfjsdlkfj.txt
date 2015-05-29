@@ -1,0 +1,2 @@
+The point of the DPL:
+If the d3fault public license was the default public license (and you couldn't/didn't-have-to 'claim copyright' (which you don't... but in a hypothetical situation, you might)), then everything would be effectively in the public domain.

@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1432882866
+Documents/minddump/:1432892280
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1498,6 +1498,7 @@ Documents/minddump/lksdjflkjasdfousdlfkjsodifusdklfjsoudfslfdjosufdl.just.say.co
 Documents/minddump/lksdjflkjsalkdfjklwerouslkjdfsodufsdlkfj.txt:1396905841
 Documents/minddump/lksdjflkjsdklfjsdklfjsdofuisldkjfsdufsdofiulkjsdfoiudsflk.txt:1392191501
 Documents/minddump/lksdjflkjsdlkjflksdjfosudlfkjsdofulwejfsdofusldjfksd.txt:1411442633
+Documents/minddump/lksdjflksdjfkljsdfkljsklfjlskdjflksdjflksdjflksdjflkjsdlfkjsdlkfjsdlkfjlskdjflksd.txt:1432889969
 Documents/minddump/lksdjflksdjflksdjfkljsdklfjsdklfjsdlkfjsdlkfjsldkjf.txt:1414704176
 Documents/minddump/lksdjflksdjflksjdflkjsdlfjlsdkjflkjsdfljdsflkjsdflkjdslfkj.txt:1423503741
 Documents/minddump/lksdjflksdjflksjdlfkjsdlkfjslkdfjlksdjflkjsdflkjsdlkfhlkjsdflkjdsf.txt:1419450329
@@ -2098,6 +2099,7 @@ Documents/minddump/sdfouwerlkjsdfosdflkajsdflksdjflkjsdfsdofusdfkjsdfioufsdkjfso
 Documents/minddump/sdfouwerlkjsdfousdflkjsdfhsdlfkjsdofudlkfjsdofysdfjsdofusdfklj.txt:1404482178
 Documents/minddump/sdfsadlfkjsdlkjflkjsdflkjsdofulkjweroulskjdflskdf.txt:1396204411
 Documents/minddump/sdfsdfhlskdjflksdjfhsdflkjsdlkfjouwerlkjsdf.txt:1402008336
+Documents/minddump/sdfsdfldjflksdjflksdjflksdjflksjdflkjsdlfkjsdlkfjsdlkfjslkdfjlksdjf.txt:1432892280
 Documents/minddump/sdfsdflkfsdfkljsdlfkjsdofuisdlkjfouiwerlkjoufdsl.txt:1366068173
 Documents/minddump/sdfsdflkjsdfoieuraeirasdlfkjsdflksdfoiurewklj.txt:1338983671
 Documents/minddump/sdfsdflksdjfouwelrjkousdlfkjasodfuljsdfouwlekjrouisldfkjsofiu.txt:1370675888
@@ -2250,6 +2252,7 @@ Documents/minddump/sdlfkjsklfjsdofuljeroulkdjsfousdflkjsdfousadlfkjsodfulkewroiu
 Documents/minddump/sdlfkjsldfkjsdofulksdjfousdflkjsdofulskdjfousdflkjsdofu.txt:1371778903
 Documents/minddump/sdlfkjsldfkjsldkfjsdlfkjosdfulsdfjosudflskjfdouwelrkjoiusdflkjsdfoul.txt:1381781043
 Documents/minddump/sdlfkjsldjflsdjflkjsdfkljsdklfjouwelrkjsodfusdlkfjlsdkjflsdkflksjdfkl.txt:1408991742
+Documents/minddump/sdlfkjsldkfjksldjfklsdjfkljsdfkljsdklfjskdlfjklsdjfklsdjfklsjdfklsjdklf.txt:1432890761
 Documents/minddump/sdlfkjsldkfjksldjfksdjfksjdflkjsdflkjsdlkfjsdlkfjlskdjflks.txt:1432365584
 Documents/minddump/sdlfkjsldkfjlksdjfousdflkjsdouewljrousdlfkjsdofui.txt:1392163065
 Documents/minddump/sdlfkjsldkfjosdufljweorulkjdfoisudfljsdofulwekjrousldfjosudfouo.txt:1370590000
@@ -5901,7 +5904,7 @@ Solutions/NothingIsKnownParadox/src/nothingisknownparadox.cpp:1426599928
 Solutions/NothingIsKnownParadox/src/nothingisknownparadox.h:1426596842
 Solutions/NothingIsKnownParadox/src/nothingisknownparadoxcli.cpp:1426600713
 Solutions/NothingIsKnownParadox/src/nothingisknownparadoxcli.h:1426600654
-Solutions/d3faultPublicLicense/:1431551668
+Solutions/d3faultPublicLicense/:1432890997
 Solutions/d3faultPublicLicense/tools/:1400836628
 Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/:1427380549
 Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrepender/src/:1427380549
@@ -5914,6 +5917,7 @@ Solutions/d3faultPublicLicense/tools/D3faultPublicLicenseCopyrightHeaderBulkPrep
 Solutions/d3faultPublicLicense/chose.to.not.do.network.clause.but.eh.may.regret.it.later.txt:1387589098
 Solutions/d3faultPublicLicense/d3fault.public.license.v1.draft.txt:1378374962
 Solutions/d3faultPublicLicense/header.prepend.dpl.v3.d3fault.launch.distribution.txt:1400664477
+Solutions/d3faultPublicLicense/the.purpose.of.the.dpl.is.to.mimick.the.scenario.where.all.information.is.in.and.remains.in.the.public.domain.sldfjlsdkfjsdlkfj.txt:1432891016
 Solutions/hackyVideoBullshitSite/:1427816177
 Solutions/hackyVideoBullshitSite/design/:1400229918
 Solutions/hackyVideoBullshitSite/design/dont.use.atomics.for.synchronization.lol.overkill.just.rely.on.fs.buffer.cache.txt:1397469831
