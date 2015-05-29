@@ -7,6 +7,7 @@ using namespace Wt;
 #define DOCUMENTTIMELINEREGISTERWEBDIALOGWIDGET_H
 
 #include <QString>
+#include <QScopedPointer>
 
 class DocumentTimelineRegisterWebDialogWidget : public WDialog
 {
@@ -17,7 +18,6 @@ public:
     QString password() const;
     bool acceptedClaCheckbox() const;
     QString fullNameSignature() const;
-    ~DocumentTimelineRegisterWebDialogWidget();
 private:
     WLineEdit *m_FullNameLineEdit;
     WLineEdit *m_DesiredUsernameLineEdit;
@@ -26,12 +26,11 @@ private:
     WCheckBox *m_AcceptedCLACheckBox;
     WLineEdit *m_FullNameSignatureLineEdit;
 
-    WMessageBox *m_MessageBox;
+    QScopedPointer<WMessageBox> m_MessageBox;
 
     void handleSubmitClicked();
     bool registerSubmissionDetailsAreValid() const;
     void handleMessageBoxFinished(DialogCode dialogCode);
-    void deleteMessageBoxIfInstantiated();
 };
 
 #endif // DOCUMENTTIMELINEREGISTERWEBDIALOGWIDGET_H

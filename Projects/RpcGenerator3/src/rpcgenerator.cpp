@@ -82,7 +82,7 @@ void RpcGenerator::generateRpc()
                       );
 
     api.createApiCall("submitRegistrationAttemptVideo"
-                          , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("QString", "desiredUsername") << ApiTypeAndVarName("QString", "password") << ApiTypeAndVarName("QByteArray", "registrationAttemptSubmissionVideo")
+                          , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("QString", "desiredUsername") << ApiTypeAndVarName("QString", "password") << ApiTypeAndVarName("QString", "registrationAttemptSubmissionVideoLocalFilePath")
                           , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "registrationAttemptVideoSubmissionSuccess")
                       );
 

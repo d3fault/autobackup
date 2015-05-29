@@ -7,6 +7,8 @@
 
 #include "idocumenttimeline.h"
 
+#include <QFile>
+
 class QSettings;
 
 class DocumentTimeline : public IDocumentTimeline
@@ -15,14 +17,23 @@ class DocumentTimeline : public IDocumentTimeline
 public:
     explicit DocumentTimeline(QObject *parent = 0);
 private:
+    QSettings *m_DocumentTimelineDocumentTimelineDeclarationsOfIntentToAttemptRegistrationDb;
     QSettings *m_DocumentTimelineRegistrationAttemptsDb;
     QSettings *m_DocumentTimelineDb;
 
     static QByteArray documentJsonToHexHash(const QByteArray &documentJson);
+    static QString generateB64Salt(QString seed);
+    static inline QByteArray filePathToQByteArray(QString filePath)
+    {
+        QFile file(filePath);
+        if(!file.open(QIODevice::ReadOnly))
+            return QByteArray();
+        return file.readAll();
+    }
 public slots:
     void getLatestDocuments(IDocumentTimelineGetLatestDocumentsRequest *request);
     void declareIntentToAttemptRegistration(IDocumentTimelineDeclareIntentToAttemptRegistrationRequest *request, QString fullName, QString desiredUsername, QString password, bool acceptedCLA, QString fullNameSignature);
-    void submitRegistrationAttemptVideo(IDocumentTimelineSubmitRegistrationAttemptVideoRequest *request, QString desiredUsername, QString password, QByteArray registrationAttemptSubmissionVideo);
+    void submitRegistrationAttemptVideo(IDocumentTimelineSubmitRegistrationAttemptVideoRequest *request, QString desiredUsername, QString password, QString registrationAttemptSubmissionVideoLocalFilePath);
     void login(IDocumentTimelineLoginRequest *request, QString username, QString password);
     void post(IDocumentTimelinePostRequest *request, QString username, QByteArray data, QString licenseIdentifier);
     void registrationVideoApprover_getOldestNotDoneRegistrationAttempsVideo(IDocumentTimelineRegistrationVideoApprover_getOldestNotDoneRegistrationAttempsVideoRequest *request);

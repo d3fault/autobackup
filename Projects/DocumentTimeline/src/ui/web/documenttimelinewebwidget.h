@@ -7,13 +7,17 @@ using namespace Wt;
 #define DOCUMENTTIMELINEWEBWIDGET_H
 
 #include <QStringList>
+#include <QScopedPointer>
+#include <QFile>
 
 #include "documenttimelinedocwebwidget.h"
+#include "documenttimelineregisterwebdialogwidget.h"
+#include "documenttimelineregistersubmitvideowidget.h"
 
 class IDocumentTimeline;
 class DocumentTimelineSession;
-class DocumentTimelineRegisterWebDialogWidget;
-class DocumentTimelineRegisterSubmitVideoWidget;
+//class DocumentTimelineRegisterWebDialogWidget;
+//class DocumentTimelineRegisterSubmitVideoWidget;
 
 class DocumentTimelineWebWidget : public WApplication
 {
@@ -27,10 +31,10 @@ public:
 private:
     friend class DocumentTimelineWeb;
     DocumentTimelineSession *m_Session;
-    DocumentTimelineRegisterWebDialogWidget *m_RegisterWidget;
-    DocumentTimelineRegisterSubmitVideoWidget *m_RegisterSubmitVideoWidget;
+    QScopedPointer<DocumentTimelineRegisterWebDialogWidget> m_RegisterWidget;
+    QScopedPointer<DocumentTimelineRegisterSubmitVideoWidget> m_RegisterSubmitVideoWidget;
 
-    WMessageBox *m_MessageBox;
+    QScopedPointer<WMessageBox> m_MessageBox;
 
     QList<DocumentTimelineDocWebWidget*> m_DocumentTimelineDocsWidgets;
 
@@ -42,14 +46,12 @@ private:
     void setMessageBoxMessage(const WString &caption, const WString &text);
     void handleMessageBoxFinished(WDialog::DialogCode dialogCode);
 
-    void deleteRegisterWidgetIfInstantiated();
-    void deleteRegisterSubmitVideoWidgetIfInstantiated();
-    void deletMessageBoxIfInstantiated();
-
     void handleRegisterWidgetFinished(WDialog::DialogCode dialogCode);
+    void handleRegisterSubmitVideoWidgetFinished(WDialog::DialogCode dialogCode);
 
     void handleDocumentTimelineGetLatestDocumentsFinished(bool getLatestTimelineDocsSuccess, QList<QByteArray> latestTimelineDocuments);
     void handleDocumentTimelineDeclareIntentToAttemptRegistrationFinished(bool intentToRegisterDeclarationSuccess, QString dataUserMustReciteInRegistrationAttemptVideo);
+    void handleDocumentTimelineSubmitRegistrationAttemptVideoFinished(bool registrationAttemptVideoSubmissionSuccess);
 };
 
 #endif // DOCUMENTTIMELINEWEBWIDGET_H

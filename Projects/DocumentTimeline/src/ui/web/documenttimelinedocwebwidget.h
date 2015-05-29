@@ -21,11 +21,13 @@ private:
     void visualizeTimestamp(const QDateTime &timestamp);
     void visualizeUsername(const QString &username);
     void visualizeLicenseIdentifier(const QString &licenseIdentifier);
-    void visualizeDocAsBestYouCanBasedOnOptionalJsonTags(QByteArray doc);
+    void visualizeDocAsBestAsPossible(QByteArray doc);
+    void visualizeDocAsBestAsPossibleBasedOnOptionalJsonTags(const QJsonObject &jsonDocObject);
     Wt::WMemoryResource *docDjsonFieldToWMemoryStream(const QJsonObject &jsonDocObject, WObject *parent = 0) const;
     void visualize_TUDL_DocAsBestYouCanBasedOnOptionalJsonTags(const QJsonObject &jsonDocObject);
     void visualize_TUDL_Mimetyped_DocAsBestYouCanBasedOnOptionalJsonTags(const QJsonObject &jsonDocObject, const QString &mimeType);
     void visualize_TUDL_NoMimetype_DocAsBestYouCanBasedOnOptionalJsonTags(const QJsonObject &jsonDocObject);
+    void unableToVisualizeDocument();
 };
 
 #endif // DOCUMENTTIMELINEDOCWEBWIDGET_H

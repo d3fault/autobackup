@@ -1,0 +1,7 @@
+Seriously, you guys.... try to compile any self coded C/C++ application on your first try without any syntax/etc errors. That's what you _THINK_ you're doing whenever you use an interpretted/JIT application.
+
+You should only use interpretted/JIT script-esq applications once you've mastered the ability to code a C/C++ application without any syntax/etc errors on your first *compile attempt*. Good fucking luck with that.
+
+Interpretted/JIT applications hide syntax/etc errors that are not in uncommonly used code paths.
+
+Some JITs use a syntactically screened intermediate language. I'm not talking about those JITs (despite their JIT abilities still being useless most of the time)

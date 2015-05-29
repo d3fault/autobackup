@@ -13,13 +13,15 @@
 #include "documenttimelinecommon.h"
 
 #define DocumentTimeline_ORGANIZATION "DocumentTimelineOrganization"
-#define DocumentTimeline_APPLICATION "DocumentTimeline"
-#define DocumentTimelineRegistrationAttempts_APPLICATION DocumentTimeline_APPLICATION "RegistrationAttempts"
+#define DocumentTimeline_QSettingsApplication_aka_DbName "DocumentTimeline"
+#define DocumentTimelineDeclarationsOfIntentToAttemptRegistration_QSettingsApplication_aka_DbName DocumentTimeline_QSettingsApplication_aka_DbName "DeclarationsOfIntentToAttemptRegistration"
+#define DocumentTimelineRegistrationAttempts_QSettingsApplication_aka_DbName DocumentTimeline_QSettingsApplication_aka_DbName "RegistrationAttempts"
 
 DocumentTimeline::DocumentTimeline(QObject *parent)
     : IDocumentTimeline(parent)
-    , m_DocumentTimelineRegistrationAttemptsDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, DocumentTimeline_ORGANIZATION, DocumentTimelineRegistrationAttempts_APPLICATION, this))
-    , m_DocumentTimelineDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, DocumentTimeline_ORGANIZATION, DocumentTimeline_APPLICATION, this))
+    , m_DocumentTimelineDocumentTimelineDeclarationsOfIntentToAttemptRegistrationDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, DocumentTimeline_ORGANIZATION, DocumentTimelineDeclarationsOfIntentToAttemptRegistration_QSettingsApplication_aka_DbName, this))
+    , m_DocumentTimelineRegistrationAttemptsDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, DocumentTimeline_ORGANIZATION, DocumentTimelineRegistrationAttempts_QSettingsApplication_aka_DbName, this))
+    , m_DocumentTimelineDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, DocumentTimeline_ORGANIZATION, DocumentTimeline_QSettingsApplication_aka_DbName, this))
 {
     QStringList docKeys = m_DocumentTimelineDb->childKeys();
     if(docKeys.isEmpty())
@@ -42,6 +44,21 @@ DocumentTimeline::DocumentTimeline(QObject *parent)
 QByteArray DocumentTimeline::documentJsonToHexHash(const QByteArray &documentJson)
 {
     return QCryptographicHash::hash(documentJson, QCryptographicHash::Sha1).toHex();
+}
+QString DocumentTimeline::generateB64Salt(QString seed) //TODOmb: more cryptographically secure-er
+{
+    qint64 currentMSecsSinceEpoch = QDateTime::currentMSecsSinceEpoch();
+    QByteArray saltBuffer = QString::number(currentMSecsSinceEpoch).toUtf8();
+    saltBuffer.append(seed.toUtf8());
+    qsrand(currentMSecsSinceEpoch);
+#define SEED_PRE_B64_MAX_LEN 16
+    QByteArray saltPreB64 = QCryptographicHash::hash(saltBuffer, QCryptographicHash::Sha1);
+    int saltPreB64LenActual = qMin(saltPreB64.length(), SEED_PRE_B64_MAX_LEN);
+    int startIndex = qrand() % (saltPreB64.length()-saltPreB64LenActual);
+    QByteArray saltSelectedRange = saltPreB64.mid(startIndex, saltPreB64LenActual);
+    QByteArray saltB64 = saltSelectedRange.toBase64();
+    QString ret(saltB64);
+    return ret;
 }
 void DocumentTimeline::getLatestDocuments(IDocumentTimelineGetLatestDocumentsRequest *request)
 {
@@ -72,25 +89,63 @@ void DocumentTimeline::getLatestDocuments(IDocumentTimelineGetLatestDocumentsReq
 }
 void DocumentTimeline::declareIntentToAttemptRegistration(IDocumentTimelineDeclareIntentToAttemptRegistrationRequest *request, QString fullName, QString desiredUsername, QString password, bool acceptedCLA, QString fullNameSignature)
 {
-    if(m_DocumentTimelineRegistrationAttemptsDb->contains(desiredUsername))
+    if(m_DocumentTimelineDocumentTimelineDeclarationsOfIntentToAttemptRegistrationDb->contains(desiredUsername)/* || m_DocumentTimelineRegistrationAttemptsDb->contains(desiredUsername)*/)
     {
         request->respond(false, QString());
         return;
     }
     QJsonObject registrationAttemptDeclarationJsonObject;
     registrationAttemptDeclarationJsonObject.insert("fullName", fullName);
-    registrationAttemptDeclarationJsonObject.insert("passwordHashB64", password);
-    registrationAttemptDeclarationJsonObject.insert("passwordSaltB64", "TODOreq: blah");
+    QString passwordSalt = generateB64Salt(fullName + desiredUsername + password);
+    QString saltedPasswordHashB64 = salt(password, passwordSalt);
+    registrationAttemptDeclarationJsonObject.insert("saltedPasswordHashB64", saltedPasswordHashB64);
+    registrationAttemptDeclarationJsonObject.insert("passwordSaltB64", passwordSalt);
     registrationAttemptDeclarationJsonObject.insert("acceptedContributorLicenseAgreement", acceptedCLA);
     registrationAttemptDeclarationJsonObject.insert("fullNameSignature", fullNameSignature);
     QJsonDocument jsonDocument(registrationAttemptDeclarationJsonObject);
-    QString json(jsonDocument.toJson(QJsonDocument::Compact));
-    m_DocumentTimelineRegistrationAttemptsDb->setValue(desiredUsername, json);
-    request->respond(true, "TODOreq: some hash of their registration attempt details (and some crypto randomness probably) or something");
+    QByteArray jsonByteArray = jsonDocument.toJson(QJsonDocument::Compact);
+    QString jsonString(jsonByteArray);
+    m_DocumentTimelineDocumentTimelineDeclarationsOfIntentToAttemptRegistrationDb->setValue(desiredUsername, jsonString);
+
+    //now that the intent to register has been declared, generate the string the user must recite in their registration attempt video. it is a b64sha1 of their 'declaration of attempt to register' json doc
+    QByteArray sha1OfRegistrationAttemptDeclaration = QCryptographicHash::hash(jsonByteArray, QCryptographicHash::Sha1);
+    QByteArray b64sha1OfRegistrationDetailsKeyAndValuePersistedToDisk_ForUserToReciteOnVidByteArray = sha1OfRegistrationAttemptDeclaration.toBase64();
+    QString b64sha1OfRegistrationDetailsKeyAndValuePersistedToDisk_ForUserToReciteOnVid(b64sha1OfRegistrationDetailsKeyAndValuePersistedToDisk_ForUserToReciteOnVidByteArray);
+
+    request->respond(true, b64sha1OfRegistrationDetailsKeyAndValuePersistedToDisk_ForUserToReciteOnVid);
 }
-void DocumentTimeline::submitRegistrationAttemptVideo(IDocumentTimelineSubmitRegistrationAttemptVideoRequest *request, QString desiredUsername, QString password, QByteArray registrationAttemptSubmissionVideo)
+void DocumentTimeline::submitRegistrationAttemptVideo(IDocumentTimelineSubmitRegistrationAttemptVideoRequest *request, QString desiredUsername, QString password, QString registrationAttemptSubmissionVideoLocalFilePath)
 {
-    qFatal("DocumentTimeline::submitRegistrationAttemptVideo(IDocumentTimelineSubmitRegistrationAttemptVideoRequest *request, QString desiredUsername, QString password, QByteArray registrationAttemptSubmissionVideo) not yet implemented");
+    QString declarationOfRegistrationAttemptJsonStringMaybe = m_DocumentTimelineDocumentTimelineDeclarationsOfIntentToAttemptRegistrationDb->value(desiredUsername).toString();
+    if((declarationOfRegistrationAttemptJsonStringMaybe.isEmpty()) || (m_DocumentTimelineRegistrationAttemptsDb->contains(desiredUsername))) //registration attempt must already be declared, registration attempt must not have been recieved yet
+    {
+        request->respond(false);
+        return;
+    }
+
+    QByteArray declarationOfRegistrationAttemptJsonByteArray = declarationOfRegistrationAttemptJsonStringMaybe.toUtf8();
+    QJsonParseError parseError;
+    QJsonDocument declarationOfRegistrationAttemptJson = QJsonDocument::fromJson(declarationOfRegistrationAttemptJsonByteArray, parseError);
+    if(parseError.error != QJsonParseError::NoError)
+    {
+        request->respond(false); //TODOmb: OT: request could be a shared pointer (perhaps explicitly shared? idfk (implementation detail is implementation detail? really a typedef QSharedPointer<BlahRequest> Request; would do)). anyways, when the last reference goes out of scope, respond is called. 'success' is a property of every request, and it defaults to true. so anywhere you have an error case, you can merely 'return;'. If you want to continue asynchronously processing the request, you save it somewhere until you are ready to continue asynchronously processing it. the saving of it increases the reference count, which postpones the respond()'ing. the async 'continue' callback itself is the best place to store the copy of the request, becuase then when that method goes out of scope, the reference count is decremented like desired. semi-ot: a requirement of this is that every response arg type must be default constructable (i still like my "one api-request-response 'finished' handler per api-request in the front-end" design, because it funnels the codepaths down to one)
+        return;
+    }
+    if(!declarationOfRegistrationAttemptJson.isObject())
+    {
+        request->respond(false);
+        return;
+    }
+    QJsonObject declarationOfRegistrationAttemptJsonObject = declarationOfRegistrationAttemptJson.object();
+    QByteArray registrationAttemptSubmissionVideoFileContents = filePathToQByteArray(registrationAttemptSubmissionVideoLocalFilePath);
+    QString registrationAttemptSubmissionVideoFileContentsString(registrationAttemptSubmissionVideoFileContents.toBase64());
+    declarationOfRegistrationAttemptJsonObject.insert("registrationAttemptSubmissionVideoB64", registrationAttemptSubmissionVideoFileContentsString);
+
+    QString registrationAttemptJsonByteArray = QString(QJsonDocument(declarationOfRegistrationAttemptJsonObject).toJson(QJsonDocument::Compact));
+    m_DocumentTimelineRegistrationAttemptsDb->setValue(desiredUsername, registrationAttemptJsonByteArray);
+    //m_DocumentTimelineDocumentTimelineDeclarationsOfIntentToAttemptRegistrationDb->remove(desiredUsername); <-- we don't/can't remove it because it opens up race conditions that I don't want to deal with
+
+    request->respond(true);
 }
 void DocumentTimeline::login(IDocumentTimelineLoginRequest *request, QString username, QString password)
 {

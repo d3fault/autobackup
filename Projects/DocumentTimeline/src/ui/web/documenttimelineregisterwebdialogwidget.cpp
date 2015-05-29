@@ -8,7 +8,6 @@ using namespace Wt;
 
 DocumentTimelineRegisterWebDialogWidget::DocumentTimelineRegisterWebDialogWidget()
     : WDialog(DocumentTimelineWebWidget_REGISTER)
-    , m_MessageBox(NULL)
 {
     setModal(false);
     setClosable(true);
@@ -91,19 +90,13 @@ QString DocumentTimelineRegisterWebDialogWidget::fullNameSignature() const
     QString ret = QString::fromUtf8(fullNameSignatureWString.toUTF8().c_str());
     return ret;
 }
-DocumentTimelineRegisterWebDialogWidget::~DocumentTimelineRegisterWebDialogWidget()
-{
-    deleteMessageBoxIfInstantiated();
-}
 void DocumentTimelineRegisterWebDialogWidget::handleSubmitClicked()
 {
     if(registerSubmissionDetailsAreValid())
         accept();
     else
     {
-        if(m_MessageBox)
-            delete m_MessageBox;
-        m_MessageBox = new WMessageBox();
+        m_MessageBox.reset(new WMessageBox());
         m_MessageBox->setCaption("Invalid Registration Details");
         m_MessageBox->setText("Some of your registration details were invalid. Please correct them before continuing");
         m_MessageBox->setModal(false);
@@ -118,13 +111,5 @@ bool DocumentTimelineRegisterWebDialogWidget::registerSubmissionDetailsAreValid(
 void DocumentTimelineRegisterWebDialogWidget::handleMessageBoxFinished(WDialog::DialogCode dialogCode)
 {
     Q_UNUSED(dialogCode)
-    deleteMessageBoxIfInstantiated();
-}
-void DocumentTimelineRegisterWebDialogWidget::deleteMessageBoxIfInstantiated()
-{
-    if(m_MessageBox)
-    {
-        delete m_MessageBox;
-        m_MessageBox = NULL;
-    }
+    m_MessageBox.reset();
 }
