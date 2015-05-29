@@ -19,14 +19,16 @@ HEADERS += ui/web/documenttimelineweb.h \
     ui/web/documenttimelinewebwidget.h \
     ui/web/documenttimelinedocwebwidget.h \
     ui/web/qbytearraywmemoryresource.h \
-    ui/web/documenttimelineregisterwebdialogwidget.h
+    ui/web/documenttimelineregisterwebdialogwidget.h \
+    ui/web/documenttimelineregistersubmitvideowidget.h
 
 SOURCES += ui/web/main.cpp \
     ui/web/documenttimelineweb.cpp \
     ui/web/documenttimelinewebwidget.cpp \
     ui/web/documenttimelinedocwebwidget.cpp \
     ui/web/qbytearraywmemoryresource.cpp \
-    ui/web/documenttimelineregisterwebdialogwidget.cpp
+    ui/web/documenttimelineregisterwebdialogwidget.cpp \
+    ui/web/documenttimelineregistersubmitvideowidget.cpp
 
 LIBS += -lwt -lwthttp -lboost_signals #TODOreq: compile time opt into -lboost_signals2 instead of 1
 

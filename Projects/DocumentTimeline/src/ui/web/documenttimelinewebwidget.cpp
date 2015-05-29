@@ -1,6 +1,7 @@
 #include <Wt/WLabel>
 #include <Wt/WEnvironment>
 #include <Wt/WAnchor>
+#include <Wt/WText>
 using namespace Wt;
 #include "documenttimelinewebwidget.h"
 
@@ -14,13 +15,17 @@ DocumentTimelineWebWidget::DocumentTimelineWebWidget(const WEnvironment &environ
     : WApplication(environment, version)
     , m_Session(NULL)
     , m_RegisterWidget(NULL)
+    , m_RegisterSubmitVideoWidget(NULL)
     , m_MessageBox(NULL)
 {
     setCssTheme("polished");
 
+    WText *documentTimelineTitle = new WText("<h2>Document Timeline</h2>", root());
+    documentTimelineTitle->setFloatSide(Wt::Top | Wt::CenterX);
+
     WAnchor *registerAnchor = new WAnchor(WLink(WLink::InternalPath, DocumentTimelineWebWidget_INTERNAL_PATH_REGISTER), DocumentTimelineWebWidget_REGISTER, root());
     registerAnchor->setMargin(WLength(DocumentTimelineWebWidget_MARGIN_PX, WLength::Pixel));
-    registerAnchor->setFloatSide(Wt::Right);
+    registerAnchor->setFloatSide(Wt::Top | Wt::Right);
     new WBreak(root());
     for(int i = 0; i < NUM_DOCUMENT_TIMELINE_DOCS_ON_FRONT_PAGE; ++i)
     {
@@ -42,6 +47,8 @@ DocumentTimelineWebWidget::~DocumentTimelineWebWidget()
 {
     if(m_Session)
         delete m_Session; //TODOmb: have the business thread be the one to delete the session?
+    deleteRegisterWidgetIfInstantiated();
+    deleteRegisterSubmitVideoWidgetIfInstantiated();
     deletMessageBoxIfInstantiated();
 }
 WApplication *DocumentTimelineWebWidget::documentTimelineWebWidgetEntryPoint(const WEnvironment &environment)
@@ -97,6 +104,22 @@ void DocumentTimelineWebWidget::handleMessageBoxFinished(WDialog::DialogCode dia
     Q_UNUSED(dialogCode)
     deletMessageBoxIfInstantiated();
 }
+void DocumentTimelineWebWidget::deleteRegisterWidgetIfInstantiated()
+{
+    if(m_RegisterWidget)
+    {
+        delete m_RegisterWidget;
+        m_RegisterWidget = NULL;
+    }
+}
+void DocumentTimelineWebWidget::deleteRegisterSubmitVideoWidgetIfInstantiated()
+{
+    if(m_RegisterSubmitVideoWidget)
+    {
+        delete m_RegisterSubmitVideoWidget;
+        m_RegisterSubmitVideoWidget = NULL;
+    }
+}
 void DocumentTimelineWebWidget::deletMessageBoxIfInstantiated()
 {
     if(m_MessageBox)
@@ -149,5 +172,10 @@ void DocumentTimelineWebWidget::handleDocumentTimelineDeclareIntentToAttemptRegi
         setMessageBoxMessage("Failed to submit registration details", "Something went wrong trying to submit the registration details. Maybe the username is already taken, maybe the db has crashed"); //TODOreq: dbError and lcbOpSuccess
         return;
     }
-    //TODOreq: submit registration video form
+    if(m_RegisterSubmitVideoWidget)
+        delete m_RegisterSubmitVideoWidget;
+    m_RegisterSubmitVideoWidget = new DocumentTimelineRegisterSubmitVideoWidget();
+    m_RegisterSubmitVideoWidget->finished().connect(this, &DocumentTimelineWebWidget::handleRegisterSubmitVideoWidgetFinished);
+    m_RegisterSubmitVideoWidget->show();
+    return;
 }

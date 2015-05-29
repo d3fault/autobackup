@@ -13,6 +13,7 @@ using namespace Wt;
 class IDocumentTimeline;
 class DocumentTimelineSession;
 class DocumentTimelineRegisterWebDialogWidget;
+class DocumentTimelineRegisterSubmitVideoWidget;
 
 class DocumentTimelineWebWidget : public WApplication
 {
@@ -27,6 +28,8 @@ private:
     friend class DocumentTimelineWeb;
     DocumentTimelineSession *m_Session;
     DocumentTimelineRegisterWebDialogWidget *m_RegisterWidget;
+    DocumentTimelineRegisterSubmitVideoWidget *m_RegisterSubmitVideoWidget;
+
     WMessageBox *m_MessageBox;
 
     QList<DocumentTimelineDocWebWidget*> m_DocumentTimelineDocsWidgets;
@@ -38,6 +41,9 @@ private:
 
     void setMessageBoxMessage(const WString &caption, const WString &text);
     void handleMessageBoxFinished(WDialog::DialogCode dialogCode);
+
+    void deleteRegisterWidgetIfInstantiated();
+    void deleteRegisterSubmitVideoWidgetIfInstantiated();
     void deletMessageBoxIfInstantiated();
 
     void handleRegisterWidgetFinished(WDialog::DialogCode dialogCode);
