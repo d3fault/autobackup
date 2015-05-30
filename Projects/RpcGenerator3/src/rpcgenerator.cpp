@@ -65,7 +65,7 @@ void RpcGenerator::generateRpc()
 
     api.createApiCall("getLatestDocuments"
                           , NoApiCallArgs
-                          , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "getLatestDocumentsSuccess") << ApiTypeAndVarName("QList<QByteArray>", "latestDocuments")
+                          , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("QList<QByteArray>", "latestDocuments")
                           //, QStringList() << "<QDateTime>"
                           //, QStringList() << "<QDateTime>"
                       );
@@ -81,22 +81,22 @@ void RpcGenerator::generateRpc()
 
     api.createApiCall("declareIntentToAttemptRegistration"
                           , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("QString", "fullName") << ApiTypeAndVarName("QString", "desiredUsername") << ApiTypeAndVarName("QString", "password") << ApiTypeAndVarName("bool", "acceptedCLA") << ApiTypeAndVarName("QString", "fullNameSignature")
-                          , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "intentToRegisterDeclarationSuccess") << ApiTypeAndVarName("QString", "dataUserMustReciteInRegistrationAttemptVideo")
+                          , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("QString", "dataUserMustReciteInRegistrationAttemptVideo")
                       );
 
     api.createApiCall("submitRegistrationAttemptVideo"
                           , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("QString", "desiredUsername") << ApiTypeAndVarName("QString", "password") << ApiTypeAndVarName("QString", "registrationAttemptSubmissionVideoLocalFilePath")
-                          , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "registrationAttemptVideoSubmissionSuccess")
+                          , NoApiCallArgs
                       );
 
     api.createApiCall("login"
                           , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("QString", "username") << ApiTypeAndVarName("QString", "password")
-                          , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "loginSuccess")
+                          , NoApiCallArgs
                       );
 
     api.createApiCall("post"
                               , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("QString", "username") << ApiTypeAndVarName("QByteArray", "data") << ApiTypeAndVarName("QString", "licenseIdentifier")
-                              , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "postSuccess") << ApiTypeAndVarName("QDateTime", "timestamp") << ApiTypeAndVarName("QByteArray", "docKey_aka_docHashHex")
+                              , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("QDateTime", "timestamp") << ApiTypeAndVarName("QByteArray", "docKey_aka_docHashHex")
                               , QStringList() << "<QDateTime>"
                               //, QStringList() << "<QDateTime>"
                           );
@@ -107,17 +107,17 @@ void RpcGenerator::generateRpc()
 
     api.createApiCall("registrationVideoApprover_getOldestNotDoneRegistrationAttempsVideo"
                             , NoApiCallArgs
-                            , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "getOldestNotDoneRegistrationAttemptVideoSuccess") << ApiTypeAndVarName("QString", "usernameAttemptingToRegister") << ApiTypeAndVarName("QByteArray", "registrationAttemptVideo") << ApiTypeAndVarName("QString", "dataUserMustHaveRecitedInRegistrationAttemptVideo")
+                            , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("QString", "usernameAttemptingToRegister") << ApiTypeAndVarName("QByteArray", "registrationAttemptVideo") << ApiTypeAndVarName("QString", "dataUserMustHaveRecitedInRegistrationAttemptVideo")
                       );
 
     api.createApiCall("registrationVideoAttemptApprover_acceptOrRejectRegistrationAttemptVideo"
                             , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "acceptIfTrue_rejectIfFalse") << ApiTypeAndVarName("QString", "usernameAttemptingToRegister")
-                            , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "acceptOrRejectRegistrationAttemptVideoSuccess")
+                            , NoApiCallArgs
                       );
 
     api.createApiCall("logout"
-                          , NoApiCallArgs
-                          , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "logoutSuccess")
+                          //, NoApiCallArgs
+                          //, NoApiCallArgs
                       );
 #endif
 
@@ -197,7 +197,8 @@ QString RpcGenerator::apiCallToMethodCppSignature(ApiCall *apiCall, bool request
         apiCallHasArgs = !apiCall->ResponseArgs.isEmpty();
     QString commaIfThereAreApiArgs = apiCallHasArgs ? ", " : "";
     //ret.append("(bool internalError, bool apiCallSuccessFor_" + apiCall->ApiCallSlotName + ", " + apiCallArgsAsCommaSeparatedList + ")");
-    ret.append("(bool internalError, " + apiCall->ApiCallSlotName + "Success" + commaIfThereAreApiArgs + apiCallArgsAsCommaSeparatedList + ")");
+    QString internalErrorAndApiSuccessBool_String_IfResponse = (requestIfTrue ? "" : ("bool internalError, " + apiCall->ApiCallSlotName + "Success" + commaIfThereAreApiArgs));
+    ret.append("(" + internalErrorAndApiSuccessBool_String_IfResponse + apiCallArgsAsCommaSeparatedList + ")");
     return ret;
 }
 QString RpcGenerator::apiCallToRawCppDeclaration(ApiCall *apiCall, bool requestIfTrue)
@@ -252,7 +253,7 @@ QString RpcGenerator::apiCallToApiCallRequestMethodDefinitionInSessionSource(Api
     QString ret;
     QString requseterDomainSpecificRequestType = apiCallToRequestBaseName(apiCall) + (trueIfQt_falseIfWt ? "FromQt" : "FromWt");
     QString commaMaybe = apiCall->RequestArgs.isEmpty() ? "" : ", ";
-    QString requesterDomainSpecificCallbackArgsWithTypes = (trueIfQt_falseIfWt ? "QObject *objectToCallbackTo, const char *callbackSlot" : "const std::string &wtSessionId, boost::function<void (" + apiCallArgNamesToCommaSeparatedList(apiCall, false, false, false, true) + ")> wApplicationCallback");
+    QString requesterDomainSpecificCallbackArgsWithTypes = (trueIfQt_falseIfWt ? "QObject *objectToCallbackTo, const char *callbackSlot" : "const std::string &wtSessionId, boost::function<void (bool internalError, bool " + apiCall->ApiCallSlotName + "Success" + (apiCall->ResponseArgs.isEmpty() ? "" : ", ") + apiCallArgNamesToCommaSeparatedList(apiCall, false, false, false, true) + ")> wApplicationCallback");
     QString requesterDomainSpecificCallbackArgsWithoutTypes = (trueIfQt_falseIfWt ? "objectToCallbackTo, callbackSlot" : "wtSessionId, wApplicationCallback");
     ret.append(apiCallToApiCallRequestMethodDeclarationInSessionHeader(apiCall, requesterDomainSpecificCallbackArgsWithTypes, apiCall->ParentApi->ApiName + "Session::") + "\n{\n    " + requseterDomainSpecificRequestType + " *request = new " + requseterDomainSpecificRequestType + "(m_" + frontLetterToUpper(apiCall->ParentApi->ApiName) + ", " + requesterDomainSpecificCallbackArgsWithoutTypes + commaMaybe + apiCallArgNamesToCommaSeparatedList(apiCall, true, false, true, false) + ");\n    invokeRequest(request);\n}\n");
     return ret;
@@ -413,7 +414,7 @@ GeneratedFile RpcGenerator::generateApiSessionHeaderFile(Api *api, QDir outputDi
         apiCallMethodsOnSessionObjectHeader.append("    " + apiCallToApiCallRequestMethodDeclarationInSessionHeader(&apiCall, "QObject *objectToCallbackTo, const char *callbackSlot") + ";\n");
 
         //FromWt overload
-        apiCallMethodsOnSessionObjectHeader.append("    " + apiCallToApiCallRequestMethodDeclarationInSessionHeader(&apiCall, "const std::string &wtSessionId, boost::function<void (" + apiCallArgNamesToCommaSeparatedList(&apiCall, false, false, false, true) + ")> wApplicationCallback") + ";\n");
+        apiCallMethodsOnSessionObjectHeader.append("    " + apiCallToApiCallRequestMethodDeclarationInSessionHeader(&apiCall, "const std::string &wtSessionId, boost::function<void (bool internalError, bool " + apiCall.ApiCallSlotName + "Success" + (apiCall.ResponseArgs.isEmpty() ? "" : ", ") + apiCallArgNamesToCommaSeparatedList(&apiCall, false, false, false, true) + ")> wApplicationCallback") + ";\n");
     }
     beforeAndAfterStrings.insert("%API_CALL_METHODS_ON_SESSION_OBJECT_HEADER%", apiCallMethodsOnSessionObjectHeader);
 
@@ -639,6 +640,7 @@ void RpcGenerator::appendApiCallBeforeAndAfterStrings(TemplateBeforeAndAfterStri
     beforeAndAfterStrings->insert("%API_CALL_ARG_MEMBER_DEFINITIONS_IN_REQUEST_INTERFACE_HEADER%", apiCallRequestArgsToRequestInterfaceHeaderDefinitions(apiCall));
     beforeAndAfterStrings->insert("%API_CALL_REQUEST_INTERFACE_ARG_MEMBER_NAMES_WITH_LEADING_COMMASPACE_IF_ANY_ARGS%", apiCallRequestInterfaceArgMemberNamesWithLeadingCommaspaceIfAndArgs(apiCall));
     beforeAndAfterStrings->insert("%API_CALL_ADDITIONAL_INCLUDES_FOR_WHENEVER_THIS_API_CALLS_REQUEST_OR_RESPONSE_ARGS_ARE_PRESENT%", additionalIncludesForThisApiCall(apiCall));
+    beforeAndAfterStrings->insert("%COMMASPACE_IF_RESPONSE_HAS_ANY_ARGS%", (apiCall->ResponseArgs.isEmpty() ? "" : ", "));
 }
 void RpcGenerator::writeApiCallFiles(FilesToWriteType *filesToWrite, ApiCall *apiCall, QDir outputDir)
 {
