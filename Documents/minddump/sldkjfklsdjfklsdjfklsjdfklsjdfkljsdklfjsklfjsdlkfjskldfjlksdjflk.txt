@@ -1,0 +1,3 @@
+To do the "every api call has both a 'internalError' and '%slotApiCallNameOrWhatever%Success' boolean (they could come as response args)" change, I opened up DocumentTimeline on accident. Then I opened up RpcGenerator3 because it's where. But first I need to protytpe in CleanRoomWeb compiling api source prototype. So I got all the way to that prototype before I had to write a single line of code.
+
+Now that I have this written out, seems boring. Back to coding.

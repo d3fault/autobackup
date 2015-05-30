@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1432971934
+Documents/minddump/:1432973654
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1499,6 +1499,7 @@ Documents/minddump/lksdjfkjsdfkjsdlkjflksdjfljeworukjlsdflkjsdflkjdsflklkjdflksj
 Documents/minddump/lksdjflkjasdfousdlfkjsodifusdklfjsoudfslfdjosufdl.just.say.cool.instead.of.weird.txt:1391106722
 Documents/minddump/lksdjflkjsalkdfjklwerouslkjdfsodufsdlkfj.txt:1396905841
 Documents/minddump/lksdjflkjsdklfjsdklfjsdofuisldkjfsdufsdofiulkjsdfoiudsflk.txt:1392191501
+Documents/minddump/lksdjflkjsdklfjsdlkfjslkdjflksdjflksjdflkjsldkfjlksdjfklsjdlfkjsdfjs.txt:1432973654
 Documents/minddump/lksdjflkjsdlkjflksdjfosudlfkjsdofulwejfsdofusldjfksd.txt:1411442633
 Documents/minddump/lksdjflksdjfkljsdfkljsklfjlskdjflksdjflksdjflksdjflkjsdlfkjsdlkfjsdlkfjlskdjflksd.txt:1432889969
 Documents/minddump/lksdjflksdjflksdjfkljsdklfjsdklfjsdlkfjsdlkfjsldkjf.txt:1414704176
@@ -2237,6 +2238,7 @@ Documents/minddump/sdlfkjsdfklsjdflksdjfoiuwelkrjsdfsdfoiuwerlk.txt:1383772039
 Documents/minddump/sdlfkjsdfsdflkjeroufdkljweoriudlkfj.txt:1355901138
 Documents/minddump/sdlfkjsdjfjerfhkdjfhadsklhfslkj.txt:1355208932
 Documents/minddump/sdlfkjsdklfjasdlfkjsdflkjsdfosdfulkjwerwrefsfeowrukjdfousdflkjsdfousdflk.txt:1379279614
+Documents/minddump/sdlfkjsdklfjskldfjslkdjflsjdfklsdjflskdjflskdjflksdjflksdjflksdlfj.txt:1432973430
 Documents/minddump/sdlfkjsdkljflksjdaflkjsdfsdufosdufoisudfwoeurlksjdafousdflksjd.txt:1391115360
 Documents/minddump/sdlfkjsdlfkjsdfoiuewrlkjodfuf.txt:1356246842
 Documents/minddump/sdlfkjsdlfkjsdofulkjewroulkjdfsousdfljksdfouwelrkjoudflkjsdfou.txt:1370676703
@@ -2472,6 +2474,7 @@ Documents/minddump/sldkfjslkdjfskjdflksjdflkjsdfoudflkjsdfjkl.txt:1361983161
 Documents/minddump/sldkfjslkfjsldkjfoisudflkjsdfousdflkjweorulkdjfosudfslkdf.txt:1381113677
 Documents/minddump/sldkfjslkjdflksdjflkjsldfkjslkdjfklsdjfjsdlkfjsdlfkjslkj.txt:1426577530
 Documents/minddump/sldkfskljdfkjsdflkjsdflkjsdflkjsfdsfdlkj.txt:1361109442
+Documents/minddump/sldkjfklsdjfklsdjfklsjdfklsjdfkljsdklfjsklfjsdlkfjskldfjlksdjflk.txt:1432973199
 Documents/minddump/sldkjfksdjfksdjflksdjflksdjfkljsdklfjsdklfjsdlkjfskdljfklsj.txt:1429168636
 Documents/minddump/sldkjflaksjflkjsdfalkfjlksdjflksdjfeklwroufdlksf.free.bsd.jails.using.cpp.is.what.you.want.txt:1399584857
 Documents/minddump/sldkjflkdsjfksjdflkjsdlkfjsdlkjflskdjflksdjflksdjfls.txt:1415262236
@@ -3278,7 +3281,7 @@ Projects/DocumentTimeline/:1432650225
 Projects/DocumentTimeline/design/:1432625405
 Projects/DocumentTimeline/design/been.putting.this.app.off.for.too.many.years.of.my.life.and.its.really.quite.simple.but.is.time.consumingish.without.an.rpc.generator.txt:1432620116
 Projects/DocumentTimeline/design/reciting.string.at.registration.not.being.utlized.to.maximum.potential.txt:1432625405
-Projects/DocumentTimeline/src/:1432893437
+Projects/DocumentTimeline/src/:1432972838
 Projects/DocumentTimeline/src/lib/:1432893423
 Projects/DocumentTimeline/src/lib/documenttimeline.cpp:1432893423
 Projects/DocumentTimeline/src/lib/documenttimeline.h:1432885782
@@ -5104,9 +5107,9 @@ Projects/RpcGenerator/design/use.case.ugly.disconnect.detected.on.server.through
 Projects/RpcGenerator/design/when.not.using.all.action.dispensers.opt.to.ignore.error.and.also.a.primitive.design.for.making.sure.all.broadcast.signals.are.being.listened.to.txt:1370575570
 Projects/RpcGenerator3/:1432379285
 Projects/RpcGenerator3/assets/:1432549520
-Projects/RpcGenerator3/assets/apitemplates/:1432630394
+Projects/RpcGenerator3/assets/apitemplates/:1432977669
 Projects/RpcGenerator3/assets/apitemplates/cleanroom.cpp:1432433509
-Projects/RpcGenerator3/assets/apitemplates/cleanroom.h:1432433509
+Projects/RpcGenerator3/assets/apitemplates/cleanroom.h:1432973954
 Projects/RpcGenerator3/assets/apitemplates/cleanroom.pri:1432410952
 Projects/RpcGenerator3/assets/apitemplates/cleanroom.pro:1432251810
 Projects/RpcGenerator3/assets/apitemplates/cleanroomfrontpagedefaultviewrequestfromqt.cpp:1432433536
@@ -5122,10 +5125,10 @@ Projects/RpcGenerator3/assets/apitemplates/cleanroomsession.h:1432630394
 Projects/RpcGenerator3/assets/apitemplates/icleanroom.cpp:1432433568
 Projects/RpcGenerator3/assets/apitemplates/icleanroom.h:1432433509
 Projects/RpcGenerator3/assets/apitemplates/icleanroomfrontpagedefaultviewrequest.cpp:1432433568
-Projects/RpcGenerator3/assets/apitemplates/icleanroomfrontpagedefaultviewrequest.h:1432630355
+Projects/RpcGenerator3/assets/apitemplates/icleanroomfrontpagedefaultviewrequest.h:1432977456
 Projects/RpcGenerator3/assets/apitemplates/icleanroomnewsessionrequest.h:1432433509
 Projects/RpcGenerator3/assets/apitemplates/icleanroomrequest.h:1432433509
-Projects/RpcGenerator3/assets/compilingapitemplatessource/:1432649837
+Projects/RpcGenerator3/assets/compilingapitemplatessource/:1432974137
 Projects/RpcGenerator3/assets/compilingapitemplatessource/gui/:1432551684
 Projects/RpcGenerator3/assets/compilingapitemplatessource/gui/cleanroomgui.cpp:1432402927
 Projects/RpcGenerator3/assets/compilingapitemplatessource/gui/cleanroomgui.h:1432403082
@@ -5166,7 +5169,9 @@ Projects/RpcGenerator3/assets/compilingapitemplatessource/web/qbytearraywmemoryr
 Projects/RpcGenerator3/assets/compilingapitemplatessource/CleanRoomGui.pro:1432547322
 Projects/RpcGenerator3/assets/compilingapitemplatessource/CleanRoomWeb.pro:1432648694
 Projects/RpcGenerator3/assets/compilingapitemplatessource/cleanroom.pri:1432440320
-Projects/RpcGenerator3/design/:1432621028
+Projects/RpcGenerator3/design/:1432976353
+Projects/RpcGenerator3/design/rants/:1432976373
+Projects/RpcGenerator3/design/rants/sldfjsldkfjlskdjflksdjflksjdflkjsdklfjsdklfjsdlkfjlskdjflksdjflksdjflksdjlkf.txt:1432976373
 Projects/RpcGenerator3/design/an.ugly.but.simple.way.to.not.save.generated.code.but.to.save.modifications.of.that.generated.code.sdkfjlksdjflkdsfj.txt:1432394142
 Projects/RpcGenerator3/design/auto.drilldown.notes.sldkfjlskdfjlsdkfjsldkjfklsjdflksjdfklsdjflkjsdlfj.txt:1432553094
 Projects/RpcGenerator3/design/bootstrap.and.projectmanager.etc.etc.sldkfjlkdsfjklsdfjklsdjfklsjdlf.txt:1432393550
@@ -5176,12 +5181,12 @@ Projects/RpcGenerator3/design/rpc.generator.3.todo.txt:1432621068
 Projects/RpcGenerator3/design/slkdjflksjdfksjdfkjsdkfjsldkfjslkdjfklsdjfkljsdfkljsflkjsdlkfjslkdfj.txt:1432427925
 Projects/RpcGenerator3/design/so.many.directions.my.eyes.are.lighting.up.wewt.sldkfjslkdfjslkdfjksdlfjdslkjflksd.txt:1432395269
 Projects/RpcGenerator3/design/so.many.ways.to.improve.this.woot.sdjflsdkfjlsdkjflk.txt:1432379322
-Projects/RpcGenerator3/src/:1432877105
+Projects/RpcGenerator3/src/:1432977522
 Projects/RpcGenerator3/src/RpcGenerator3Cli.pro:1432392292
 Projects/RpcGenerator3/src/api.h:1432629856
 Projects/RpcGenerator3/src/main.cpp:1432241271
 Projects/RpcGenerator3/src/rpcbusinesstemplatestousewhengenerating.qrc:1432411247
-Projects/RpcGenerator3/src/rpcgenerator.cpp:1432884114
+Projects/RpcGenerator3/src/rpcgenerator.cpp:1432977522
 Projects/RpcGenerator3/src/rpcgenerator.h:1432630473
 Projects/RpcGenerator3/src/rpcgeneratorcli.cpp:1432251016
 Projects/RpcGenerator3/src/rpcgeneratorcli.h:1432243966

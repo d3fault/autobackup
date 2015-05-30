@@ -1,0 +1,8 @@
+I've been searching for the correct way to describe the following for a while now:
+There's two "kinds" of callbacks currently being generated/represented/supported by RpcGenerator3.
+
+
+Train of thought leading up to above: I made an Rpc Generator, you specify (nope:your rpc back) the kind of callback you want based on whatever you need at the time of request dispatch (from Qt or Wt).
+
+
+Despite "rpc back" sounding shit, Remote Procedural Callback actually has a nice ring to it. I fucking un-abbreviated(had:un-acronymed) it for the sake of brevity.
