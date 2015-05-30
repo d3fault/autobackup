@@ -49,9 +49,9 @@ private:
     void handleRegisterWidgetFinished(WDialog::DialogCode dialogCode);
     void handleRegisterSubmitVideoWidgetFinished(WDialog::DialogCode dialogCode);
 
-    void handleDocumentTimelineGetLatestDocumentsFinished(bool getLatestTimelineDocsSuccess, QList<QByteArray> latestTimelineDocuments);
-    void handleDocumentTimelineDeclareIntentToAttemptRegistrationFinished(bool intentToRegisterDeclarationSuccess, QString dataUserMustReciteInRegistrationAttemptVideo);
-    void handleDocumentTimelineSubmitRegistrationAttemptVideoFinished(bool registrationAttemptVideoSubmissionSuccess);
+    void handleDocumentTimelineGetLatestDocumentsFinished(bool internalError, bool getLatestTimelineDocsSuccess, QList<QByteArray> latestTimelineDocuments);
+    void handleDocumentTimelineDeclareIntentToAttemptRegistrationFinished(bool internalError, bool intentToRegisterDeclarationSuccess, QString dataUserMustReciteInRegistrationAttemptVideo);
+    void handleDocumentTimelineSubmitRegistrationAttemptVideoFinished(bool internalError, bool registrationAttemptVideoSubmissionSuccess);
 };
 
 #endif // DOCUMENTTIMELINEWEBWIDGET_H

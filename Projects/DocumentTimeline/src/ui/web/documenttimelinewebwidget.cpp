@@ -70,7 +70,7 @@ void DocumentTimelineWebWidget::handleDocumentTimelineSessionStarted(DocumentTim
     if(m_Session)
         delete m_Session;
     m_Session = session;
-    m_Session->requestNewDocumentTimelineGetLatestDocuments(this->sessionId(), boost::bind(&DocumentTimelineWebWidget::handleDocumentTimelineGetLatestDocumentsFinished, this, _1, _2));
+    m_Session->requestNewDocumentTimelineGetLatestDocuments(this->sessionId(), boost::bind(&DocumentTimelineWebWidget::handleDocumentTimelineGetLatestDocumentsFinished, this, _1, _2, _3));
 }
 void DocumentTimelineWebWidget::requestPending()
 {
@@ -104,7 +104,7 @@ void DocumentTimelineWebWidget::handleRegisterWidgetFinished(WDialog::DialogCode
         return;
     if(dialogCode == WDialog::Accepted)
     {
-        m_Session->requestNewDocumentTimelineDeclareIntentToAttemptRegistration(this->sessionId(), boost::bind(&DocumentTimelineWebWidget::handleDocumentTimelineDeclareIntentToAttemptRegistrationFinished, this, _1, _2), m_RegisterWidget->fullName(), m_RegisterWidget->desiredUsername(), m_RegisterWidget->password(), m_RegisterWidget->acceptedClaCheckbox(), m_RegisterWidget->fullNameSignature());
+        m_Session->requestNewDocumentTimelineDeclareIntentToAttemptRegistration(this->sessionId(), boost::bind(&DocumentTimelineWebWidget::handleDocumentTimelineDeclareIntentToAttemptRegistrationFinished, this, _1, _2, _3), m_RegisterWidget->fullName(), m_RegisterWidget->desiredUsername(), m_RegisterWidget->password(), m_RegisterWidget->acceptedClaCheckbox(), m_RegisterWidget->fullNameSignature());
         requestPending();
     }
     m_RegisterWidget.reset();
@@ -115,12 +115,12 @@ void DocumentTimelineWebWidget::handleRegisterSubmitVideoWidgetFinished(WDialog:
         return;
     if(dialogCode == WDialog::Accepted)
     {
-        m_Session->requestNewDocumentTimelineSubmitRegistrationAttemptVideo(this->sessionId(), boost::bind(&DocumentTimelineWebWidget::handleDocumentTimelineSubmitRegistrationAttemptVideoFinished, this, _1), m_RegisterSubmitVideoWidget->desiredUsername(), m_RegisterSubmitVideoWidget->password(), m_RegisterSubmitVideoWidget->filePathOfJustUploadedRegistrationAttemptVideo());
+        m_Session->requestNewDocumentTimelineSubmitRegistrationAttemptVideo(this->sessionId(), boost::bind(&DocumentTimelineWebWidget::handleDocumentTimelineSubmitRegistrationAttemptVideoFinished, this, _1, _2), m_RegisterSubmitVideoWidget->desiredUsername(), m_RegisterSubmitVideoWidget->password(), m_RegisterSubmitVideoWidget->filePathOfJustUploadedRegistrationAttemptVideo());
         requestPending();
     }
     m_RegisterSubmitVideoWidget.reset();
 }
-void DocumentTimelineWebWidget::handleDocumentTimelineGetLatestDocumentsFinished(bool getLatestTimelineDocsSuccess, QList<QByteArray> latestTimelineDocuments)
+void DocumentTimelineWebWidget::handleDocumentTimelineGetLatestDocumentsFinished(bool internalError, bool getLatestTimelineDocsSuccess, QList<QByteArray> latestTimelineDocuments)
 {
     responseReceived();
 
@@ -142,7 +142,7 @@ void DocumentTimelineWebWidget::handleDocumentTimelineGetLatestDocumentsFinished
         m_DocumentTimelineDocsWidgets.at(i)->setDoc(/*docTimestamp.toString().toStdString(), docSubmitterUsername.toStdString(), */latestTimelineDocuments.at(i)/*, docLicense.toStdString()*/);
     }
 }
-void DocumentTimelineWebWidget::handleDocumentTimelineDeclareIntentToAttemptRegistrationFinished(bool intentToRegisterDeclarationSuccess, QString dataUserMustReciteInRegistrationAttemptVideo)
+void DocumentTimelineWebWidget::handleDocumentTimelineDeclareIntentToAttemptRegistrationFinished(bool internalError, bool intentToRegisterDeclarationSuccess, QString dataUserMustReciteInRegistrationAttemptVideo)
 {
     responseReceived();
 
@@ -156,7 +156,7 @@ void DocumentTimelineWebWidget::handleDocumentTimelineDeclareIntentToAttemptRegi
     m_RegisterSubmitVideoWidget->show();
     return;
 }
-void DocumentTimelineWebWidget::handleDocumentTimelineSubmitRegistrationAttemptVideoFinished(bool registrationAttemptVideoSubmissionSuccess)
+void DocumentTimelineWebWidget::handleDocumentTimelineSubmitRegistrationAttemptVideoFinished(bool internalError, bool registrationAttemptVideoSubmissionSuccess)
 {
     responseReceived();
 

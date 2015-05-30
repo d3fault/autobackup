@@ -2,8 +2,8 @@
 //This file is an Rpc Generated Business Implementation Skeleton file. Changing it is allowed. If you delete this file, it will be re-generated to it's default state the next time the Rpc Generator is run. If you really want to ignore it's contents, just put the entire file's contents in an 'if 0'
 //##################
 
-#ifndef CLEANROOM_H
-#define CLEANROOM_H
+#ifndef DOCUMENTTIMELINE_H
+#define DOCUMENTTIMELINE_H
 
 #include "idocumenttimeline.h"
 
@@ -52,4 +52,4 @@ public slots:
     void logout(IDocumentTimelineLogoutRequest *request);
 };
 
-#endif // CLEANROOM_H
+#endif // DOCUMENTTIMELINE_H
