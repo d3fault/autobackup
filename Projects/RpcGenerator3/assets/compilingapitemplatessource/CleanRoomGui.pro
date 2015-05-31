@@ -19,3 +19,5 @@ SOURCES += gui/main.cpp \
     gui/cleanroomgui.cpp
 
 include(cleanroom.pri)
+
+LIBS += -lwt -lwthttp #even though this is GUI, some WEB code still compiles (TODOreq: need an at-generate switch for rpc generator to decide what 'modes' (GUI/WEB) to generate in order to avoid this)
