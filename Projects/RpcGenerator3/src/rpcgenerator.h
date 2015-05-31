@@ -49,8 +49,8 @@ class RpcGeneratorApiCallbackType
 public:
     enum RpcGeneratorApiCallbackTypeEnum
     {
-          Qt = 0x0
-        , Web = 0x1
+          Qt = 0x1
+        , Web = 0x2
     };
     Q_DECLARE_FLAGS(RpcGeneratorApiCallbackTypes, RpcGeneratorApiCallbackTypeEnum)
 };
@@ -61,13 +61,13 @@ class RpcGeneratorApiFrontEndType
 public:
     enum RpcGeneratorApiFrontEndTypeEnum
     {
-          DontGenerateAnyFrontEnds = 0x00
-        , QtWidgets = 0x01
-        //, QtCli = 0x02
-        //, QtQuickQml = 0x04
-        , Web = 0x08
-        //, RemoteQtCli = 0x16
-        //, RemoteQtWidgets = 0x32
+          DontGenerateAnyFrontEnds = 0x01
+        , QtWidgets = 0x02
+        //, QtCli = 0x04
+        //, QtQuickQml = 0x08
+        , Web = 0x16
+        //, RemoteQtCli = 0x32
+        //, RemoteQtWidgets = 0x64
     };
     Q_DECLARE_FLAGS(RpcGeneratorApiFrontEndTypes, RpcGeneratorApiFrontEndTypeEnum)
 };
@@ -82,7 +82,7 @@ private:
     RpcGeneratorApiCallbackType::RpcGeneratorApiCallbackTypes m_ApiCallbackTypesToGenerate;
     RpcGeneratorApiFrontEndType::RpcGeneratorApiFrontEndTypes m_ApiFrontEndTypesToGenerateSkeletonCallbacksFor;
 
-    static void addFileToWrite(FilesToWriteType *filesToWrite, Api *api, QString filePathOfFileToAdd, QString generatedFileName);
+    void addFileToWrite(FilesToWriteType *filesToWrite, Api *api, QString filePathOfFileToAdd, QString generatedFileName, bool overwriteIfExisting = true);
     static QString frontLetterToLower(const QString &stringInput);
     static QString frontLetterToUpper(const QString &stringInput);
     static QString classHeaderFileName(QString apiName);
