@@ -16,10 +16,10 @@ public:
         , m_WtSessionId(wtSessionId)
         , m_WApplicationCallback(wApplicationCallback)
     { }
-    void respond(%API_NAME%Session *session);
+    void respond(%API_NAME%Session session);
 private:
     std::string m_WtSessionId;
-    boost::function<void (%API_NAME%Session*)> m_WApplicationCallback;
+    boost::function<void (%API_NAME%Session)> m_WApplicationCallback;
 };
 
 #endif // %API_NAME_UPPERCASE%NEWSESSIONREQUESTFROMWT_H

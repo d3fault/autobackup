@@ -16,5 +16,5 @@ void I%API_NAME%::initializeAndStart()
 }
 void I%API_NAME%::newSession(I%API_NAME%NewSessionRequest *request)
 {
-    request->respond(new %API_NAME%Session(this));
+    request->respond(%API_NAME%Session(this));
 }

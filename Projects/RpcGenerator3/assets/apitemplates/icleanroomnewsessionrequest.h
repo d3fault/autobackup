@@ -6,8 +6,7 @@
 #include "i%API_NAME_LOWERCASE%request.h"
 
 #include "i%API_NAME_LOWERCASE%.h"
-
-class %API_NAME%Session;
+#include "%API_NAME_LOWERCASE%session.h"
 
 class I%API_NAME%NewSessionRequest : public QObject, public I%API_NAME%Request
 {
@@ -22,7 +21,7 @@ public:
     {
         emit newSessionRequested(this);
     }
-    virtual void respond(%API_NAME%Session *newSession)=0;
+    virtual void respond(%API_NAME%Session newSession)=0;
 signals:
     void newSessionRequested(I%API_NAME%NewSessionRequest *newSessionRequest);
 };

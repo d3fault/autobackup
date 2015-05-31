@@ -10,7 +10,7 @@ void %API_NAME%Session::requestNewSession(I%API_NAME% *%API_AS_VARIABLE_NAME%, Q
     %API_NAME%NewSessionRequestFromQt *request = new %API_NAME%NewSessionRequestFromQt(%API_AS_VARIABLE_NAME%, objectToCallbackTo, callbackSlot);
     invokeRequest(request);
 }
-void %API_NAME%Session::requestNewSession(I%API_NAME% *%API_AS_VARIABLE_NAME%, const std::string &wtSessionId, boost::function<void (%API_NAME%Session*)> wApplicationCallback)
+void %API_NAME%Session::requestNewSession(I%API_NAME% *%API_AS_VARIABLE_NAME%, const std::string &wtSessionId, boost::function<void (%API_NAME%Session)> wApplicationCallback)
 {
     %API_NAME%NewSessionRequestFromWt *request = new %API_NAME%NewSessionRequestFromWt(%API_AS_VARIABLE_NAME%, wtSessionId, wApplicationCallback);
     invokeRequest(request);

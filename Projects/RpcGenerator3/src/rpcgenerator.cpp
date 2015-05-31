@@ -55,6 +55,8 @@ void RpcGenerator::generateRpc()
 #if 1
     Api api("DocumentTimeline");
 
+    api.addPropertyToSession("bool", "LoggedIn", "false");
+
     /*TODOmb(COW obviously): api.declareDataType("Document",
                         QList<ApiTypeAndVarName>()
                             << ApiTypeAndVarName("QDateTime", "Timestamp")
@@ -86,12 +88,11 @@ void RpcGenerator::generateRpc()
 
     api.createApiCall("submitRegistrationAttemptVideo"
                           , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("QString", "desiredUsername") << ApiTypeAndVarName("QString", "password") << ApiTypeAndVarName("QString", "registrationAttemptSubmissionVideoLocalFilePath")
-                          , NoApiCallArgs
                       );
 
     api.createApiCall("login"
                           , QList<ApiTypeAndVarName>() /*NOPE: request->parentSession() to get it instead (TODOreq: make an implicitly shared copy in the login business method, just to MAKE SURE that we detach from the old one that the front-end might be storing improperly (as a pointer, for example)): << ApiTypeAndVarName("DocumentTimelineSession", "documentTimelineSession")*/ << ApiTypeAndVarName("QString", "username") << ApiTypeAndVarName("QString", "password")
-                          , ApiTypeAndVarName("DocumentTimelineSession", "documentTimelineSessionNowLoggedInIfTheApiCallWasAsuccess")
+                          , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("DocumentTimelineSession", "documentTimelineSessionNowLoggedInIfTheApiCallWasAsuccess")
                       );
 
     api.createApiCall("post"
@@ -109,12 +110,11 @@ void RpcGenerator::generateRpc()
 
     api.createApiCall("registrationVideoAttemptApprover_acceptOrRejectRegistrationAttemptVideo"
                             , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("bool", "acceptIfTrue_rejectIfFalse") << ApiTypeAndVarName("QString", "usernameAttemptingToRegister")
-                            , NoApiCallArgs
                       );
 
     api.createApiCall("logout"
                           , NoApiCallArgs
-                          , ApiTypeAndVarName("DocumentTimelineSession", "documentTimelineSessionNowLoggedOutIfTheApiCallWasAsuccess")
+                          , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("DocumentTimelineSession", "documentTimelineSessionNowLoggedOutIfTheApiCallWasAsuccess")
                       );
 #endif
 
@@ -252,7 +252,7 @@ QString RpcGenerator::apiCallToApiCallRequestMethodDefinitionInSessionSource(Api
     QString commaMaybe = apiCall->RequestArgs.isEmpty() ? "" : ", ";
     QString requesterDomainSpecificCallbackArgsWithTypes = (trueIfQt_falseIfWt ? "QObject *objectToCallbackTo, const char *callbackSlot" : "const std::string &wtSessionId, boost::function<void (bool internalError, bool " + apiCall->ApiCallSlotName + "Success" + (apiCall->ResponseArgs.isEmpty() ? "" : ", ") + apiCallArgNamesToCommaSeparatedList(apiCall, false, false, false, true) + ")> wApplicationCallback");
     QString requesterDomainSpecificCallbackArgsWithoutTypes = (trueIfQt_falseIfWt ? "objectToCallbackTo, callbackSlot" : "wtSessionId, wApplicationCallback");
-    ret.append(apiCallToApiCallRequestMethodDeclarationInSessionHeader(apiCall, requesterDomainSpecificCallbackArgsWithTypes, apiCall->ParentApi->ApiName + "Session::") + "\n{\n    " + requseterDomainSpecificRequestType + " *request = new " + requseterDomainSpecificRequestType + "(m_" + frontLetterToUpper(apiCall->ParentApi->ApiName) + ", " + requesterDomainSpecificCallbackArgsWithoutTypes + commaMaybe + apiCallArgNamesToCommaSeparatedList(apiCall, true, false, true, false) + ");\n    invokeRequest(request);\n}\n");
+    ret.append(apiCallToApiCallRequestMethodDeclarationInSessionHeader(apiCall, requesterDomainSpecificCallbackArgsWithTypes, apiCall->ParentApi->ApiName + "Session::") + " const\n{\n    " + requseterDomainSpecificRequestType + " *request = new " + requseterDomainSpecificRequestType + "(" + frontLetterToLower(apiCall->ParentApi->ApiName) + "(), *this, " + requesterDomainSpecificCallbackArgsWithoutTypes + commaMaybe + apiCallArgNamesToCommaSeparatedList(apiCall, true, false, true, false) + ");\n    invokeRequest(request);\n}\n");
     return ret;
 }
 QString RpcGenerator::apiCallToConstructorInitializationCpp(ApiCall *apiCall)
@@ -269,7 +269,7 @@ QString RpcGenerator::apiCallRequestArgsToRequestInterfaceHeaderDefinitions(ApiC
 {
     QString ret;
     if(!apiCall->RequestArgs.isEmpty())
-        ret.append("\nprivate:");
+        ret.append("\n");
     Q_FOREACH(ApiTypeAndVarName currentApiTypeAndVarName, apiCall->RequestArgs)
     {
         ret.append("\n    " + currentApiTypeAndVarName.ApiTypeAndVarNameType + " m_" + frontLetterToUpper(currentApiTypeAndVarName.ApiTypeAndVarNameName) + ";");
@@ -411,9 +411,28 @@ GeneratedFile RpcGenerator::generateApiSessionHeaderFile(Api *api, QDir outputDi
         apiCallMethodsOnSessionObjectHeader.append("    " + apiCallToApiCallRequestMethodDeclarationInSessionHeader(&apiCall, "QObject *objectToCallbackTo, const char *callbackSlot") + ";\n");
 
         //FromWt overload
-        apiCallMethodsOnSessionObjectHeader.append("    " + apiCallToApiCallRequestMethodDeclarationInSessionHeader(&apiCall, "const std::string &wtSessionId, boost::function<void (bool internalError, bool " + apiCall.ApiCallSlotName + "Success" + (apiCall.ResponseArgs.isEmpty() ? "" : ", ") + apiCallArgNamesToCommaSeparatedList(&apiCall, false, false, false, true) + ")> wApplicationCallback") + ";\n");
+        apiCallMethodsOnSessionObjectHeader.append("    " + apiCallToApiCallRequestMethodDeclarationInSessionHeader(&apiCall, "const std::string &wtSessionId, boost::function<void (bool internalError, bool " + apiCall.ApiCallSlotName + "Success" + (apiCall.ResponseArgs.isEmpty() ? "" : ", ") + apiCallArgNamesToCommaSeparatedList(&apiCall, false, false, false, true) + ")> wApplicationCallback") + " const;\n");
     }
     beforeAndAfterStrings.insert("%API_CALL_METHODS_ON_SESSION_OBJECT_HEADER%", apiCallMethodsOnSessionObjectHeader);
+
+    QString sessionDataAdditionalSessionPropertiesMemberDeclarations;
+    QString sessionDataConstructorAdditionalSessionPropertiesCopyConstructorInitializers;
+    QString sessionDataConstructorAdditionalSessionPropertiesConstructorInitializers;
+    QString sessionAdditionalSessionPropertiesGettersSettersMemberDeclarationsAndDefinitions;
+    Q_FOREACH(ApiSessionProperty additionalProperty, api->ApiAdditionalSessionProperties)
+    {
+        sessionDataAdditionalSessionPropertiesMemberDeclarations.append("\n    " + additionalProperty.PropertyTypeAndVarName.ApiTypeAndVarNameType + " " + additionalProperty.PropertyTypeAndVarName.ApiTypeAndVarNameName + ";");
+        sessionDataConstructorAdditionalSessionPropertiesCopyConstructorInitializers.append("\n        , " + additionalProperty.PropertyTypeAndVarName.ApiTypeAndVarNameName + "(other." + additionalProperty.PropertyTypeAndVarName.ApiTypeAndVarNameName + ")");
+        if(!additionalProperty.PropertyDefaultValueOrEmptyStringIfToDefaultConstruct.isEmpty())
+        {
+            sessionDataConstructorAdditionalSessionPropertiesConstructorInitializers.append("\n        , " + additionalProperty.PropertyTypeAndVarName.ApiTypeAndVarNameName + "(" + additionalProperty.PropertyDefaultValueOrEmptyStringIfToDefaultConstruct + ")");
+        }
+        sessionAdditionalSessionPropertiesGettersSettersMemberDeclarationsAndDefinitions.append("\n\n    " + additionalProperty.PropertyTypeAndVarName.ApiTypeAndVarNameType + " " + frontLetterToLower(additionalProperty.PropertyTypeAndVarName.ApiTypeAndVarNameName) + "() const { return d->" + additionalProperty.PropertyTypeAndVarName.ApiTypeAndVarNameName + "; }\n    void set" + frontLetterToUpper(additionalProperty.PropertyTypeAndVarName.ApiTypeAndVarNameName) + "(" + additionalProperty.PropertyTypeAndVarName.ApiTypeAndVarNameType + " " + frontLetterToLower(additionalProperty.PropertyTypeAndVarName.ApiTypeAndVarNameName) + ") { d->" + additionalProperty.PropertyTypeAndVarName.ApiTypeAndVarNameName + " = " + frontLetterToLower(additionalProperty.PropertyTypeAndVarName.ApiTypeAndVarNameName) + "; }");
+    }
+    beforeAndAfterStrings.insert("%SESSIONDATA_ADDITIONAL_SESSION_PROPERTIES_MEMBER_DECLARATIONS%", sessionDataAdditionalSessionPropertiesMemberDeclarations);
+    beforeAndAfterStrings.insert("%SESSIONDATA_CONSTRUCTOR_ADDITIONAL_SESSION_PROPERTIES_COPY_CONSTRUCTOR_INITIALIZERS%", sessionDataConstructorAdditionalSessionPropertiesCopyConstructorInitializers);
+    beforeAndAfterStrings.insert("%SESSIONDATA_CONSTRUCTOR_ADDITIONAL_SESSION_PROPERTIES_CONSTRUCTOR_INITIALIZERS%", sessionDataConstructorAdditionalSessionPropertiesConstructorInitializers);
+    beforeAndAfterStrings.insert("%SESSION_ADDITIONAL_SESSION_PROPERTIES_GETTERS_SETTERS_MEMBER_DECLARATIONS_AND_DEFINITIONS%", sessionAdditionalSessionPropertiesGettersSettersMemberDeclarationsAndDefinitions);
 
     GeneratedFile generatedFile(fileToString(":/cleanroomsession.h"), outputDir.path() + QDir::separator() + autoGeneratedRpcCodeSubDirPath(api) + "/" + api->ApiName.toLower() + "session.h", beforeAndAfterStrings);
     generatedFile.replaceTemplateBeforesWithAfters();

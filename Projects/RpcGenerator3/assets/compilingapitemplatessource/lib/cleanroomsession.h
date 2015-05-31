@@ -31,11 +31,13 @@ public:
 
 class CleanRoomSession
 {
-public:
+private:
+    friend class ICleanRoom;
     CleanRoomSession(ICleanRoom *cleanRoom)
     {
         d = new CleanRoomSessionData(cleanRoom);
     }
+public:
     CleanRoomSession(const CleanRoomSession &other)
         : d(other.d)
     { }
