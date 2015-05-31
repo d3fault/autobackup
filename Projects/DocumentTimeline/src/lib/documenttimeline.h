@@ -12,17 +12,20 @@
 
 class QSettings;
 
+class DocumentTimelineDb;
+
 class DocumentTimeline : public IDocumentTimeline
 {
     Q_OBJECT
 public:
     explicit DocumentTimeline(QObject *parent = 0);
 private:
-    QSettings *m_DocumentTimelineDocumentTimelineDeclarationsOfIntentToAttemptRegistrationDb;
-    QSettings *m_DocumentTimelineRegistrationAttemptsDb;
-    QSettings *m_DocumentTimelineRegistrationAttemptsApprovalsOrRejectionsDb;
-    QSettings *m_DocumentTimelineRegisteredUsersDb;
+    //QSettings *m_DocumentTimelineDocumentTimelineDeclarationsOfIntentToAttemptRegistrationDb;
+    //QSettings *m_DocumentTimelineRegistrationAttemptsDb;
+    //QSettings *m_DocumentTimelineRegistrationAttemptsApprovalsOrRejectionsDb;
+    //QSettings *m_DocumentTimelineRegisteredUsersDb;
     //QSettings *m_DocumentTimelineDb;
+    DocumentTimelineDb *m_Db;
 
     static QByteArray documentJsonToHexHash(const QByteArray &documentJson);
     static QString generateB64Salt(QString seed);
@@ -46,10 +49,12 @@ public slots:
     void declareIntentToAttemptRegistration(IDocumentTimelineDeclareIntentToAttemptRegistrationRequest *request, QString fullName, QString desiredUsername, QString password, bool acceptedCLA, QString fullNameSignature);
     void submitRegistrationAttemptVideo(IDocumentTimelineSubmitRegistrationAttemptVideoRequest *request, QString desiredUsername, QString password, QString registrationAttemptSubmissionVideoLocalFilePath);
     void login(IDocumentTimelineLoginRequest *request, QString username, QString password);
-    void post(IDocumentTimelinePostRequest *request, QString username, QByteArray data, QString licenseIdentifier);
+    void post(IDocumentTimelinePostRequest *request, QByteArray data, QString licenseIdentifier);
     void registrationVideoApprover_getOldestNotDoneRegistrationAttempsVideo(IDocumentTimelineRegistrationVideoApprover_getOldestNotDoneRegistrationAttempsVideoRequest *request);
     void registrationVideoAttemptApprover_acceptOrRejectRegistrationAttemptVideo(IDocumentTimelineRegistrationVideoAttemptApprover_acceptOrRejectRegistrationAttemptVideoRequest *request, bool acceptIfTrue_rejectIfFalse, QString usernameAttemptingToRegister);
     void logout(IDocumentTimelineLogoutRequest *request);
+private slots:
+    void handleAddToDbFinished(bool dbError, bool addToDbSuccess, void *userData);
 };
 
 #endif // DOCUMENTTIMELINE_H

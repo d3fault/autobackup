@@ -90,15 +90,12 @@ void RpcGenerator::generateRpc()
                       );
 
     api.createApiCall("login"
-                          , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("QString", "username") << ApiTypeAndVarName("QString", "password")
-                          , NoApiCallArgs
+                          , QList<ApiTypeAndVarName>() /*NOPE: request->parentSession() to get it instead (TODOreq: make an implicitly shared copy in the login business method, just to MAKE SURE that we detach from the old one that the front-end might be storing improperly (as a pointer, for example)): << ApiTypeAndVarName("DocumentTimelineSession", "documentTimelineSession")*/ << ApiTypeAndVarName("QString", "username") << ApiTypeAndVarName("QString", "password")
+                          , ApiTypeAndVarName("DocumentTimelineSession", "documentTimelineSessionNowLoggedInIfTheApiCallWasAsuccess")
                       );
 
     api.createApiCall("post"
-                              , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("QString", "username") << ApiTypeAndVarName("QByteArray", "data") << ApiTypeAndVarName("QString", "licenseIdentifier")
-                              , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("QDateTime", "timestamp") << ApiTypeAndVarName("QByteArray", "docKey_aka_docHashHex")
-                              , QStringList() << "<QDateTime>"
-                              //, QStringList() << "<QDateTime>"
+                              , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("QByteArray", "data") << ApiTypeAndVarName("QString", "licenseIdentifier")
                           );
     /*api.createApiCall("post"
                           , QList<ApiTypeAndVarName>() << ApiTypeAndVarName("Document", "document")
@@ -116,8 +113,8 @@ void RpcGenerator::generateRpc()
                       );
 
     api.createApiCall("logout"
-                          //, NoApiCallArgs
-                          //, NoApiCallArgs
+                          , NoApiCallArgs
+                          , ApiTypeAndVarName("DocumentTimelineSession", "documentTimelineSessionNowLoggedOutIfTheApiCallWasAsuccess")
                       );
 #endif
 

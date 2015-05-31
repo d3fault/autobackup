@@ -1,12 +1,21 @@
 #ifndef DOCUMENTTIMELINEDB_H
 #define DOCUMENTTIMELINEDB_H
 
-#include <QByteArray>
+#include <QObject>
 
-class DocumentTimelineDb
+class QSettings;
+
+class DocumentTimelineDb : public QObject
 {
+    Q_OBJECT
 public:
-    bool addDocToDb(QByteArray docToAddToDb);
+    DocumentTimelineDb(QObject *parent = 0);
+private:
+    QSettings *m_Settings;
+signals:
+    void addDocToDbFinished(bool dbError, bool addDocToDbSuccess);
+public slots:
+    void addDocToDb(QByteArray docToAddToDb, void *userData);
 };
 
 #endif // DOCUMENTTIMELINEDB_H

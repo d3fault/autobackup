@@ -11,25 +11,28 @@
 #include <QCryptographicHash>
 
 #include "documenttimelinecommon.h"
+#include "documenttimelinedb.h"
 
-#define DocumentTimeline_ORGANIZATION "DocumentTimelineOrganization"
-#define DocumentTimeline_QSettingsApplication_aka_DbName "DocumentTimeline"
+#if 0
 #define DocumentTimelineDeclarationsOfIntentToAttemptRegistration_QSettingsApplication_aka_DbName DocumentTimeline_QSettingsApplication_aka_DbName "DeclarationsOfIntentToAttemptRegistration"
 #define DocumentTimelineRegistrationAttempts_QSettingsApplication_aka_DbName DocumentTimeline_QSettingsApplication_aka_DbName "RegistrationAttempts"
 #define DocumentTimelineRegistrationAttemptsApprovalsOrRejections_QSettingsApplication_aka_DbName DocumentTimelineRegistrationAttempts_QSettingsApplication_aka_DbName "ApprovalsOrRejections"
 #define DocumentTimelineRegisteredUsers__QSettingsApplication_aka_DbName DocumentTimeline_QSettingsApplication_aka_DbName "RegisteredUsers"
+#endif
 
 //TODOreq: redo the API so that registration attempts (both declarations of attempts, and the attempt videos themselves) are posted on the DocumentTimeline by some special username "DocumentTimelineRegistrationAttempts" (or something). This means that the registration attempt must itself must be >= DPL, of course
 //OT'ish: I could make my QSettings-asap-usage mimic couchbase 1:1, where I store the data by key and the key is b64sha1(data).... BUT then the QSettings impl would be SLOW AS BALLS. Better to choose an ad-hoc/temporary 'primary key' for storage/retrieval (desiredUsername, in the case of registration attempts)
 //TODOprobably: 'registration video attempt' approver tiers. I am at the top tier, can approve any registration video attempt by myself/etc (admin mode or whatever). A more scalable strategy is to have every user be a 'registration video attempt' approver, but to require some N number of approvals, and some M number of approvals by a "moderator"-tier approver. So just a random example: registration requires 10x approvals from peers, and 1x approval from moderator. I can of course tier it up to infinite precision (HEH, SOUNDS/LOOKS LIKE "tear it up")). For now and to KISS, 1x admin-tier user (me).
 //Note: how the qsettings-asep db impl stores the data is not too important. what IS is important is that the interactions between the business and the db (DocumentTimelineDb) are compatible-with and tuned-to couchbase db interactions (regular get/post shit, or view query)
+//TODOmb: the 'session' should be implicitly shared. when logging in, the front-end sends the session as one of the api call args (along with username/pw). the business checks the username/pw, changes the 'session' by calling setLogin(true) (note: this detaches from the copy the front-end is storing), and then returns the 'session' as an api call response arg... where the front-end overwrites (detaches/probably-destroys the last copy of the old/NOT-logged-in session) it's byval copy of 'session' using simple assignment. In order for this to work, none of the 'request-new-api-call-X' methods on the session can be non-const (I don't think this is an issue, but I might be wrong). --- IDEALLY in a future version of RpcGenerator, an application's "auth" stuff could/would be built in and transparent (the same login procedure would be used, but the user wouldn't have to create the "login" api call (with the session as request/response args)... they'd simply say "the application uses basic authentication" to the rpc generator or some such)
 DocumentTimeline::DocumentTimeline(QObject *parent)
     : IDocumentTimeline(parent)
-    , m_DocumentTimelineDocumentTimelineDeclarationsOfIntentToAttemptRegistrationDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, DocumentTimeline_ORGANIZATION, DocumentTimelineDeclarationsOfIntentToAttemptRegistration_QSettingsApplication_aka_DbName, this))
-    , m_DocumentTimelineRegistrationAttemptsDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, DocumentTimeline_ORGANIZATION, DocumentTimelineRegistrationAttempts_QSettingsApplication_aka_DbName, this))
-    , m_DocumentTimelineRegistrationAttemptsApprovalsOrRejectionsDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, DocumentTimeline_ORGANIZATION, DocumentTimelineRegistrationAttemptsApprovalsOrRejections_QSettingsApplication_aka_DbName, this))
+    , m_Db(new DocumentTimelineDb(this))
+    //, m_DocumentTimelineDocumentTimelineDeclarationsOfIntentToAttemptRegistrationDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, DocumentTimeline_ORGANIZATION, DocumentTimelineDeclarationsOfIntentToAttemptRegistration_QSettingsApplication_aka_DbName, this))
+    //, m_DocumentTimelineRegistrationAttemptsDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, DocumentTimeline_ORGANIZATION, DocumentTimelineRegistrationAttempts_QSettingsApplication_aka_DbName, this))
+    //, m_DocumentTimelineRegistrationAttemptsApprovalsOrRejectionsDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, DocumentTimeline_ORGANIZATION, DocumentTimelineRegistrationAttemptsApprovalsOrRejections_QSettingsApplication_aka_DbName, this))
     //, m_DocumentTimelineRegisteredUsersDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, DocumentTimeline_ORGANIZATION, , this))
-    , m_DocumentTimelineDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, DocumentTimeline_ORGANIZATION, DocumentTimeline_QSettingsApplication_aka_DbName, this))
+    //, m_DocumentTimelineDb(new QSettings(QSettings::IniFormat, QSettings::UserScope, DocumentTimeline_ORGANIZATION, DocumentTimeline_QSettingsApplication_aka_DbName, this))
 {
 //    QStringList docKeys = m_DocumentTimelineDb->childKeys();
 //    if(docKeys.isEmpty())
@@ -48,6 +51,8 @@ DocumentTimeline::DocumentTimeline(QObject *parent)
 //            m_DocumentTimelineDb->setValue(documentJsonToHexHash(newDebugTestDoc), newDebugTestDoc);
 //        }
 //    }
+
+    connect(m_Db, &DocumentTimelineDb::addDocToDbFinished, this, &DocumentTimeline::handleAddToDbFinished);
 }
 QByteArray DocumentTimeline::documentJsonToHexHash(const QByteArray &documentJson)
 {
@@ -172,9 +177,19 @@ void DocumentTimeline::login(IDocumentTimelineLoginRequest *request, QString use
 //        return;
 //    }
 }
-void DocumentTimeline::post(IDocumentTimelinePostRequest *request, QString username, QByteArray data, QString licenseIdentifier)
+void DocumentTimeline::post(IDocumentTimelinePostRequest *request, /*QString username, */QByteArray data, QString licenseIdentifier)
 {
-    qFatal("DocumentTimeline::post(IDocumentTimelinePostRequest *request, QString username, QByteArray data, QString licenseIdentifier) not yet implemented");
+    if(!request->parentSession()->isLoggedIn())
+    {
+        request->respond(false, false, QDateTime(), QByteArray()); //TODOmb: error strings? in this case, it'd simply be "login first" (obviously the front-end can/should check isLoggedIn before even us getting here (they both should do the check)). I think back in my old Rpc Generator 2 days I eventually landed on a FailureType enum, idk
+        return;
+    }
+    QJsonObject postJsonObject;
+    //timestamp 't' assigned by db -- TODOreq: once couchbase is integrated: whenevver a db submit has to 'retry' (exponential backoff), the corresponding timestamp should be updated (which, yes, changes the key LoL!)
+    postJsonObject.insert("u", request->parentSession()->loggedInUsername());
+    postJsonObject.insert("d", QString(data.toBase64()));
+    postJsonObject.insert("l", licenseIdentifier);
+    m_Db->addDocToDb(QJsonDocument(postJsonObject).toJson(QJsonDocument::Compact), request);
 }
 void DocumentTimeline::registrationVideoApprover_getOldestNotDoneRegistrationAttempsVideo(IDocumentTimelineRegistrationVideoApprover_getOldestNotDoneRegistrationAttempsVideoRequest *request) //becomes couchbase-json-view-query
 {
@@ -250,4 +265,9 @@ void DocumentTimeline::registrationVideoAttemptApprover_acceptOrRejectRegistrati
 void DocumentTimeline::logout(IDocumentTimelineLogoutRequest *request)
 {
     qFatal("DocumentTimeline::logout(IDocumentTimelineLogoutRequest *request) not yet implemented");
+}
+void DocumentTimeline::handleAddToDbFinished(bool dbError, bool addToDbSuccess, void *userData)
+{
+    IDocumentTimelinePostRequest *request = static_cast<IDocumentTimelinePostRequest*>(userData);
+    request->respond(dbError, addToDbSuccess);
 }
