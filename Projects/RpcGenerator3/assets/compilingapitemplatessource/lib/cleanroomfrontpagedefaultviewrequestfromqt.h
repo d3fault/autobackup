@@ -3,13 +3,11 @@
 
 #include "icleanroomfrontpagedefaultviewrequest.h"
 
-class CleanRoomSession;
-
 class CleanRoomFrontPageDefaultViewRequestFromQt : public ICleanRoomFrontPageDefaultViewRequest
 {
     Q_OBJECT
 public:
-    CleanRoomFrontPageDefaultViewRequestFromQt(ICleanRoom *cleanRoom, QObject *objectCallback, const char *slotCallback, double someArg0);
+    CleanRoomFrontPageDefaultViewRequestFromQt(ICleanRoom *cleanRoom, CleanRoomSession parentSession, QObject *objectCallback, const char *slotCallback, double someArg0);
     void respond(QStringList frontPageDocs);
 signals:
     void frontPageDefaultViewResponseRequested(QStringList frontPageDocs);

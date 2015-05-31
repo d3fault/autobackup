@@ -20,11 +20,11 @@ void CleanRoomSession::requestNewSession(ICleanRoom *cleanRoom, const std::strin
 }
 void CleanRoomSession::requestNewCleanRoomFrontPageDefaultView(QObject *objectToCallbackTo, const char *callbackSlot, double someArg0) const
 {
-    CleanRoomFrontPageDefaultViewRequestFromQt *request = new CleanRoomFrontPageDefaultViewRequestFromQt(cleanRoom(), objectToCallbackTo, callbackSlot, someArg0);
+    CleanRoomFrontPageDefaultViewRequestFromQt *request = new CleanRoomFrontPageDefaultViewRequestFromQt(cleanRoom(), *this, objectToCallbackTo, callbackSlot, someArg0);
     invokeRequest(request);
 }
 void CleanRoomSession::requestNewCleanRoomFrontPageDefaultView(const std::string &wtSessionId, boost::function<void (QStringList)> wApplicationCallback, double someArg0) const
 {
-    CleanRoomFrontPageDefaultViewRequestFromWt *request = new CleanRoomFrontPageDefaultViewRequestFromWt(cleanRoom(), wtSessionId, wApplicationCallback, someArg0);
+    CleanRoomFrontPageDefaultViewRequestFromWt *request = new CleanRoomFrontPageDefaultViewRequestFromWt(cleanRoom(), *this, wtSessionId, wApplicationCallback, someArg0);
     invokeRequest(request);
 }

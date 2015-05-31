@@ -12,7 +12,7 @@ class ICleanRoom;
 class CleanRoomFrontPageDefaultViewRequestFromWt : public ICleanRoomFrontPageDefaultViewRequest
 {
 public:
-    CleanRoomFrontPageDefaultViewRequestFromWt(ICleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (QStringList/*frontPageDocs*/)> wApplicationCallback, double someArg0);
+    CleanRoomFrontPageDefaultViewRequestFromWt(ICleanRoom *cleanRoom, CleanRoomSession parentSession, const std::string &wtSessionId, boost::function<void (QStringList/*frontPageDocs*/)> wApplicationCallback, double someArg0);
     void respond(QStringList frontPageDocs);
 private:
     std::string m_WtSessionId;
