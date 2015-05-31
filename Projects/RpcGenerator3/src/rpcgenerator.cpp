@@ -408,7 +408,7 @@ GeneratedFile RpcGenerator::generateApiSessionHeaderFile(Api *api, QDir outputDi
     Q_FOREACH(ApiCall apiCall, api->ApiCalls)
     {
         //FromQt overload
-        apiCallMethodsOnSessionObjectHeader.append("    " + apiCallToApiCallRequestMethodDeclarationInSessionHeader(&apiCall, "QObject *objectToCallbackTo, const char *callbackSlot") + ";\n");
+        apiCallMethodsOnSessionObjectHeader.append("    " + apiCallToApiCallRequestMethodDeclarationInSessionHeader(&apiCall, "QObject *objectToCallbackTo, const char *callbackSlot") + " const;\n");
 
         //FromWt overload
         apiCallMethodsOnSessionObjectHeader.append("    " + apiCallToApiCallRequestMethodDeclarationInSessionHeader(&apiCall, "const std::string &wtSessionId, boost::function<void (bool internalError, bool " + apiCall.ApiCallSlotName + "Success" + (apiCall.ResponseArgs.isEmpty() ? "" : ", ") + apiCallArgNamesToCommaSeparatedList(&apiCall, false, false, false, true) + ")> wApplicationCallback") + " const;\n");
