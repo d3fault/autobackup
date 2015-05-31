@@ -3,8 +3,6 @@
 
 #include "icleanroomnewsessionrequest.h"
 
-class CleanRoomSession;
-
 class CleanRoomNewSessionRequestFromQt : public ICleanRoomNewSessionRequest
 {
     Q_OBJECT
@@ -15,11 +13,11 @@ public:
     {
         QObject::connect(this, SIGNAL(newSessionResponseRequested(CleanRoomSession*)), objectToRespondTo, slotCallback);
     }
-    void respond(CleanRoomSession *session);
+    void respond(CleanRoomSession session);
 private:
     QObject *m_ObjectToRespondTo;
 signals:
-    void newSessionResponseRequested(CleanRoomSession *session);
+    void newSessionResponseRequested(CleanRoomSession session);
 };
 
 #endif // CLEANROOMNEWSESSIONREQUESTFROMQT_H

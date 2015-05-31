@@ -5,20 +5,18 @@
 
 #include <boost/function.hpp>
 
-class CleanRoomSession;
-
 class CleanRoomNewSessionRequestFromWt : public ICleanRoomNewSessionRequest
 {
 public:
-    CleanRoomNewSessionRequestFromWt(ICleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (CleanRoomSession*)> wApplicationCallback)
+    CleanRoomNewSessionRequestFromWt(ICleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (CleanRoomSession)> wApplicationCallback)
         : ICleanRoomNewSessionRequest(cleanRoom)
         , m_WtSessionId(wtSessionId)
         , m_WApplicationCallback(wApplicationCallback)
     { }
-    void respond(CleanRoomSession *session);
+    void respond(CleanRoomSession session);
 private:
     std::string m_WtSessionId;
-    boost::function<void (CleanRoomSession*)> m_WApplicationCallback;
+    boost::function<void (CleanRoomSession)> m_WApplicationCallback;
 };
 
 #endif // CLEANROOMNEWSESSIONREQUESTFROMWT_H

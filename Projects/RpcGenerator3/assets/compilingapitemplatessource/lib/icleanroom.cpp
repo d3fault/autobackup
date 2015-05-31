@@ -14,5 +14,5 @@ void ICleanRoom::initializeAndStart()
 }
 void ICleanRoom::newSession(ICleanRoomNewSessionRequest *request)
 {
-    request->respond(new CleanRoomSession(this));
+    request->respond(CleanRoomSession(this));
 }

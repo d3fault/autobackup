@@ -5,8 +5,7 @@
 #include "icleanroomrequest.h"
 
 #include "icleanroom.h"
-
-class CleanRoomSession;
+#include "cleanroomsession.h"
 
 class ICleanRoomNewSessionRequest : public QObject, public ICleanRoomRequest
 {
@@ -21,7 +20,7 @@ public:
     {
         emit newSessionRequested(this);
     }
-    virtual void respond(CleanRoomSession *newSession)=0;
+    virtual void respond(CleanRoomSession newSession)=0;
 signals:
     void newSessionRequested(ICleanRoomNewSessionRequest *newSessionRequest);
 };

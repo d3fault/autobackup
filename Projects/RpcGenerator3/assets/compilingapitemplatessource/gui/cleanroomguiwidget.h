@@ -2,10 +2,11 @@
 #define CLEANROOMGUIWIDGET_H
 
 #include <QWidget>
+#include <QScopedPointer>
+
+#include "cleanroomsession.h"
 
 class QLabel;
-
-class CleanRoomSession;
 
 class CleanRoomGuiWidget : public QWidget
 {
@@ -13,10 +14,10 @@ class CleanRoomGuiWidget : public QWidget
 public:
     explicit CleanRoomGuiWidget(QWidget *parent = 0);
 private:
-    CleanRoomSession *m_Session;
+    QScopedPointer<CleanRoomSession> m_Session;
     QList<QLabel*> m_CleanRoomDocsWidgets;
 public slots:
-    void handleNewSessionCreated(CleanRoomSession *session);
+    void handleNewSessionCreated(CleanRoomSession session);
     void handleFrontPageDefaultViewReceived(QStringList frontPageDocs);
 };
 

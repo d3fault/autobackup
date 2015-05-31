@@ -4,9 +4,11 @@ using namespace Wt;
 #define CLEANROOMWEBWIDGET_H
 
 #include <QStringList>
+#include <QScopedPointer>
+
+#include "cleanroomsession.h"
 
 class ICleanRoom;
-class CleanRoomSession;
 
 class CleanRoomWebWidget : public WApplication
 {
@@ -17,11 +19,11 @@ public:
     static WApplication *cleanRoomWebWidgetEntryPoint(const WEnvironment &myEnv);
 private:
     friend class CleanRoomWeb;
-    CleanRoomSession *m_Session;
+    QScopedPointer<CleanRoomSession> m_Session;
 
     QList<WLabel*> m_CleanRoomDocsWidgets;
 
-    void handleCleanRoomSessionStarted(CleanRoomSession *session);
+    void handleCleanRoomSessionStarted(CleanRoomSession session);
 
     void handleFrontPageDefaultViewReceived(QStringList frontPageDocs);
 };

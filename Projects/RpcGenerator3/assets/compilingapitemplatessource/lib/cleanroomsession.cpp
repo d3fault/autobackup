@@ -13,7 +13,7 @@ void CleanRoomSession::requestNewSession(ICleanRoom *cleanRoom, QObject *objectT
     CleanRoomNewSessionRequestFromQt *request = new CleanRoomNewSessionRequestFromQt(cleanRoom, objectToCallbackTo, callbackSlot);
     invokeRequest(request);
 }
-void CleanRoomSession::requestNewSession(ICleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (CleanRoomSession*)> wApplicationCallback)
+void CleanRoomSession::requestNewSession(ICleanRoom *cleanRoom, const std::string &wtSessionId, boost::function<void (CleanRoomSession)> wApplicationCallback)
 {
     CleanRoomNewSessionRequestFromWt *request = new CleanRoomNewSessionRequestFromWt(cleanRoom, wtSessionId, wApplicationCallback);
     invokeRequest(request);

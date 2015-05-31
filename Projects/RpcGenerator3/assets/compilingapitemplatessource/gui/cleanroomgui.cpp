@@ -16,5 +16,5 @@ void CleanRoomGui::handleCleanRoomReadyForSessions()
 {
     m_Gui.reset(new CleanRoomGuiWidget());
     m_Gui->show();
-    CleanRoomSession::requestNewSession(m_CleanRoom, m_Gui.data(), SLOT(handleNewSessionCreated(CleanRoomSession*)));
+    CleanRoomSession::requestNewSession(m_CleanRoom, m_Gui.data(), SLOT(handleNewSessionCreated(CleanRoomSession)));
 }

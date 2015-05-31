@@ -7,8 +7,6 @@ using namespace Wt;
 
 #include <boost/bind.hpp>
 
-#include "cleanroomsession.h"
-
 ICleanRoom *CleanRoomWebWidget::s_CleanRoom = NULL;
 
 CleanRoomWebWidget::CleanRoomWebWidget(const WEnvironment &environment, WtLibVersion version)
@@ -32,9 +30,9 @@ WApplication *CleanRoomWebWidget::cleanRoomWebWidgetEntryPoint(const WEnvironmen
 {
     return new CleanRoomWebWidget(myEnv);
 }
-void CleanRoomWebWidget::handleCleanRoomSessionStarted(CleanRoomSession *session)
+void CleanRoomWebWidget::handleCleanRoomSessionStarted(CleanRoomSession session)
 {
-    m_Session = session;
+    m_Session.reset(new CleanRoomSession(session)); //we do a 'new' here because we want to +1 the implicitly shared session (notice we're using the copy constructor of CleanRoomSession). If we did "&session" instead, then the pointer in the m_Session scoped pointer would be a dangling pointer. I had to use a scoped pointer around CleanRoomSession in the first place because CleanRoomSession has no default constructor
     m_Session->requestNewCleanRoomFrontPageDefaultView(this->sessionId(), boost::bind(&CleanRoomWebWidget::handleFrontPageDefaultViewReceived, this, _1), 69420);
 }
 void CleanRoomWebWidget::handleFrontPageDefaultViewReceived(QStringList frontPageDocs)
