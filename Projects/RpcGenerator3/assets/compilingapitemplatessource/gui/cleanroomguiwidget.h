@@ -8,11 +8,13 @@
 
 class QLabel;
 
+class ICleanRoom;
+
 class CleanRoomGuiWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit CleanRoomGuiWidget(QWidget *parent = 0);
+    explicit CleanRoomGuiWidget(ICleanRoom *cleanRoom, QWidget *parent = 0);
 private:
     QScopedPointer<CleanRoomSession> m_Session;
     QList<QLabel*> m_CleanRoomDocsWidgets;

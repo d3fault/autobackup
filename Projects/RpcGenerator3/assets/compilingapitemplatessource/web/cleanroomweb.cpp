@@ -3,8 +3,6 @@ using namespace Wt;
 
 #include "cleanroomweb.h"
 
-#include <QCoreApplication>
-
 #include <boost/bind.hpp>
 
 #include "cleanroom.h"
@@ -16,8 +14,7 @@ CleanRoomWeb::CleanRoomWeb(int argc, char *argv[], QObject *parent)
     : QObject(parent)
     , m_CleanRoom(new CleanRoom(this))
 {
-    QString firstArg = QCoreApplication::arguments().first();
-    m_WtServer.reset(new WServer(firstArg.toStdString()));
+    m_WtServer.reset(new WServer(argv[0]));
     m_WtServer->setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
     m_WtServer->addEntryPoint(Application, &CleanRoomWebWidget::cleanRoomWebWidgetEntryPoint);
 
@@ -28,13 +25,8 @@ CleanRoomWeb::CleanRoomWeb(int argc, char *argv[], QObject *parent)
 }
 CleanRoomWeb::~CleanRoomWeb()
 {
-    if(!m_WtServer.isNull())
-    {
-        if(m_WtServer->isRunning())
-        {
-            m_WtServer->stop();
-        }
-    }
+    if((!m_WtServer.isNull()) && m_WtServer->isRunning())
+        m_WtServer->stop();
 }
 void CleanRoomWeb::handleCleanRoomReadyForSessions()
 {

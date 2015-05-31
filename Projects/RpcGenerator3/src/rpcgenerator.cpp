@@ -34,7 +34,15 @@
 //^^^And shit at this point, might as well generate a 'skeleton' .pro file(s(Web and Gui)) as well. So the creation of the application becomes "creating or at least instantiating custom tuned front-end widget-trees (QObject trees, QWidget trees, WWidget trees)
 RpcGenerator::RpcGenerator(QObject *parent)
     : QObject(parent)
+    , m_ApiCallbackTypesToGenerate(RpcGeneratorApiCallbackType::Qt | RpcGeneratorApiCallbackType::Web)
+    , m_ApiFrontEndTypesToGenerateSkeletonCallbacksFor(RpcGeneratorApiFrontEndType::QtWidgets | RpcGeneratorApiFrontEndType::Web) //TODOreq: the web front-end type depends on the web callback type, and same goes for Qt. Maybe: having a qt or web front-end without the callback counterpart should result in an error (or at least a warning) at the time of rpc generation <-- an alternative is to simply omit anything missing a dependency callback type silently/gracefully
 { }
+void RpcGenerator::addFileToWrite(FilesToWriteType *filesToWrite, Api *api, QString filePathOfFileToAdd, QString generatedFileName)
+{
+    GeneratedFile generatedFile(filePathOfFileToAdd, generatedFileName, initialBeforeAndAfterStrings(api));
+    generatedFile.replaceTemplateBeforesWithAfters();
+    filesToWrite->insert(generatedFile);
+}
 void RpcGenerator::generateRpc()
 {
     QTemporaryDir tempDir("/run/shm/RpcGenerated-");
@@ -128,7 +136,7 @@ void RpcGenerator::generateRpc()
         EEEEEEEEEE_RpcGenerator("failed to generate")
 
     tempDir.setAutoRemove(false);
-    emit o("successfully generated rpc to: " + outputPath);
+    emit v("successfully generated rpc to: " + outputPath); //nothing attached to v atm
     emit rpcGenerated(true, outputPath);
 }
 QString RpcGenerator::frontLetterToLower(const QString &stringInput)
@@ -175,14 +183,14 @@ QString RpcGenerator::apiCallToForwardDefinitionRawCpp(ApiCall *apiCall)
 {
     return "class " + apiCallToRequestInterfaceTypeName(apiCall) + ";";
 }
-QString RpcGenerator::apiCallArgNamesToCommaSeparatedList(ApiCall *apiCall, bool requestIfTrue, bool makeRequestPointerFirstParameter, bool emitTypes, bool emitNames)
+QString RpcGenerator::apiCallArgNamesToCommaSeparatedList(ApiCall *apiCall, bool requestIfTrue, bool makeRequestPointerFirstParameter, bool omitTypes, bool omitNames)
 {
     QStringList apiCallArgsRawCpp;
     if(makeRequestPointerFirstParameter)
         apiCallArgsRawCpp.append(apiCallToRequestInterfaceTypeName(apiCall) + " *request");
     Q_FOREACH(ApiTypeAndVarName apiCallArg, (requestIfTrue ? apiCall->RequestArgs : apiCall->ResponseArgs))
     {
-        apiCallArgsRawCpp.append(apiCallArgToCpp(&apiCallArg, emitTypes, emitNames));
+        apiCallArgsRawCpp.append(apiCallArgToCpp(&apiCallArg, omitTypes, omitNames));
     }
     return apiCallArgsRawCpp.join(", ");
 }
@@ -204,19 +212,19 @@ QString RpcGenerator::apiCallToRawCppDeclaration(ApiCall *apiCall, bool requestI
     QString ret("    void " + apiCallToMethodCppSignature(apiCall, requestIfTrue) + ";");
     return ret;
 }
-QString RpcGenerator::apiCallArgToCpp(ApiTypeAndVarName *apiCallArg, bool emitTypes, bool emitNames)
+QString RpcGenerator::apiCallArgToCpp(ApiTypeAndVarName *apiCallArg, bool omitTypes, bool omitNames)
 {
     QString ret;
-    if(!emitTypes)
+    if(!omitTypes)
     {
         ret.append(apiCallArg->ApiTypeAndVarNameType);
     }
-    if((!emitTypes) && (!emitNames))
+    if((!omitTypes) && (!omitNames))
     {
         if(!apiCallArg->ApiTypeAndVarNameType.endsWith(" *")) //we want points to be next to the variable name, unless the pointer is next to the type
             ret.append(" ");
     }
-    if(!emitNames)
+    if(!omitNames)
     {
         ret.append(apiCallArg->ApiTypeAndVarNameName);
     }
@@ -634,8 +642,45 @@ TemplateBeforeAndAfterStrings_Type RpcGenerator::initialBeforeAndAfterStrings(Ap
     {
         additionalIncludesRawCpp.append("#include " + additionalInclude);
     }
-
     beforeAndAfterStrings.insert("%ALL_API_CALLS_ADDITIONAL_INCLUDES_FOR_REQUEST_AND_RESPONSE_ARGS%", additionalIncludesRawCpp.join("\n"));
+
+    QStringList apiFrontEndSkeletonCallbackMethodDeclarations;
+    Q_FOREACH(ApiCall apiCall, api->ApiCalls)
+    {
+        QString commaSpaceIfAnyResponseArgs;
+        if(!apiCall.ResponseArgs.isEmpty())
+            commaSpaceIfAnyResponseArgs = ", ";
+        apiFrontEndSkeletonCallbackMethodDeclarations.append("    void handle" + frontLetterToUpper(apiCall.ApiCallSlotName) + "Finished(bool internalError, bool " + frontLetterToUpper(apiCall.ApiCallSlotName) + "Success" + commaSpaceIfAnyResponseArgs + apiCallArgNamesToCommaSeparatedList(&apiCall, false, false) + ");");
+    }
+    beforeAndAfterStrings.insert("%API_FRONTEND_SKELETON_CALLBACK_METHOD_DECLARATIONS%", apiFrontEndSkeletonCallbackMethodDeclarations.join("\n"));
+
+    QStringList apiQtFrontEndSkeletonCallbackMethodDefinitions;
+    Q_FOREACH(ApiCall apiCall, api->ApiCalls)
+    {
+        QString commaSpaceIfAnyResponseArgs;
+        if(!apiCall.ResponseArgs.isEmpty())
+            commaSpaceIfAnyResponseArgs = ", ";
+        QString callbackMethodSignature = "void " + api->ApiName + "GuiWidget::handle" + frontLetterToUpper(apiCall.ApiCallSlotName) + "Finished(bool internalError, bool " + frontLetterToUpper(apiCall.ApiCallSlotName) + "Success" + commaSpaceIfAnyResponseArgs + apiCallArgNamesToCommaSeparatedList(&apiCall, false, false) + ")";
+        apiQtFrontEndSkeletonCallbackMethodDefinitions.append(callbackMethodSignature);
+        apiQtFrontEndSkeletonCallbackMethodDefinitions.append("{");
+        apiQtFrontEndSkeletonCallbackMethodDefinitions.append("    qFatal(\"callback " + callbackMethodSignature + " not yet implemented\");"); //maybe I should just do the header definition. that way, they can still compile and test/use a partially implemented api. err actually they already can xD. but still, doing header definitions only means I can STILL use the callback's signature for auto-completion (the main reason I'm doing this), BUT once they use the callback, they then would have to define it... and there's a c++ refactor action for that
+        apiQtFrontEndSkeletonCallbackMethodDefinitions.append("}");
+    }
+    beforeAndAfterStrings.insert("%API_QTFRONTEND_SKELETON_CALLBACK_METHOD_DEFINITIONS%", apiQtFrontEndSkeletonCallbackMethodDefinitions.join("\n"));
+
+    QStringList apiWtFrontEndSkeletonCallbackMethodDefinitions;
+    Q_FOREACH(ApiCall apiCall, api->ApiCalls)
+    {
+        QString commaSpaceIfAnyResponseArgs;
+        if(!apiCall.ResponseArgs.isEmpty())
+            commaSpaceIfAnyResponseArgs = ", ";
+        QString callbackMethodSignature = "void " + api->ApiName + "WebWidget::handle" + frontLetterToUpper(apiCall.ApiCallSlotName) + "Finished(bool internalError, bool " + frontLetterToUpper(apiCall.ApiCallSlotName) + "Success" + commaSpaceIfAnyResponseArgs + apiCallArgNamesToCommaSeparatedList(&apiCall, false, false) + ")";
+        apiWtFrontEndSkeletonCallbackMethodDefinitions.append(callbackMethodSignature);
+        apiWtFrontEndSkeletonCallbackMethodDefinitions.append("{");
+        apiWtFrontEndSkeletonCallbackMethodDefinitions.append("    qFatal(\"callback " + callbackMethodSignature + " not yet implemented\");"); //maybe I should just do the header definition. that way, they can still compile and test/use a partially implemented api. err actually they already can xD. but still, doing header definitions only means I can STILL use the callback's signature for auto-completion (the main reason I'm doing this), BUT once they use the callback, they then would have to define it... and there's a c++ refactor action for that
+        apiWtFrontEndSkeletonCallbackMethodDefinitions.append("}");
+    }
+    beforeAndAfterStrings.insert("%API_WTFRONTEND_SKELETON_CALLBACK_METHOD_DEFINITIONS%", apiWtFrontEndSkeletonCallbackMethodDefinitions.join("\n"));
 
     return beforeAndAfterStrings;
 }
@@ -659,7 +704,7 @@ void RpcGenerator::appendApiCallBeforeAndAfterStrings(TemplateBeforeAndAfterStri
     beforeAndAfterStrings->insert("%API_CALL_ADDITIONAL_INCLUDES_FOR_WHENEVER_THIS_API_CALLS_REQUEST_OR_RESPONSE_ARGS_ARE_PRESENT%", additionalIncludesForThisApiCall(apiCall));
     beforeAndAfterStrings->insert("%COMMASPACE_IF_RESPONSE_HAS_ANY_ARGS%", (apiCall->ResponseArgs.isEmpty() ? "" : ", "));
 }
-void RpcGenerator::writeApiCallFiles(FilesToWriteType *filesToWrite, ApiCall *apiCall, QDir outputDir)
+void RpcGenerator::generateApiCallFiles(FilesToWriteType *filesToWrite, ApiCall *apiCall, QDir outputDir)
 {
     //Interface
     filesToWrite->insert(generateApiCallRequestInterfaceHeader(apiCall, outputDir));
@@ -672,6 +717,25 @@ void RpcGenerator::writeApiCallFiles(FilesToWriteType *filesToWrite, ApiCall *ap
     //Wt Impl
     filesToWrite->insert(generateApiCallRequestFromWtHeader(apiCall, outputDir));
     filesToWrite->insert(generateApiCallRequestFromWtSource(apiCall, outputDir));
+}
+void RpcGenerator::generateApiFrontEndSkeletonImplementationFiles(FilesToWriteType *filesToWrite, Api *api, QDir outputDir, RpcGeneratorApiFrontEndType::RpcGeneratorApiFrontEndTypeEnum frontEndType)
+{
+    QString outputPath = outputDir.path() + QDir::separator();
+    QString apiNameToLower = api->ApiName.toLower();
+    if(frontEndType == RpcGeneratorApiFrontEndType::QtWidgets)
+    {
+        addFileToWrite(filesToWrite, api, ":/cleanroomgui.h", outputPath + apiNameToLower + "gui.h");
+        addFileToWrite(filesToWrite, api, ":/cleanroomgui.cpp", outputPath + apiNameToLower + "gui.cpp");
+        addFileToWrite(filesToWrite, api, ":/cleanroomguiwidget.h", outputPath + apiNameToLower + "guiwidget.h");
+        addFileToWrite(filesToWrite, api, ":/cleanroomguiwidget.cpp", outputPath + apiNameToLower + "guiwidget.cpp");
+    }
+    else if(frontEndType == RpcGeneratorApiFrontEndType::Web)
+    {
+        addFileToWrite(filesToWrite, api, ":/cleanroomweb.h", outputPath + apiNameToLower + "web.h");
+        addFileToWrite(filesToWrite, api, ":/cleanroomweb.cpp", outputPath + apiNameToLower + "web.cpp");
+        addFileToWrite(filesToWrite, api, ":/cleanroomwebwidget.h", outputPath + apiNameToLower + "webwidget.h");
+        addFileToWrite(filesToWrite, api, ":/cleanroomwebwidget.cpp", outputPath + apiNameToLower + "webwidget.cpp");
+    }
 }
 bool RpcGenerator::generateRpcActual(Api *api, QString outputPath) //OT af: mfw "typedef QSharedPointer<IClassImpl> Class;". such easy way to use shared pointer for business objects IClassImpl _IS_ Class, but is named that way just to make the using Api more conveniently memory/lifetime managed
 {
@@ -693,10 +757,10 @@ bool RpcGenerator::generateRpcActual(Api *api, QString outputPath) //OT af: mfw 
     //Api Request Interface
     filesToWrite.insert(generateApiRequestInterface(api, outputDir));
 
-    //Per-API-Call Objects
+    //Per-API-Call Files
     Q_FOREACH(ApiCall apiCall, api->ApiCalls)
     {
-        writeApiCallFiles(&filesToWrite, &apiCall, outputDir);
+        generateApiCallFiles(&filesToWrite, &apiCall, outputDir);
     }
 
     //Session
@@ -704,19 +768,39 @@ bool RpcGenerator::generateRpcActual(Api *api, QString outputPath) //OT af: mfw 
     filesToWrite.insert(generateApiSessionSourceFile(api, outputDir));
     //New Session Request Interface
     filesToWrite.insert(generateNewSessionRequestInterface(api, outputDir));
-    //New Session Request //from Qt
-    filesToWrite.insert(generateNewSessionRequestFromHeaderFile(api, outputDir, "qt"));
-    filesToWrite.insert(generateNewSessionRequestFromSourceFile(api, outputDir, "qt"));
-    //New Session Request //from Wt
-    filesToWrite.insert(generateNewSessionRequestFromHeaderFile(api, outputDir, "wt"));
-    filesToWrite.insert(generateNewSessionRequestFromSourceFile(api, outputDir, "wt"));
+    if(m_ApiCallbackTypesToGenerate & RpcGeneratorApiCallbackType::Qt)
+    {
+        //New Session Request //from Qt
+        filesToWrite.insert(generateNewSessionRequestFromHeaderFile(api, outputDir, "qt"));
+        filesToWrite.insert(generateNewSessionRequestFromSourceFile(api, outputDir, "qt"));
+    }
+    if(m_ApiCallbackTypesToGenerate & RpcGeneratorApiCallbackType::Web)
+    {
+        //New Session Request //from Wt
+        filesToWrite.insert(generateNewSessionRequestFromHeaderFile(api, outputDir, "wt"));
+        filesToWrite.insert(generateNewSessionRequestFromSourceFile(api, outputDir, "wt"));
+    }
 
-    //.pri File
+    //.pri File -- lib
     filesToWrite.insert(generateApiPriFile(api, outputDir, filesToWrite));
 
     //Project Compiliation Verification Files (.pro and main function in source file merely instantiating the business)
     filesToWrite.insert(generateApiCompilationVerificationProFile(api, outputDir)); //.pro
     filesToWrite.insert(generateApiCompilationVerificationMainFile(api, outputDir)); //source file with int main()
+
+
+    //(Optional) Front-End Skeleton Implementation Files
+    if(m_ApiFrontEndTypesToGenerateSkeletonCallbacksFor & RpcGeneratorApiFrontEndType::QtWidgets)
+    {
+        //Qt GUI (Widgets) Front-End Skeleton Implementation files
+        generateApiFrontEndSkeletonImplementationFiles(&filesToWrite, api, outputDir, RpcGeneratorApiFrontEndType::QtWidgets);
+    }
+    if(m_ApiFrontEndTypesToGenerateSkeletonCallbacksFor & RpcGeneratorApiFrontEndType::Web)
+    {
+        //Wt Web Front-End Skeleton Implementation files
+        generateApiFrontEndSkeletonImplementationFiles(&filesToWrite, api, outputDir, RpcGeneratorApiFrontEndType::Web);
+    }
+
 
     if(!writeFiles(filesToWrite))
         EEEEEEEEEE_RETURN_RpcGenerator("failed to write some files", false)

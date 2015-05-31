@@ -44,12 +44,45 @@ typedef GeneratedFile FileToWriteType;
 typedef QSet<FileToWriteType> FilesToWriteType;
 typedef QSetIterator<FileToWriteType> FilesToWriteIterator;
 
+class RpcGeneratorApiCallbackType
+{
+public:
+    enum RpcGeneratorApiCallbackTypeEnum
+    {
+          Qt = 0x0
+        , Web = 0x1
+    };
+    Q_DECLARE_FLAGS(RpcGeneratorApiCallbackTypes, RpcGeneratorApiCallbackTypeEnum)
+};
+Q_DECLARE_OPERATORS_FOR_FLAGS(RpcGeneratorApiCallbackType::RpcGeneratorApiCallbackTypes)
+
+class RpcGeneratorApiFrontEndType
+{
+public:
+    enum RpcGeneratorApiFrontEndTypeEnum
+    {
+          DontGenerateAnyFrontEnds = 0x00
+        , QtWidgets = 0x01
+        //, QtCli = 0x02
+        //, QtQuickQml = 0x04
+        , Web = 0x08
+        //, RemoteQtCli = 0x16
+        //, RemoteQtWidgets = 0x32
+    };
+    Q_DECLARE_FLAGS(RpcGeneratorApiFrontEndTypes, RpcGeneratorApiFrontEndTypeEnum)
+};
+Q_DECLARE_OPERATORS_FOR_FLAGS(RpcGeneratorApiFrontEndType::RpcGeneratorApiFrontEndTypes)
+
 class RpcGenerator : public QObject
 {
     Q_OBJECT
 public:
     explicit RpcGenerator(QObject *parent = 0);
 private:
+    RpcGeneratorApiCallbackType::RpcGeneratorApiCallbackTypes m_ApiCallbackTypesToGenerate;
+    RpcGeneratorApiFrontEndType::RpcGeneratorApiFrontEndTypes m_ApiFrontEndTypesToGenerateSkeletonCallbacksFor;
+
+    static void addFileToWrite(FilesToWriteType *filesToWrite, Api *api, QString filePathOfFileToAdd, QString generatedFileName);
     static QString frontLetterToLower(const QString &stringInput);
     static QString frontLetterToUpper(const QString &stringInput);
     static QString classHeaderFileName(QString apiName);
@@ -58,10 +91,10 @@ private:
     static QString apiCallToRequestInterfaceTypeName(ApiCall *apiCall);
     static QString apiCallToRequestInterfaceHeaderInclude(ApiCall *apiCall);
     static QString apiCallToForwardDefinitionRawCpp(ApiCall *apiCall);
-    static QString apiCallArgNamesToCommaSeparatedList(ApiCall *apiCall, bool requestIfTrue, bool makeRequestPointerFirstParameter = true, bool emitTypes = false, bool emitNames = false);
+    static QString apiCallArgNamesToCommaSeparatedList(ApiCall *apiCall, bool requestIfTrue, bool makeRequestPointerFirstParameter = true, bool omitTypes = false, bool omitNames = false);
     static QString apiCallToMethodCppSignature(ApiCall *apiCall, bool requestIfTrue, bool makeRequestPointerFirstParameter = true);
     static QString apiCallToRawCppDeclaration(ApiCall *apiCall, bool requestIfTrue);
-    static QString apiCallArgToCpp(ApiTypeAndVarName *apiCallArg, bool emitTypes = true, bool emitNames = false);
+    static QString apiCallArgToCpp(ApiTypeAndVarName *apiCallArg, bool omitTypes = true, bool omitNames = false);
     static QString apiCallToApiDefinitionRawCpp(ApiCall *apiCall, bool requestIfTrue);
     static QString apiCallToApiCallRequestMethodDeclarationInSessionHeader(ApiCall *apiCall, const QString &boostOrQtCallbackArgs, QString includeApiNamePrefix = QString());
     static QString apiCallToApiCallRequestMethodDefinitionInSessionSource(ApiCall *apiCall, bool trueIfQt_falseIfWt);
@@ -110,9 +143,10 @@ private:
     GeneratedFile generateApiCompilationVerificationProFile(Api *api, QDir outputDir);
     GeneratedFile generateApiCompilationVerificationMainFile(Api *api, QDir outputDir);
 
-    TemplateBeforeAndAfterStrings_Type initialBeforeAndAfterStrings(Api *api);
+    static TemplateBeforeAndAfterStrings_Type initialBeforeAndAfterStrings(Api *api);
     void appendApiCallBeforeAndAfterStrings(TemplateBeforeAndAfterStrings_Type *beforeAndAfterStrings, ApiCall *apiCall);
-    void writeApiCallFiles(FilesToWriteType *filesToWrite, ApiCall *apiCall, QDir outputDir);
+    void generateApiCallFiles(FilesToWriteType *filesToWrite, ApiCall *apiCall, QDir outputDir);
+    void generateApiFrontEndSkeletonImplementationFiles(FilesToWriteType *filesToWrite, Api *api, QDir outputDir, RpcGeneratorApiFrontEndType::RpcGeneratorApiFrontEndTypeEnum frontEndType); //(Optional) Front-End Skeleton Implementation Files
 
     bool generateRpcActual(Api *api, QString outputPath);
     QString fileToString(QString filePath);
@@ -121,6 +155,7 @@ private:
 signals:
     void o(QString);
     void e(QString);
+    void v(QString);
     void rpcGenerated(bool success = false, const QString &directoryFilesWereGeneratedInto = QString());
 public slots:
     void generateRpc();

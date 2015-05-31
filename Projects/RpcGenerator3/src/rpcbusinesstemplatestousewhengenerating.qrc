@@ -18,5 +18,16 @@
     <file alias="icleanroomfrontpagedefaultviewrequest.h">../assets/apitemplates/icleanroomfrontpagedefaultviewrequest.h</file>
     <file alias="icleanroomfrontpagedefaultviewrequest.cpp">../assets/apitemplates/icleanroomfrontpagedefaultviewrequest.cpp</file>
     <file alias="icleanroomrequest.h">../assets/apitemplates/icleanroomrequest.h</file>
+
+
+    <file alias="cleanroomgui.h">../assets/apitemplates/ui/gui/cleanroomgui.h</file>
+    <file alias="cleanroomgui.cpp">../assets/apitemplates/ui/gui/cleanroomgui.cpp</file>
+    <file alias="cleanroomguiwidget.h">../assets/apitemplates/ui/gui/cleanroomguiwidget.h</file>
+    <file alias="cleanroomguiwidget.cpp">../assets/apitemplates/ui/gui/cleanroomguiwidget.cpp</file>
+
+    <file alias="cleanroomweb.h">../assets/apitemplates/ui/web/cleanroomweb.h</file>
+    <file alias="cleanroomweb.cpp">../assets/apitemplates/ui/web/cleanroomweb.cpp</file>
+    <file alias="cleanroomwebwidget.h">../assets/apitemplates/ui/web/cleanroomwebwidget.h</file>
+    <file alias="cleanroomwebwidget.cpp">../assets/apitemplates/ui/web/cleanroomwebwidget.cpp</file>
 </qresource>
 </RCC>

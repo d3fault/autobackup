@@ -31,5 +31,6 @@ void RpcGeneratorCli::handleRpcGenerated(bool success, const QString &directoryF
 {
     if(!success)
         handleE("failed to generate rpc");
+    handleO(directoryFilesWereGeneratedInto);
     emit exitRequested(success ? 0 : 1);
 }
