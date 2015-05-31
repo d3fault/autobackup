@@ -13,7 +13,7 @@ public:
 private:
     QSettings *m_Settings;
 signals:
-    void addDocToDbFinished(bool dbError, bool addDocToDbSuccess);
+    void addDocToDbFinished(bool dbError, bool addDocToDbSuccess, void *userData);
 public slots:
     void addDocToDb(QByteArray docToAddToDb, void *userData);
 };

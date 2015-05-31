@@ -10,12 +10,12 @@ using namespace Wt;
 #include <QScopedPointer>
 #include <QFile>
 
+#include "documenttimelinesession.h"
 #include "documenttimelinedocwebwidget.h"
 #include "documenttimelineregisterwebdialogwidget.h"
 #include "documenttimelineregistersubmitvideowidget.h"
 
 class IDocumentTimeline;
-class DocumentTimelineSession;
 //class DocumentTimelineRegisterWebDialogWidget;
 //class DocumentTimelineRegisterSubmitVideoWidget;
 
@@ -30,7 +30,7 @@ public:
     void handleInternalPathChanged(const std::string &newInternalPath);
 private:
     friend class DocumentTimelineWeb;
-    DocumentTimelineSession *m_Session;
+    QScopedPointer<DocumentTimelineSession> m_Session;
     QScopedPointer<DocumentTimelineRegisterWebDialogWidget> m_RegisterWidget;
     QScopedPointer<DocumentTimelineRegisterSubmitVideoWidget> m_RegisterSubmitVideoWidget;
 
@@ -38,7 +38,7 @@ private:
 
     QList<DocumentTimelineDocWebWidget*> m_DocumentTimelineDocsWidgets;
 
-    void handleDocumentTimelineSessionStarted(DocumentTimelineSession *session);
+    void handleDocumentTimelineSessionStarted(DocumentTimelineSession session);
 
     void requestPending();
     void responseReceived();

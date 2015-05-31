@@ -20,11 +20,6 @@ class DocumentTimeline : public IDocumentTimeline
 public:
     explicit DocumentTimeline(QObject *parent = 0);
 private:
-    //QSettings *m_DocumentTimelineDocumentTimelineDeclarationsOfIntentToAttemptRegistrationDb;
-    //QSettings *m_DocumentTimelineRegistrationAttemptsDb;
-    //QSettings *m_DocumentTimelineRegistrationAttemptsApprovalsOrRejectionsDb;
-    //QSettings *m_DocumentTimelineRegisteredUsersDb;
-    //QSettings *m_DocumentTimelineDb;
     DocumentTimelineDb *m_Db;
 
     static QByteArray documentJsonToHexHash(const QByteArray &documentJson);

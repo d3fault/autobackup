@@ -9,6 +9,7 @@
 #include <QMapIterator>
 #include <QSettings>
 #include <QCryptographicHash>
+#include <QDateTime>
 
 #include "documenttimelinecommon.h"
 #include "documenttimelinedb.h"
@@ -107,6 +108,8 @@ void DocumentTimeline::declareIntentToAttemptRegistration(IDocumentTimelineDecla
 //        request->respond(false, QString());
 //        return;
 //    }
+
+#if 0
     QJsonObject registrationAttemptDeclarationJsonObject;
     registrationAttemptDeclarationJsonObject.insert("preDocumentTimelineRegistrationDocument", true);
     registrationAttemptDeclarationJsonObject.insert("desiredUsername", desiredUsername);
@@ -130,6 +133,7 @@ void DocumentTimeline::declareIntentToAttemptRegistration(IDocumentTimelineDecla
     QByteArray jsonByteArray = QJsonDocument(registrationAttemptDeclarationJsonObject).toJson(QJsonDocument::Compact);
     QString jsonString(jsonByteArray);
     m_Db->addDocToDb(jsonString);
+#endif
 }
 void DocumentTimeline::submitRegistrationAttemptVideo(IDocumentTimelineSubmitRegistrationAttemptVideoRequest *request, QString desiredUsername, QString password, QString registrationAttemptSubmissionVideoLocalFilePath)
 {
@@ -176,17 +180,19 @@ void DocumentTimeline::login(IDocumentTimelineLoginRequest *request, QString use
 //        request->respond(false);
 //        return;
 //    }
+
+    //how the fuck would logging in work if 'every piece of data is a post'? I _CAN_ recreate the json doc used to calculate the sha1 key 1:1, ex-fucking-actomundo (if doc not in db, pw is wrong or user doesn't exist etc)......... EXCEPT for the 't' element onf 'tudl'. Fuck fuck what the fuck. Oh wait just realized the passwordSalt has the same problem. So 't' and 'passwordSalt' shit all over this 'every data item in app is a tudl post' design. wat do nao? Another maybe OT thing was that the addDocToDbFinished signal is only listened to in one slot, so we can only static_cast the userData back to IDocumentTimelinePostRequest..... which is fine when it's just a regular post: BUT.. there's a declare-intent-to-attempt-to-register 'post', submit-registration-attempt-video 'post, etc... that would still follow that same 'post' code path. Posting because a sub-request of those two 'register' api calls
 }
 void DocumentTimeline::post(IDocumentTimelinePostRequest *request, /*QString username, */QByteArray data, QString licenseIdentifier)
 {
-    if(!request->parentSession()->isLoggedIn())
+    if(!request->parentSession().loggedIn())
     {
-        request->respond(false, false, QDateTime(), QByteArray()); //TODOmb: error strings? in this case, it'd simply be "login first" (obviously the front-end can/should check isLoggedIn before even us getting here (they both should do the check)). I think back in my old Rpc Generator 2 days I eventually landed on a FailureType enum, idk
+        request->respond(false, false); //TODOmb: error strings? in this case, it'd simply be "login first" (obviously the front-end can/should check isLoggedIn before even us getting here (they both should do the check)). I think back in my old Rpc Generator 2 days I eventually landed on a FailureType enum, idk
         return;
     }
     QJsonObject postJsonObject;
     //timestamp 't' assigned by db -- TODOreq: once couchbase is integrated: whenevver a db submit has to 'retry' (exponential backoff), the corresponding timestamp should be updated (which, yes, changes the key LoL!)
-    postJsonObject.insert("u", request->parentSession()->loggedInUsername());
+    postJsonObject.insert("u", request->parentSession().loggedInUsername());
     postJsonObject.insert("d", QString(data.toBase64()));
     postJsonObject.insert("l", licenseIdentifier);
     m_Db->addDocToDb(QJsonDocument(postJsonObject).toJson(QJsonDocument::Compact), request);

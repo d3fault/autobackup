@@ -56,6 +56,7 @@ void RpcGenerator::generateRpc()
     Api api("DocumentTimeline");
 
     api.addPropertyToSession("bool", "LoggedIn", "false");
+    api.addPropertyToSession("QString", "LoggedInUsername");
 
     /*TODOmb(COW obviously): api.declareDataType("Document",
                         QList<ApiTypeAndVarName>()

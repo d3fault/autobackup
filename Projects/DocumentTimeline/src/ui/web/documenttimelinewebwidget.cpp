@@ -6,7 +6,6 @@ using namespace Wt;
 #include "documenttimelinewebwidget.h"
 
 #include "documenttimelinecommon.h"
-#include "documenttimelinesession.h"
 #include "documenttimelineregisterwebdialogwidget.h"
 #include "documenttimelineregistersubmitvideowidget.h"
 
@@ -14,7 +13,6 @@ IDocumentTimeline *DocumentTimelineWebWidget::s_DocumentTimeline = NULL;
 
 DocumentTimelineWebWidget::DocumentTimelineWebWidget(const WEnvironment &environment, WtLibVersion version)
     : WApplication(environment, version)
-    , m_Session(NULL)
     , m_RegisterWidget(NULL)
     , m_RegisterSubmitVideoWidget(NULL)
     , m_MessageBox(NULL)
@@ -46,8 +44,8 @@ DocumentTimelineWebWidget::DocumentTimelineWebWidget(const WEnvironment &environ
 }
 DocumentTimelineWebWidget::~DocumentTimelineWebWidget()
 {
-    if(m_Session)
-        delete m_Session; //TODOmb: have the business thread be the one to delete the session (since he instantiated it)? idfk tbh. a delete later call sounds safe though, I just hope I can easily make m_Session a QObject (plus doesn't making session a QObject imply that it is communicated with asynchronously (whereas currently, session is communicated with synchronously (it dispatches and that's it) (OT: i could make session async). It's not 'illegal' to do a synchronous QObject, but it's better to decide that all QObjects are asynchronous (because then synchronous is achieved via Qt::AutoConnection most of the time). The problem is: async objects with implicitly shared properties....... take longer to code. yes, 'session' is rpc generated in this case (WOOT), so it's not a problem for IT. but that is still a general programming problem. perhaps i need a standalone 'async [q]object with implicitly shared properties'... generator. heh but rpc generator (and even d=) is already that once I say it is. it is. it doesn't use signals for the async 'finished' emittance though (but could!). still, behind the request->respond() really is a signal emission if/when it's a Qt requester. fuck yea inheritence (*sucks own dick*). So am I saying that every session dispatch should be asynchronous just so it respects the QObject being inherited? One problem with that: I'm in Wt land. I am a fucking WApplication. I surely can't use rpc generator to communicate with the session, because then I've entered the chicken and the egg problem. So which is better(TODOreq:)? Making 'session' a QObject so I can call deleteLater on it, or passing 'session' back to business [thread] so he can do the deleting. both of them have the same effect of 'session is deleted on business thread', at least. I think I'm going to look into how 'login+session' will interact before deciding on this
+    //if(m_Session)
+        //delete m_Session; //TODOmb(have made session implicitly shared since writing this comment): have the business thread be the one to delete the session (since he instantiated it)? idfk tbh. a delete later call sounds safe though, I just hope I can easily make m_Session a QObject (plus doesn't making session a QObject imply that it is communicated with asynchronously (whereas currently, session is communicated with synchronously (it dispatches and that's it) (OT: i could make session async). It's not 'illegal' to do a synchronous QObject, but it's better to decide that all QObjects are asynchronous (because then synchronous is achieved via Qt::AutoConnection most of the time). The problem is: async objects with implicitly shared properties....... take longer to code. yes, 'session' is rpc generated in this case (WOOT), so it's not a problem for IT. but that is still a general programming problem. perhaps i need a standalone 'async [q]object with implicitly shared properties'... generator. heh but rpc generator (and even d=) is already that once I say it is. it is. it doesn't use signals for the async 'finished' emittance though (but could!). still, behind the request->respond() really is a signal emission if/when it's a Qt requester. fuck yea inheritence (*sucks own dick*). So am I saying that every session dispatch should be asynchronous just so it respects the QObject being inherited? One problem with that: I'm in Wt land. I am a fucking WApplication. I surely can't use rpc generator to communicate with the session, because then I've entered the chicken and the egg problem. So which is better(TODOreq:)? Making 'session' a QObject so I can call deleteLater on it, or passing 'session' back to business [thread] so he can do the deleting. both of them have the same effect of 'session is deleted on business thread', at least. I think I'm going to look into how 'login+session' will interact before deciding on this
 }
 WApplication *DocumentTimelineWebWidget::documentTimelineWebWidgetEntryPoint(const WEnvironment &environment)
 {
@@ -55,7 +53,7 @@ WApplication *DocumentTimelineWebWidget::documentTimelineWebWidgetEntryPoint(con
 }
 void DocumentTimelineWebWidget::handleInternalPathChanged(const std::string &newInternalPath)
 {
-    if(!m_Session)
+    if(m_Session.isNull())
         return;
     if(newInternalPath == DocumentTimelineWebWidget_INTERNAL_PATH_REGISTER)
     {
@@ -65,11 +63,9 @@ void DocumentTimelineWebWidget::handleInternalPathChanged(const std::string &new
         return;
     }
 }
-void DocumentTimelineWebWidget::handleDocumentTimelineSessionStarted(DocumentTimelineSession *session)
+void DocumentTimelineWebWidget::handleDocumentTimelineSessionStarted(DocumentTimelineSession session)
 {
-    if(m_Session)
-        delete m_Session;
-    m_Session = session;
+    m_Session.reset(new DocumentTimelineSession(session));
     m_Session->requestNewDocumentTimelineGetLatestDocuments(this->sessionId(), boost::bind(&DocumentTimelineWebWidget::handleDocumentTimelineGetLatestDocumentsFinished, this, _1, _2, _3));
 }
 void DocumentTimelineWebWidget::requestPending()
