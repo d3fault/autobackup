@@ -22,7 +22,7 @@ private:
     QSettings *m_DocumentTimelineRegistrationAttemptsDb;
     QSettings *m_DocumentTimelineRegistrationAttemptsApprovalsOrRejectionsDb;
     QSettings *m_DocumentTimelineRegisteredUsersDb;
-    QSettings *m_DocumentTimelineDb;
+    //QSettings *m_DocumentTimelineDb;
 
     static QByteArray documentJsonToHexHash(const QByteArray &documentJson);
     static QString generateB64Salt(QString seed);

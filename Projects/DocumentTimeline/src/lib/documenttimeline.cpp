@@ -102,30 +102,29 @@ void DocumentTimeline::declareIntentToAttemptRegistration(IDocumentTimelineDecla
 //        request->respond(false, QString());
 //        return;
 //    }
-//    QJsonObject registrationAttemptDeclarationJsonObject;
-//    registrationAttemptDeclarationJsonObject.insert("desiredUsername", desiredUsername);
-//    registrationAttemptDeclarationJsonObject.insert("fullName", fullName);
-//    QString passwordSalt = generateB64Salt(fullName + desiredUsername + password);
-//    QString saltedPasswordHashB64 = b64hashSaltedPassword(password, passwordSalt);
-//    registrationAttemptDeclarationJsonObject.insert("saltedPasswordHashB64", saltedPasswordHashB64);
-//    registrationAttemptDeclarationJsonObject.insert("passwordSaltB64", passwordSalt);
-//    registrationAttemptDeclarationJsonObject.insert("acceptedContributorLicenseAgreement", acceptedCLA);
-//    registrationAttemptDeclarationJsonObject.insert("fullNameSignature", fullNameSignature);
+    QJsonObject registrationAttemptDeclarationJsonObject;
+    registrationAttemptDeclarationJsonObject.insert("preDocumentTimelineRegistrationDocument", true);
+    registrationAttemptDeclarationJsonObject.insert("desiredUsername", desiredUsername);
+    registrationAttemptDeclarationJsonObject.insert("fullName", fullName);
+    QString passwordSalt = generateB64Salt(fullName + desiredUsername + password);
+    QString saltedPasswordHashB64 = b64hashSaltedPassword(password, passwordSalt);
+    registrationAttemptDeclarationJsonObject.insert("saltedPasswordHashB64", saltedPasswordHashB64);
+    registrationAttemptDeclarationJsonObject.insert("passwordSaltB64", passwordSalt);
+    registrationAttemptDeclarationJsonObject.insert("acceptedContributorLicenseAgreement", acceptedCLA);
+    registrationAttemptDeclarationJsonObject.insert("fullNameSignature", fullNameSignature);
 
-//    //now that the intent to register has been created, generate the string the user must recite in their registration attempt video. it is a b64sha1 of their 'declaration of attempt to register' json doc, which incidentally also goes in the declaration of attempt to register (so we can't calculate it again without first removing it again (but don't need to calculate it again so fuck it))
-//    QJsonDocument jsonDocumentBeforeStringForUserToReciteAdded(registrationAttemptDeclarationJsonObject);
-//    QByteArray jsonByteArrayBeforeStringForUserToReciteAdded = jsonDocumentBeforeStringForUserToReciteAdded.toJson(QJsonDocument::Compact);
-//    QByteArray sha1OfRegistrationAttemptDeclaration = QCryptographicHash::hash(jsonByteArrayBeforeStringForUserToReciteAdded, QCryptographicHash::Sha1);
-//    QByteArray b64sha1OfRegistrationDetails_ForUserToReciteOnVidByteArray = sha1OfRegistrationAttemptDeclaration.toBase64();
-//#define DOCUMENT_TIMELINE_B64_SHA1_OF_REGISTRATION_DETAILS_FOR_USER_TO_RECITE_ON_VID "b64sha1OfRegistrationDetails_ForUserToReciteOnVid"
-//    QString b64sha1OfRegistrationDetails_ForUserToReciteOnVid(b64sha1OfRegistrationDetails_ForUserToReciteOnVidByteArray);
-//    registrationAttemptDeclarationJsonObject.insert(DOCUMENT_TIMELINE_B64_SHA1_OF_REGISTRATION_DETAILS_FOR_USER_TO_RECITE_ON_VID, b64sha1OfRegistrationDetails_ForUserToReciteOnVid);
+    //now that the intent to register has been created, generate the string the user must recite in their registration attempt video. it is a b64sha1 of their 'declaration of attempt to register' json doc, which incidentally also goes in the declaration of attempt to register (so we can't calculate it again without first removing it again (but don't need to calculate it again so fuck it))
+    QJsonDocument jsonDocumentBeforeStringForUserToReciteAdded(registrationAttemptDeclarationJsonObject);
+    QByteArray jsonByteArrayBeforeStringForUserToReciteAdded = jsonDocumentBeforeStringForUserToReciteAdded.toJson(QJsonDocument::Compact);
+    QByteArray sha1OfRegistrationAttemptDeclaration = QCryptographicHash::hash(jsonByteArrayBeforeStringForUserToReciteAdded, QCryptographicHash::Sha1);
+    QByteArray b64sha1OfRegistrationDetails_ForUserToReciteOnVidByteArray = sha1OfRegistrationAttemptDeclaration.toBase64();
+#define DOCUMENT_TIMELINE_B64_SHA1_OF_REGISTRATION_DETAILS_FOR_USER_TO_RECITE_ON_VID "b64sha1OfRegistrationDetails_ForUserToReciteOnVid"
+    QString b64sha1OfRegistrationDetails_ForUserToReciteOnVid(b64sha1OfRegistrationDetails_ForUserToReciteOnVidByteArray);
+    registrationAttemptDeclarationJsonObject.insert(DOCUMENT_TIMELINE_B64_SHA1_OF_REGISTRATION_DETAILS_FOR_USER_TO_RECITE_ON_VID, b64sha1OfRegistrationDetails_ForUserToReciteOnVid);
 
-//    QByteArray jsonByteArray = QJsonDocument(registrationAttemptDeclarationJsonObject).toJson(QJsonDocument::Compact);
-//    QString jsonString(jsonByteArray);
-//    m_DocumentTimelineDocumentTimelineDeclarationsOfIntentToAttemptRegistrationDb->setValue(desiredUsername, jsonString);
-
-//    request->respond(true, b64sha1OfRegistrationDetails_ForUserToReciteOnVid);
+    QByteArray jsonByteArray = QJsonDocument(registrationAttemptDeclarationJsonObject).toJson(QJsonDocument::Compact);
+    QString jsonString(jsonByteArray);
+    m_Db->addDocToDb(jsonString);
 }
 void DocumentTimeline::submitRegistrationAttemptVideo(IDocumentTimelineSubmitRegistrationAttemptVideoRequest *request, QString desiredUsername, QString password, QString registrationAttemptSubmissionVideoLocalFilePath)
 {
