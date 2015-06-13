@@ -1,0 +1,13 @@
+1. RNG (preferably PRNG so there's perfect replayability from a relatively small seed, but this is an aside)
+2. Apply pitch correction
+3. Voting system on pitch corrected RNG 'segments'
+4. Pattern matching in the 'liked' pitch corrected RNG 'segments'. Such patterns could be (gradually) intentionally generated from then on
+
+Takes all the fun (and difficulty!) out of 'making music'.
+
+Thousands of hours of music could be stored in just a few megabytes of data (the PRNG seed, the votes, etc).
+
+Obviously crowd-sourcable. The personal and 'global' voted upon streams would probably be vastly different. Could combine 2+ personal streams on demand ("compare with (or rather: merge with) a friend").
+
+
+The idea above doesn't incorporate any user input aside from votes (like, dislike, or a range 0-9 etc)... but tangent ideas could. Obviously MusicFingers comes to mind. The same concept above but maybe perhaps the RNG chooses an instrument configuration only and then applying the pitch correction to the MusicFingers' output. The size of the 'music files' would be much larger than the original idea described above, since 'finger positions' at various times needs to be serialized.
