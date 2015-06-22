@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1434406105
+Documents/minddump/:1434967820
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1434404408
+Documents/minddump/dreams/:1434968160
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -214,6 +214,7 @@ Documents/minddump/dreams/sdkfjslkdjflksdjfklsjdflkjdsfkljdsfjdofulskdjfosduflsk
 Documents/minddump/dreams/sdkjflsdkjflksdjflksdjflkjslfkjsdlkfjsldkfjlksdjflkjeworulksdjfousldkfjldskf.txt:1419070646
 Documents/minddump/dreams/sdkjflskjdflskjdfosudfljsdfousdfljsfdoulkjeroiusdlfkjsdofuo.txt:1391895285
 Documents/minddump/dreams/sdlafjlasjflsajdfsdufowieurlkasjdfouasfdljouwerlkjsdoafuslfdjkaslf.txt:1381489684
+Documents/minddump/dreams/sdlfjsdlkfjsdlkjflskdjflskdjflksdjflksdjflksdjflksdjflkjlkdsfjlsdhfslkdjfl.txt:1434968160
 Documents/minddump/dreams/sdlfjsdlkjflksdjfklsjdkfljskdljflksdjflksjdfjsdflkjlkjsdf.txt:1428089473
 Documents/minddump/dreams/sdlfjsldjflsdjflskdjflkjsdflkjsdlkfjsdf.txt:1401173176
 Documents/minddump/dreams/sdlfjsldkjflksjdfkljsdlkfjksldjflsjdflkjsdklfjklsdjfksjdfklsjdfkljsdklfjsdklf.txt:1416329133
@@ -1298,7 +1299,7 @@ Documents/minddump/kljsdflsdjfljsdlfjldfalskflaskdjfouerouwerouiqaeruio.txt:1352
 Documents/minddump/kljsdlkfjsdlkjfdfglskdjfslkjfsldkjfousdlkjfsoduflkj.txt:1392976737
 Documents/minddump/klsdjflkjsdlkfjsdoufslkdjfouerljosiudflksd.txt:1392987038
 Documents/minddump/klsdjflksdjflksdjflksjdflskdjflksdjflksdjflksdjflksdfjlskdjflskdjflksdfjlsd.txt:1432865562
-Documents/minddump/klsdjflksjdfklsjdkfljsdflkjsdlkfjsldkfjslkdjflksjdflksdjfkljslkfjksldlksdjf.txt:1434406105
+Documents/minddump/klsdjflksjdfklsjdkfljsdflkjsdlkfjsldkfjslkdjflksjdflksdjfkljslkfjksldlksdjf.txt:1434532963
 Documents/minddump/klsjdflkjsdlkfjslkdfjlskdjflksdjflksjdlfkjsdlkfjlsdkjf.txt:1434358421
 Documents/minddump/klsjdflksdjflkjsdlkfjsdkljfouerhsdfglkdsf.txt:1411010693
 Documents/minddump/ksajdflkjasdfkljsdlkjflkjsdflkjsdlkfjfsdlfkjsdlkfjs.txt:1400292268
@@ -1309,6 +1310,7 @@ Documents/minddump/ksjdflkjsdlfjslkdjflksjdflkdjsflkjsdlkfjsdofuwelkrjoudslfkjsd
 Documents/minddump/ksjdflkjsdlkfjslkdjflksjdfkljsdlkfjslkdjflksdjflkjsd.txt:1424836273
 Documents/minddump/ksjfljslkadjflksjadflkjsdfouwerlkdfs.txt:1396053085
 Documents/minddump/ksjflkjslkfjslkdjflksjfkljsdflkjsdlkfjskdlfjskldjflksdjf.txt:1408989046
+Documents/minddump/ksjflksdjflksdjflksjdflkjsdklfjsdklfjsldkfjskldfhowerjlskdflksdjf.txt:1434967842
 Documents/minddump/ladkjflksdjflksdjfoiuwerlkjosdfusldkfjoweuirlkjadfsoui.txt:1354188555
 Documents/minddump/ladskfjalsdkjfasdouflawjosduflsdkjfowurlwkejfsdou.txt:1353176324
 Documents/minddump/lafkjdslkfjlsakdjflsadfouwerljsoufoweiurojfjk.txt:1354189416
@@ -1407,6 +1409,7 @@ Documents/minddump/ljdslfjlfkjsalkdfjlksdjfkljsdflkjsafljsdoewurljdfousdflk.txt:
 Documents/minddump/ljkfsldkjfksljdfkljsdlfkjsdfousdljfkosduflskjdfousldkfjsdiu.txt:1393820908
 Documents/minddump/ljksadfljksadlkfjsdouflkjewourlkjsdfouasdlfk.txt:1384946785
 Documents/minddump/ljksdlkfjsldjflksdjflksdjflkshdflkjdsofulsdkfjsdlkjfsldkf.find.pleasure.in.or.get.pleasure.from.txt:1423509153
+Documents/minddump/ljlfksjlksdjflksjdflksjdfljsdflkjsdlkjflskdjflkjsdfkjsdlkfjlsdkjflksdjflkj.txt:1434532856
 Documents/minddump/ljsalkjfjslkdfsdfjsdlfkjdsfousdfkjsdfewroudsfljk.txt:1361169440
 Documents/minddump/ljsdfljsdlfjsdlkjflsdkjflksdjflksdjflksjdflsdjflkjsdflkjsdlfkjsdf.txt:1418197519
 Documents/minddump/ljsdfljsdlkjflksdjflkjsdflkjsdfouwerlkjdsouflkdjsf.txt:1400571129
@@ -3466,7 +3469,7 @@ Projects/IcePick/src/lib/:1431941696
 Projects/IcePick/src/lib/icepick.cpp:1431941696
 Projects/IcePick/src/lib/icepick.h:1431941502
 Projects/IcePick/src/IcePickGui.pro:1431928734
-Projects/Ideas/:1434204215
+Projects/Ideas/:1434968622
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -3684,6 +3687,7 @@ Projects/Ideas/motion.detected.keyboard.adlfkjsadfjaweoriusdflksjdfoult.txt:1339
 Projects/Ideas/music.crowd.sourced.volume.scaling.of.songs.txt:1344298072
 Projects/Ideas/music.ide.related.set.of.streams.etc.lksdjflkjasdf.txt:1423938843
 Projects/Ideas/music.timeline.save.time.pressed.ban.love.next.especially.the.next.part.and.tell.the.artist.txt:1342772760
+Projects/Ideas/my.idea.of.userland.is.deleteproof.computing.environment.and.ofc.that.implies.dev.env.too.woot.i.hate.data.loss.txt:1434968622
 Projects/Ideas/network.grid.of.computers.that.each.0.or.1.represents.a.single.computer.or.group.of.computers.if.REALLY.important.OR.bandwidth.intensive.txt:1322071181
 Projects/Ideas/neural.network.of.pitch.corrected.randomly.generated.music.sdlfjlsdfjlskdfjds.txt:1434204215
 Projects/Ideas/next.vid.suggestion.ad.injection.aljsdfkjsd.txt:1354838411

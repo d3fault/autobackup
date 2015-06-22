@@ -1,0 +1,4 @@
+0) Find a river
+1) Build a dam/generator
+2) Sell electricity
+3) Enslave the human species
