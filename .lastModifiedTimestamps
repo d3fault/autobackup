@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1435735253
+Documents/minddump/:1438040782
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1435734222
+Documents/minddump/dreams/:1438035809
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -93,7 +93,7 @@ Documents/minddump/dreams/falkdsjflkjasdfjsfosldfjsodufslkdjfsodiufkljowiuer.txt
 Documents/minddump/dreams/falling.asleep.in.a.lucid.dream.on.the.day.of.my.gpa.wielers.funeral.txt:1367832133
 Documents/minddump/dreams/falsfjlsdjflksjdflkjsdflkjsdflkjsdfkljoewurlkjsfdsodfusldfkjsdofu.txt:1382077511
 Documents/minddump/dreams/fasdlkfjlsdkjflkjweroulsdjfosduflksjdfouwerljosufdlsfk.txt:1397520143
-Documents/minddump/dreams/favorite.minute.lucid.dream.electric.moon.and.grass.and.daphdils.txt:1384628855
+Documents/minddump/dreams/favorite.minute.lucid.dream.electric.moon.and.grass.and.dandelion.txt:1438035960
 Documents/minddump/dreams/flajflkjasdlfjsdofusldjfosudflsjdfouisdlfjoudslkfjasdoiu.txt:1383759787
 Documents/minddump/dreams/flat.horse.probably.one.of.the.trippiest.dreams.ive.ever.had.txt:1369395745
 Documents/minddump/dreams/freeway.buff.out.scrapes.extended.thoughts.and.reflection.txt:1341458227
@@ -1540,6 +1540,7 @@ Documents/minddump/lksjdflkjasdlfkjsdfousdflkjsdfousdflkjweourlkjsdfousdf.txt:13
 Documents/minddump/lksjdflkjdsklfjlkdsfjlksdjfljdsfyewrljdsfusdofjsdlkfjsdfjsldkjflksdjf.txt:1421241633
 Documents/minddump/lksjdflkjsdfkljsdklfjlksdjflksjdfkljsdklfjsdkljflksjdflkj.txt:1427837267
 Documents/minddump/lksjdflkjsdfkljsdlfkjsdflkjdsflkjdfsouwerljksfd.txt:1360825363
+Documents/minddump/lksjdflksdjflkjsdfkljsdklfjsdlkfjklsdjfklsdjflkj.txt:1435735538
 Documents/minddump/lksjfkljsfdouwerlkjsdaoifusghghfgsertertdlfkjouierlk.txt:1358035260
 Documents/minddump/lksjflkjaslfjlskjdflksjaflkjsaldkfjsadfowiuerlkjsf.txt:1398341689
 Documents/minddump/lksjflksajflksjflksjdflksdjflkjsdflkjsdflkuweorjlksdfjousdflkjdsfosdiufl.txt:1380194516
@@ -1598,6 +1599,7 @@ Documents/minddump/lsdjflsdjflksjdlkfjsdkljfsdlkjfoiwherljsdflkjsdfl.txt:1405678
 Documents/minddump/lsdjflsdkjfklsdjfkjsdfkljsdlkfowuerlkjsdfhdskfjklsdjfsldkjf.txt:1414785399
 Documents/minddump/lsdjflsjadflkjskdlfjsdlkfjsdofusdlkfjsoduflsdjfljkewrousdf.txt:1393796085
 Documents/minddump/lsdjflsjdflksjdflkjsdlkfjklsdhflksdjfklsdjfkljsdklfjoiuerlhsdlfjsldkfj.txt:1427573280
+Documents/minddump/lsdjflskdjflkjsdlfkjsdlfjsldjflksdjflksjdflksdjf.txt:1438035674
 Documents/minddump/lsdjkflskajdfkjsdlfkjlwkejroulsdkjflksjdflksdfjouewlrkjousdfls.txt:1400127929
 Documents/minddump/lsdkfjlkasdjflksadjflkjsdofusldfjsoduflsdjfousdfldsjflkt.xt:1416243644
 Documents/minddump/lsdkfjlksdjfklsdjfklssdffdsdjfklsjdklfjsdlkfjslkdjflksdj.txt:1424480960
@@ -1642,6 +1644,7 @@ Documents/minddump/lsjdflkjsldkjfkjwerousldfjosdufljdsfoulekrjsufsdl.txt:1397553
 Documents/minddump/lsjdflksjdfkljsdlkfjlskdjflksdjflkjsdlfkjsdlkfjslkdjf.txt:1426332628
 Documents/minddump/lsjdflksjdflkjsdfosduiflsdjfousdflolololjsdflksjdfosfolololsdjfksdjfkls.txt:1393170391
 Documents/minddump/lsjdflksjdflkjsdlkfjsdlkjflskdhljkwrousldkfjsdlkfjsdlfjlfdj.txt:1426849979
+Documents/minddump/lsjdflksjdflksjdflksjdflksjdflkjsdlfkjsdlkfjlskdfjlksdjfk.txt:1436032738
 Documents/minddump/lsjdflsdjflksdjflkjsdlfjsldkfjsdfouwelrjkousdflkjsdofulwkejrousdlfks.txt:1405646446
 Documents/minddump/lsjdflskjdflkslkdjfjsdlfjsdlfkjsldkjflsdkjflksdjflskdjf.txt:1399262829
 Documents/minddump/lsjdflskjflkjsdflkjsdklfjsldkjfklsdjflkjsdlkfjsdlkfjlksdjflksjdflksljflks.txt:1426856534
@@ -2533,6 +2536,7 @@ Documents/minddump/sljdkflksjdflkjsdfouljwerodsfasdfusldfjaljsdflkjsadfouewrlkds
 Documents/minddump/slkdfjlkasdjfosaduflsjdfousldfjsoduflksdjfouiweoruofsd.txt:1384659158
 Documents/minddump/slkdfjlksjflksjdfkljsdfkljsdfjsdlkfjsodiuflsdkjfsdlkfjsdf.txt:1404703975
 Documents/minddump/slkdfjlskdjfksdfklsjdfkljwerousdlkfjsdlfjlskdfjsdlkfjoeukdf.txt:1405164900
+Documents/minddump/slkdfjlskdjflksdjflkjsdlkfjsldkjflskdjflksjdflkjsdlkfjsdlkjfk.txt:1436354249
 Documents/minddump/slkdfjlskdjflsdkjflsdjfsjdfljsdlkfjdsfljsdlfkjsdfou.txt:1405835171
 Documents/minddump/slkdfjsdlkfjlskdjfklsdjflksdjflksjdflksjdflkjsdflkjsdlkfjsdlkflksdjfl.txt:1432893601
 Documents/minddump/slkdfjslkdjfskdjfkjsdfkljsdfkljsdkfljuwiokljsfsdfkl.txt:1362494365
@@ -2543,6 +2547,7 @@ Documents/minddump/slkdjflsdkjflksjdlfkjsdlkjflsdjlfkjsfjlskdjflsjflskjflkjslkdj
 Documents/minddump/slkdjflskdjflkjsdfosdfuljkwerjkdfsoiusdelkj.txt:1360823579
 Documents/minddump/slkdjflskjdfsdoifuwlerkjsdafousdlfkjweroui.txt:1358069286
 Documents/minddump/slkdjfskldjflksjdfklsjdfkljsfkjsdklfjsdlkfjskldjfklsdjfklsjdflkjsdfkljskldf.txt:1432659816
+Documents/minddump/slkfdjlskdjflksdjflkjsdlkfjslkdjflksdjflksjdfkljsdlkfjsdlkfjlskdjf.txt:1438040782
 Documents/minddump/slkfdjsdlkjfsdwerreouflkjweorulkjsdfoulkjelkjfsdlksfdjklsfd.txt:1364944514
 Documents/minddump/slkfdslfkjlsakdjflsdjflksdjflkjsdflkjweroulsdkfjsdf.txt:1398713903
 Documents/minddump/slkfjsalkjfdlsdaffskdwerwerasfsdfjfsdofusdlkfjsdlfkj.txt:1360772334
