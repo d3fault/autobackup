@@ -5,10 +5,11 @@ hvbs
 abc2
 
 do:
-server migration
-last 100 timeline entries titles (had:git commits) beneath video stream in hvbs
-
+last 100 timeline entry titles (or maybe the entire docs (excluding code docs (but including /Projects/Ideas lel))) beneath video stream in hvbs
+hardcoded "starred" video segments
+previous video button. perhaps when navigating to a video from dir browser, i should use the 'front page' mode since it actually works
 abc explain vids -- that and/or step by step tutorials (images), obviously preferably both
+
 "not serving this"
 binary post-update also? err not post-update anymore since it's not a git repo anymore, but still there's a bit of content in /binary/ not being shown on the site. using my new night/morning script might create dupes if i start showing /binary/ [somehow]
 copyleft disclaimer (assignment is easiest, but shitty, CLA would be better but maybe complicated (also shitty, just less shitty than assignment), some kind of "you agree to give your works to me in DPL3(+? (maybe two versions, one with the plus and one without))" would be best (and idk that itself kind of sounds like a CLA (typical CLAs require giving up MORE, however), idfk want2buy lawyer))

@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1438221651
+Documents/minddump/:1438680152
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1438221422
+Documents/minddump/dreams/:1438496651
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -161,6 +161,7 @@ Documents/minddump/dreams/lskdfjlaksjfdlsdkjfosudflsjkdfouslfdjsdfououer.txt:138
 Documents/minddump/dreams/lskdjflkasdjflkjsdlkfjsdlkfjsldkjfklsdjfklsdjflks.txt:1415247717
 Documents/minddump/dreams/lskdjflksdjfklsjdflkjsdlfkjsdlkfjsldkjflksdjflksdjfsdlkfjlksdjfl.txt:1429165195
 Documents/minddump/dreams/lskdjflksjdfkljsdflkjsdkfjskldjfklsdjflkjsdlfkjsdklfjskldjflkjolkjdsflksjdf.txt:1424340072
+Documents/minddump/dreams/lskdjflksjdflkjsdlkfjlksdjflksjdflkjsdlkfjslkdjflksdjflksjdlfkjsdfl.txt:1438496651
 Documents/minddump/dreams/lskdjflksjdflksjdfouflkjsdofusdlfjsoduflkjweroiujsdf.txt:1377721281
 Documents/minddump/dreams/lskdjflsjadfosuadflsdofusdlfjouwerlkjsdofuisadlfk.txt:1389041042
 Documents/minddump/dreams/lskdjflskjdflkjsdfkljdsjflskdjfoiewurkjsdflkjf.txt:1409865070
@@ -256,7 +257,7 @@ Documents/minddump/dreams/sldkfjsldkjfskdjflksjdflkjsdlkfjsdklfjlskdjflksdjfkjsd
 Documents/minddump/dreams/sldkjflksdjfkljsdlkfjskldjfklsdjfkljsdlfkjsdlkfjlskdjf.txt:1424552869
 Documents/minddump/dreams/sldkjflksdjfklsjdkfljsdkjflskdjflksjdflkjsdlkfjsldkfjsdlkjfl.txt:1426287074
 Documents/minddump/dreams/sldkjflsdjfdlskjfldskjflksdjflsdkjflksdjflkjsdflkjsdflk.txt:1417933376
-Documents/minddump/dreams/sldkjflskdjflkjsdflkjsdlkfjsdlkflsdhflksdjflksdjflksdjflkjsdlkfjsdlkfj.txt:1438221422
+Documents/minddump/dreams/sldkjflskdjflkjsdflkjsdlkfjsdlkflsdhflksdjflksdjflksdjflkjsdlkfjsdlkfj.txt:1438314891
 Documents/minddump/dreams/sldkjflskdjflksdjflksjdlfkjsdfjoweurlksdjfosduflkdsjflksdjf.txt:1415787073
 Documents/minddump/dreams/sldkjflskjdflkjsdlfjsdkljfjewrjlkjdflkjsldfjoiwer.txt:1394211103
 Documents/minddump/dreams/slfkjalskjflksjdflsjdflkjsdlkfjouwerlkjosudflksjdfousdfl.easy.metaphore.for.uhh.economy.and.lots.others.txt:1397896994
@@ -1277,6 +1278,7 @@ Documents/minddump/jfsdfjoiawurwlkfsdfoaurkl.txt:1322828902
 Documents/minddump/jhskjdhfkjashfkjhskjfhksjhfkjsdhfkjsdhfkjhsdfkjh.txt:1396679853
 Documents/minddump/jksdflkjdslkfjsadouwreoiuafjlsdflkj.txt:1354049859
 Documents/minddump/jladsfkjdslfkjasdfoiuwerkljasfdiusalfj.txt:1335804567
+Documents/minddump/jlkjsjdflksjdflkjsdlfjsdlfjlskdjflsdjflksjdlfkjsdlkfjslkdjflskdjflsdjflkjsdfl.txt:1438508404
 Documents/minddump/jlsakjfdlksjdflkjsdlkfjsjdfljsdofulsdjflkjouwerlkjsoduflksdfj.txt:1398267831
 Documents/minddump/jsdafljsadofiuasfousaoeriujwearoausdpfuawrljwlkfsdoiufsalkfj.txt:1327710139
 Documents/minddump/jsdfljsdlfjlskdjflksdjfkljdkfjsdklfjsdlkfjlksdjfklsdjfklhsdflksdhflksdhfljsdlkf.txt:1408535443
@@ -1417,6 +1419,7 @@ Documents/minddump/ljkfsldkjfksljdfkljsdlfkjsdfousdljfkosduflskjdfousldkfjsdiu.t
 Documents/minddump/ljksadfljksadlkfjsdouflkjewourlkjsdfouasdlfk.txt:1384946785
 Documents/minddump/ljksdlkfjsldjflksdjflksdjflkshdflkjdsofulsdkfjsdlkjfsldkf.find.pleasure.in.or.get.pleasure.from.txt:1423509153
 Documents/minddump/ljlfksjlksdjflksjdflksjdfljsdflkjsdlkjflskdjflkjsdfkjsdlkfjlsdkjflksdjflkj.txt:1434532856
+Documents/minddump/ljlkfdjlskdjflksdjflksdjflksdjflhglsdjlfkjsdlfkjsdklfhsodfisjdlkfjsdlkj.txt:1438508512
 Documents/minddump/ljsalkjfjslkdfsdfjsdlfkjdsfousdfkjsdfewroudsfljk.txt:1361169440
 Documents/minddump/ljsdfljsdlfjsdlkjflsdkjflksdjflksdjflksjdflsdjflkjsdflkjsdlfkjsdf.txt:1418197519
 Documents/minddump/ljsdfljsdlkjflksdjflkjsdflkjsdfouwerlkjdsouflkdjsf.txt:1400571129
@@ -2303,6 +2306,7 @@ Documents/minddump/sdlkfjlaksjdfosudflkjsadfousdlfjouwelrkjousdf.txt:1384490455
 Documents/minddump/sdlkfjlaskjdflkjslkdfjlkasjflkjsdflkjsdflkjsdfkj.whats.one.day.txt.oh.shit.so.what.about.releasing.files.then.i.mean.when.txt:1400311121
 Documents/minddump/sdlkfjlksdjfkljsdklfjkljsdklfjskldjfklsjdlkfjksd.txt:1425035296
 Documents/minddump/sdlkfjlksdjflskdjfouwerljsdlkfhlsdkjfsdlkjfsdofuoewurjfdlkjfsdflksjdfsduferkjsf.txt:1405074523
+Documents/minddump/sdlkfjlsdkjflsdjflksdjlfkjsldkfjlskdfjlksdjflksjdflkhsdfjsldkfjsdlkfj.txt:1438680152
 Documents/minddump/sdlkfjlskdjflksjdflkjsdkfljsdklfjksldjfklsdjfkjsdklfjlskdjflkj.txt:1427135836
 Documents/minddump/sdlkfjlskdjflksjdflkjsdklfjlksdjflksjdflkjsdf.txt:1409512159
 Documents/minddump/sdlkfjlskjfklsjdklfjsdkfjlksdjfjlksjflkjlsdkfjlksdjflk.txt:1427100510
@@ -3902,10 +3906,12 @@ Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmak
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/mouseormotionormysexyfaceviewmakerwidget.h:1424872740
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/qtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.png:1424755814
 Projects/MouseOrMotionOrMySexyFaceViewMaker/src/systemTrayIcon.svg:1424596976
-Projects/MusicFingers/:1424881086
+Projects/MusicFingers/:1438697230
 Projects/MusicFingers/assets/:1424881312
 Projects/MusicFingers/assets/ArduinoWriteChangesOnA0toSerial/:1428920701
 Projects/MusicFingers/assets/ArduinoWriteChangesOnA0toSerial/ArduinoWriteChangesOnA0toSerial.ino:1428920701
+Projects/MusicFingers/design/:1438697274
+Projects/MusicFingers/design/maybe.version.2.andor.the.commercial.version.svg:1438697274
 Projects/MusicFingers/src/:1428303545
 Projects/MusicFingers/src/cli/:1429355191
 Projects/MusicFingers/src/cli/MusicFingersCli.pro:1426284942
@@ -6143,4 +6149,4 @@ scripts/zoom.backup.and.shred.sh:1351237228
 .gitignore:1432417463
 copyright.txt:1388203681
 license.dpl.txt:1388242176
-todo.txt:1432017599
+todo.txt:1438315080
