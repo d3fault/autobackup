@@ -5,6 +5,7 @@ hvbs
 abc2
 
 do:
+episodic book publishing halper (I'm iffy on this idea, but might as well (I could temporarily proprietize mah w0rdz, but I'll NEVER proprietize mah codez))
 last 100 timeline entry titles (or maybe the entire docs (excluding code docs (but including /Projects/Ideas lel))) beneath video stream in hvbs
 hardcoded "starred" video segments
 previous video button. perhaps when navigating to a video from dir browser, i should use the 'front page' mode since it actually works
