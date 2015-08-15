@@ -77,6 +77,7 @@ void SubjectMatterMasteryHelper::askNextQuestionInSubjectMatterIoDevice()
                 delete m_SubjectMatterQuestionsAndAnswersIterator;
                 m_SubjectMatterQuestionsAndAnswersIterator = new QListIterator<QuestionAndAnswerType>(m_CurrentSubjectMatterQuestionsAndAnswers);
                 askNextQuestionInSubjectMatterIoDevice();
+                return;
             }
             emit o("gratz, you got them all right");
             emit testingFinished();
