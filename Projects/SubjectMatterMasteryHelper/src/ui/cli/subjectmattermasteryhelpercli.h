@@ -25,6 +25,7 @@ private slots:
     void handleQuestionAsked(const QString &question);
     void handleStandardInputReceivedLine(const QString &standardInputLine);
     void handleQuestionAnsweredGraded(bool answerAttemptWasCorrect, const QString &answerIfAttemptWasIncorrect);
+    void handleO(const QString &msg);
     void handleE(const QString &msg);
     void handleQuitRequested();
 };
