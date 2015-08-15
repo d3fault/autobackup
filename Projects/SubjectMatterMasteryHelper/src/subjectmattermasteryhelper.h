@@ -6,6 +6,7 @@
 #include <QPair>
 #include <QScopedPointer>
 #include <QMap>
+#include <QSet>
 
 class QIODevice;
 
@@ -28,8 +29,19 @@ private:
     bool m_AnswersTooLongUseMultipleChoice;
     bool m_DontRandomize;
     QMap<char, QString> m_CurrentMultipleChoiceLettersAndAnswers;
+    QSet<QString> m_AnswersDeduplicatedForMultipleChoiceShenanigans;
 
     void readAllQuestionsFromSubjectMatterIoDeviceAndMaybeScrambleTheirOrdering();
+    template <class T>
+    void shuffleList(QList<T> *theList)
+    {
+        QList<T> shuffled;
+        while(!theList->isEmpty())
+        {
+            shuffled.append(theList->takeAt(theList->size() % qrand()));
+        }
+        *theList = shuffled;
+    }
     void askNextQuestionInSubjectMatterIoDevice();
     void maybeCleanup();
 signals:

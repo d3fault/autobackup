@@ -1,7 +1,5 @@
 #include "subjectmattermasteryhelper.h"
 
-#include <algorithm>
-
 #include <QFile>
 #include <QTextStream>
 #include <QDateTime>
@@ -13,7 +11,9 @@ SubjectMatterMasteryHelper::SubjectMatterMasteryHelper(QObject *parent)
     , m_SubjectMatterQuestionsAndAnswersIterator(0)
     , m_AnswersTooLongUseMultipleChoice(false)
     , m_DontRandomize(false)
-{ }
+{
+    qsrand(QDateTime::currentMSecsSinceEpoch());
+}
 SubjectMatterMasteryHelper::~SubjectMatterMasteryHelper()
 {
     maybeCleanup();
@@ -24,6 +24,7 @@ void SubjectMatterMasteryHelper::readAllQuestionsFromSubjectMatterIoDeviceAndMay
 {
     m_SubjectMatterQuestionsAndAnswers.clear();
     m_SubjectMatterQuestionsAndAnswersGotWrong.clear();
+    m_AnswersDeduplicatedForMultipleChoiceShenanigans.clear();
     QTextStream subjectMatterQuestionsAndAnswersTextStream(m_IoDeviceToSubjectMatter);
     while(!subjectMatterQuestionsAndAnswersTextStream.atEnd())
     {
@@ -40,10 +41,11 @@ void SubjectMatterMasteryHelper::readAllQuestionsFromSubjectMatterIoDeviceAndMay
             return;
         }
         m_SubjectMatterQuestionsAndAnswers.append(qMakePair(currentQuestion, currentAnswer));
+        m_AnswersDeduplicatedForMultipleChoiceShenanigans.insert(currentAnswer);
     }
     m_IoDeviceToSubjectMatter->close();
     if(!m_DontRandomize)
-        std::random_shuffle(m_SubjectMatterQuestionsAndAnswers.begin(), m_SubjectMatterQuestionsAndAnswers.end());
+        shuffleList(&m_SubjectMatterQuestionsAndAnswers);
     m_CurrentSubjectMatterQuestionsAndAnswers = m_SubjectMatterQuestionsAndAnswers;
     if(m_SubjectMatterQuestionsAndAnswersIterator)
         delete m_SubjectMatterQuestionsAndAnswersIterator;
@@ -72,7 +74,8 @@ void SubjectMatterMasteryHelper::askNextQuestionInSubjectMatterIoDevice()
             m_CurrentSubjectMatterQuestionsAndAnswers = m_SubjectMatterQuestionsAndAnswersGotWrong;
             m_SubjectMatterQuestionsAndAnswersGotWrong.clear();
             if(!m_DontRandomize)
-                std::random_shuffle(m_CurrentSubjectMatterQuestionsAndAnswers.begin(), m_CurrentSubjectMatterQuestionsAndAnswers.end());
+                shuffleList(&m_CurrentSubjectMatterQuestionsAndAnswers);
+            //std::random_shuffle(m_CurrentSubjectMatterQuestionsAndAnswers.begin(), m_CurrentSubjectMatterQuestionsAndAnswers.end()); //TODOreq: random_shuffle is tits without c++11 support to get rand_device (and fuck c++11)... or maybe there's another way to seed? but yea i'm seeing the same patterns over and over -_-
             delete m_SubjectMatterQuestionsAndAnswersIterator;
             m_SubjectMatterQuestionsAndAnswersIterator = new QListIterator<QuestionAndAnswerType>(m_CurrentSubjectMatterQuestionsAndAnswers);
             askNextQuestionInSubjectMatterIoDevice(); //TODOreq: infinite loop if no questions/answers in subject matter file
@@ -120,19 +123,18 @@ void SubjectMatterMasteryHelper::questionAnswered(const QString &answerAttempt)
 #define SubjectMatterMasteryHelper_NUM_MULTIPLE_CHOICE_ANSWERS 4
             QList<QString> multipleChoiceAnswers;
             multipleChoiceAnswers.append(m_CurrentQuestionAndAnswer.second);
-            qsrand(QDateTime::currentMSecsSinceEpoch());
-            int numMultipleChoiceAnswers = qMin(m_SubjectMatterQuestionsAndAnswers.size(), SubjectMatterMasteryHelper_NUM_MULTIPLE_CHOICE_ANSWERS);
+            int numMultipleChoiceAnswers = qMin(m_AnswersDeduplicatedForMultipleChoiceShenanigans.size(), SubjectMatterMasteryHelper_NUM_MULTIPLE_CHOICE_ANSWERS);
             while(multipleChoiceAnswers.size() < numMultipleChoiceAnswers)
             {
                 QString wrongAnswerCandidate;
                 do
                 {
-                    wrongAnswerCandidate = m_SubjectMatterQuestionsAndAnswers.at(qrand() % numMultipleChoiceAnswers).second;
+                    wrongAnswerCandidate = m_AnswersDeduplicatedForMultipleChoiceShenanigans.toList().at(qrand() % m_AnswersDeduplicatedForMultipleChoiceShenanigans.size());
                 }
                 while(multipleChoiceAnswers.contains(wrongAnswerCandidate));
                 multipleChoiceAnswers.append(wrongAnswerCandidate);
             }
-            std::random_shuffle(multipleChoiceAnswers.begin(), multipleChoiceAnswers.end());
+            shuffleList(&multipleChoiceAnswers);
             QString multipleChoiceAnswersString; // = "\ta) " + multipleChoiceAnswers + "\n\tb) " + ;
             char x = 'a'; //TODOoptional: if I ever want to allow more than 26 multiple choice answers, I need to rethink this strategy
             m_CurrentMultipleChoiceLettersAndAnswers.clear();

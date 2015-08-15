@@ -42,6 +42,7 @@ SubjectMatterMasteryHelperCli::SubjectMatterMasteryHelperCli(QObject *parent)
         return;
     }
 
+    m_StandardInputNotifier->setNotifyOnEmptyInput(true);
     connect(m_StandardInputNotifier, SIGNAL(standardInputReceivedLine(QString)), this, SLOT(handleStandardInputReceivedLine(QString)));
 
     connect(m_SubjectMatterMasteryHelper, SIGNAL(questionAsked(QString)), this, SLOT(handleQuestionAsked(QString)));
@@ -82,6 +83,7 @@ void SubjectMatterMasteryHelperCli::handleQuestionAnsweredGraded(bool answerAtte
 void SubjectMatterMasteryHelperCli::handleO(const QString &msg)
 {
     m_StdOut << msg;
+    m_StdOut.flush();
 }
 void SubjectMatterMasteryHelperCli::handleE(const QString &msg)
 {
