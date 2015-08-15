@@ -8,6 +8,7 @@
 
 #define SubjectMatterMasteryHelperCli_ANSWERS_TOO_LONG_USE_MULTIPLE_CHOICE_CLI_ARG "--answers-too-long-use-multiple-choice"
 #define SubjectMatterMasteryHelperCli_DONT_RANDOMIZE_CLI_ARG "--dont-randomize"
+#define SubjectMatterMasteryHelperCli_LOOP_UNTIL_MASTERED_CLI_ARG "--loop-until-mastered"
 
 SubjectMatterMasteryHelperCli::SubjectMatterMasteryHelperCli(QObject *parent)
     : QObject(parent)
@@ -35,6 +36,14 @@ SubjectMatterMasteryHelperCli::SubjectMatterMasteryHelperCli(QObject *parent)
         argz.removeAt(dontRandomizeArgIndex);
     }
 
+    bool loopUntilMastered = false;
+    int loopUntilMasteredArgIndex = argz.indexOf(SubjectMatterMasteryHelperCli_LOOP_UNTIL_MASTERED_CLI_ARG);
+    if(loopUntilMasteredArgIndex > -1)
+    {
+        loopUntilMastered = true;
+        argz.removeAt(loopUntilMasteredArgIndex);
+    }
+
     if(argz.isEmpty()) //there should be exactly 1 arg left: the filenameOfSubjectMatter
     {
         usage();
@@ -53,12 +62,12 @@ SubjectMatterMasteryHelperCli::SubjectMatterMasteryHelperCli(QObject *parent)
     connect(m_SubjectMatterMasteryHelper, SIGNAL(e(QString)), this, SLOT(handleE(QString)));
     connect(m_SubjectMatterMasteryHelper, SIGNAL(quitRequested()), this, SLOT(handleQuitRequested()));
 
-    QMetaObject::invokeMethod(m_SubjectMatterMasteryHelper, "startSubjectMatterMasteryHelper", Q_ARG(QString, argz.first()), Q_ARG(bool, answersTooLongUseMultipleChoice), Q_ARG(bool, dontRandomize)); //OT'ish: using invokeMethod for one offs is more memory conservative, because the connection is not persistent. i wonder if it's slower though TODOoptimization?
+    QMetaObject::invokeMethod(m_SubjectMatterMasteryHelper, "startSubjectMatterMasteryHelper", Q_ARG(QString, argz.first()), Q_ARG(bool, answersTooLongUseMultipleChoice), Q_ARG(bool, dontRandomize), Q_ARG(bool, loopUntilMastered)); //OT'ish: using invokeMethod for one offs is more memory conservative, because the connection is not persistent. i wonder if it's slower though TODOoptimization?
 }
 void SubjectMatterMasteryHelperCli::usage()
 {
     QString usageStr =  "Usage: SubjectMatterMasteryHelperCli filenameOfSubjectMatter [options]\n\n"
-                        "\tfilenameOfSubjectMatter should be a file with a question on a line, an answer on a line, repeating for as many questions/answers as you want (every question must have an answer, otherwise it is an error)\n\nOptions:\n\n" SubjectMatterMasteryHelperCli_ANSWERS_TOO_LONG_USE_MULTIPLE_CHOICE_CLI_ARG "\n\tIf the answers are so long that they can't accurately be typed (with proper punctuation etc), this mode does multiple choice using randomly selected other answers as the other/wrong choices\n\n" SubjectMatterMasteryHelperCli_DONT_RANDOMIZE_CLI_ARG "\n\tPresent the questions in the same order that they appear in filenameOfSubjectMatter (the default behavior is to randomize their order)";
+                        "\tfilenameOfSubjectMatter should be a file with a question on a line, an answer on a line, repeating for as many questions/answers as you want (every question must have an answer, otherwise it is an error)\n\nOptions:\n" SubjectMatterMasteryHelperCli_ANSWERS_TOO_LONG_USE_MULTIPLE_CHOICE_CLI_ARG "\n\tIf the answers are so long that they can't accurately be typed (with proper punctuation etc), this mode does multiple choice using randomly selected other answers as the other/wrong choices\n" SubjectMatterMasteryHelperCli_DONT_RANDOMIZE_CLI_ARG "\n\tPresent the questions in the same order that they appear in filenameOfSubjectMatter (the default behavior is to randomize their order)\n" SubjectMatterMasteryHelperCli_LOOP_UNTIL_MASTERED_CLI_ARG "\n\tKeep taking the test over and over until you get 100% correct. The default behavior makes you repeat your missed questions until you get all of them right, then exits";
     m_StdOut << usageStr << endl;
 }
 void SubjectMatterMasteryHelperCli::handleQuestionAsked(const QString &question)

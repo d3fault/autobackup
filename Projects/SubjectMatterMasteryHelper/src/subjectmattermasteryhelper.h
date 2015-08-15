@@ -30,6 +30,8 @@ private:
     bool m_DontRandomize;
     QMap<char, QString> m_CurrentMultipleChoiceLettersAndAnswers;
     QSet<QString> m_AnswersDeduplicatedForMultipleChoiceShenanigans;
+    bool m_LoopUntilMastered;
+    bool m_TheyMissedAtLeastOneQuestion;
 
     void readAllQuestionsFromSubjectMatterIoDeviceAndMaybeScrambleTheirOrdering();
     template <class T>
@@ -38,7 +40,7 @@ private:
         QList<T> shuffled;
         while(!theList->isEmpty())
         {
-            shuffled.append(theList->takeAt(theList->size() % qrand()));
+            shuffled.append(theList->takeAt(qrand() % theList->size()));
         }
         *theList = shuffled;
     }
@@ -52,8 +54,8 @@ signals:
     void e(const QString &);
     void quitRequested();
 public slots:
-    void startSubjectMatterMasteryHelper(const QString &filenameOfSubjectMatter, bool answersTooLongUseMultipleChoice = false, bool dontRandomize = false);
-    void startSubjectMatterMasteryHelper(QIODevice *ioDeviceToSubjectMatter, bool answersTooLongUseMultipleChoice = false, bool dontRandomize = false);
+    void startSubjectMatterMasteryHelper(const QString &filenameOfSubjectMatter, bool answersTooLongUseMultipleChoice = false, bool dontRandomize = false, bool loopUntilMastered = false);
+    void startSubjectMatterMasteryHelper(QIODevice *ioDeviceToSubjectMatter, bool answersTooLongUseMultipleChoice = false, bool dontRandomize = false, bool loopUntilMastered = false);
     void questionAnswered(const QString &answerAttempt);
 };
 

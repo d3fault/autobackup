@@ -11,6 +11,9 @@ SubjectMatterMasteryHelper::SubjectMatterMasteryHelper(QObject *parent)
     , m_SubjectMatterQuestionsAndAnswersIterator(0)
     , m_AnswersTooLongUseMultipleChoice(false)
     , m_DontRandomize(false)
+    , m_LoopUntilMastered(false)
+    , m_TheyMissedAtLeastOneQuestion(false)
+
 {
     qsrand(QDateTime::currentMSecsSinceEpoch());
 }
@@ -64,9 +67,18 @@ void SubjectMatterMasteryHelper::askNextQuestionInSubjectMatterIoDevice()
 
         if(m_SubjectMatterQuestionsAndAnswersGotWrong.length() == 0)
         {
-            //TODOreq: gratz, you got them all right
-
-            //TODOreq: if they didn't get them all right on the very first try, re-present ALL of them again. it should loop FOREVER until they manage to get the entire test 100%
+            if(m_LoopUntilMastered && m_TheyMissedAtLeastOneQuestion)
+            {
+                m_TheyMissedAtLeastOneQuestion = false;
+                emit o("\n\n -- Re-taking test because you missed at least one question -- \n\n");
+                if(!m_DontRandomize)
+                    shuffleList(&m_SubjectMatterQuestionsAndAnswers);
+                m_CurrentSubjectMatterQuestionsAndAnswers = m_SubjectMatterQuestionsAndAnswers;
+                delete m_SubjectMatterQuestionsAndAnswersIterator;
+                m_SubjectMatterQuestionsAndAnswersIterator = new QListIterator<QuestionAndAnswerType>(m_CurrentSubjectMatterQuestionsAndAnswers);
+                askNextQuestionInSubjectMatterIoDevice();
+            }
+            emit o("gratz, you got them all right");
             emit testingFinished();
         }
         else //got at least one answer wrong
@@ -91,18 +103,20 @@ void SubjectMatterMasteryHelper::maybeCleanup()
     }
     m_IoDeviceToSubjectMatter = 0;
 }
-void SubjectMatterMasteryHelper::startSubjectMatterMasteryHelper(const QString &filenameOfSubjectMatter, bool answersTooLongUseMultipleChoice, bool dontRandomize)
+void SubjectMatterMasteryHelper::startSubjectMatterMasteryHelper(const QString &filenameOfSubjectMatter, bool answersTooLongUseMultipleChoice, bool dontRandomize, bool loopUntilMastered)
 {
     m_OwnIoDevice = true; //TODOreq: set back to false at the end of session, if multiple sessions?
     QFile *subjectMatterFile = new QFile(filenameOfSubjectMatter, this);
-    startSubjectMatterMasteryHelper(subjectMatterFile, answersTooLongUseMultipleChoice, dontRandomize);
+    startSubjectMatterMasteryHelper(subjectMatterFile, answersTooLongUseMultipleChoice, dontRandomize, loopUntilMastered);
 }
 //io device should not be opened before passing
-void SubjectMatterMasteryHelper::startSubjectMatterMasteryHelper(QIODevice *ioDeviceToSubjectMatter, bool answersTooLongUseMultipleChoice, bool dontRandomize)
+void SubjectMatterMasteryHelper::startSubjectMatterMasteryHelper(QIODevice *ioDeviceToSubjectMatter, bool answersTooLongUseMultipleChoice, bool dontRandomize, bool loopUntilMastered)
 {
     m_IoDeviceToSubjectMatter = ioDeviceToSubjectMatter;
     m_AnswersTooLongUseMultipleChoice = answersTooLongUseMultipleChoice;
     m_DontRandomize = dontRandomize;
+    m_LoopUntilMastered = loopUntilMastered;
+    m_TheyMissedAtLeastOneQuestion = false;
     if(!m_IoDeviceToSubjectMatter->open(QIODevice::ReadOnly | QIODevice::Text))
     {
         emit e("failed to open subject matter for reading");
@@ -169,6 +183,7 @@ void SubjectMatterMasteryHelper::questionAnswered(const QString &answerAttempt)
     else
     {
         //answer incorrect
+        m_TheyMissedAtLeastOneQuestion = true;
         m_SubjectMatterQuestionsAndAnswersGotWrong.append(m_CurrentQuestionAndAnswer);
         emit questionAnsweredGraded(false, m_CurrentQuestionAndAnswer.second);
     }
