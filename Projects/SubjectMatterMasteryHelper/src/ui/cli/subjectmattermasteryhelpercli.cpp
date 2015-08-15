@@ -52,7 +52,7 @@ SubjectMatterMasteryHelperCli::SubjectMatterMasteryHelperCli(QObject *parent)
     connect(m_SubjectMatterMasteryHelper, SIGNAL(e(QString)), this, SLOT(handleE(QString)));
     connect(m_SubjectMatterMasteryHelper, SIGNAL(quitRequested()), this, SLOT(handleQuitRequested()));
 
-    QMetaObject::invokeMethod(m_SubjectMatterMasteryHelper, "startSubjectMatterMasteryHelper", Q_ARG(QString, argz.at(1)), Q_ARG(bool, answersTooLongUseMultipleChoice), Q_ARG(bool, dontRandomize)); //OT'ish: using invokeMethod for one offs is more memory conservative, because the connection is not persistent. i wonder if it's slower though TODOoptimization?
+    QMetaObject::invokeMethod(m_SubjectMatterMasteryHelper, "startSubjectMatterMasteryHelper", Q_ARG(QString, argz.first()), Q_ARG(bool, answersTooLongUseMultipleChoice), Q_ARG(bool, dontRandomize)); //OT'ish: using invokeMethod for one offs is more memory conservative, because the connection is not persistent. i wonder if it's slower though TODOoptimization?
 }
 void SubjectMatterMasteryHelperCli::usage()
 {

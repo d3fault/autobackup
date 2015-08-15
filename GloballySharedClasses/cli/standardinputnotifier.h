@@ -19,6 +19,7 @@ public:
     ~StandardInputNotifier();
 private:
     QTextStream *m_StandardInputTextStream;
+    bool m_NotifyOnEmptyInput;
 #if defined(Q_OS_WIN) || defined(Q_WS_WIN)
     QTimer *m_StandardInputPollingTimerLoLWindows;
 #else
@@ -29,6 +30,7 @@ private:
 signals:
     void standardInputReceivedLine(const QString &);
 public slots:
+    void setNotifyOnEmptyInput(bool notifyOnEmptyInput);
     //the user can just disconnect the signal (but actually this slot would still make rapid toggling easier, not that i need it :-P): void stopNotifyingOnStandardInput();
     void readStandardInAndEmitSignalIfNotEmpty();
 };
