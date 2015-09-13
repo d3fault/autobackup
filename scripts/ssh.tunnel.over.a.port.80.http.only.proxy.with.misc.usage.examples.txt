@@ -1,0 +1,64 @@
+Behind a company firewall that blocks all access to the internet except through a company http proxy on port 80? This doc describes (mostly for myself because I know I'll forget it) how to tunnel an ssh connection over that port 80 http proxy to some other server with an ssh server listening on port 443 and 22. It describes how to do 4 things with that ssh tunnel:
+1) ssh to any server
+2) Firefox proxy to internet (because your company is probably snooping that proxy (creepy))
+3) wget/curl a file to/from internet
+4) Git push (using ssh protocol) to server on internet
+
+
+Aside: Because it mirrors my current setup, I'm going to introduce an extra server into the picture (the one furthest to the right in the diagram below).
+
+[unrestricted.server] <---> [company.proxy.port.80.http.only] <---> [comp.with.port.80.http.only.access] <---> [comp.with.lan.connection.to.comp.with.port.80.http.only.access]
+	^ssh-server______________________________________________________________________________________________________________ssh-client^
+
+unrestricted.server must be running an ssh server and have general access to the internet
+
+
+=== 0) CREATE THE SSH-over-HTTP TUNNEL ===
+On comp.with.port.80.http.only.access , run:
+$ dbclient user.on.unrestricted.server@unrestricted.server -K 5 -J "corkscrew company.proxy.port.80.http.only 80 unrestricted.server 443" -g -L 31337:unrestricted.server:22
+
+Welp that's the tunnel from ssh-server to ssh-client established, now to USE it:
+
+
+=== 1) ssh to any server ===
+For this to work, 'nc' has to be installed on unrestricted.server ...
+On comp.with.lan.connection.to.comp.with.port.80.http.only.access , edit ~/.ssh/config (create it if necessary) and add these lines:
+
+Host hostname.of.server.you.want.to.ssh.into
+	User user.on.that.hostname.to.ssh.into.as
+	ProxyCommand ssh -q -p 31337 user.on.unrestricted.server@comp.with.port.80.http.only.access nc %h %p
+
+Then just ssh like normal:
+$ ssh user.on.that.hostname.to.ssh.into.as@hostname.of.server.you.want.to.ssh.into
+
+
+=== 2) Firefox proxy to internet ===
+On comp.with.lan.connection.to.comp.with.port.80.http.only.access , run:
+$ ssh -D 9999 -p 31337 user.on.unrestricted.server@comp.with.port.80.http.only.access
+
+Then set up your firefox SOCKS proxy to 127.0.0.1:9999 -- IMPORTANT: _only_ set up the firefox SOCKS proxy. I struggled for HOURS wondering why it wasn't working before finally leaving the HTTP/SSL/FTP proxy hostname fields empty. Make sure "SOCKS v5" is selected (v4 might work but it's a lower number so is obviously inferior ;-P), and you also probably want to make sure "Remote DNS" is selected as well.
+
+
+=== 3) wget/curl a file to/from internet ===
+Ok I admit I didn't try pushing a file "to" the internet, but it would probably work if you understand the following commands and then modify them.
+On comp.with.lan.connection.to.comp.with.port.80.http.only.access , run:
+$ ssh -D 9999 -p 31337 user.on.unrestricted.server@comp.with.port.80.http.only.access
+
+Curl has built-in support for SOCKS5:
+$ curl --socks5 127.0.0.1:9999 http://example.com/file.7z
+
+Wget does not have SOCKS5 support but I found this example to be very informative and helps me understand the ssh command in general better:
+$ ssh -p 9999 127.0.0.1 'wget -O - http://example.com/file.7z' > file.7z
+
+I didn't test that wget command, but it'd probably work. Also worth noting that setting up the "ssh -D" connection to comp.with.port.80.http.only.access might not be necessary, I'm unsure tbh -- you might be able to just use 31337 instead of 9999 and ser.on.unrestricted.server@comp.with.port.80.http.only.access instead of 127.0.0.1 -- On one hand it makes sense that it would wok, but on the other I think I tried it and it didn't (and I've spent too much time fiddling with this crap to mess with it any further (if it ain't broke, don't fix it (whoop de do possibly one extra/wasted ssh tunnel, prematurely optimization is...)))
+
+
+=== 4) Git push (using ssh protocol) to server on internet ===
+Set up ~/.ssh/config just like in use case (1), replacing the server you want to ssh into with the server you want to git push into (since it really is the same operation).
+git push just like normal
+
+clone/pull probably also work, but haven't tested
+
+
+
+It's worth noting/explaining the confusing parts in some of the user@host ssh args where it says: 'user.on.unrestricted.server@comp.with.port.80.http.only.access'. The user on the left side of the @ does not belong to the host on the right side of the @, but we're TUNNELING through the host to the server (unrestricted.server) where the user DOES exist.

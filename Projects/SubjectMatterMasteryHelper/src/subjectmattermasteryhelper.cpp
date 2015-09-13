@@ -70,7 +70,7 @@ void SubjectMatterMasteryHelper::askNextQuestionInSubjectMatterIoDevice()
             if(m_LoopUntilMastered && m_TheyMissedAtLeastOneQuestion)
             {
                 m_TheyMissedAtLeastOneQuestion = false;
-                emit o("\n\n -- Re-taking test because you missed at least one question -- \n\n");
+                emit o("\n -- Re-taking test because you missed at least one question -- \n\n");
                 if(!m_DontRandomize)
                     shuffleList(&m_SubjectMatterQuestionsAndAnswers);
                 m_CurrentSubjectMatterQuestionsAndAnswers = m_SubjectMatterQuestionsAndAnswers;
@@ -79,7 +79,7 @@ void SubjectMatterMasteryHelper::askNextQuestionInSubjectMatterIoDevice()
                 askNextQuestionInSubjectMatterIoDevice();
                 return;
             }
-            emit o("gratz, you got them all right");
+            emit o("gratz, you got them all right\n");
             emit testingFinished();
         }
         else //got at least one answer wrong

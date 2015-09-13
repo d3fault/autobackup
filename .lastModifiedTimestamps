@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1439555001
+Documents/minddump/:1442175920
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -27,7 +27,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1439555596
+Documents/minddump/dreams/:1442177399
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -169,6 +169,7 @@ Documents/minddump/dreams/lskdjflskjdflkjsdfkljdsjflskdjfoiewurkjsdflkjf.txt:140
 Documents/minddump/dreams/lskfjsdjfldskjflksdjflkjsdflksjdlfkjsdklfjsdkljflskdjflksjdflksdjfoulkjlk.txt:1410245913
 Documents/minddump/dreams/lskjdflkjsdfouewljrousdflkjsdofulewkjroiuasfkdjlsdjkfsdofulekjroiudsflkjsdf.txt:1382820797
 Documents/minddump/dreams/lskjdflkjsdlkfjskldjfklsjdklfjsdkljfkljekwlrjousdlfkjsdlf.txt:1408257545
+Documents/minddump/dreams/lskjdflksjdflkjsdflkjsdlkfjlskdjflsdjfklsdjflkjsdlkfjsldkfjlksdj.txt:1442177399
 Documents/minddump/dreams/lskjdflksjdflksjdflkjsdlfkjsdlkfjsldjflskdjflksdjflksd.txt:1428894575
 Documents/minddump/dreams/lskjflksjflksjdfosduflsdkjfosudflkjsdofusdlkfjsdouflskdjf.txt:1379861608
 Documents/minddump/dreams/lucid.dream.infinite.mirrors.sadfljsadflsjfdouiwerkjosdfiuasldkfjoiur.txt:1376826749
@@ -243,6 +244,7 @@ Documents/minddump/dreams/skdjflskdjflksdjfklsjdfkljsdkfljslkdjflksdjfsdjflksjdf
 Documents/minddump/dreams/skldfjlsakjdflskdjflkjweorulsdkjfsldfj.top.isnt.dream.obv.txt:1398410127
 Documents/minddump/dreams/slafjsldajflsjdlfkjsdlkjfsoufslkjfaosudflkasdjfl.txt:1398268465
 Documents/minddump/dreams/slakdjfsldkjflksajdflksjdfoudsfouwelrjkousdflkjsdofudsl.txt:1391543176
+Documents/minddump/dreams/sldfjdslkfjlksdjflksdjfklsjdflkjsdlkfjlksjflksjflkjsflksdjlkflskj.txt:1439798900
 Documents/minddump/dreams/sldfjklsadkjflsdkjflsdkjfoiuwelrjousdfjskdfsjsdfoiuewr.txt:1390571228
 Documents/minddump/dreams/sldfjklsddfdsjfklsjdkfljsdklfjlskjdflkjslkfjlksdjflksjdklfjsdlk.txt:1426466790
 Documents/minddump/dreams/sldfjlsdjflksjdklfjlksjdfklsjdflkjdlskfjsdlkjflksdjflksj.txt:1428302056
@@ -1430,6 +1432,7 @@ Documents/minddump/ljlkfdjlskdjflksdjflksdjflksdjflhglsdjlfkjsdlfkjsdklfhsodfisj
 Documents/minddump/ljsalkjfjslkdfsdfjsdlfkjdsfousdfkjsdfewroudsfljk.txt:1361169440
 Documents/minddump/ljsdfljsdlfjsdlkjflsdkjflksdjflksdjflksjdflsdjflkjsdflkjsdlfkjsdf.txt:1418197519
 Documents/minddump/ljsdfljsdlkjflksdjflkjsdflkjsdfouwerlkjdsouflkdjsf.txt:1400571129
+Documents/minddump/ljsdlfjlsdfjlsdjflksjdflkjsdlfkjlsdkfjlkdsjflksjdflksjdflkj.txt:1439807019
 Documents/minddump/ljsdlfjlsdjflsjdlkfjlksdjfkjsdklfjsdkljflksdjflksjdflkjsdlkfjsldkj.txt:1423244083
 Documents/minddump/ljsdlfkjlskdjfkljsdfoywlejrousdlfkjsdofulsdkjfosdiuflkjdsflkjsdkl.txt:1418709308
 Documents/minddump/ljsdlfkjsdklfjsdkljflksdjflkjsdlkfjsdkfjlskdjflkjsdlkfjlskdj.txt:1426840846
@@ -1590,6 +1593,7 @@ Documents/minddump/lsdakfjalskjdflksdjfosudflkjsdfousdfljksdofu.txt:1388990461
 Documents/minddump/lsdakjfsdlkjfsdlkjfoiuwerlkjsdfousdflkjwero.txt:1357061331
 Documents/minddump/lsdfajljsflkjsldfkjousldfjouwerlkjousdfljslfjksdfjoerulkfd.txt:1394404257
 Documents/minddump/lsdfjlkjfksdjfklsjdklfjsdklfjskldfjsdlkfjlksdfjsldf.txt:1411562209
+Documents/minddump/lsdfjlskdjflksdjflksdjflksdjflsjflkjsdlfkjsdlkflksdfj.txt:1439797966
 Documents/minddump/lsdfjsdhflsajwerflsjfljsfkjsdflkjsdfklhsfjsdlkf.txt:1401095514
 Documents/minddump/lsdfkjlskjdfowuerlkjsdfousdflk.txt:1355478503
 Documents/minddump/lsdfkjsldkfjsadoifulkjweroulskjfdosdufljsdfouwljreousldfkjsdoiulkwjeroiusdflkj.txt:1370677027
@@ -1606,6 +1610,7 @@ Documents/minddump/lsdjflksdjfkljsdlkfjsdklfjskldjfklsdjfklsdjfkljslkjfsdoulsjfl
 Documents/minddump/lsdjflksdjflkjsalkfjslkjdfsdjfkljsdkjfwerujsdfusdklfj.txt:1396515274
 Documents/minddump/lsdjflksdjflkjsdflkhsdlfkjsdlkfjsdlkfjsdlkjflksdjlfkjsdkjflsdkjflkjsd.txt:1435046937
 Documents/minddump/lsdjflksdjflkjslkfjslkfjlksdjflksjdflkjsdflkjsdlfkjsdlkfjfd.txt:1421118375
+Documents/minddump/lsdjflksdjflksdjflksjdflkjsdflkjsdklfjsdlkfjklsdjfsdkjflsjdflkjsdlkf.txt:1440237967
 Documents/minddump/lsdjflksjdflkjsdlkfjsdlkfjlskdjflksjdflkjsdlkfjsldkjflksjdflksjdlfkjslkdf.txt:1438730321
 Documents/minddump/lsdjflsdjflksjdlkfjsdkljfsdlkjfoiwherljsdflkjsdfl.txt:1405678628
 Documents/minddump/lsdjflsdkjfklsdjfkjsdfkljsdlkfowuerlkjsdfhdskfjklsdjfsldkjf.txt:1414785399
@@ -2412,6 +2417,7 @@ Documents/minddump/skdljflksjdflkjsdflkjasldkf.txt:1396677636
 Documents/minddump/skfjsldkjflsdkjfklsjdflkjwerolsjdfoudfjfousdflkj.txt:1397363322
 Documents/minddump/skjdflaksjdflkjsdlkfjasldkjfslkdjfoweurlkjsdfousdflkjsdf.txt:1411442922
 Documents/minddump/skjdflksjdflkjsdlfkjsdlkfjsdouflkjwerousdlfkjsdofulsdjfljsldkfjlkdsjflksdj.txt:1423407742
+Documents/minddump/skjdflskjdfsdfsdflksjdflkjsdlfkjsdlkfjslkdfjlksdjflksjdflk.txt:1442175996
 Documents/minddump/skjflksjflkjsdlkfjouerksjfosudflksdjfousdfsjfsldfkljsdfou.txt:1390374434
 Documents/minddump/skldfjlskjflkdsjfljsdlfjsdlkfjlkjoweurlkjsdflkjsdfkfsdh.txt:1400722948
 Documents/minddump/sklfjsdkfjsdlkfjsdofiuwelrkjsdfoiul.txt:1356170079
@@ -5359,7 +5365,7 @@ Projects/SubjectMatterMasteryHelper/src/ui/cli/SubjectMatterMasteryHelperCli.pro
 Projects/SubjectMatterMasteryHelper/src/ui/cli/main.cpp:1403584970
 Projects/SubjectMatterMasteryHelper/src/ui/cli/subjectmattermasteryhelpercli.cpp:1439608925
 Projects/SubjectMatterMasteryHelper/src/ui/cli/subjectmattermasteryhelpercli.h:1439600123
-Projects/SubjectMatterMasteryHelper/src/subjectmattermasteryhelper.cpp:1439609020
+Projects/SubjectMatterMasteryHelper/src/subjectmattermasteryhelper.cpp:1439609275
 Projects/SubjectMatterMasteryHelper/src/subjectmattermasteryhelper.h:1439608800
 Projects/SymbolicLinksDetector/:1367836621
 Projects/SymbolicLinksDetector/src/:1371580055
@@ -6108,7 +6114,7 @@ Solutions/launchASEPbecauseRedAlert/video.bytestream.design.rofl.so.ghetto.and.p
 Solutions/standard.wt.deploy.arguments.to.get.clean.urls.working.properly.txt:1398266138
 licenses/:1398086549
 licenses/license.dpl.txt:1388242176
-scripts/:1430326700
+scripts/:1442180362
 scripts/LiveCDinstallAndConfigExtra/:1338074874
 scripts/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
 scripts/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
@@ -6165,6 +6171,7 @@ scripts/shallow.directory.hierarchy.comparison.command.checks.filenames.filesize
 scripts/sony.ic.recorder.backup.and.delete.sh:1401722135
 scripts/sony.ic.recorder.backup.and.delete.sh.bak:1370738506
 scripts/soxRecPipedToOpusEncodeCommand.txt:1376137084
+scripts/ssh.tunnel.over.a.port.80.http.only.proxy.with.misc.usage.examples.txt:1442180937
 scripts/steps.to.staticBackup.txt:1349809723
 scripts/sudoer.config.fresh.os.install.truecrypt.and.general.mounting.txt:1389527463
 scripts/sync.toSync.and.shred.sh:1370736718
