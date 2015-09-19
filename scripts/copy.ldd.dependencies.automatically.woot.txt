@@ -1,0 +1,2 @@
+mkdir ./folderForTheLibs
+ldd `which appname` | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -v '{}' ./folderForTheLibs > /dev/null

@@ -3,3 +3,13 @@ md5(MyBrain-PrivateFiles.tc) == b29c366bdad175a0a89f18f117ff2c06
 latest git commit-id of "binarySupplment" == cf8e0b138f8f1d3afb6b9e0a2671f9210e882d5a
 
 is kinda a circular ref (which makes it worth... less?), but eh the _parent_ git commit-id of "autobackup" (in which this very document is being committed into) == 1fb2144aec83d0ff6775fae6662c7cf97f70be49
+
+
+Added these hashes later (same launch files though):
+
+md5(MyBrain-2014-Supplement.7z) == e6addf1ee3dd8ecdbd77401a523cb298
+sha512(MyBrain-2014-Supplement.7z) == a9bfb4c2eb6c0f8c1f9cc29785bc0a050d4906724d7397806924c8abb6d921bcd36745a283b63d4bbc2426a9012c12223c67442338c76ece0b4ccd5e0d344499
+
+sha512(MyBrain-PublicFiles.tc) == efd404c67082f56d77646226bbb39ef1035113de518483636b766a9628fba352750a238034417ccd5506d72be0f3ff1724deedccdf3114e507c9494c04bd06e7
+
+sha512(MyBrain-PrivateFiles.tc) == 6442016d8d1aad3e57e976e0a44c4b4bcdba5b0a8652cf97a428942e17676ff1b5884fbb4030954f7a510ae27de5ade4d59a341ac00c39c9fbac396aa71a83b7

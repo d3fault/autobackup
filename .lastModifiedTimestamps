@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1442446041
+Documents/minddump/:1442694286
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -2416,6 +2416,7 @@ Documents/minddump/sjkdflksjdflkjsdklfjslkjflksjflskdjflksjdfoiusdlfkjsdfousdlfk
 Documents/minddump/skdajfslakdjflksdjfklsdjflkjsdlkfjsdlkfjsldkfjlskdjf.txt:1417396365
 Documents/minddump/skdjflhsdlfjsdlkfjsldhflksdjflksdjfouewlkrlkdsflj.txt:1401827921
 Documents/minddump/skdjflkjsdfkljsdkfjsdlkjflskdjflksdjflkjsdflkjsdflkjsdflkjsdlkf.txt:1423773546
+Documents/minddump/skdjflkjsdflkjsdlkfjsdlkfjlsdkjflksdjflksdjflkjdlfkjsldkfjslkdfj.txt:1442693452
 Documents/minddump/skdjflsdkjflksdjflksdjflksdjflksdjflkjsdlfkjsdlkfjlskdjflksdjflksdjflsjflkdsjf.txt:1438221651
 Documents/minddump/skdjflskdjflskjdfouwlerkjofsdfhsfsggsiusflkjsdfouisdlfkjoiuwerljsadf.txt:1382449951
 Documents/minddump/skdjfsjflskdjfsdjfouwerjkjdsflkjsdfosuidflkjer.txt:1396823888
@@ -2577,6 +2578,7 @@ Documents/minddump/slkdfjsdlkfjlskdjfklsdjflksdjflksjdflksjdflkjsdflkjsdlkfjsdlk
 Documents/minddump/slkdfjslkdjfskdjfkjsdfkljsdfkljsdkfljuwiokljsfsdfkl.txt:1362494365
 Documents/minddump/slkdjfkljsdlkfjskldjflksdjflkjsdlkjflskdjflksdjfklsdjflksdjflksdjfklsjdlkfjsd.txt:1432626483
 Documents/minddump/slkdjflkjsdflkjsdlfkjsdlkfjlsdkjflskjdflksjdklfjsdlkfjslkdf.txt:1439501253
+Documents/minddump/slkdjflksdjflksdjflksjdfkjsdlkfjsdlkjflksdjflkjsdflkjsdlkfjlskdj.txt:1442696025
 Documents/minddump/slkdjflksjdfkljdsfljsdfodsufljsdfoulewjrouslfjsdlfkj.txt:1393807789
 Documents/minddump/slkdjflksjfdlkjsdklfjsdklfjklsdjfklsdjfklsjdklflkjsdflk.txt:1424659527
 Documents/minddump/slkdjflsdkjflksjdlfkjsdlkjflsdjlfkjsfjlskdjflsjflskjflkjslkdjflksjlfk.txt:1426558440
@@ -2894,7 +2896,7 @@ OldStaticMeta/VariousTreeingsDuringHugeArchivePurge/Silver1tbCalvaryeBooksEasyTr
 OldStaticMeta/VariousTreeingsDuringHugeArchivePurge/externals.which.is.which.txt:1367597729
 OldStaticMeta/VariousTreeingsDuringHugeArchivePurge/k3.wpl:1264978231
 OldStaticMeta/abandoned.binary.git.log.txt:1427184456
-OldStaticMeta/my.brain.hashes.at.launch.txt:1424346028
+OldStaticMeta/my.brain.hashes.at.launch.txt:1442696816
 Pictures/:1431416502
 Pictures/2012-09 Tobey Family Tree Cartoon/:1348379662
 Pictures/2012-09 Tobey Family Tree Cartoon/2012-09-22-Tobey-Family-Tree-Cartoon.svg:1348374568
@@ -4907,8 +4909,8 @@ Projects/RecursiveFileStringReplaceRenamer/src/lib/:1388247652
 Projects/RecursiveFileStringReplaceRenamer/src/lib/recursivefilestringreplacerenamer.cpp:1388247646
 Projects/RecursiveFileStringReplaceRenamer/src/lib/recursivefilestringreplacerenamer.h:1388247652
 Projects/RecursiveGpgTools/:1426487982
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/:1428010445
-Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/:1429000837
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/:1442698394
+Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/:1442698465
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/:1427393150
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/main.cpp:1426424959
 Projects/RecursiveGpgTools/RecursivelyGpgSignIntoCustomDetachedSignaturesFormat/src/cli/recursivelygpgsignintocustomdetachedsignaturesformatcli.cpp:1427393143
@@ -6122,7 +6124,7 @@ Solutions/launchASEPbecauseRedAlert/video.bytestream.design.rofl.so.ghetto.and.p
 Solutions/standard.wt.deploy.arguments.to.get.clean.urls.working.properly.txt:1398266138
 licenses/:1398086549
 licenses/license.dpl.txt:1388242176
-scripts/:1442180362
+scripts/:1442694419
 scripts/LiveCDinstallAndConfigExtra/:1338074874
 scripts/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
 scripts/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
@@ -6157,6 +6159,7 @@ scripts/base64theSha1SumOfAFileProperly.sh:1424394103
 scripts/best.rsync.command.txt:1427098358
 scripts/cleanAptEtc.sh:1350618598
 scripts/cmd.to.make.torrent.with.lots.of.relevant.trackers.txt:1426427907
+scripts/copy.ldd.dependencies.automatically.woot.txt:1442694424
 scripts/debian.squeeze.dell.mini.9.post.install.instructions.txt:1368042665
 scripts/dedicated.server.domain.name.associating.txt:1409246698
 scripts/design.for.new.auto-commit.infrastructure.that.is.basic.incremement.of.current.auto-commit.but.nowhere.near.what.i.want.ultimately.txt:1343536975
@@ -6191,4 +6194,5 @@ scripts/zoom.backup.and.shred.sh:1351237228
 .gitignore:1432417463
 copyright.txt:1388203681
 license.dpl.txt:1388242176
+pseudo.git.submodules.temphack.txt:1442699439
 todo.txt:1438854611

@@ -1,0 +1,4 @@
+Not using git submodules proper yet because I'm not comfortable enough with them yet. I'm also kind of rushing atm xD. These are sha1/git-commit-ids.
+
+OneKeyToRuleThemAll: e0a6f7601f34bb380019657a615590cec85bff97
+binaryMeta: 9cf0e2126e279a737d33fe60d2af5349543f7d55
