@@ -8,6 +8,8 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+CONFIG += c++11
+
 #contains(QT_CONFIG, opengl): QT += opengl
 DEFINES += QT_NO_OPENGL #comment this out and uncomment above line for OpenGL
 
@@ -146,5 +148,5 @@ DEFINES += _GNU_SOURCE
 DEFINES += __STDC_CONSTANT_MACROS
 DEFINES += __STDC_FORMAT_MACROS
 DEFINES += __STDC_LIMIT_MACROS
-INCLUDEPATH += "/usr/lib/llvm-3.4/include"
-LIBS += -L/usr/lib/llvm-3.4/lib -lclangTooling -lclangDriver -lclangFrontend -lclangParse -lclangSema -lclangEdit -lclangAnalysis -lclangLex -lclangSerialization -lclangAST -lclangBasic -lclang
+INCLUDEPATH += "/usr/lib/llvm-3.5/include"
+LIBS += -L/usr/lib/llvm-3.5/lib -lclangTooling -lclangDriver -lclangFrontend -lclangParse -lclangSema -lclangEdit -lclangAnalysis -lclangLex -lclangSerialization -lLLVMBitReader -lclangAST -lclangBasic -lLLVMMCParser -lLLVMMC -lLLVMOption -lLLVMSupport -lz -lpthread -lffi -ltinfo -ldl -lm -lclang

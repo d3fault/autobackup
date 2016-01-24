@@ -13,7 +13,7 @@ MusicFingersCli::MusicFingersCli(QObject *parent)
     , m_StdOut(stdout)
     , m_StdErr(stderr)
 {
-    CHOOSE_MUSIC_FINGERS_SERIAL_PORT_INFO_OR_ELSEANDRETURN(chosenSerialPortInfo, quit())
+    CHOOSE_MUSIC_FINGERS_SERIAL_PORT_INFO_OR_DOELSEANDRETURN(chosenSerialPortInfo, quit())
 
     MusicFingersSerialPortIntegration *musicFingersSerialPortIntegration = new MusicFingersSerialPortIntegration(chosenSerialPortInfo, this);
     connect(musicFingersSerialPortIntegration, SIGNAL(e(QString)), this, SLOT(handleE(QString)));

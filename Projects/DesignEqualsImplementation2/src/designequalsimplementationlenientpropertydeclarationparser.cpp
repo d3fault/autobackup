@@ -55,7 +55,7 @@ private:
 
 struct DesignEqualsImplementationLenientPropertyDeclarationParserDiagnosticConsumer : clang::DiagnosticConsumer
 {
-    llvm::OwningPtr<DiagnosticConsumer> m_Proxy;
+    std::unique_ptr<DiagnosticConsumer> m_Proxy;
     DesignEqualsImplementationLenientPropertyDeclarationParserDiagnosticConsumer(DiagnosticConsumer *previous, DesignEqualsImplementationLenientPropertyDeclarationParser *designEqualsImplementationPropertyDeclarationParser)
         : m_Proxy(previous)
         , m_DesignEqualsImplementationPropertyDeclarationParser(designEqualsImplementationPropertyDeclarationParser)

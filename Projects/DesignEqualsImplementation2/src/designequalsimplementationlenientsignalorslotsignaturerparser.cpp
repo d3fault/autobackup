@@ -45,7 +45,7 @@ private:
 
 struct DesignEqualsImplementationLenientSignalOrSlotSignaturerParserDiagnosticConsumer : clang::DiagnosticConsumer
 {
-    llvm::OwningPtr<DiagnosticConsumer> m_Proxy;
+    std::unique_ptr<DiagnosticConsumer> m_Proxy;
     DesignEqualsImplementationLenientSignalOrSlotSignaturerParserDiagnosticConsumer(DiagnosticConsumer *previous, DesignEqualsImplementationLenientSignalOrSlotSignaturerParser *designEqualsImplementationFunctionDefinitionParser)
         : m_Proxy(previous)
         , m_DesignEqualsImplementationFunctionDefinitionParser(designEqualsImplementationFunctionDefinitionParser)

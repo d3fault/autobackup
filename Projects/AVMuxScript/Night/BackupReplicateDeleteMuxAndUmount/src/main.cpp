@@ -719,6 +719,7 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
 
     //delete sources (ffffffff one typo and I'm dead (is why I exit on ANY error))
     //TODOreq: uncomment these when you're confident in the script
+    qDebug() << "NOTE: sources are _not_ being deleted. The code to do that is written but commented out";
     //RETURN_ONE_IF_RECURSIVE_DELETE_OR_REMAKE_FAILS(audioSource)
     //RETURN_ONE_IF_RECURSIVE_DELETE_OR_REMAKE_FAILS(videoSource)
 

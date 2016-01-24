@@ -44,7 +44,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::context
     QMenu menu;
     QAction *chooseInstanceAction = menu.addAction(tr("Choose Instance"));
     QAction *classEditorAction = menu.addAction(tr("Class Editor"));
-    Action *editCppAction = menu.addAction(tr("Edit C++"));
+    QAction *editCppAction = menu.addAction(tr("Edit C++"));
     QAction *removeClassLifelineFromUseCaseAction = menu.addAction(tr("Remove Class Lifeline from Use Case"));
     QAction *selectedAction = menu.exec(event->screenPos());
     if(!selectedAction)

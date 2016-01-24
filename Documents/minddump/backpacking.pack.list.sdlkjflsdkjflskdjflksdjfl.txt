@@ -33,13 +33,16 @@ hiking boots
 sandals
 towel(??? maybe not)
 sweatshirt
+liner gloves
 work gloves
 warm gloves
+fire gloves (welding gloves)
 sun hat (full face. clothespins to keep it all together in wind)
 sunglasses
 beanie (half and/or full-faced?)
-MAYBE waterproof clothes (snowboarding clothes + umbrella?)
-MAYBE blanket
+rain suit
+umbrella
+blanket (haven't used this at all but it's a nice backup)
 
 == navigation ==
 compass
@@ -71,8 +74,7 @@ tape
 very strong "weld" glue
 anti-hystamines
 multivitamins
-vitamin D
-OTC painkiller
+OTC painkiller (todo get some)
 cut antibiotic
 multi screwdriver
 mini screwdriver
@@ -89,6 +91,9 @@ wagon (to carry as much as possible during food runs, to minimize interactions w
 lock for wagon
 sled harness (to pull wagon and free up my hands for the following item)
 hiking/trekking poles (to de-evolve into a 4 legged animal again. my legs shouldn't have to do all the work. also plan to use them to prop up the shade tarp above the tent)
+bike (decided last minute to add this to the mix. so glad i did)
+foot tire pump
+spare tire
 
 == comfort ==
 folding chair
@@ -98,7 +103,8 @@ pillow
 solar panel with usb ports
 e-book reader with unlimited 3g web browsing
 AA/AAA charger (usb input) + 16x AAA batteries (it was a $12 kit, way more batteries than I need)
-usb power bank (15000 mAh)
+2x usb power banks, use one while the other is charging via solar panel (one 15000 mAh, the other 10000 mAh)
+a quad core small linux box (X11/qtcreator actuall usable at reasonable speeds now)
 small linux box (1.8" LCD, but also able to use e-book reader's magnet screen for 800x600)
 usb hub
 ethernet cable(s)
@@ -113,6 +119,7 @@ pen/paper
 voice recorder
 vidya camera
 bunch of usb A->micro cables
+usb powered speakers
 
 == emergency ==
 deactivated cell phone with battery removed (test battery level periodically)

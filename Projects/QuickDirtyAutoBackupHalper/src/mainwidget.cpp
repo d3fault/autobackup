@@ -148,9 +148,9 @@ void mainWidget::setupGui()
     m_FilenameIgnoreLineEdit = new QLineEdit();
     m_FilenamesEndsWithIgnoreLineEdit = new QLineEdit(".pro.user,~");
     m_DirnameIgnoreLineEdit = new QLineEdit(".git");
-    m_DirnameEndsWithIgnoreLineEdit = new QLineEdit("_GCC_32bit-Release,_GCC_32bit-Debug,_GCC_64bit-Debug,_GCC_64bit-Release");
+    m_DirnameEndsWithIgnoreLineEdit = new QLineEdit("_GCC_32bit-Release,_GCC_32bit-Debug,_GCC_64bit-Debug,_GCC_64bit-Release,-Qt_4_8_6-Debug,-Qt_4_8_6-Release,-Qt_5_3_2-Debug,-Qt_5_3_2-Release");
     m_PushToGitIgnoreButton = new QPushButton("Push To .gitignore"); //because i don't want it to be rewritten every time, and detecting changes is too hard
-    m_WorkingDirectoryLineEdit = new QLineEdit("/home/d3fault/text");
+    m_WorkingDirectoryLineEdit = new QLineEdit("/home/user/text");
     m_MountPointSubDirToBareGitRepoLineEdit = new QLineEdit("autobackup"); //TODOoptional: customizable/persist'able. we append this sub-dir to each mount point when doing git push. we might additionally want to be able to specify the "working dir" (the FULL dir, not just sub-dir)... and hell this could even transform into "profiles" (one working dir has many tc containers and a configured subdir specific to that one working dir). for now hard-coded and single 'profile' is fine
     m_DirStructureFileNameLineEdit = new QLineEdit(".lastModifiedTimestamps");
     m_RowsPlaceholderWidget = new QWidget();

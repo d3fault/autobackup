@@ -1,8 +1,8 @@
 stable main noX:
-build-essential cmake pkg-config checkinstall automake autoconf libtool valgrind smartmontools libdevmapper1.02.1 ntfs-3g dosfstools testdisk git curl p7zip-full zip unzip tree strace netcat yasm sox opus-tools libopus-dev zlib1g-dev libtheora-dev libevent-dev libssl-dev libgstreamer-plugins-base0.10-dev libxslt1-dev libcap2-bin libasound2-dev libv4l-dev rtorrent gdb libsox-dev libclang-dev llvm-dev libboost-all-dev tmux tcplay needrestart
+build-essential cmake pkg-config checkinstall automake autoconf libtool valgrind smartmontools libdevmapper1.02.1 ntfs-3g dosfstools testdisk git subversion curl p7zip-full zip unzip tree strace netcat yasm sox opus-tools libopus-dev zlib1g-dev libtheora-dev libevent-dev libssl-dev libgstreamer-plugins-base0.10-dev libxslt1-dev libcap2-bin libasound2-dev alsa-utils libv4l-dev rtorrent gdb libsox-dev libclang-dev llvm-dev clang lldb libboost-all-dev tmux tcplay needrestart libcrypto++-dev libcrypto++-doc fbterm fbi libstk0-dev
 
 stable main X:
-smart-notifier gsmartcontrol arduino keepassx xul-ext-noscript xul-ext-tabmixplus mplayer gimp dia inkscape unetbootin virtualbox gv xscreensaver xscreensaver-data-extra openjdk-7-jdk mesa-common-dev
+smart-notifier gsmartcontrol arduino keepassx xul-ext-noscript xul-ext-tabmixplus xul-ext-adblock-plus xul-ext-flashgot mplayer gimp dia inkscape virtualbox gv xscreensaver xscreensaver-data-extra openjdk-7-jdk mesa-common-dev x11vnc keynav xvkbd
 
 //^yes, mesa-common-dev is needed even with a proprietary graphics driver. it installs OpenGL headers (btw, make sure there's a symlink similar to the one generated from: `ln -s /usr/lib/x86_64-linux-gnu/nvidia/libGL.so.1 /usr/lib/libGL.so`. The mesa libGL works as well)
 
@@ -13,14 +13,7 @@ sid main:
 bitcoind unetbootin ntfsprogs
 
 
-MESA-3D-LLVM-PIPE: --this is definitely too many packages. most were required for dri, which as you can see is disabled in `configure`. might work with as little as flex,bison,python-mako, and libxcb-glx0-dev'... but libxcb-glx0-dev is just a guess
-libdrm-dev x11proto-dri2-dev x11proto-dri3-dev x11proto-present-dev x11proto-gl-dev flex bison python-mako libxext-dev libxdamage-dev libxfixes-dev libx11-xcb-dev libxcb-glx0-dev libxcb-dri2-0-dev libxcb-dri3-dev libxcb-present-dev libxshmfence-dev libudev-dev
-./configure --disable-dri --disable-egl --enable-xlib-glx
-make
-make install, then make sure (using sha1sum/etc) that all the symbolic links in /usr/local/lib point to the libGL.so.version built in $CWD/lib/gallium
-
-
-OLD stable main (installing differently now):
+OLD stable (not to be confused with oldstable) main (installing differently now):
 libboost-all-dev witty witty-dev ffmpeg libavcodec-dev libavdevice-dev libavfilter-dev libavformat-dev libavutil-dev libpostproc-dev libswscale-dev
 
 
