@@ -11,10 +11,9 @@
 #include <QMessageBox>
 
 #include "methodsingleargumentwidget.h"
-#include "newtypeseen_createdesignequalsclassfromit_ornoteasdefinedelsewheretype_dialog.h"
+#include "designequalsimplementationguicommon.h"
 #include "../../designequalsimplementationproject.h"
 #include "../../designequalsimplementationclass.h"
-#include "../../designequalsimplementationlenientsignalorslotsignaturerparser.h"
 #include "../../designequalsimplementationlenientpropertydeclarationparser.h"
 
 //modeless yet still cancelable would be best, but for now i'll settle for modal and cancelable. actually fuck that shit, the editor is going to modify the backend object directly for now (fuck the police)
@@ -375,23 +374,8 @@ void ClassEditorDialog::handleQuickAddNewPropertyButtonClicked()
 }
 void ClassEditorDialog::handleQuickAddNewSignalButtonClicked()
 {
-    DesignEqualsImplementationLenientSignalOrSlotSignaturerParser signalSignatureParser(m_QuickMemberAddLineEdit->text(), m_CurrentProject->allKnownTypes());
-    if(signalSignatureParser.hasError())
-    {
-        QMessageBox::critical(this, tr("Error"), signalSignatureParser.mostRecentError()); //TODOreq: show the details in-app in a qplaintextedit
+    if(!DesignEqualsImplementationGuiCommon::parseNewSignalDefinition_then_askWhatToDoWithNewSignalArgTypes_then_createNewSignal(this, m_ClassBeingEditted, m_QuickMemberAddLineEdit->text()))
         return;
-    }
-
-    //first we account for any new param type that is unknown to us
-    if(!signalSignatureParser.newTypesSeenInFunctionDeclaration().isEmpty())
-    {
-        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(signalSignatureParser.newTypesSeenInFunctionDeclaration(), m_CurrentProject);
-        if(newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.exec() != QDialog::Accepted)
-            return;
-    }
-
-    //now create the new signal itself
-    m_ClassBeingEditted->createNewSignal(signalSignatureParser.parsedFunctionName(), signalSignatureParser.parsedFunctionArguments());
 
     m_QuickMemberAddLineEdit->clear();
     m_QuickMemberAddLineEdit->setFocus();
@@ -399,25 +383,8 @@ void ClassEditorDialog::handleQuickAddNewSignalButtonClicked()
 //TODOreq: either manually filter "_Bool" to "bool", or figure out how to get clang to give me the cpp version of a bool :-P
 void ClassEditorDialog::handleQuickAddNewSlotButtonClicked()
 {
-    DesignEqualsImplementationLenientSignalOrSlotSignaturerParser slotSignatureParser(m_QuickMemberAddLineEdit->text(), m_CurrentProject->allKnownTypes());
-    if(slotSignatureParser.hasError())
-    {
-        QMessageBox::critical(this, tr("Error"), slotSignatureParser.mostRecentError()); //TODOreq: show the details in-app in a qplaintextedit
+    if(!DesignEqualsImplementationGuiCommon::parseNewSlotDefinition_then_askWhatToDoWithNewSlotArgTypes_then_createNewSlot(this, m_ClassBeingEditted, m_QuickMemberAddLineEdit->text()))
         return;
-    }
-
-    //first we account for any new param type that is unknown to us
-    if(!slotSignatureParser.newTypesSeenInFunctionDeclaration().isEmpty())
-    {
-        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(slotSignatureParser.newTypesSeenInFunctionDeclaration(), m_CurrentProject); //intuitive naming ;-P
-        if(newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.exec() != QDialog::Accepted)
-            return;
-    }
-
-    //now create the new slot itself
-    m_ClassBeingEditted->createwNewSlot(slotSignatureParser.parsedFunctionName(), slotSignatureParser.parsedFunctionArguments());
-
-    //TODOreq: add the args to the new slot, i think i need to refactor some though... because the argument types can be either internally designed classes or defined elsewhere types... and additionally they can have modifiers such as "references", "pointers", "consts", etc... that we want to KEEP for the slot declaration. so i guess i'll just stop coding and sit here staring at the blinking cursor comatose until i figure out what to do
 
     m_QuickMemberAddLineEdit->clear();
     m_QuickMemberAddLineEdit->setFocus();

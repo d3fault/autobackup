@@ -1,6 +1,11 @@
 #ifndef DESIGNEQUALSIMPLEMENTATIONGUICOMMON_H
 #define DESIGNEQUALSIMPLEMENTATIONGUICOMMON_H
 
+#include "newtypeseen_createdesignequalsclassfromit_ornoteasdefinedelsewheretype_dialog.h"
+#include "../../designequalsimplementationlenientsignalorslotsignaturerparser.h"
+
+class DesignEqualsImplementationProject;
+
 #define DESIGNEQUALSIMPLEMENTATION_GUI_SNAP_INDICATION_COLOR Qt::red
 
 #define DESIGNEQUALSIMPLEMENTATION_GUI_LAYOUT_CONTENT_MARGINS 0
@@ -33,5 +38,14 @@ Q_DECLARE_METATYPE(DesignEqualsImplementationMouseModeEnum)
     DESIGNEQUALSIMPLEMENTATION_MIME_TYPE_UML_PREFIX "class-diagram-object"
 #define DESIGNEQUALSIMPLEMENTATION_MIME_TYPE_UML_USE_CASE_OBJECT \
     DESIGNEQUALSIMPLEMENTATION_MIME_TYPE_UML_PREFIX "use-case-object"
+
+class DesignEqualsImplementationGuiCommon
+{
+private:
+    static bool parseNewFunctionDefinitioin_then_askWhatToDoWithNewFunctionArgTypes(QWidget *parentWidget, DesignEqualsImplementationProject *currentProject, const QString &functionDefinitionToParse, QString *out_parsedFunctionName, QStringList *out_parsedFunctionArgs);
+public:
+    static bool parseNewSignalDefinition_then_askWhatToDoWithNewSignalArgTypes_then_createNewSignal(QWidget *parentWidget, DesignEqualsImplementationClass *classToAddTheSignalTo, const QString &signalDefinitionToParse);
+    static bool parseNewSlotDefinition_then_askWhatToDoWithNewSlotArgTypes_then_createNewSlot(QWidget *parentWidget, DesignEqualsImplementationClass *classToAddTheSlotTo, const QString &signalDefinitionToParse);
+};
 
 #endif // DESIGNEQUALSIMPLEMENTATIONGUICOMMON_H

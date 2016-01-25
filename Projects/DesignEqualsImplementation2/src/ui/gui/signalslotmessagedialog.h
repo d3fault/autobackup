@@ -67,6 +67,7 @@ private slots:
 
     void handleChooseSourceInstanceButtonClicked();
 
+    bool acceptIfNoSignalsSlotsParsingNeeded_Or_AcceptIfSignalsSlotsParsingSucceeds();
     void handleOkAndMakeChildOfSignalSenderActionTriggered();
 };
 

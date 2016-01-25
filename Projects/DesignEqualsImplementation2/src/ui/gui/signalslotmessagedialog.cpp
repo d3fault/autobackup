@@ -12,12 +12,14 @@
 #include <QLineEdit>
 #include <QMessageBox>
 
+#include "designequalsimplementationguicommon.h"
 #include "classinstancechooserdialog.h"
 #include "../../designequalsimplementationcommon.h"
 #include "../../designequalsimplementationclassslot.h"
 #include "../../designequalsimplementationclass.h"
 #include "../../designequalsimplementationclasslifeline.h"
 #include "../../designequalsimplementationclasslifelineunitofexecution.h"
+#include "../../designequalsimplementationlenientsignalorslotsignaturerparser.h"
 
 //TODOreq: SignalSlotMessageEditorDialog (creation + editting-later-on using same widget) would be best
 //TODOreq: signal/slot mode, slot args populated by signal args, can have less than signal arg count, but arg-ordering and arg-type matter
@@ -35,6 +37,7 @@
 //TODOreq: quick assign instance should contain "Ok", "Ok and create and assign instance...", and "Ok and assign instance...". The latter two have sub-menus (no default action) that finish off the "...". That is to say, two options under "Ok and create and assign instance..." could be "as child of sender named m_Foo0" (this one is already implemented) and "as child of sender with name of my choosing" (QInputDialog). The sub-menu of "Ok and assign instance..." should list existing instances, but to keep things nice and organized we could make them choose the "parent" class first, and the parent's sub-menu lists its existing instances. When listing the classes that are available for parenting in the "Ok and assign instance..." menu, the sender should be listed at the top.
 //TODOreq: ^related to above-ish, the instance creating/choosing should be merged into a common backend. Sure create/assign is just two steps, but it's better to re-use a method that does that rather than do those two actions myself whenever relevant. The instance chooser dialog can/should also inherit the functionality described in the above req, namedly a drill-down "tree" view for selecting parents/instances.
 //TODOoptional: "local" variables defined in "chunk of raw c++" can be used as signal emit args (or invoke method args (etc)), if I use libclang intelligently.... but eh fuck that for now, for now "chunk of raw c++" must modify a member in order for it to be used in a signal emit/slot invoke/etc
+//TODOreq: dynamic tab ordering. So for example in the most common case we are focused on the "signal line edit" right when the dialog opens. If they type something in here, then press tab, the place focus is transferred to should be the "slot line edit". But if they leave the "signal line edit" empty before pressing tab, the focus should be trasferred to the "existing signals combo box" (and the same functionality happens below for the "existing slots combo box" if "slot line edit" is empty when tab is pressed. Should be noted that a tab press when"existing signals combo box" is focused should still move focus to "slot line edit" (since whether or not we use an existing signal has no bearing on whether or not we're going to use an existing slot)
 SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCase::UseCaseEventTypeEnum messageEditorDialogMode, DesignEqualsImplementationClassSlot *destinationSlotToInvoke_OrZeroIfNoDest, bool sourceIsActor, bool destinationIsActor, DesignEqualsImplementationClassLifeLine *sourceClassLifeLine_OrZeroIfSourceIsActor, DesignEqualsImplementationClassLifeLine *destinationClassLifeLine_OrZeroIfNoDest, DesignEqualsImplementationClassSlot *sourceSlot_OrZeroIfSourceIsActor, DesignEqualsImplementationClassSignal *sourceExistingSignalStatement_OrZeroIfSourceIsNotExistingSignalStatement, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     //, m_UnitOfExecutionContainingSlotToInvoke(unitOfExecutionContainingSlotToInvoke) //TODOreq: it's worth noting that the unit of execution is only the DESIRED unit of execution, and that it might not be invokable from the source unit of execution (at the time of writing, that is actor... so... lol)
@@ -123,13 +126,13 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
         okToolButton->addAction(okAndMakeChildOfSignalSenderAction);
         okToolButton->setPopupMode(QToolButton::MenuButtonPopup);
         m_OkButton = okToolButton;
-        connect(okAction, SIGNAL(triggered()), this, SLOT(accept()));
+        connect(okAction, SIGNAL(triggered()), this, SLOT(acceptIfNoSignalsSlotsParsingNeeded_Or_AcceptIfSignalsSlotsParsingSucceeds()));
         connect(okAndMakeChildOfSignalSenderAction, SIGNAL(triggered()), this, SLOT(handleOkAndMakeChildOfSignalSenderActionTriggered()));
     }
     else //regular ok button
     {
         QPushButton *okPushButton = new QPushButton(tr("Ok"), this); //TODOreq: button stays below arg filling in;
-        connect(okPushButton, SIGNAL(clicked()), this, SLOT(accept()));
+        connect(okPushButton, SIGNAL(clicked()), this, SLOT(acceptIfNoSignalsSlotsParsingNeeded_Or_AcceptIfSignalsSlotsParsingSucceeds()));
         okPushButton->setDefault(true);
         m_OkButton = okPushButton;
     }
@@ -367,6 +370,11 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 
     setLayout(m_Layout);
+
+    if(newSignalAndExistingSignalsWidget->isEnabled())
+        autoParsedSignalNameWithAutoCompleteForExistingSignals->setFocus();
+    else if(newSlotAndExistingSlotsWidget->isEnabled())
+        autoParsedSlotNameWithAutoCompleteForExistingSlots->setFocus();
 }
 DesignEqualsImplementationClassSignal *SignalSlotMessageDialog::signalToEmit_OrZeroIfNone() const //TODOreq: set m_SignalToEmit to zero when user unchecks "Signal"
 {
@@ -620,11 +628,42 @@ void SignalSlotMessageDialog::handleChooseSourceInstanceButtonClicked() //corner
         //TODOoptional: pre-Generate-source-code sanitization. I am only hesitant to do that stage of sanitization because eventually there hopefully won't be the requirement of objects being children of each other in order to communicate (the source would still need a pointer to dest, even if he doesn't own dest)
     }
 }
+bool SignalSlotMessageDialog::acceptIfNoSignalsSlotsParsingNeeded_Or_AcceptIfSignalsSlotsParsingSucceeds()
+{
+    //first handle the simple case where no signals/slots parsing needs to be done (we just accept())
+    if(m_ExistingSignalsGroupBox->isChecked() && m_ExistingSlotsGroupBox->isChecked()) //TODOreq: handle signal or slot gray'd out, pending a GUI refactor
+    {
+        accept(); //TODOreq: give warnings, ask for confirmation, if either signal or slot line edits are not empty (what did they mean?)
+        return true;
+    }
+
+
+    //now onto the more complex signals/slots parsing, accept()'ing only after success
+
+    //new signal
+    if(m_CreateNewSignalGroupBox->isChecked())
+    {
+        if(!DesignEqualsImplementationGuiCommon::parseNewSignalDefinition_then_askWhatToDoWithNewSignalArgTypes_then_createNewSignal(this, m_SourceClassLifeline_OrZeroIfSourceIsActor->designEqualsImplementationClass(), m_CreateNewSignalLineEdit->text()))
+            return false;
+    }
+
+    //new slot
+    if(m_CreateNewSlotGroupBox->isChecked())
+    {
+        if(!DesignEqualsImplementationGuiCommon::parseNewSlotDefinition_then_askWhatToDoWithNewSlotArgTypes_then_createNewSlot(this, m_DestinationClassLifeline_OrZeroIfNoDest->designEqualsImplementationClass(), m_CreateNewSlotLineEdit->text()))
+            return false;
+    }
+
+    return true;
+}
 void SignalSlotMessageDialog::handleOkAndMakeChildOfSignalSenderActionTriggered()
 {
+    if(!acceptIfNoSignalsSlotsParsingNeeded_Or_AcceptIfSignalsSlotsParsingSucceeds())
+        return; //On a signals/slots parse fail, delay the 'childing' until they fix the errors and click "make child" again. TODOreq: an alternative/better/less-KISS way is to do the 'childing', then update the gui of this dialog so it no longer shows the "make child" button that got us here
+
     //the toolbutton to get here wouldn't be shown if source is actor or if there's no dest
     DesignEqualsImplementationClass *sourceClass = m_SourceSlot_OrZeroIfSourceIsActor->ParentClass;
     HasA_Private_Classes_Member *newHasAmember = sourceClass->createHasA_Private_Classes_Member(m_DestinationSlot_OrZeroIfNoDest->ParentClass);
     m_DestinationClassLifeline_OrZeroIfNoDest->setInstanceInOtherClassIfApplicable(newHasAmember);
-    accept();
+    //accept();
 }

@@ -74,7 +74,8 @@ SOURCES += ui/gui/main.cpp\
     ui/gui/sourceexistingsignalsnappingindicationvisualrepresentation.cpp \
     ui/gui/signalstatementnotchmultiplextergraphicsrect.cpp \
     designequalsimplementationchunkofrawcppstatements.cpp \
-    ui/gui/designequalsimplementationchunkofrawcppstatementsgraphicsitemforusecasescene.cpp
+    ui/gui/designequalsimplementationchunkofrawcppstatementsgraphicsitemforusecasescene.cpp \
+    ui/gui/designequalsimplementationguicommon.cpp
 
 HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
