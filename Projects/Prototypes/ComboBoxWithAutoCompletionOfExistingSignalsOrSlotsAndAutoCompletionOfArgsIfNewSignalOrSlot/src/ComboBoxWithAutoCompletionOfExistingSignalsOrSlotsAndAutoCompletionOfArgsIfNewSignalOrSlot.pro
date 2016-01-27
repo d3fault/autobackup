@@ -12,12 +12,9 @@ TARGET = ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfAr
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        comboboxwithautocompletionofexistingsignalsorslotsandautocompletionofargsifnewsignalorslot.cpp
+SOURCES += main.cpp
 
-HEADERS  += comboboxwithautocompletionofexistingsignalsorslotsandautocompletionofargsifnewsignalorslot.h \
-    lineeditwithpubliccursorrect.h
-
+include(../../../../GloballySharedClasses/comboboxwithautocompletionofexistingsignalsorslotsandautocompletionofargsifnewsignalorslot.pri)
 
 DEFINES += NDEBUG
 DEFINES += _GNU_SOURCE

@@ -141,6 +141,8 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementationchunkofrawcppstatements.h \
     ui/gui/designequalsimplementationchunkofrawcppstatementsgraphicsitemforusecasescene.h
 
+include(../../../GloballySharedClasses/comboboxwithautocompletionofexistingsignalsorslotsandautocompletionofargsifnewsignalorslot.pri)
+
 #libclang stuff
 CONFIG += precompile_header
 PRECOMPILED_HEADER = libclangpch.h
@@ -149,5 +151,5 @@ DEFINES += _GNU_SOURCE
 DEFINES += __STDC_CONSTANT_MACROS
 DEFINES += __STDC_FORMAT_MACROS
 DEFINES += __STDC_LIMIT_MACROS
-INCLUDEPATH += "/usr/lib/llvm-3.5/include"
-LIBS += -L/usr/lib/llvm-3.5/lib -lclangTooling -lclangDriver -lclangFrontend -lclangParse -lclangSema -lclangEdit -lclangAnalysis -lclangLex -lclangSerialization -lLLVMBitReader -lclangAST -lclangBasic -lLLVMMCParser -lLLVMMC -lLLVMOption -lLLVMSupport -lz -lpthread -lffi -ltinfo -ldl -lm -lclang
+INCLUDEPATH += $$system('llvm-config --includedir')
+LIBS += -L$$system('llvm-config --libdir') -lclangTooling -lclangDriver -lclangFrontend -lclangParse -lclangSema -lclangEdit -lclangAnalysis -lclangLex -lclangSerialization -lLLVMBitReader -lclangAST -lclangBasic -lLLVMMCParser -lLLVMMC -lLLVMOption -lLLVMSupport -lz -lpthread -lffi -ltinfo -ldl -lm -lclang

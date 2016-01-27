@@ -15,11 +15,13 @@
 #include "designequalsimplementationguicommon.h"
 #include "classinstancechooserdialog.h"
 #include "../../designequalsimplementationcommon.h"
+#include "../../designequalsimplementationproject.h"
 #include "../../designequalsimplementationclassslot.h"
 #include "../../designequalsimplementationclass.h"
 #include "../../designequalsimplementationclasslifeline.h"
 #include "../../designequalsimplementationclasslifelineunitofexecution.h"
 #include "../../designequalsimplementationlenientsignalorslotsignaturerparser.h"
+#include "comboboxwithautocompletionofexistingsignalsorslotsandautocompletionofargsifnewsignalorslot.h"
 
 //TODOreq: SignalSlotMessageEditorDialog (creation + editting-later-on using same widget) would be best
 //TODOreq: signal/slot mode, slot args populated by signal args, can have less than signal arg count, but arg-ordering and arg-type matter
@@ -68,19 +70,24 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
     signalHLayout->addWidget(m_SignalsCheckbox);
 
-    QWidget *newSignalAndExistingSignalsWidget = new QWidget();
+    m_SignalsWidget = new QWidget();
     QVBoxLayout *signalsLayout = new QVBoxLayout();
 
     //new signal
-    QLineEdit *autoParsedSignalNameWithAutoCompleteForExistingSignals = new QLineEdit(); //TODOreq. TODOreq: "create handler in slot" (checks Slot checkbox if needed). ex: "handleFooSignal"
+    //QLineEdit *autoParsedSignalNameWithAutoCompleteForExistingSignals = new QLineEdit(); //TODOreq. TODOreq: "create handler in slot" (checks Slot checkbox if needed). ex: "handleFooSignal". When pressed, focus should change to the slot signature and have that "handleFooSignal" highlighted so they can type in a better name. It saves them from having to type the arguments portion of the signature
     //existing signal
-    m_ExistingSignalsComboBox = new QComboBox();
-    m_ExistingSignalsComboBox->addItem(tr("Select signal...")); //TODOreq: for both signals and slots, make the NAME of it bold (args are less important). This should be anywhere the signature is seen
-    signalsLayout->addWidget(autoParsedSignalNameWithAutoCompleteForExistingSignals);
+    m_ExistingSignalsComboBox = new ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot();
+    if(!m_ExistingSignalsComboBox->isValid())
+    {
+        setDisabled(true);
+        //return;
+    }
+    //TODOreq: for both signals and slots, make the NAME of it bold (args are less important). This should be anywhere the signature is seen
+    //signalsLayout->addWidget(autoParsedSignalNameWithAutoCompleteForExistingSignals);
     signalsLayout->addWidget(m_ExistingSignalsComboBox);
 
-    signalHLayout->addWidget(newSignalAndExistingSignalsWidget);
-    newSignalAndExistingSignalsWidget->setLayout(signalsLayout);
+    signalHLayout->addWidget(m_SignalsWidget);
+    m_SignalsWidget->setLayout(signalsLayout);
     QVBoxLayout *signalVLayout = new QVBoxLayout();
     signalVLayout->addLayout(signalHLayout);
     signalGroupBox->setLayout(signalVLayout);
@@ -96,20 +103,25 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     m_SlotsCheckbox->setChecked(messageEditorDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType);
     slotHLayout->addWidget(m_SlotsCheckbox);
 
-    QWidget *newSlotAndExistingSlotsWidget = new QWidget();
+    m_SlotsWidget = new QWidget();
     QVBoxLayout *slotsLayout = new QVBoxLayout();
 
     //new slot
-    QLineEdit *autoParsedSlotNameWithAutoCompleteForExistingSlots = new QLineEdit(); //TODOreq
+    //QLineEdit *autoParsedSlotNameWithAutoCompleteForExistingSlots = new QLineEdit(); //TODOreq
     //existing slot
-    m_ExistingSlotsComboBox = new QComboBox();
-    m_ExistingSlotsComboBox->addItem(tr("Select slot...")); //TODOreq: qlistwidget only takes one click insead of two (precious seconds when you're trying to keep a complicated design in your head)... but the trade off is that it takes up more space (not really though, once the combo box is expanded...)
+    m_ExistingSlotsComboBox = new ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot();
+    if(!m_ExistingSlotsComboBox->isValid())
+    {
+        setDisabled(true);
+        //return; //TODOreq: leaks memory. all the widgets above this line not yet added to a layout, and even the layouts themselves which haven't been set to a widget. "no naked new"
+    }
+    //TODOreq: qlistwidget only takes one click insead of two (precious seconds when you're trying to keep a complicated design in your head)... but the trade off is that it takes up more space (not really though, once the combo box is expanded...)
 
-    slotsLayout->addWidget(autoParsedSlotNameWithAutoCompleteForExistingSlots);
+    //slotsLayout->addWidget(autoParsedSlotNameWithAutoCompleteForExistingSlots);
     slotsLayout->addWidget(m_ExistingSlotsComboBox);
 
-    slotHLayout->addWidget(newSlotAndExistingSlotsWidget);
-    newSlotAndExistingSlotsWidget->setLayout(slotsLayout);
+    slotHLayout->addWidget(m_SlotsWidget);
+    m_SlotsWidget->setLayout(slotsLayout);
     slotGroupBox->setLayout(slotHLayout);
     m_Layout->addWidget(slotGroupBox);
 
@@ -146,24 +158,27 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
     //Layout visibility and poulating
 
+    m_ExistingSignalsComboBox->lineEdit()->setPlaceholderText(tr("Select existing signal, or declare new signal..."));
+    m_ExistingSlotsComboBox->lineEdit()->setPlaceholderText(tr("Select existing slot, or declare new slot..."));
+
     if(messageEditorDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalEventType)
     {
         //no destination context, so they'd have to select an object/lifeline/unit-of-exectution or create one on the fly TODOreq
         m_SignalsCheckbox->setChecked(true);
         m_SignalsCheckbox->setDisabled(true);
-        newSignalAndExistingSignalsWidget->setDisabled(false);
+        m_SignalsWidget->setDisabled(false);
         m_SignalsCheckbox->setToolTip(tr("You can't NOT have a signal when you don't have a destination"));
         m_SlotsCheckbox->setDisabled(true);
         m_SlotsCheckbox->setToolTip(tr("You can't have a slot when you don't have a destination")); //TODOreq: create destination+slot on the fly
-        newSlotAndExistingSlotsWidget->setDisabled(true);
+        m_SlotsWidget->setDisabled(true);
     }
     else
     {
-        newSignalAndExistingSignalsWidget->setDisabled(true);
+        m_SignalsWidget->setDisabled(true);
         m_SlotsCheckbox->setChecked(true);
         m_SlotsCheckbox->setDisabled(true);
         m_SlotsCheckbox->setToolTip(tr("You have a destination object, so you must have a slot")); //TODOreq: actor as destination breaks rule bleh (don't think it matters because actor uses UseCaseSignalEventType?)
-        newSlotAndExistingSlotsWidget->setDisabled(false);
+        m_SlotsWidget->setDisabled(false);
         if(destinationSlotToInvoke_OrZeroIfNoDest) //I think this is impied != 0 when not UseCaseSignalEventType, however I'm not sure of it and the check is cheap and prevents segfault lolol
         {
             if(sourceSlot_OrZeroIfSourceIsActor && (!sourceIsActor))
@@ -219,7 +234,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
                                 //when the connection-activatation-line _destination_(slot) is parent (hasA relationship) of the _source_(signal), a signal is mandatory in the signal/slot message dialog before the dialog can be accepted. a slot is also mandatory since there is a destination, but that is already implemenented(implied?)
                                 m_SignalsCheckbox->setChecked(true);
                                 m_SignalsCheckbox->setDisabled(true);
-                                newSignalAndExistingSignalsWidget->setDisabled(false);
+                                m_SignalsWidget->setDisabled(false);
                                 m_SignalsCheckbox->setToolTip(tr("When the destination-object hasA the source-object, a signal is mandatory"));
                             }
 
@@ -234,7 +249,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
                             {
                                 m_SignalsCheckbox->setChecked(true);
                                 m_SignalsCheckbox->setDisabled(true);
-                                newSignalAndExistingSignalsWidget->setDisabled(false);
+                                m_SignalsWidget->setDisabled(false);
                                 m_SignalsCheckbox->setToolTip(tr("When connecting two members of the same type, the connection statement must go in the owner of said two members. Hence, a signal is required for one member to communicate with the other")); //TODOreq: slot required to, but that is implied already since there is a dest
                             }
                         }
@@ -242,7 +257,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
                         {
                             //source does not have instance, so warn them that if they don't select a signal (they only select slot invoke), dest must be made a child of source before source can be generated
                             m_SignalsCheckbox->setChecked(true);
-                            newSignalAndExistingSignalsWidget->setDisabled(false);
+                            m_SignalsWidget->setDisabled(false);
                             m_SignalsCheckbox->setText(m_SignalsCheckbox->text() + "*");
 
                             QHBoxLayout *warningRow = new QHBoxLayout();
@@ -277,13 +292,13 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
             }
 
-
             Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->mySlots()) //List the slots on the target slot, derp
             {
                 if(currentSlot->Name.startsWith(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING_PREFIX))
                     continue;
                 m_ExistingSlotsComboBox->addItem(currentSlot->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSlot));
             }
+            m_ExistingSlotsComboBox->insertKnownTypes(destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->m_ParentProject->allKnownTypes());
         }
     }
 
@@ -324,6 +339,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
             {
                 m_ExistingSignalsComboBox->addItem(currentSignal->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSignal));
             }
+            m_ExistingSignalsComboBox->insertKnownTypes(sourceSlot_OrZeroIfSourceIsActor->ParentClass->m_ParentProject->allKnownTypes());
 
             //fill in list of variables in current context to use for satisfying whatever slot they choose's arguments. TODOreq: prefix the "source" of the arg satisfier, and perhaps sort them by that too. "my-method-arguments", "my-class-members", etc)
             //m_VariablesAvailableToSatisfyArgs.append(*(slotWithCurrentContext_OrZeroIfSourceIsActor->Arguments));
@@ -349,7 +365,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     {
         m_SlotsCheckbox->setChecked(false);
         m_SlotsCheckbox->setDisabled(true);
-        newSlotAndExistingSlotsWidget->setDisabled(true);
+        m_SlotsWidget->setDisabled(true);
         m_SlotsCheckbox->setToolTip(tr("You can't choose a slot when the destination is actor"));
     }
 
@@ -357,11 +373,11 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     if(messageEditorDialogMode == DesignEqualsImplementationUseCase::UseCaseSignalSlotEventType)
     {
         //Can't disable signals in other mode, so no point in listening
-        connect(m_SignalsCheckbox, SIGNAL(toggled(bool)), newSignalAndExistingSignalsWidget, SLOT(setEnabled(bool)));
+        connect(m_SignalsCheckbox, SIGNAL(toggled(bool)), m_SignalsWidget, SLOT(setEnabled(bool)));
         connect(m_SignalsCheckbox, SIGNAL(toggled(bool)), this, SLOT(handleSignalCheckboxToggled(bool)));
 
         //No slot in other mode, so no point in listening
-        connect(m_SlotsCheckbox, SIGNAL(toggled(bool)), newSlotAndExistingSlotsWidget, SLOT(setEnabled(bool)));
+        connect(m_SlotsCheckbox, SIGNAL(toggled(bool)), m_SlotsWidget, SLOT(setEnabled(bool)));
         connect(m_SlotsCheckbox, SIGNAL(toggled(bool)), this, SLOT(handleSlotCheckboxToggled(bool)));
         connect(m_ExistingSlotsComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleExistingSlotsComboBoxCurrentIndexChanged(int)));
     }
@@ -371,10 +387,10 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
     setLayout(m_Layout);
 
-    if(newSignalAndExistingSignalsWidget->isEnabled())
-        autoParsedSignalNameWithAutoCompleteForExistingSignals->setFocus();
-    else if(newSlotAndExistingSlotsWidget->isEnabled())
-        autoParsedSlotNameWithAutoCompleteForExistingSlots->setFocus();
+    if(m_SignalsWidget->isEnabled())
+        m_ExistingSignalsComboBox->setFocus();
+    else if(m_SlotsWidget->isEnabled())
+        m_ExistingSlotsComboBox->setFocus();
 }
 DesignEqualsImplementationClassSignal *SignalSlotMessageDialog::signalToEmit_OrZeroIfNone() const //TODOreq: set m_SignalToEmit to zero when user unchecks "Signal"
 {
@@ -631,7 +647,9 @@ void SignalSlotMessageDialog::handleChooseSourceInstanceButtonClicked() //corner
 bool SignalSlotMessageDialog::acceptIfNoSignalsSlotsParsingNeeded_Or_AcceptIfSignalsSlotsParsingSucceeds()
 {
     //first handle the simple case where no signals/slots parsing needs to be done (we just accept())
-    if(m_ExistingSignalsGroupBox->isChecked() && m_ExistingSlotsGroupBox->isChecked()) //TODOreq: handle signal or slot gray'd out, pending a GUI refactor
+    bool signalDoesntNeedParsing = ((m_SignalsWidget->isEnabled() && m_ExistingSignalsComboBox->currentIndex() > 0) || (!m_SignalsWidget->isEnabled()));
+    bool slotDoesntNeedParsing = ((m_SlotsWidget->isEnabled() && m_ExistingSlotsComboBox->currentIndex() > 0) || (!m_SlotsWidget->isEnabled()));
+    if(signalDoesntNeedParsing && slotDoesntNeedParsing)
     {
         accept(); //TODOreq: give warnings, ask for confirmation, if either signal or slot line edits are not empty (what did they mean?)
         return true;
@@ -640,20 +658,21 @@ bool SignalSlotMessageDialog::acceptIfNoSignalsSlotsParsingNeeded_Or_AcceptIfSig
 
     //now onto the more complex signals/slots parsing, accept()'ing only after success
 
-    //new signal
-    if(m_CreateNewSignalGroupBox->isChecked())
+    if(m_SignalsCheckbox->isChecked() && m_ExistingSignalsComboBox->currentIndex() == 0)
     {
-        if(!DesignEqualsImplementationGuiCommon::parseNewSignalDefinition_then_askWhatToDoWithNewSignalArgTypes_then_createNewSignal(this, m_SourceClassLifeline_OrZeroIfSourceIsActor->designEqualsImplementationClass(), m_CreateNewSignalLineEdit->text()))
+        //new signal
+        if(!DesignEqualsImplementationGuiCommon::parseNewSignalDefinition_then_askWhatToDoWithNewSignalArgTypes_then_createNewSignal(this, m_SourceClassLifeline_OrZeroIfSourceIsActor->designEqualsImplementationClass(), m_ExistingSignalsComboBox->lineEdit()->text()))
             return false;
     }
 
-    //new slot
-    if(m_CreateNewSlotGroupBox->isChecked())
+    if(m_SlotsCheckbox->isChecked() && m_ExistingSlotsComboBox->currentIndex() == 0)
     {
-        if(!DesignEqualsImplementationGuiCommon::parseNewSlotDefinition_then_askWhatToDoWithNewSlotArgTypes_then_createNewSlot(this, m_DestinationClassLifeline_OrZeroIfNoDest->designEqualsImplementationClass(), m_CreateNewSlotLineEdit->text()))
+        //new slot
+        if(!DesignEqualsImplementationGuiCommon::parseNewSlotDefinition_then_askWhatToDoWithNewSlotArgTypes_then_createNewSlot(this, m_DestinationClassLifeline_OrZeroIfNoDest->designEqualsImplementationClass(), m_ExistingSlotsComboBox->lineEdit()->text()))
             return false;
     }
 
+    accept();
     return true;
 }
 void SignalSlotMessageDialog::handleOkAndMakeChildOfSignalSenderActionTriggered()

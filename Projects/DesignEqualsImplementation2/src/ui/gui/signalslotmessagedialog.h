@@ -15,6 +15,7 @@ class DesignEqualsImplementationClassSlot;
 class DesignEqualsImplementationClassLifeLine;
 //class DesignEqualsImplementationClassLifeLineUnitOfExecution;
 class IHaveTypeAndVariableNameAndPreferredTextualRepresentation;
+class ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot;
 
 class SignalSlotMessageDialog : public QDialog
 {
@@ -30,8 +31,10 @@ private:
     QVBoxLayout *m_Layout;
     QCheckBox *m_SignalsCheckbox;
     QCheckBox *m_SlotsCheckbox;
-    QComboBox *m_ExistingSignalsComboBox;
-    QComboBox *m_ExistingSlotsComboBox;
+    QWidget *m_SignalsWidget;
+    QWidget *m_SlotsWidget;
+    ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot *m_ExistingSignalsComboBox;
+    ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot *m_ExistingSlotsComboBox;
     DesignEqualsImplementationClassSlot *m_SourceSlot_OrZeroIfSourceIsActor;
     DesignEqualsImplementationClassSlot *m_DestinationSlot_OrZeroIfNoDest;
     DesignEqualsImplementationClassSignal *m_SignalToEmit;

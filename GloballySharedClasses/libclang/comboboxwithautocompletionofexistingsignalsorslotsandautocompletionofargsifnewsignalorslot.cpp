@@ -8,27 +8,21 @@
 #include <QMessageBox>
 #include <QTextCursor>
 #include <QLineEdit>
-#include <QDebug>
-
-#include "lineeditwithpubliccursorrect.h"
 
 #define ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot_DUMMY_FILENAME "dummyfile.cpp"
 
 //So yea if the cursor is to the left of the open parenthesis, we use the default completer filled with full signal/slot signatures (they are also "combo box items"). When to the right of the open parenthesis, we complete all types in project. When to the right of the close parenthesis, we shouldn't complete anything at all, BUT just to KISS we should just go back to using the default completer TODoreq
 //TODOreq: when cursor is immediately after the open parenthesis and nothing typed, ctrl+space should show all known types. I think libclang completion already does this. There's also the subsequent args to consider
 //TODOreq: A new arg type should be auto-completed when using it again on subsequent args of the same signal/slot signature. ex: someSlot(NewType arg0, NewT <- NewType should be completed. Yes we still have to ask them whether or not to make a new d=i class out of it (or if it's defined elsewhere), but that's irrelevant
+//TODOreq: auto-completion of existing signals/slots should still work even when the user types "void " in front
 ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot(QWidget *parent)
     : QComboBox(parent)
+    , m_IsValid(true)
     , m_CompleterPopup(new QCompleter(this))
 {
-    QStringList existingSignalsOrSlots;
-    existingSignalsOrSlots << "someSlot0()" << "someSlot1(int someArg)";
     insertItem(0, "");
-    insertItems(count(), existingSignalsOrSlots);
-
-    m_AllKnownTypes << "CustomType0" << "BlahType";
-
     setEditable(true);
+    setInsertPolicy(QComboBox::NoInsert);
     setLineEdit(new LineEditWithPublicCursorRect(this));
     completer()->setCompletionMode(QCompleter::PopupCompletion);
 
@@ -40,12 +34,9 @@ ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSi
     m_ClangIndex = clang_createIndex(1, 0);
     if(!m_ClangIndex)
     {
+        m_IsValid = false;
         QMessageBox::critical(this, tr("Error"), tr("clang_createIndex failed"));
-        close();
     }
-    QSize currentSize = size();
-    currentSize.setWidth(400);
-    resize(currentSize);
 }
 void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::keyPressEvent(QKeyEvent *e)
 {
@@ -152,11 +143,7 @@ void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIf
 
     //clang_reparseTranslationUnit(u, 0, 0, 0);
 
-    qDebug() << "Source:";
-    qDebug() << sourceCode;
-    qDebug() << "Line:" << line;
     int column = lineOfInterest.length()+1-token.length();
-    qDebug() << "Column:" << column;
 
     CXCodeCompleteResults* codeCompleteResults = clang_codeCompleteAt(translationUnit, ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot_DUMMY_FILENAME, line, column, unsavedFiles, 1, 0);
     if(!codeCompleteResults)

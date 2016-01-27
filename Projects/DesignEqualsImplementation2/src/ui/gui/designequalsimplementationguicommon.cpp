@@ -4,12 +4,12 @@
 
 #include "../../designequalsimplementationproject.h"
 
-bool DesignEqualsImplementationGuiCommon::parseNewFunctionDefinitioin_then_askWhatToDoWithNewFunctionArgTypes(QWidget *parentWidget, DesignEqualsImplementationProject *currentProject, const QString &functionDefinitionToParse, QString *out_parsedFunctionName, QStringList *out_parsedFunctionArgs)
+bool DesignEqualsImplementationGuiCommon::parseNewFunctionDefinitioin_then_askWhatToDoWithNewFunctionArgTypes(QWidget *parentWidget, DesignEqualsImplementationProject *currentProject, const QString &functionDefinitionToParse, QString *out_parsedFunctionName, QList<MethodArgumentTypedef> *out_parsedFunctionArgs)
 {
     DesignEqualsImplementationLenientSignalOrSlotSignaturerParser functionSignatureParser(functionDefinitionToParse, currentProject->allKnownTypes());
     if(functionSignatureParser.hasError())
     {
-        QMessageBox::critical(parentWidget, tr("Error"), functionSignatureParser.mostRecentError()); //TODOreq: show the details in-app in a qplaintextedit
+        QMessageBox::critical(parentWidget, QObject::tr("Error"), functionSignatureParser.mostRecentError()); //TODOreq: show the details in-app in a qplaintextedit
         return false;
     }
 
@@ -28,7 +28,7 @@ bool DesignEqualsImplementationGuiCommon::parseNewFunctionDefinitioin_then_askWh
 bool DesignEqualsImplementationGuiCommon::parseNewSignalDefinition_then_askWhatToDoWithNewSignalArgTypes_then_createNewSignal(QWidget *parentWidget, DesignEqualsImplementationClass *classToAddTheSignalTo, const QString &signalDefinitionToParse)
 {
     QString parsedSignalName;
-    QStringList parsedSignalArguments;
+    QList<MethodArgumentTypedef> parsedSignalArguments;
     if(!parseNewFunctionDefinitioin_then_askWhatToDoWithNewFunctionArgTypes(parentWidget, classToAddTheSignalTo->m_ParentProject, signalDefinitionToParse, &parsedSignalName, &parsedSignalArguments))
         return false;
 
@@ -39,11 +39,11 @@ bool DesignEqualsImplementationGuiCommon::parseNewSignalDefinition_then_askWhatT
 bool DesignEqualsImplementationGuiCommon::parseNewSlotDefinition_then_askWhatToDoWithNewSlotArgTypes_then_createNewSlot(QWidget *parentWidget, DesignEqualsImplementationClass *classToAddTheSlotTo, const QString &signalDefinitionToParse)
 {
     QString parsedSlotName;
-    QStringList parsedSlotArguments;
+    QList<MethodArgumentTypedef> parsedSlotArguments;
     if(!parseNewFunctionDefinitioin_then_askWhatToDoWithNewFunctionArgTypes(parentWidget, classToAddTheSlotTo->m_ParentProject, signalDefinitionToParse, &parsedSlotName, &parsedSlotArguments))
         return false;
 
     //now create the new slot itself
-    classToAddTheSlotTo->createNewSlot(parsedSlotName, parsedSlotArguments);
+    classToAddTheSlotTo->createwNewSlot(parsedSlotName, parsedSlotArguments);
     return true;
 }
