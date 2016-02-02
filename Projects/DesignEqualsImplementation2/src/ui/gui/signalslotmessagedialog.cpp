@@ -77,7 +77,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     //QLineEdit *autoParsedSignalNameWithAutoCompleteForExistingSignals = new QLineEdit(); //TODOreq. TODOreq: "create handler in slot" (checks Slot checkbox if needed). ex: "handleFooSignal". When pressed, focus should change to the slot signature and have that "handleFooSignal" highlighted so they can type in a better name. It saves them from having to type the arguments portion of the signature
     //existing signal
     m_ExistingSignalsComboBox = new ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot();
-    if(!m_ExistingSignalsComboBox->isValid())
+    if(!m_ExistingSignalsComboBox->isInitialized())
     {
         setDisabled(true);
         //return;
@@ -110,7 +110,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     //QLineEdit *autoParsedSlotNameWithAutoCompleteForExistingSlots = new QLineEdit(); //TODOreq
     //existing slot
     m_ExistingSlotsComboBox = new ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot();
-    if(!m_ExistingSlotsComboBox->isValid())
+    if(!m_ExistingSlotsComboBox->isInitialized())
     {
         setDisabled(true);
         //return; //TODOreq: leaks memory. all the widgets above this line not yet added to a layout, and even the layouts themselves which haven't been set to a widget. "no naked new"
@@ -551,24 +551,22 @@ bool SignalSlotMessageDialog::allArgSatisfiersAreValid()
     //Check signal arg count >= slot arg count, and check signal arg types match slot arg types
     if(m_SignalsCheckbox->isChecked() && m_SlotsCheckbox->isChecked())
     {
-        if(m_ExistingSignalsComboBox->currentIndex() != 0 && m_ExistingSlotsComboBox->currentIndex() != 0)
+        if(m_ExistingSignalsComboBox->currentIndex() == 0 || m_ExistingSlotsComboBox->currentIndex() == 0)
+            return false;
+        //TODOreq: verify signal/slot arg compatibility, return true if checks out (TODOoptional: highlight in red the slot so they know it's not the arg satisfiers)
+        if(m_SignalToEmit->arguments().size() < m_SlotToInvoke->arguments().size())
+            return false;
+        int currentArgIndex = 0;
+        Q_FOREACH(DesignEqualsImplementationClassMethodArgument *currentSlotArgument, m_SlotToInvoke->arguments())
         {
-            //TODOreq: verify signal/slot arg compatibility, return true if checks out (TODOoptional: highlight in red the slot so they know it's not the arg satisfiers)
-            if(m_SignalToEmit->arguments().size() < m_SlotToInvoke->arguments().size())
-                return false;
-            int currentArgIndex = 0;
-            Q_FOREACH(DesignEqualsImplementationClassMethodArgument *currentSlotArgument, m_SlotToInvoke->arguments())
+            const QByteArray &slotArgTypeCstr = currentSlotArgument->typeString().toUtf8();
+            const QByteArray &signalArgTypeCstr = m_SignalToEmit->arguments().at(currentArgIndex++)->typeString().toUtf8();
+            if(QMetaObject::normalizedType(slotArgTypeCstr.constData()) != QMetaObject::normalizedType(signalArgTypeCstr.constData())) //TODOoptional: maybe QMetaObject::checkConnectArgs handles inheritence stuff for me? I might need to register the to-be-generated types at runtime for it to work?
             {
-                const QByteArray &slotArgTypeCstr = currentSlotArgument->typeString().toUtf8();
-                const QByteArray &signalArgTypeCstr = m_SignalToEmit->arguments().at(currentArgIndex++)->typeString().toUtf8();
-                if(QMetaObject::normalizedType(slotArgTypeCstr.constData()) != QMetaObject::normalizedType(signalArgTypeCstr.constData())) //TODOoptional: maybe QMetaObject::checkConnectArgs handles inheritence stuff for me? I might need to register the to-be-generated types at runtime for it to work?
-                {
-                    return false;
-                }
+                return false;
             }
-            return true;
         }
-        return false;
+        return true;
     }
     return true;
 }

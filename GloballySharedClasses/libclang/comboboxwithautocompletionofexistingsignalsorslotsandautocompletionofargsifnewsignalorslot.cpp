@@ -17,7 +17,8 @@
 //TODOreq: auto-completion of existing signals/slots should still work even when the user types "void " in front
 ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot(QWidget *parent)
     : QComboBox(parent)
-    , m_IsValid(true)
+    , m_IsInitialized(true)
+    , m_ResultState(NoResult)
     , m_CompleterPopup(new QCompleter(this))
 {
     insertItem(0, "");
@@ -34,9 +35,12 @@ ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSi
     m_ClangIndex = clang_createIndex(1, 0);
     if(!m_ClangIndex)
     {
-        m_IsValid = false;
+        m_IsInitialized = false;
         QMessageBox::critical(this, tr("Error"), tr("clang_createIndex failed"));
     }
+
+    connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(handleCurrentIndexChanged(int)));
+    connect(this, SIGNAL(editTextChanged(QString)), this, SLOT(handleEditTextChanged(QString)));
 }
 void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::keyPressEvent(QKeyEvent *e)
 {
@@ -173,6 +177,14 @@ void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIf
     m_CompleterPopup->setModel(new QStringListModel(codeCompletionEntries, m_CompleterPopup));
     clang_disposeCodeCompleteResults(codeCompleteResults);
 }
+void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::setResultState(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultState newResultState)
+{
+    if(m_ResultState != newResultState)
+    {
+        m_ResultState = newResultState;
+        emit resultStateChanged(m_ResultState);
+    }
+}
 void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::insertCompletion(const QString &completion)
 {
     if(m_CompleterPopup->widget() != this)
@@ -187,4 +199,26 @@ void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIf
     lineEdit()->cursorWordBackward(true);
     //insert implies delete. lineEdit()->del(); //capitalization may have been wrong, since we're doing case insensitive completing
     lineEdit()->insert(completion);
+}
+void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::handleCurrentIndexChanged(int newIndex)
+{
+    if(newIndex == 0)
+    {
+        setResultState(NoResult);
+    }
+    else
+    {
+        setResultState(ExistingResult);
+    }
+}
+void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::handleEditTextChanged(QString newEditText)
+{
+    if(newEditText.trimmed().isEmpty()) //TODOmb: full signal/slot (function) signature validation via libclang? this could probably be done at the same time that "new args seen in new signal/slot declaration are auto-completed when used for subsequent args". they both involve parsing/analyzing. However I should note that we should only set "NewResult" after the signal/slot is actually valid (ie, there is at least a close parenthesis (but rely on libclang for validation duh))
+    {
+        setResultState(NoResult);
+    }
+    else
+    {
+        setResultState(NewResult);
+    }
 }

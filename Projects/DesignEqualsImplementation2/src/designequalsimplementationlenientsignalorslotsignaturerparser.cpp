@@ -124,8 +124,13 @@ DesignEqualsImplementationLenientSignalOrSlotSignaturerParser::DesignEqualsImple
             m_HasError = true;
             return;
         }
-        mutableFunctionDeclaration.prepend("typedef int " + m_UnknownTypesDetectedInLastRunToolOnCodeIteration.at(0) + ";\n"); //just one at a time, since the next one might be the same unknown type (right?)
-        m_NewTypesSeenInFunctionDeclaration.append(m_UnknownTypesDetectedInLastRunToolOnCodeIteration.at(0));
+        Q_FOREACH(const QString &unknownType, m_UnknownTypesDetectedInLastRunToolOnCodeIteration)
+        {
+            if(m_NewTypesSeenInFunctionDeclaration.contains(unknownType))
+                continue;
+            mutableFunctionDeclaration.prepend("typedef int " + unknownType + ";\n"); //just one at a time, since the next one might be the same unknown type (right?)
+            m_NewTypesSeenInFunctionDeclaration.append(unknownType);
+        }
         m_UnknownTypesDetectedInLastRunToolOnCodeIteration.clear();
         m_ParsedFunctionArguments.clear();
         m_NumEncounteredFunctionDeclarations = 0;

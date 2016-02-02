@@ -12,7 +12,8 @@ TARGET = ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfAr
 TEMPLATE = app
 
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    resultstatechangedlistener.cpp
 
 include(../../../../GloballySharedClasses/comboboxwithautocompletionofexistingsignalsorslotsandautocompletionofargsifnewsignalorslot.pri)
 
@@ -23,3 +24,6 @@ DEFINES += __STDC_FORMAT_MACROS
 DEFINES += __STDC_LIMIT_MACROS
 INCLUDEPATH += $$system('llvm-config --includedir')
 LIBS += -L$$system('llvm-config --libdir') -lclang
+
+HEADERS += \
+    resultstatechangedlistener.h
