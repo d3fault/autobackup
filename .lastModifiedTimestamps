@@ -16,7 +16,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1453856121
+Documents/minddump/:1454465029
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -2256,6 +2256,7 @@ Documents/minddump/sdlfjsdfjdklsjflkjwerousdlkfjsdofsdlkjfklsdjflksdjfklsdjfklsj
 Documents/minddump/sdlfjsdfkjsdkjfldskjflksdjfwueorulkdsfjsodfulsdfjsdlkfjsdlkf.txt:1406928946
 Documents/minddump/sdlfjsdflkjsdlfkjdsfljsdfoduflkjwourlksjdflksdjf.txt:1404639556
 Documents/minddump/sdlfjsdlfjdlskfjlsdkjflskdjflksdjfouwelrjksdofsdlfhsdlfkjsdl.txt:1422419014
+Documents/minddump/sdlfjsdlfjsdklfjskldjfklsdjfklsdjfklsdj.txt:1454465029
 Documents/minddump/sdlfjsdlfjsldkfjsldkjfsldkjfouiwerlkjsdfoudsflkjsdfsdflkjsdflkjsdfoiuwerlk.txt:1418086808
 Documents/minddump/sdlfjsdlkfjlskdjflksdjflksdjfhsdlfkhoweurlkhdfljsdflksjdflkjsdf.txt:1418025070
 Documents/minddump/sdlfjsfkjsdlfkjsdfousdjlfksdfuosdifulkjdsfousdlfkjsdofuwerlkjsdfou.txt:1380139952
@@ -4921,14 +4922,14 @@ Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalper.cpp:134962412
 Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalper.h:1348734985
 Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.cpp:1432418200
 Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.h:1428042364
-Projects/QuickDirtyStaticGitWeb/:1454451806
+Projects/QuickDirtyStaticGitWeb/:1454466181
 Projects/QuickDirtyStaticGitWeb/design/:1454451835
 Projects/QuickDirtyStaticGitWeb/design/some.improvements.txt:1454451835
-Projects/QuickDirtyStaticGitWeb/src/:1454464444
-Projects/QuickDirtyStaticGitWeb/src/QuickDirtyStaticGitWebCli.pro:1454145974
+Projects/QuickDirtyStaticGitWeb/src/:1454466904
+Projects/QuickDirtyStaticGitWeb/src/QuickDirtyStaticGitWebCli.pro:1454466807
 Projects/QuickDirtyStaticGitWeb/src/main.cpp:1454107041
-Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitweb.cpp:1454464119
-Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitweb.h:1454463686
+Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitweb.cpp:1454466678
+Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitweb.h:1454466244
 Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitwebcli.cpp:1454107568
 Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitwebcli.h:1454107534
 Projects/RecursiveFileStringReplaceRenamer/:1388246494

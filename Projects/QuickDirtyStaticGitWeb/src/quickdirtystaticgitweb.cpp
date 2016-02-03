@@ -335,44 +335,74 @@ bool QuickDirtyStaticGitWeb::rewriteStaleArchiveHtmls(ArchiveHtmls *archiveHtmls
         }
     }
 
-    if(archiveHtmls->isStale())
+//    if(archiveHtmls->isStale())
+//    {
+//        QString archiveHtmlFileName = "archive.html";
+//        //QMap<YEARS_ARCHIVE_HTMLS_TYPES > years = archiveHtmls->yearsArchiveHtmls();
+//        QMap<int, QString> years = getAllYearsWithMonthEntriesNotJustMutatedInThisAppSession();
+//        if(years.isEmpty())
+//        {
+//            //lol wut you deleted everything in your repo? umm k
+//            if(!QFile::remove(m_DestinationOutputStaticGitWebRepo + archiveHtmlFileName))
+//            {
+//                emit e("failed to delete file: " + archiveHtmlFileName);
+//                //return false;
+//            }
+//        }
+//        else
+//        {
+//            //truncate and recreate archive.html
+//            QString archiveHtmlFileContents;
+//            QTextStream archiveHtmlTextStream(&archiveHtmlFileContents);
+//            archiveHtmlTextStream << "<html><head><title>Archive</title>" + cssStyleTag() + "</head>" << bodyHeader();
+//            QMapIterator<int, QString> yearsIterator(years);
+//            yearsIterator.toBack();
+//            archiveHtmlTextStream << "<center><table>";
+//            bool even = true;
+//            while(yearsIterator.hasPrevious())
+//            {
+//                yearsIterator.previous();
+//                QString archiveYearHtmlFilePath = "archive-" + QString::number(yearsIterator.key()) + ".html";
+//                archiveHtmlTextStream << "<tr class='" + QString(even ? "d0" : "d1") + "'><td><a href='" << archiveYearHtmlFilePath << "'>" << QString::number(yearsIterator.key()) << "</a></td></tr>\n";
+//                even = !even;
+//            }
+//            archiveHtmlTextStream << "</table></center>";
+//            archiveHtmlTextStream << bodyFooter();
+//            archiveHtmlTextStream.flush();
+//            if(!makeFileInDestinationOutputStaticGitWebRepoOverwritingIfNecessary(archiveHtmlFileName, archiveHtmlFileContents))
+//                return false;
+//        }
+//    }
+    QString archiveHtmlFileName = "archive.html";
+    QMap<int /*year*/, QMap<int /*month*/, bool /*unused-lazisorter*/> > allMonths = getAllMonthsArchiveHtmls();
+    //truncate and recreate archive.html
+    QString archiveHtmlFileContents;
+    QTextStream archiveHtmlTextStream(&archiveHtmlFileContents);
+    archiveHtmlTextStream << "<html><head><title>Archive</title>" + cssStyleTag() + "</head>" << bodyHeader();
+    QMapIterator<int, QMap<int /*month*/, bool /*unused-lazisorter*/> > allMonthsIterator(allMonths);
+    allMonthsIterator.toBack();
+    archiveHtmlTextStream << "<center><table>";
+    bool even = true;
+    while(allMonthsIterator.hasPrevious())
     {
-        QString archiveHtmlFileName = "archive.html";
-        //QMap<YEARS_ARCHIVE_HTMLS_TYPES > years = archiveHtmls->yearsArchiveHtmls();
-        QMap<int, QString> years = getAllYearsWithMonthEntriesNotJustMutatedInThisAppSession();
-        if(years.isEmpty())
+        allMonthsIterator.previous();
+        int year = allMonthsIterator.key();
+        QMapIterator<int /*month*/, bool> monthsInAgivenYearIterator = allMonthsIterator.value();
+        monthsInAgivenYearIterator.toBack();
+        while(monthsInAgivenYearIterator.hasPrevious())
         {
-            //lol wut you deleted everything in your repo? umm k
-            if(!QFile::remove(m_DestinationOutputStaticGitWebRepo + archiveHtmlFileName))
-            {
-                emit e("failed to delete file: " + archiveHtmlFileName);
-                //return false;
-            }
-        }
-        else
-        {
-            //truncate and recreate archive.html
-            QString archiveHtmlFileContents;
-            QTextStream archiveHtmlTextStream(&archiveHtmlFileContents);
-            archiveHtmlTextStream << "<html><head><title>Archive</title>" + cssStyleTag() + "</head>" << bodyHeader();
-            QMapIterator<int, QString> yearsIterator(years);
-            yearsIterator.toBack();
-            archiveHtmlTextStream << "<center><table>";
-            bool even = true;
-            while(yearsIterator.hasPrevious())
-            {
-                yearsIterator.previous();
-                QString archiveYearHtmlFilePath = "archive-" + QString::number(yearsIterator.key()) + ".html";
-                archiveHtmlTextStream << "<tr class='" + QString(even ? "d0" : "d1") + "'><td><a href='" << archiveYearHtmlFilePath << "'>" << QString::number(yearsIterator.key()) << "</a></td></tr>\n";
-                even = !even;
-            }
-            archiveHtmlTextStream << "</table></center>";
-            archiveHtmlTextStream << bodyFooter();
-            archiveHtmlTextStream.flush();
-            if(!makeFileInDestinationOutputStaticGitWebRepoOverwritingIfNecessary(archiveHtmlFileName, archiveHtmlFileContents))
-                return false;
+            int month = monthsInAgivenYearIterator.key();
+            QString archiveMonthFilePath = "archive-" + QString::number(year) + "-" + QDate::longMonthName(month).toLower() + ".html";
+            archiveHtmlTextStream << "<tr class='" + QString(even ? "d0" : "d1") + "'><td><a href='" << archiveMonthFilePath << "'>" << QString::number(year) << " - " << QDate::longMonthName(month) << "</a></td></tr>\n";
+            even = !even;
         }
     }
+    archiveHtmlTextStream << "</table></center>";
+    archiveHtmlTextStream << bodyFooter();
+    archiveHtmlTextStream.flush();
+    if(!makeFileInDestinationOutputStaticGitWebRepoOverwritingIfNecessary(archiveHtmlFileName, archiveHtmlFileContents))
+        return false;
+
 
     archiveHtmls->clearStaleMonths();
     archiveHtmls->clearStaleYears();
@@ -501,6 +531,41 @@ QMap<int, QString> QuickDirtyStaticGitWeb::getAllYearsWithMonthEntriesNotJustMut
             continue;
         }
         ret.insert(year, currentMonthOrYearArchiveFileName);
+    }
+
+    return ret;
+}
+QMap<int, QMap<int, bool> > QuickDirtyStaticGitWeb::getAllMonthsArchiveHtmls()
+{
+    QMap<int, QMap<int, bool> > ret;
+    QDir destDir(m_DestinationOutputStaticGitWebRepo);
+    QStringList allYearAndMonthArchivesInDest = destDir.entryList(QStringList() << "archive-*.html", QDir::Files);
+    Q_FOREACH(const QString &currentMonthOrYearArchiveFileName, allYearAndMonthArchivesInDest)
+    {
+        QStringList fileNameSplitAtHyphens = currentMonthOrYearArchiveFileName.split("-");
+        if(fileNameSplitAtHyphens.size() != 3)
+            continue; //[old, no longer in use] year archive file most likely, skip it
+
+        QString monthPartOfFilename = fileNameSplitAtHyphens.last();
+        QString htmlExt(".html");
+        if(monthPartOfFilename.endsWith(htmlExt))
+            monthPartOfFilename.chop(htmlExt.length());
+        int month = QDate::fromString(monthPartOfFilename, "MMMM").month();
+
+        QString yearPartOfFilename = fileNameSplitAtHyphens.at(1);
+        bool convertOk = false;
+        int year = yearPartOfFilename.toInt(&convertOk);
+        if(!convertOk)
+        {
+            emit e("failed to parse year out of this filename: " + currentMonthOrYearArchiveFileName);
+            continue;
+        }
+
+        QMap<int /*month*/, bool> months;
+        if(ret.contains(year))
+            months = ret.value(year);
+        months.insert(month, true);
+        ret.insert(year, months);
     }
 
     return ret;

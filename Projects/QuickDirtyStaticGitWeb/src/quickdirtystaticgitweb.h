@@ -67,6 +67,7 @@ private:
     QMultiMap<qint64 /*timestamp*/, QString /*path*/> getAllEntriesForThisMonthNotJustMutatedInThisAppSession(int year, int month) const;
     QMap<int, QString> getAllMonthsWithEntriesForThisYearNotJustMutatedInThisAppSession(int year);
     QMap<int, QString> getAllYearsWithMonthEntriesNotJustMutatedInThisAppSession();
+    QMap<int, QMap<int, bool> > getAllMonthsArchiveHtmls();
     void makeStaticAboutFileIfItNeedsToChange();
     void makeStaticCNAMEIfItDoesntExist();
     void makeStaticRobotsIfItDoesntExist();

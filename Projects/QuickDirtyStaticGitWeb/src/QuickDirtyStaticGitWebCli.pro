@@ -16,14 +16,14 @@ TEMPLATE = app
 SOURCES += main.cpp \
     quickdirtystaticgitweb.cpp \
     quickdirtystaticgitwebcli.cpp \
-    /home/user/text/Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.cpp
+    ../../LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.cpp
 
 HEADERS += \
     quickdirtystaticgitweb.h \
     quickdirtystaticgitwebcli.h \
-    /home/user/text/Projects/LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.h
+    ../../LastModifiedTimestampsSorter/src/lib/lastmodifiedtimestampssorter.h
 
-INCLUDEPATH += /home/user/text/Projects/LastModifiedTimestampsSorter/src/lib/
-include(/home/user/text/GloballySharedClasses/lastmodifiedtimestamp.pri)
+INCLUDEPATH += ../../LastModifiedTimestampsSorter/src/lib/
+include(../../../GloballySharedClasses/lastmodifiedtimestamp.pri)
 
 LIBS += -lgit2

@@ -1,0 +1,1 @@
+My life would be an order of magnitude easier if git stored modification dates if make/gcc/etc didn't rely on them to detect changes if filesystems in general weren't in such a shitty state
