@@ -392,6 +392,7 @@ bool QuickDirtyStaticGitWeb::rewriteStaleArchiveHtmls(ArchiveHtmls *archiveHtmls
         monthsInAgivenYearIterator.toBack();
         while(monthsInAgivenYearIterator.hasPrevious())
         {
+            monthsInAgivenYearIterator.previous();
             int month = monthsInAgivenYearIterator.key();
             QString archiveMonthFilePath = "archive-" + QString::number(year) + "-" + QDate::longMonthName(month).toLower() + ".html";
             archiveHtmlTextStream << "<tr class='" + QString(even ? "d0" : "d1") + "'><td><a href='" << archiveMonthFilePath << "'>" << QString::number(year) << " - " << QDate::longMonthName(month) << "</a></td></tr>\n";
