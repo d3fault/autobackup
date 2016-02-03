@@ -20,6 +20,7 @@ extern "C"
 
 #define MAX_INDEXHTML_ENTRIES 100
 #define LAST_MODIFIED_TIMESTAMPS_FILEPATH ".lastModifiedTimestamps"
+#define MONTHS_ARCHIVE_HTMLS_MAP_TYPES int /*month*/, QSharedPointer<ArchiveMonthHtml>
 
 class QuickDirtyStaticGitWebResultEmitter;
 
@@ -64,6 +65,8 @@ private:
     //bool touchAllTreeEntriesEitherAddedOrModified();
     bool touchFileInDestinationDir(const QString &relativePath, qint64 timestamp);
     QMultiMap<qint64 /*timestamp*/, QString /*path*/> getAllEntriesForThisMonthNotJustMutatedInThisAppSession(int year, int month) const;
+    QMap<int, QString> getAllMonthsWithEntriesForThisYearNotJustMutatedInThisAppSession(int year);
+    QMap<int, QString> getAllYearsWithMonthEntriesNotJustMutatedInThisAppSession();
     void makeStaticAboutFileIfItNeedsToChange();
     void makeStaticCNAMEIfItDoesntExist();
     void makeStaticRobotsIfItDoesntExist();
@@ -308,7 +311,6 @@ private:
     int m_Month;
     QMultiMap<ARCHIVE_MONTH_HTML_ENTRY_MAP_TYPES> m_Entries;
 };
-#define MONTHS_ARCHIVE_HTMLS_MAP_TYPES int /*year*/, QSharedPointer<ArchiveMonthHtml>
 typedef QMap<MONTHS_ARCHIVE_HTMLS_MAP_TYPES > MonthsArchiveHtmlsType;
 class ArchiveYearHtml
 {

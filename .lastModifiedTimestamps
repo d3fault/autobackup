@@ -4924,11 +4924,11 @@ Projects/QuickDirtyAutoBackupHalper/src/quickdirtyautobackuphalperbusiness.h:142
 Projects/QuickDirtyStaticGitWeb/:1454451806
 Projects/QuickDirtyStaticGitWeb/design/:1454451835
 Projects/QuickDirtyStaticGitWeb/design/some.improvements.txt:1454451835
-Projects/QuickDirtyStaticGitWeb/src/:1454451763
+Projects/QuickDirtyStaticGitWeb/src/:1454464444
 Projects/QuickDirtyStaticGitWeb/src/QuickDirtyStaticGitWebCli.pro:1454145974
 Projects/QuickDirtyStaticGitWeb/src/main.cpp:1454107041
-Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitweb.cpp:1454411345
-Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitweb.h:1454407658
+Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitweb.cpp:1454464119
+Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitweb.h:1454463686
 Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitwebcli.cpp:1454107568
 Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitwebcli.h:1454107534
 Projects/RecursiveFileStringReplaceRenamer/:1388246494

@@ -297,7 +297,8 @@ bool QuickDirtyStaticGitWeb::rewriteStaleArchiveHtmls(ArchiveHtmls *archiveHtmls
     Q_FOREACH(ArchiveYearHtml *currentStaleYear, archiveHtmls->staleYears())
     {
         QString archiveYearHtmlFileName("archive-" + QString::number(currentStaleYear->year()) + ".html");
-        QMap<MONTHS_ARCHIVE_HTMLS_MAP_TYPES > months = currentStaleYear->monthEntries();
+        //QMap<MONTHS_ARCHIVE_HTMLS_MAP_TYPES > months = currentStaleYear->monthEntries();
+        QMap<int /*month*/, QString /*path*/ > months = getAllMonthsWithEntriesForThisYearNotJustMutatedInThisAppSession(currentStaleYear->year());
         if(months.isEmpty())
         {
             //TODOreq: delete the file. delete the ArchiveYearHtml [scoped] pointer in the archive's list. mark the archive as stale
@@ -314,7 +315,7 @@ bool QuickDirtyStaticGitWeb::rewriteStaleArchiveHtmls(ArchiveHtmls *archiveHtmls
             QString archiveYearHtmlFileContents;
             QTextStream archiveYearHtmlTextSteam(&archiveYearHtmlFileContents);
             archiveYearHtmlTextSteam << "<html><head><title>Archive - " << QString::number(currentStaleYear->year()) << "</title>" + cssStyleTag() + "</head>" << bodyHeader();
-            QMapIterator<MONTHS_ARCHIVE_HTMLS_MAP_TYPES > monthsIterator(months);
+            QMapIterator<int, QString> monthsIterator(months);
             monthsIterator.toBack();
             archiveYearHtmlTextSteam << "<center><table>";
             bool even = true;
@@ -337,7 +338,8 @@ bool QuickDirtyStaticGitWeb::rewriteStaleArchiveHtmls(ArchiveHtmls *archiveHtmls
     if(archiveHtmls->isStale())
     {
         QString archiveHtmlFileName = "archive.html";
-        QMap<YEARS_ARCHIVE_HTMLS_TYPES > years = archiveHtmls->yearsArchiveHtmls();
+        //QMap<YEARS_ARCHIVE_HTMLS_TYPES > years = archiveHtmls->yearsArchiveHtmls();
+        QMap<int, QString> years = getAllYearsWithMonthEntriesNotJustMutatedInThisAppSession();
         if(years.isEmpty())
         {
             //lol wut you deleted everything in your repo? umm k
@@ -353,7 +355,7 @@ bool QuickDirtyStaticGitWeb::rewriteStaleArchiveHtmls(ArchiveHtmls *archiveHtmls
             QString archiveHtmlFileContents;
             QTextStream archiveHtmlTextStream(&archiveHtmlFileContents);
             archiveHtmlTextStream << "<html><head><title>Archive</title>" + cssStyleTag() + "</head>" << bodyHeader();
-            QMapIterator<YEARS_ARCHIVE_HTMLS_TYPES > yearsIterator(years);
+            QMapIterator<int, QString> yearsIterator(years);
             yearsIterator.toBack();
             archiveHtmlTextStream << "<center><table>";
             bool even = true;
@@ -441,6 +443,64 @@ QMultiMap<qint64, QString> QuickDirtyStaticGitWeb::getAllEntriesForThisMonthNotJ
         QString relativePath = filePath;
         relativePath.remove(0, m_DestinationOutputStaticGitWebRepo.length());
         ret.insert(dateTime.toMSecsSinceEpoch() / 1000, relativePath);
+    }
+
+    return ret;
+}
+QMap<int, QString> QuickDirtyStaticGitWeb::getAllMonthsWithEntriesForThisYearNotJustMutatedInThisAppSession(int year)
+{
+    QMap<int, QString> ret;
+
+    QDir destDir(m_DestinationOutputStaticGitWebRepo);
+    QStringList allMonthsArchivesForThatYear = destDir.entryList(QStringList() << QString("archive-" + QString::number(year) + "-*.html"), QDir::Files);
+    Q_FOREACH(const QString &currentMonthArchiveFile, allMonthsArchivesForThatYear)
+    {
+        QStringList fileNameSplitAtHyphens = currentMonthArchiveFile.split("-");
+        if(fileNameSplitAtHyphens.size() != 3)
+        {
+            emit e("eh split at hyphens wasn't 3. I probably globbed wrong: " + currentMonthArchiveFile);
+            continue;
+        }
+        QString monthPartOfFilename = fileNameSplitAtHyphens.last();
+        QString htmlExt(".html");
+        if(monthPartOfFilename.endsWith(htmlExt))
+            monthPartOfFilename.chop(htmlExt.length());
+        int month = QDate::fromString(monthPartOfFilename, "MMMM").month();
+        ret.insert(month, currentMonthArchiveFile);
+    }
+
+    return ret;
+}
+QMap<int, QString> QuickDirtyStaticGitWeb::getAllYearsWithMonthEntriesNotJustMutatedInThisAppSession()
+{
+#if 0 //num hyphens ezier
+    QStringList monthExcludeLol;
+    for(int i = 1; i < 12+1; ++i)
+    {
+        monthExcludeLol << QDate::longMonthName(i).toLower();
+    }
+#endif
+
+    QMap<int, QString> ret;
+    QDir destDir(m_DestinationOutputStaticGitWebRepo);
+    QStringList allYearAndMonthArchivesInDest = destDir.entryList(QStringList() << "archive-*.html", QDir::Files);
+    Q_FOREACH(const QString &currentMonthOrYearArchiveFileName, allYearAndMonthArchivesInDest)
+    {
+        QStringList fileNameSplitAtHyphens = currentMonthOrYearArchiveFileName.split("-");
+        if(fileNameSplitAtHyphens.size() != 2)
+            continue; //month archive file most likely, skip it
+        QString yearPartOfFilename = fileNameSplitAtHyphens.last();
+        QString htmlExt(".html");
+        if(yearPartOfFilename.endsWith(htmlExt))
+            yearPartOfFilename.chop(htmlExt.length());
+        bool convertOk = false;
+        int year = yearPartOfFilename.toInt(&convertOk);
+        if(!convertOk)
+        {
+            emit e("failed to parse year out of this filename: " + currentMonthOrYearArchiveFileName);
+            continue;
+        }
+        ret.insert(year, currentMonthOrYearArchiveFileName);
     }
 
     return ret;
