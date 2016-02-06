@@ -1,3 +1,4 @@
+qemu devbox in devbox (test box). btrfs has some interesting solutions to this involving snapshots/etc, qemu itself might already have it solved ofc
 truecrypt script + pwless keypass (sshkeys bind mount)
 
 at your leisure (unordered):

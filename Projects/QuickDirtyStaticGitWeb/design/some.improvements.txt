@@ -1,1 +1,3 @@
 how to improve this app: delete it and start over xD. seriously so fucking shitty
+
+On a more serious note, it would have been much more efficient to simply write (checkout) the HEAD commit to disk, then walk backwards to root commit until IndexHtmlMostRecentQueue has it's 100 entries (which would probably happen much sooner than the root commit), and of course to generate the archive(s) the same way I am now (a shitty way but it works)

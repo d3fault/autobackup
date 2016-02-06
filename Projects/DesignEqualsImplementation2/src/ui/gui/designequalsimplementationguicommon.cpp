@@ -36,11 +36,11 @@ bool DesignEqualsImplementationGuiCommon::parseNewSignalDefinition_then_askWhatT
     classToAddTheSignalTo->createNewSignal(parsedSignalName, parsedSignalArguments);
     return true;
 }
-bool DesignEqualsImplementationGuiCommon::parseNewSlotDefinition_then_askWhatToDoWithNewSlotArgTypes_then_createNewSlot(QWidget *parentWidget, DesignEqualsImplementationClass *classToAddTheSlotTo, const QString &signalDefinitionToParse)
+bool DesignEqualsImplementationGuiCommon::parseNewSlotDefinition_then_askWhatToDoWithNewSlotArgTypes_then_createNewSlot(QWidget *parentWidget, DesignEqualsImplementationClass *classToAddTheSlotTo, const QString &slotDefinitionToParse)
 {
     QString parsedSlotName;
     QList<MethodArgumentTypedef> parsedSlotArguments;
-    if(!parseNewFunctionDefinitioin_then_askWhatToDoWithNewFunctionArgTypes(parentWidget, classToAddTheSlotTo->m_ParentProject, signalDefinitionToParse, &parsedSlotName, &parsedSlotArguments))
+    if(!parseNewFunctionDefinitioin_then_askWhatToDoWithNewFunctionArgTypes(parentWidget, classToAddTheSlotTo->m_ParentProject, slotDefinitionToParse, &parsedSlotName, &parsedSlotArguments))
         return false;
 
     //now create the new slot itself

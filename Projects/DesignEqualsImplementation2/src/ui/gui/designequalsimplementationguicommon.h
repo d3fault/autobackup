@@ -45,7 +45,7 @@ private:
     static bool parseNewFunctionDefinitioin_then_askWhatToDoWithNewFunctionArgTypes(QWidget *parentWidget, DesignEqualsImplementationProject *currentProject, const QString &functionDefinitionToParse, QString *out_parsedFunctionName, QList<MethodArgumentTypedef> *out_parsedFunctionArgs);
 public:
     static bool parseNewSignalDefinition_then_askWhatToDoWithNewSignalArgTypes_then_createNewSignal(QWidget *parentWidget, DesignEqualsImplementationClass *classToAddTheSignalTo, const QString &signalDefinitionToParse);
-    static bool parseNewSlotDefinition_then_askWhatToDoWithNewSlotArgTypes_then_createNewSlot(QWidget *parentWidget, DesignEqualsImplementationClass *classToAddTheSlotTo, const QString &signalDefinitionToParse);
+    static bool parseNewSlotDefinition_then_askWhatToDoWithNewSlotArgTypes_then_createNewSlot(QWidget *parentWidget, DesignEqualsImplementationClass *classToAddTheSlotTo, const QString &slotDefinitionToParse);
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONGUICOMMON_H
