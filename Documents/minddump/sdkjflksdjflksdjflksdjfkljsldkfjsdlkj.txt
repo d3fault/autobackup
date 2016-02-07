@@ -1,0 +1,2 @@
+mfw I have my own variant of "every program grows until it eventually has email"
+my version is: "every program grows until it eventually has a timeline [of which messaging is a function [and of which email is a supported transport plugin]]"
