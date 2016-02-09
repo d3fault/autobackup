@@ -21,13 +21,14 @@ int main(int argc, char *argv[])
     w.resize(currentSize);
 
     ResultStateChangedListener resultStateChangedListener;
-    QObject::connect(&w, SIGNAL(resultStateChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultState)), &resultStateChangedListener, SLOT(handleResultStateChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultState)));
+    QObject::connect(&w, SIGNAL(resultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType)), &resultStateChangedListener, SLOT(handleResultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType)));
+    QObject::connect(&w, SIGNAL(syntaxIsValidChanged(bool)), &resultStateChangedListener, SLOT(handleSyntaxIsValidChanged(bool)));
 
     w.show();
 
     int retCode =  a.exec();
 
-    ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultState resultState = w.resultState();
+    ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultState = w.resultType();
     switch(resultState)
     {
     case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoResult:

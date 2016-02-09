@@ -11,7 +11,8 @@ class ResultStateChangedListener : public QObject
 public:
     explicit ResultStateChangedListener(QObject *parent = 0);
 public slots:
-    void handleResultStateChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultState newResultState);
+    void handleResultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType newResultType);
+    void handleSyntaxIsValidChanged(bool syntaxIsValid);
 };
 
 #endif // RESULTSTATECHANGEDLISTENER_H

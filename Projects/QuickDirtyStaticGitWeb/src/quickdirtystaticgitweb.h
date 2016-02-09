@@ -21,6 +21,7 @@ extern "C"
 #define MAX_INDEXHTML_ENTRIES 100
 #define LAST_MODIFIED_TIMESTAMPS_FILEPATH ".lastModifiedTimestamps"
 #define MONTHS_ARCHIVE_HTMLS_MAP_TYPES int /*month*/, QSharedPointer<ArchiveMonthHtml>
+#define A_STRING_IN_MODIFIED_FILE_HTML_KEK_HACK "modified</a> the file: <a href" //our blockquoted text MIGHT have this text in it.... BUT we htmlencode that before showing it, so it's impossible for it to contain this string with the < and > etc... kek
 
 class QuickDirtyStaticGitWebResultEmitter;
 
@@ -233,13 +234,15 @@ public:
         //*this = settings.value(INDEX_HTML_FIFO_CACHE_KEY).value<IndexHtmlFifo>(); //this line looks funky, not sure it'll work. almost certain it doesn't work in the constructor
     }
 #endif
-    void removeByFilePath(const QString &filePath)
+    void removeModificationEntriesByFilePath(const QString &filePath)
     {
         QMutableListIterator<QPair<QString, QString> > queueIterator(*this);
         while(queueIterator.hasNext())
         {
             QPair<QString, QString> entry = queueIterator.next();
-            if(entry.first == filePath)
+            if(entry.first == filePath //the entry matches...
+                    &&
+                    entry.second.contains(A_STRING_IN_MODIFIED_FILE_HTML_KEK_HACK)) //..and it is a "modified the file" entry (we don't remove "created the file" entries")
             {
                 queueIterator.remove();
                 break;
@@ -253,7 +256,7 @@ public:
             return;
 
         //then dedupe the new entry
-        removeByFilePath(newEntry.first);
+        removeModificationEntriesByFilePath(newEntry.first);
 
         //add the new entry
         QQueue::enqueue(newEntry);

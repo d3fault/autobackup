@@ -170,7 +170,6 @@ QString QuickDirtyStaticGitWeb::createdFileHtml(const QString &htmlEncodedFilePa
 //    ret.append("</blockquote>");
     return ret;*/
 }
-#define A_STRING_IN_MODIFIED_FILE_HTML_KEK_HACK "modified</a> the file: <a href"
 QString QuickDirtyStaticGitWeb::modifiedFileHtml(const QString &diffHtmlFilePath, const QString &htmlEncodedFilePath, qint64 modificationTimestamp)
 {
 //    QString htmlExt(".html");
@@ -973,7 +972,7 @@ void QuickDirtyStaticGitWeb::generateStaticGitWeb(const QString &sourceInputRepo
                             emit e("failed to delete file: " + filePath + ".html");
                             return;
                         }
-                        indexHtmlFifo.removeByFilePath(filePath); //remove the now-pointing-to-404 deletes in indexHtmlFifo
+                        indexHtmlFifo.removeModificationEntriesByFilePath(filePath); //remove the now-pointing-to-404 deletes in indexHtmlFifo
                         qint64 oldTimestamp = 0; // = getTimestampOfFileInPreviousCommit(filePath); //TODOreq: we're definitely not handling the root commit, but we do need to handle last modified timestamps file not existing. the trickiest case, though, is when resuming
 
                         const git_tree_entry *lastModifiedTimestampsEntryInParentCommitMaybe = git_tree_entry_byname(gitParentTreeFreeOnDestruct.data(), LAST_MODIFIED_TIMESTAMPS_FILEPATH);

@@ -7,6 +7,7 @@
 #include <QDateTime>
 
 //TODOoptional: use stars rating as weight (boost::random for this)
+//TODOreq: use libcurl to fix the breakage (I got 'forbidden' even when I used a popular user-agent O_o)), icefilms seems to have taken measures... but curl mimicks browser "quirks"
 IcePick::IcePick(QObject *parent)
     : QObject(parent)
     , m_SettingsAndCache(QSettings::IniFormat, QSettings::UserScope, "IcePickOrganization", "IcePick")

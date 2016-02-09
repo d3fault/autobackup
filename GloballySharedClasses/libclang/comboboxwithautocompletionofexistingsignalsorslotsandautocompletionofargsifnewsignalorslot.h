@@ -2,17 +2,20 @@
 #define COMBOBOXWITHAUTOCOMPLETIONOFEXISTINGSIGNALSORSLOTSANDAUTOCOMPLETIONOFARGSIFNEWSIGNALORSLOT_H
 
 #include <QComboBox>
+#include "libclangfunctiondeclarationparser.h"
 
 #include <clang-c/Index.h>
 
 class QCompleter;
 
-class ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot : public QComboBox
+class ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot
+        : public QComboBox
+        , protected LibClangFunctionDeclarationParser //protected because we don't want to expose hasError. syntaxIsValid wraps hasError (with additional combobox specific functionality)
 {
     Q_OBJECT
-    Q_ENUMS(ResultState)
+    Q_ENUMS(ResultType)
 public:
-    enum ResultState
+    enum ResultType
     {
           NoResult = 0
         , NewResult = 1
@@ -21,23 +24,34 @@ public:
 
     ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot(QWidget *parent = 0);
     bool isInitialized() const { return m_IsInitialized; }
-    ResultState resultState() const { return m_ResultState; }
+    ResultType resultType() const { return m_ResultType; }
     void insertKnownTypes(const QStringList &knownTypes) { m_AllKnownTypes.append(knownTypes); }
+    bool syntaxIsValid() const;
+
+    //only valid when m_SyntaxIsValid == true
+    QString functionName() const;
+    QList<QString> newTypesSeenInFunctionDeclaration() const;
+    QList<FunctionArgumentTypedef> functionArguments() const;
+    QString mostRecentSyntaxError() const;
 protected:
     virtual void keyPressEvent(QKeyEvent *e);
     virtual void focusInEvent(QFocusEvent *e);
 private:
     bool m_IsInitialized;
-    ResultState m_ResultState;
+    ResultType m_ResultType;
+    bool m_SyntaxIsValid;
     QStringList m_AllKnownTypes;
     QCompleter *m_CompleterPopup;
 
     CXIndex m_ClangIndex;
 
+    void checkSyntaxAndSetSyntaxIsValidAccordingly(const QString &lineEditText);
     void populateCompleterPopupViaClangCodeComplete(const QString &lineEditText, const QString &token);
-    void setResultState(ResultState newResultState);
+    void setResultType(ResultType newResultType);
+    void setSyntaxIsValid(bool syntaxIsValid);
 signals:
-    void resultStateChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultState newResultState);
+    void resultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType newResultType);
+    void syntaxIsValidChanged(bool syntaxIsValid);
 private slots:
     void insertCompletion(const QString &completion);
     void handleCurrentIndexChanged(int newIndex);
