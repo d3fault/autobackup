@@ -174,7 +174,6 @@ QString LibClangFunctionDeclarationParser::mostRecentError() const
 }
 QString LibClangFunctionDeclarationParser::parsedFunctionName() const
 {
-    //TODOreq: error out if zero or two+ function declarations were seen
     return m_ParsedFunctionName;
 }
 QList<QString> LibClangFunctionDeclarationParser::newTypesSeenInFunctionDeclaration() const

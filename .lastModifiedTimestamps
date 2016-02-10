@@ -443,7 +443,7 @@ Documents/minddump/alskfjklsadjfsadouflkjweroualkfjsdaofuilkj.txt:1357938202
 Documents/minddump/alskfjlaskjfosaudflsjdfousfljsdofuilkjewroudasf.txt:1385556074
 Documents/minddump/alskfjsldkfjslkdfouwejfdsdfourlkjl.txt:1354871806
 Documents/minddump/and.spelling.two.aldfjkasdlfjasdlkfjweoruisadlfkjasdlfj.txt:1351667779
-Documents/minddump/animal.encounters.txt:1454903008
+Documents/minddump/animal.encounters.txt:1455071974
 Documents/minddump/anonymity.depends.on.privacy.so.fuck.anonymity.even.though.yeh.i.kinda.leik.it.txt:1390051004
 Documents/minddump/arbitrary.sdlfjsladfjosdufljsdfousdflkjsdfoudfslk.txt:1383888855
 Documents/minddump/asdfasdflksdalkfjouwelkjsdaofusdljrou.txt:1356083734
@@ -1284,7 +1284,7 @@ Documents/minddump/it.also.has.zero.cost.once.installed.because.of.solar.panels.
 Documents/minddump/it.landed.on.1.there.is.a.corresponding.image.txt:1325464080
 Documents/minddump/it.never.stops.yesterday.i.was.nub.today.i.am.1337.while.true.sldkjflsdkjflkdsjflksjdf.txt:1416510062
 Documents/minddump/it.will.be.documented.and.others.could.easily.be.as.smart.as.me.or.smart.by.mimickery.alone.txt:1323683638
-Documents/minddump/items.found.since.going.and.living.in.tent.in.desert.txt:1454715750
+Documents/minddump/items.found.since.going.and.living.in.tent.in.desert.txt:1455145145
 Documents/minddump/ive.only.done.900mg.as.of.writing.but.ive.purchased.and.am.planning.my.1200mg.trip.txt:1398990635
 Documents/minddump/iwonderifwhenitypedsadlastfilethatifitisabrainthing.txt:1340447705
 Documents/minddump/jdfljsdlkfjklsdjfjsdkfjsldkjflksdjlkfjsd.txt:1400733803
@@ -2814,10 +2814,10 @@ GloballySharedClasses/gui/labellineeditbrowsebutton.cpp:1409509734
 GloballySharedClasses/gui/labellineeditbrowsebutton.h:1409508309
 GloballySharedClasses/image/:1394443296
 GloballySharedClasses/image/nonanimatedimagheaderchecker.h:1394443296
-GloballySharedClasses/libclang/:1454985618
-GloballySharedClasses/libclang/comboboxwithautocompletionofexistingsignalsorslotsandautocompletionofargsifnewsignalorslot.cpp:1454985618
-GloballySharedClasses/libclang/comboboxwithautocompletionofexistingsignalsorslotsandautocompletionofargsifnewsignalorslot.h:1454983653
-GloballySharedClasses/libclang/libclangfunctiondeclarationparser.cpp:1454920534
+GloballySharedClasses/libclang/:1455084426
+GloballySharedClasses/libclang/comboboxwithautocompletionofexistingsignalsorslotsandautocompletionofargsifnewsignalorslot.cpp:1455084426
+GloballySharedClasses/libclang/comboboxwithautocompletionofexistingsignalsorslotsandautocompletionofargsifnewsignalorslot.h:1455084177
+GloballySharedClasses/libclang/libclangfunctiondeclarationparser.cpp:1455083053
 GloballySharedClasses/libclang/libclangfunctiondeclarationparser.h:1454985252
 GloballySharedClasses/libclang/libclangpch.h:1454916081
 GloballySharedClasses/network/:1418082372
@@ -3233,11 +3233,11 @@ Projects/DesignEqualsImplementation2/design/use.case.is.series.of.either.slot.de
 Projects/DesignEqualsImplementation2/design/use.cases.define.slot.bodies.at.runtime.but.only.resolve.where.connect.statements.go.at.source.generation.time.txt:1408252978
 Projects/DesignEqualsImplementation2/design/when.to.do.the.cross.thread.call.analysis.optimization.sdfljsdlfjsdl.txt:1410402949
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1454987286
+Projects/DesignEqualsImplementation2/src/:1455084529
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
-Projects/DesignEqualsImplementation2/src/ui/gui/:1454732103
+Projects/DesignEqualsImplementation2/src/ui/gui/:1455082790
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.cpp:1409876592
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.h:1408651682
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramumlitemswidget.cpp:1404498658
@@ -3291,8 +3291,8 @@ Projects/DesignEqualsImplementation2/src/ui/gui/renameprojectdialog.cpp:14111873
 Projects/DesignEqualsImplementation2/src/ui/gui/renameprojectdialog.h:1411186033
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotconnectionactivationarrowforgraphicsscene.cpp:1412603998
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotconnectionactivationarrowforgraphicsscene.h:1412602934
-Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.cpp:1453930476
-Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.h:1453852622
+Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.cpp:1455082790
+Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.h:1455082507
 Projects/DesignEqualsImplementation2/src/ui/gui/signalstatementnotchmultiplextergraphicsrect.cpp:1412603934
 Projects/DesignEqualsImplementation2/src/ui/gui/signalstatementnotchmultiplextergraphicsrect.h:1412603754
 Projects/DesignEqualsImplementation2/src/ui/gui/snappingindicationvisualrepresentation.cpp:1412599359
@@ -4313,7 +4313,7 @@ Projects/Prototypes/ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCom
 Projects/Prototypes/ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot/segfaulting_ComboBoxWithTwoDifferentCompleterTypesDependingOnWhereTextCursorIs/src/comboboxwithtwodifferentcompletertypesdependingonwheretextcursoris.cpp:1453759447
 Projects/Prototypes/ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot/segfaulting_ComboBoxWithTwoDifferentCompleterTypesDependingOnWhereTextCursorIs/src/comboboxwithtwodifferentcompletertypesdependingonwheretextcursoris.h:1453748901
 Projects/Prototypes/ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot/segfaulting_ComboBoxWithTwoDifferentCompleterTypesDependingOnWhereTextCursorIs/src/main.cpp:1453746225
-Projects/Prototypes/ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot/src/:1454987296
+Projects/Prototypes/ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot/src/:1455072059
 Projects/Prototypes/ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot/src/ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot.pro:1454985106
 Projects/Prototypes/ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot/src/main.cpp:1454918065
 Projects/Prototypes/ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot/src/resultstatechangedlistener.cpp:1454917979
@@ -4946,7 +4946,7 @@ Projects/QuickDirtyStaticGitWeb/design/some.improvements.txt:1454715632
 Projects/QuickDirtyStaticGitWeb/src/:1454903933
 Projects/QuickDirtyStaticGitWeb/src/QuickDirtyStaticGitWebCli.pro:1454466807
 Projects/QuickDirtyStaticGitWeb/src/main.cpp:1454107041
-Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitweb.cpp:1454903848
+Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitweb.cpp:1455145358
 Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitweb.h:1454903904
 Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitwebcli.cpp:1454107568
 Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitwebcli.h:1454107534

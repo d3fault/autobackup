@@ -151,12 +151,17 @@ void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIf
     }
     else
     {
-        //QString functionName = libClangFunctionDeclarationParser.parsedFunctionName();
-        //QList<FunctionArgumentTypedef> functionArguments = libClangFunctionDeclarationParser.parsedFunctionArguments();
-
-        //TODOmb: remember the name/args and have them accessable via a getter in this class... or hmm better yet I might as well just inherit the wi- err function parser
-
-        setSyntaxIsValid(true);
+        //setSyntaxIsValid(true);
+        bool resultTypeChangedNow = m_ResultType == NewResult ? false : true;
+        m_ResultType = true;
+        bool syntaxIsValidChangedNow = m_SyntaxIsValid ? false : true;
+        m_SyntaxIsValid = true;
+        setParsedFunctionName(libClangFunctionDeclarationParser.parsedFunctionName());
+        setParsedFunctionArguments(libClangFunctionDeclarationParser.parsedFunctionArguments());
+        if(resultTypeChangedNow)
+            emit resultTypeChangedNow(NewResult);
+        if(syntaxIsValidChangedNow)
+            emit syntaxIsValidChanged(true);
     }
 }
 bool ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::syntaxIsValid() const
@@ -290,6 +295,22 @@ void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIf
     {
         m_SyntaxIsValid = syntaxIsValid;
         emit syntaxIsValidChanged(m_SyntaxIsValid);
+    }
+}
+void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::setParsedFunctionName(const QString &newParsedFunctionName)
+{
+    if(newParsedFunctionName != m_ParsedFunctionNameForDetectingChanges)
+    {
+        m_ParsedFunctionNameForDetectingChanges = newParsedFunctionName;
+        emit parsedFunctionNameChanged(m_ParsedFunctionNameForDetectingChanges);
+    }
+}
+void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::setParsedFunctionArguments(const QList<FunctionArgumentTypedef> &newParsedFunctionArguments)
+{
+    if(newParsedFunctionArguments != m_ParsedFunctionArgumentsForDetectingChanges)
+    {
+        m_ParsedFunctionArgumentsForDetectingChanges = newParsedFunctionArguments;
+        emit parsedFunctionArgumentsChanged(m_ParsedFunctionArgumentsForDetectingChanges);
     }
 }
 void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::insertCompletion(const QString &completion)

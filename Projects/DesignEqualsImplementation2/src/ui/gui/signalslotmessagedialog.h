@@ -5,6 +5,7 @@
 
 #include "../../designequalsimplementationusecase.h"
 #include "../../signalemissionorslotinvocationcontextvariables.h"
+#include "comboboxwithautocompletionofexistingsignalsorslotsandautocompletionofargsifnewsignalorslot.h"
 
 class QVBoxLayout;
 class QCheckBox;
@@ -15,7 +16,6 @@ class DesignEqualsImplementationClassSlot;
 class DesignEqualsImplementationClassLifeLine;
 //class DesignEqualsImplementationClassLifeLineUnitOfExecution;
 class IHaveTypeAndVariableNameAndPreferredTextualRepresentation;
-class ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot;
 
 class SignalSlotMessageDialog : public QDialog
 {
@@ -53,10 +53,11 @@ private:
 
     bool m_SignalIsExistingSignalFlag;
 
-    void showSignalArgFillingIn();
+    void showSignalArgFillingIn(const QString &signalName, const QList<MethodArgumentTypedef> &signalArguments);
     void collapseSignalArgFillingIn();
 
-    void showSlotArgFillingIn();
+    void maybeShowSlotArgFillingInUsingAppropriateComboBoxValues();
+    void showSlotArgFillingIn(const QString &slotName, const QList<MethodArgumentTypedef> &slotArguments);
     void collapseSlotArgFillingIn();
 
     bool allArgSatisfiersAreValid();
@@ -64,14 +65,27 @@ private:
 private slots:
     void handleSignalCheckboxToggled(bool checked);
     void handleSlotCheckboxToggled(bool checked);
-    void handleExistingSignalComboBoxIndexChanged(int newIndex);
-    void handleExistingSlotsComboBoxCurrentIndexChanged(int newIndex);
+    //void handleExistingSignalComboBoxIndexChanged(int newIndex);
+    //void handleExistingSlotsComboBoxCurrentIndexChanged(int newIndex);
+
+    void handleSignalsComboBoxResultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType);
+    void handleSignalsComboBoxSyntaxIsValidChanged(bool syntaxIsValid);
+    void handleParsedSignalNameChanged(const QString &parsedSignalName);
+    void handleParsedSignalArgumentsChanged(QList<MethodArgumentTypedef> parsedSignalArguments);
+
+    void handleSlotsComboBoxResultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType);
+    void handleSlotsComboBoxSyntaxIsValidChanged(bool syntaxIsValid);
+    void handleParsedSlotNameChanged(const QString &parsedSlotName);
+    void handleParsedSlotArgumentsChanged(const QList<MethodArgumentTypedef> &parsedSlotArguments);
+
     void tryValidatingDialog();
 
     void handleChooseSourceInstanceButtonClicked();
 
     bool acceptIfNoSignalsSlotsParsingNeeded_Or_AcceptIfSignalsSlotsParsingSucceeds();
     void handleOkAndMakeChildOfSignalSenderActionTriggered();
+
+    void jitMaybeCreateSignalAndOrSlot();
 };
 
 #endif // SIGNALSLOTMESSAGEDIALOG_H

@@ -42,6 +42,8 @@ private:
     bool m_SyntaxIsValid;
     QStringList m_AllKnownTypes;
     QCompleter *m_CompleterPopup;
+    QString m_ParsedFunctionNameForDetectingChanges;
+    QList<FunctionArgumentTypedef> m_ParsedFunctionArgumentsForDetectingChanges;
 
     CXIndex m_ClangIndex;
 
@@ -49,9 +51,13 @@ private:
     void populateCompleterPopupViaClangCodeComplete(const QString &lineEditText, const QString &token);
     void setResultType(ResultType newResultType);
     void setSyntaxIsValid(bool syntaxIsValid);
+    void setParsedFunctionName(const QString &newParsedFunctionName);
+    void setParsedFunctionArguments(const QList<FunctionArgumentTypedef> &newParsedFunctionArguments);
 signals:
     void resultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType newResultType);
     void syntaxIsValidChanged(bool syntaxIsValid);
+    void parsedFunctionNameChanged(QString newParsedFunctionName);
+    void parsedFunctionArgumentsChanged(QList<FunctionArgumentTypedef> newParsedFunctionArguments);
 private slots:
     void insertCompletion(const QString &completion);
     void handleCurrentIndexChanged(int newIndex);

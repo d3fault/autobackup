@@ -21,7 +21,6 @@
 #include "../../designequalsimplementationclasslifeline.h"
 #include "../../designequalsimplementationclasslifelineunitofexecution.h"
 #include "../../designequalsimplementationlenientsignalorslotsignaturerparser.h"
-#include "comboboxwithautocompletionofexistingsignalsorslotsandautocompletionofargsifnewsignalorslot.h"
 
 //TODOreq: SignalSlotMessageEditorDialog (creation + editting-later-on using same widget) would be best
 //TODOreq: signal/slot mode, slot args populated by signal args, can have less than signal arg count, but arg-ordering and arg-type matter
@@ -379,10 +378,21 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
         //No slot in other mode, so no point in listening
         connect(m_SlotsCheckbox, SIGNAL(toggled(bool)), m_SlotsWidget, SLOT(setEnabled(bool)));
         connect(m_SlotsCheckbox, SIGNAL(toggled(bool)), this, SLOT(handleSlotCheckboxToggled(bool)));
-        connect(m_ExistingSlotsComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleExistingSlotsComboBoxCurrentIndexChanged(int)));
+        //connect(m_ExistingSlotsComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleExistingSlotsComboBoxCurrentIndexChanged(int)));
+        connect(m_ExistingSlotsComboBox, SIGNAL(resultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType)), this, SLOT(handleSlotsComboBoxResultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType)));
+        connect(m_ExistingSlotsComboBox, SIGNAL(syntaxIsValidChanged(bool)), this, SLOT(handleSlotsComboBoxSyntaxIsValidChanged(bool)));
+        //TODOreq: whenever the parsed function name or args changes we collapse and re-whow the arg fillers. signals combo box does same. we can't rely on "syntax is valid" and "result type changed" to give us the most up to date parsing results, for example "someSlot0" would get NewResult/ValidSyntax on the first "s". Of course, the "parsed X changed" signals do imply NewResult and ValidSyntax.
+        a
+        connect(m_ExistingSlotsComboBox, SIGNAL(parsedFunctionNameChanged(QString)), this, SLOT(handleParsedSlotNameChanged(QString)));
+        connect(m_ExistingSlotsComboBox, SIGNAL(parsedFunctionArgumentsChanged(QList<MethodArgumentTypedef>)), this, SLOT(handleParsedSlotArgumentsChanged(QList<MethodArgumentTypedef>)));
     }
 
-    connect(m_ExistingSignalsComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleExistingSignalComboBoxIndexChanged(int)));
+    //connect(m_ExistingSignalsComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(handleExistingSignalComboBoxIndexChanged(int)));
+    connect(m_ExistingSignalsComboBox, SIGNAL(resultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType)), this, SLOT(handleSignalsComboBoxResultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType)));
+    connect(m_ExistingSignalsComboBox, SIGNAL(syntaxIsValidChanged(bool)), this, SLOT(handleSignalsComboBoxSyntaxIsValidChanged(bool)));
+    connect(m_ExistingSignalsComboBox, SIGNAL(parsedFunctionNameChanged(QString)), this, SLOT(handleParsedSignalNameChanged(QString)));
+    connect(m_ExistingSignalsComboBox, SIGNAL(parsedFunctionArgumentsChanged(QList<MethodArgumentTypedef>)), this, SLOT(handleParsedSignalArgumentsChanged(QList<MethodArgumentTypedef>)));
+
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 
     setLayout(m_Layout);
@@ -391,8 +401,10 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
         m_ExistingSignalsComboBox->setFocus();
     else if(m_SlotsWidget->isEnabled())
         m_ExistingSlotsComboBox->setFocus();
+
+    connect(this, SIGNAL(accepted()), this, SLOT(jitMaybeCreateSignalAndOrSlot()));
 }
-DesignEqualsImplementationClassSignal *SignalSlotMessageDialog::signalToEmit_OrZeroIfNone() const //TODOreq: set m_SignalToEmit to zero when user unchecks "Signal"
+DesignEqualsImplementationClassSignal *SignalSlotMessageDialog::signalToEmit_OrZeroIfNone() const
 {
     return m_SignalToEmit;
 }
@@ -414,7 +426,7 @@ bool SignalSlotMessageDialog::signalIsExistingSignalFlag() const
 {
     return m_SignalIsExistingSignalFlag;
 }
-void SignalSlotMessageDialog::showSignalArgFillingIn()
+void SignalSlotMessageDialog::showSignalArgFillingIn(const QString &signalName, const QList<MethodArgumentTypedef> &signalArguments)
 {
     //TODOreq
 
@@ -430,7 +442,7 @@ void SignalSlotMessageDialog::showSignalArgFillingIn()
         delete m_SignalArgsFillingInWidget;
         m_SignalArgsFillingInWidget = 0;
     }
-    if(m_SignalToEmit->arguments().isEmpty())
+    if(signalArguments.isEmpty())
     {
         if(!m_SlotToInvoke)
             m_OkButton->setDisabled(false); //signal emit with no listeners
@@ -439,11 +451,13 @@ void SignalSlotMessageDialog::showSignalArgFillingIn()
 
     m_SignalArgsFillingInWidget = new QWidget();
     QVBoxLayout *argsFillingInLayout = new QVBoxLayout(); //TODOreq: a scroll bar may be needed if the slot has too many args, but really 10 is a decent soft limit that Qt uses also... any more and you suck at designing :-P
-    argsFillingInLayout->addWidget(new QLabel(QObject::tr("Fill in the arguments for: ") + m_SignalToEmit->Name), 0, Qt::AlignLeft);
-    Q_FOREACH(DesignEqualsImplementationClassMethodArgument* currentArgument, m_SignalToEmit->arguments())
+    argsFillingInLayout->addWidget(new QLabel(QObject::tr("Fill in the arguments for: ") + signalName), 0, Qt::AlignLeft);
+    Q_FOREACH(MethodArgumentTypedef currentArgument, signalArguments)
     {
         QHBoxLayout *currentArgRow = new QHBoxLayout();
-        currentArgRow->addWidget(new QLabel(currentArgument->preferredTextualRepresentationOfTypeAndVariableTogether()));
+        DesignEqualsImplementationClassMethodArgument arg(currentArgument.second);
+        arg.Type = currentArgument.first;
+        currentArgRow->addWidget(new QLabel(arg.preferredTextualRepresentationOfTypeAndVariableTogether()));
         QComboBox *currentArgSatisfiersComboBox = new QComboBox();
         connect(currentArgSatisfiersComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(tryValidatingDialog()));
         currentArgSatisfiersComboBox->addItem(tr("Select variable for this arg..."));
@@ -459,10 +473,7 @@ void SignalSlotMessageDialog::showSignalArgFillingIn()
     m_Layout->addWidget(m_SignalArgsFillingInWidget);
     m_OkButton->setDisabled(true);
 
-    if(m_SlotsCheckbox->isChecked() && m_ExistingSlotsComboBox->currentIndex() != 0)
-    {
-        showSlotArgFillingIn();
-    }
+    maybeShowSlotArgFillingInUsingAppropriateComboBoxValues();
 }
 void SignalSlotMessageDialog::collapseSignalArgFillingIn()
 {
@@ -472,12 +483,29 @@ void SignalSlotMessageDialog::collapseSignalArgFillingIn()
         delete m_SignalArgsFillingInWidget;
         m_SignalArgsFillingInWidget = 0;
     }
-    if(m_SlotsCheckbox->isChecked() && m_ExistingSlotsComboBox->currentIndex() != 0)
-    {
-        showSlotArgFillingIn(); //what was "slot arg match up with signal arg" becomes "choose context variables to satisfy slot args"
-    }
+    maybeShowSlotArgFillingInUsingAppropriateComboBoxValues(); //what was "slot arg match up with signal arg" becomes "choose context variables to satisfy slot args"
 }
-void SignalSlotMessageDialog::showSlotArgFillingIn()
+void SignalSlotMessageDialog::maybeShowSlotArgFillingInUsingAppropriateComboBoxValues()
+{
+    if((!m_SlotsCheckbox->isChecked()) || (!m_ExistingSlotsComboBox->syntaxIsValid()))
+    {
+        collapseSlotArgFillingIn();
+        return;
+    }
+
+    ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType = m_ExistingSlotsComboBox->resultType();
+    if(resultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoResult)
+        collapseSlotArgFillingIn();
+    else if(resultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ExistingResult)
+    {
+        m_SlotToInvoke = qvariant_cast<DesignEqualsImplementationClassSlot*>(m_ExistingSlotsComboBox->itemData(newIndex));
+        //TODOreq: present selectable context variables for the slot args. This is required before OK is enabled, but not when it's the first/actor->slotInvoke (grayed out in that case)
+        showSlotArgFillingIn(m_SlotToInvoke->Name, m_SlotToInvoke->arguments());
+    }
+    else if(resultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NewResult)
+        showSlotArgFillingIn(m_ExistingSlotsComboBox->parsedFunctionName(), m_ExistingSlotsComboBox->parsedFunctionArguments());
+}
+void SignalSlotMessageDialog::showSlotArgFillingIn(const QString &slotName, const QList<MethodArgumentTypedef> &slotArguments)
 {
     if(m_SourceIsActor)
     {
@@ -490,20 +518,20 @@ void SignalSlotMessageDialog::showSlotArgFillingIn()
         delete m_SlotArgsFillingInWidget;
         m_SlotArgsFillingInWidget = 0;
     }
-    if(m_SlotsCheckbox->isChecked() && m_ExistingSlotsComboBox->currentIndex() != 0 && m_SlotToInvoke->arguments().isEmpty())
-    {
+    if(m_SlotsCheckbox->isChecked() && m_ExistingSlotsComboBox->currentIndex() != 0 && slotArguments.isEmpty())
         return;
-    }
 
     if(!m_SignalsCheckbox->isChecked())
     {
         m_SlotArgsFillingInWidget = new QWidget();
         QVBoxLayout *argsFillingInLayout = new QVBoxLayout(); //TODOreq: a scroll bar may be needed if the slot has too many args, but really 10 is a decent soft limit that Qt uses also... any more and you suck at designing :-P
-        argsFillingInLayout->addWidget(new QLabel(QObject::tr("Fill in the arguments for: ") + m_SlotToInvoke->Name), 0, Qt::AlignLeft);
-        Q_FOREACH(DesignEqualsImplementationClassMethodArgument* currentArgument, m_SlotToInvoke->arguments())
+        argsFillingInLayout->addWidget(new QLabel(QObject::tr("Fill in the arguments for: ") + slotName), 0, Qt::AlignLeft);
+        Q_FOREACH(MethodArgumentTypedef currentArgument, slotArguments)
         {
             QHBoxLayout *currentArgRow = new QHBoxLayout(); //TODOoptimization: one grid layout instead? fuck it
-            currentArgRow->addWidget(new QLabel(currentArgument->preferredTextualRepresentationOfTypeAndVariableTogether()));
+            DesignEqualsImplementationClassMethodArgument arg(currentArgument.second);
+            arg.Type = currentArgument.first;
+            currentArgRow->addWidget(new QLabel(arg.preferredTextualRepresentationOfTypeAndVariableTogether()));
             QComboBox *currentArgSatisfiersComboBox = new QComboBox(); //instead of listening to signals, i should just manually validate the dialog when ok is pressed (keep a list of combo boxes, ensure all indexes aren't zero)... only downside to that is that the ok button now can't be disabled :(... fffff. i guess whole dialog validation on ANY combo box signal change is a hacky/easy/unoptimal/functional solution TODOoptimization proper dat shit
             connect(currentArgSatisfiersComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(tryValidatingDialog()));
             currentArgSatisfiersComboBox->addItem(tr("Select variable for this arg..."));
@@ -551,7 +579,7 @@ bool SignalSlotMessageDialog::allArgSatisfiersAreValid()
     //Check signal arg count >= slot arg count, and check signal arg types match slot arg types
     if(m_SignalsCheckbox->isChecked() && m_SlotsCheckbox->isChecked())
     {
-        if(m_ExistingSignalsComboBox->currentIndex() == 0 || m_ExistingSlotsComboBox->currentIndex() == 0)
+        if((!m_ExistingSignalsComboBox->syntaxIsValid()) || (!m_ExistingSlotsComboBox->syntaxIsValid()))
             return false;
         //TODOreq: verify signal/slot arg compatibility, return true if checks out (TODOoptional: highlight in red the slot so they know it's not the arg satisfiers)
         if(m_SignalToEmit->arguments().size() < m_SlotToInvoke->arguments().size())
@@ -561,7 +589,7 @@ bool SignalSlotMessageDialog::allArgSatisfiersAreValid()
         {
             const QByteArray &slotArgTypeCstr = currentSlotArgument->typeString().toUtf8();
             const QByteArray &signalArgTypeCstr = m_SignalToEmit->arguments().at(currentArgIndex++)->typeString().toUtf8();
-            if(QMetaObject::normalizedType(slotArgTypeCstr.constData()) != QMetaObject::normalizedType(signalArgTypeCstr.constData())) //TODOoptional: maybe QMetaObject::checkConnectArgs handles inheritence stuff for me? I might need to register the to-be-generated types at runtime for it to work?
+            if(QMetaObject::normalizedType(slotArgTypeCstr.constData()) != QMetaObject::normalizedType(signalArgTypeCstr.constData())) //TODOoptional: maybe QMetaObject::checkConnectArgs handles inheritence stuff for me? I might need to register the to-be-generated types at runtime for it to work? Pretty sure libclang has "inherits or is type" TODOlater
             {
                 return false;
             }
@@ -593,32 +621,82 @@ void SignalSlotMessageDialog::handleSlotCheckboxToggled(bool checked)
     if(!checked)
         m_SlotToInvoke = 0;
 }
-void SignalSlotMessageDialog::handleExistingSignalComboBoxIndexChanged(int newIndex)
+void SignalSlotMessageDialog::handleSignalsComboBoxResultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType)
 {
-    if(newIndex == 0)
-    {
+    if(resultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoResult)
         collapseSignalArgFillingIn();
-    }
-    else
+    else if(resultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ExistingResult)
     {
         m_SignalToEmit = qvariant_cast<DesignEqualsImplementationClassSignal*>(m_ExistingSignalsComboBox->itemData(newIndex));
-        showSignalArgFillingIn();
+        showSignalArgFillingIn(m_SignalToEmit->Name, m_SignalToEmit->arguments());
+    }
+    else if(resultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NewResult)
+    {
+        if(m_ExistingSignalsComboBox->syntaxIsValid())
+            showSignalArgFillingIn(m_ExistingSignalsComboBox->parsedFunctionName(), m_ExistingSignalsComboBox->parsedFunctionArguments());
+        else
+            collapseSignalArgFillingIn();
     }
     tryValidatingDialog();
 }
-void SignalSlotMessageDialog::handleExistingSlotsComboBoxCurrentIndexChanged(int newIndex)
+void SignalSlotMessageDialog::handleSignalsComboBoxSyntaxIsValidChanged(bool syntaxIsValid)
 {
-    if(newIndex == 0)
-    {
-        collapseSlotArgFillingIn();
-    }
-    else
-    {
-        m_SlotToInvoke = qvariant_cast<DesignEqualsImplementationClassSlot*>(m_ExistingSlotsComboBox->itemData(newIndex));
-        //TODOreq: present selectable context variables for the slot args. This is required before OK is enabled, but not when it's the first/actor->slotInvoke (grayed out in that case)
-        showSlotArgFillingIn();
-    }
+    if(!syntaxIsValid)
+        collapseSignalArgFillingIn();
+    else if(m_ExistingSignalsComboBox->resultType() == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NewResult)
+        showSignalArgFillingIn(m_ExistingSignalsComboBox->parsedFunctionName(), m_ExistingSignalsComboBox->parsedFunctionArguments());
+}
+void SignalSlotMessageDialog::handleParsedSignalNameChanged(const QString &parsedSignalName)
+{
+    m_SignalNameHavingArgsFilledIn = parsedSignalName;
+    collapseSignalArgFillingIn(); //TODOoptimization
+    showSignalArgFillingIn();
+}
+void SignalSlotMessageDialog::handleParsedSignalArgumentsChanged(QList<MethodArgumentTypedef> parsedSignalArguments)
+{
+    m_SignalArgumentsBeingFilledIn = parsedSignalArguments;
+    collapseSignalArgFillingIn(); //TODOreq: this applies to slots too... but say they type in a second arg after typing the first and "filling in" the first. atm we'd be clearing in their filling in work every time they change ANY aspect of an arg (type, name, num args, etc)... which is stupid ofc... but KISS
+    showSignalArgFillingIn();
+}
+void SignalSlotMessageDialog::handleSlotsComboBoxResultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType)
+{
+//    if(resultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoResult)
+//        collapseSlotArgFillingIn();
+//    else
+        maybeShowSlotArgFillingInUsingAppropriateComboBoxValues();
+//    else if(resultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ExistingResult)
+//    {
+//        m_SlotToInvoke = qvariant_cast<DesignEqualsImplementationClassSlot*>(m_ExistingSlotsComboBox->itemData(newIndex));
+//        //TODOreq: present selectable context variables for the slot args. This is required before OK is enabled, but not when it's the first/actor->slotInvoke (grayed out in that case)
+//        showSlotArgFillingIn(m_SlotToInvoke->Name, m_SlotToInvoke->arguments());
+//    }
+//    else if(resultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NewResult)
+//    {
+//        if(m_ExistingSlotsComboBox->syntaxIsValid())
+//            showSlotArgFillingIn(m_ExistingSlotsComboBox->parsedFunctionName(), m_ExistingSlotsComboBox->parsedFunctionArguments());
+//        else
+//            collapseSlotArgFillingIn();
+//    }
     tryValidatingDialog();
+}
+void SignalSlotMessageDialog::handleSlotsComboBoxSyntaxIsValidChanged(bool syntaxIsValid)
+{
+    if(!syntaxIsValid)
+        collapseSlotArgFillingIn();
+    else if(m_ExistingSlotsComboBox->resultType() == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NewResult)
+        showSlotArgFillingIn(m_ExistingSlotsComboBox->parsedFunctionName(), m_ExistingSlotsComboBox->parsedFunctionArguments());
+}
+void SignalSlotMessageDialog::handleParsedSlotNameChanged(const QString &parsedSlotName)
+{
+    m_SlotNameHavingArgsFilledIn = parsedSlotName;
+    collapseSlotArgFillingIn();
+    showSlotArgFillingIn(); //TODOoptimization: just call label->setText instead of colapsing/re-showing
+}
+void SignalSlotMessageDialog::handleParsedSlotArgumentsChanged(const QList<MethodArgumentTypedef> &parsedSlotArguments)
+{
+    m_SlotArgsBeingFilledIn = parsedSlotArguments;
+    collapseSlotArgFillingIn();
+    showSlotArgFillingIn();
 }
 void SignalSlotMessageDialog::tryValidatingDialog()
 {
@@ -683,4 +761,25 @@ void SignalSlotMessageDialog::handleOkAndMakeChildOfSignalSenderActionTriggered(
     HasA_Private_Classes_Member *newHasAmember = sourceClass->createHasA_Private_Classes_Member(m_DestinationSlot_OrZeroIfNoDest->ParentClass);
     m_DestinationClassLifeline_OrZeroIfNoDest->setInstanceInOtherClassIfApplicable(newHasAmember);
     //accept();
+}
+void SignalSlotMessageDialog::jitMaybeCreateSignalAndOrSlot()
+{
+    //syntax is already known to be valid, otherwise we never would have gotten here because this slot was invoked by the accepted() signal
+
+    //TODOreq
+    //if using signal and result type == new, jit create the d=i signal, then set m_SignalToEmit pointer to it. ez pz
+    if(m_SignalsCheckbox->isChecked() && m_ExistingSignalsComboBox->resultType() == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NewResult)
+    {
+        m_SignalToEmit = m_SourceClassLifeline_OrZeroIfSourceIsActor->designEqualsImplementationClass()->createNewSignal(m_ExistingSignalsComboBox->parsedFunctionName(), m_ExistingSignalsComboBox->parsedFunctionArguments());
+        //TODOreq: handle new types seen in arguments here/now too. or maybe one statement earlier? see how/when class editor does it and mimic
+        a
+    }
+
+    //do same thing for slot
+    if(m_SlotsCheckbox->isChecked() && m_ExistingSlotsComboBox->resultType() == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NewResult)
+    {
+        m_SlotToInvoke = m_DestinationClassLifeline_OrZeroIfNoDest->designEqualsImplementationClass()->createwNewSlot(m_ExistingSlotsComboBox->parsedFunctionName(), m_ExistingSlotsComboBox->parsedFunctionArguments());
+        //TODOreq: handle new types seen in arguments here/now too. or maybe one statement earlier? see how/when class editor does it and mimic
+        a
+    }
 }
