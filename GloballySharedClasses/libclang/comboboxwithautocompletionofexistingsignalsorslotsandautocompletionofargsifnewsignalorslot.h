@@ -17,47 +17,39 @@ class ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsI
 public:
     enum ResultType
     {
-          NoResult = 0
-        , NewResult = 1
-        , ExistingResult = 2
+          NoFunction = 0
+        , TypedInFunction = 1
+        , ExistingFunction = 2
     };
 
     ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot(QWidget *parent = 0);
     bool isInitialized() const { return m_IsInitialized; }
-    ResultType resultType() const { return m_ResultType; }
+    //ResultType resultType() const { return m_ResultType; }
     void insertKnownTypes(const QStringList &knownTypes) { m_AllKnownTypes.append(knownTypes); }
     bool syntaxIsValid() const;
 
-    //only valid when m_SyntaxIsValid == true
-    QString functionName() const;
-    QList<QString> newTypesSeenInFunctionDeclaration() const;
-    QList<FunctionArgumentTypedef> functionArguments() const;
+    //only valid when resultType == NewResult && m_SyntaxIsValid == true
+    QString parsedFunctionName() const;
+    QList<FunctionArgumentTypedef> parsedFunctionArguments() const;
+    QList<QString> newTypesSeenInParsedFunctionDeclaration() const;
     QString mostRecentSyntaxError() const;
 protected:
     virtual void keyPressEvent(QKeyEvent *e);
     virtual void focusInEvent(QFocusEvent *e);
 private:
+    int m_LastSeenIndex;
     bool m_IsInitialized;
-    ResultType m_ResultType;
+    //ResultType m_ResultType;
     bool m_SyntaxIsValid;
     QStringList m_AllKnownTypes;
     QCompleter *m_CompleterPopup;
-    QString m_ParsedFunctionNameForDetectingChanges;
-    QList<FunctionArgumentTypedef> m_ParsedFunctionArgumentsForDetectingChanges;
 
     CXIndex m_ClangIndex;
 
-    void checkSyntaxAndSetSyntaxIsValidAccordingly(const QString &lineEditText);
+    void parseFunctionDeclarationAndSetSyntaxIsValidAccordingly(const QString &lineEditText);
     void populateCompleterPopupViaClangCodeComplete(const QString &lineEditText, const QString &token);
-    void setResultType(ResultType newResultType);
-    void setSyntaxIsValid(bool syntaxIsValid);
-    void setParsedFunctionName(const QString &newParsedFunctionName);
-    void setParsedFunctionArguments(const QList<FunctionArgumentTypedef> &newParsedFunctionArguments);
 signals:
-    void resultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType newResultType);
-    void syntaxIsValidChanged(bool syntaxIsValid);
-    void parsedFunctionNameChanged(QString newParsedFunctionName);
-    void parsedFunctionArgumentsChanged(QList<FunctionArgumentTypedef> newParsedFunctionArguments);
+    void selectedFunctionChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType/*, bool syntaxIsValid*/); //is emitted when resultType changes, a different existing function is selected (index changes), syntax is valid changes, or even when neither of those change but the parsed function name/arguments does change ("s" becaomes "so" becomes "som" ultimately becomes "someSlot")
 private slots:
     void insertCompletion(const QString &completion);
     void handleCurrentIndexChanged(int newIndex);

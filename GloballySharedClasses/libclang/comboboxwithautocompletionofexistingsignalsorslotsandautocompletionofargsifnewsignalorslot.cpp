@@ -23,11 +23,13 @@
 //TODOreq: A new arg type should be auto-completed when using it again on subsequent args of the same signal/slot signature. ex: someSlot(NewType arg0, NewT <- NewType should be completed. Yes we still have to ask them whether or not to make a new d=i class out of it (or if it's defined elsewhere), but that's irrelevant
 //TODOreq: auto-completion of existing signals/slots should still work even when the user types "void " in front
 //TODOreq: a more appropriate name for this class is now: ComboBox_with_AutoCompletionOfExistingFunctions_and_RealtimeSyntaxValidationOfNewFunctions_and_AutoCompletionOfNewFunctionArgs -- not to mention new function arg TYPES are accepted [and even auto-completed on subsequent uses wowow] xD
+//^or maybe since that's a bit wordy, just LibClangFunctionParsingComboBox... and in the comments is where it's functionality is described using numbers/bullets
 ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot(QWidget *parent)
     : QComboBox(parent)
     , LibClangFunctionDeclarationParser()
+    , m_LastSeenIndex(0)
     , m_IsInitialized(true)
-    , m_ResultType(NoResult)
+    //, m_ResultType(NoFunction)
     , m_SyntaxIsValid(false)
     , m_CompleterPopup(new QCompleter(this))
 {
@@ -64,9 +66,9 @@ void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIf
         case Qt::Key_Tab:
         case Qt::Key_Backtab:
             e->ignore();
-            return;
+        return;
         default:
-            break;
+        break;
         }
     }
 
@@ -91,13 +93,6 @@ void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIf
     int indexOfCloseParenthesis = lineEditText.indexOf(")");
     if(indexOfCloseParenthesis > -1 && currentCursorPosition > indexOfCloseParenthesis)
         useDefaultCompleter = true; //cursor is to the right of close parenthesis? use default completer
-
-    bool dontCheckSyntax = (indexOfOpenParenthesis > -1) && (indexOfCloseParenthesis < 0); //We want to perform syntax checking on every keystroke (TODOreq: 200ms no typing before attempting validation), unless they're typing in function arguments
-    if(!dontCheckSyntax) //mmm, double negatives
-    {
-        //if we get here, there are either no parenthesis at all, or there is a close parenthesis to match the open parenthesis
-        checkSyntaxAndSetSyntaxIsValidAccordingly(lineEditText);
-    }
 
     if(!useDefaultCompleter)
     {
@@ -139,68 +134,21 @@ void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIf
     m_CompleterPopup->setWidget(this);
     QComboBox::focusInEvent(e);
 }
-void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::checkSyntaxAndSetSyntaxIsValidAccordingly(const QString &lineEditText)
-{
-    //LibClangFunctionDeclarationParser libClangFunctionDeclarationParser(lineEditText, m_AllKnownTypes);
-    parseFunctionDeclaration(lineEditText, m_AllKnownTypes);
-    //if(libClangFunctionDeclarationParser.hasError())
-    if(hasError())
-    {
-        //NOPE: TODOmb: make combo box background red. a messagebox would get in the way of their typing lol -- QMessageBox::critical(this, tr("libclang syntax error"), libClangFunctionDeclarationParser.mostRecentError());
-        setSyntaxIsValid(false);
-    }
-    else
-    {
-        //setSyntaxIsValid(true);
-        bool resultTypeChangedNow = m_ResultType == NewResult ? false : true;
-        m_ResultType = true;
-        bool syntaxIsValidChangedNow = m_SyntaxIsValid ? false : true;
-        m_SyntaxIsValid = true;
-        setParsedFunctionName(libClangFunctionDeclarationParser.parsedFunctionName());
-        setParsedFunctionArguments(libClangFunctionDeclarationParser.parsedFunctionArguments());
-        if(resultTypeChangedNow)
-            emit resultTypeChangedNow(NewResult);
-        if(syntaxIsValidChangedNow)
-            emit syntaxIsValidChanged(true);
-    }
-}
 bool ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::syntaxIsValid() const
 {
     return m_SyntaxIsValid;
 }
-QString ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::functionName() const
+QString ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::parsedFunctionName() const
 {
-//    if(m_SyntaxIsValid)
-//    {
-//        if(m_ResultType == NewResult)
-//            return LibClangFunctionDeclarationParser::parsedFunctionName();
-//        else if(m_ResultType == ExistingResult)
-//            return TODOreq;
-//    }
-//    return QString();
-    if(m_SyntaxIsValid && m_ResultType == NewResult)
-        return LibClangFunctionDeclarationParser::parsedFunctionName();
-    return QString(); //when result type is existing we get our 'app specific' type out of the 'data' role thingo
+    return m_SyntaxIsValid ? LibClangFunctionDeclarationParser::parsedFunctionName() : QString();
 }
-QList<QString> ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::newTypesSeenInFunctionDeclaration() const
+QList<QString> ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::newTypesSeenInParsedFunctionDeclaration() const
 {
-    if(m_SyntaxIsValid && m_ResultType == NewResult)
-        return LibClangFunctionDeclarationParser::newTypesSeenInFunctionDeclaration();
-    return QList<QString>();
+    return m_SyntaxIsValid ? LibClangFunctionDeclarationParser::newTypesSeenInFunctionDeclaration() : QList<QString>();
 }
-QList<FunctionArgumentTypedef> ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::functionArguments() const
+QList<FunctionArgumentTypedef> ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::parsedFunctionArguments() const
 {
-//    if(m_SyntaxIsValid)
-//    {
-//        if(m_ResultType == NewResult)
-//            return LibClangFunctionDeclarationParser::parsedFunctionArguments();
-//        else if(m_ResultType == ExistingResult)
-//            return TODOreq;
-//    }
-//    return QList<FunctionArgumentTypedef>();
-    if(m_SyntaxIsValid && m_ResultType == NewResult)
-        return LibClangFunctionDeclarationParser::parsedFunctionArguments();
-    return QList<FunctionArgumentTypedef>();
+    return m_SyntaxIsValid ? LibClangFunctionDeclarationParser::parsedFunctionArguments() : QList<FunctionArgumentTypedef>();
 }
 QString ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::mostRecentSyntaxError() const
 {
@@ -268,61 +216,16 @@ void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIf
     m_CompleterPopup->setModel(new QStringListModel(codeCompletionEntries, m_CompleterPopup));
     clang_disposeCodeCompleteResults(codeCompleteResults);
 }
-void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::setResultType(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType newResultType)
-{
-    if(m_ResultType != newResultType)
-    {
-        m_ResultType = newResultType;
-        emit resultTypeChanged(m_ResultType);
-    }
-
-    switch(m_ResultType)
-    {
-    case NoResult:
-        setSyntaxIsValid(false);
-    break;
-    case ExistingResult:
-        setSyntaxIsValid(true);
-    break;
-    case NewResult:
-        //DO NOTHING. our onKeyPressed will trigger parsing/validating (when appropriate) and will setSyntaxIsValid accordingly
-    break;
-    }
-}
-void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::setSyntaxIsValid(bool syntaxIsValid)
-{
-    if(m_SyntaxIsValid != syntaxIsValid)
-    {
-        m_SyntaxIsValid = syntaxIsValid;
-        emit syntaxIsValidChanged(m_SyntaxIsValid);
-    }
-}
-void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::setParsedFunctionName(const QString &newParsedFunctionName)
-{
-    if(newParsedFunctionName != m_ParsedFunctionNameForDetectingChanges)
-    {
-        m_ParsedFunctionNameForDetectingChanges = newParsedFunctionName;
-        emit parsedFunctionNameChanged(m_ParsedFunctionNameForDetectingChanges);
-    }
-}
-void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::setParsedFunctionArguments(const QList<FunctionArgumentTypedef> &newParsedFunctionArguments)
-{
-    if(newParsedFunctionArguments != m_ParsedFunctionArgumentsForDetectingChanges)
-    {
-        m_ParsedFunctionArgumentsForDetectingChanges = newParsedFunctionArguments;
-        emit parsedFunctionArgumentsChanged(m_ParsedFunctionArgumentsForDetectingChanges);
-    }
-}
 void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::insertCompletion(const QString &completion)
 {
     if(m_CompleterPopup->widget() != this)
         return;
 
-//    QTextCursor tc = textCursor();
-//    tc.select(QTextCursor::WordUnderCursor);
-//    tc.removeSelectedText(); //capitalization may have been wrong, since we're doing case insensitive completing
-//    tc.insertText(completion);
-//    setTextCursor(tc);
+    //    QTextCursor tc = textCursor();
+    //    tc.select(QTextCursor::WordUnderCursor);
+    //    tc.removeSelectedText(); //capitalization may have been wrong, since we're doing case insensitive completing
+    //    tc.insertText(completion);
+    //    setTextCursor(tc);
 
     lineEdit()->cursorWordBackward(true);
     //insert implies delete. lineEdit()->del(); //capitalization may have been wrong, since we're doing case insensitive completing
@@ -332,21 +235,42 @@ void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIf
 {
     if(newIndex == 0)
     {
-        setResultType(NoResult);
+        m_SyntaxIsValid = false; //just in case
+        emit selectedFunctionChanged(NoFunction);
     }
     else
     {
-        setResultType(ExistingResult);
+        m_SyntaxIsValid = true; //just in case
+        emit selectedFunctionChanged(ExistingFunction);
     }
 }
 void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::handleEditTextChanged(QString newEditText)
 {
-    if(newEditText.trimmed().isEmpty()) //TODOmb: full signal/slot (function) signature validation via libclang? this could probably be done at the same time that "new args seen in new signal/slot declaration are auto-completed when used for subsequent args". they both involve parsing/analyzing. However I should note that we should only set "NewResult" after the signal/slot is actually valid (ie, there is at least a close parenthesis (but rely on libclang for validation duh))
+    //selecting existing items brings us here, wtf? so the following is a hack: if the edit text changes but the current index does NOT, we know it's neither an existing item nor an empty/no result
+    if(m_LastSeenIndex != currentIndex())
     {
-        setResultType(NoResult);
+        m_LastSeenIndex = currentIndex();
+        return; //this was either an existing combo box item or the blank/empty one at index 0 at the top
+    }
+
+    if(newEditText.trimmed().isEmpty())
+    {
+        m_SyntaxIsValid = false; //just in case
+        emit selectedFunctionChanged(NoFunction);
+        return;
+    }
+
+    bool checkSyntax = newEditText.contains("(") && newEditText.contains(")");
+    if(!checkSyntax)
+        checkSyntax = (!newEditText.contains("(")) && (!newEditText.contains(")"));
+    if(checkSyntax)
+    {
+        //if we get here, there are either no parenthesis at all, or there is a close parenthesis to match the open parenthesis
+        parseFunctionDeclaration(newEditText, m_AllKnownTypes);
+        m_SyntaxIsValid = !hasError();
     }
     else
-    {
-        setResultType(NewResult);
-    }
+        m_SyntaxIsValid = false; //they're typing the function arguments and have yet to hit the ")"
+
+    emit selectedFunctionChanged(TypedInFunction);
 }

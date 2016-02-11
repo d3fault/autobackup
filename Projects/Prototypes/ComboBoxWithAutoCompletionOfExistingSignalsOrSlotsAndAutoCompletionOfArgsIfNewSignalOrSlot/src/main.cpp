@@ -21,26 +21,9 @@ int main(int argc, char *argv[])
     w.resize(currentSize);
 
     ResultStateChangedListener resultStateChangedListener;
-    QObject::connect(&w, SIGNAL(resultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType)), &resultStateChangedListener, SLOT(handleResultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType)));
-    QObject::connect(&w, SIGNAL(syntaxIsValidChanged(bool)), &resultStateChangedListener, SLOT(handleSyntaxIsValidChanged(bool)));
+    QObject::connect(&w, SIGNAL(selectedFunctionChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType)), &resultStateChangedListener, SLOT(handleSelectedFunctionChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType)));
 
     w.show();
 
-    int retCode =  a.exec();
-
-    ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultState = w.resultType();
-    switch(resultState)
-    {
-    case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoResult:
-        qDebug() << "No result";
-        break;
-    case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ExistingResult:
-        qDebug() << "Existing result:" << w.currentText(); //in d=i, the associated existing signal/slot is stored in the itemData at this index in the combo box, so no parsing is needed. it can be retrieved via: w.itemData(w.currentIndex())
-        break;
-    case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NewResult:
-        qDebug() << "New result:" << w.currentText(); //in d=i, there is no itemData so we parse the text and try to create a new signal/slot out of it
-        break;
-    }
-
-    return retCode;
+    return a.exec();
 }
