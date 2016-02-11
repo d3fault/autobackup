@@ -68,21 +68,23 @@ private slots:
     //void handleExistingSignalComboBoxIndexChanged(int newIndex);
     //void handleExistingSlotsComboBoxCurrentIndexChanged(int newIndex);
 
-    void handleSignalsComboBoxResultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType);
-    void handleSignalsComboBoxSyntaxIsValidChanged(bool syntaxIsValid);
-    void handleParsedSignalNameChanged(const QString &parsedSignalName);
-    void handleParsedSignalArgumentsChanged(QList<MethodArgumentTypedef> parsedSignalArguments);
+    //void handleSignalsComboBoxResultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType);
+    //void handleSignalsComboBoxSyntaxIsValidChanged(bool syntaxIsValid);
+    //void handleParsedSignalNameChanged(const QString &parsedSignalName);
+    //void handleParsedSignalArgumentsChanged(QList<MethodArgumentTypedef> parsedSignalArguments);
+    void handleSelectedSignalChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType);
 
-    void handleSlotsComboBoxResultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType);
-    void handleSlotsComboBoxSyntaxIsValidChanged(bool syntaxIsValid);
-    void handleParsedSlotNameChanged(const QString &parsedSlotName);
-    void handleParsedSlotArgumentsChanged(const QList<MethodArgumentTypedef> &parsedSlotArguments);
+    //void handleSlotsComboBoxResultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType);
+    //void handleSlotsComboBoxSyntaxIsValidChanged(bool syntaxIsValid);
+    //void handleParsedSlotNameChanged(const QString &parsedSlotName);
+    //void handleParsedSlotArgumentsChanged(const QList<MethodArgumentTypedef> &parsedSlotArguments);
+    void handleSelectedSlotChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType);
 
     void tryValidatingDialog();
 
     void handleChooseSourceInstanceButtonClicked();
 
-    bool acceptIfNoSignalsSlotsParsingNeeded_Or_AcceptIfSignalsSlotsParsingSucceeds();
+    //bool acceptIfNoSignalsSlotsParsingNeeded_Or_AcceptIfSignalsSlotsParsingSucceeds();
     void handleOkAndMakeChildOfSignalSenderActionTriggered();
 
     void jitMaybeCreateSignalAndOrSlot();

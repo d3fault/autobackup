@@ -36,10 +36,20 @@ NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::N
     }
 
     QHBoxLayout *okCancelRow = new QHBoxLayout();
-    QPushButton *cancelButton = new QPushButton(tr("Cancel"));
     QPushButton *okButton = new QPushButton(tr("Ok"));
     okButton->setDefault(true);
-    okCancelRow->addWidget(cancelButton);
+
+    if(ThisDialogIsCancellableOrNotEnum == Cancellable) //TO DOnereq: what if esc or alt+f4 is pressed or the close button clicked???
+    {
+        QPushButton *cancelButton = new QPushButton(tr("Cancel"));
+        okCancelRow->addWidget(cancelButton);
+        connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+    }
+    else
+    {
+        connect(this, SIGNAL(rejected()), this, SLOT(handleDialogAccepted())); //TODOreq: regarding the above comment, this hack/solution still would break business logic of checking this dialog's result == or != DialogAccepted O_o ffffff so I should inherit widget and yea...
+    }
+
     okCancelRow->addWidget(okButton);
 
     myLayout->addLayout(m_NewTypesGridLayout);
@@ -47,7 +57,6 @@ NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::N
 
     setLayout(myLayout);
 
-    connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
     connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
     connect(this, SIGNAL(accepted()), this, SLOT(handleDialogAccepted()));
 }

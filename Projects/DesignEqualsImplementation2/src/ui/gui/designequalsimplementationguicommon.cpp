@@ -16,7 +16,7 @@ bool DesignEqualsImplementationGuiCommon::parseNewFunctionDefinitioin_then_askWh
     //account for any new param type that is unknown to us
     if(!functionSignatureParser.newTypesSeenInFunctionDeclaration().isEmpty())
     {
-        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(functionSignatureParser.newTypesSeenInFunctionDeclaration(), currentProject);
+        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(functionSignatureParser.newTypesSeenInFunctionDeclaration(), currentProject, NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::Cancellable, parentWidget);
         if(newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.exec() != QDialog::Accepted)
             return false;
     }

@@ -358,7 +358,7 @@ void ClassEditorDialog::handleQuickAddNewPropertyButtonClicked()
     //the property might be a new type, so ask the user how to handle it
     if(!propertyDeclarationParser.newTypesSeenInPropertyDeclaration().isEmpty())
     {
-        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(propertyDeclarationParser.newTypesSeenInPropertyDeclaration(), m_CurrentProject);
+        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(propertyDeclarationParser.newTypesSeenInPropertyDeclaration(), m_CurrentProject, NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::Cancellable, this);
         if(newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.exec() != QDialog::Accepted)
             return;
     }
