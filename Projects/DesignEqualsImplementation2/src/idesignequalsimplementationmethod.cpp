@@ -18,6 +18,18 @@ QList<DesignEqualsImplementationClassMethodArgument *> IDesignEqualsImplementati
 {
     return m_Arguments;
 }
+QList<MethodArgumentTypedef> IDesignEqualsImplementationMethod::argumentsAsMethodArgumentTypedefList() const
+{
+    QList<MethodArgumentTypedef> ret;
+    Q_FOREACH(DesignEqualsImplementationClassMethodArgument* currentArgument, m_Arguments)
+    {
+        MethodArgumentTypedef entry;
+        entry.first = currentArgument->Type;
+        entry.second = currentArgument->VariableName;
+        ret.append(entry);
+    }
+    return ret;
+}
 QString IDesignEqualsImplementationMethod::methodSignatureWithoutReturnType(MethodSignatureFlagsEnum methodSignatureFlagsEnum)
 {
     return Name + "(" + argumentsToCommaSeparatedString(methodSignatureFlagsEnum) + ")";

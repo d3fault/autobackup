@@ -11,12 +11,12 @@
 #include "designequalsimplementationclassslot.h"
 #include "designequalsimplementationclasssignal.h"
 #include "hasa_private_classes_member.h"
+#include "designequalsimplementationclassmethodargument.h"
 
 #define DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX "failed to generate source for: "
 
 class DesignEqualsImplementationProject;
 
-typedef QPair<QString /*type*/, QString /*name*/> MethodArgumentTypedef; //derp defined like twenty different places...
 //typedef QPair<QString /*member variable name*/, DesignEqualsImplementationClass* /*member variable type*/> HasA_Private_Classes_Members_ListEntryType;
 
 //TODOinstancing: class DesignEqualsImplementationClassInstance;

@@ -10,13 +10,8 @@ class DesignEqualsImplementationProject;
 class NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog : public QDialog
 {
     Q_OBJECT
-    enum ThisDialogIsCancellableOrNotEnum
-    {
-          Cancellable = 0
-        , NotCancellable = 1
-    };
 public:
-    explicit NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(const QList<QString> listOfTypesToDecideOn, DesignEqualsImplementationProject *designEqualsImplementationProject, ThisDialogIsCancellableOrNotEnum ThisDialogIsCancellableOrNot = Cancellable, QWidget *parent = 0, Qt::WindowFlags f = 0);
+    explicit NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(const QList<QString> listOfTypesToDecideOn, DesignEqualsImplementationProject *designEqualsImplementationProject, QWidget *parent = 0, Qt::WindowFlags f = 0);
     QList<QString> typesDecidedToBeDesignEqualsImplementationClass() const;
     QList<QString> typesDecidedToBeDefinedElsewhere() const;
 private:

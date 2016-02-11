@@ -53,7 +53,9 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     , m_SlotArgsFillingInWidget(0)
     , m_SourceClassLifeline_OrZeroIfSourceIsActor(sourceClassLifeLine_OrZeroIfSourceIsActor)
     , m_DestinationClassLifeline_OrZeroIfNoDest(destinationClassLifeLine_OrZeroIfNoDest)
-    , m_SignalIsExistingSignalFlag(sourceExistingSignalStatement_OrZeroIfSourceIsNotExistingSignalStatement != 0)
+    , m_SignalIsAlreadyPlacedInUseCaseGraphicsScene(sourceExistingSignalStatement_OrZeroIfSourceIsNotExistingSignalStatement != 0)
+    , m_SignalResultType(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoFunction)
+    , m_SlotResultType(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoFunction)
 {
     setWindowTitle(tr("Signal/Slot Message"));
     //Note: our use of the dialogMode excludes UseCaseSlotEventType altogether (it is used in the backend)
@@ -137,13 +139,13 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
         okToolButton->addAction(okAndMakeChildOfSignalSenderAction);
         okToolButton->setPopupMode(QToolButton::MenuButtonPopup);
         m_OkButton = okToolButton;
-        connect(okAction, SIGNAL(triggered()), this, SLOT(accept()));
+        connect(okAction, SIGNAL(triggered()), this, SLOT(askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDeclarationIfAny_then_jitMaybeCreateSignalAndOrSlot_then_setSignalSlotResultPointersAsAppropriate_then_acceptDialog()));
         connect(okAndMakeChildOfSignalSenderAction, SIGNAL(triggered()), this, SLOT(handleOkAndMakeChildOfSignalSenderActionTriggered()));
     }
     else //regular ok button
     {
         QPushButton *okPushButton = new QPushButton(tr("Ok"), this); //TODOreq: button stays below arg filling in;
-        connect(okPushButton, SIGNAL(clicked()), this, SLOT(accept()));
+        connect(okPushButton, SIGNAL(clicked()), this, SLOT(askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDeclarationIfAny_then_jitMaybeCreateSignalAndOrSlot_then_setSignalSlotResultPointersAsAppropriate_then_acceptDialog()));
         okPushButton->setDefault(true);
         m_OkButton = okPushButton;
     }
@@ -403,13 +405,13 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     else if(m_SlotsWidget->isEnabled())
         m_ExistingSlotsComboBox->setFocus();
 
-    connect(this, SIGNAL(accepted()), this, SLOT(jitMaybeCreateSignalAndOrSlot()));
+    connect(this, SIGNAL(accepted()), this, SLOT(askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDeclarationIfAny_then_jitMaybeCreateSignalAndOrSlot_then_setSignalSlotResultPointersAsAppropriate_then_acceptDialog()));
 }
 DesignEqualsImplementationClassSignal *SignalSlotMessageDialog::signalToEmit_OrZeroIfNone() const
 {
     return m_SignalToEmit;
 }
-DesignEqualsImplementationClassSlot *SignalSlotMessageDialog::slotToInvoke_OrZeroIfNone() const //TODOreq: set m_SlotToInvoke to zero when user unchecks "Slot"
+DesignEqualsImplementationClassSlot *SignalSlotMessageDialog::slotToInvoke_OrZeroIfNone() const
 {
     return m_SlotToInvoke;
 }
@@ -423,11 +425,12 @@ SignalEmissionOrSlotInvocationContextVariables SignalSlotMessageDialog::slotInvo
     }
     return slotInvocationContextVariables;
 }
-bool SignalSlotMessageDialog::signalIsExistingSignalFlag() const
+bool SignalSlotMessageDialog::signalIsAlreadyPlacedInUseCaseGraphicsScene() const
 {
-    return m_SignalIsExistingSignalFlag;
+    //to determine when connecting a new slot to an existing signal
+    return m_SignalIsAlreadyPlacedInUseCaseGraphicsScene;
 }
-void SignalSlotMessageDialog::showSignalArgFillingIn(const QString &signalName, const QList<MethodArgumentTypedef> &signalArguments)
+void SignalSlotMessageDialog::showSignalArgFillingIn()
 {
     //TODOreq
 
@@ -443,17 +446,17 @@ void SignalSlotMessageDialog::showSignalArgFillingIn(const QString &signalName, 
         delete m_SignalArgsFillingInWidget;
         m_SignalArgsFillingInWidget = 0;
     }
-    if(signalArguments.isEmpty())
+    if(m_SignalArgumentsBeingFilledIn.isEmpty())
     {
-        if(!m_SlotToInvoke)
+        if(m_SlotNameHavingArgsFilledIn.isEmpty())
             m_OkButton->setDisabled(false); //signal emit with no listeners
         return;
     }
 
     m_SignalArgsFillingInWidget = new QWidget();
     QVBoxLayout *argsFillingInLayout = new QVBoxLayout(); //TODOreq: a scroll bar may be needed if the slot has too many args, but really 10 is a decent soft limit that Qt uses also... any more and you suck at designing :-P
-    argsFillingInLayout->addWidget(new QLabel(QObject::tr("Fill in the arguments for: ") + signalName), 0, Qt::AlignLeft);
-    Q_FOREACH(MethodArgumentTypedef currentArgument, signalArguments)
+    argsFillingInLayout->addWidget(new QLabel(QObject::tr("Fill in the arguments for: ") + m_SignalNameHavingArgsFilledIn), 0, Qt::AlignLeft);
+    Q_FOREACH(MethodArgumentTypedef currentArgument, m_SignalArgumentsBeingFilledIn)
     {
         QHBoxLayout *currentArgRow = new QHBoxLayout();
         DesignEqualsImplementationClassMethodArgument arg(currentArgument.second);
@@ -488,14 +491,14 @@ void SignalSlotMessageDialog::collapseSignalArgFillingIn()
 }
 void SignalSlotMessageDialog::maybeShowSlotArgFillingInUsingAppropriateComboBoxValues()
 {
-    if((!m_SlotsCheckbox->isChecked()) || (!m_ExistingSlotsComboBox->syntaxIsValid()) || m_ExistingSlotsComboBox->currentIndex() == 0)
+    if((!m_SlotsCheckbox->isChecked()) || (!m_ExistingSlotsComboBox->syntaxIsValid()) || m_SlotResultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoFunction)
     {
         collapseSlotArgFillingIn();
         return;
     }
     showSlotArgFillingIn();
 }
-void SignalSlotMessageDialog::showSlotArgFillingIn(const QString &slotName, const QList<MethodArgumentTypedef> &slotArguments)
+void SignalSlotMessageDialog::showSlotArgFillingIn()
 {
     if(m_SourceIsActor)
     {
@@ -508,15 +511,15 @@ void SignalSlotMessageDialog::showSlotArgFillingIn(const QString &slotName, cons
         delete m_SlotArgsFillingInWidget;
         m_SlotArgsFillingInWidget = 0;
     }
-    if(m_SlotsCheckbox->isChecked() && m_ExistingSlotsComboBox->currentIndex() != 0 && slotArguments.isEmpty())
+    if(m_SlotsCheckbox->isChecked() && m_SlotResultType != ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoFunction && m_SlotArgumentsBeingFilledIn.isEmpty())
         return;
 
     if(!m_SignalsCheckbox->isChecked())
     {
         m_SlotArgsFillingInWidget = new QWidget();
         QVBoxLayout *argsFillingInLayout = new QVBoxLayout(); //TODOreq: a scroll bar may be needed if the slot has too many args, but really 10 is a decent soft limit that Qt uses also... any more and you suck at designing :-P
-        argsFillingInLayout->addWidget(new QLabel(QObject::tr("Fill in the arguments for: ") + slotName), 0, Qt::AlignLeft);
-        Q_FOREACH(MethodArgumentTypedef currentArgument, slotArguments)
+        argsFillingInLayout->addWidget(new QLabel(QObject::tr("Fill in the arguments for: ") + m_SlotNameHavingArgsFilledIn), 0, Qt::AlignLeft);
+        Q_FOREACH(MethodArgumentTypedef currentArgument, m_SlotArgumentsBeingFilledIn)
         {
             QHBoxLayout *currentArgRow = new QHBoxLayout(); //TODOoptimization: one grid layout instead? fuck it
             DesignEqualsImplementationClassMethodArgument arg(currentArgument.second);
@@ -569,7 +572,7 @@ bool SignalSlotMessageDialog::allArgSatisfiersAreValid()
     //Check signal arg count >= slot arg count, and check signal arg types match slot arg types
     if(m_SignalsCheckbox->isChecked() && m_SlotsCheckbox->isChecked())
     {
-        if((m_ExistingSignalsComboBox->currentIndex() == 0) || (!m_ExistingSignalsComboBox->syntaxIsValid()) || (m_ExistingSlotsComboBox->currentIndex() == 0) || (!m_ExistingSlotsComboBox->syntaxIsValid()))
+        if((m_SignalResultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoFunction) || (!m_ExistingSignalsComboBox->syntaxIsValid()) || (m_SlotResultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoFunction) || (!m_ExistingSlotsComboBox->syntaxIsValid()))
             return false;
         //TODOreq: verify signal/slot arg compatibility, return true if checks out (TODOoptional: highlight in red the slot so they know it's not the arg satisfiers)
         if(m_SignalArgumentsBeingFilledIn.size() < m_SlotArgumentsBeingFilledIn.size())
@@ -604,15 +607,28 @@ bool SignalSlotMessageDialog::allSlotsArgsMatchedUpWithSignalArgsIfSlotEvenCheck
 void SignalSlotMessageDialog::handleSignalCheckboxToggled(bool checked)
 {
     if(!checked)
-        m_SignalToEmit = 0;
+    {
+        m_SignalNameHavingArgsFilledIn.clear();
+        m_SignalArgumentsBeingFilledIn.clear();
+        m_ExistingSignalsComboBox->setEditText("");
+        m_ExistingSignalsComboBox->setCurrentIndex(0);
+        collapseSignalArgFillingIn();
+    }
 }
 void SignalSlotMessageDialog::handleSlotCheckboxToggled(bool checked)
 {
     if(!checked)
-        m_SlotToInvoke = 0;
+    {
+        m_SlotNameHavingArgsFilledIn.clear();
+        m_SlotArgumentsBeingFilledIn.clear();
+        m_ExistingSlotsComboBox->setEditText("");
+        m_ExistingSlotsComboBox->setCurrentIndex(0);
+        collapseSlotArgFillingIn();
+    }
 }
 void SignalSlotMessageDialog::handleSelectedSignalChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType)
 {
+    m_SignalResultType = resultType;
     switch(resultType)
     {
     case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoFunction:
@@ -622,14 +638,17 @@ void SignalSlotMessageDialog::handleSelectedSignalChanged(ComboBoxWithAutoComple
         m_OkButton->setDisabled(true);
     break;
     case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ExistingFunction:
+    {
         collapseSignalArgFillingIn();
-        DesignEqualsImplementationClassSignal *selectedSignal = qvariant_cast<DesignEqualsImplementationClassSignal*>(m_ExistingSignalsComboBox->itemData(newIndex));
+        DesignEqualsImplementationClassSignal *selectedSignal = qvariant_cast<DesignEqualsImplementationClassSignal*>(m_ExistingSignalsComboBox->itemData(m_ExistingSignalsComboBox->currentIndex()));
         m_SignalNameHavingArgsFilledIn = selectedSignal->Name;
-        m_SignalArgumentsBeingFilledIn = selectedSignal->arguments();
+        m_SignalArgumentsBeingFilledIn = selectedSignal->argumentsAsMethodArgumentTypedefList();
         showSignalArgFillingIn();
         tryValidatingDialog();
+    }
     break;
     case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::TypedInFunction:
+    {
         collapseSignalArgFillingIn();
         m_SignalNameHavingArgsFilledIn = m_ExistingSignalsComboBox->parsedFunctionName();
         m_SignalArgumentsBeingFilledIn = m_ExistingSignalsComboBox->parsedFunctionArguments();
@@ -640,11 +659,13 @@ void SignalSlotMessageDialog::handleSelectedSignalChanged(ComboBoxWithAutoComple
         }
         else
             m_OkButton->setDisabled(true);
+    }
     break;
     }
 }
 void SignalSlotMessageDialog::handleSelectedSlotChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType)
 {
+    m_SlotResultType = resultType;
     switch(resultType)
     {
     case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoFunction:
@@ -654,14 +675,17 @@ void SignalSlotMessageDialog::handleSelectedSlotChanged(ComboBoxWithAutoCompleti
         m_OkButton->setDisabled(true);
     break;
     case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ExistingFunction:
+    {
         collapseSlotArgFillingIn();
-        DesignEqualsImplementationClassSlot *selectedSlot = qvariant_cast<DesignEqualsImplementationClassSlot*>(m_ExistingSlotsComboBox->itemData(newIndex));
+        DesignEqualsImplementationClassSlot *selectedSlot = qvariant_cast<DesignEqualsImplementationClassSlot*>(m_ExistingSlotsComboBox->itemData(m_ExistingSlotsComboBox->currentIndex()));
         m_SlotNameHavingArgsFilledIn = selectedSlot->Name;
-        m_SlotArgumentsBeingFilledIn = selectedSlot->arguments();
+        m_SlotArgumentsBeingFilledIn = selectedSlot->argumentsAsMethodArgumentTypedefList();
         showSlotArgFillingIn();
         tryValidatingDialog();
+    }
     break;
     case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::TypedInFunction:
+    {
         collapseSlotArgFillingIn();
         m_SlotNameHavingArgsFilledIn = m_ExistingSlotsComboBox->parsedFunctionName();
         m_SlotArgumentsBeingFilledIn = m_ExistingSlotsComboBox->parsedFunctionArguments();
@@ -672,39 +696,9 @@ void SignalSlotMessageDialog::handleSelectedSlotChanged(ComboBoxWithAutoCompleti
         }
         else
             m_OkButton->setDisabled(true);
+    }
     break;
     }
-}
-void SignalSlotMessageDialog::handleSignalsComboBoxResultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType)
-{
-    if(resultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoResult)
-        collapseSignalArgFillingIn();
-    else if(resultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ExistingResult)
-    {
-        m_SignalToEmit = qvariant_cast<DesignEqualsImplementationClassSignal*>(m_ExistingSignalsComboBox->itemData(newIndex));
-        showSignalArgFillingIn(m_SignalToEmit->Name, m_SignalToEmit->arguments());
-    }
-    else if(resultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NewResult)
-    {
-        if(m_ExistingSignalsComboBox->syntaxIsValid())
-            showSignalArgFillingIn(m_ExistingSignalsComboBox->parsedFunctionName(), m_ExistingSignalsComboBox->parsedFunctionArguments());
-        else
-            collapseSignalArgFillingIn();
-    }
-    tryValidatingDialog();
-}
-void SignalSlotMessageDialog::handleSignalsComboBoxSyntaxIsValidChanged(bool syntaxIsValid)
-{
-    if(!syntaxIsValid)
-        collapseSignalArgFillingIn();
-    else if(m_ExistingSignalsComboBox->resultType() == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NewResult)
-        showSignalArgFillingIn(m_ExistingSignalsComboBox->parsedFunctionName(), m_ExistingSignalsComboBox->parsedFunctionArguments());
-}
-void SignalSlotMessageDialog::handleParsedSignalNameChanged(const QString &parsedSignalName)
-{
-    m_SignalNameHavingArgsFilledIn = parsedSignalName;
-    collapseSignalArgFillingIn(); //TODOoptimization
-    showSignalArgFillingIn();
 }
 //TODOreq: this applies to slots too... but say they type in a second arg after typing the first and "filling in" the first. atm we'd be clearing in their filling in work every time they change ANY aspect of an arg (type, name, num args, etc)... which is stupid ofc... but KISS
 void SignalSlotMessageDialog::tryValidatingDialog()
@@ -731,42 +725,84 @@ void SignalSlotMessageDialog::handleChooseSourceInstanceButtonClicked() //corner
 }
 void SignalSlotMessageDialog::handleOkAndMakeChildOfSignalSenderActionTriggered()
 {
+    if(!askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDeclarationIfAny_then_jitMaybeCreateSignalAndOrSlot_then_setSignalSlotResultPointersAsAppropriate_then_acceptDialog())
+        return; //if they hit "cancel" n the new types dialog, they have to re-request the "make child of sender" thing
+
     //the toolbutton to get here wouldn't be shown if source is actor or if there's no dest
     DesignEqualsImplementationClass *sourceClass = m_SourceSlot_OrZeroIfSourceIsActor->ParentClass;
     HasA_Private_Classes_Member *newHasAmember = sourceClass->createHasA_Private_Classes_Member(m_DestinationSlot_OrZeroIfNoDest->ParentClass);
     m_DestinationClassLifeline_OrZeroIfNoDest->setInstanceInOtherClassIfApplicable(newHasAmember);
-    accept();
+    //accept();
 }
-void SignalSlotMessageDialog::jitMaybeCreateSignalAndOrSlot()
+bool SignalSlotMessageDialog::askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDeclarationIfAny_then_jitMaybeCreateSignalAndOrSlot_then_setSignalSlotResultPointersAsAppropriate_then_acceptDialog()
 {
     //syntax is already known to be valid, otherwise we never would have gotten here because this slot was invoked by the accepted() signal
 
     //if using signal and result type == new, jit create the d=i signal, then set m_SignalToEmit pointer to it. ez pz
 
     //but first, create or mark as defined elsewhere, any new types seen in signal/slot args
+    DesignEqualsImplementationProject *currentProject;
     QList<QString> newSignalOrSlotArgTypesSeen;
-    if(m_SignalsCheckbox->isChecked() && m_ExistingSignalsComboBox->resultType() == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::TypedInFunction && (!m_ExistingSignalsComboBox->newTypesSeenInParsedFunctionDeclaration().isEmpty()))
+    if(m_SignalsCheckbox->isChecked() && m_SignalResultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::TypedInFunction && (!m_ExistingSignalsComboBox->newTypesSeenInParsedFunctionDeclaration().isEmpty()))
     {
+        currentProject = m_SourceClassLifeline_OrZeroIfSourceIsActor->designEqualsImplementationClass()->m_ParentProject;
         newSignalOrSlotArgTypesSeen.append(m_ExistingSignalsComboBox->newTypesSeenInParsedFunctionDeclaration());
     }
-    else if(m_SlotsCheckbox->isChecked() && m_ExistingSlotsComboBox->resultType() == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::TypedInFunction && (!m_ExistingSlotsComboBox->newTypesSeenInParsedFunctionDeclaration().isEmpty()))
+    else if(m_SlotsCheckbox->isChecked() && m_SlotResultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::TypedInFunction && (!m_ExistingSlotsComboBox->newTypesSeenInParsedFunctionDeclaration().isEmpty()))
     {
+        currentProject = m_DestinationClassLifeline_OrZeroIfNoDest->designEqualsImplementationClass()->m_ParentProject;
         newSignalOrSlotArgTypesSeen.append(m_ExistingSlotsComboBox->newTypesSeenInParsedFunctionDeclaration());
     }
     if(!newSignalOrSlotArgTypesSeen.isEmpty())
     {
-        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(newSignalOrSlotArgTypesSeen, currentProject, NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::NotCancellable);
-        newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.exec();
+        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(newSignalOrSlotArgTypesSeen, currentProject, this);
+        if(newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.exec() != QDialog::Accepted)
+        {
+            return false;
+        }
     }
 
-    if(m_SignalsCheckbox->isChecked() && m_ExistingSignalsComboBox->resultType() == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::TypedInFunction)
+    if(m_SignalsCheckbox->isChecked())
     {
-        m_SignalToEmit = m_SourceClassLifeline_OrZeroIfSourceIsActor->designEqualsImplementationClass()->createNewSignal(m_ExistingSignalsComboBox->parsedFunctionName(), m_ExistingSignalsComboBox->parsedFunctionArguments());
+        switch(m_SignalResultType)
+        {
+        case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::TypedInFunction:
+            m_SignalToEmit = m_SourceClassLifeline_OrZeroIfSourceIsActor->designEqualsImplementationClass()->createNewSignal(m_ExistingSignalsComboBox->parsedFunctionName(), m_ExistingSignalsComboBox->parsedFunctionArguments());
+        break;
+        case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ExistingFunction:
+            m_SignalToEmit = qvariant_cast<DesignEqualsImplementationClassSignal*>(m_ExistingSignalsComboBox->itemData(m_ExistingSignalsComboBox->currentIndex()));
+        break;
+        case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoFunction:
+            m_SignalToEmit = 0;
+            qFatal("The signals/slots message dialog was accept()'d with the signal checkbox checked but no signal selected");
+            return false;
+        break;
+        }
     }
+    else
+        m_SignalToEmit = 0;
 
     //do same thing for slot
-    if(m_SlotsCheckbox->isChecked() && m_ExistingSlotsComboBox->resultType() == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::TypedInFunction)
+    if(m_SlotsCheckbox->isChecked())
     {
-        m_SlotToInvoke = m_DestinationClassLifeline_OrZeroIfNoDest->designEqualsImplementationClass()->createwNewSlot(m_ExistingSlotsComboBox->parsedFunctionName(), m_ExistingSlotsComboBox->parsedFunctionArguments());
+        switch(m_SlotResultType)
+        {
+        case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::TypedInFunction:
+            m_SlotToInvoke = m_DestinationClassLifeline_OrZeroIfNoDest->designEqualsImplementationClass()->createwNewSlot(m_ExistingSlotsComboBox->parsedFunctionName(), m_ExistingSlotsComboBox->parsedFunctionArguments());
+        break;
+        case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ExistingFunction:
+            m_SlotToInvoke = qvariant_cast<DesignEqualsImplementationClassSlot*>(m_ExistingSlotsComboBox->itemData(m_ExistingSlotsComboBox->currentIndex()));
+        break;
+        case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoFunction:
+            m_SlotToInvoke = 0;
+            qFatal("The signals/slots message dialog was accept()'d with the slot checkbox checked but no slot selected");
+            return false;
+        break;
+        }
     }
+    else
+        m_SlotToInvoke = 0;
+
+    accept();
+    return true;
 }

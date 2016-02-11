@@ -10,6 +10,10 @@ return qds;
 DesignEqualsImplementationClassMethodArgument::DesignEqualsImplementationClassMethodArgument(QObject *parent)
     : QObject(parent)
 { }
+DesignEqualsImplementationClassMethodArgument::DesignEqualsImplementationClassMethodArgument(const QString &variableName, QObject *parent)
+    : QObject(parent)
+    , IHaveTypeAndVariableNameAndPreferredTextualRepresentation(variableName)
+{ }
 DesignEqualsImplementationClassMethodArgument::~DesignEqualsImplementationClassMethodArgument()
 { }
 QString DesignEqualsImplementationClassMethodArgument::typeString()

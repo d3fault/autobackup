@@ -726,7 +726,7 @@ bool UseCaseGraphicsScene::processMouseReleaseEvent_andReturnWhetherOrNotToKeepT
 
     if(userChosenDestinationSlot_OrZeroIfNone && userChosenSourceSignal_OrZeroIfNone)
     {
-        if(signalSlotMessageCreatorDialog.signalIsExistingSignalFlag())
+        if(signalSlotMessageCreatorDialog.signalIsAlreadyPlacedInUseCaseGraphicsScene())
         {
             //Existing signal statement, new slot
             emit insertExistingSignalNewSlotEventRequested(indexToInsertStatementAt_IntoSource, sourceSlotForStatementInsertion_OrZeroIfSourceIsActor, userChosenSourceSignal_OrZeroIfNone, userChosenDestinationSlot_OrZeroIfNone, signalEmissionOrSlotInvocationContextVariables, sourceClassLifeLine_OrZeroIfSourceIsActor, classLifeLineIndexIntoUseCasesListOfClassLifeLines_OfDestinationSlot, m_SignalSlotConnectionActivationArrowCurrentlyBeingDrawn_OrZeroIfNone->optionalSubInsertIndexForWhenConnectingSlotToExistingSignal_OrNegativeOneIfNotApplicable());  //TODOreq: ensure all are actually valid. TODOoptimization: some of the args are probably not used and can be ommitted. but actually the method called might require them anyways lol so meh

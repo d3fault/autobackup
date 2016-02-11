@@ -141,6 +141,7 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementationchunkofrawcppstatements.h \
     ui/gui/designequalsimplementationchunkofrawcppstatementsgraphicsitemforusecasescene.h
 
+include(../../../GloballySharedClasses/libclangfunctiondeclarationparser.pri)
 include(../../../GloballySharedClasses/comboboxwithautocompletionofexistingsignalsorslotsandautocompletionofargsifnewsignalorslot.pri)
 
 #libclang stuff

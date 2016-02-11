@@ -25,7 +25,7 @@ public:
     DesignEqualsImplementationClassSignal *signalToEmit_OrZeroIfNone() const;
     DesignEqualsImplementationClassSlot *slotToInvoke_OrZeroIfNone() const;
     SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables() const;
-    bool signalIsExistingSignalFlag() const;
+    bool signalIsAlreadyPlacedInUseCaseGraphicsScene() const;
 private:
     //DesignEqualsImplementationClassLifeLineUnitOfExecution *m_UnitOfExecutionContainingSlotToInvoke;
     QVBoxLayout *m_Layout;
@@ -51,13 +51,22 @@ private:
     DesignEqualsImplementationClassLifeLine *m_SourceClassLifeline_OrZeroIfSourceIsActor;
     DesignEqualsImplementationClassLifeLine *m_DestinationClassLifeline_OrZeroIfNoDest;
 
-    bool m_SignalIsExistingSignalFlag;
+    bool m_SignalIsAlreadyPlacedInUseCaseGraphicsScene;
 
-    void showSignalArgFillingIn(const QString &signalName, const QList<MethodArgumentTypedef> &signalArguments);
+    ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType m_SignalResultType;
+    ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType m_SlotResultType;
+
+    QString m_SignalNameHavingArgsFilledIn;
+    QList<FunctionArgumentTypedef> m_SignalArgumentsBeingFilledIn;
+
+    QString m_SlotNameHavingArgsFilledIn;
+    QList<FunctionArgumentTypedef> m_SlotArgumentsBeingFilledIn;
+
+    void showSignalArgFillingIn();
     void collapseSignalArgFillingIn();
 
     void maybeShowSlotArgFillingInUsingAppropriateComboBoxValues();
-    void showSlotArgFillingIn(const QString &slotName, const QList<MethodArgumentTypedef> &slotArguments);
+    void showSlotArgFillingIn();
     void collapseSlotArgFillingIn();
 
     bool allArgSatisfiersAreValid();
@@ -87,7 +96,7 @@ private slots:
     //bool acceptIfNoSignalsSlotsParsingNeeded_Or_AcceptIfSignalsSlotsParsingSucceeds();
     void handleOkAndMakeChildOfSignalSenderActionTriggered();
 
-    void jitMaybeCreateSignalAndOrSlot();
+    bool askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDeclarationIfAny_then_jitMaybeCreateSignalAndOrSlot_then_setSignalSlotResultPointersAsAppropriate_then_acceptDialog();
 };
 
 #endif // SIGNALSLOTMESSAGEDIALOG_H

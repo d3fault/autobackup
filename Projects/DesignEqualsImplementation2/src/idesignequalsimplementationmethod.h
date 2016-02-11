@@ -3,8 +3,11 @@
 
 #include <QString>
 #include <QList>
+#include <QPair>
 
 #include "designequalsimplementationclassmethodargument.h"
+
+typedef QPair<QString /*type*/, QString /*name*/> MethodArgumentTypedef; //derp defined like twenty different places...
 
 class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassMethodArgument;
@@ -26,6 +29,7 @@ public:
     //TODOoptional: private + getter/setter blah
     QString Name;
     QList<DesignEqualsImplementationClassMethodArgument*> arguments();
+    QList<MethodArgumentTypedef> argumentsAsMethodArgumentTypedefList() const;
     DesignEqualsImplementationClass *ParentClass;
 
     QString methodSignatureWithoutReturnType(MethodSignatureFlagsEnum methodSignatureFlagsEnum = MethodSignatureForVisualAppearanceContainsArgumentVariableNames);

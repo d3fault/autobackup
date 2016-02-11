@@ -9,6 +9,7 @@ class DesignEqualsImplementationClassMethodArgument : public QObject, public IHa
     Q_OBJECT
 public:
     explicit DesignEqualsImplementationClassMethodArgument(QObject *parent = 0);
+    explicit DesignEqualsImplementationClassMethodArgument(const QString &variableName, QObject *parent = 0);
     virtual ~DesignEqualsImplementationClassMethodArgument();
 
     virtual QString typeString();
