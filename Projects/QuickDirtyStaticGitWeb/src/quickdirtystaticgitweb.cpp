@@ -22,6 +22,7 @@
 //TODOmb: vanilla index.html files (aka "browse folders"). the one in the root should then be browse.html (since index.html in the root is my "most recent")
 //TODOmb: embed svg
 //TODOoptional: inline the colorized diff on the IndexHtmlFifo (front page 'most recent items') and do it on a per-file basis instead of per-commit/per-changeSET. The reason I didn't at first was because it'd be expensive, but if I rewrite this app to go BACKWARDS from HEAD [until 100 'most recent items' seen), then it wouldn't be that expensive at all. Was also too lazy to fuck around with ansi2html, I'd probably have to fork it but that's doable...
+//TODOreq: word wrap <body> (it applies to all children elements, right?), not just <pre>. My long-filenames are triggering horizontal scrollbars... because the filenames aren't part of the <pre>, only the file contents are
 static int staticTreeWalkingCallback(const char *root, const git_tree_entry *entry, void *userData)
 {
     QuickDirtyStaticGitWeb *quickDirtyStaticGitWeb = static_cast<QuickDirtyStaticGitWeb*>(userData);

@@ -405,7 +405,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     else if(m_SlotsWidget->isEnabled())
         m_ExistingSlotsComboBox->setFocus();
 
-    connect(this, SIGNAL(accepted()), this, SLOT(askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDeclarationIfAny_then_jitMaybeCreateSignalAndOrSlot_then_setSignalSlotResultPointersAsAppropriate_then_acceptDialog()));
+    //connect(this, SIGNAL(accepted()), this, SLOT(askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDeclarationIfAny_then_jitMaybeCreateSignalAndOrSlot_then_setSignalSlotResultPointersAsAppropriate_then_acceptDialog()));
 }
 DesignEqualsImplementationClassSignal *SignalSlotMessageDialog::signalToEmit_OrZeroIfNone() const
 {
@@ -680,6 +680,7 @@ void SignalSlotMessageDialog::handleSelectedSlotChanged(ComboBoxWithAutoCompleti
         DesignEqualsImplementationClassSlot *selectedSlot = qvariant_cast<DesignEqualsImplementationClassSlot*>(m_ExistingSlotsComboBox->itemData(m_ExistingSlotsComboBox->currentIndex()));
         m_SlotNameHavingArgsFilledIn = selectedSlot->Name;
         m_SlotArgumentsBeingFilledIn = selectedSlot->argumentsAsMethodArgumentTypedefList();
+        //m_ExistingSlotsComboBox->setItemData(m_ExistingSlotsComboBox->currentIndex(), QVariant::fromValue(selectedSlot));
         showSlotArgFillingIn();
         tryValidatingDialog();
     }
@@ -791,7 +792,14 @@ bool SignalSlotMessageDialog::askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDe
             m_SlotToInvoke = m_DestinationClassLifeline_OrZeroIfNoDest->designEqualsImplementationClass()->createwNewSlot(m_ExistingSlotsComboBox->parsedFunctionName(), m_ExistingSlotsComboBox->parsedFunctionArguments());
         break;
         case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ExistingFunction:
-            m_SlotToInvoke = qvariant_cast<DesignEqualsImplementationClassSlot*>(m_ExistingSlotsComboBox->itemData(m_ExistingSlotsComboBox->currentIndex()));
+        {
+            int currentIndex = m_ExistingSlotsComboBox->currentIndex();
+            QVariant existingSlot = m_ExistingSlotsComboBox->itemData(currentIndex);
+            if(existingSlot.isValid())
+                m_SlotToInvoke = qvariant_cast<DesignEqualsImplementationClassSlot*>(existingSlot);
+            else
+                qFatal("got an invalid existing slot out of the combo box's itemData");
+        }
         break;
         case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoFunction:
             m_SlotToInvoke = 0;

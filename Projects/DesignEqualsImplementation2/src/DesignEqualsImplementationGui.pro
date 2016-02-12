@@ -10,6 +10,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
 
+#lessThan(QT_MAJOR_VERSION, 5)
+#QMAKE_CXXFLAGS += -std=c++11
+
 #contains(QT_CONFIG, opengl): QT += opengl
 DEFINES += QT_NO_OPENGL #comment this out and uncomment above line for OpenGL
 
