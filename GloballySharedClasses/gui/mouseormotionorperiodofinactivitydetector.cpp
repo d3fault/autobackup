@@ -8,6 +8,7 @@
 #include <QPainter>
 
 //TODOreq: although it would certainly be an optimization to give the motionDetected listeners a copy of the screen grab (it's COW, after all), I don't think this class should be responsible for cutting/slicing/cropping/scaling/etc. That should be the listender's job
+//^Thinking about it more, it kind of does make sense to put the "rectangular cutting" into a lib that all the apps could then bum off of. Does it belong in this class, or it's own class [that then uses this class]? As per C[++] ideology, I should only implement it in this class if it doesn't cost anything when I don't use it. A simple setRectAroundMouseOrMotionToCutOutAndEmit(QRect) would get the job done. mouseMovementDetected would then emit a second arg, a QImage, that could simply be null whenever that setRectAround[...] hasn't been.. err... set. The movementOnScreenDetected signal stays the same, but now the secong arg is the rect image instead of the full desktop grab. Giving them the cut out rect/image does kinda sort defeat the purpose of giving them the mouse/motion coords though... wtf would they need em for? Maybe, though, JUST to keep the code cleaner/simpler and for no other reason, the image "cutting" should be put into it's own class. That's actually a decent reason. MouseOrMotionRectGrabberWithPeriodOfInactivityDetection
 MouseOrMotionOrPeriodOfInactivityDetector::MouseOrMotionOrPeriodOfInactivityDetector(QObject *parent)
     : QObject(parent)
     , m_Screen(QGuiApplication::primaryScreen())

@@ -38,4 +38,12 @@ back to the GUI app: I think maybe I should disable mouse pressing if the width 
 ^OH RIGHT the same applies for the 'use completion' button/character. I guess at the top of the app I should have a legend for those two (and any others I come up with along the way)
 
 
-TODOreq: actually you know what, I think after EVERY key press the keymap needs to be reshuffled. to protect against "ee" and "oo" etc analysis. I might be wrong, but I'm damn sure it's not going to HURT the entropy.
+TO DOnereq: actually you know what, I think after EVERY key press the keymap needs to be reshuffled. to protect against "ee" and "oo" etc analysis. I might be wrong, but I'm damn sure it's not going to HURT the entropy.
+
+TODOreq: if a keymap "page" is uneven, ie there are 'empty' 'buttons' on that page due to it being the last page and there not being enough keys on that page to fill all the 'buttons'... then we should shuffle the 'blank'/empty/disabled/non-mapped buttons into the gridlayout. I think this protects against a tiny as fuck entropy leak that might be substantial after a long period of time, but maybe it doesn't do anything at all xD. Again, at the very least, it wouldn't HURT the entropy.
+
+
+So hmm I'm wondering how this 'keymap page' thing is going to work seeing as I reshuffle on every key. When there's only two pages it is fine to have the 'next page' button simply be a 'NOOP -> reshuffle' key. You might have to press it a few times for the key you're looking for to show up, but it wouldn't be a big deal as long as there aren't very many keymap pages. To support assloads of characters, however, we'd need the "reshuffle" to generate every page, and then the 'next page' button doesn't trigger a reshuffle (and there's a 'next page' button on each page ofc). Only whe you select an ACTUAL key does it reshuffle. "use suggested completion" is considered an actual key ofc, so it triggers a reshuffle. The only one that doesn't is 'next page'.
+
+
+It's cool that a person can watch your keyboard as you type in your password and you're still safe. As long as they can't see your monitor ofc :-P. I envision myself making a tiny ~1ft cube out of foil around my head and the only thing in there with me is the monitor (the comp doesn't need to be in there I don't think, but that will change in the future when x-ray/etc scanners are so precise that they can look at the electricity flowing through a computer and see what it's doing (this also applies to a human brain, fml.jpg)).

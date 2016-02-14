@@ -19,9 +19,9 @@ private:
     QList<QPushButton*> m_Buttons;
     QLineEdit *m_PasswordLineEdit;
 signals:
-    void translateShuffledKeymapEntryRequested(const int &shuffledKeymapEntry);
+    void translateShuffledKeymapEntryRequested(const QString &shuffledKeymapEntry);
 public slots:
-    void useShuffledKeymap(const KeyMap &shuffledKeymap);
+    void presentShuffledKeymapPage(const KeyMap &shuffledKeymapPage);
     void appendTranslatedKeymapEntryToPasswordLineEdit(const KeyMapEntry &translatedKeymapEntry);
 private slots:
     void disableAllButtons();
