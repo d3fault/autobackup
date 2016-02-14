@@ -1,0 +1,24 @@
+To have computer security, you must never let the computer out of your sight. This also goes for the keyboard, mouse, and monitor (and even a USB hub). Any of these mentioned devices could be logging your passwords. Up until a few seconds ago, I didn't know a way to get around the necessity to never let a keyboard/mouse[/usb-hub] out of your sight. Now the only things you must never let out of your sight are a monitor and the computer.
+
+GUI: using a secure rng, scramble the alphabet/numbers/symbols and display them in a window. the user can then alt as many times as needed until key is selected, or click on it with a mouse. since the keys were scrambled, a key logger only gets a bunch of tabs that correlate with an in-memory-only (disable your swap ofc!!!) selection of keys. Once you shutdown and that memory is wiped (assuming the computer itself isn't logging you hue huehuehuehue), those tabs won't make any sense. Mouse logging is similar, but logging x/y coords with every click, that now are useless once that rng seed is lost at shutdown. Subsequent runs/logs also don't help them deduce your pw. So yea the pw goes into a lineedit and you copy/paste it whatever... it could even be a virtual keyboard type app and be typing into some other app (but idk how to do a PORTABLE virtual keyboard :/)
+
+CLI: same idea (you type in keys that are mapped to different/shuffled keys. the map is displayed right above where you type), but I guess instead of a line edit you copy out of, it writes the end result pw to /run/shm/ (so apps could read the pw via: `app --pw=$(cat /run/shm/pwtempfile)`) or something. or we could make the assumption that tmux/etc is running and copy/paste is possible
+
+Optimization: if using a series of dictionary words for your password (like you should be), the word could be guessed/auto-completed/thing, saving you some time and not decreasing security. It would decrease security if you didn't also do the following: a "use suggested completion" button/entry should ALSO be shuffled in there with the regular keys. If it was in a fixed location (or triggered from a fixed key), mouse/key loggers could determine the lengths of your words, or at least get closer to deducing the lengths of your words...
+
+^^^^^ON SECOND THOUGHT, this optimization can't be used since a monitor logger would pick it up xD
+
+
+re: monitor: (well nvm if you never let the pw be shown to screen, which is doable ez)... is the computer itself. Wait no after thinking about it more the monitor does need to be with you for this about-to-be-described technique. Ok in order for the monitor to not need to be with you, there needs to be no visual indication of which keys were selected. So usually when you 'tab' around on GUI buttons they get highlighted and depressed when clicked etc. A GraphicsScene would solve that (just don't allow the tabbing technique I guess: regular typing is fine, so is clicking). And with CLI you need to eat the readch before it ever gets shown to screen. I think that's possible, but I'm unsure. In both cases, you have to be clever/careful about the pw never being shown to screen. running `ps aux` might compromise your security etc, as might an accidental ctrl+v -- TODOreq clearing the clipboard after X seconds like KeyPass does would be a good feature. Hell, in all honesty, this idea makes a good password entry form FOR keypass (but seeing as it'll work with any app, it doesn't need such specific integration (that and I think KeePass is GPL :-/))
+
+
+
+Note: those keyboard and mouse entropy techniques are NOT usable in this app. I'm just gonna rely on boost::random for now but gathering entropy might need a lot of consideration because I think /dev/random on linux uses keyboard/mouse activity for entropy (but also fs/network/etc)
+
+
+TODOreq: also worth noting that you can't require them to press shift when entering keys (mapped to other keys), otherwise that keyboard logger in combination with a monitor logger could greatly deduce/determine your pw. So perhaps this app works best (or at all xD) with passwords that contain ONLY a-z 0-9 ... or other symbols that don't require the shift key (not very many). FML: my ultra long pw requires the shift key xD xD xD xD ffffffff WHAT WAS I THINKING ;op
+
+
+
+
+Fuck wait no there's no way in hell to thwart the need to carry a monitor xD, I am dumb (I keep going back and forth on this): screen caps (monitor logging) + key logging = pw retrieved. So yea I'm back t "need monitor at all times". Good thing I have a 1.8" monitor :-D
