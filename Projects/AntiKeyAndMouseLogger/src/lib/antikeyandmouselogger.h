@@ -16,11 +16,13 @@ class AntiKeyAndMouseLogger : public QObject
     Q_OBJECT
 public:
     explicit AntiKeyAndMouseLogger(QObject *parent = 0);
+    static QList<KeyMapEntry> staticInitNonShuffledKeymap();
+    static int numEntriesOnOneKeymapPage();
     static inline QString keymapEntryToString(const KeyMapEntry &keyMapEntry) { return QKeySequence(keyMapEntry).toString().toLower(); }
 private:
-    void addKeyRangeToListsInclusive(int startKey, int endKey, QList<KeyMapEntry> *firstList, QList<KeyMapEntry> *secondList);
-
     KeyMap m_ShuffledKeymap;
+
+    static QList<KeyMapEntry> m_NonShuffledKeymap;
 signals:
     void shuffledKeymapGenerated(const KeyMap &shuffledKeymap);
     void shuffledKeymapEntryTranslated(const KeyMapEntry &translatedKey);
