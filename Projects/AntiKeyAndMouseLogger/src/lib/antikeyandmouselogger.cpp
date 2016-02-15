@@ -5,9 +5,8 @@ QList<KeyMapEntry> AntiKeyAndMouseLogger::m_NonShuffledKeymap = allTypeableKeysO
 
 #include <QDateTime>
 
-//TODOmb: qwerty? I have width/height restrictions on my 1.8" monitor (160x128), but eh could always scale the font size down anyways
 //TODOreq: if I implement "clear clipboard after 30 seconds", I should make sure that what I'm clearing is [still] there password. We don't want to clear it if it isn't. I wonder if KeePass does this check O_o (could find out right now but fuck it), I should file a bug if not
-//TODOreq: if they keep pressing "next page" so many times that we wrap around to the first page again, we should reshuffle all the pages before showing the first page. Otherwise a keylogger could determine which keys are the 'next page' keys for a given set of pages.... which blah probably tells them NOTHING but eh just to err on the side of caution fuck it
+//TODOreq: my instincts told me not to use 'spacebar' as an 'input' key, because how would I represent it without taking up more than one character (another entry in yee ole' legend?)? But after thinking about it further, space is a perfectly valid 'output' (used in passwords) key and so I have the same problem on both sides. Representing it like this: " " (as in, showing the quotes on the button) is no good because it takes up 3 characters instead of 1 :(, which might leak tiny bits of entropy that add up ove time ;-P. Well making it a legend/special key works but only for the output side of things, aww well I guess it's good enough really
 AntiKeyAndMouseLogger::AntiKeyAndMouseLogger(QObject *parent)
     : QObject(parent)
     , m_CurrentShuffledKeymapPageIndex(0)
@@ -28,11 +27,16 @@ QList<KeyMapEntry> AntiKeyAndMouseLogger::allTypeableKeysOnUsKeyboard()
 {
     QList<KeyMapEntry> ret = m_EntrySelectionKeys;
     ret << "~" << "!" << "@" << "#" << "$" << "%" << "^" << "&" << "*" << "(" << ")" << "_" << "+" << "Q" << "W" << "E" << "R" << "T" << "Y" << "U" << "I" << "O" << "P" << "{" << "}" << "|" << "A" << "S" << "D" << "F" << "G" << "H" << "J" << "K" << "L" << ":" << "\"" << "Z" << "X" << "C" << "V" << "B" << "N" << "M" << "<" << ">" << "?";
+    ret << QtKeyToString(AntiKeyAndMouseLogger_SPACE_BAR_SPECIALSYMBOL); //yes, space bar is pressable without the shift key, but there's no way to represent it without taking up more than one character (or, it'd be too difficult to type some funky unicode (via alt+69420) to represent it. so space is an OUTPUT key only)
     return ret;
 }
 bool AntiKeyAndMouseLogger::isTypeableOnUsKeyboardWithoutNeedingShiftKey(const QString &key)
 {
     return m_EntrySelectionKeys.contains(key);
+}
+bool AntiKeyAndMouseLogger::isTypeableOnUsKeyboard(const QString &key)
+{
+    return m_NonShuffledKeymap.contains(key);
 }
 int AntiKeyAndMouseLogger::numEntriesOnOneKeymapPage()
 {
@@ -93,8 +97,11 @@ void AntiKeyAndMouseLogger::translateShuffledKeymapEntry(const QString &shuffled
                 emit presentShuffledKeymapPageRequested(m_CurrentShuffledKeymapPage);
                 return;
             }
+            QString translatedKeyEntry = currentEntry.second;
+            if(translatedKeyEntry == QtKeyToString(AntiKeyAndMouseLogger_SPACE_BAR_SPECIALSYMBOL))
+                translatedKeyEntry = " ";
 
-            emit shuffledKeymapEntryTranslated(currentEntry.second);
+            emit shuffledKeymapEntryTranslated(translatedKeyEntry);
             generateShuffledKeymapAndRequestPresentationOfFirstPage();
             return;
         }

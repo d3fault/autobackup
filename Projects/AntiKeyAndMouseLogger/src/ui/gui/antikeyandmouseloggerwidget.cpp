@@ -20,7 +20,7 @@ AntiKeyAndMouseLoggerWidget::AntiKeyAndMouseLoggerWidget(QWidget *parent)
 {
     QGridLayout *gridLayout = new QGridLayout();
     int rowOffset = 0;
-    gridLayout->addWidget(new QLabel(tr("Legend: ") + AntiKeyAndMouseLogger::QtKeyToString(AntiKeyAndMouseLogger_NEXT_PAGE_SPECIAL_SYMBOL) + tr(" = Next Page Of Keys")), 0, 0, 1, AntiKeyAndMouseLogger_COLUMNS_PER_ROW, Qt::AlignCenter | Qt::AlignHCenter);
+    gridLayout->addWidget(new QLabel(tr("Legend: ") + AntiKeyAndMouseLogger::QtKeyToString(AntiKeyAndMouseLogger_NEXT_PAGE_SPECIAL_SYMBOL) + tr(" = Next Page Of Keys    ") + AntiKeyAndMouseLogger::QtKeyToString(AntiKeyAndMouseLogger_SPACE_BAR_SPECIALSYMBOL) + tr(" = Space Bar")), 0, 0, 1, AntiKeyAndMouseLogger_COLUMNS_PER_ROW, Qt::AlignCenter | Qt::AlignHCenter);
     ++rowOffset;
     int i = 0;
     for(; i < AntiKeyAndMouseLogger::numEntriesOnOneKeymapPage(); ++i)
@@ -75,6 +75,7 @@ void AntiKeyAndMouseLoggerWidget::presentShuffledKeymapPage(const KeyMap &shuffl
 }
 void AntiKeyAndMouseLoggerWidget::appendTranslatedKeymapEntryToPasswordLineEdit(const KeyMapEntry &translatedKeymapEntry)
 {
+    //TODOmb: insert it where the text cursor is instead of just appending it, since I now give them some write permissions for delete/backspace etc and they can arbitrarily place the text cursor as well
     m_PasswordLineEdit->setText(m_PasswordLineEdit->text() + translatedKeymapEntry);
 }
 void AntiKeyAndMouseLoggerWidget::disableAllButtons()
