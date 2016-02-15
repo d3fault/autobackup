@@ -3,16 +3,13 @@
 QList<KeyMapEntry> AntiKeyAndMouseLogger::m_EntrySelectionKeys = allTypeableOnUsKeyboardWithoutNeedingShiftKey();
 QList<KeyMapEntry> AntiKeyAndMouseLogger::m_NonShuffledKeymap = allTypeableKeysOnUsKeyboard();
 
-#include <QDateTime>
-
 //TODOreq: if I implement "clear clipboard after 30 seconds", I should make sure that what I'm clearing is [still] there password. We don't want to clear it if it isn't. I wonder if KeePass does this check O_o (could find out right now but fuck it), I should file a bug if not
 //TODOreq: my instincts told me not to use 'spacebar' as an 'input' key, because how would I represent it without taking up more than one character (another entry in yee ole' legend?)? But after thinking about it further, space is a perfectly valid 'output' (used in passwords) key and so I have the same problem on both sides. Representing it like this: " " (as in, showing the quotes on the button) is no good because it takes up 3 characters instead of 1 :(, which might leak tiny bits of entropy that add up ove time ;-P. Well making it a legend/special key works but only for the output side of things, aww well I guess it's good enough really
 AntiKeyAndMouseLogger::AntiKeyAndMouseLogger(QObject *parent)
     : QObject(parent)
+    , m_Rng(true) //TODOreq: see notes in initial.idea.txt about not using keyboard/mouse entropy
     , m_CurrentShuffledKeymapPageIndex(0)
-{
-    qsrand(QDateTime::currentMSecsSinceEpoch()); //TODOreq: boost:random or something more secure. see notes in initial.idea.txt about not using keyboard/mouse entropy
-}
+{ }
 QList<KeyMapEntry> AntiKeyAndMouseLogger::allTypeableOnUsKeyboardWithoutNeedingShiftKey()
 {
     QList<KeyMapEntry> ret;
@@ -44,10 +41,8 @@ int AntiKeyAndMouseLogger::numEntriesOnOneKeymapPage()
 }
 void AntiKeyAndMouseLogger::insertSpecialNextPageKeyIntoRandomPositionOnPage(KeyMap *currentPage)
 {
-    int indexOfAnExistingEntryToSwapSpecialLastPageButtonWith = qrand() % currentPage->size();
-    KeymapHashTypes anExistingEntryToSwapSpecialLastPageButtonWith = currentPage->at(indexOfAnExistingEntryToSwapSpecialLastPageButtonWith);
-    currentPage->replace(indexOfAnExistingEntryToSwapSpecialLastPageButtonWith, qMakePair(anExistingEntryToSwapSpecialLastPageButtonWith.first, QtKeyToString(AntiKeyAndMouseLogger_NEXT_PAGE_SPECIAL_SYMBOL)));
-    currentPage->append(qMakePair(m_EntrySelectionKeys.at(currentPage->size()), anExistingEntryToSwapSpecialLastPageButtonWith.second));
+    currentPage->append(qMakePair(m_EntrySelectionKeys.at(currentPage->size()), QtKeyToString(AntiKeyAndMouseLogger_NEXT_PAGE_SPECIAL_SYMBOL)));
+    m_Rng.Shuffle(currentPage->begin(), currentPage->end()); //TODOoptimization: I shuffle every page twice because it's the easiest way to get the 'next page' key into a random spot on the page
 }
 void AntiKeyAndMouseLogger::generateShuffledKeymapAndRequestPresentationOfFirstPage()
 {
@@ -55,10 +50,11 @@ void AntiKeyAndMouseLogger::generateShuffledKeymapAndRequestPresentationOfFirstP
     m_ShuffledKeymapPages.clear(); //TODOmb: on shutdown/destruct/whatever (or just on clear), I should overwrite the memory. LibCrypo ++has SecMem classes maybe I should use? Oh wait no this app assumes your comp is not compromised duh, otherwise all is [already] lost
 
     QList<KeyMapEntry> values = m_NonShuffledKeymap;
+    m_Rng.Shuffle(values.begin(), values.end());
     KeyMap currentPage;
     while(!values.isEmpty())
     {
-        currentPage.append(qMakePair(m_EntrySelectionKeys.at(currentPage.size()), values.takeAt(qrand() % values.size())));
+        currentPage.append(qMakePair(m_EntrySelectionKeys.at(currentPage.size()), values.takeFirst()));
 
         //if there's only one entry slot left on this page, fill it with the special 'next page' button (but we put it in a random spot, swapping it with a different entry)
         if(currentPage.size() == (numEntriesOnOneKeymapPage()-1))

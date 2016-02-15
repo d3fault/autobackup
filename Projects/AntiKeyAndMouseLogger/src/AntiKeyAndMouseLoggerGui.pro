@@ -19,3 +19,5 @@ SOURCES += ui/gui/main.cpp\
     ui/gui/lineeditthatignoreskeypressedevents.cpp
 
 include(antikeyandmouselogger.pri)
+
+LIBS += -lcrypto++

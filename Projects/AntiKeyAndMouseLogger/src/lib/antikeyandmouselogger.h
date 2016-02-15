@@ -6,6 +6,8 @@
 #include <QPair>
 #include <QKeySequence>
 
+#include <crypto++/osrng.h>
+
 typedef QString KeyMapEntry;
 #define KeymapHashTypes QPair<KeyMapEntry /*what they type*/, KeyMapEntry> /*what it translates to*/
 typedef QList<KeymapHashTypes> KeyMap;
@@ -24,6 +26,7 @@ public:
     static int numEntriesOnOneKeymapPage();
     static inline QString QtKeyToString(const int qtKey) { return QKeySequence(qtKey).toString().toLower(); }
 private:
+    CryptoPP::DefaultAutoSeededRNG m_Rng;
     QList<KeyMap> m_ShuffledKeymapPages;
     int m_CurrentShuffledKeymapPageIndex;
     KeyMap m_CurrentShuffledKeymapPage;
@@ -31,9 +34,10 @@ private:
     static QList<KeyMapEntry> m_EntrySelectionKeys;
     static QList<KeyMapEntry> m_NonShuffledKeymap;
 
+    void insertSpecialNextPageKeyIntoRandomPositionOnPage(KeyMap *currentPage);
+
     static QList<KeyMapEntry> allTypeableOnUsKeyboardWithoutNeedingShiftKey();
     static QList<KeyMapEntry> allTypeableKeysOnUsKeyboard();
-    static void insertSpecialNextPageKeyIntoRandomPositionOnPage(KeyMap *currentPage);
 signals:
     void presentShuffledKeymapPageRequested(const KeyMap &shuffledKeymapPage);
     void shuffledKeymapEntryTranslated(const KeyMapEntry &translatedKey);
