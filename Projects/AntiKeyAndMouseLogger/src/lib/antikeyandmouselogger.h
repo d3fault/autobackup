@@ -3,13 +3,15 @@
 
 #include <QObject>
 
-#include <QHash>
+#include <QPair>
 #include <QKeySequence>
 
 typedef QString KeyMapEntry;
 #define KeymapHashTypes QPair<KeyMapEntry /*what they type*/, KeyMapEntry> /*what it translates to*/
 typedef QList<KeymapHashTypes> KeyMap;
 typedef QListIterator<KeymapHashTypes> KeyMapIterator;
+
+#define AntiKeyAndMouseLogger_NEXT_PAGE_SPECIAL_SYMBOL Qt::Key_copyright
 
 class AntiKeyAndMouseLogger : public QObject
 {
@@ -21,10 +23,13 @@ public:
     static int numEntriesOnOneKeymapPage();
     static inline QString QtKeyToString(const int qtKey) { return QKeySequence(qtKey).toString().toLower(); }
 private:
-    KeyMap m_ShuffledKeymap;
+    QList<KeyMap> m_ShuffledKeymapPages;
+    int m_CurrentShuffledKeymapPageIndex;
+    KeyMap m_CurrentShuffledKeymapPage;
 
     static QList<KeyMapEntry> m_EntrySelectionKeys;
     static QList<KeyMapEntry> m_NonShuffledKeymap;
+    static void insertSpecialNextPageKeyIntoRandomPositionOnPage(KeyMap *currentPage);
 signals:
     void presentShuffledKeymapPageRequested(const KeyMap &shuffledKeymapPage);
     void shuffledKeymapEntryTranslated(const KeyMapEntry &translatedKey);

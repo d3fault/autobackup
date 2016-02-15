@@ -2,6 +2,7 @@
 
 #include <QSignalMapper>
 #include <QGridLayout>
+#include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
 
@@ -14,14 +15,18 @@ AntiKeyAndMouseLoggerWidget::AntiKeyAndMouseLoggerWidget(QWidget *parent)
     , m_SignalMapper(new QSignalMapper(this))
 {
     QGridLayout *gridLayout = new QGridLayout();
+    int rowOffset = 0;
+    gridLayout->addWidget(new QLabel(tr("Legend: ") + AntiKeyAndMouseLogger::QtKeyToString(AntiKeyAndMouseLogger_NEXT_PAGE_SPECIAL_SYMBOL) + tr(" = Next Page Of Keys")), 0, 0, 1, AntiKeyAndMouseLogger_COLUMNS_PER_ROW, Qt::AlignCenter | Qt::AlignHCenter);
+    ++rowOffset;
     int i = 0;
     for(; i < AntiKeyAndMouseLogger::numEntriesOnOneKeymapPage(); ++i)
     {
         QPushButton *button = new QPushButton();
         connect(button, SIGNAL(clicked()), m_SignalMapper, SLOT(map()));
-        gridLayout->addWidget(button, i / AntiKeyAndMouseLogger_COLUMNS_PER_ROW, i % AntiKeyAndMouseLogger_COLUMNS_PER_ROW);
+        gridLayout->addWidget(button, (i / AntiKeyAndMouseLogger_COLUMNS_PER_ROW)+rowOffset, i % AntiKeyAndMouseLogger_COLUMNS_PER_ROW);
         m_Buttons << button;
     }
+    ++rowOffset;
     connect(m_SignalMapper, SIGNAL(mapped(QString)), this, SIGNAL(translateShuffledKeymapEntryRequested(QString)));
 
     disableAllButtons();
@@ -30,7 +35,8 @@ AntiKeyAndMouseLoggerWidget::AntiKeyAndMouseLoggerWidget(QWidget *parent)
     m_PasswordLineEdit = new QLineEdit();
     m_PasswordLineEdit->setReadOnly(true);
     m_PasswordLineEdit->setEchoMode(QLineEdit::Password); //TODOreq: a "show password" checkbox. I was tempted to say that turning off echo like this is a waste of time, because if someone can see your monitor then all bets are off. But really asterisking is a LAYER of security that protects against casual onlookers such as your friends, roomates, family, etc... who might be standing nearby. While their eyes might not be fast enough to see your keystrokes, they sure as shit are fast enough to read a line edit's contents. TODOreq: THIS CONFLICTS WITH dictionary 'completion'. So maybe dictionary-completion should be turned off by default and enabled via a checkbox? When using 'dictionary completion' AND asterisk, we should only show 'the rest of the word' being completed (the letters typed so far remain asterisked), to minimize compromise. one thing I haven't thought of yet is "dictionary word boundary" detection. But as long as every word is 'dictionary completed', setting those won't be too difficult. Fuck this noise tho, that optimization is low as fuck priority
-    gridLayout->addWidget(m_PasswordLineEdit, (i / AntiKeyAndMouseLogger_COLUMNS_PER_ROW)+1, 0, 1, AntiKeyAndMouseLogger_COLUMNS_PER_ROW);
+    gridLayout->addWidget(m_PasswordLineEdit, (i / AntiKeyAndMouseLogger_COLUMNS_PER_ROW)+rowOffset, 0, 1, AntiKeyAndMouseLogger_COLUMNS_PER_ROW);
+    ++rowOffset;
 
     setLayout(gridLayout);
 }
