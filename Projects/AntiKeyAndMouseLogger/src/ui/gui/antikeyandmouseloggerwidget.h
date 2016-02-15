@@ -7,17 +7,20 @@
 
 class QSignalMapper;
 class QPushButton;
-class QLineEdit;
+
+class LineEditThatIgnoresKeyPressedEvents;
 
 class AntiKeyAndMouseLoggerWidget : public QWidget
 {
     Q_OBJECT
 public:
     AntiKeyAndMouseLoggerWidget(QWidget *parent = 0);
+protected:
+    virtual void keyPressEvent(QKeyEvent *keyEvent);
 private:
     QSignalMapper *m_SignalMapper;
     QList<QPushButton*> m_Buttons;
-    QLineEdit *m_PasswordLineEdit;
+    LineEditThatIgnoresKeyPressedEvents *m_PasswordLineEdit;
 signals:
     void translateShuffledKeymapEntryRequested(const QString &shuffledKeymapEntry);
 public slots:
@@ -25,6 +28,7 @@ public slots:
     void appendTranslatedKeymapEntryToPasswordLineEdit(const KeyMapEntry &translatedKeymapEntry);
 private slots:
     void disableAllButtons();
+    void handleShowPasswordCheckboxToggled(bool checked);
 };
 
 #endif // ANTIKEYANDMOUSELOGGERWIDGET_H

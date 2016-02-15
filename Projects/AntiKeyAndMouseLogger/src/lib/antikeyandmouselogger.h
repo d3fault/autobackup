@@ -20,6 +20,7 @@ public:
     explicit AntiKeyAndMouseLogger(QObject *parent = 0);
     static QList<KeyMapEntry> allTypeableOnUsKeyboardWithoutNeedingShiftKey();
     static QList<KeyMapEntry> allTypeableKeysOnUsKeyboard();
+    static bool isTypeableOnUsKeyboardWithoutNeedingShiftKey(const QString &key);
     static int numEntriesOnOneKeymapPage();
     static inline QString QtKeyToString(const int qtKey) { return QKeySequence(qtKey).toString().toLower(); }
 private:

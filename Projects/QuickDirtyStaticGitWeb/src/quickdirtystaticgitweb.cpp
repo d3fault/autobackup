@@ -23,6 +23,7 @@
 //TODOmb: embed svg
 //TODOoptional: inline the colorized diff on the IndexHtmlFifo (front page 'most recent items') and do it on a per-file basis instead of per-commit/per-changeSET. The reason I didn't at first was because it'd be expensive, but if I rewrite this app to go BACKWARDS from HEAD [until 100 'most recent items' seen), then it wouldn't be that expensive at all. Was also too lazy to fuck around with ansi2html, I'd probably have to fork it but that's doable...
 //TODOreq: word wrap <body> (it applies to all children elements, right?), not just <pre>. My long-filenames are triggering horizontal scrollbars... because the filenames aren't part of the <pre>, only the file contents are
+//TODOreq: on index.html it should just say in huge words front and center: CHOOSE:\nCode - Mind Dump\nor:\nBoth ... Code -> code.html, Mind Dump -> minddump.html (anything under Documents/, the rest goes to code), Both -> all.html ... this, or something like this, was originally the plan but I got so fed up with this app and I was rushing etc. All 3 of those code/minddump/all are "InfoHtmlFifo" things of course
 static int staticTreeWalkingCallback(const char *root, const git_tree_entry *entry, void *userData)
 {
     QuickDirtyStaticGitWeb *quickDirtyStaticGitWeb = static_cast<QuickDirtyStaticGitWeb*>(userData);

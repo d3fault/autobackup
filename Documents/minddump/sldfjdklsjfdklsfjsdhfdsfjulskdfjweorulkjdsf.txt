@@ -1,0 +1,7 @@
+I'm not a black hat hacker. Not a white or gray hat hacker either. I'm not a redhat hacker, because Debian > Fedora. I know how to wear any of those hats, and under the right circumstances I probably would too. But I'm a propeller hat hacker. I hack for fun, I have no goal. Life is arbitrary, so what you do for fun is and should be too.
+
+
+The other day while taking a bath in the river and stalking up on water, a group of adults on horses came to the river nearby and we made some smalltalk (they said I looked like an indian kek). Bleh anyways it was the first time I used my sled harness to carry water before (aside from a few seconds back at camp to make sure it worked). 2x 2.5 gallon containers, one on each side attached to caribeaners attached to sled harness. It makes it so much easier to carry! I ghetto rigged a rope to some pvc pipe that I carried over my shoulders, but the next day my spine (where the pvc pipe sat) was sore. And yea my scrawny arms are too weak to carry them without taking a bunch of breaks. Blah back to the point: one of the ladies on a horse said to me as I was putting the sled-harness-with-water-containers-attached on: "you need a pack horse", to which I replied: "I am a pack horse". All she said then was "oh".
+
+
+I finally got Qt5 debugging working on this box, it's some obscure/fixed bug in QtCreator (but I'm running an old patched version). Well I got it running the night I fixed the d=i infinite loop pretty recently. I used the "attach to running process" functionality. Eh good enough.

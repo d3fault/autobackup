@@ -30,6 +30,10 @@ QList<KeyMapEntry> AntiKeyAndMouseLogger::allTypeableKeysOnUsKeyboard()
     ret << "~" << "!" << "@" << "#" << "$" << "%" << "^" << "&" << "*" << "(" << ")" << "_" << "+" << "Q" << "W" << "E" << "R" << "T" << "Y" << "U" << "I" << "O" << "P" << "{" << "}" << "|" << "A" << "S" << "D" << "F" << "G" << "H" << "J" << "K" << "L" << ":" << "\"" << "Z" << "X" << "C" << "V" << "B" << "N" << "M" << "<" << ">" << "?";
     return ret;
 }
+bool AntiKeyAndMouseLogger::isTypeableOnUsKeyboardWithoutNeedingShiftKey(const QString &key)
+{
+    return m_EntrySelectionKeys.contains(key);
+}
 int AntiKeyAndMouseLogger::numEntriesOnOneKeymapPage()
 {
     return m_EntrySelectionKeys.size(); //soon this would be size/2 (for "non-shift" and "shift" pages), but ultimately it could be arbitrary/run-time-specifiable-depending-on-screen-size-etc and this app could cover much more (all?) of the unicode keymap
@@ -95,5 +99,5 @@ void AntiKeyAndMouseLogger::translateShuffledKeymapEntry(const QString &shuffled
             return;
         }
     }
-    //TODOmb: error checking? if the frontend gives us a key not in the map, we'd become unusable because of a lack of a signal response here
+    //TO DOnereq: error checking. if the frontend gives us a key not in the map, we'd become unusable because of a lack of a signal response here. this isn't likely when the mouse is used to click buttons, but when the keyboard is used it can happen easily and under normal circumstances: ex alt+10 (maximize), alt+f4 (close). both of those make the GUI blank and the app no longer functional
 }
