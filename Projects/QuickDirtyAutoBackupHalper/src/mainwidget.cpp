@@ -239,7 +239,6 @@ void mainWidget::setupGui()
 
     this->setLayout(m_Layout);
 
-    m_CommitMessageLineEdit->setFocus();
     connect(m_CommitMessageLineEdit, SIGNAL(returnPressed()), m_CommitAfterMountingIfNeededButton, SLOT(click()));
 }
 void mainWidget::enableDisableMountDismountButtonsAndRowLineEditChangeability(bool mounted)
@@ -307,6 +306,7 @@ void mainWidget::handleSettingsReadAndDevicesProbed(bool allMountedTrueOrAllDism
     if(!m_BrokenOverride)
     {
         this->setEnabled(true);
+        m_CommitMessageLineEdit->setFocus();
 
         handleD("probed settings received from business");
         if(deviceAndPasswordPathsFromSettingsRegardlessOfMountStatus->size() == 0)

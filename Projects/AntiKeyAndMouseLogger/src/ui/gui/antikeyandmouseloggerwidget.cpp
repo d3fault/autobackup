@@ -15,7 +15,6 @@
 //TODOoptional: where/what the fuck is my grid layout with a dynamic columns per row depending on the space available and column size, dynamically changing when the space available and column sizes do too
 //TODOreq: a complete yet short description in a help dialog on how to use this program (ie, how to have computer security. the dos and donts)
 //TODOreq: onKeyPressed/Released, 'click' corresponding button
-#define AntiKeyAndMouseLogger_COLUMNS_PER_ROW 6
 AntiKeyAndMouseLoggerWidget::AntiKeyAndMouseLoggerWidget(QWidget *parent)
     : QWidget(parent)
     , m_SignalMapper(new QSignalMapper(this))

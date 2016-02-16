@@ -13,6 +13,7 @@ typedef QString KeyMapEntry;
 typedef QList<KeymapHashTypes> KeyMap;
 typedef QListIterator<KeymapHashTypes> KeyMapIterator;
 
+#define AntiKeyAndMouseLogger_COLUMNS_PER_ROW 6
 #define AntiKeyAndMouseLogger_NEXT_PAGE_SPECIAL_SYMBOL Qt::Key_copyright
 #define AntiKeyAndMouseLogger_SPACE_BAR_SPECIALSYMBOL Qt::Key_registered
 
