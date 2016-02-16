@@ -64,7 +64,6 @@ bool MouseOrMotionOrPeriodOfInactivityDetector::newScreenGrabMatchesOldScreenGra
     QImage mutableNewScreenGrab = newScreenGrab;
 
     //scan left to right bottom to top
-    bool firstMotionDetected = false; //TODOreq: use a better variable that let's me filter out N shapes/pictures, not just one
     static const int m_BottomPixelRowsToIgnore = 16; //TODOreq: user specifiable, default to zero. a better way would be a list of "exclude regions", or conversely: "include regions", or both ;oP
     for(int y = ((mutableNewScreenGrab.height()-1)-m_BottomPixelRowsToIgnore); y > -1; --y)
     {
@@ -74,13 +73,6 @@ bool MouseOrMotionOrPeriodOfInactivityDetector::newScreenGrabMatchesOldScreenGra
         {
             if(*currentPixelOfNewScreenGrab != *currentPixelOfOldScreenGrab)
             {
-                if(firstMotionDetected)
-                {
-                    m_PointOnScreenWhereMotionWasDetected.setX(x);
-                    m_PointOnScreenWhereMotionWasDetected.setY(y);
-                    return false;
-                }
-                firstMotionDetected = true;
                 //draw cursor on top of this first motion (make sure there is space above and to the right of it, don't go out of bounds (if it would have been out of bounds, the motion is valid)).... then continue onto finding motion. when a second motion is detected, we know it is NOT the cursor. if no more motion is seen, it was only the cursor
                 if(!thereIsEnoughRoomToDrawQtCreatorBlinkingCursorInOrderToExcludeItFromFutureSearching(y, x, mutableNewScreenGrab.width()))
                 {
@@ -89,7 +81,53 @@ bool MouseOrMotionOrPeriodOfInactivityDetector::newScreenGrabMatchesOldScreenGra
                     m_PointOnScreenWhereMotionWasDetected.setY(y);
                     return false;
                 }
-                //draw qt blinking cursor and keep checking for motion
+
+                //TODOreq: my 'draw cursor over both images and continue' technique to detect the blinking cursor is shit. Say, for example, you type in a colon (:). If you draw a blinking cursor over the colon on both images like this, you will have erronesously excluded that colon from being considered 'motion'. I should instead cut out a rectangle the size of the cursor from each image, then compare/ensure that they are _NOT_ matching at EVERY PIXEL THEREIN. If that's the case, only then do I exclude it from being considered motion. But yea when you do detect an excluded cursor, you should then exclude those pixels from being checked later on (because otherwise we'd do the check again, and this time it would fail because we'd start 1 pixel 'higher' (assuming a 1 pixel wide cursor (which it isn't, but for the sake of explaining let's say it is))) -- One way to exclude the pixel rects from future checks is to draw the blinking cursor in like we were doing before (we just can't do that as our means of CHECKING)
+                //^We don't necessariy have to 'cut out' the rectangle around the blinking cursor, but in our minds we do ;-P
+                //^^One of the two rects, either old or new, must match pixel for pixel (including color, unless it's a 'shape' exclusion), the blinking cursor image!!! TODOreq
+                //^^^Transparency 'exclude as motion' 'pictures' is a bitch, but possible: just ignore the transparent pixels kek: ie, every non-transparent pixel must NOT match between new and old for every [non-transparent] pixel therein. Fuck transparency atm tho it hurts my brain.
+
+                //scan the blinking cursor 'exclude' image left to right bottom to top, just like with the images (the pixel we are looking at would then be the bottom-left pixel if it is the blinking cursor)
+                bool oldScreenGrabHasQtCreatorCursorOnit = true;
+                bool newScreenGrabHasQtCreatorCursorOnit = true;
+                for(int y2 = (m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.height()-1); y2 > -1; --y2)
+                {
+                    QRgb *currentPixelOfBlinkingCursor = (QRgb*)(m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.scanLine(y2));
+                    for(int x2 = 0; x2 < m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.width(); ++x2)
+                    {
+                        QRgb currentPixelOfMaybeBlinkingCursorNewScreenGrab = mutableNewScreenGrab.pixel(x+x2, y-y2);
+                        QRgb currentPixelOfMaybeBlinkingCursorOldScreenGrab = m_OldScreenGrab.pixel(x+x2, y-y2);
+
+                        //compare new to old, ensure they DON'T match (see huge comment above)
+                        if(currentPixelOfMaybeBlinkingCursorNewScreenGrab == currentPixelOfMaybeBlinkingCursorOldScreenGrab)
+                        {
+                            //them matching at any given pixel within the qt creator cursor rect means that x,y is a point of motion (ie, not a blinking qt cursor to be excluded)
+                            m_PointOnScreenWhereMotionWasDetected.setX(x);
+                            m_PointOnScreenWhereMotionWasDetected.setY(y);
+                            return false;
+                        }
+
+                        //compare new to cursor (unless we already determined it doesn't match)
+                        if(newScreenGrabHasQtCreatorCursorOnit && currentPixelOfMaybeBlinkingCursorNewScreenGrab != *currentPixelOfBlinkingCursor)
+                            newScreenGrabHasQtCreatorCursorOnit = false;
+
+                        //compare old to cursor (unless we already determined it doesn't match)
+                        if(oldScreenGrabHasQtCreatorCursorOnit && currentPixelOfMaybeBlinkingCursorOldScreenGrab != *currentPixelOfBlinkingCursor)
+                            oldScreenGrabHasQtCreatorCursorOnit = false;
+
+                        if((!newScreenGrabHasQtCreatorCursorOnit) && (!oldScreenGrabHasQtCreatorCursorOnit))
+                        {
+                            //if neither screen grabs have the full blinking cursor on them, then we know the original point (x,y) was motion
+                            m_PointOnScreenWhereMotionWasDetected.setX(x);
+                            m_PointOnScreenWhereMotionWasDetected.setY(y);
+                            return false;
+                        }
+
+                        ++currentPixelOfBlinkingCursor;
+                    }
+                }
+                //if we get here, then we have determined that the motion was the blinking qt creator cursor that we want to exclude. since it's not just the current pixel we're on (x,y), we need to make sure that the rest of the blinking cursor's pixels don't also trigger non-matches. one way to do that is to draw the qt blinking cursor on both images (or just the one without it, but eh I'm lazy TODOoptimization)
+                //draw qt blinking cursor and keep checking for other motion
                 QPainter qtCreatorBlinkingCursorCurrentImagePainter(&mutableNewScreenGrab);
                 qtCreatorBlinkingCursorCurrentImagePainter.drawImage(x, (y-m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.height())+1, m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks); //TODOoptional: the +1 accounts for an off by one, which may also be present in thereIsEnoughRoomToDrawQtCreatorBlinkingCursorInOrderToExcludeItFromFutureSearching
                 QPainter qtCreatorBlinkingCursorPreviousImagePainter(&m_OldScreenGrab);
@@ -116,7 +154,7 @@ bool MouseOrMotionOrPeriodOfInactivityDetector::thereIsEnoughRoomToDrawQtCreator
 //TODOmb: mouse poll rate independent of motion poll rate? since polling for mouse movements is cheap af by comparison. it would also make sense then to let the client specify a 'min time before emitting X-detected signals', because most likely they're going to be doing a screen grab (expensive), and those are NOT cheap. but then again since mouse uses it's own signal anyways, mayb that 'min time...' param isn't necessary (but still could be helpful so idfk)
 void MouseOrMotionOrPeriodOfInactivityDetector::startDetectingMouseOrMotionOrPeriodsOfInactivity(int pollRateMSec, int amountOfTimeMSecWithNoMouseOrMotionActivityToBeConsideredAPeriodOfInactivity)
 {
-    m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks = QImage(2, 13, QImage::Format_RGB32);
+    m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks = QImage(2, 13, QImage::Format_RGB32); //TODOreq: use a better variable that let's me filter out N shapes/pictures, not just one
     m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.fill(Qt::black);
 
     QTimer *pollTimer = new QTimer(this);
