@@ -7,6 +7,8 @@
 #include <QKeyEvent>
 #include <QHBoxLayout>
 #include <QCheckBox>
+#include <QApplication>
+#include <QClipboard>
 
 #include "lineeditthatignoreskeypressedevents.h"
 
@@ -44,11 +46,17 @@ AntiKeyAndMouseLoggerWidget::AntiKeyAndMouseLoggerWidget(QWidget *parent)
     m_PasswordLineEdit = new LineEditThatIgnoresKeyPressedEvents();
     m_PasswordLineEdit->setEchoMode(QLineEdit::Password); //TODOreq: a "show password" checkbox. I was tempted to say that turning off echo like this is a waste of time, because if someone can see your monitor then all bets are off. But really asterisking is a LAYER of security that protects against casual onlookers such as your friends, roomates, family, etc... who might be standing nearby. While their eyes might not be fast enough to see your keystrokes, they sure as shit are fast enough to read a line edit's contents. TODOreq: THIS CONFLICTS WITH dictionary 'completion'. So maybe dictionary-completion should be turned off by default and enabled via a checkbox? When using 'dictionary completion' AND asterisk, we should only show 'the rest of the word' being completed (the letters typed so far remain asterisked), to minimize compromise. one thing I haven't thought of yet is "dictionary word boundary" detection. But as long as every word is 'dictionary completed', setting those won't be too difficult. Fuck this noise tho, that optimization is low as fuck priority
     passwordRow->addWidget(m_PasswordLineEdit, 1);
+    QPushButton *clearButton = new QPushButton(tr("Clear"));
+    connect(clearButton, SIGNAL(clicked()), m_PasswordLineEdit, SLOT(clear()));
+    passwordRow->addWidget(clearButton);
+    QPushButton *copyToClipboardButton = new QPushButton(tr("Copy to Clipboard"));
+    connect(copyToClipboardButton, SIGNAL(clicked()), this, SLOT(handleCopyToClipboardButtonClicked()));
+    passwordRow->addWidget(copyToClipboardButton);
     gridLayout->addWidget(passwordRowWidget, (i / AntiKeyAndMouseLogger_COLUMNS_PER_ROW)+rowOffset, 0, 1, AntiKeyAndMouseLogger_COLUMNS_PER_ROW);
     ++rowOffset;
 
     setLayout(gridLayout);
-    showPasswordCheckbox->setFocus();
+    m_PasswordLineEdit->setFocus();
 }
 void AntiKeyAndMouseLoggerWidget::keyPressEvent(QKeyEvent *keyEvent)
 {
@@ -90,4 +98,9 @@ void AntiKeyAndMouseLoggerWidget::disableAllButtons()
 void AntiKeyAndMouseLoggerWidget::handleShowPasswordCheckboxToggled(bool checked)
 {
     m_PasswordLineEdit->setEchoMode(checked ? QLineEdit::Normal : QLineEdit::Password);
+}
+void AntiKeyAndMouseLoggerWidget::handleCopyToClipboardButtonClicked()
+{
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(m_PasswordLineEdit->text());
 }

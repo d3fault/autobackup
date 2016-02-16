@@ -42,7 +42,7 @@ int AntiKeyAndMouseLogger::numEntriesOnOneKeymapPage()
 void AntiKeyAndMouseLogger::insertSpecialNextPageKeyIntoRandomPositionOnPage(KeyMap *currentPage)
 {
     currentPage->append(qMakePair(m_EntrySelectionKeys.at(currentPage->size()), QtKeyToString(AntiKeyAndMouseLogger_NEXT_PAGE_SPECIAL_SYMBOL)));
-    m_Rng.Shuffle(currentPage->begin(), currentPage->end()); //TODOoptimization: I shuffle every page twice because it's the easiest way to get the 'next page' key into a random spot on the page
+    m_Rng.Shuffle(currentPage->begin(), currentPage->end()); //TODOreq: although this does sufficiently insert the 'next page symbol' into the current page at a random spot, it also has the unintended side effect of shuffling my 'entry selection keys' as well (so I no longer have WASDF ordering (err qwerty that is ;-P)) //TODOoptimization: I shuffle every page twice because it's the easiest way to get the 'next page' key into a random spot on the page
 }
 void AntiKeyAndMouseLogger::generateShuffledKeymapAndRequestPresentationOfFirstPage()
 {

@@ -29,6 +29,7 @@ public slots:
 private slots:
     void disableAllButtons();
     void handleShowPasswordCheckboxToggled(bool checked);
+    void handleCopyToClipboardButtonClicked();
 };
 
 #endif // ANTIKEYANDMOUSELOGGERWIDGET_H
