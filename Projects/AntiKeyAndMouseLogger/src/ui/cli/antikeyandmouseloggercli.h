@@ -7,8 +7,6 @@
 
 #include "antikeyandmouselogger.h"
 
-class StandardInputNotifier;
-
 class AntiKeyAndMouseLoggerCli : public QObject
 {
     Q_OBJECT
@@ -18,14 +16,13 @@ public:
 private:
     QString m_Password;
     QTextStream m_StdOut;
-    StandardInputNotifier *m_StdIn;
 
-    void setStdInEchoEnabled(bool enabled);
+    void set_GetCh_Hackery(bool enable_GetCh_Hackery);
+    char myGetCh();
 signals:
     void translateShuffledKeymapEntryRequested(const QString &shuffledKeymapEntry);
 private slots:
     void presentShuffledKeymapPage(const KeyMap &shuffledKeymapPage);
-    void handleStandardInputReceivedLine(const QString &line);
     void handleShuffledKeymapEntryTranslated(const KeyMapEntry &translatedKeymapEntry);
 };
 
