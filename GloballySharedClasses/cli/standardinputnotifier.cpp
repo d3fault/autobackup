@@ -11,9 +11,25 @@ StandardInputNotifier::StandardInputNotifier(int msecTimeoutForPollingStandardIn
 {
     constructor(msecTimeoutForPollingStandardInput_WINDOWS_ONLY);
 }
+char StandardInputNotifier::getch()
+{
+    //NOTE: this method should only be used after calling setDontWaitForEnterToBePressedAndEmitEveryCharacterIndividually(true);
+    char buf;
+    if(read(STDIN_FILENO, &buf, 1) < 1)
+        qFatal("Read less than 1 bytes");
+    return buf;
+}
 StandardInputNotifier::~StandardInputNotifier()
 {
     delete m_StandardInputTextStream;
+}
+void StandardInputNotifier::populateOriginalAndCurrentTtyIfNeeded()
+{
+    if(!m_OriginalTty.isNull())
+        return;
+    m_OriginalTty.reset(new termios());
+    tcgetattr(STDIN_FILENO, m_OriginalTty.data());
+    m_CurrentTty = *(m_OriginalTty.data());
 }
 void StandardInputNotifier::constructor(int msecTimeoutForPollingStandardInput_WINDOWS_ONLY)
 {
@@ -32,6 +48,67 @@ void StandardInputNotifier::constructor(int msecTimeoutForPollingStandardInput_W
 void StandardInputNotifier::setNotifyOnEmptyInput(bool notifyOnEmptyInput)
 {
     m_NotifyOnEmptyInput = notifyOnEmptyInput;
+}
+void StandardInputNotifier::setEchoStandardInput(bool echoStandardInput)
+{
+    populateOriginalAndCurrentTtyIfNeeded();
+    if(echoStandardInput)
+        m_CurrentTty.c_lflag |= ECHO;
+    else
+        m_CurrentTty.c_lflag &= ~ECHO;
+    (void)tcsetattr(STDIN_FILENO, TCSANOW, &m_CurrentTty);
+
+#if 0 //TODOreq
+#ifdef Q_OS_WIN32
+    HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+    DWORD mode;
+    GetConsoleMode(hStdin, &mode);
+
+    if(!enabled)
+        mode &= ~ENABLE_ECHO_INPUT;
+    else
+        mode |= ENABLE_ECHO_INPUT;
+
+    SetConsoleMode(hStdin, mode);
+
+#else
+    struct termios tty;
+    tcgetattr(STDIN_FILENO, &tty);
+
+    if(!enabled)
+    {
+        tty.c_lflag &= ~ECHO;
+        tty.c_lflag &= ~ICANON;
+        tty.c_cc[VMIN] = 1;
+        tty.c_cc[VTIME] = 0;
+    }
+    else
+    {
+        tty.c_lflag |= ECHO;
+        tty.c_lflag |= ICANON;
+    }
+
+    (void)tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+#endif
+#endif
+}
+void StandardInputNotifier::setDontWaitForEnterToBePressedAndEmitEveryCharacterIndividually(bool dontWaitForEnterToBePressedAndEmitEveryCharacterIndividually)
+{
+    //note, although this method does set up the terminal, you no longer listen to standardInputReceivedLine and instead call the blocking getch method
+    populateOriginalAndCurrentTtyIfNeeded();
+    if(dontWaitForEnterToBePressedAndEmitEveryCharacterIndividually)
+    {
+        disconnect(m_StandardInputSocketNotifierWootEventDriven, SIGNAL(activated(int)));
+        m_CurrentTty.c_lflag &= ~ICANON;
+        m_CurrentTty.c_cc[VMIN] = 1;
+        m_CurrentTty.c_cc[VTIME] = 0;
+    }
+    else
+    {
+        connect(m_StandardInputSocketNotifierWootEventDriven, SIGNAL(activated(int)), this, SLOT(readStandardInAndEmitSignalIfNotEmpty()));
+        m_CurrentTty.c_lflag |= ICANON;
+    }
+    (void)tcsetattr(STDIN_FILENO, TCSANOW, &m_CurrentTty);
 }
 void StandardInputNotifier::readStandardInAndEmitSignalIfNotEmpty()
 {

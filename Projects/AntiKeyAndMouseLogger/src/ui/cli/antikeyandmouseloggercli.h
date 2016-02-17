@@ -7,6 +7,8 @@
 
 #include "antikeyandmouselogger.h"
 
+class StandardInputNotifier;
+
 class AntiKeyAndMouseLoggerCli : public QObject
 {
     Q_OBJECT
@@ -16,6 +18,7 @@ public:
 private:
     QString m_Password;
     QTextStream m_StdOut;
+    StandardInputNotifier *m_StdIn;
 
     void setStdInEchoEnabled(bool enabled);
 signals:
