@@ -1,5 +1,5 @@
 Documents/:1435732687
-Documents/Qt/:1363796688
+Documents/Qt/:1455821785
 Documents/Qt/interoperable-diagrams/:1341534418
 Documents/Qt/interoperable-diagrams/current.noninteroperable.design.png:1341534383
 Documents/Qt/interoperable-diagrams/current.noninteroperable.design.svg:1341531095
@@ -12,6 +12,7 @@ Documents/Qt/interoperable-diagrams/qt.quick.only.svg:1341529800
 Documents/Qt/Qt.Fork.Declaration.Haha.I.Should.Do.This.In.Like.A.Week.txt:1340125143
 Documents/Qt/dat.bootstrap.omgrofl.aldfjadslkfjlksd.txt:1350945091
 Documents/Qt/dear.nokia.gtfo.txt:1341373118
+Documents/Qt/qt.in.a.nutshell.sldfjdlsfjlsdkjf.txt:1455821785
 Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.frontend.backend.divide...with.respect.to.the.usercode.sorry.for.using.frontend.backend.words.twice.and.differently.txt:1363796688
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
@@ -2819,13 +2820,13 @@ GloballySharedClasses/filesystem/githelper.cpp:1384759637
 GloballySharedClasses/filesystem/githelper.h:1384584954
 GloballySharedClasses/filesystem/lastmodifiedtimestamp.cpp:1401628130
 GloballySharedClasses/filesystem/lastmodifiedtimestamp.h:1398554554
-GloballySharedClasses/gui/:1455768955
+GloballySharedClasses/gui/:1455828524
 GloballySharedClasses/gui/labellineeditbrowsebutton.cpp:1409509734
 GloballySharedClasses/gui/labellineeditbrowsebutton.h:1409508309
-GloballySharedClasses/gui/mouseormotionorperiodofinactivitydetector.cpp:1455753749
-GloballySharedClasses/gui/mouseormotionorperiodofinactivitydetector.h:1455407482
-GloballySharedClasses/gui/mouseormotionrectgrabberwithperiodofinactivitydetection.cpp:1455768880
-GloballySharedClasses/gui/mouseormotionrectgrabberwithperiodofinactivitydetection.h:1455768955
+GloballySharedClasses/gui/mouseormotionorperiodofinactivitydetector.cpp:1455824125
+GloballySharedClasses/gui/mouseormotionorperiodofinactivitydetector.h:1455823856
+GloballySharedClasses/gui/mouseormotionrectgrabberwithperiodofinactivitydetection.cpp:1455828524
+GloballySharedClasses/gui/mouseormotionrectgrabberwithperiodofinactivitydetection.h:1455828412
 GloballySharedClasses/image/:1394443296
 GloballySharedClasses/image/nonanimatedimagheaderchecker.h:1394443296
 GloballySharedClasses/libclang/:1455152003
@@ -4443,7 +4444,7 @@ Projects/Prototypes/MouseOrMotionOrPeriodOfInactivityDetector/src/main.cpp:14557
 Projects/Prototypes/MouseOrMotionOrPeriodOfInactivityDetector/src/mouseormotionorperiodofinactivitydetectordebugoutput.cpp:1455407018
 Projects/Prototypes/MouseOrMotionOrPeriodOfInactivityDetector/src/mouseormotionorperiodofinactivitydetectordebugoutput.h:1455406793
 Projects/Prototypes/MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionGui/:1455768705
-Projects/Prototypes/MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionGui/src/:1455771124
+Projects/Prototypes/MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionGui/src/:1455828701
 Projects/Prototypes/MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionGui/src/MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionGui.pro:1455769428
 Projects/Prototypes/MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionGui/src/main.cpp:1455770014
 Projects/Prototypes/MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionGui/src/mouseormotionrectgrabberwithperiodofinactivitydetectiongui.cpp:1455770911

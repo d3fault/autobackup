@@ -6,6 +6,7 @@
 #include <QSize>
 #include <QPoint>
 #include <QImage>
+#include <QVariant>
 
 class QScreen;
 
@@ -22,6 +23,9 @@ private:
     QPoint m_PointOnScreenWhereMotionWasDetected;
     QImage m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks;
 
+    QVariant::Type m_RequestedScreenGrabImageTypeWhenMotionOnScreenDetected;
+    QVariant m_ScreenGrabToEmitWhenMotionOnScreenDetected;
+
     bool mouseMovedSinceLastPoll();
     bool thereWasMotionOnScreenSinceLastPoll();
     bool thereHasBeenAperiodOfInactivity() const;
@@ -29,10 +33,10 @@ private:
     bool thereIsEnoughRoomToDrawQtCreatorBlinkingCursorInOrderToExcludeItFromFutureSearching(int verticalPositionOfMotionPoint, int horizontalPositionOfMotionPoint, int imageWidth) const;
 signals:
     void mouseMovementDetected(const QPoint &newMousePos);
-    void motionOnScreenDetected(const QPoint &pointOnScreenWhereMotionWasDetected, const QImage &screenGrabImage);
+    void motionOnScreenDetected(const QPoint &pointOnScreenWhereMotionWasDetected, const QVariant &screenGrabImage);
     void periodOfInactivityDetected();
 public slots:
-    void startDetectingMouseOrMotionOrPeriodsOfInactivity(int pollRateMSec = 100, int amountOfTimeMSecWithNoMouseOrMotionActivityToBeConsideredAPeriodOfInactivity = 2000);
+    void startDetectingMouseOrMotionOrPeriodsOfInactivity(int pollRateMSec = 100, int amountOfTimeMSecWithNoMouseOrMotionActivityToBeConsideredAPeriodOfInactivity = 2000, const QVariant::Type &requestedImageTypeWhenMotionOnScreen = QVariant::Pixmap);
 private slots:
     void handlePollTimerTimedOut();
 };

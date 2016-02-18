@@ -38,6 +38,22 @@ bool MouseOrMotionOrPeriodOfInactivityDetector::thereWasMotionOnScreenSinceLastP
     if(!newScreenGrabMatchesOldScreenGrab_andBtwNoteThePointWhereTheyDontMatchPlox(newScreenGrab))
     {
         m_OldScreenGrab = newScreenGrab;
+        switch(m_RequestedScreenGrabImageTypeWhenMotionOnScreenDetected)
+        {
+        case QVariant::Pixmap:
+            m_ScreenGrabToEmitWhenMotionOnScreenDetected = QVariant::fromValue(newScreenGrabPixmap);
+        break;
+        case QVariant::Image:
+            m_ScreenGrabToEmitWhenMotionOnScreenDetected = QVariant::fromValue(newScreenGrab);
+        break;
+        default:
+        {
+            m_ScreenGrabToEmitWhenMotionOnScreenDetected = QVariant::fromValue(m_OldScreenGrab);
+            if((!m_ScreenGrabToEmitWhenMotionOnScreenDetected.canConvert(m_RequestedScreenGrabImageTypeWhenMotionOnScreenDetected)) || (!m_ScreenGrabToEmitWhenMotionOnScreenDetected.convert(m_RequestedScreenGrabImageTypeWhenMotionOnScreenDetected)))
+                m_ScreenGrabToEmitWhenMotionOnScreenDetected = QVariant(QVariant::Invalid);
+        }
+        break;
+        }
         return true;
     }
     return false;
@@ -130,7 +146,7 @@ bool MouseOrMotionOrPeriodOfInactivityDetector::newScreenGrabMatchesOldScreenGra
                 //draw qt blinking cursor and keep checking for other motion
                 QPainter qtCreatorBlinkingCursorCurrentImagePainter(&mutableNewScreenGrab);
                 qtCreatorBlinkingCursorCurrentImagePainter.drawImage(x, (y-m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.height())+1, m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks); //TODOoptional: the +1 accounts for an off by one, which may also be present in thereIsEnoughRoomToDrawQtCreatorBlinkingCursorInOrderToExcludeItFromFutureSearching
-                QPainter qtCreatorBlinkingCursorPreviousImagePainter(&m_OldScreenGrab);
+                QPainter qtCreatorBlinkingCursorPreviousImagePainter(&m_OldScreenGrab); //TODOreq: we don't want to mutate this because it's what we emit!!! Or hmm maybe it doesn't matter because we only draw on it filtered out pictures/shapes? I guess it WOULD matter if there was 'picture/shape' transitioning to 'no picture/shape'. The emitted image would ALWAYS have that picture/shape on it. tl;dr: const that shiz. also note that when this method returns we might be setting m_OldScreenGrab to newScreenGrab, so maybe in fact the one we don't want to mutate is newScreenGrab (and I don't think it does, seeing as we have mutableNewScreenGrab in existence). so maybe ignore this comment. thinking about it further, if old becomes new when this method returns (if images don't match), it doesn't matter if we mutate it. but if old DOESN'T become new when this method returns (images do match), then our mutations here will stick onto the next poll/motion-detection. I'm not sure if that matters, but it very well might!!!
                 qtCreatorBlinkingCursorPreviousImagePainter.drawImage(x, (y-m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.height())+1, m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks);
             }
             ++currentPixelOfNewScreenGrab;
@@ -152,8 +168,9 @@ bool MouseOrMotionOrPeriodOfInactivityDetector::thereIsEnoughRoomToDrawQtCreator
     return true;
 }
 //TODOmb: mouse poll rate independent of motion poll rate? since polling for mouse movements is cheap af by comparison. it would also make sense then to let the client specify a 'min time before emitting X-detected signals', because most likely they're going to be doing a screen grab (expensive), and those are NOT cheap. but then again since mouse uses it's own signal anyways, mayb that 'min time...' param isn't necessary (but still could be helpful so idfk)
-void MouseOrMotionOrPeriodOfInactivityDetector::startDetectingMouseOrMotionOrPeriodsOfInactivity(int pollRateMSec, int amountOfTimeMSecWithNoMouseOrMotionActivityToBeConsideredAPeriodOfInactivity)
+void MouseOrMotionOrPeriodOfInactivityDetector::startDetectingMouseOrMotionOrPeriodsOfInactivity(int pollRateMSec, int amountOfTimeMSecWithNoMouseOrMotionActivityToBeConsideredAPeriodOfInactivity, const QVariant::Type &requestedImageTypeWhenMotionOnScreen)
 {
+    m_RequestedScreenGrabImageTypeWhenMotionOnScreenDetected = requestedImageTypeWhenMotionOnScreen;
     m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks = QImage(2, 13, QImage::Format_RGB32); //TODOreq: use a better variable that let's me filter out N shapes/pictures, not just one
     m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.fill(Qt::black);
 
@@ -166,7 +183,7 @@ void MouseOrMotionOrPeriodOfInactivityDetector::handlePollTimerTimedOut()
     if(mouseMovedSinceLastPoll())
         emit mouseMovementDetected(m_CurrentMousePos);
     else if(thereWasMotionOnScreenSinceLastPoll())
-        emit motionOnScreenDetected(m_PointOnScreenWhereMotionWasDetected, m_OldScreenGrab /*new already became old*/);
+        emit motionOnScreenDetected(m_PointOnScreenWhereMotionWasDetected, m_ScreenGrabToEmitWhenMotionOnScreenDetected);
     else if(thereHasBeenAperiodOfInactivity())
         emit periodOfInactivityDetected(); //TODOreq: only emit "once", not every poll thereafter
 }

@@ -35,38 +35,79 @@ QRect MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::makeRectAroundPoi
     QRect ret(topLeft.x(), topLeft.y(), targetSize.width(), targetSize.height());
     return ret;
 }
-void MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::scaleIfZoomFactorWarrantsIt(QImage *imageToMaybeScale)
-{
-    if(m_ZoomFactor != 1.0)
-        (*imageToMaybeScale) = (*imageToMaybeScale).scaled(m_RectSize);
-}
-void MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::startGrabbingMouseOrMotionRectsWhileAlsoDetectingPeriodsOfInactivity(const QSize &rectSizeAroundMouseOrMotionToGrab, int pollRateMSec, int amountOfTimeMSecWithNoMouseOrMotionActivityToBeConsideredAPeriodOfInactivity, double zoomFactor)
+void MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::startGrabbingMouseOrMotionRectsWhileAlsoDetectingPeriodsOfInactivity(const QSize &rectSizeAroundMouseOrMotionToGrab, int pollRateMSec, int amountOfTimeMSecWithNoMouseOrMotionActivityToBeConsideredAPeriodOfInactivity, double zoomFactor, QVariant::Type requestedImageType)
 {
     m_RectSize = rectSizeAroundMouseOrMotionToGrab;
     m_ZoomFactor = zoomFactor;
+    m_RequestedImageType = requestedImageType;
 
     MouseOrMotionOrPeriodOfInactivityDetector *detector = new MouseOrMotionOrPeriodOfInactivityDetector(this);
     connect(detector, SIGNAL(mouseMovementDetected(QPoint)), this, SLOT(handleMouseMovementDetected(QPoint)));
-    connect(detector, SIGNAL(motionOnScreenDetected(QPoint,QImage)), this, SLOT(handleMotionOnScreenDetected(QPoint,QImage)));
+    connect(detector, SIGNAL(motionOnScreenDetected(QPoint,QVariant)), this, SLOT(handleMotionOnScreenDetected(QPoint,QVariant)));
     connect(detector, SIGNAL(periodOfInactivityDetected()), this, SIGNAL(periodOfInactivityDetected()));
 
-    detector->startDetectingMouseOrMotionOrPeriodsOfInactivity(pollRateMSec, amountOfTimeMSecWithNoMouseOrMotionActivityToBeConsideredAPeriodOfInactivity);
+    detector->startDetectingMouseOrMotionOrPeriodsOfInactivity(pollRateMSec, amountOfTimeMSecWithNoMouseOrMotionActivityToBeConsideredAPeriodOfInactivity, requestedImageType);
 }
 void MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::handleMouseMovementDetected(const QPoint &newMousePos)
 {
     QRect rectAroundMouse = makeRectAroundPointStayingWithinResolution(newMousePos);
     QPixmap rectAroundTheCursorPixmap = m_Screen->grabWindow(0, rectAroundMouse.x(), rectAroundMouse.y(), rectAroundMouse.width(), rectAroundMouse.height());
-    QImage rectAroundTheCursorImage = rectAroundTheCursorPixmap.toImage();
-    scaleIfZoomFactorWarrantsIt(&rectAroundTheCursorImage);
-    emit mouseOrMotionRectGrabbed(newMousePos, rectAroundTheCursorImage, Mouse);
+    QPixmap rectAroundTheCursorPixmapZoomedMaybe = scaleIfZoomFactorWarrantsIt<QPixmap>(rectAroundTheCursorPixmap); //TODOoptimization: might be faster to convert to QImage (if that's m_RequestedImageType) before calling scaleIfZoomFactorWarrantsIt
+    QVariant imageRect;
+    switch(m_RequestedImageType)
+    {
+    case QVariant::Pixmap:
+        imageRect = QVariant::fromValue(rectAroundTheCursorPixmapZoomedMaybe);
+        break;
+    case QVariant::Image:
+        imageRect = QVariant::fromValue(rectAroundTheCursorPixmapZoomedMaybe.toImage()); //our 'default' case could have done this (when I wrote this comment, I was planning on trying to convert), but it saves us from having to check canConvert/convert etc. we know it converts.
+        break;
+    default:
+        imageRect = QVariant(QVariant::Invalid); //TODoreq: should we _TRY_ to convert? it would work for eg QBitmap. see the 'default' case comment in handleMotionOnScreenDetected, as it's directly related
+        break;
+    }
+    emit mouseOrMotionRectGrabbed(newMousePos, imageRect, Mouse);
+
+    //QImage rectAroundTheCursorImage = rectAroundTheCursorPixmap.toImage();
+    //scaleIfZoomFactorWarrantsIt(&rectAroundTheCursorImage);
+    //emit mouseOrMotionRectGrabbed(newMousePos, rectAroundTheCursorImage, Mouse);
+    //convertIfneededToRequestedImageTypeThenEmit(newMousePos, rectAroundTheCursorPixmap, Mouse);
 
     //QImage screenGrab = m_Screen.grab(); //TO DOneoptimization(oh duh it does, screen motion will use tha- wait no it won't xD): I think grab() accepts a rect actually...
     //grabRectAroundPointOnImageAndEmitIt(newMousePos, screenGrab, Mouse);
 }
-void MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::handleMotionOnScreenDetected(const QPoint &pointOnImageAroundWhichToGrabRect, const QImage &imageToGrabRectFrom)
+void MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::handleMotionOnScreenDetected(const QPoint &pointOnImageAroundWhichToGrabRect, const QVariant &imageToGrabRectFrom)
 {
     QRect rectAroundTheScreenMovement = makeRectAroundPointStayingWithinResolution(pointOnImageAroundWhichToGrabRect);
+    QVariant imageRect;
+    switch(m_RequestedImageType)
+    {
+    case QVariant::Pixmap:
+        imageRect = copyAndScaleIfZoomFactorWarrantsIt<QPixmap>(imageToGrabRectFrom, rectAroundTheScreenMovement);
+        break;
+    case QVariant::Image:
+        imageRect = copyAndScaleIfZoomFactorWarrantsIt<QImage>(imageToGrabRectFrom, rectAroundTheScreenMovement);
+        break;
+    default:
+        //TODOmb: maybe the requested type doesn't have ::copy and ::scaled (QBitmap), in which case we can convert it to an image, copy/scale it, then convert it back to a QBitmap xD. We even could have pipleined this optimization by giving QImage (not QPixmap since it [probably] copies/scales slower) to MouseOrMotionOrPeriodOfInactivityDetector as IT'S requested image type
+        imageRect = QVariant(QVariant::Invalid);
+        break;
+    }
+    emit mouseOrMotionRectGrabbed(pointOnImageAroundWhichToGrabRect, imageRect, Motion);
+#if 0
     QImage rectAroundTheScreenMovementImage = imageToGrabRectFrom.copy(rectAroundTheScreenMovement);
-    scaleIfZoomFactorWarrantsIt(&rectAroundTheScreenMovementImage);
-    emit mouseOrMotionRectGrabbed(pointOnImageAroundWhichToGrabRect, rectAroundTheScreenMovementImage, Motion);
+    //scaleIfZoomFactorWarrantsIt(&rectAroundTheScreenMovementImage);
+    //emit mouseOrMotionRectGrabbed(pointOnImageAroundWhichToGrabRect, rectAroundTheScreenMovementImage, Motion);
+    convertIfneededToRequestedImageTypeThenEmit(pointOnImageAroundWhichToGrabRect, rectAroundTheScreenMovementImage, Motion);
+#endif
+}
+template<class T>
+QVariant MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::copyAndScaleIfZoomFactorWarrantsIt(const QVariant &imageToCopyFromAndZoomInOn, const QRect &rectToCopy)
+{
+    //T must have ::copy and ::scaled
+    T image = imageToCopyFromAndZoomInOn.value<T>();
+    T temp = image.copy(rectToCopy);
+    T tempZoomedMaybe = scaleIfZoomFactorWarrantsIt<T>(temp);
+    QVariant ret = QVariant::fromValue(tempZoomedMaybe);
+    return ret;
 }
