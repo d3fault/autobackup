@@ -11,10 +11,13 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionGui
 TEMPLATE = app
 
-HEADERS  += mouseormotionrectgrabberwithperiodofinactivitydetectionwidget.h
+HEADERS  += mouseormotionrectgrabberwithperiodofinactivitydetectionwidget.h \
+    mouseormotionrectgrabberwithperiodofinactivitydetectiongui.h
 
 SOURCES += main.cpp\
-        mouseormotionrectgrabberwithperiodofinactivitydetectionwidget.cpp
+        mouseormotionrectgrabberwithperiodofinactivitydetectionwidget.cpp \
+    mouseormotionrectgrabberwithperiodofinactivitydetectiongui.cpp
 
+include(../../../../GloballySharedClasses/objectonthreadgroup.pri)
 include(../../../../GloballySharedClasses/mouseormotionorperiodofinactivitydetector.pri)
 include(../../../../GloballySharedClasses/mouseormotionrectgrabberwithperiodofinactivitydetection.pri)

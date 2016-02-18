@@ -7,3 +7,7 @@ void MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionWidget::handleMotion
 {
 
 }
+void MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionWidget::handlePeriodOfInactivityDetected()
+{
+
+}

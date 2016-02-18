@@ -12,6 +12,7 @@ public:
     MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionWidget(QWidget *parent = 0);
 public slots:
     void handleMotionOrMotionRectGrabbed(const QPoint &positionOnDesktopWhereMouseOrMotionOccured, const QImage &rectAroundMouseOrMotion, MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::MouseOrMotionEnum mouseOrMotion);
+    void handlePeriodOfInactivityDetected();
 };
 
 #endif // MOUSEORMOTIONRECTGRABBERWITHPERIODOFINACTIVITYDETECTIONWIDGET_H
