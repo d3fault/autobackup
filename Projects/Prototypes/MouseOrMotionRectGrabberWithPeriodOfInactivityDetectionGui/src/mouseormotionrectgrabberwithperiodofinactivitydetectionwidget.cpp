@@ -1,0 +1,9 @@
+#include "mouseormotionrectgrabberwithperiodofinactivitydetectionwidget.h"
+
+MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionWidget::MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionWidget(QWidget *parent)
+    : QWidget(parent)
+{ }
+void MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionWidget::handleMotionOrMotionRectGrabbed(const QPoint &positionOnDesktopWhereMouseOrMotionOccured, const QImage &rectAroundMouseOrMotion, MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::MouseOrMotionEnum mouseOrMotion)
+{
+
+}

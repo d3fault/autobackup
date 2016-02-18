@@ -5,6 +5,7 @@ QList<KeyMapEntry> AntiKeyAndMouseLogger::m_NonShuffledKeymap = allTypeableKeysO
 
 //TODOreq: if I implement "clear clipboard after 30 seconds", I should make sure that what I'm clearing is [still] there password. We don't want to clear it if it isn't. I wonder if KeePass does this check O_o (could find out right now but fuck it), I should file a bug if not
 //TODOreq: my instincts told me not to use 'spacebar' as an 'input' key, because how would I represent it without taking up more than one character (another entry in yee ole' legend?)? But after thinking about it further, space is a perfectly valid 'output' (used in passwords) key and so I have the same problem on both sides. Representing it like this: " " (as in, showing the quotes on the button) is no good because it takes up 3 characters instead of 1 :(, which might leak tiny bits of entropy that add up ove time ;-P. Well making it a legend/special key works but only for the output side of things, aww well I guess it's good enough really
+//TODOmb: primitive swap detection, giving warning if enabled. QProcess("free) -> shows 'available swap > 0'? There might be a [cross platform] API for this. Imo it would fit in crypto++ considering how important it is
 AntiKeyAndMouseLogger::AntiKeyAndMouseLogger(QObject *parent)
     : QObject(parent)
     , m_Rng(true) //TODOreq: see notes in initial.idea.txt about not using keyboard/mouse entropy
