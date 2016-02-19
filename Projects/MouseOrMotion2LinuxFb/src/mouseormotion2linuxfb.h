@@ -4,6 +4,7 @@
 #include <QObject>
 
 #include <QScopedPointer>
+#include <QImage>
 
 #include <linux/fb.h>
 #include <unistd.h>
@@ -53,8 +54,9 @@ private:
     MemoryMappedFramebufferUnmapper m_MemoryMappedFramebuffer;
     fb_var_screeninfo m_FramebufferVariableInformation;
     fb_fix_screeninfo m_FramebufferFixedInformation;
+    QImage::Format m_FramebufferImageFormat;
 
-    bool setupFb();
+    bool setupFramebuffer(const QString &framebufferFilePath);
 private slots:
     void handleMouseOrMotionRectGrabbed(const QPoint &positionOnDesktopWhereMouseOrMotionOccured, const QVariant &rectAroundMouseOrMotion, MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::MouseOrMotionEnum mouseOrMotion);
 };
