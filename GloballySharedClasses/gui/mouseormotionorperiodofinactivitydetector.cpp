@@ -77,6 +77,7 @@ bool MouseOrMotionOrPeriodOfInactivityDetector::newScreenGrabMatchesOldScreenGra
         return true;
     }
 
+    QImage mutableOldScreenGrab = m_OldScreenGrab; //m_OldScreenGrab _IS_ mutable, but we don't want to change it for the next poll
     QImage mutableNewScreenGrab = newScreenGrab;
 
     //scan left to right bottom to top
@@ -84,7 +85,7 @@ bool MouseOrMotionOrPeriodOfInactivityDetector::newScreenGrabMatchesOldScreenGra
     for(int y = ((mutableNewScreenGrab.height()-1)-m_BottomPixelRowsToIgnore); y > -1; --y)
     {
         QRgb *currentPixelOfNewScreenGrab = (QRgb*)(mutableNewScreenGrab.scanLine(y));
-        QRgb *currentPixelOfOldScreenGrab = (QRgb*)(m_OldScreenGrab.scanLine(y));
+        QRgb *currentPixelOfOldScreenGrab = (QRgb*)(mutableOldScreenGrab.scanLine(y));
         for(int x = 0; x < mutableNewScreenGrab.width(); ++x)
         {
             if(*currentPixelOfNewScreenGrab != *currentPixelOfOldScreenGrab)
@@ -112,7 +113,7 @@ bool MouseOrMotionOrPeriodOfInactivityDetector::newScreenGrabMatchesOldScreenGra
                     for(int x2 = 0; x2 < m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.width(); ++x2)
                     {
                         QRgb currentPixelOfMaybeBlinkingCursorNewScreenGrab = mutableNewScreenGrab.pixel(x+x2, y-y2);
-                        QRgb currentPixelOfMaybeBlinkingCursorOldScreenGrab = m_OldScreenGrab.pixel(x+x2, y-y2);
+                        QRgb currentPixelOfMaybeBlinkingCursorOldScreenGrab = mutableOldScreenGrab.pixel(x+x2, y-y2);
 
                         //compare new to old, ensure they DON'T match (see huge comment above)
                         if(currentPixelOfMaybeBlinkingCursorNewScreenGrab == currentPixelOfMaybeBlinkingCursorOldScreenGrab)
@@ -146,7 +147,7 @@ bool MouseOrMotionOrPeriodOfInactivityDetector::newScreenGrabMatchesOldScreenGra
                 //draw qt blinking cursor and keep checking for other motion
                 QPainter qtCreatorBlinkingCursorCurrentImagePainter(&mutableNewScreenGrab);
                 qtCreatorBlinkingCursorCurrentImagePainter.drawImage(x, (y-m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.height())+1, m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks); //TODOoptional: the +1 accounts for an off by one, which may also be present in thereIsEnoughRoomToDrawQtCreatorBlinkingCursorInOrderToExcludeItFromFutureSearching
-                QPainter qtCreatorBlinkingCursorPreviousImagePainter(&m_OldScreenGrab); //TODOreq: we don't want to mutate this because it's what we emit!!! Or hmm maybe it doesn't matter because we only draw on it filtered out pictures/shapes? I guess it WOULD matter if there was 'picture/shape' transitioning to 'no picture/shape'. The emitted image would ALWAYS have that picture/shape on it. tl;dr: const that shiz. also note that when this method returns we might be setting m_OldScreenGrab to newScreenGrab, so maybe in fact the one we don't want to mutate is newScreenGrab (and I don't think it does, seeing as we have mutableNewScreenGrab in existence). so maybe ignore this comment. thinking about it further, if old becomes new when this method returns (if images don't match), it doesn't matter if we mutate it. but if old DOESN'T become new when this method returns (images do match), then our mutations here will stick onto the next poll/motion-detection. I'm not sure if that matters, but it very well might!!!
+                QPainter qtCreatorBlinkingCursorPreviousImagePainter(&mutableOldScreenGrab); //TO DOnereq(this comment might still be relevant, but I err'd on the side of caution and am modifying a copy of m_OldScreenGrab instead. I couldn't wrap my head around the reprocussions. It might have been an optimization): we don't want to mutate this because it's what we emit!!! Or hmm maybe it doesn't matter because we only draw on it filtered out pictures/shapes? I guess it WOULD matter if there was 'picture/shape' transitioning to 'no picture/shape'. The emitted image would ALWAYS have that picture/shape on it. tl;dr: const that shiz. also note that when this method returns we might be setting m_OldScreenGrab to newScreenGrab, so maybe in fact the one we don't want to mutate is newScreenGrab (and I don't think it does, seeing as we have mutableNewScreenGrab in existence). so maybe ignore this comment. thinking about it further, if old becomes new when this method returns (if images don't match), it doesn't matter if we mutate it. but if old DOESN'T become new when this method returns (images do match), then our mutations here will stick onto the next poll/motion-detection. I'm not sure if that matters, but it very well might!!! Heh, thinking about it even further, it just MIGHT be an optimization to mutate it... but idfk still pondering.
                 qtCreatorBlinkingCursorPreviousImagePainter.drawImage(x, (y-m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks.height())+1, m_QtCreatorBlinkingCursorToExcludeFromMotionDetectionChecks);
             }
             ++currentPixelOfNewScreenGrab;
@@ -186,4 +187,21 @@ void MouseOrMotionOrPeriodOfInactivityDetector::handlePollTimerTimedOut()
         emit motionOnScreenDetected(m_PointOnScreenWhereMotionWasDetected, m_ScreenGrabToEmitWhenMotionOnScreenDetected);
     else if(thereHasBeenAperiodOfInactivity())
         emit periodOfInactivityDetected(); //TODOreq: only emit "once", not every poll thereafter
+}
+bool MouseOrMotionOrPeriodOfInactivityDetector::screenGrabImageTypeIsSupported(const QVariant::Type &type)
+{
+    switch(type)
+    {
+    case QVariant::Pixmap:
+    case QVariant::Image:
+        return true;
+    break;
+    default:
+    {
+        static const QImage i;
+        static const QVariant v = QVariant::fromValue(i);
+        return v.canConvert(type);
+    }
+    break;
+    }
 }

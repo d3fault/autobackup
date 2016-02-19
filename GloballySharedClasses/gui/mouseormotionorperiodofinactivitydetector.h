@@ -15,6 +15,7 @@ class MouseOrMotionOrPeriodOfInactivityDetector : public QObject
     Q_OBJECT
 public:
     explicit MouseOrMotionOrPeriodOfInactivityDetector(QObject *parent = 0);
+    static bool screenGrabImageTypeIsSupported(const QVariant::Type &type);
 private:
     QScreen *m_Screen;
     QSize m_ScreenResolution;

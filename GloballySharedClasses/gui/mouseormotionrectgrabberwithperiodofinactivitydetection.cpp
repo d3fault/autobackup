@@ -11,7 +11,15 @@ MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::MouseOrMotionRectGrabbe
     : QObject(parent)
     , m_Screen(QGuiApplication::primaryScreen())
     , m_ScreenResolution(m_Screen->size())
-{ }
+{
+    qRegisterMetaType<QVariant::Type>("QVariant::Type"); //muahaha register it the QVariant::Type as a QVariant::Type muahahaha. another perpetual motion machine! or perhaps an infinite loop? methinks it'll work just fine actually. hmm not with just Q_DECLARE_METATYPE, but this seems to work although it's shittier :(. where does one put the static initialization of the nothingness of a class?
+    qRegisterMetaType<MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::MouseOrMotionEnum>("MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::MouseOrMotionEnum");
+}
+bool MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::rectGrabImageTypeIsSupported(const QVariant::Type &type)
+{
+    return (type == QVariant::Pixmap || type == QVariant::Image); //bleh why do all this whacky premature optimization conversion logic for the end user when it's so simple to call eg .toBitmap() on the result? fuggit
+    //return MouseOrMotionOrPeriodOfInactivityDetector::screenGrabImageTypeIsSupported(type);
+}
 QRect MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::makeRectAroundPointStayingWithinResolution(const QPoint &inputPoint)
 {
     QSize targetSize; //taking into account zoom factor
@@ -40,6 +48,19 @@ void MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::startGrabbingMouse
     m_RectSize = rectSizeAroundMouseOrMotionToGrab;
     m_ZoomFactor = zoomFactor;
     m_RequestedImageType = requestedImageType;
+
+    if(!rectGrabImageTypeIsSupported(m_RequestedImageType))
+    {
+        //if(MouseOrMotionOrPeriodOfInactivityDetector::screenGrabImageTypeIsSupported(type))
+        //{
+            //derp use image type for detection then convert and blah blah fuck that shit
+        //}
+        QString blah("Rect grab image type not supported: ");
+        blah.append(QVariant::typeToName(m_RequestedImageType));
+        std::string blahStd = blah.toStdString();
+        qFatal(blahStd.c_str());
+        return;
+    }
 
     MouseOrMotionOrPeriodOfInactivityDetector *detector = new MouseOrMotionOrPeriodOfInactivityDetector(this);
     connect(detector, SIGNAL(mouseMovementDetected(QPoint)), this, SLOT(handleMouseMovementDetected(QPoint)));

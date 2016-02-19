@@ -13,12 +13,13 @@ class MouseOrMotionRectGrabberWithPeriodOfInactivityDetection : public QObject
     Q_OBJECT
     Q_ENUMS(MouseOrMotionEnum)
 public:
-    explicit MouseOrMotionRectGrabberWithPeriodOfInactivityDetection(QObject *parent = 0);
     enum MouseOrMotionEnum
     {
          Mouse = 0
         , Motion = 1
     };
+    explicit MouseOrMotionRectGrabberWithPeriodOfInactivityDetection(QObject *parent = 0);
+    static bool rectGrabImageTypeIsSupported(const QVariant::Type &type);
 private:
     QScreen *m_Screen;
     QSize m_ScreenResolution;

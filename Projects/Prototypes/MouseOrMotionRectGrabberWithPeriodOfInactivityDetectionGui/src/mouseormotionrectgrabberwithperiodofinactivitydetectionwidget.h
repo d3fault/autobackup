@@ -1,17 +1,17 @@
 #ifndef MOUSEORMOTIONRECTGRABBERWITHPERIODOFINACTIVITYDETECTIONWIDGET_H
 #define MOUSEORMOTIONRECTGRABBERWITHPERIODOFINACTIVITYDETECTIONWIDGET_H
 
-#include <QWidget>
+#include <QLabel>
 
 #include "mouseormotionrectgrabberwithperiodofinactivitydetection.h"
 
-class MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionWidget : public QWidget
+class MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionWidget : public QLabel
 {
     Q_OBJECT
 public:
     MouseOrMotionRectGrabberWithPeriodOfInactivityDetectionWidget(QWidget *parent = 0);
 public slots:
-    void handleMotionOrMotionRectGrabbed(const QPoint &positionOnDesktopWhereMouseOrMotionOccured, const QImage &rectAroundMouseOrMotion, MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::MouseOrMotionEnum mouseOrMotion);
+    void handleMotionOrMotionRectGrabbed(const QPoint &positionOnDesktopWhereMouseOrMotionOccured, const QVariant &rectAroundMouseOrMotion, MouseOrMotionRectGrabberWithPeriodOfInactivityDetection::MouseOrMotionEnum mouseOrMotion);
     void handlePeriodOfInactivityDetected();
 };
 
