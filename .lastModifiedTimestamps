@@ -28,7 +28,7 @@ Documents/minddump/couchbase/potential.problem.it.is.eventually.consistent.for.j
 Documents/minddump/couchbase/thoughts.on.vesioning.bug.might.not.matter.and.also.paging.discussed.txt:1339955731
 Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.they.show.tells.me.nothing.txt:1340087363
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
-Documents/minddump/dreams/:1455764797
+Documents/minddump/dreams/:1455918294
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -224,6 +224,7 @@ Documents/minddump/dreams/sdkfjslkdjflksdjfklsjdflkjdsfkljdsfjdofulskdjfosduflsk
 Documents/minddump/dreams/sdkjflsdkjflksdjflksdjflkjslfkjsdlkfjsldkfjlksdjflkjeworulksdjfousldkfjldskf.txt:1419070646
 Documents/minddump/dreams/sdkjflskjdflskjdfosudfljsdfousdfljsfdoulkjeroiusdlfkjsdofuo.txt:1391895285
 Documents/minddump/dreams/sdlafjlasjflsajdfsdufowieurlkasjdfouasfdljouwerlkjsdoafuslfdjkaslf.txt:1381489684
+Documents/minddump/dreams/sdlfjdlsfjdsofuewlrjdosfydslfjsdofusfljssflj.txt:1455918294
 Documents/minddump/dreams/sdlfjdlskfjdklsfjouewrlkjdsfodsufljd.txt:1455680643
 Documents/minddump/dreams/sdlfjlsdkjflksdjflkjsdlfk.txt:1439555570
 Documents/minddump/dreams/sdlfjsdlkfjsdlkjflskdjflskdjflksdjflksdjflksdjflksdjflkjlkdsfjlsdhfslkdjfl.txt:1434968160
@@ -3276,11 +3277,11 @@ Projects/DesignEqualsImplementation2/design/use.case.is.series.of.either.slot.de
 Projects/DesignEqualsImplementation2/design/use.cases.define.slot.bodies.at.runtime.but.only.resolve.where.connect.statements.go.at.source.generation.time.txt:1408252978
 Projects/DesignEqualsImplementation2/design/when.to.do.the.cross.thread.call.analysis.optimization.sdfljsdlfjsdl.txt:1410402949
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1455392463
+Projects/DesignEqualsImplementation2/src/:1455930505
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
-Projects/DesignEqualsImplementation2/src/ui/gui/:1455392456
+Projects/DesignEqualsImplementation2/src/ui/gui/:1455930293
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.cpp:1409876592
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramgraphicsscene.h:1408651682
 Projects/DesignEqualsImplementation2/src/ui/gui/classdiagramumlitemswidget.cpp:1404498658
@@ -3334,7 +3335,7 @@ Projects/DesignEqualsImplementation2/src/ui/gui/renameprojectdialog.cpp:14111873
 Projects/DesignEqualsImplementation2/src/ui/gui/renameprojectdialog.h:1411186033
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotconnectionactivationarrowforgraphicsscene.cpp:1412603998
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotconnectionactivationarrowforgraphicsscene.h:1412602934
-Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.cpp:1455392456
+Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.cpp:1455930293
 Projects/DesignEqualsImplementation2/src/ui/gui/signalslotmessagedialog.h:1455227733
 Projects/DesignEqualsImplementation2/src/ui/gui/signalstatementnotchmultiplextergraphicsrect.cpp:1412603934
 Projects/DesignEqualsImplementation2/src/ui/gui/signalstatementnotchmultiplextergraphicsrect.h:1412603754
@@ -3367,8 +3368,8 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationclassmethodar
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclassmethodargument.h:1455227054
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclassprivatemethod.cpp:1410417585
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclassprivatemethod.h:1425502818
-Projects/DesignEqualsImplementation2/src/designequalsimplementationclassproperty.cpp:1411177444
-Projects/DesignEqualsImplementation2/src/designequalsimplementationclassproperty.h:1409811358
+Projects/DesignEqualsImplementation2/src/designequalsimplementationclassproperty.cpp:1455928539
+Projects/DesignEqualsImplementation2/src/designequalsimplementationclassproperty.h:1455928481
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasssignal.cpp:1410400871
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasssignal.h:1410400879
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclassslot.cpp:1413769477
@@ -3383,7 +3384,7 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationprivatemethod
 Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.cpp:1425757176
 Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.h:1425570194
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.cpp:1425575774
-Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.h:1425574946
+Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.h:1455928482
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.cpp:1425516130
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.h:1409871198
 Projects/DesignEqualsImplementation2/src/designequalsimplementationsignalemissionstatement.cpp:1425502817
@@ -3406,7 +3407,7 @@ Projects/DesignEqualsImplementation2/src/idesignequalsimplementationvisuallyrepr
 Projects/DesignEqualsImplementation2/src/ihavetypeandvariablenameandpreferredtextualrepresentation.h:1407744702
 Projects/DesignEqualsImplementation2/src/libclangpch.h:1409068915
 Projects/DesignEqualsImplementation2/src/signalemissionorslotinvocationcontextvariables.cpp:1409796472
-Projects/DesignEqualsImplementation2/src/signalemissionorslotinvocationcontextvariables.h:1409796463
+Projects/DesignEqualsImplementation2/src/signalemissionorslotinvocationcontextvariables.h:1455925934
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/:1428920854
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/:1429353425
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/cli/:1427138873

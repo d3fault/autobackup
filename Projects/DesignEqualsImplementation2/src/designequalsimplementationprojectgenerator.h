@@ -41,6 +41,11 @@ public:
         }
         return ret;
     }
+    static inline QString memberNameForProperty(const QString &thePropertyName)
+    {
+        QString ret = "m_" + firstCharacterToUpper(thePropertyName);
+        return ret;
+    }
 private:
     DesignEqualsImplementationProject *m_DesignEqualsImplementationProject;
     DesignEqualsImplementationProject::ProjectGenerationMode m_ProjectGenerationMode;
@@ -87,11 +92,6 @@ private:
     static inline QString changedSignalForProperty(const QString &thePropertyName)
     {
         QString ret = firstCharacterToLower(thePropertyName) + "Changed";
-        return ret;
-    }
-    static inline QString memberNameForProperty(const QString &thePropertyName)
-    {
-        QString ret = "m_" + firstCharacterToUpper(thePropertyName);
         return ret;
     }
 signals:

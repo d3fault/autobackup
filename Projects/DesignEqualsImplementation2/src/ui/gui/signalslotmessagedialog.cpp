@@ -83,6 +83,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
         setDisabled(true);
         //return;
     }
+    m_ExistingSignalsComboBox->setMinimumWidth(150);
     //TODOreq: for both signals and slots, make the NAME of it bold (args are less important). This should be anywhere the signature is seen
     //signalsLayout->addWidget(autoParsedSignalNameWithAutoCompleteForExistingSignals);
     signalsLayout->addWidget(m_ExistingSignalsComboBox);
@@ -116,6 +117,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
         setDisabled(true);
         //return; //TODOreq: leaks memory. all the widgets above this line not yet added to a layout, and even the layouts themselves which haven't been set to a widget. "no naked new"
     }
+    m_ExistingSlotsComboBox->setMinimumWidth(150);
     //TODOreq: qlistwidget only takes one click insead of two (precious seconds when you're trying to keep a complicated design in your head)... but the trade off is that it takes up more space (not really though, once the combo box is expanded...)
 
     //slotsLayout->addWidget(autoParsedSlotNameWithAutoCompleteForExistingSlots);
@@ -349,6 +351,10 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
                 m_VariablesAvailableToSatisfyArgs.append(currentArg);
             }
             //m_VariablesAvailableToSatisfyArgs.append(*slotWithCurrentContext_OrZeroIfSourceIsActor->ParentClass->HasA_PrivateMemberClasses);
+            Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentProperty, sourceSlot_OrZeroIfSourceIsActor->ParentClass->Properties)
+            {
+                m_VariablesAvailableToSatisfyArgs.append(currentProperty);
+            }
             Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentHasAClass, sourceSlot_OrZeroIfSourceIsActor->ParentClass->hasA_Private_Classes_Members())
             {
                 m_VariablesAvailableToSatisfyArgs.append(currentHasAClass);
@@ -432,8 +438,6 @@ bool SignalSlotMessageDialog::signalIsAlreadyPlacedInUseCaseGraphicsScene() cons
 }
 void SignalSlotMessageDialog::showSignalArgFillingIn()
 {
-    //TODOreq
-
     if(m_SlotArgsFillingInWidget)
     {
         m_AllArgSatisfiers.clear();
@@ -791,7 +795,7 @@ bool SignalSlotMessageDialog::askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDe
             m_SlotToInvoke = m_DestinationClassLifeline_OrZeroIfNoDest->designEqualsImplementationClass()->createwNewSlot(m_ExistingSlotsComboBox->parsedFunctionName(), m_ExistingSlotsComboBox->parsedFunctionArguments());
         break;
         case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ExistingFunction:
-            m_SlotToInvoke = qvariant_cast<DesignEqualsImplementationClassSlot*>(m_ExistingSlotsComboBox->itemData(currentm_ExistingSlotsComboBox->currentIndex()));
+            m_SlotToInvoke = qvariant_cast<DesignEqualsImplementationClassSlot*>(m_ExistingSlotsComboBox->itemData(m_ExistingSlotsComboBox->currentIndex()));
         break;
         case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::NoFunction:
             m_SlotToInvoke = 0;

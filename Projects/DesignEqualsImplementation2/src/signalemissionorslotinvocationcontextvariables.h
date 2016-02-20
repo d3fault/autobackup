@@ -6,7 +6,7 @@
 
 //#include "designequalsimplementationclasslifeline.h"
 
-typedef QList<QString> SignalEmissionOrSlotInvocationContextVariables;
+typedef QList<QString> SignalEmissionOrSlotInvocationContextVariables; //TODOreq: fuck, if a signal emit 'arg' is a member of the class, and we rename that member later, finding it in all use cases' signal slot connection activations for a given class will be a bitch. I should have had all classes/properties/defined-elsewhere-types/ETC all inherit from the same type: Type... or some such
 
 #if 0
 struct SignalEmissionOrSlotInvocationContextVariables

@@ -2,13 +2,15 @@
 #define DESIGNEQUALSIMPLEMENTATIONCLASSPROPERTY_H
 
 #include <QObject>
+#include "ihavetypeandvariablenameandpreferredtextualrepresentation.h"
 
-class DesignEqualsImplementationClassProperty : public QObject
+class DesignEqualsImplementationClassProperty : public QObject, public IHaveTypeAndVariableNameAndPreferredTextualRepresentation
 {
     Q_OBJECT
 public:
     explicit DesignEqualsImplementationClassProperty(QObject *parent = 0);
     explicit DesignEqualsImplementationClassProperty(const QString &propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange, QObject *parent = 0);
+    virtual QString typeString() { return Type; }
 
     //TODOoptional: private + getter/setter blah
     QString Type;
