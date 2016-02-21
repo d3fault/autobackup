@@ -12,7 +12,6 @@ class MindDumpDocument : public QWidget
     Q_OBJECT
 public:
     explicit MindDumpDocument(const QString &tabTitle, const QString &mindDumpDirectoryWithSlashAppended, QWidget *parent = 0);
-    void setFocusOnDocument();
     QString tabTitle() const;
     bool isSaved() const;
 private:
@@ -31,6 +30,7 @@ private:
 signals:
     void savedAndFudgedLastModifiedTimestamp(bool success);
 public slots:
+    void setFocusOnDocument();
     void saveAndFudgeLastModifiedTimestamp();
 private slots:
     void handleTextChanged();

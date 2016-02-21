@@ -38,11 +38,21 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
     }
 
     m_NewDocumentAction = new QAction(style()->standardIcon(QStyle::SP_FileIcon), tr("&New"), this);
+    //m_NewDocumentAction->setShortcut(QKeySequence::New);
+    m_NewDocumentAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_N));
     connect(m_NewDocumentAction, SIGNAL(triggered()), this, SLOT(newDocumentAction()));
+
     m_SaveCurrentTabAction = new QAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save"), this);
+    //m_SaveCurrentTabAction->setShortcut(QKeySequence::Save);
+    m_SaveCurrentTabAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
     connect(m_SaveCurrentTabAction, SIGNAL(triggered()), this, SLOT(saveCurrentTabAction()));
+
     m_SaveAllTabsAction = new QAction(style()->standardIcon(QStyle::SP_DialogYesButton), tr("Save &All"), this);
+    //m_SaveAllTabsAction->setShortcut(QKeySequence::SaveAs); //My guess is that save-all is ctrl+shift+s? <-nope
+    m_SaveAllTabsAction->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_S));
     connect(m_SaveAllTabsAction, SIGNAL(triggered()), this, SLOT(saveAllTabsAction()));
+
+    //TODOreq: CTRL+W, CTRL+SHIFT+W, CTRL+Q, CTRL+SHIFT+N(save current (or all? current only seems saner) and then open new tab)
 
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(m_NewDocumentAction);

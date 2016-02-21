@@ -3994,12 +3994,12 @@ Projects/LossyDirectoryCopier/src/main.cpp:1386648220
 Projects/MindDumper/:1456018618
 Projects/MindDumper/design/:1456001533
 Projects/MindDumper/design/initial.idea.txt:1456001533
-Projects/MindDumper/src/:1456027167
+Projects/MindDumper/src/:1456038130
 Projects/MindDumper/src/MindDumper.pro:1456002084
 Projects/MindDumper/src/main.cpp:1456011400
-Projects/MindDumper/src/minddumpdocument.cpp:1456025689
-Projects/MindDumper/src/minddumpdocument.h:1456025689
-Projects/MindDumper/src/minddumpermainwindow.cpp:1456027065
+Projects/MindDumper/src/minddumpdocument.cpp:1456038072
+Projects/MindDumper/src/minddumpdocument.h:1456037994
+Projects/MindDumper/src/minddumpermainwindow.cpp:1456037479
 Projects/MindDumper/src/minddumpermainwindow.h:1456024516
 Projects/MouseAndOrMotionViewMaker/:1427380548
 Projects/MouseAndOrMotionViewMaker/design/:1396053309

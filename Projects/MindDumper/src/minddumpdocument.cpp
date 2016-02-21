@@ -24,7 +24,9 @@ MindDumpDocument::MindDumpDocument(const QString &tabTitle, const QString &mindD
     myLayout->addWidget(m_FilenameLineEdit = new QLineEdit()); //no naked new!
     m_FilenameLineEdit->setPlaceholderText(tr("Optional Filename..."));
     m_FilenameLineEdit->setToolTip(tr("A-Z and 0-9; Spaces, underscores and hyphens will be converted into dots. Everything else is discarded"));
-    myLayout->addWidget(m_DreamCheckbox = new QCheckBox(tr("Dream:"))); //TODOmb: Ctrl+D toggles
+    myLayout->addWidget(m_DreamCheckbox = new QCheckBox(tr("&Dream:")));
+    m_DreamCheckbox->setShortcut(Qt::CTRL + Qt::Key_D);
+    connect(m_DreamCheckbox, SIGNAL(toggled(bool)), this, SLOT(setFocusOnDocument())); //the shortcut gives the checkbox focus, we only want to toggle it
     myLayout->addWidget(m_Document = new QPlainTextEdit(), 1);
 
     connect(m_Document, SIGNAL(textChanged()), this, SLOT(handleTextChanged()));
@@ -80,9 +82,9 @@ void MindDumpDocument::saveAndFudgeLastModifiedTimestamp()
     connect(saveResultEmitter.data(), SIGNAL(haveResult(bool)), this, SIGNAL(savedAndFudgedLastModifiedTimestamp(bool)));
 
     QString text = m_Document->document()->toPlainText();
-    QString theChosenFilePathAndName; //not known yet, QTemporaryFile choses for us
     if(!text.trimmed().isEmpty())
     {
+        QString theChosenFilePathAndName; //not known yet, QTemporaryFile choses for us
         //if((true) && (!false) && 1 == 1)
         {
             QString maybeHyphenAndFilenamePortion;
