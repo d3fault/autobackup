@@ -1,0 +1,10 @@
+I don't want to overcompliate this app, no thinking of timelines allowed motherfucker!
+
+-A simple tab based text editor.
+-Filename line edit at the top of each tab-body that is completely optional.
+-QTemporaryFile based for safe file creation, filename is seeded with the first keystroke's unix timestamp, and a [safely converted] filename if one is entered. The random 6 characters at the end are fine.
+-Each tab keeps track of the unix timestamp for the "first" keystroke and the "last" keystroke
+-File->Quit (Ctrl+Q) auto-saves every tab and `touch`'s the last modified timestamp to be that of the "last" keystroke. In this way we have the 'start' timestamp in the filename, and the 'end' timestamp in the filesystem/.lastModifiedTimestamps
+-Folderization of year->month (my minddump folder has too many entries!!)
+-'Dream' checkbox, puts into /dreams/ subfolder (with folderization still)
+-Ctrl+S could save all files and close those tabs, leaving you with an empty tab ready to write

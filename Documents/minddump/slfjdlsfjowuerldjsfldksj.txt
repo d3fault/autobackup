@@ -1,0 +1,3 @@
+Micro vs Macro
+
+When I code at "80% Max Relaxed" speed, as I do out here in the desert, my code is much cleaner/elegant/reusable. I think it's mainly the fact that I'm relaxed/not-rushed that allows me to think more clearly and to code things "the right way" rather than "the quickest way". So even though I'm going slower on the "micro" scale (80%), since my code is more reusable it can (and often does) result in a macro speedup of 200%-1000%. Of course I pulled those numbers out of my ass, but you get the idea. The code being cleaner/more-elegant also means that I save time later on trying to re-understand it, debug it, and/or modify/enhance it. So I say to you, employers who ask their [coder] employees to give 110%: go fuck a duck.

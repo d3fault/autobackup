@@ -1,0 +1,7 @@
+Nick (Boolean) is a protected member of this thing of ours.
+
+class ThisThingOfOurs
+{
+protected:
+	bool m_Nick;
+};
