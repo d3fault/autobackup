@@ -24,6 +24,7 @@ private:
     int m_TabTitleAutoNumber;
     QString getTabTitleAutoNumber();
 
+    QAction *m_NewDocumentAction;
     QAction *m_SaveCurrentTabAction;
     QAction *m_SaveAllTabsAction;
 
@@ -36,6 +37,7 @@ private:
 
     static inline QString appendSlashIfNeeded(const QString &inputString) { if(inputString.endsWith("/")) return inputString; return inputString + "/"; }
 private slots:
+    void newDocumentAction();
     void saveCurrentTabAction();
     void saveAllTabsAction();
     void handleMindDumpDocumentSaveAttemptFinished(bool success);

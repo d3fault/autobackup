@@ -9,6 +9,7 @@
 #include <QStyle>
 #include <QMenuBar>
 #include <QMenu>
+#include <QToolBar>
 
 #include "minddumpdocument.h"
 
@@ -36,33 +37,37 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
         return;
     }
 
+    m_NewDocumentAction = new QAction(style()->standardIcon(QStyle::SP_FileIcon), tr("&New"), this);
+    connect(m_NewDocumentAction, SIGNAL(triggered()), this, SLOT(newDocumentAction()));
     m_SaveCurrentTabAction = new QAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save"), this);
     connect(m_SaveCurrentTabAction, SIGNAL(triggered()), this, SLOT(saveCurrentTabAction()));
     m_SaveAllTabsAction = new QAction(style()->standardIcon(QStyle::SP_DialogYesButton), tr("Save &All"), this);
     connect(m_SaveAllTabsAction, SIGNAL(triggered()), this, SLOT(saveAllTabsAction()));
 
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction(m_NewDocumentAction);
     fileMenu->addAction(m_SaveCurrentTabAction);
     fileMenu->addAction(m_SaveAllTabsAction);
 
-    //QToolBar *toolBar = tool
+    QToolBar *toolBar = addToolBar(tr("File Actions Toolbar"));
+    toolBar->addAction(m_NewDocumentAction);
+    toolBar->addAction(m_SaveCurrentTabAction);
+    toolBar->addAction(m_SaveAllTabsAction);
 
     setCentralWidget(m_TabWidget = new QTabWidget());
-    MindDumpDocument *firstDocument = createAndAddMindDumpDocument();
-    firstDocument->setFocusOnDocument();
+    newDocumentAction();
 
     //actually yea we just delay the close itself until saving completes [without error]. qApp->setQuitOnLastWindowClosed(false);
     //no such signal lol, closeEvent instead. connect(this, SIGNAL(closed))
 }
 void MindDumperMainWindow::closeEvent(QCloseEvent *theCloseEvent)
 {
-    //TODOreq: only don't ignore the close event if all tabs are already saved
     m_QuitInProgress = true;
     m_SavingAllTabsActionInProgress = true;
     m_TabIndexCurrentlyAttemptingToSave = getNextUnsavedTabIndex(-1);
     if(m_TabIndexCurrentlyAttemptingToSave > -1)
     {
-        theCloseEvent->ignore(); //TODOreq: close later
+        theCloseEvent->ignore(); //we async save all, then close (again) later
         saveTabAtIndexThenMoveOntoNextUnsavedTabIfNoErrors(m_TabIndexCurrentlyAttemptingToSave);
     }
 }
@@ -94,9 +99,16 @@ void MindDumperMainWindow::saveTabAtIndexThenMoveOntoNextUnsavedTabIfNoErrors(in
     connect(mindDumpDocument, SIGNAL(savedAndFudgedLastModifiedTimestamp(bool)), this, SLOT(handleMindDumpDocumentSaveAttemptFinished(bool))); //TODOmb: disconnect afterwards? probably won't matter but might if save fails and we re-attempt it :-/
     mindDumpDocument->saveAndFudgeLastModifiedTimestamp();
 }
+void MindDumperMainWindow::newDocumentAction()
+{
+    MindDumpDocument *newDocument = createAndAddMindDumpDocument();
+    m_TabWidget->setCurrentWidget(newDocument);
+    newDocument->setFocusOnDocument();
+}
 void MindDumperMainWindow::saveCurrentTabAction()
 {
     m_SavingAllTabsActionInProgress = false;
+    m_QuitInProgress = false;
     m_TabIndexCurrentlyAttemptingToSave = m_TabWidget->currentIndex();
     if(!static_cast<MindDumpDocument*>(m_TabWidget->widget(m_TabIndexCurrentlyAttemptingToSave))->isSaved())
         saveTabAtIndexThenMoveOntoNextUnsavedTabIfNoErrors(m_TabIndexCurrentlyAttemptingToSave);
@@ -106,6 +118,7 @@ void MindDumperMainWindow::saveCurrentTabAction()
 void MindDumperMainWindow::saveAllTabsAction()
 {
     m_SavingAllTabsActionInProgress = true;
+    m_QuitInProgress = false;
     m_TabIndexCurrentlyAttemptingToSave = getNextUnsavedTabIndex(-1);
     if(m_TabIndexCurrentlyAttemptingToSave > -1)
         saveTabAtIndexThenMoveOntoNextUnsavedTabIfNoErrors(m_TabIndexCurrentlyAttemptingToSave);
@@ -132,7 +145,7 @@ void MindDumperMainWindow::handleMindDumpDocumentSaveAttemptFinished(bool succes
     {
         if(m_QuitInProgress)
         {
-            close(); //TODOmb: a progress dialog when saving in bulk (either in app or when quitting)
+            QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection); //Queued because a closeEvent might have gotten us here, and I think there's some logic to eat subsequent close() calls or something because calling close() directly didn't work. TODOmb: a progress dialog when saving in bulk (either in app or when quitting)
             return;
         }
         QMessageBox::information(this, tr("Success!"), tr("All tabs have been saved successfully"));

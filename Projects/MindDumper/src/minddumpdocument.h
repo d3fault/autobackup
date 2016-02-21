@@ -27,7 +27,7 @@ private:
 
     static bool charOfFilenameisSane(const QString &charOfFilename);
     static QString filterFilenameChar(const QString &charOfFilenameToFilter);
-    static QString sanitizedFileName(const QString &inputFileName);
+    static QString fileNameSanitized(const QString &inputFileName);
 signals:
     void savedAndFudgedLastModifiedTimestamp(bool success);
 public slots:
