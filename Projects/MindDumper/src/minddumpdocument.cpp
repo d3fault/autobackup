@@ -43,6 +43,10 @@ bool MindDumpDocument::isSaved() const
 {
     return m_IsSaved;
 }
+bool MindDumpDocument::isEmpty() const
+{
+    return m_Document->toPlainText().trimmed().isEmpty() && fileNameSanitized(m_FilenameLineEdit->text().trimmed()).isEmpty();
+}
 bool MindDumpDocument::charOfFilenameisSane(const QString &charOfFilename)
 {
     for(int i = Qt::Key_A; i <= Qt::Key_Z; ++i)
@@ -80,6 +84,12 @@ void MindDumpDocument::saveAndFudgeLastModifiedTimestamp()
 {
     QScopedPointer<ResultEmitter> saveResultEmitter(new ResultEmitter());
     connect(saveResultEmitter.data(), SIGNAL(haveResult(bool)), this, SIGNAL(savedAndFudgedLastModifiedTimestamp(bool)));
+
+    if(m_IsSaved)
+    {
+        QMessageBox::warning(this, tr("Warning!"), tr("Attempted to double-save tab: ") + m_TabTitle);
+        return;
+    }
 
     QString text = m_Document->document()->toPlainText();
     if(!text.trimmed().isEmpty())

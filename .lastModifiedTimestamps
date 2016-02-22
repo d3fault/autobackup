@@ -17,7 +17,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1456011876
+Documents/minddump/:1456087661
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -1623,6 +1623,7 @@ Documents/minddump/lsdfkjsldkfjsadoifulkjweroulskjfdosdufljsdfouwljreousldfkjsdo
 Documents/minddump/lsdflkdjflksdjflkjsdklfjsdklfjsdkljfkljasfkljsdfouwerlks.txt:1404662045
 Documents/minddump/lsdhflsjdflkjsdofusdlfhowuerlkjsdofulskdjfosduflsdf.if.we.were.smart.we.would.be.bored.txt:1403588243
 Documents/minddump/lsdjfaowuralsjfaworuaowruawfljsadlfkjsofuweorjwlkjsfdosaudfwjerlkj.txt:1343313151
+Documents/minddump/lsdjfdlskfjdslkfjdsfoudsflkjsdjflks.txt:1456077852
 Documents/minddump/lsdjfldsjfldksjflkdsjfdosjfldsjf.txt:1455157161
 Documents/minddump/lsdjflkdsjflkjsdlkfjskdjfksjdlfjsdlkfjlskdjfkljsdflkj.txt:1425280152
 Documents/minddump/lsdjflkjsdflkewrulkjdsfldfjoulsdjfsdfuosd.txt:1398082376
@@ -2248,6 +2249,7 @@ Documents/minddump/sdlfjasdlfjsoduflkjsdofusadfkjsouerlkjaoufdlksjdfouwerlkj.txt
 Documents/minddump/sdlfjaslfkjsdfousdlfjosduflskdjffasdfsdfwerosudflksdjfoulkwjreoulkfd.txt:1378885899
 Documents/minddump/sdlfjaslkdjfaosduflajsfousfljsofusljfdousdfsdofusdlfk.txt:1390922942
 Documents/minddump/sdlfjdlfjsdlkfjsdlkfjlskdjfowuerhfhsdfljr.txt:1355828578
+Documents/minddump/sdlfjdslfoiwuerlkjdsfoudlkjdf.txt:1456087661
 Documents/minddump/sdlfjdslkfjlsdjflksjdflkjsdlkfjsdlkjflksdjfklsjdklfjs.txt:1428299440
 Documents/minddump/sdlfjksdlkfjlsdjfsdlfjsdflkjousfdlkj.txt:1355731617
 Documents/minddump/sdlfjksdlkfjsdlkfjlskdjflskdjfskldjflksdjflksdjflskdjflksdjkljslkdjfdlskjflksd.txt:1432892847
@@ -2416,7 +2418,7 @@ Documents/minddump/sfdlksjadfouwarkhsdfiawyroaisfhwerusdofiu.txt:1344187598
 Documents/minddump/sfdlkwejroiusdflkjawfsdopfsudflskjdoiuwerl.txt:1339058790
 Documents/minddump/sfdlsakdjflksdajflksdouretretwergfdafflejrkwoeirulkjsdf.txt:1363563716
 Documents/minddump/sfdlskdfjsdfouwerlkjsdofiusdlkfjdsofuiwlekjrouisfdl.txt:1363797045
-Documents/minddump/sfkjdlskfjdlskfjouwelrj.txt:1455999070
+Documents/minddump/sfkjdlskfjdlskfjouwelrj.txt:1456082300
 Documents/minddump/sfkjskjfslkdjfksjdflksjdflkjsdlkjfslkdjfsdkljflsdkfjosduflksdfsdlkfj.txt:1404986008
 Documents/minddump/sfljsflkjsdlkfjsodufjlsdkjfoduflkjsdflkjsdfoui.txt:1359545770
 Documents/minddump/sfljslfkjsdlkfjsdofusdlfjsdlfkjoweiuljkfsdf.txt:1359855527
@@ -3994,13 +3996,13 @@ Projects/LossyDirectoryCopier/src/main.cpp:1386648220
 Projects/MindDumper/:1456018618
 Projects/MindDumper/design/:1456001533
 Projects/MindDumper/design/initial.idea.txt:1456001533
-Projects/MindDumper/src/:1456038130
+Projects/MindDumper/src/:1456103726
 Projects/MindDumper/src/MindDumper.pro:1456002084
 Projects/MindDumper/src/main.cpp:1456011400
-Projects/MindDumper/src/minddumpdocument.cpp:1456038072
-Projects/MindDumper/src/minddumpdocument.h:1456037994
-Projects/MindDumper/src/minddumpermainwindow.cpp:1456037479
-Projects/MindDumper/src/minddumpermainwindow.h:1456024516
+Projects/MindDumper/src/minddumpdocument.cpp:1456101752
+Projects/MindDumper/src/minddumpdocument.h:1456100704
+Projects/MindDumper/src/minddumpermainwindow.cpp:1456103721
+Projects/MindDumper/src/minddumpermainwindow.h:1456101139
 Projects/MouseAndOrMotionViewMaker/:1427380548
 Projects/MouseAndOrMotionViewMaker/design/:1396053309
 Projects/MouseAndOrMotionViewMaker/design/initial.idea.txt:1396053674
@@ -6292,7 +6294,7 @@ scripts/win/my.shutdown.bat:1320779187
 scripts/win/old.passwords.kdb:1320056131
 scripts/win/zoom.cygwin.commands.sh:1320861500
 scripts/win/zoom.sync.with.3x.750gb.drives.bat:1320860540
-scripts/apt.initial.packages.debian.txt:1455999566
+scripts/apt.initial.packages.debian.txt:1456079080
 scripts/base64theSha1SumOfAFileProperly.sh:1424394103
 scripts/best.rsync.command.txt:1427098358
 scripts/cleanAptEtc.sh:1350618598

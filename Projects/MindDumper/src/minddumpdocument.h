@@ -14,6 +14,7 @@ public:
     explicit MindDumpDocument(const QString &tabTitle, const QString &mindDumpDirectoryWithSlashAppended, QWidget *parent = 0);
     QString tabTitle() const;
     bool isSaved() const;
+    bool isEmpty() const;
 private:
     QString m_TabTitle;
     QString m_MindDumpDirectoryWithSlashAppended;
