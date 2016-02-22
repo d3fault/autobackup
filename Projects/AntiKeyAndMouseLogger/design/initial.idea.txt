@@ -47,3 +47,6 @@ So hmm I'm wondering how this 'keymap page' thing is going to work seeing as I r
 
 
 It's cool that a person can watch your keyboard as you type in your password and you're still safe. As long as they can't see your monitor ofc :-P. I envision myself making a tiny ~1ft cube out of foil around my head and the only thing in there with me is the monitor (the comp doesn't need to be in there I don't think, but that will change in the future when x-ray/etc scanners are so precise that they can look at the electricity flowing through a computer and see what it's doing (this also applies to a human brain, fml.jpg)).
+
+
+Blah, disabling usb TYPES would be pointless if they could then be reactivated again [using the keyboard or mouse]. And permanently disabling usb TYPES for a given OS installation would be pointless if they could type out the source code to + boot a whole new freaking operating system (and from that new os, they simply mount the old OS and read the pw file or inject a sw keylogger etc). So what is needed is a locked down as fuck OS, kind of like what video game consoles use. No compiler access, no system access, just "KEYBOARD + MOUSE + SIGN TEXT + GENERATE PASSWORDS" only OS. Yea err ehh uhmm backing up the generated passwords or signing keys would then be impossible rofl, fuck my life.

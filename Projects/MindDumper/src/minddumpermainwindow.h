@@ -3,28 +3,16 @@
 
 #include <QMainWindow>
 
-#include <QHash>
-#include <QScopedPointer>
-#include <QAction>
-
 class QTabWidget;
+class QAction;
 
 class MindDumpDocument;
 
-struct MindDumperPostActionActions
-{
-    enum MindDumperPostActionActionsEnum
-    {
-          PostSaveSingleTabAction = 0
-        , PostSaveAllTabsAction = 1
-    };
-};
 class MindDumperMainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
     MindDumperMainWindow(QWidget *parent = 0);
-    ~MindDumperMainWindow();
 protected:
     virtual void closeEvent(QCloseEvent *theCloseEvent);
 private:
@@ -44,17 +32,7 @@ private:
     QAction *m_QuitAction;
     QAction *m_SaveCurrentTabThenOpenNewDocumentAction;
 
-    //bool m_QuitInProgress;
-    //bool m_SavingAllTabsActionInProgress;
-    int m_TabIndexCurrentlyAttemptingToSave;
-    int getNextUnsavedAndNonEmptyTabIndex(int fromIndexExcluding);
-
-    QHash<MindDumperPostActionActions::MindDumperPostActionActionsEnum, QScopedPointer<QAction>*> m_PostActionActions;
-    void doActionIfAny(MindDumperPostActionActions::MindDumperPostActionActionsEnum actionToDoIfSet);
-    void resetAllPostActionActions();
-
-    void saveSingleTabAtIndex(int tabIndexToSave);
-    bool closeTabAtIndex(int tabIndexToClose);
+    bool ensureSavedIfNotEmpty(MindDumpDocument *mindDumpDocument);
 
     static inline QString appendSlashIfNeeded(const QString &inputString) { if(inputString.endsWith("/")) return inputString; return inputString + "/"; }
 private slots:
@@ -65,13 +43,8 @@ private slots:
     void saveAllTabsThenCloseAllTabsAction();
     void saveCurrentTabThenOpenNewDocumentAction();
 
-    void handleMindDumpDocumentSaveAttemptFinished(bool success);
+    void handleCurrentTabIndexChanged(int newCurrentTabIndex);
 
-    void saveFirstUnsavedTabThenMoveOntoNextUnsavedTabs_OrDoPostSaveAllTabsAction();
-
-    void closeCurrentTab();
-    void closeAllSavedTabs();
-    void showAllTabsSavedMessageBox();
     void doQueuedClose();
 };
 

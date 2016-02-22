@@ -80,15 +80,12 @@ QString MindDumpDocument::fileNameSanitized(const QString &inputFileName)
     }
     return ret;
 }
-void MindDumpDocument::saveAndFudgeLastModifiedTimestamp()
+bool MindDumpDocument::saveAndFudgeLastModifiedTimestamp()
 {
-    QScopedPointer<ResultEmitter> saveResultEmitter(new ResultEmitter());
-    connect(saveResultEmitter.data(), SIGNAL(haveResult(bool)), this, SIGNAL(savedAndFudgedLastModifiedTimestamp(bool)));
-
     if(m_IsSaved)
     {
         QMessageBox::warning(this, tr("Warning!"), tr("Attempted to double-save tab: ") + m_TabTitle);
-        return;
+        return false;
     }
 
     QString text = m_Document->document()->toPlainText();
@@ -107,7 +104,7 @@ void MindDumpDocument::saveAndFudgeLastModifiedTimestamp()
             if(!yearMonthDir.mkpath(jitCreatedYearAndMonthFoldersWithSlashAppended))
             {
                 QMessageBox::critical(this, tr("Critical Error!"), tr("Failed to mkpath: ") + jitCreatedYearAndMonthFoldersWithSlashAppended);
-                return;
+                return false;
             }
             QString temporaryFileTemplatePath = jitCreatedYearAndMonthFoldersWithSlashAppended + QString::number(m_TimestampOfFirstKeystroke) + maybeHyphenAndFilenamePortion + "-XXXXXX.txt";
             QTemporaryFile file(temporaryFileTemplatePath);
@@ -115,7 +112,7 @@ void MindDumpDocument::saveAndFudgeLastModifiedTimestamp()
             if(!file.open(/*wtf QIODevice::WriteOnly | QIODevice::Text*/))
             {
                 QMessageBox::critical(this, tr("Critical Error!"), tr("Failed to open QTemporaryFile for writing with template: ") + temporaryFileTemplatePath);
-                return;
+                return false;
             }
 
             QTextStream fileStream(&file);
@@ -125,13 +122,13 @@ void MindDumpDocument::saveAndFudgeLastModifiedTimestamp()
             if(fileStream.status() != QTextStream::Ok)
             {
                 QMessageBox::critical(this, tr("Critical Error!"), tr("Failed to flush the QTextStream around file: ") + file.fileName());
-                return;
+                return false;
             }
 
             if(!file.flush())
             {
                 QMessageBox::critical(this, tr("Critical Error!"), tr("Failed to flush the file: ") + file.fileName());
-                return;
+                return false;
             }
             theChosenFilePathAndName = file.fileName();
             file.setAutoRemove(false);
@@ -145,28 +142,29 @@ void MindDumpDocument::saveAndFudgeLastModifiedTimestamp()
         if(!touchProcess.waitForStarted(-1))
         {
             QMessageBox::critical(this, tr("Critical Error!"), tr("The `touch` process failed to start with the arguments: ") + touchProcessArgs.join(" ") + "\n\n\n" + tr("NOTE: The file has already been written to disk and will not be removed!!!"));
-            return;
+            return false;
         }
         if(!touchProcess.waitForFinished(-1))
         {
             QMessageBox::critical(this, tr("Critical Error!"), tr("The `touch` process failed to start with the arguments: ") + touchProcessArgs.join(" ") + "\n\n\n" + tr("NOTE: The file has already been written to disk and will not be removed!!!"));
-            return;
+            return false;
         }
         if(touchProcess.exitStatus() != QProcess::NormalExit || touchProcess.exitCode() != 0)
         {
             QMessageBox::critical(this, tr("Critical Error!"), tr("The `touch` process exitted abnormally (exit-code=") + QString::number(touchProcess.exitCode()) + tr(") with the arguments: ") + touchProcessArgs.join(" ") + "\n\n\n" + tr("NOTE: The file has already been written to disk and will not be removed!!!"));
-            return;
+            return false;
         }
     }
     else if(!m_FilenameLineEdit->text().trimmed().isEmpty())
     {
         //corner case: the document was empty, but the filename was not. don't save, tell them about it and they ahve to then delete the text before trying to save again
         QMessageBox::warning(this, tr("Warning!"), tr("In tab ") + m_TabTitle + tr(", you have a filename but no file contents. Delete the filename and try again")); //TODOoptional: ask them here and now how to proceed? Discard yes/no whatever
-        return;
+        return false;
     }
 
-    saveResultEmitter->setSuccess(true);
     m_IsSaved = true;
+    setDisabled(true);
+    return true;
 }
 void MindDumpDocument::handleTextChanged()
 {

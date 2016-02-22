@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QFileInfo>
+#include <QSettings>
 #include <QTabWidget>
 #include <QMessageBox>
 #include <QCloseEvent>
@@ -16,15 +17,12 @@
 MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_TabTitleAutoNumber(-1)
-    //, m_QuitInProgress(false)
-    //, m_SavingAllTabsActionInProgress(false)
-    , m_TabIndexCurrentlyAttemptingToSave(-1)
 {
     QStringList argz = qApp->arguments();
     argz.removeFirst(); //app filename
     if(argz.size() != 1)
     {
-        QMessageBox::critical(this, tr("Critical Error!"), tr("The first argument provided to this application should be the path of your minddump directory. Quitting"));
+        QMessageBox::critical(this, tr("Critical Error!"), tr("The first argument provided to this application must be the path of your minddump directory. Quitting"));
         doQueuedClose();
         return;
     }
@@ -36,6 +34,13 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
         doQueuedClose();
         return;
     }
+
+    QCoreApplication::setOrganizationName("MindDumperOrganization");
+    QCoreApplication::setOrganizationDomain("MindDumperDomain");
+    QCoreApplication::setApplicationName("MindDumper");
+    QSettings settings;
+    restoreGeometry(settings.value("geometry").toByteArray());
+    //restoreState(settings.value("windowState").toByteArray());
 
     m_NewDocumentAction = new QAction(style()->standardIcon(QStyle::SP_FileIcon), tr("&New"), this);
     //m_NewDocumentAction->setShortcut(QKeySequence::New);
@@ -68,7 +73,7 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
     m_SaveCurrentTabThenOpenNewDocumentAction->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_N));
     connect(m_SaveCurrentTabThenOpenNewDocumentAction, SIGNAL(triggered()), this, SLOT(saveCurrentTabThenOpenNewDocumentAction()));
 
-    //TODOreq: CTRL+TAB, CTRL+SHIFT+TAB
+    //TODOreq: CTRL+TAB, CTRL+SHIFT+TAB, CTRL+T, CTRL+SHIFT+T
 
     //OLD comment:
     //^My use of bool flags is sloppy/ugly. It works, but as I add more actions the complexity grows exponentially and I'm bound to forget to set some bool to false during some corner case and poof there goes my files. I'm considering using actions in scoped pointers, eg m_ActionToPerformAfterSaveAttemptFinishes could point to a "saveNextUnsavedThenContinueOn" action, and when THAT action finishes then I check if an m_ActionToPerformAfterSaveAllTabsActionFinishes isn't null, and if it isn't then I do that action. One such action there would be "quit". But I know deep down I'm reinventing finite state machines. I know Qt has a framework for this! I'm just not used to using them. I remember doing FSM in college when we built a CPU out of NAND gates [on a simulator], but I've not used FSMs since. I want to, and I've read the Qt documentation on them like 20 fucking times, but each time i do I forget wtf is going on and/or forget my original task. So here it is, this comment. Come back to it after you read the FSM doc yet again.
@@ -92,265 +97,189 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
     toolBar->addAction(m_SaveCurrentTabAction);
     toolBar->addAction(m_SaveAllTabsAction);
 
-    m_PostActionActions .insert(MindDumperPostActionActions::PostSaveSingleTabAction, new QScopedPointer<QAction>());
-    m_PostActionActions .insert(MindDumperPostActionActions::PostSaveAllTabsAction, new QScopedPointer<QAction>());
-
     setCentralWidget(m_TabWidget = new QTabWidget());
-    newDocumentAction();
+    m_TabWidget->setDocumentMode(true);
+    connect(m_TabWidget, SIGNAL(currentChanged(int)), this, SLOT(handleCurrentTabIndexChanged(int)));
+    //this is handled implicitly in handleCurrentTabIndexChanged: newDocumentAction();
+    handleCurrentTabIndexChanged(-1); //get things started
 
     //actually yea we just delay the close itself until saving completes [without error]. qApp->setQuitOnLastWindowClosed(false);
     //no such signal lol, closeEvent instead. connect(this, SIGNAL(closed))
 }
-MindDumperMainWindow::~MindDumperMainWindow()
-{
-    qDeleteAll(m_PostActionActions);
-}
 void MindDumperMainWindow::closeEvent(QCloseEvent *theCloseEvent)
 {
-    m_TabIndexCurrentlyAttemptingToSave = getNextUnsavedAndNonEmptyTabIndex(-1);
-    if(m_TabIndexCurrentlyAttemptingToSave > -1)
+    int numTabs = m_TabWidget->count();
+    for(int i = 0; i < numTabs; ++i)
     {
-        //m_QuitInProgress = true;
-        //m_SavingAllTabsActionInProgress = true;
-        resetAllPostActionActions();
-        QAction *postSaveAllTabsAction;
-        QScopedPointer<QAction> *postSaveAllTabsActionScopedPointer = m_PostActionActions.value(MindDumperPostActionActions::PostSaveAllTabsAction);
-        postSaveAllTabsActionScopedPointer->reset(postSaveAllTabsAction = new QAction(this));
-        connect(postSaveAllTabsAction, SIGNAL(triggered()), this, SLOT(doQueuedClose()));
-
-        theCloseEvent->ignore(); //we async save all, then close (again) later
-        //saveSingleTabAtIndex(m_TabIndexCurrentlyAttemptingToSave);
-        saveFirstUnsavedTabThenMoveOntoNextUnsavedTabs_OrDoPostSaveAllTabsAction();
-        return;
+        MindDumpDocument *currentMindDumpDocument = qobject_cast<MindDumpDocument*>(m_TabWidget->widget(i));
+        if(!currentMindDumpDocument)
+        {
+            QMessageBox::critical(this, tr("Critical Error!"), tr("Close Event triggered, but we failed to get the widget at TAB WIDGET INDEX (not tab title): ") + QString::number(i) + tr(". This is probably a bug"));
+            theCloseEvent->ignore();
+            return;
+        }
+        if(!ensureSavedIfNotEmpty(currentMindDumpDocument))
+        {
+            QMessageBox::critical(this, tr("Critical Error!"), tr("During a Close Event, we failed to ensure the tab is saved if not empty: ") + currentMindDumpDocument->tabTitle());
+            theCloseEvent->ignore();
+            return;
+        }
     }
 
-    //since the event was not ignored, the window closes and the application quits
+    QSettings settings;
+    settings.setValue("geometry", saveGeometry());
+    //settings.setValue("windowState", saveState());
+
+    QMainWindow::closeEvent(theCloseEvent);
 }
 MindDumpDocument *MindDumperMainWindow::createAndAddMindDumpDocument()
 {
     QString tabTitle = getTabTitleAutoNumber();
     MindDumpDocument *newDocument;
-    m_TabWidget->addTab(newDocument = new MindDumpDocument(tabTitle, m_MindDumpDirectoryWithSlashAppended), tabTitle);
+    m_TabWidget->addTab(newDocument = new MindDumpDocument(tabTitle, m_MindDumpDirectoryWithSlashAppended, this), tabTitle);
     return newDocument;
 }
 QString MindDumperMainWindow::getTabTitleAutoNumber()
 {
     return QString::number(++m_TabTitleAutoNumber);
 }
-int MindDumperMainWindow::getNextUnsavedAndNonEmptyTabIndex(int fromIndexExcluding)
+bool MindDumperMainWindow::ensureSavedIfNotEmpty(MindDumpDocument *mindDumpDocument)
 {
-    int tabCount = m_TabWidget->count();
-    for(int i = fromIndexExcluding+1; i < tabCount; ++i)
-    {
-        MindDumpDocument *mindDumpDocument = static_cast<MindDumpDocument*>(m_TabWidget->widget(i));
-        if((!mindDumpDocument->isSaved()) && (!mindDumpDocument->isEmpty()))
-            return i;
-    }
-    return -1;
-}
-void MindDumperMainWindow::doActionIfAny(MindDumperPostActionActions::MindDumperPostActionActionsEnum actionToDoIfSet)
-{
-    QScopedPointer<QAction> *actionToMaybeDo = m_PostActionActions.value(actionToDoIfSet);
-    if(actionToMaybeDo->isNull())
-        return;
-    //actionToMaybeDo->data()->trigger();
-    //TO DOnereq: do I want to reset it now that it's been triggered? my head hurts. maybe I want to take() it before trigger()'ing it, because trigger()'ing it might reset it (OR NOT) but we do want to reset it, but without overwriting a new post action action that might have been [re]set after the trigger that this post action action triggered? yea eat my dust
-    QScopedPointer<QAction> newOwner(actionToMaybeDo->take()); //never let a heap allocated type go without an owner for even a single statement!
-    newOwner->trigger();
-    //reset called implicitly in destructor of newOwner
-}
-void MindDumperMainWindow::resetAllPostActionActions()
-{
-    Q_FOREACH(QScopedPointer<QAction> *currentPostActionAction, m_PostActionActions)
-    {
-        currentPostActionAction->reset();
-    }
-}
-void MindDumperMainWindow::saveSingleTabAtIndex(int tabIndexToSave)
-{
-    MindDumpDocument *mindDumpDocument = static_cast<MindDumpDocument*>(m_TabWidget->widget(tabIndexToSave));
-    //TO DOnereq: maybe check if it's already saved? Ideally the actions would be untriggerable and we'd never get here. If it is already saved, do we then do our post single save action?
-    if(!mindDumpDocument->isSaved())
-    {
-        connect(mindDumpDocument, SIGNAL(savedAndFudgedLastModifiedTimestamp(bool)), this, SLOT(handleMindDumpDocumentSaveAttemptFinished(bool)));
-        mindDumpDocument->saveAndFudgeLastModifiedTimestamp();
-    }
-    else
-    {
-        QMessageBox::warning(this, tr("Warning!"), tr("Save tab called for tab") + mindDumpDocument->tabTitle() + tr(", but it was already saved"));
-        doActionIfAny(MindDumperPostActionActions::PostSaveSingleTabAction);
-    }
-}
-bool MindDumperMainWindow::closeTabAtIndex(int tabIndexToClose)
-{
-    QScopedPointer<MindDumpDocument> minddumpDocument(static_cast<MindDumpDocument*>(m_TabWidget->widget(tabIndexToClose)));
-    if((!minddumpDocument->isSaved()) && (!minddumpDocument->isEmpty()))
-    {
-        resetAllPostActionActions();
-        QMessageBox::critical(this, tr("Critical Error!"), tr("Tab ") + minddumpDocument->tabTitle() + tr(" was told to close, but hasn't been saved yet. This is probably a bug. We're leaving the tab open"));
-        minddumpDocument.take();
-        return false;
-    }
-    m_TabWidget->removeTab(tabIndexToClose);
-
-    //TO DOnereq: if this was the last tab open, open a new/blank empty one just like at the start of the app
-    if(m_TabWidget->count() == 0)
-        QMetaObject::invokeMethod(this, "newDocumentAction", Qt::QueuedConnection); //queued because the "close all tabs" loop becomes an infinite loop if it's not queued
-
-    //MindDumpDocument itself gets deleted in scoped pointer destructor
-    return true;
+    if(mindDumpDocument->isSaved() || mindDumpDocument->isEmpty())
+        return true;
+    return mindDumpDocument->saveAndFudgeLastModifiedTimestamp();
 }
 void MindDumperMainWindow::newDocumentAction()
 {
-    resetAllPostActionActions();
+    //resetAllPostActionActions();
     MindDumpDocument *newDocument = createAndAddMindDumpDocument();
     m_TabWidget->setCurrentWidget(newDocument);
     newDocument->setFocusOnDocument();
 }
 void MindDumperMainWindow::saveCurrentTabAction()
 {
-    resetAllPostActionActions();
-    //m_SavingAllTabsActionInProgress = false;
-    //m_QuitInProgress = false;
-    m_TabIndexCurrentlyAttemptingToSave = m_TabWidget->currentIndex();
-    saveSingleTabAtIndex(m_TabIndexCurrentlyAttemptingToSave);
+    MindDumpDocument *currentTab = qobject_cast<MindDumpDocument*>(m_TabWidget->currentWidget());
+    if(!currentTab)
+    {
+        QMessageBox::critical(this, tr("Critical Error!"), tr("Save Current Tab action triggered, but there is no current tab. This is probably a bug"));
+        return;
+    }
+    if(currentTab->isEmpty())
+    {
+        QMessageBox::critical(this, tr("Critical Error!"), tr("Save Current Tab action triggered, but there it is an empty document. This is probably a bug"));
+        return;
+    }
+    if(currentTab->isSaved())
+    {
+        QMessageBox::critical(this, tr("Critical Error!"), tr("Save Current Tab action triggered, but there it is already saved. This is probably a bug"));
+        return;
+    }
+    if(!currentTab->saveAndFudgeLastModifiedTimestamp())
+    {
+        QMessageBox::critical(this, tr("Critical Error!"), tr("Failed to save current tab"));
+        return;
+    }
 }
 void MindDumperMainWindow::saveAllTabsAction()
 {
-    resetAllPostActionActions();
-    QAction *postSaveAllTabsAction;
-    QScopedPointer<QAction> *postSaveAllTabsActionScopedPointer = m_PostActionActions.value(MindDumperPostActionActions::PostSaveAllTabsAction);
-    postSaveAllTabsActionScopedPointer->reset(postSaveAllTabsAction = new QAction(this));
-    connect(postSaveAllTabsAction, SIGNAL(triggered()), this, SLOT(showAllTabsSavedMessageBox()));
+    bool atLeastOneSaved = false;
 
-    Q_ASSERT(getNextUnsavedAndNonEmptyTabIndex(-1) != -1); //the action should bhave been disabled
-    saveFirstUnsavedTabThenMoveOntoNextUnsavedTabs_OrDoPostSaveAllTabsAction();
+    int numTabs = m_TabWidget->count();
+    for(int i = 0; i < numTabs; ++i)
+    {
+        MindDumpDocument *currentMindDumpDocument = qobject_cast<MindDumpDocument*>(m_TabWidget->widget(i));
+        if(!currentMindDumpDocument)
+        {
+            QMessageBox::critical(this, tr("Critical Error!"), tr("Save All Tabs action triggered, but we failed to get the widget at TAB WIDGET INDEX (not tab title): ") + QString::number(i) + tr(". This is probably a bug"));
+            return;
+        }
+        if(ensureSavedIfNotEmpty(currentMindDumpDocument))
+        {
+            atLeastOneSaved = true;
+        }
+        else
+        {
+            QMessageBox::critical(this, tr("Critical Error!"), tr("During a Save All Tabs action, we failed to ensure the tab is saved if not empty: ") + currentMindDumpDocument->tabTitle());
+            return;
+        }
+    }
 
-#if 0
-    //m_SavingAllTabsActionInProgress = true;
-    //m_QuitInProgress = false;
-    m_TabIndexCurrentlyAttemptingToSave = getNextUnsavedTabIndex(-1);
-    if(m_TabIndexCurrentlyAttemptingToSave > -1)
-        saveTabAtIndexThenMoveOntoNextUnsavedTabIfNoErrors(m_TabIndexCurrentlyAttemptingToSave);
-    else
-        qDebug("Save All Tabs Action triggered, but all tabs already saved");
-#endif
+    if(!atLeastOneSaved)
+    {
+        QMessageBox::warning(this, tr("Warning!"), tr("Save All Tabs action triggered and each tab visitted without error, but none of the tabs were saved. This is probably a bug"));
+        return;
+    }
+
+    QMessageBox::information(this, tr("Success!"), tr("All tabs have been saved successfully"));
 }
 void MindDumperMainWindow::saveCurrentTabThenCloseCurrentTabAction()
 {
-    resetAllPostActionActions();
-
-    m_TabIndexCurrentlyAttemptingToSave = m_TabWidget->currentIndex();
-    MindDumpDocument *mindDumpDocument = static_cast<MindDumpDocument*>(m_TabWidget->widget(m_TabIndexCurrentlyAttemptingToSave));
-    if(mindDumpDocument->isSaved() || mindDumpDocument->isEmpty())
+    int currentIndex = m_TabWidget->currentIndex();
+    MindDumpDocument *mindDumpDocument = qobject_cast<MindDumpDocument*>(m_TabWidget->widget(currentIndex));
+    if(!mindDumpDocument)
     {
-        closeCurrentTab();
+        QMessageBox::critical(this, tr("Critical Error!"), tr("Save Current Tab Then Close Current Tab action triggered, but there is no current tab. This is probably a bug"));
         return;
     }
-
-    QAction *postSaveSingleTabAction;
-    QScopedPointer<QAction> *postSaveSingleTabActionScopedPointer = m_PostActionActions.value(MindDumperPostActionActions::PostSaveSingleTabAction);
-    postSaveSingleTabActionScopedPointer->reset(postSaveSingleTabAction = new QAction(this));
-    connect(postSaveSingleTabAction, SIGNAL(triggered()), this, SLOT(closeCurrentTab()));
-
-    saveSingleTabAtIndex(m_TabIndexCurrentlyAttemptingToSave);
+    if(!ensureSavedIfNotEmpty(mindDumpDocument))
+    {
+        QMessageBox::critical(this, tr("Critical Error!"), tr("During a Save Current Tab Then Close Current Tab action, we failed to ensure the tab is saved if not empty"));
+        return;
+    }
+    //it's either saved or it's emtpy
+    m_TabWidget->removeTab(currentIndex);
+    delete mindDumpDocument;
 }
 void MindDumperMainWindow::saveAllTabsThenCloseAllTabsAction()
 {
-    //TO DOnereq: two empty tabs, ctrl+shift+w = infinite loop
-    resetAllPostActionActions();
-    QAction *postSaveAllTabsAction;
-    m_PostActionActions.value(MindDumperPostActionActions::PostSaveAllTabsAction)->reset(postSaveAllTabsAction = new QAction(this));
-    connect(postSaveAllTabsAction, SIGNAL(triggered()), this, SLOT(closeAllSavedTabs()));
+    int numTabs = m_TabWidget->count();
+    for(int i = 0; i < numTabs; ++i)
+    {
+        MindDumpDocument *currentMindDumpDocument = qobject_cast<MindDumpDocument*>(m_TabWidget->widget(i));
+        if(!currentMindDumpDocument)
+        {
+            QMessageBox::critical(this, tr("Critical Error!"), tr("Save All Tabs Then Close All Tabs action triggered, but we failed to get the widget at TAB WIDGET INDEX (not tab title): ") + QString::number(i) + tr(". This is probably a bug"));
+            return;
+        }
+        if(!ensureSavedIfNotEmpty(currentMindDumpDocument))
+        {
+            QMessageBox::critical(this, tr("Critical Error!"), tr("During a Save All Tabs Then Close All Tabs action, we failed to ensure the tab is saved if not empty: ") + currentMindDumpDocument->tabTitle());
+            return;
+        }
+    }
 
-    //TO DOnereq: after all tabs have closed, open a new/blank empty one just like at the start of the app..... perhaps using a new PostActionAction "PostAllTabsClosedAction"
-    saveFirstUnsavedTabThenMoveOntoNextUnsavedTabs_OrDoPostSaveAllTabsAction();
+    //this caused infinite loop because handleCurrentTabIndexChanged spawns a new one when count reaches 0 (I could have also made the connection queued, but meh): while(m_TabWidget->count() > 0)
+    for(int i = 0; i < numTabs; ++i)
+    {
+        MindDumpDocument *mindDumpDocument = qobject_cast<MindDumpDocument*>(m_TabWidget->widget(0));
+        m_TabWidget->removeTab(0);
+        delete mindDumpDocument;
+    }
 }
 void MindDumperMainWindow::saveCurrentTabThenOpenNewDocumentAction()
 {
-    int currentIndex = m_TabWidget->currentIndex();
-
-    MindDumpDocument *currentTab = static_cast<MindDumpDocument*>(m_TabWidget->widget(currentIndex));
-    if(currentTab->isSaved() || currentTab->isEmpty())
+    MindDumpDocument *currentTab = qobject_cast<MindDumpDocument*>(m_TabWidget->currentWidget());
+    if(!currentTab)
     {
-        //TO DOnereq: should behave just like "new tab" if current tab is already saved. Atm this will cause a "double save", which is considered a "save error"
+        QMessageBox::critical(this, tr("Critical Error!"), tr("Save Current Tab Then Open New Document action triggered, but there is no current tab. This is probably a bug"));
+        return;
+    }
+    if(!ensureSavedIfNotEmpty(currentTab))
+    {
+        QMessageBox::critical(this, tr("Critical Error!"), tr("During a Save Current Tab Then Open New Document action, we failed to ensure saved if not empty: ") + currentTab->tabTitle());
+        return;
+    }
+    newDocumentAction();
+}
+void MindDumperMainWindow::handleCurrentTabIndexChanged(int newCurrentTabIndex)
+{
+    //TODOreq: enable/disable actions based on saved'ness and emptiness
+
+    if(newCurrentTabIndex == -1)
+    {
         newDocumentAction();
         return;
     }
-
-    resetAllPostActionActions();
-    QAction *postSaveSingleTabAction;
-    m_PostActionActions.value(MindDumperPostActionActions::PostSaveSingleTabAction)->reset(postSaveSingleTabAction = new QAction(this));
-    connect(postSaveSingleTabAction, SIGNAL(triggered()), this, SLOT(newDocumentAction()));
-
-    saveSingleTabAtIndex(currentIndex);
-}
-void MindDumperMainWindow::handleMindDumpDocumentSaveAttemptFinished(bool success)
-{
-    MindDumpDocument *mindDumpDocument = qobject_cast<MindDumpDocument*>(sender());
-    disconnect(mindDumpDocument, SIGNAL(savedAndFudgedLastModifiedTimestamp(bool)));
-    if(!success)
-    {
-        //m_SavingAllTabsActionInProgress = false; //whether or not there was one occuring, we set it to false from here on out
-        //m_QuitInProgress = false;
-        resetAllPostActionActions();
-        QMessageBox::critical(this, tr("Critical Error!"), tr("Failed to save tab: ") + mindDumpDocument->tabTitle());
-        return;
-    }
-    mindDumpDocument->setDisabled(true);
-
-    doActionIfAny(MindDumperPostActionActions::PostSaveSingleTabAction);
-
- #if 0 //TODOreq: merge
-    if(!m_SavingAllTabsActionInProgress)
-        return;
-    m_TabIndexCurrentlyAttemptingToSave = getNextUnsavedTabIndex(m_TabIndexCurrentlyAttemptingToSave);
-    if(m_TabIndexCurrentlyAttemptingToSave == -1)
-    {
-        if(m_QuitInProgress)
-        {
-            QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection); //Queued because a closeEvent might have gotten us here, and I think there's some internal qt logic to eat subsequent close() calls or something because calling close() directly didn't work. TODOmb: a progress dialog when saving in bulk (either in app or when quitting)
-            return;
-        }
-        QMessageBox::information(this, tr("Success!"), tr("All tabs have been saved successfully"));
-        return;
-    }
-    saveSingleTabAtIndex(m_TabIndexCurrentlyAttemptingToSave);
-#endif
-}
-void MindDumperMainWindow::saveFirstUnsavedTabThenMoveOntoNextUnsavedTabs_OrDoPostSaveAllTabsAction()
-{
-    m_TabIndexCurrentlyAttemptingToSave = getNextUnsavedAndNonEmptyTabIndex(-1);
-    if(m_TabIndexCurrentlyAttemptingToSave > -1)
-    {
-        QAction *postSaveSingleTabAction;
-        QScopedPointer<QAction> *postSaveSingleTabActionScopedPointer = m_PostActionActions.value(MindDumperPostActionActions::PostSaveSingleTabAction);
-        postSaveSingleTabActionScopedPointer->reset(postSaveSingleTabAction = new QAction(this));
-        connect(postSaveSingleTabAction, SIGNAL(triggered()), this, SLOT(saveFirstUnsavedTabThenMoveOntoNextUnsavedTabs_OrDoPostSaveAllTabsAction()));
-
-        saveSingleTabAtIndex(m_TabIndexCurrentlyAttemptingToSave);
-    }
-    else
-        doActionIfAny(MindDumperPostActionActions::PostSaveAllTabsAction);
-}
-void MindDumperMainWindow::closeCurrentTab()
-{
-    closeTabAtIndex(m_TabWidget->currentIndex());
-}
-void MindDumperMainWindow::closeAllSavedTabs()
-{
-    while(m_TabWidget->count() > 0)
-    {
-        if(!closeTabAtIndex(0))
-            return;
-    }
-
-    //hmmm... could have a "post all tabs closed" action, but.....
-    //nvm we do it in closeTabAtIndex: newDocumentAction(); //.....atm there's only one thing we ever do after all tabs get closed
-}
-void MindDumperMainWindow::showAllTabsSavedMessageBox()
-{
-    QMessageBox::information(this, tr("Success!"), tr("All tabs have been saved successfully"));
 }
 void MindDumperMainWindow::doQueuedClose()
 {

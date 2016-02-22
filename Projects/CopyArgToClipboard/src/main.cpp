@@ -13,8 +13,18 @@ int main(int argc, char *argv[])
         stdOut << "Error: no argument provided" << endl;
         return 1;
     }
+    argz.removeFirst(); //app name
     QClipboard *clipboard = QGuiApplication::clipboard();
-    clipboard->setText(argz.at(1));
-    stdOut << "Argument copied" << endl;
+    QString clip;
+    bool first = true;
+    Q_FOREACH(const QString &currentArg, argz)
+    {
+        if(!first)
+            clip += " ";
+        first = false;
+        clip += currentArg;
+    }
+    clipboard->setText(clip);
+    stdOut << "Argument(s) copied" << endl;
     return 0;
 }

@@ -15,6 +15,7 @@ public:
     QString tabTitle() const;
     bool isSaved() const;
     bool isEmpty() const;
+    bool saveAndFudgeLastModifiedTimestamp();
 private:
     QString m_TabTitle;
     QString m_MindDumpDirectoryWithSlashAppended;
@@ -28,28 +29,10 @@ private:
     static bool charOfFilenameisSane(const QString &charOfFilename);
     static QString filterFilenameChar(const QString &charOfFilenameToFilter);
     static QString fileNameSanitized(const QString &inputFileName);
-signals:
-    void savedAndFudgedLastModifiedTimestamp(bool success);
 public slots:
     void setFocusOnDocument();
-    void saveAndFudgeLastModifiedTimestamp();
 private slots:
     void handleTextChanged();
-};
-class ResultEmitter : public QObject
-{
-    Q_OBJECT
-public:
-    explicit ResultEmitter(QObject *parent = 0)
-        : QObject(parent)
-        , m_Success(false)
-    { }
-    void setSuccess(bool success) { m_Success = success; }
-    ~ResultEmitter() { emit haveResult(m_Success); }
-signals:
-    void haveResult(bool success);
-private:
-    bool m_Success;
 };
 
 #endif // MINDDUMPDOCUMENT_H
