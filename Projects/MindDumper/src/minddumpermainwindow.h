@@ -31,6 +31,8 @@ private:
     QAction *m_SaveAllTabsThenCloseAllTabsAction;
     QAction *m_QuitAction;
     QAction *m_SaveCurrentTabThenOpenNewDocumentAction;
+    QAction *m_NextTabAction;
+    QAction *m_PreviousTabAction;
 
     bool ensureSavedIfNotEmpty(MindDumpDocument *mindDumpDocument);
 
@@ -42,6 +44,8 @@ private slots:
     void saveCurrentTabThenCloseCurrentTabAction();
     void saveAllTabsThenCloseAllTabsAction();
     void saveCurrentTabThenOpenNewDocumentAction();
+    void nextTabAction();
+    void previousTabAction();
 
     void handleCurrentTabIndexChanged(int newCurrentTabIndex);
 

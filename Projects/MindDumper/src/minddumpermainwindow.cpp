@@ -44,7 +44,7 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
 
     m_NewDocumentAction = new QAction(style()->standardIcon(QStyle::SP_FileIcon), tr("&New"), this);
     //m_NewDocumentAction->setShortcut(QKeySequence::New);
-    m_NewDocumentAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_N));
+    m_NewDocumentAction->setShortcuts(QList<QKeySequence>() << QKeySequence(Qt::CTRL + Qt::Key_N) << QKeySequence(Qt::CTRL + Qt::Key_T));
     connect(m_NewDocumentAction, SIGNAL(triggered()), this, SLOT(newDocumentAction()));
 
     m_SaveCurrentTabAction = new QAction(style()->standardIcon(QStyle::SP_DialogSaveButton), tr("&Save"), this);
@@ -70,10 +70,16 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
     connect(m_QuitAction, SIGNAL(triggered()), this, SLOT(doQueuedClose()));
 
     m_SaveCurrentTabThenOpenNewDocumentAction = new QAction(tr("Save Current, Open New"), this);
-    m_SaveCurrentTabThenOpenNewDocumentAction->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_N));
+    m_SaveCurrentTabThenOpenNewDocumentAction->setShortcuts(QList<QKeySequence>() << QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_N) << QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_T));
     connect(m_SaveCurrentTabThenOpenNewDocumentAction, SIGNAL(triggered()), this, SLOT(saveCurrentTabThenOpenNewDocumentAction()));
 
-    //TODOreq: CTRL+TAB, CTRL+SHIFT+TAB, CTRL+T, CTRL+SHIFT+T
+    m_NextTabAction = new QAction(style()->standardIcon(QStyle::SP_ArrowForward), tr("Next Tab"), this);
+    m_NextTabAction->setShortcut(Qt::CTRL + Qt::Key_Tab);
+    connect(m_NextTabAction, SIGNAL(triggered()), this, SLOT(nextTabAction()));
+
+    m_PreviousTabAction = new QAction(style()->standardIcon(QStyle::SP_ArrowBack), tr("Previous Tab"), this);
+    m_PreviousTabAction->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_Tab);
+    connect(m_PreviousTabAction, SIGNAL(triggered()), this, SLOT(previousTabAction()));
 
     //OLD comment:
     //^My use of bool flags is sloppy/ugly. It works, but as I add more actions the complexity grows exponentially and I'm bound to forget to set some bool to false during some corner case and poof there goes my files. I'm considering using actions in scoped pointers, eg m_ActionToPerformAfterSaveAttemptFinishes could point to a "saveNextUnsavedThenContinueOn" action, and when THAT action finishes then I check if an m_ActionToPerformAfterSaveAllTabsActionFinishes isn't null, and if it isn't then I do that action. One such action there would be "quit". But I know deep down I'm reinventing finite state machines. I know Qt has a framework for this! I'm just not used to using them. I remember doing FSM in college when we built a CPU out of NAND gates [on a simulator], but I've not used FSMs since. I want to, and I've read the Qt documentation on them like 20 fucking times, but each time i do I forget wtf is going on and/or forget my original task. So here it is, this comment. Come back to it after you read the FSM doc yet again.
@@ -96,6 +102,9 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
     toolBar->addSeparator();
     toolBar->addAction(m_SaveCurrentTabAction);
     toolBar->addAction(m_SaveAllTabsAction);
+    toolBar->addSeparator();
+    toolBar->addAction(m_PreviousTabAction);
+    toolBar->addAction(m_NextTabAction);
 
     setCentralWidget(m_TabWidget = new QTabWidget());
     m_TabWidget->setDocumentMode(true);
@@ -271,15 +280,37 @@ void MindDumperMainWindow::saveCurrentTabThenOpenNewDocumentAction()
     }
     newDocumentAction();
 }
+void MindDumperMainWindow::nextTabAction()
+{
+    //loop around, but don't set to index already at
+    int currentIndex = m_TabWidget->currentIndex();
+    int maybeNextIndex = currentIndex + 1;
+    if(maybeNextIndex == m_TabWidget->count())
+        maybeNextIndex = 0;
+    if(currentIndex == maybeNextIndex)
+        return;
+    m_TabWidget->setCurrentIndex(maybeNextIndex);
+}
+void MindDumperMainWindow::previousTabAction()
+{
+    //loop around, but don't set to index already at
+    int currentIndex = m_TabWidget->currentIndex();
+    int maybePreviousIndex = currentIndex - 1;
+    if(maybePreviousIndex < 0)
+        maybePreviousIndex = m_TabWidget->count() - 1;
+    if(currentIndex == maybePreviousIndex)
+        return;
+    m_TabWidget->setCurrentIndex(maybePreviousIndex);
+}
 void MindDumperMainWindow::handleCurrentTabIndexChanged(int newCurrentTabIndex)
 {
-    //TODOreq: enable/disable actions based on saved'ness and emptiness
-
     if(newCurrentTabIndex == -1)
     {
         newDocumentAction();
-        return;
+        return; //we return because the newDocumentAction will trigger yet another handleCurrentTabIndexChanged
     }
+
+    //TODOreq: enable/disable actions based on saved'ness and emptiness
 }
 void MindDumperMainWindow::doQueuedClose()
 {
