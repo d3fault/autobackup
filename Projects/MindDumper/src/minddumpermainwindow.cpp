@@ -175,12 +175,12 @@ void MindDumperMainWindow::saveCurrentTabAction()
     }
     if(currentTab->isEmpty())
     {
-        QMessageBox::critical(this, tr("Critical Error!"), tr("Save Current Tab action triggered, but there it is an empty document. This is probably a bug"));
+        QMessageBox::critical(this, tr("Critical Error!"), tr("Save Current Tab action triggered, but it is an empty document. This is probably a bug"));
         return;
     }
     if(currentTab->isSaved())
     {
-        QMessageBox::critical(this, tr("Critical Error!"), tr("Save Current Tab action triggered, but there it is already saved. This is probably a bug"));
+        QMessageBox::critical(this, tr("Critical Error!"), tr("Save Current Tab action triggered, but it is already saved. This is probably a bug"));
         return;
     }
     if(!currentTab->saveAndFudgeLastModifiedTimestamp())
@@ -202,20 +202,22 @@ void MindDumperMainWindow::saveAllTabsAction()
             QMessageBox::critical(this, tr("Critical Error!"), tr("Save All Tabs action triggered, but we failed to get the widget at TAB WIDGET INDEX (not tab title): ") + QString::number(i) + tr(". This is probably a bug"));
             return;
         }
-        if(ensureSavedIfNotEmpty(currentMindDumpDocument))
+        if(currentMindDumpDocument->isSaved() || currentMindDumpDocument->isEmpty())
+            continue;
+        if(currentMindDumpDocument->saveAndFudgeLastModifiedTimestamp())
         {
             atLeastOneSaved = true;
         }
         else
         {
-            QMessageBox::critical(this, tr("Critical Error!"), tr("During a Save All Tabs action, we failed to ensure the tab is saved if not empty: ") + currentMindDumpDocument->tabTitle());
+            QMessageBox::critical(this, tr("Critical Error!"), tr("During a Save All Tabs action, we failed to save: ") + currentMindDumpDocument->tabTitle());
             return;
         }
     }
 
     if(!atLeastOneSaved)
     {
-        QMessageBox::warning(this, tr("Warning!"), tr("Save All Tabs action triggered and each tab visitted without error, but none of the tabs were saved. This is probably a bug"));
+        QMessageBox::warning(this, tr("Warning!"), tr("Save All Tabs action triggered and each tab was verified saved or empty, but none of the tabs were saved. This is probably a bug"));
         return;
     }
 

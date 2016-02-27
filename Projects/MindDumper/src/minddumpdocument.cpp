@@ -163,7 +163,9 @@ bool MindDumpDocument::saveAndFudgeLastModifiedTimestamp()
     }
 
     m_IsSaved = true;
-    setDisabled(true);
+    m_FilenameLineEdit->setReadOnly(true);
+    m_DreamCheckbox->setDisabled(true);
+    m_Document->setReadOnly(true);
     return true;
 }
 void MindDumpDocument::handleTextChanged()
