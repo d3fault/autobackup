@@ -13,7 +13,9 @@ class MindDumperMainWindow : public QMainWindow
     Q_OBJECT
 public:
     MindDumperMainWindow(QWidget *parent = 0);
+    ~MindDumperMainWindow();
 protected:
+    bool handleSignal(int sig);
     virtual void closeEvent(QCloseEvent *theCloseEvent);
 private:
     QString m_MindDumpDirectoryWithSlashAppended;
@@ -49,6 +51,7 @@ private slots:
 
     void handleCurrentTabIndexChanged(int newCurrentTabIndex);
 
+    void handleSystemSignalInterruptOrTerminateReceived();
     void doQueuedClose();
 };
 

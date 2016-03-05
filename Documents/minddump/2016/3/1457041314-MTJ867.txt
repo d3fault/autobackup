@@ -1,0 +1,11 @@
+Given:
+-I am life
+-Life is nuts
+Conclusion: I am nuts
+
+
+The original train of thought was different/backwards:
+A hypothetical conversation:
+not-me: you're nuts
+me: life is nuts
+me: i am life

@@ -17,3 +17,5 @@ SOURCES += main.cpp\
 
 HEADERS  += minddumpermainwindow.h \
     minddumpdocument.h
+
+include(../../../GloballySharedClasses/qtsystemsignalhandler.pri)

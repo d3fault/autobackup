@@ -11,6 +11,7 @@
 
 #include "standardinputnotifier.h"
 
+//TODOreq: utilize QtSystemSignalHandler to get the destructor to run when Ctrl+C / `kill <pid>` occurs... because if the destructor doesn't run, the terminal is left with canonical mode off and stdin echo'ing disabled
 AntiKeyAndMouseLoggerCli::AntiKeyAndMouseLoggerCli(QObject *parent)
     : QObject(parent)
     , m_StdOut(stdout)

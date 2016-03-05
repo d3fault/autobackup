@@ -11,6 +11,7 @@
 #include <QMenu>
 #include <QToolBar>
 
+#include "qtsystemsignalhandler.h"
 #include "minddumpdocument.h"
 
 //TODOreq: asterisk in tab title when unsaved, asterisk in window title when any tab unsaved
@@ -18,6 +19,7 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_TabTitleAutoNumber(-1)
 {
+    connect(QtSystemSignalHandler::instance(), SIGNAL(systemSignalReceived(QtSystemSignal::QtSystemSignalEnum)), this, SLOT(handleSystemSignalInterruptOrTerminateReceived()));
     QStringList argz = qApp->arguments();
     argz.removeFirst(); //app filename
     if(argz.size() != 1)
@@ -114,6 +116,32 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
 
     //actually yea we just delay the close itself until saving completes [without error]. qApp->setQuitOnLastWindowClosed(false);
     //no such signal lol, closeEvent instead. connect(this, SIGNAL(closed))
+}
+MindDumperMainWindow::~MindDumperMainWindow()
+{
+    //TO DOnereq: a qApp->quit() might get us here, so let's 'ensure saved' just to be on the safe side xD. it's too late to show a message box error though (i think...)
+    //TODOmb: on error: spit the unsaved docs out to stdout? save them to a temp file at a location given to us by qt (we can request a "local writable" dir), in addition to saying on stdout that there was an error and where to find the files? TODOreq: verify mind dump dir is writeable on app startup
+    int numTabs = m_TabWidget->count();
+    for(int i = 0; i < numTabs; ++i)
+    {
+        MindDumpDocument *currentMindDumpDocument = qobject_cast<MindDumpDocument*>(m_TabWidget->widget(i));
+        if(!currentMindDumpDocument)
+            continue; //maybe later tabs will have more success?
+#if 0
+        {
+            QMessageBox::critical(this, tr("Critical Error!"), tr("System signal 'interrupt' or 'terminate' received, but we failed to get the widget at TAB WIDGET INDEX (not tab title): ") + QString::number(i) + tr(". This is probably a bug"));
+            return;
+        }
+#endif
+        if(!ensureSavedIfNotEmpty(currentMindDumpDocument))
+            continue; //ditto
+#if 0
+        {
+            QMessageBox::critical(this, tr("Critical Error!"), tr("While trying to save all and exit after receiving an 'interrupt' or 'terminate' system signal, we failed to ensure the tab is saved if not empty: ") + currentMindDumpDocument->tabTitle());
+            return;
+        }
+#endif
+    }
 }
 void MindDumperMainWindow::closeEvent(QCloseEvent *theCloseEvent)
 {
@@ -313,6 +341,26 @@ void MindDumperMainWindow::handleCurrentTabIndexChanged(int newCurrentTabIndex)
     }
 
     //TODOreq: enable/disable actions based on saved'ness and emptiness
+}
+void MindDumperMainWindow::handleSystemSignalInterruptOrTerminateReceived()
+{
+    int numTabs = m_TabWidget->count();
+    for(int i = 0; i < numTabs; ++i)
+    {
+        MindDumpDocument *currentMindDumpDocument = qobject_cast<MindDumpDocument*>(m_TabWidget->widget(i));
+        if(!currentMindDumpDocument)
+        {
+            QMessageBox::critical(this, tr("Critical Error!"), tr("System signal 'interrupt' or 'terminate' received, but we failed to get the widget at TAB WIDGET INDEX (not tab title): ") + QString::number(i) + tr(". This is probably a bug"));
+            return;
+        }
+        if(!ensureSavedIfNotEmpty(currentMindDumpDocument))
+        {
+            QMessageBox::critical(this, tr("Critical Error!"), tr("While trying to save all and exit after receiving an 'interrupt' or 'terminate' system signal, we failed to ensure the tab is saved if not empty: ") + currentMindDumpDocument->tabTitle());
+            return;
+        }
+    }
+    //doQueuedClose();
+    QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection); //because what if the window isn't open/shown O_o!?!?
 }
 void MindDumperMainWindow::doQueuedClose()
 {
