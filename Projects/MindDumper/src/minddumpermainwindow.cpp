@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QFileInfo>
+#include <QDir>
 #include <QSettings>
 #include <QTabWidget>
 #include <QMessageBox>
@@ -19,6 +20,8 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_TabTitleAutoNumber(-1)
 {
+    setCentralWidget(m_TabWidget = new QTabWidget());
+
     connect(QtSystemSignalHandler::instance(), SIGNAL(systemSignalReceived(QtSystemSignal::QtSystemSignalEnum)), this, SLOT(handleSystemSignalInterruptOrTerminateReceived()));
     QStringList argz = qApp->arguments();
     argz.removeFirst(); //app filename
@@ -33,6 +36,12 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
     if(!fileInfo.isDir())
     {
         QMessageBox::critical(this, tr("Critical Error!"), tr("Path either does not exist or is not a directory: ") + m_MindDumpDirectoryWithSlashAppended);
+        doQueuedClose();
+        return;
+    }
+    if(!fileInfo.isWritable())
+    {
+        QMessageBox::critical(this, tr("Critical Error!"), tr("Path is not writable: ") + m_MindDumpDirectoryWithSlashAppended);
         doQueuedClose();
         return;
     }
@@ -108,7 +117,6 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
     toolBar->addAction(m_PreviousTabAction);
     toolBar->addAction(m_NextTabAction);
 
-    setCentralWidget(m_TabWidget = new QTabWidget());
     m_TabWidget->setDocumentMode(true);
     connect(m_TabWidget, SIGNAL(currentChanged(int)), this, SLOT(handleCurrentTabIndexChanged(int)));
     //this is handled implicitly in handleCurrentTabIndexChanged: newDocumentAction();
@@ -120,7 +128,7 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
 MindDumperMainWindow::~MindDumperMainWindow()
 {
     //TO DOnereq: a qApp->quit() might get us here, so let's 'ensure saved' just to be on the safe side xD. it's too late to show a message box error though (i think...)
-    //TODOmb: on error: spit the unsaved docs out to stdout? save them to a temp file at a location given to us by qt (we can request a "local writable" dir), in addition to saying on stdout that there was an error and where to find the files? TODOreq: verify mind dump dir is writeable on app startup
+    //TODOmb: on error: spit the unsaved docs out to stdout? save them to a temp file at a location given to us by qt (we can request a "local writable" dir), in addition to saying on stdout that there was an error and where to find the files?
     int numTabs = m_TabWidget->count();
     for(int i = 0; i < numTabs; ++i)
     {

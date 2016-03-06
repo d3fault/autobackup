@@ -9,3 +9,5 @@ A hypothetical conversation:
 not-me: you're nuts
 me: life is nuts
 me: i am life
+
+But I do prefer the minimal/fast version: I am life. Life is nuts. I am nuts.
