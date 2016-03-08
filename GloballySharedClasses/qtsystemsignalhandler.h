@@ -17,7 +17,7 @@ struct QtSystemSignal
         //TODOmb: USR1, USR2
     };
 };
-typedef QSet<QtSystemSignal::QtSystemSignalEnum> QtSystemSignals;
+typedef QSet<QtSystemSignal::QtSystemSignalEnum> QtSystemSignals; //TODOoptional: QFlags instead
 class QtSystemSignalHandler : public QObject
 {
     Q_OBJECT
@@ -30,7 +30,6 @@ public:
 private:
     //buh, bug in c++ imo: friend class QScopedPointer<QtSystemSignalHandler>;
     explicit QtSystemSignalHandler(QObject *parent = 0);
-    void signalHandler(QtSystemSignal::QtSystemSignalEnum systemSignal);
 
     static QScopedPointer<QtSystemSignalHandler> s_Instance;
     static QtSystemSignals s_SystemSignalsToHandle;
@@ -45,6 +44,8 @@ private:
 #endif
 signals:
     void systemSignalReceived(QtSystemSignal::QtSystemSignalEnum systemSignal);
+private slots:
+    void signalHandler(QtSystemSignal::QtSystemSignalEnum systemSignal);
 };
 
 #endif // QTSYSTEMSIGNALHANDLER_H

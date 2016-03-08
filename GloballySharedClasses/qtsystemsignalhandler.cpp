@@ -1,5 +1,7 @@
 #include "qtsystemsignalhandler.h"
 
+#include <QMetaType>
+
 #if defined(Q_OS_WIN) || defined(Q_WS_WIN)
 #include <windows.h>
 #else
@@ -13,6 +15,8 @@ QtSystemSignals QtSystemSignalHandler::s_SystemSignalsToHandle = defaultSystemSi
 QtSystemSignalHandler::QtSystemSignalHandler(QObject *parent)
     : QObject(parent)
 {
+    qRegisterMetaType<QtSystemSignal::QtSystemSignalEnum>("QtSystemSignal::QtSystemSignalEnum");
+
     s_SystemSignalsToHandle.remove(QtSystemSignal::Unhandled); //just in case they are retarded
 #if defined(Q_OS_WIN) || defined(Q_WS_WIN)
     SetConsoleCtrlHandler(QtSystemSignalHandler::staticSignalHandler, TRUE);
@@ -31,7 +35,11 @@ QtSystemSignalHandler::QtSystemSignalHandler(QObject *parent)
         int systemSig = enumSignalToOsSignal(current);
         if(systemSig == -1)
             continue; //unhandled. maybe the "window closed win32 only" signal
-        Q_ASSERT(sigaction(enumSignalToOsSignal(current), &sigAction, 0) == 0); //TODOmb: save the old action here and restore it in destructor
+        if(sigaction(enumSignalToOsSignal(current), &sigAction, 0) != 0) //TODOmb: save the old action here and restore it in destructor
+        {
+            qFatal("sigaction() failed");
+            return;
+        }
     }
 #endif
 }
@@ -75,10 +83,10 @@ BOOL WINAPI QtSystemSignalHandler::staticSignalHandler(DWORD sig)
 {
     if(!s_Instance.isNull())
     {
-        QtSystemSignal::QtSystemSignalEnum sig = osSignalToEnumSignal(sig);
-        if(s_SystemSignalsToHandle.contains(sig))
+        QtSystemSignal::QtSystemSignalEnum enumSig = osSignalToEnumSignal(sig);
+        if(s_SystemSignalsToHandle.contains(enumSig))
         {
-            s_Instance->signalHandler(sig);
+            QMetaObject::invokeMethod(s_Instance.data(), "signalHandler", Qt::QueuedConnection, Q_ARG(QtSystemSignal::QtSystemSignalEnum, enumSig));
             return TRUE;
         }
     }
@@ -102,7 +110,10 @@ QtSystemSignal::QtSystemSignalEnum QtSystemSignalHandler::osSignalToEnumSignal(D
 void QtSystemSignalHandler::staticSignalHandler(int sig)
 {
     if(!s_Instance.isNull())
-        s_Instance->signalHandler(osSignalToEnumSignal(sig));
+    {
+        QtSystemSignal::QtSystemSignalEnum enumSig = osSignalToEnumSignal(sig);
+        QMetaObject::invokeMethod(s_Instance.data(), "signalHandler", Qt::QueuedConnection, Q_ARG(QtSystemSignal::QtSystemSignalEnum, enumSig)); //even though s_Instance lives on main thread and we are currently on the main thread, I've seen that signals are handled in a sort of... interrupt... kind of way. A slot currently executing is interrupted mid-execution in order to handle signals. Since I don't want to do that, I use a queued connection
+    }
 }
 QtSystemSignal::QtSystemSignalEnum QtSystemSignalHandler::osSignalToEnumSignal(int sig)
 {

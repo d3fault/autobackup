@@ -2813,7 +2813,7 @@ Documents/minimalist.argument.against.copyright.and.patents.gsdjfsdofsdlfjksdlkf
 Documents/sup.txt:1396677921
 Documents/true.sdjflsjdflkjsdklfjdklsfdjslfjlksdjflksdjflksoeuwrldjflksdflk.txt:1434532699
 Documents/uhh.this.goes.here.too.an.d.yea.i.am.mhigh.txt:1396678563
-GloballySharedClasses/:1457146793
+GloballySharedClasses/:1457467296
 GloballySharedClasses/architecture/:1399320087
 GloballySharedClasses/architecture/ibusinessobject.cpp:1399321145
 GloballySharedClasses/architecture/ibusinessobject.h:1399319929
@@ -2915,8 +2915,8 @@ GloballySharedClasses/multiserverabstraction.pri:1370583845
 GloballySharedClasses/multiserverclientabstraction.pri:1370584222
 GloballySharedClasses/objectonthreadgroup.pri:1400281691
 GloballySharedClasses/objectonthreadhelper.pri:1353171209
-GloballySharedClasses/qtsystemsignalhandler.cpp:1457141798
-GloballySharedClasses/qtsystemsignalhandler.h:1457141952
+GloballySharedClasses/qtsystemsignalhandler.cpp:1457467296
+GloballySharedClasses/qtsystemsignalhandler.h:1457298396
 GloballySharedClasses/qtsystemsignalhandler.pri:1457146720
 GloballySharedClasses/savefileorstdout.cpp:1427401041
 GloballySharedClasses/savefileorstdout.h:1427401012
@@ -4217,7 +4217,7 @@ Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge
 Projects/ProjectGoOutside/i.could.use.this.as.a.name.of.my.stream.channel.show.or.whatever.its.called.txt:1355727455
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
 Projects/ProjectGoOutside/wasdf.com.home.for.fingers.software.and.setup.but.also.for.controlling.windows.linux.etc.TITLE.FOR.DOMAIN.txt:1341829441
-Projects/Prototypes/:1455751104
+Projects/Prototypes/:1457297073
 Projects/Prototypes/AdDoublesRawMathLaunchSim/:1427380548
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/:1427380548
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/AdDoublesRawMathLaunchSim.pro:1390329374
@@ -4688,6 +4688,13 @@ Projects/Prototypes/QtHttpsServer/src/qthttpsserver.cpp:1420271822
 Projects/Prototypes/QtHttpsServer/src/qthttpsserver.h:1420123248
 Projects/Prototypes/QtHttpsServer/src/qthttpsservercli.cpp:1420126185
 Projects/Prototypes/QtHttpsServer/src/qthttpsservercli.h:1420080998
+Projects/Prototypes/QtSystemSignalHandler/:1457297107
+Projects/Prototypes/QtSystemSignalHandler/cli/:1457297694
+Projects/Prototypes/QtSystemSignalHandler/cli/src/:1457468058
+Projects/Prototypes/QtSystemSignalHandler/cli/src/QtSystemSignalHandlerCli.pro:1457297399
+Projects/Prototypes/QtSystemSignalHandler/cli/src/main.cpp:1457297588
+Projects/Prototypes/QtSystemSignalHandler/cli/src/qtsystemsignalhandlercli.cpp:1457297718
+Projects/Prototypes/QtSystemSignalHandler/cli/src/qtsystemsignalhandlercli.h:1457297549
 Projects/Prototypes/RemoteBankManagementTest/:1330551098
 Projects/Prototypes/RemoteBankManagementTest/src/:1331378216
 Projects/Prototypes/RemoteBankManagementTest/src/BitcoinCommunicatingServer/:1342625716
