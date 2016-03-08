@@ -22,7 +22,8 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
 {
     setCentralWidget(m_TabWidget = new QTabWidget());
 
-    connect(QtSystemSignalHandler::instance(), SIGNAL(systemSignalReceived(QtSystemSignal::QtSystemSignalEnum)), this, SLOT(handleSystemSignalInterruptOrTerminateReceived()));
+    QtSystemSignalHandler *systemSignalHandler = new QtSystemSignalHandler(this);
+    connect(systemSignalHandler, SIGNAL(systemSignalReceived(QtSystemSignal::QtSystemSignalEnum)), this, SLOT(handleSystemSignalInterruptOrTerminateReceived()));
     QStringList argz = qApp->arguments();
     argz.removeFirst(); //app filename
     if(argz.size() != 1)

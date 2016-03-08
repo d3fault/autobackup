@@ -7,7 +7,8 @@
 QtSystemSignalHandlerCli::QtSystemSignalHandlerCli(QObject *parent)
     : QObject(parent)
 {
-    connect(QtSystemSignalHandler::instance(), SIGNAL(systemSignalReceived(QtSystemSignal::QtSystemSignalEnum)), this, SLOT(handleSigTermOrSigIntReceived()));
+    QtSystemSignalHandler *systemSignalHandler = new QtSystemSignalHandler(this);
+    connect(systemSignalHandler, SIGNAL(systemSignalReceived(QtSystemSignal::QtSystemSignalEnum)), this, SLOT(handleSigTermOrSigIntReceived()));
 }
 void QtSystemSignalHandlerCli::handleSigTermOrSigIntReceived()
 {

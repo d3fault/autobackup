@@ -2813,7 +2813,7 @@ Documents/minimalist.argument.against.copyright.and.patents.gsdjfsdofsdlfjksdlkf
 Documents/sup.txt:1396677921
 Documents/true.sdjflsjdflkjsdklfjdklsfdjslfjlksdjflksdjflksoeuwrldjflksdflk.txt:1434532699
 Documents/uhh.this.goes.here.too.an.d.yea.i.am.mhigh.txt:1396678563
-GloballySharedClasses/:1457467296
+GloballySharedClasses/:1457471296
 GloballySharedClasses/architecture/:1399320087
 GloballySharedClasses/architecture/ibusinessobject.cpp:1399321145
 GloballySharedClasses/architecture/ibusinessobject.h:1399319929
@@ -2915,8 +2915,8 @@ GloballySharedClasses/multiserverabstraction.pri:1370583845
 GloballySharedClasses/multiserverclientabstraction.pri:1370584222
 GloballySharedClasses/objectonthreadgroup.pri:1400281691
 GloballySharedClasses/objectonthreadhelper.pri:1353171209
-GloballySharedClasses/qtsystemsignalhandler.cpp:1457467296
-GloballySharedClasses/qtsystemsignalhandler.h:1457298396
+GloballySharedClasses/qtsystemsignalhandler.cpp:1457471295
+GloballySharedClasses/qtsystemsignalhandler.h:1457471119
 GloballySharedClasses/qtsystemsignalhandler.pri:1457146720
 GloballySharedClasses/savefileorstdout.cpp:1427401041
 GloballySharedClasses/savefileorstdout.h:1427401012
@@ -4009,12 +4009,12 @@ Projects/LossyDirectoryCopier/src/main.cpp:1386648220
 Projects/MindDumper/:1456174632
 Projects/MindDumper/design/:1456001533
 Projects/MindDumper/design/initial.idea.txt:1456001533
-Projects/MindDumper/src/:1457226870
+Projects/MindDumper/src/:1457471562
 Projects/MindDumper/src/MindDumper.pro:1457146853
 Projects/MindDumper/src/main.cpp:1456011400
 Projects/MindDumper/src/minddumpdocument.cpp:1456174998
 Projects/MindDumper/src/minddumpdocument.h:1456171263
-Projects/MindDumper/src/minddumpermainwindow.cpp:1457226849
+Projects/MindDumper/src/minddumpermainwindow.cpp:1457471474
 Projects/MindDumper/src/minddumpermainwindow.h:1457140576
 Projects/MouseAndOrMotionViewMaker/:1427380548
 Projects/MouseAndOrMotionViewMaker/design/:1396053309
@@ -4690,10 +4690,10 @@ Projects/Prototypes/QtHttpsServer/src/qthttpsservercli.cpp:1420126185
 Projects/Prototypes/QtHttpsServer/src/qthttpsservercli.h:1420080998
 Projects/Prototypes/QtSystemSignalHandler/:1457297107
 Projects/Prototypes/QtSystemSignalHandler/cli/:1457297694
-Projects/Prototypes/QtSystemSignalHandler/cli/src/:1457468058
+Projects/Prototypes/QtSystemSignalHandler/cli/src/:1457471382
 Projects/Prototypes/QtSystemSignalHandler/cli/src/QtSystemSignalHandlerCli.pro:1457297399
 Projects/Prototypes/QtSystemSignalHandler/cli/src/main.cpp:1457297588
-Projects/Prototypes/QtSystemSignalHandler/cli/src/qtsystemsignalhandlercli.cpp:1457297718
+Projects/Prototypes/QtSystemSignalHandler/cli/src/qtsystemsignalhandlercli.cpp:1457471363
 Projects/Prototypes/QtSystemSignalHandler/cli/src/qtsystemsignalhandlercli.h:1457297549
 Projects/Prototypes/RemoteBankManagementTest/:1330551098
 Projects/Prototypes/RemoteBankManagementTest/src/:1331378216

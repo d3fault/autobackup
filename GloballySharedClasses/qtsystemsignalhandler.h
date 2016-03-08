@@ -22,16 +22,16 @@ class QtSystemSignalHandler : public QObject
 {
     Q_OBJECT
 public:
+    explicit QtSystemSignalHandler(QObject *parent = 0);
+    ~QtSystemSignalHandler();
     static QtSystemSignals defaultSystemSignalsToHandle();
     static void setSystemSignalsToHandle(const QtSystemSignals &systemSignalsToHandle);
-    static QtSystemSignalHandler *instance();
 
-    ~QtSystemSignalHandler();
 private:
     //buh, bug in c++ imo: friend class QScopedPointer<QtSystemSignalHandler>;
-    explicit QtSystemSignalHandler(QObject *parent = 0);
+    //static QScopedPointer<QtSystemSignalHandler> s_Instance;
 
-    static QScopedPointer<QtSystemSignalHandler> s_Instance;
+    static QtSystemSignalHandler *s_Instance;
     static QtSystemSignals s_SystemSignalsToHandle;
 
 #if defined(Q_OS_WIN) || defined(Q_WS_WIN)
