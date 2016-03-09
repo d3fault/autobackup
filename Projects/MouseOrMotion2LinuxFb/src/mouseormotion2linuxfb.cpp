@@ -6,11 +6,16 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 
+#include "qtsystemsignalhandler.h"
+
 //I'm not sure if I need a backend thread for this app. Even though it's a GUI app (QT += gui), there's no actual GUI to block! One reason it might warrant a backend thread though, is so the system can communicate with it still. It might think it's "not responding" etc if the system overall is under high load and motion detection is lagging. Whatever, can always throw that bitch on a backend thread later...
 //TODOreq: a way to close/stop the application (I want my destructors to run). Perhaps a system tray icon? I need to do some research in order to get 'shutdown' of OS to cleanly stop my apps. aboutToQuit() comes to mind, but I had some reason for not using it long ago. These days I make my apps quit themselves
 MouseOrMotion2LinuxFb::MouseOrMotion2LinuxFb(QObject *parent)
     : QObject(parent)
 {
+    QtSystemSignalHandler *systemSignalHandler = new QtSystemSignalHandler(this);
+    connect(systemSignalHandler, SIGNAL(systemSignalReceived(QtSystemSignal::QtSystemSignalEnum)), qApp, SLOT(quit()));
+
     QStringList argz = qApp->arguments();
     argz.removeFirst(); //app name
 

@@ -1,6 +1,7 @@
 #include "lineeditthatignoreskeypressedevents.h"
 
 #include <QKeyEvent>
+#include <QKeySequence>
 
 #include "antikeyandmouselogger.h"
 
@@ -28,7 +29,8 @@ void LineEditThatIgnoresKeyPressedEvents::keyPressEvent(QKeyEvent *keyEvent)
         return;
     }
 #endif
-    if(!AntiKeyAndMouseLogger::isTypeableOnUsKeyboard(AntiKeyAndMouseLogger::QtKeyToString(key)))
+    QString keyString = QKeySequence(key).toString().toLower();
+    if(!AntiKeyAndMouseLogger::isTypeableOnUsKeyboard(keyString))
     {
         //the name of the function is misleading. what we really mean instead of typeable is whether or not we can output them for passwords etc. you could 'type' random ass unicode still. I was gonna do a whitelist instead of a blacklist (above, commente out) but there was too much to think of
         QLineEdit::keyPressEvent(keyEvent);

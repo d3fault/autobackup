@@ -1,4 +1,6 @@
-INCLUDEPATH += $$system(pwd)/gui
+INCLUDEPATH *= $$system(pwd)/gui
 
-HEADERS += $$system(pwd)/gui/mouseormotionrectgrabberwithperiodofinactivitydetection.h
-SOURCES += $$system(pwd)/gui/mouseormotionrectgrabberwithperiodofinactivitydetection.cpp
+HEADERS *= $$system(pwd)/gui/mouseormotionrectgrabberwithperiodofinactivitydetection.h
+SOURCES *= $$system(pwd)/gui/mouseormotionrectgrabberwithperiodofinactivitydetection.cpp
+
+include(mouseormotionorperiodofinactivitydetector.pri)

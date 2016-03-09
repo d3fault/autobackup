@@ -3,8 +3,8 @@
 QList<KeyMapEntry> AntiKeyAndMouseLogger::m_EntrySelectionKeys = allTypeableOnUsKeyboardWithoutNeedingShiftKey();
 QList<KeyMapEntry> AntiKeyAndMouseLogger::m_NonShuffledKeymap = allTypeableKeysOnUsKeyboard();
 
-//TODOreq: if I implement "clear clipboard after 30 seconds", I should make sure that what I'm clearing is [still] there password. We don't want to clear it if it isn't. I wonder if KeePass does this check O_o (could find out right now but fuck it), I should file a bug if not
-//TODOreq: my instincts told me not to use 'spacebar' as an 'input' key, because how would I represent it without taking up more than one character (another entry in yee ole' legend?)? But after thinking about it further, space is a perfectly valid 'output' (used in passwords) key and so I have the same problem on both sides. Representing it like this: " " (as in, showing the quotes on the button) is no good because it takes up 3 characters instead of 1 :(, which might leak tiny bits of entropy that add up ove time ;-P. Well making it a legend/special key works but only for the output side of things, aww well I guess it's good enough really
+//TODOreq: if I implement "clear clipboard after 30 seconds", I should make sure that what I'm clearing is [still] their password. We don't want to clear it if it isn't. I wonder if KeePass does this check O_o (could find out right now but fuck it), I should file a bug if not
+//TODOreq: my instincts told me not to use 'spacebar' as an 'input' key, because how would I represent it without taking up more than one character (another entry in yee ole' legend?)? But after thinking about it further, space is a perfectly valid 'output' (used in passwords) key and so I have the same problem on both sides. Representing it like this: " " (as in, showing the quotes on the button) is no good because it takes up 3 characters instead of 1 :(, which might leak tiny bits of entropy that add up over time ;-P. Well making it a legend/special key works but only for the output side of things, aww well I guess it's good enough really
 //TODOmb: primitive swap detection, giving warning if enabled. QProcess("free) -> shows 'available swap > 0'? There might be a [cross platform] API for this. Imo it would fit in crypto++ considering how important it is
 AntiKeyAndMouseLogger::AntiKeyAndMouseLogger(QObject *parent)
     : QObject(parent)
@@ -15,8 +15,8 @@ QList<KeyMapEntry> AntiKeyAndMouseLogger::allTypeableOnUsKeyboardWithoutNeedingS
 {
     QList<KeyMapEntry> ret;
     ret << "`";
-    for(int i = Qt::Key_1; i <= Qt::Key_9; ++i)
-        ret << QtKeyToString(i);
+    for(char i = '1'; i <= '9'; ++i)
+        ret << KeyMapEntry(i);
     ret << "0" << "-" << "=";
     ret << "q" << "w" << "e" << "r" << "t" << "y" << "u" << "i" << "o" << "p" << "[" << "]" << "\\" << "a" << "s" << "d" << "f" << "g" << "h" << "j" << "k" << "l" << ";" << "'" << "z" << "x" << "c" << "v" << "b" << "n" << "m" << "," << "." << "/";
     return ret;
@@ -25,7 +25,7 @@ QList<KeyMapEntry> AntiKeyAndMouseLogger::allTypeableKeysOnUsKeyboard()
 {
     QList<KeyMapEntry> ret = m_EntrySelectionKeys;
     ret << "~" << "!" << "@" << "#" << "$" << "%" << "^" << "&" << "*" << "(" << ")" << "_" << "+" << "Q" << "W" << "E" << "R" << "T" << "Y" << "U" << "I" << "O" << "P" << "{" << "}" << "|" << "A" << "S" << "D" << "F" << "G" << "H" << "J" << "K" << "L" << ":" << "\"" << "Z" << "X" << "C" << "V" << "B" << "N" << "M" << "<" << ">" << "?";
-    ret << QtKeyToString(AntiKeyAndMouseLogger_SPACE_BAR_SPECIALSYMBOL); //yes, space bar is pressable without the shift key, but there's no way to represent it without taking up more than one character (or, it'd be too difficult to type some funky unicode (via alt+69420) to represent it. so space is an OUTPUT key only)
+    ret << AntiKeyAndMouseLogger_SPACE_BAR_SPECIALSYMBOL; //yes, space bar is pressable without the shift key, but there's no way to represent it without taking up more than one character (or, it'd be too difficult to type some funky unicode (via alt+69420) to represent it. so space is an OUTPUT key only)
     return ret;
 }
 bool AntiKeyAndMouseLogger::isTypeableOnUsKeyboardWithoutNeedingShiftKey(const QString &key)
@@ -36,6 +36,10 @@ bool AntiKeyAndMouseLogger::isTypeableOnUsKeyboard(const QString &key)
 {
     return m_NonShuffledKeymap.contains(key);
 }
+QString AntiKeyAndMouseLogger::legend()
+{
+    return QString(tr("Legend: ") + AntiKeyAndMouseLogger_NEXT_PAGE_SPECIAL_SYMBOL + tr(" = Next Page Of Keys    ") + AntiKeyAndMouseLogger_SPACE_BAR_SPECIALSYMBOL + tr(" = Space Bar"));
+}
 int AntiKeyAndMouseLogger::numEntriesOnOneKeymapPage()
 {
     return m_EntrySelectionKeys.size(); //soon this would be size/2 (for "non-shift" and "shift" pages), but ultimately it could be arbitrary/run-time-specifiable-depending-on-screen-size-etc and this app could cover much more (all?) of the unicode keymap
@@ -44,7 +48,7 @@ void AntiKeyAndMouseLogger::insertSpecialNextPageKeyIntoRandomPositionOnPage(Key
 {
     int indexOfAnExistingEntryToSwapSpecialLastPageButtonWith = m_Rng.GenerateWord32(0, currentPage->size()-1);
     KeymapHashTypes anExistingEntryToSwapSpecialLastPageButtonWith = currentPage->at(indexOfAnExistingEntryToSwapSpecialLastPageButtonWith);
-    currentPage->replace(indexOfAnExistingEntryToSwapSpecialLastPageButtonWith, qMakePair(anExistingEntryToSwapSpecialLastPageButtonWith.first, QtKeyToString(AntiKeyAndMouseLogger_NEXT_PAGE_SPECIAL_SYMBOL)));
+    currentPage->replace(indexOfAnExistingEntryToSwapSpecialLastPageButtonWith, qMakePair(anExistingEntryToSwapSpecialLastPageButtonWith.first, AntiKeyAndMouseLogger_NEXT_PAGE_SPECIAL_SYMBOL));
     currentPage->append(qMakePair(m_EntrySelectionKeys.at(currentPage->size()), anExistingEntryToSwapSpecialLastPageButtonWith.second));
 }
 void AntiKeyAndMouseLogger::generateShuffledKeymapAndRequestPresentationOfFirstPage()
@@ -84,7 +88,7 @@ void AntiKeyAndMouseLogger::translateShuffledKeymapEntry(const QString &shuffled
     {
         if(shuffledKeymapEntry == currentEntry.first)
         {
-            if(currentEntry.second == QtKeyToString(AntiKeyAndMouseLogger_NEXT_PAGE_SPECIAL_SYMBOL))
+            if(currentEntry.second == AntiKeyAndMouseLogger_NEXT_PAGE_SPECIAL_SYMBOL)
             {
                 ++m_CurrentShuffledKeymapPageIndex;
                 if(m_CurrentShuffledKeymapPageIndex >= m_ShuffledKeymapPages.size())
@@ -97,7 +101,7 @@ void AntiKeyAndMouseLogger::translateShuffledKeymapEntry(const QString &shuffled
                 return;
             }
             QString translatedKeyEntry = currentEntry.second;
-            if(translatedKeyEntry == QtKeyToString(AntiKeyAndMouseLogger_SPACE_BAR_SPECIALSYMBOL))
+            if(translatedKeyEntry == AntiKeyAndMouseLogger_SPACE_BAR_SPECIALSYMBOL)
                 translatedKeyEntry = " ";
 
             emit shuffledKeymapEntryTranslated(translatedKeyEntry);

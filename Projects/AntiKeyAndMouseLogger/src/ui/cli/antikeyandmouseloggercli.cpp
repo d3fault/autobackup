@@ -7,15 +7,19 @@
 #else
 #include <termios.h>
 #include <unistd.h>
+#include <errno.h>
 #endif
 
 #include "standardinputnotifier.h"
+#include "qtsystemsignalhandler.h"
 
-//TODOreq: utilize QtSystemSignalHandler to get the destructor to run when Ctrl+C / `kill <pid>` occurs... because if the destructor doesn't run, the terminal is left with canonical mode off and stdin echo'ing disabled
 AntiKeyAndMouseLoggerCli::AntiKeyAndMouseLoggerCli(QObject *parent)
     : QObject(parent)
     , m_StdOut(stdout)
 {
+    QtSystemSignalHandler *systemSignalHandler = new QtSystemSignalHandler(this);
+    connect(systemSignalHandler, SIGNAL(systemSignalReceived(QtSystemSignal::QtSystemSignalEnum)), qApp, SLOT(quit())); //to get the destructor to run when Ctrl+C / `kill <pid>` occurs... because if the destructor doesn't run, the terminal is left with canonical mode off and stdin echo'ing disabled
+
     AntiKeyAndMouseLogger *anti = new AntiKeyAndMouseLogger(this);
     connect(anti, SIGNAL(presentShuffledKeymapPageRequested(KeyMap)), this, SLOT(presentShuffledKeymapPage(KeyMap)));
     connect(this, SIGNAL(translateShuffledKeymapEntryRequested(QString)), anti, SLOT(translateShuffledKeymapEntry(QString)));
@@ -54,15 +58,38 @@ void AntiKeyAndMouseLoggerCli::set_GetCh_Hackery(bool enable_GetCh_Hackery)
 char AntiKeyAndMouseLoggerCli::myGetCh()
 {
 #if defined(Q_OS_WIN) || defined(Q_WS_WIN)
-    return _getch();
+    return _getch(); //TODOwin32: what happens when SIGINT or that SIGWINDOWCLOSED-thing is received?
 #else
     char buf;
-    if(read(STDIN_FILENO, &buf, 1) != 1)
+    ssize_t sizeRead = read(STDIN_FILENO, &buf, 1);
+    bool shouldQuit = false;
+    if(sizeRead == 0 /*eof*/)
+        shouldQuit = true;
+    else if(sizeRead > 1 /*wtf error should never happen)*/)
     {
-        //i want my destructor to run ;-P qFatal("didn't read exactly 1 character");
-        m_StdOut << "Error: we didn't read exactly 1 character in myGetCh";
-        //QMetaObject::invokeMethod(qApp, "quit");
-        return static_cast<char>(static_cast<int>(10)); //return an 'Enter', so it's as if they chose to quit
+        m_StdOut << "Error: we read() more than 1 character!";
+        shouldQuit = true;
+    }
+    if(sizeRead < 0)
+    {
+        if(errno == EINTR)
+        {
+            //SIGINT or SIGTERM received while we were reading. in theory this could have been a USR1 or USR2 etc in which case i shouldn't set shouldQuit to true. but since I know it's not those, I'm going to set shouldQuit to true just to KISS (even though or system signal handler already (or is about to) dispatch the "quit" signal! double "quit"ing is fine, I just want to simplify this 'stop reading' code path)
+            shouldQuit = true;
+        }
+        else
+        {
+            m_StdOut << "Error: read() returned < 0";
+            shouldQuit = true;
+        }
+    }
+    else
+    {
+        //sizeRead == 1
+    }
+    if(shouldQuit)
+    {
+        return static_cast<char>(static_cast<int>(10)); //return an 'Enter', so it's as if they chose to quit by pressing Enter
     }
     return buf;
 #endif
@@ -71,7 +98,7 @@ void AntiKeyAndMouseLoggerCli::presentShuffledKeymapPage(const KeyMap &shuffledK
 {
     m_StdOut << endl << endl;
     int column = 1;
-    //TODOreq: legend
+    m_StdOut << "\t" << AntiKeyAndMouseLogger::legend() << endl;
     Q_FOREACH(const KeymapHashTypes &currentEntry, shuffledKeymapPage)
     {
         //TODOmb: sum ascii art gridz

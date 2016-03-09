@@ -5,7 +5,6 @@
 #-------------------------------------------------
 
 QT       += core
-QT       += gui #just for QKeySequence TODOreq
 
 TARGET = AntiKeyAndMouseLoggerCli
 CONFIG   += console
@@ -20,5 +19,6 @@ SOURCES += ui/cli/main.cpp \
 
 include(antikeyandmouselogger.pri)
 include(../../../GloballySharedClasses/standardinputnotifier.pri)
+include(../../../GloballySharedClasses/qtsystemsignalhandler.pri)
 
 LIBS += -lcrypto++

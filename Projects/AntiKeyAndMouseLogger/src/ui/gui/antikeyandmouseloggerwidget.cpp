@@ -9,6 +9,7 @@
 #include <QCheckBox>
 #include <QApplication>
 #include <QClipboard>
+#include <QKeySequence>
 
 #include "lineeditthatignoreskeypressedevents.h"
 
@@ -21,7 +22,7 @@ AntiKeyAndMouseLoggerWidget::AntiKeyAndMouseLoggerWidget(QWidget *parent)
 {
     QGridLayout *gridLayout = new QGridLayout();
     int rowOffset = 0;
-    gridLayout->addWidget(new QLabel(tr("Legend: ") + AntiKeyAndMouseLogger::QtKeyToString(AntiKeyAndMouseLogger_NEXT_PAGE_SPECIAL_SYMBOL) + tr(" = Next Page Of Keys    ") + AntiKeyAndMouseLogger::QtKeyToString(AntiKeyAndMouseLogger_SPACE_BAR_SPECIALSYMBOL) + tr(" = Space Bar")), 0, 0, 1, AntiKeyAndMouseLogger_COLUMNS_PER_ROW, Qt::AlignCenter | Qt::AlignHCenter);
+    gridLayout->addWidget(new QLabel(AntiKeyAndMouseLogger::legend()), 0, 0, 1, AntiKeyAndMouseLogger_COLUMNS_PER_ROW, Qt::AlignCenter | Qt::AlignHCenter);
     ++rowOffset;
     int i = 0;
     for(; i < AntiKeyAndMouseLogger::numEntriesOnOneKeymapPage(); ++i)
@@ -59,7 +60,7 @@ AntiKeyAndMouseLoggerWidget::AntiKeyAndMouseLoggerWidget(QWidget *parent)
 }
 void AntiKeyAndMouseLoggerWidget::keyPressEvent(QKeyEvent *keyEvent)
 {
-    QString key = AntiKeyAndMouseLogger::QtKeyToString(keyEvent->key());
+    QString key = QKeySequence(keyEvent->key()).toString().toLower();
     if(!AntiKeyAndMouseLogger::isTypeableOnUsKeyboardWithoutNeedingShiftKey(key))
     {
         QWidget::keyPressEvent(keyEvent);

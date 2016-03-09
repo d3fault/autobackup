@@ -4,7 +4,6 @@
 #include <QObject>
 
 #include <QPair>
-#include <QKeySequence>
 
 #include <crypto++/osrng.h>
 
@@ -14,8 +13,8 @@ typedef QList<KeymapHashTypes> KeyMap;
 typedef QListIterator<KeymapHashTypes> KeyMapIterator;
 
 #define AntiKeyAndMouseLogger_COLUMNS_PER_ROW 6
-#define AntiKeyAndMouseLogger_NEXT_PAGE_SPECIAL_SYMBOL Qt::Key_copyright
-#define AntiKeyAndMouseLogger_SPACE_BAR_SPECIALSYMBOL Qt::Key_registered
+#define AntiKeyAndMouseLogger_NEXT_PAGE_SPECIAL_SYMBOL QString(QChar(169)) //Qt::Key_copyright
+#define AntiKeyAndMouseLogger_SPACE_BAR_SPECIALSYMBOL QString(QChar(174)) //Qt::Key_registered
 
 class AntiKeyAndMouseLogger : public QObject
 {
@@ -24,8 +23,8 @@ public:
     explicit AntiKeyAndMouseLogger(QObject *parent = 0);
     static bool isTypeableOnUsKeyboardWithoutNeedingShiftKey(const QString &key);
     static bool isTypeableOnUsKeyboard(const QString &key);
+    static QString legend();
     static int numEntriesOnOneKeymapPage();
-    static inline QString QtKeyToString(const int qtKey) { return QKeySequence(qtKey).toString().toLower(); }
 private:
     CryptoPP::DefaultAutoSeededRNG m_Rng;
     QList<KeyMap> m_ShuffledKeymapPages;

@@ -16,5 +16,5 @@ HEADERS  += mouseormotion2linuxfb.h
 SOURCES += main.cpp \
     mouseormotion2linuxfb.cpp
 
-include(../../../GloballySharedClasses/mouseormotionorperiodofinactivitydetector.pri)
+include(../../../GloballySharedClasses/qtsystemsignalhandler.pri)
 include(../../../GloballySharedClasses/mouseormotionrectgrabberwithperiodofinactivitydetection.pri)
