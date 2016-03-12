@@ -43,13 +43,13 @@ public:
     DesignEqualsImplementationProject *m_ParentProject;
     QString ClassName;
 
-    bool addNonFunctionMember(NonFunctionMember nonFunctionMember);
+    bool addNonFunctionMember(NonFunctionMember *nonFunctionMember);
 
     DesignEqualsImplementationClassProperty *createNewProperty(const QString &propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange);
     void addProperty(DesignEqualsImplementationClassProperty *propertyToAdd);
 
-    HasA_Private_Classes_Member *createHasA_Private_Classes_Member(DesignEqualsImplementationClass *memberClassType, const QString &variableName_OrLeaveBlankForAutoNumberedVariableName = QString());
-    QList<HasA_Private_Classes_Member *> hasA_Private_Classes_Members();
+    //HasA_Private_Classes_Member *createHasA_Private_Classes_Member(DesignEqualsImplementationClass *memberClassType, const QString &variableName_OrLeaveBlankForAutoNumberedVariableName = QString());
+
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
     QList<DesignEqualsImplementationClassSignal*> mySignals();
     QList<DesignEqualsImplementationClassSlot*> mySlots();
@@ -62,7 +62,6 @@ public:
 
     //TODOoptional: should be private
     QList<DesignEqualsImplementationClassProperty*> Properties;
-    QList<HasA_Private_Classes_Member*> m_HasA_Private_Classes_Members;
     QList<DesignEqualsImplementationClassSignal*> m_MySignals;
     QList<DesignEqualsImplementationClassSlot*> m_MySlots;
 
@@ -72,8 +71,8 @@ public:
     inline DesignEqualsImplementationClassSignal* signalInstantiationFromSerializedSignalId(int signalId) { return m_MySignals.at(signalId); }
     inline int serializationSlotIdForSlot(DesignEqualsImplementationClassSlot *theSlot) { return m_MySlots.indexOf(theSlot); } //TODOoptional: check return of indexOf, qFatal. also on similar methods throughout
     inline DesignEqualsImplementationClassSlot *slotInstantiationFromSerializedSlotId(int slotId) { return m_MySlots.at(slotId); }
-    inline int serializationHasAIdForHasA(HasA_Private_Classes_Member *theHasA) { return m_HasA_Private_Classes_Members.indexOf(theHasA); }
-    inline HasA_Private_Classes_Member *hasAinstanceFromHasAId(int hasAId) { return m_HasA_Private_Classes_Members.at(hasAId); }
+    inline int serializationHasAIdForNonFunctionMember(NonFunctionMember *theNonFunctionMember) { return m_NonFunctionMembers.indexOf(theNonFunctionMember); }
+    inline NonFunctionMember *nonFunctionMemberFromNonFunctionMemberId(int nonFunctionMemberId) { return m_NonFunctionMembers.at(nonFunctionMemberId); }
 
     QString autoNameForNewChildMemberOfType(DesignEqualsImplementationClass *childMemberClassType);
     QString nextTempUnnamedSlotName();

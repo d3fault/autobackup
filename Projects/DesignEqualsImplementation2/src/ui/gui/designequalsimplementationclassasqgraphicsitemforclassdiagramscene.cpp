@@ -131,9 +131,9 @@ QString DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::clas
         classContentsString.append("<br />o  " + currentProperty->Type + ": " + currentProperty->Name); //TODOoptional: visualize optional init value
         ++numLinesOfText;
     }
-    Q_FOREACH(HasA_Private_Classes_Member *currentHasA_Private_Classes_Members_ListEntryType, m_DesignEqualsImplementationClass->hasA_Private_Classes_Members())
+    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, m_DesignEqualsImplementationClass->nonFunctionMembers())
     {
-        classContentsString.append("<br />-  " + currentHasA_Private_Classes_Members_ListEntryType->preferredTextualRepresentationOfTypeAndVariableTogether());
+        classContentsString.append("<br />-  " + currentNonFunctionMember->typeInstance->preferredTextualRepresentationOfTypeAndVariableTogether());
         ++numLinesOfText;
     }
     Q_FOREACH(DesignEqualsImplementationClassPrivateMethod *currentPrivateMethod, m_DesignEqualsImplementationClass->PrivateMethods)

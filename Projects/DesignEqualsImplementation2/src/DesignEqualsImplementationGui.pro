@@ -76,7 +76,8 @@ SOURCES += ui/gui/main.cpp\
     designequalsimplementationchunkofrawcppstatements.cpp \
     ui/gui/designequalsimplementationchunkofrawcppstatementsgraphicsitemforusecasescene.cpp \
     ui/gui/designequalsimplementationguicommon.cpp \
-    designequalsimplementationimplicitlyshareddatatype.cpp
+    designequalsimplementationimplicitlyshareddatatype.cpp \
+    type.cpp
 
 HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \

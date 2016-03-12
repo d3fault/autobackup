@@ -345,25 +345,24 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
 
             //fill in list of variables in current context to use for satisfying whatever slot they choose's arguments. TODOreq: prefix the "source" of the arg satisfier, and perhaps sort them by that too. "my-method-arguments", "my-class-members", etc)
             //m_VariablesAvailableToSatisfyArgs.append(*(slotWithCurrentContext_OrZeroIfSourceIsActor->Arguments));
+
+            //TODOmb: one hacky way to get user-typed C++ 'locals' here would be to do auto-completion for every letter of the alphabet (a-Z), since variables must start with that. There might be a better way, but this is the best I can think of atm that definitely would work
+
             Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArg, sourceSlot_OrZeroIfSourceIsActor->arguments())
             {
                 m_VariablesAvailableToSatisfyArgs.append(currentArg);
             }
             //m_VariablesAvailableToSatisfyArgs.append(*slotWithCurrentContext_OrZeroIfSourceIsActor->ParentClass->HasA_PrivateMemberClasses);
+#if 0
             Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentProperty, sourceSlot_OrZeroIfSourceIsActor->ParentClass->Properties)
             {
                 m_VariablesAvailableToSatisfyArgs.append(currentProperty);
             }
-            Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentHasAClass, sourceSlot_OrZeroIfSourceIsActor->ParentClass->hasA_Private_Classes_Members())
-            {
-                m_VariablesAvailableToSatisfyArgs.append(currentHasAClass);
-            }
-#if 0 //TODOoptional: properties? i seem to have invented like 20 different variants of the same thing, so that decision is pending the refactor/consolidation
-            Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentHasAPod, sourceSlot_OrZeroIfSourceIsActor->ParentClass->hasA_Private_PODorNonDesignedCpp_Members())
-            {
-                m_VariablesAvailableToSatisfyArgs.append(currentHasAPod);
-            }
 #endif
+            Q_FOREACH(NonFunctionMember *currentNonFunctionMember, sourceSlot_OrZeroIfSourceIsActor->ParentClass->nonFunctionMembers())
+            {
+                m_VariablesAvailableToSatisfyArgs.append(currentNonFunctionMember->typeInstance);
+            }
         }
     }
 

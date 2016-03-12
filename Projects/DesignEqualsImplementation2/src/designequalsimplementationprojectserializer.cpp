@@ -83,12 +83,13 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
     Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToSerialize->m_Classes)
     {
         //Project Classes -- second interdependent class serializing (hasAs are classes, so we had to hold off on setting up the hasAs in order to avoid dependency problems)
-        projectDataStream << currentClass->m_HasA_Private_Classes_Members.size();
-        Q_FOREACH(HasA_Private_Classes_Member *currentHasA, currentClass->m_HasA_Private_Classes_Members)
+        projectDataStream << currentClass->m_NonFunctionMembers.size();
+        Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentClass->m_NonFunctionMembers)
         {
-            //Project Class HasA Classes Members
-            projectDataStream << projectToSerialize->serializationClassIdForClass(currentHasA->m_MyClass);
-            projectDataStream << currentHasA->VariableName;
+            //Project Class NonFunctionMembers
+            projectDataStream << projectToSerialize->serializationClassIdForClass(currentNonFunctionMember->m_MyClass);
+            projectDataStream << currentNonFunctionMember->typeInstance->VariableName;
+            //TODOreq: visibility, etc? also deserialization
         }
     }
 
@@ -125,7 +126,7 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
                 //out << *currentClassLifeLine->m_InstanceInOtherClassIfApplicable;
                 DesignEqualsImplementationClass *parentClass = currentClassLifeLine->m_InstanceInOtherClassIfApplicable->m_ParentClass;
                 projectDataStream << projectToSerialize->serializationClassIdForClass(parentClass);
-                projectDataStream << parentClass->serializationHasAIdForHasA(currentClassLifeLine->m_InstanceInOtherClassIfApplicable);
+                projectDataStream << parentClass->serializationHasAIdForNonFunctionMember(currentClassLifeLine->m_InstanceInOtherClassIfApplicable);
             }
 
             //is 'known' because use case hasA class lifeline: out << classLifeline.m_ParentProject->serializationUseCaseIdForUseCase(classLifeline.parentUseCase());
@@ -307,7 +308,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
                 DesignEqualsImplementationClass *hasAparentClass = projectToPopulate->classInstantiationFromSerializedClassId(classIdofParentThatHasAus);
                 int hasAid;
                 projectDataStream >> hasAid;
-                HasA_Private_Classes_Member *instanceInOtherClass = hasAparentClass->hasAinstanceFromHasAId(hasAid);
+                HasA_Private_Classes_Member *instanceInOtherClass = hasAparentClass->nonFunctionMemberFromNonFunctionMemberId(hasAid);
                 currentClassLifeline->setInstanceInOtherClassIfApplicable(instanceInOtherClass);
             }
             currentClassLifeline->m_ParentUseCase = currentUseCase;

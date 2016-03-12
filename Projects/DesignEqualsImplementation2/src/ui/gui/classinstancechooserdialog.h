@@ -5,6 +5,8 @@
 #include <QList>
 #include <QStack>
 
+#include "../../type.h"
+
 class QRadioButton;
 class QComboBox;
 class QLineEdit;
@@ -13,7 +15,6 @@ class QListWidget;
 class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassLifeLine;
 class DesignEqualsImplementationUseCase;
-class HasA_Private_Classes_Member;
 
 class ClassInstanceChooserDialog : public QDialog
 {
@@ -22,9 +23,6 @@ public:
     explicit ClassInstanceChooserDialog(DesignEqualsImplementationClassLifeLine *classLifelineForWhichAnInstanceIsBeingChosen, QWidget *parent = 0, Qt::WindowFlags f = 0);
     bool newInstanceChosen();
     DesignEqualsImplementationClass *parentClassChosenToGetNewHasAprivateMember() const;
-    QString nameOfNewPrivateHasAMember() const;
-
-    HasA_Private_Classes_Member *chosenExistingHasA_Private_Classes_Member() const;
 
 #if 0 //TODOinstancing
     bool newTopLevelInstanceChosen();
@@ -38,9 +36,9 @@ private:
     QListWidget *m_ExistingInstancesListWidget;
     DesignEqualsImplementationClassLifeLine *m_ClassLifelineForWhichAnInstanceIsBeingChosen;
     DesignEqualsImplementationClass *m_ExistingClassToUseAsParentForNewInstance;
-    QString m_NameOfNewPrivateHasAMember;
+    QString m_NameOfNewNonFunctionMember;
 
-    HasA_Private_Classes_Member *m_ExistingInstanceHasAPrivateClassesMember;
+    NonFunctionMember *m_ExistingInstanceNonFunctionMember;
 
     void addAllPrivateHasAMembersThatAreOfAcertainTypeToExistingInstancesListWidget(DesignEqualsImplementationClass *classToIterate, DesignEqualsImplementationClass *typeOfClassWeAreInterestedInInstancesOf);
 
@@ -57,8 +55,8 @@ private:
     QString makeAbsoluteVariableNameSpecifierForInstance(DesignEqualsImplementationClassInstance *instanceToFinalizeTheVariableName);
 #endif
 signals:
-    void createNewHasAPrivateMemberAndAssignItAsClassLifelineInstanceRequested(DesignEqualsImplementationClass *parentClassChosenToGetNewHasAprivateMember, DesignEqualsImplementationClass *typeOfNewPrivateHasAMember, const QString &nameOfNewPrivateHasAMember);
-    void assignPrivateMemberAsClassLifelineInstanceRequested(HasA_Private_Classes_Member *chosenExistingHasA_Private_Classes_Member);
+    void createNewNonFunctionMemberAndAssignItAsClassLifelineInstanceRequested(DesignEqualsImplementationClass *parentClassChosenToGetNewHasAprivateMember, DesignEqualsImplementationClass *typeOfNewPrivateHasAMember, const QString &nameOfNewPrivateHasAMember);
+    void assignNonFunctionMemberAsClassLifelineInstanceRequested(NonFunctionMember *chosenExistingNonFunctionMemberThatIsKnownToBeQObjectDerived);
 private slots:
     void handleNewInstancesRadioButtonToggled(bool checked);
     void handleClassesInUseCaseAvailableForUseAsParentOfNewInstanceCurrentIndexChanged(int newIndex);

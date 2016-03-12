@@ -320,7 +320,7 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
                                     if(destinationSlotClassLifeline->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline) //precondition that slot has a parent
                                     {
                                         //if(destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->parentClass()->hasA_Private_Classes_Members().contains())
-                                        if(classLifeline->designEqualsImplementationClass()->hasA_Private_Classes_Members().contains(destinationSlotClassLifeline->instanceInOtherClassIfApplicable()))
+                                        if(classLifeline->designEqualsImplementationClass()->nonFunctionMembers().contains(destinationSlotClassLifeline->instanceInOtherClassIfApplicable()))
                                         {
                                             //the class with the signal hasA the class with the slot
                                             //so the signal's constructor gets the connect statement
@@ -334,7 +334,7 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
                                     //if the slot class hasA the signal class, put in slot constructor-ish
                                     if(classLifeline->instanceType() == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline) //precondition that signal has a parent
                                     {
-                                        if(destinationSlotClassLifeline->designEqualsImplementationClass()->hasA_Private_Classes_Members().contains(classLifeline->instanceInOtherClassIfApplicable()))
+                                        if(destinationSlotClassLifeline->designEqualsImplementationClass()->nonFunctionMembers().contains(classLifeline->instanceInOtherClassIfApplicable()))
                                         {
                                             //the class with the slot hasA the class with the signal
                                             //so the slot's constructor gets the connect statement

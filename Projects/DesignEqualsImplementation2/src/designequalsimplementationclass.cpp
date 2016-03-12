@@ -40,7 +40,6 @@ DesignEqualsImplementationClass::~DesignEqualsImplementationClass()
     //{
     //    delete currentMember->m_DesignEqualsImplementationClass;
     //}
-    qDeleteAll(m_HasA_Private_Classes_Members);
     qDeleteAll(PrivateMethods);
     qDeleteAll(m_MySlots);
     qDeleteAll(m_MySignals);
@@ -86,9 +85,9 @@ void DesignEqualsImplementationClass::removeSlot(DesignEqualsImplementationClass
     slotToRemove->ParentClass = 0; //TODOreq: a slot without a parent is undefined
     //emit slotRemoved(slotToRemove);
 }
-bool DesignEqualsImplementationClass::addNonFunctionMember(NonFunctionMember nonFunctionMember)
+bool DesignEqualsImplementationClass::addNonFunctionMember(NonFunctionMember *nonFunctionMember)
 {
-    NonFunctionMembers << nonFunctionMember;
+    m_NonFunctionMembers << nonFunctionMember;
     return true;
 }
 DesignEqualsImplementationClassProperty *DesignEqualsImplementationClass::createNewProperty(const QString &propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange)
@@ -102,6 +101,7 @@ void DesignEqualsImplementationClass::addProperty(DesignEqualsImplementationClas
     Properties.append(propertyToAdd);
     emit propertyAdded(propertyToAdd);
 }
+#if 0
 HasA_Private_Classes_Member *DesignEqualsImplementationClass::createHasA_Private_Classes_Member(DesignEqualsImplementationClass *memberClassType, const QString &variableName_OrLeaveBlankForAutoNumberedVariableName)
 {
     //TODOreq: ensure all callers haven't already done the "new"
@@ -119,14 +119,11 @@ HasA_Private_Classes_Member *DesignEqualsImplementationClass::createHasA_Private
     newMember->m_MyClass = memberClassType;
     newMember->VariableName = chosenVariableName;
     newMember->setParentClass(this);
-    m_HasA_Private_Classes_Members.append(newMember); //TODOreq: re-ordering needs to resynchronize
+    m_NonFunctionMembers.append(newMember); //TODOreq: re-ordering needs to resynchronize
 
     return newMember;
 }
-QList<HasA_Private_Classes_Member*> DesignEqualsImplementationClass::hasA_Private_Classes_Members()
-{
-    return m_HasA_Private_Classes_Members;
-}
+#endif
 QList<DesignEqualsImplementationClassSignal *> DesignEqualsImplementationClass::mySignals()
 {
     return m_MySignals;
@@ -166,9 +163,9 @@ QString DesignEqualsImplementationClass::autoNameForNewChildMemberOfType(DesignE
     {
         QString maybeVariableName = "m_" + DesignEqualsImplementationProjectGenerator::firstCharacterToUpper(childMemberClassType->ClassName) + QString::number(++indexCurrentlyTestingForNameCollission); //m_Foo0, m_Foo1, etc. TODOoptional: random 5 letter word from dictionary chosen, append two numbers also, so they are easier to differentiate/remember when using auto mode (although i probably won't use it myself (unless i'm in a rush)). //TODooptional: should the first m_Foo have a zero on the end or no? I'd say yes keep the zero, just makes it simpler LATER
         bool seenThisTime = false;
-        Q_FOREACH(HasA_Private_Classes_Member *currentHasAprivateClassMember, m_HasA_Private_Classes_Members)
+        Q_FOREACH(NonFunctionMember *currentNonFunctionMember, m_NonFunctionMembers)
         {
-            if(currentHasAprivateClassMember->VariableName == maybeVariableName)
+            if(currentNonFunctionMember->typeInstance->VariableName == maybeVariableName)
             {
                 seenThisTime = true;
                 break;

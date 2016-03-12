@@ -216,11 +216,11 @@ void DesignEqualsImplementationClassLifeLine::setInstanceType(DesignEqualsImplem
 {
     m_InstanceType = instanceType;
 }
-HasA_Private_Classes_Member *DesignEqualsImplementationClassLifeLine::instanceInOtherClassIfApplicable() const
+NonFunctionMember *DesignEqualsImplementationClassLifeLine::instanceInOtherClassIfApplicable() const
 {
     return m_InstanceInOtherClassIfApplicable;
 }
-void DesignEqualsImplementationClassLifeLine::setInstanceInOtherClassIfApplicable(HasA_Private_Classes_Member *instanceInOtherClassIfApplicable)
+void DesignEqualsImplementationClassLifeLine::setInstanceInOtherClassIfApplicable(NonFunctionMember *instanceInOtherClassIfApplicable)
 {
     m_InstanceType = ChildMemberOfOtherClassLifeline;
     m_InstanceInOtherClassIfApplicable = instanceInOtherClassIfApplicable;
@@ -248,13 +248,13 @@ DesignEqualsImplementationClassLifeLine *DesignEqualsImplementationClassLifeLine
     DesignEqualsImplementationUseCase *useCaseThatHasClassLifeline = project->useCaseInstantiationFromSerializedUseCaseId(useCaseId);
     return useCaseThatHasClassLifeline->classLifelineInstantiatedFromSerializedClassLifelineId(classLifelineId);
 }
-void DesignEqualsImplementationClassLifeLine::createNewHasAPrivateMemberAndAssignItAsClassLifelineInstance(DesignEqualsImplementationClass *parentClassChosenToGetNewHasAprivateMember, DesignEqualsImplementationClass *typeOfNewPrivateHasAMember, const QString &nameOfNewPrivateHasAMember)
+void DesignEqualsImplementationClassLifeLine::createNewNonFunctionMemberAndAssignItAsClassLifelineInstance(DesignEqualsImplementationClass *parentClassChosenToGetNewNonFunctionMember, DesignEqualsImplementationClass *typeOfNewNonFunctionMember, const QString &nameOfNewNonFunctionMember)
 {
-    assignPrivateMemberAsClassLifelineInstance(parentClassChosenToGetNewHasAprivateMember->createHasA_Private_Classes_Member(typeOfNewPrivateHasAMember, nameOfNewPrivateHasAMember));
+    assignNonFunctionMemberAsClassLifelineInstance(parentClassChosenToGetNewNonFunctionMember->createNewNonFunctionMember(typeOfNewNonFunctionMember, nameOfNewNonFunctionMember, Visibility::Private, NonFunctionMemberOwnershipOfPointedToDataIfPointer::OwnsPointedToData));
 }
-void DesignEqualsImplementationClassLifeLine::assignPrivateMemberAsClassLifelineInstance(HasA_Private_Classes_Member *chosenExistingHasA_Private_Classes_Member)
+void DesignEqualsImplementationClassLifeLine::assignNonFunctionMemberAsClassLifelineInstance(NonFunctionMember *chosenExistingNonFunctionMember)
 {
-    setInstanceInOtherClassIfApplicable(chosenExistingHasA_Private_Classes_Member);
+    setInstanceInOtherClassIfApplicable(chosenExistingNonFunctionMember);
 }
 #if 0
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassLifeLine &classLifeline)

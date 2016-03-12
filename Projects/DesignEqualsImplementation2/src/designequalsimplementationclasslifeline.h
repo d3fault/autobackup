@@ -6,11 +6,12 @@
 #include <QList>
 #include <QMap>
 
+#include "type.h"
+
 class DesignEqualsImplementationProject;
 class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassSlot;
 class DesignEqualsImplementationUseCase;
-class HasA_Private_Classes_Member;
 
 typedef QList<DesignEqualsImplementationClassSlot*> MySlotsAppearingInClassLifeLine_List;
 
@@ -48,8 +49,8 @@ public:
     bool hasBeenAssignedInstance();
     DesignEqualsImplementationClassInstanceTypeEnum instanceType() const;
     void setInstanceType(DesignEqualsImplementationClassInstanceTypeEnum instanceType);
-    HasA_Private_Classes_Member *instanceInOtherClassIfApplicable() const;
-    void setInstanceInOtherClassIfApplicable(HasA_Private_Classes_Member *instanceInOtherClassIfApplicable);
+    NonFunctionMember *instanceInOtherClassIfApplicable() const;
+    void setInstanceInOtherClassIfApplicable(NonFunctionMember *instanceInOtherClassIfApplicable);
 
     QString instanceVariableName();
 
@@ -65,13 +66,13 @@ public: //was protected, but eh serialization plx
     DesignEqualsImplementationUseCase *m_ParentUseCase;
 
     DesignEqualsImplementationClassInstanceTypeEnum m_InstanceType;
-    HasA_Private_Classes_Member *m_InstanceInOtherClassIfApplicable;
+    NonFunctionMember *m_InstanceInOtherClassIfApplicable;
 signals:
     void slotInsertedIntoClassLifeLine(int insertIndex, DesignEqualsImplementationClassSlot *slot);
     void slotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot *slotRemoved);
 public slots:
-    void createNewHasAPrivateMemberAndAssignItAsClassLifelineInstance(DesignEqualsImplementationClass *parentClassChosenToGetNewHasAprivateMember, DesignEqualsImplementationClass *typeOfNewPrivateHasAMember, const QString &nameOfNewPrivateHasAMember);
-    void assignPrivateMemberAsClassLifelineInstance(HasA_Private_Classes_Member *chosenExistingHasA_Private_Classes_Member);
+    void createNewNonFunctionMemberAndAssignItAsClassLifelineInstance(DesignEqualsImplementationClass *parentClassChosenToGetNewNonFunctionMember, DesignEqualsImplementationClass *typeOfNewNonFunctionMember, const QString &nameOfNewNonFunctionMember);
+    void assignNonFunctionMemberAsClassLifelineInstance(NonFunctionMember *chosenExistingNonFunctionMember);
 };
 #if 0
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassLifeLine &classLifeline);

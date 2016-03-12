@@ -156,8 +156,8 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
 
     connect(this, SIGNAL(accepted()), this, SLOT(handleDialogAccepted()));
 
-    connect(this, SIGNAL(createNewHasAPrivateMemberAndAssignItAsClassLifelineInstanceRequested(DesignEqualsImplementationClass*,DesignEqualsImplementationClass*,QString)), classLifelineForWhichAnInstanceIsBeingChosen, SLOT(createNewHasAPrivateMemberAndAssignItAsClassLifelineInstance(DesignEqualsImplementationClass*,DesignEqualsImplementationClass*,QString)));
-    connect(this, SIGNAL(assignPrivateMemberAsClassLifelineInstanceRequested(HasA_Private_Classes_Member*)), classLifelineForWhichAnInstanceIsBeingChosen, SLOT(assignPrivateMemberAsClassLifelineInstance(HasA_Private_Classes_Member*)));
+    connect(this, SIGNAL(createNewNonFunctionMemberAndAssignItAsClassLifelineInstanceRequested(DesignEqualsImplementationClass*,DesignEqualsImplementationClass*,QString)), classLifelineForWhichAnInstanceIsBeingChosen, SLOT(createNewNonFunctionMemberAndAssignItAsClassLifelineInstance(DesignEqualsImplementationClass*,DesignEqualsImplementationClass*,QString)));
+    connect(this, SIGNAL(assignNonFunctionMemberAsClassLifelineInstanceRequested(NonFunctionMember*)), classLifelineForWhichAnInstanceIsBeingChosen, SLOT(assignNonFunctionMemberAsClassLifelineInstance(NonFunctionMember*)));
 
     if(!atLeastOneOtherClassLifeline)
     {
@@ -172,17 +172,23 @@ DesignEqualsImplementationClass *ClassInstanceChooserDialog::parentClassChosenTo
 {
     return m_ExistingClassToUseAsParentForNewInstance;
 }
-QString ClassInstanceChooserDialog::nameOfNewPrivateHasAMember() const
-{
-    return m_NameOfNewPrivateHasAMember;
-}
-HasA_Private_Classes_Member *ClassInstanceChooserDialog::chosenExistingHasA_Private_Classes_Member() const
-{
-    return m_ExistingInstanceHasAPrivateClassesMember;
-}
 void ClassInstanceChooserDialog::addAllPrivateHasAMembersThatAreOfAcertainTypeToExistingInstancesListWidget(DesignEqualsImplementationClass *classToIterate, DesignEqualsImplementationClass *typeOfClassWeAreInterestedInInstancesOf)
 {
     //TODOreq: if the existing instance is already making an appearance in this use case (and it is not us), then i'm pretty sure it shouldn't be shown in the existing instances list. it depends on whether or not there can be two class lifeline instances that are the same, which i'm pretty sure is not allowed
+    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, classToIterate->m_NonFunctionMembers)
+    {
+        DesignEqualsImplementationClass *aClassThatIsANonFunctionMemberMaybe = qobject_cast<DesignEqualsImplementationClass*>(currentNonFunctionMember->typeInstance->type);
+        if(!aClassThatIsANonFunctionMemberMaybe)
+            continue; //only DesignEqualsImplementationClasses can be used as class lifeline instances. the other types don't have signals/slots!
+
+        if(aClassThatIsANonFunctionMemberMaybe != typeOfClassWeAreInterestedInInstancesOf)
+            continue;
+
+        QListWidgetItem *existingClassInstanceListWidgetItem = new QListWidgetItem(classToIterate->ClassName + "::" + currentNonFunctionMember->typeInstance->VariableName);
+        existingClassInstanceListWidgetItem->setData(Qt::UserRole, QVariant::fromValue(currentNonFunctionMember));
+        m_ExistingInstancesListWidget->addItem(existingClassInstanceListWidgetItem);
+    }
+#if 0
     Q_FOREACH(HasA_Private_Classes_Member *currentPrivateHasAClassMember, classToIterate->hasA_Private_Classes_Members())
     {
         if(currentPrivateHasAClassMember->m_MyClass != typeOfClassWeAreInterestedInInstancesOf)
@@ -192,6 +198,7 @@ void ClassInstanceChooserDialog::addAllPrivateHasAMembersThatAreOfAcertainTypeTo
         existingClassInstanceListWidgetItem->setData(Qt::UserRole, QVariant::fromValue(currentPrivateHasAClassMember));
         m_ExistingInstancesListWidget->addItem(existingClassInstanceListWidgetItem);
     }
+#endif
 }
 void ClassInstanceChooserDialog::handleNewInstancesRadioButtonToggled(bool checked)
 {
@@ -313,20 +320,20 @@ void ClassInstanceChooserDialog::handleClassesInUseCaseAvailableForUseAsParentOf
 void ClassInstanceChooserDialog::handleNewInstanceNameLineEditTextChanged(const QString &newText)
 {
     m_UserIsTypingInCustomVariableNameSoDontSuggestAutoName = true;
-    m_NameOfNewPrivateHasAMember = newText;
+    m_NameOfNewNonFunctionMember = newText;
 }
 void ClassInstanceChooserDialog::handleExistingInstancesCurrentRowChanged(int newRow)
 {
-    m_ExistingInstanceHasAPrivateClassesMember = qvariant_cast<HasA_Private_Classes_Member*>(m_ExistingInstancesListWidget->item(newRow)->data(Qt::UserRole));
+    m_ExistingInstanceNonFunctionMember = qvariant_cast<NonFunctionMember*>(m_ExistingInstancesListWidget->item(newRow)->data(Qt::UserRole));
 }
 void ClassInstanceChooserDialog::handleDialogAccepted()
 {
     if(newInstanceChosen())
     {
-        emit createNewHasAPrivateMemberAndAssignItAsClassLifelineInstanceRequested(parentClassChosenToGetNewHasAprivateMember(), m_ClassLifelineForWhichAnInstanceIsBeingChosen->designEqualsImplementationClass(), nameOfNewPrivateHasAMember());
+        emit createNewNonFunctionMemberAndAssignItAsClassLifelineInstanceRequested(parentClassChosenToGetNewHasAprivateMember(), m_ClassLifelineForWhichAnInstanceIsBeingChosen->designEqualsImplementationClass(), m_NameOfNewNonFunctionMember);
     }
     else
     {
-        emit assignPrivateMemberAsClassLifelineInstanceRequested(chosenExistingHasA_Private_Classes_Member());
+        emit assignNonFunctionMemberAsClassLifelineInstanceRequested(m_ExistingInstanceNonFunctionMember);
     }
 }

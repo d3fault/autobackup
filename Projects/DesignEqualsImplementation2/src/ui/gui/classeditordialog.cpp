@@ -272,15 +272,15 @@ QString ClassEditorDialog::classDetailsAsHtmlString()
     }
 
     //hasA_Private_Classes_Members
-    if(m_ClassBeingEditted->hasA_Private_Classes_Members().size() > 0)
+    if(m_ClassBeingEditted->nonFunctionMembers().size() > 0)
     {
-        classContentsString.append("<br /><b>Private Class Members</b>");
+        classContentsString.append("<br /><b>Non-Function Members</b>");
     }
-    Q_FOREACH(HasA_Private_Classes_Member *currentHasA_Private_Classes_Members_ListEntryType, m_ClassBeingEditted->hasA_Private_Classes_Members())
+    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, m_ClassBeingEditted->nonFunctionMembers())
     {
-        classContentsString.append("<br />" + currentHasA_Private_Classes_Members_ListEntryType->preferredTextualRepresentationOfTypeAndVariableTogether());
+        classContentsString.append("<br />" + currentNonFunctionMember->typeInstance->preferredTextualRepresentationOfTypeAndVariableTogether());
     }
-    if(m_ClassBeingEditted->hasA_Private_Classes_Members().size() > 0)
+    if(m_ClassBeingEditted->nonFunctionMembers().size() > 0)
     {
         classContentsString.append("<br />");
     }
