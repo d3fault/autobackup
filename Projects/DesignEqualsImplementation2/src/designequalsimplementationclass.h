@@ -1,7 +1,7 @@
 #ifndef DESIGNEQUALSIMPLEMENTATIONCLASS_H
 #define DESIGNEQUALSIMPLEMENTATIONCLASS_H
 
-#include <QObject>
+#include "type.h"
 #include "idesignequalsimplementationvisuallyrepresenteditem.h"
 
 #include <QPair>
@@ -21,7 +21,7 @@ class DesignEqualsImplementationProject;
 
 //TODOinstancing: class DesignEqualsImplementationClassInstance;
 
-class DesignEqualsImplementationClass : public QObject, public IDesignEqualsImplementationVisuallyRepresentedItem
+class DesignEqualsImplementationClass : public Type, public IDesignEqualsImplementationVisuallyRepresentedItem
 {
     Q_OBJECT
 public:
@@ -42,6 +42,8 @@ public:
     //TODOoptional: private + getter/setter blah
     DesignEqualsImplementationProject *m_ParentProject;
     QString ClassName;
+
+    bool addNonFunctionMember(NonFunctionMember nonFunctionMember);
 
     DesignEqualsImplementationClassProperty *createNewProperty(const QString &propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange);
     void addProperty(DesignEqualsImplementationClassProperty *propertyToAdd);

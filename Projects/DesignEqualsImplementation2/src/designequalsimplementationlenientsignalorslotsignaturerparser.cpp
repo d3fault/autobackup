@@ -3,6 +3,8 @@
 #include "libclangpch.h"
 using namespace clang;
 
+
+//TODOreq: most/all of this class was copy/pasted into LibClangFunctionParser, so this class should refactor to use that
 class DesignEqualsImplementationLenientSignalOrSlotSignaturerParserRecursiveAstVisitor : public RecursiveASTVisitor<DesignEqualsImplementationLenientSignalOrSlotSignaturerParserRecursiveAstVisitor>
 {
 public:

@@ -300,7 +300,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
                     continue;
                 m_ExistingSlotsComboBox->addItem(currentSlot->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSlot));
             }
-            m_ExistingSlotsComboBox->insertKnownTypes(destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->m_ParentProject->allKnownTypes());
+            m_ExistingSlotsComboBox->insertKnownTypes(destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->m_ParentProject->allKnownTypesNames());
         }
     }
 
@@ -341,7 +341,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
             {
                 m_ExistingSignalsComboBox->addItem(currentSignal->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSignal));
             }
-            m_ExistingSignalsComboBox->insertKnownTypes(sourceSlot_OrZeroIfSourceIsActor->ParentClass->m_ParentProject->allKnownTypes());
+            m_ExistingSignalsComboBox->insertKnownTypes(sourceSlot_OrZeroIfSourceIsActor->ParentClass->m_ParentProject->allKnownTypesNames());
 
             //fill in list of variables in current context to use for satisfying whatever slot they choose's arguments. TODOreq: prefix the "source" of the arg satisfier, and perhaps sort them by that too. "my-method-arguments", "my-class-members", etc)
             //m_VariablesAvailableToSatisfyArgs.append(*(slotWithCurrentContext_OrZeroIfSourceIsActor->Arguments));

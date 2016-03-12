@@ -6,7 +6,7 @@
 
 bool DesignEqualsImplementationGuiCommon::parseNewFunctionDefinitioin_then_askWhatToDoWithNewFunctionArgTypes(QWidget *parentWidget, DesignEqualsImplementationProject *currentProject, const QString &functionDefinitionToParse, QString *out_parsedFunctionName, QList<MethodArgumentTypedef> *out_parsedFunctionArgs)
 {
-    DesignEqualsImplementationLenientSignalOrSlotSignaturerParser functionSignatureParser(functionDefinitionToParse, currentProject->allKnownTypes());
+    DesignEqualsImplementationLenientSignalOrSlotSignaturerParser functionSignatureParser(functionDefinitionToParse, currentProject->allKnownTypesNames());
     if(functionSignatureParser.hasError())
     {
         QMessageBox::critical(parentWidget, QObject::tr("Error"), functionSignatureParser.mostRecentError()); //TODOreq: show the details in-app in a qplaintextedit

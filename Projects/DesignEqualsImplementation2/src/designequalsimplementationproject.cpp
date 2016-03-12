@@ -37,17 +37,24 @@ DesignEqualsImplementationClass *DesignEqualsImplementationProject::createNewCla
     return newClass;
 }
 //cat(classes + definedElsewhereTypes); //maybe more types  of types (xD) to come
-QList<QString> DesignEqualsImplementationProject::allKnownTypes() const
+QList<Type*> DesignEqualsImplementationProject::allKnownTypes() const
 {
-    QList<QString> ret;
+    QList<Type*> ret;
     Q_FOREACH(DesignEqualsImplementationClass *currentClass, m_Classes)
     {
-        ret.append(currentClass->ClassName);
+        ret.append(currentClass);
     }
-    Q_FOREACH(const QString &currentDefinedElsewhereType, m_DefinedElsewhereTypes)
+    Q_FOREACH(DefinedElsewhereType *currentDefinedElsewhereType, m_DefinedElsewhereTypes)
     {
         ret.append(currentDefinedElsewhereType);
     }
+    return ret;
+}
+QList<QString> DesignEqualsImplementationProject::allKnownTypesNames() const
+{
+    QList<QString> ret;
+    Q_FOREACH(Type *type, allKnownTypes())
+        ret << type->Name;
     return ret;
 }
 void DesignEqualsImplementationProject::addClass(DesignEqualsImplementationClass *newClass)
@@ -89,9 +96,11 @@ void DesignEqualsImplementationProject::noteDefinedElsewhereType(const QString &
 {
     //note: at first i thought i'd need to 'ensure a defined elsewhere type is never noted more than once', BUT currently i am always building allKnownTypes using the defined elsewhere types, which means it would be impossible for me to detect a defined elsewhere type as a new type (which is prerequisite for me noting that it's defined elsewhere). still, a qset would de-dupe with ease if i ever can't make that guarantee in the future
 
-    m_DefinedElsewhereTypes.append(definedElsewhereType); //TODOreq: [de-]serialize
+    DefinedElsewhereType *newDefinedElsewhereType = new DefinedElsewhereType(this);
+    newDefinedElsewhereType->Name = definedElsewhereType;
+    m_DefinedElsewhereTypes.append(newDefinedElsewhereType); //TODOreq: [de-]serialize
 }
-QList<QString> DesignEqualsImplementationProject::definedElsewhereTypes() const
+QList<DefinedElsewhereType*> DesignEqualsImplementationProject::definedElsewhereTypes() const
 {
     return m_DefinedElsewhereTypes;
 }

@@ -9,6 +9,7 @@ class NonFunctionMember
     Type *ParentTypeThatIamMemberOf;
     TypeInstance *typeInstance;
     Visibility visibility;
+    QScopedPointer<bool> IsOwnerOfPointer_orNullIfNotPointer; //hacky tri-bool :). tells us whether or not to do a '[typeInstance.variableName] = new [typeInstance.type.Name](this)' in constructor initialization. OT'ish: if it's not a QObject derived object, we should throw that bitch in a scoped pointer
 };
 class Type
 {
@@ -58,8 +59,6 @@ class TypeInstance
     QString Qualifiers_RHS;
 
     QString VariableName;
-
-    QScopedPointer<bool> IsOwnerOfPointer_orNullIfNotPointer; //hacky tri-bool :). tells us whether or not to do a '[typeInstance.variableName] = new [typeInstance.type.Name](this)' in constructor initialization. OT'ish: if it's not a QObject derived object, we should throw that bitch in a scoped pointer
 };
 class QPropertyTypeInstance : public TypeInstance
 {
@@ -74,10 +73,10 @@ class QPropertyTypeInstance : public TypeInstance
 
 void /*UseCaseClassLifelineInstanceChooserDialog::*/populateComboBoxWithEligibleInstances()
 {
-    Q_FOREACH(Type aClass, m_ClassesInUseCaseScene) //this is a guess. i forget which classes are eligible, maybe all in project? this part is already coded, so I'll continue to use what I decided way back when
+    Q_FOREACH(ClassLifeline aClasslifeLine, m_ClassLifeLinesInUseCaseScene)
     {
 
-        Q_FOREACH(NonFunctionMember aNonFunctionMember, aClass.NonFunctionMembers)
+        Q_FOREACH(NonFunctionMember aNonFunctionMember, aClassLifeLine.ParentClass.NonFunctionMembers)
         {
             if(!qobject_cast<DesignEqualsImplementationClass_aka_BusinessQObject>(aNonFunctionMember.typeInstance->type))
                 continue; //only DesignEqualsImplementationClass_aka_BusinessQObjects can be used as class lifeline instances. the other types don't have signals/slots!

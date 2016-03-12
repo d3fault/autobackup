@@ -29,7 +29,7 @@ QString DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSe
     return QString("connect(" + signalObjectVariableName + ", SIGNAL(" + signalNameIncludingNormalizedArgs + "), " +  slotObjectVariableName + ", SLOT(" + slotNameIncludingNormalizedArgs + "));");
 }
 DesignEqualsImplementationClass::DesignEqualsImplementationClass(QObject *parent, DesignEqualsImplementationProject *parentProject)
-    : QObject(parent)
+    : Type(parent)
     , IDesignEqualsImplementationVisuallyRepresentedItem()
     , m_ParentProject(parentProject)
 { }
@@ -85,6 +85,11 @@ void DesignEqualsImplementationClass::removeSlot(DesignEqualsImplementationClass
     m_MySlots.removeOne(slotToRemove);
     slotToRemove->ParentClass = 0; //TODOreq: a slot without a parent is undefined
     //emit slotRemoved(slotToRemove);
+}
+bool DesignEqualsImplementationClass::addNonFunctionMember(NonFunctionMember nonFunctionMember)
+{
+    NonFunctionMembers << nonFunctionMember;
+    return true;
 }
 DesignEqualsImplementationClassProperty *DesignEqualsImplementationClass::createNewProperty(const QString &propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange)
 {

@@ -7,6 +7,7 @@
 #include "designequalsimplementationcommon.h"
 #include "designequalsimplementationclass.h" //TODOoptional: forward declare in this + tons of similar classes
 #include "designequalsimplementationusecase.h"
+#include "type.h"
 
 class DesignEqualsImplementationProject : public QObject
 {
@@ -18,7 +19,8 @@ public:
 
     DesignEqualsImplementationClass *createNewClass(const QString &newClassName = QString(), const QPointF &classPositionInGraphicsScene = QPointF());
 
-    QList<QString> allKnownTypes() const;
+    QList<Type *> allKnownTypes() const;
+    QList<QString> allKnownTypesNames() const;
 
     //TODOoptional: private + getter/setter blah
     QString Name;
@@ -33,12 +35,12 @@ public:
     QList<DesignEqualsImplementationUseCase*> useCases();
 
     void noteDefinedElsewhereType(const QString &definedElsewhereType);
-    QList<QString> definedElsewhereTypes() const;
+    QList<DefinedElsewhereType *> definedElsewhereTypes() const;
 
     //TODOreq: m_Classes should be private, but I had issues getting the getters/setters to play nicely with QDataStream. Maybe a simple "friend QDataStream;" would fix it (or similar), but I can't be fucked to even play around with it right now. STILL, after coding for a while you should check that all usages of m_Classes are only from within the getter/setters (more important is the setter, but still in principle the getter too)
     QList<DesignEqualsImplementationClass*> m_Classes;
     QList<DesignEqualsImplementationUseCase*> m_UseCases;
-    QList<QString> m_DefinedElsewhereTypes;
+    QList<DefinedElsewhereType*> m_DefinedElsewhereTypes;
 
     //serialization and deserialization of a class REFERENCE
     inline int serializationClassIdForClass(DesignEqualsImplementationClass *classToReturnSerializationIdFor) { return m_Classes.indexOf(classToReturnSerializationIdFor); }

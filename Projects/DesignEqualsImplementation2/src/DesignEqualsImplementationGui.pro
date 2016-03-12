@@ -75,7 +75,8 @@ SOURCES += ui/gui/main.cpp\
     ui/gui/signalstatementnotchmultiplextergraphicsrect.cpp \
     designequalsimplementationchunkofrawcppstatements.cpp \
     ui/gui/designequalsimplementationchunkofrawcppstatementsgraphicsitemforusecasescene.cpp \
-    ui/gui/designequalsimplementationguicommon.cpp
+    ui/gui/designequalsimplementationguicommon.cpp \
+    designequalsimplementationimplicitlyshareddatatype.cpp
 
 HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementation.h \
@@ -139,7 +140,9 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     ui/gui/sourceexistingsignalsnappingindicationvisualrepresentation.h \
     ui/gui/signalstatementnotchmultiplextergraphicsrect.h \
     designequalsimplementationchunkofrawcppstatements.h \
-    ui/gui/designequalsimplementationchunkofrawcppstatementsgraphicsitemforusecasescene.h
+    ui/gui/designequalsimplementationchunkofrawcppstatementsgraphicsitemforusecasescene.h \
+    type.h \
+    designequalsimplementationimplicitlyshareddatatype.h
 
 include(../../../GloballySharedClasses/libclangfunctiondeclarationparser.pri)
 include(../../../GloballySharedClasses/comboboxwithautocompletionofexistingsignalsorslotsandautocompletionofargsifnewsignalorslot.pri)

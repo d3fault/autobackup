@@ -1,10 +1,10 @@
 #ifndef DESIGNEQUALSIMPLEMENTATIONCLASSPROPERTY_H
 #define DESIGNEQUALSIMPLEMENTATIONCLASSPROPERTY_H
 
-#include <QObject>
+#include "type.h"
 #include "ihavetypeandvariablenameandpreferredtextualrepresentation.h"
 
-class DesignEqualsImplementationClassProperty : public QObject, public IHaveTypeAndVariableNameAndPreferredTextualRepresentation
+class DesignEqualsImplementationClassProperty : public TypeInstance, public IHaveTypeAndVariableNameAndPreferredTextualRepresentation
 {
     Q_OBJECT
 public:

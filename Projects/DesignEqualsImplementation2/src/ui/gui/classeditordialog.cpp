@@ -348,7 +348,7 @@ void ClassEditorDialog::handleQuickAddNewPropertyButtonClicked()
     //TODOreq: differentiating member pointer owned (instantiated) vs. not owned (not instantiated, passed in somehow) = ??????????????????
 
 
-    DesignEqualsImplementationLenientPropertyDeclarationParser propertyDeclarationParser(m_QuickMemberAddLineEdit->text(), m_CurrentProject->allKnownTypes());
+    DesignEqualsImplementationLenientPropertyDeclarationParser propertyDeclarationParser(m_QuickMemberAddLineEdit->text(), m_CurrentProject->allKnownTypesNames());
     if(propertyDeclarationParser.hasError())
     {
         QMessageBox::critical(this, tr("Error"), propertyDeclarationParser.mostRecentError()); //TODOreq: show the details in-app in a qplaintextedit
