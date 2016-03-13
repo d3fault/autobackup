@@ -297,7 +297,9 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
                                 {
                                     if(destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->parentClass() == classLifeline->instanceInOtherClassIfApplicable()->parentClass())
                                     {
-                                        DesignEqualsImplementationClass *sharedParentOfSignalAndSlotForGettingConnectStatementInConstructorish = destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->parentClass();
+                                        DesignEqualsImplementationClass *sharedParentOfSignalAndSlotForGettingConnectStatementInConstructorish = qobject_cast<DesignEqualsImplementationClass*>(destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->parentClass());
+                                        if(!sharedParentOfSignalAndSlotForGettingConnectStatementInConstructorish)
+                                            qFatal("Somehow managed to assign a class lifeline to an instance of a Type that is NOT a DesignEqualsImplementationClass. This should never happen and is a programming bug");
 
 #if 0
                                         //3
@@ -308,7 +310,7 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
                                         else //0b
                                         {
 #endif
-                                            appendConnectStatementToClassInitializationSequence(sharedParentOfSignalAndSlotForGettingConnectStatementInConstructorish, DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->VariableName, signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->VariableName, destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
+                                            appendConnectStatementToClassInitializationSequence(sharedParentOfSignalAndSlotForGettingConnectStatementInConstructorish, DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->typeInstance->VariableName, signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->typeInstance->VariableName, destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
                                             //                                    }
                                         }
                                     }
@@ -324,8 +326,8 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
                                         {
                                             //the class with the signal hasA the class with the slot
                                             //so the signal's constructor gets the connect statement
-                                            //classLifeline->designEqualsImplementationClass()->appendLineToClassConstructorTemporarily(DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->VariableName, currentStatement->toRawCppWithoutEndingSemicolon(), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->VariableName, destinationSlot->methodSignatureWithoutReturnType()));
-                                            appendConnectStatementToClassInitializationSequence(classLifeline->designEqualsImplementationClass(), DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(QString("this"), signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->VariableName, destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
+                                            //classLifeline->designEqualsImplementationClass()->appendLineToClassConstructorTemporarily(DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->typeInstance->VariableName, currentStatement->toRawCppWithoutEndingSemicolon(), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->typeInstance->VariableName, destinationSlot->methodSignatureWithoutReturnType()));
+                                            appendConnectStatementToClassInitializationSequence(classLifeline->designEqualsImplementationClass(), DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(QString("this"), signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->typeInstance->VariableName, destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
                                         }
 
                                     }
@@ -338,7 +340,7 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
                                         {
                                             //the class with the slot hasA the class with the signal
                                             //so the slot's constructor gets the connect statement
-                                            appendConnectStatementToClassInitializationSequence(destinationSlotClassLifeline->designEqualsImplementationClass(), DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->VariableName, signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), QString("this"), destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
+                                            appendConnectStatementToClassInitializationSequence(destinationSlotClassLifeline->designEqualsImplementationClass(), DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->typeInstance->VariableName, signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), QString("this"), destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
                                         }
                                     }
 
@@ -443,6 +445,10 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
                             << endl
                             << "#include <QObject>" << endl //TODOoptional: non-QObject classes? hmm nah because signals/slots based
                             << endl;
+
+
+    bool atLeastOneHasAPrivateMemberClass = false; //TODOreq: temp to get it to compile
+#if 0
     //Header's header's forward declares
     bool atLeastOneHasAPrivateMemberClass = !currentClass->hasA_Private_Classes_Members().isEmpty(); //spacing
     Q_FOREACH(HasA_Private_Classes_Member *currentPrivateMember, currentClass->hasA_Private_Classes_Members())
@@ -452,6 +458,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     }
     if(atLeastOneHasAPrivateMemberClass)
         headerFileTextStream << endl; //OCD <3
+#endif
     headerFileTextStream    << "class " << currentClass->ClassName << " : public QObject" << endl
                             << "{" << endl
                             << DESIGNEQUALSIMPLEMENTATION_TAB << "Q_OBJECT" << endl;
@@ -460,11 +467,11 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
     {
         //Q_PROPERTY..
-        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "Q_PROPERTY(" + currentProperty->Type << " " << firstCharacterToLower(currentProperty->Name) << " READ " << getterNameForProperty(currentProperty->Name); //here marks the first time i've ever actually used the Q_PROPERTY macro <3. i'm always just too lazy and don't see the benefit... but since code generator, the cost becomes/became zero xD
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "Q_PROPERTY(" + currentProperty->PropertyType << " " << firstCharacterToLower(currentProperty->PropertyName) << " READ " << getterNameForProperty(currentProperty->PropertyName); //here marks the first time i've ever actually used the Q_PROPERTY macro <3. i'm always just too lazy and don't see the benefit... but since code generator, the cost becomes/became zero xD
         if(!currentProperty->ReadOnly)
-            headerFileTextStream << " WRITE " << setterNameForProperty(currentProperty->Name);
+            headerFileTextStream << " WRITE " << setterNameForProperty(currentProperty->PropertyName);
         if(currentProperty->NotifiesOnChange)
-            headerFileTextStream << " NOTIFY " << changedSignalForProperty(currentProperty->Name);
+            headerFileTextStream << " NOTIFY " << changedSignalForProperty(currentProperty->PropertyName);
         headerFileTextStream << ")" << endl;
     }
 
@@ -477,13 +484,13 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     {
         //Property getter
         //int x() const;
-        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->Type << " " << getterNameForProperty(currentProperty->Name) << "() const;" << endl;
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->PropertyType << " " << getterNameForProperty(currentProperty->PropertyName) << "() const;" << endl;
 
         //Property setter
         if(!currentProperty->ReadOnly)
         {
             //void setX(int newX);
-            headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << setterNameForProperty(currentProperty->Name) << "(" << currentProperty->Type << " " << "new" << firstCharacterToUpper(currentProperty->Name) << ");" << endl;
+            headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << setterNameForProperty(currentProperty->PropertyName) << "(" << currentProperty->PropertyType << " " << "new" << firstCharacterToUpper(currentProperty->PropertyName) << ");" << endl;
         }
     }
 
@@ -497,7 +504,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     //Header's property member declarations
     Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
     {
-        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->Type << " " << memberNameForProperty(currentProperty->Name) << ";" << endl;
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->PropertyType << " " << memberNameForProperty(currentProperty->PropertyName) << ";" << endl;
     }
     if(!currentClass->Properties.isEmpty() && atLeastOneHasAPrivateMemberClass) //TODOsanity: make a list of each of the visibility specifier entries, then process AT THE END whether or not to write a visibility specifier. there should be an "empty line" entry (like the one just below) that should be able to be "trimmed" if no statements are following (like the second half of this if statement does). the same kind of thing can/should be used to determine whether or not to do "{ }" or "{\n" (if any statements in block)
     {
@@ -510,21 +517,25 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         headerFileTextStream << "private:" << endl;
         privateAccessSpecifierWritten = true;
     }
+#if 0
     Q_FOREACH(HasA_Private_Classes_Member *currentPrivateMember, currentClass->hasA_Private_Classes_Members())
     {
         //Bar *m_Bar;
         headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentPrivateMember->preferredTextualRepresentationOfTypeAndVariableTogether() << ";" << endl;
     }
+#endif
 
     //Source's header+constructor (the top bits, not the ".h" counter-part)
     DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "#include \"" << currentClass->headerFilenameOnly() << "\"" << endl
                             << endl;)
     //Source's header PrivateMemberClasses includes
+#if 0
     Q_FOREACH(HasA_Private_Classes_Member *currentPrivateMember, currentClass->hasA_Private_Classes_Members())
     {
         //#include "bar.h"
         DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "#include \"" << currentPrivateMember->m_MyClass->headerFilenameOnly() << "\"" << endl;)
     }
+#endif
     if(atLeastOneHasAPrivateMemberClass)
     {
         DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << endl;)
@@ -537,15 +548,17 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         if(currentProperty->HasInit)
         {
             //, m_SomeBoolProperty(true)
-            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << ", " << memberNameForProperty(currentProperty->Name) << "(" << currentProperty->OptionalInit << ")" << endl;) //TODOoptional: a way to use one of currentClass's constructor args (or even multiple but omg my brain) as the init for a given property. should be 'smart'
+            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << ", " << memberNameForProperty(currentProperty->PropertyName) << "(" << currentProperty->OptionalInit << ")" << endl;) //TODOoptional: a way to use one of currentClass's constructor args (or even multiple but omg my brain) as the init for a given property. should be 'smart'
         }
     }
     //Source's header PrivateMemberClasses constructor initializers
+#if 0
     Q_FOREACH(HasA_Private_Classes_Member *currentPrivateMember, currentClass->hasA_Private_Classes_Members())
     {
         //, m_Bar(new Bar(this))
         DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << ", " << currentPrivateMember->VariableName << "(new " << currentPrivateMember->m_MyClass->ClassName << "(this))" << endl;) //TODOreq: for now all my objects need a QObject *parent=0 constructor, but since that's also a [fixable] requirement for my ObjectOnThreadGroup, no biggy. Still, would be nice to solve the threading issue and to allow constructor args here (RAII = pro)
     }
+#endif
 
     //Source constructor -- children connection statements (or just constructor statements, but as of writing they are only connect statements)
     QList<QString> classConstructorLines = m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements.value(currentClass);
@@ -574,7 +587,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         //{
         //  return m_X;
         //}
-        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << currentProperty->Type << " " << currentClass->ClassName << "::" << getterNameForProperty(currentProperty->Name) << "() const" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "return " << memberNameForProperty(currentProperty->Name) << ";" << endl << "}" << endl;)
+        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << currentProperty->PropertyType << " " << currentClass->ClassName << "::" << getterNameForProperty(currentProperty->PropertyName) << "() const" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "return " << memberNameForProperty(currentProperty->PropertyName) << ";" << endl << "}" << endl;)
 
         if(!currentProperty->ReadOnly)
         {
@@ -586,11 +599,11 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
             //    emit xChanged(m_X);
             //  }
             //}
-            const QString &newSetPropertyVariableName = "new" + firstCharacterToUpper(currentProperty->Name);
-            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "void " << currentClass->ClassName << "::" << setterNameForProperty(currentProperty->Name) << "(" << currentProperty->Type << " " << "new" << firstCharacterToUpper(currentProperty->Name) << ")" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "if(" << newSetPropertyVariableName << " != " << memberNameForProperty(currentProperty->Name) << ")" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << memberNameForProperty(currentProperty->Name) << " = " << newSetPropertyVariableName << ";" << endl;)
+            const QString &newSetPropertyVariableName = "new" + firstCharacterToUpper(currentProperty->PropertyName);
+            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "void " << currentClass->ClassName << "::" << setterNameForProperty(currentProperty->PropertyName) << "(" << currentProperty->PropertyType << " " << "new" << firstCharacterToUpper(currentProperty->PropertyName) << ")" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "if(" << newSetPropertyVariableName << " != " << memberNameForProperty(currentProperty->PropertyName) << ")" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << memberNameForProperty(currentProperty->PropertyName) << " = " << newSetPropertyVariableName << ";" << endl;)
             if(currentProperty->NotifiesOnChange)
             {
-                DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << "emit " << changedSignalForProperty(currentProperty->Name) << "(" << memberNameForProperty(currentProperty->Name) << ");" << endl;)
+                DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << "emit " << changedSignalForProperty(currentProperty->PropertyName) << "(" << memberNameForProperty(currentProperty->PropertyName) << ");" << endl;)
             }
             DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << "}" << endl << "}" << endl;)
         }
@@ -627,7 +640,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
                 gapBetweenRegularSignalsAndPropertyChangeSignalsWritten = true;
             }
 
-            headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << changedSignalForProperty(currentProperty->Name) << "(" << currentProperty->Type << " " << "new" + firstCharacterToUpper(currentProperty->Name) << ");" << endl;
+            headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << changedSignalForProperty(currentProperty->PropertyName) << "(" << currentProperty->PropertyType << " " << "new" + firstCharacterToUpper(currentProperty->PropertyName) << ");" << endl;
         }
     }
 

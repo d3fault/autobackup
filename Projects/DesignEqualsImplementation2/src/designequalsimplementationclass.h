@@ -45,7 +45,7 @@ public:
 
     bool addNonFunctionMember(NonFunctionMember *nonFunctionMember);
 
-    DesignEqualsImplementationClassProperty *createNewProperty(const QString &propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange);
+    DesignEqualsImplementationClassProperty *createNewProperty(Type *propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange);
     void addProperty(DesignEqualsImplementationClassProperty *propertyToAdd);
 
     //HasA_Private_Classes_Member *createHasA_Private_Classes_Member(DesignEqualsImplementationClass *memberClassType, const QString &variableName_OrLeaveBlankForAutoNumberedVariableName = QString());

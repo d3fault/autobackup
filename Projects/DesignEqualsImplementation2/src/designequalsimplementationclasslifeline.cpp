@@ -231,7 +231,7 @@ QString DesignEqualsImplementationClassLifeLine::instanceVariableName()
     if(m_InstanceType == UseCasesRootClassLifeline)
         ret = "this";
     else if(m_InstanceType == ChildMemberOfOtherClassLifeline)
-        ret = m_InstanceInOtherClassIfApplicable->VariableName;
+        ret = m_InstanceInOtherClassIfApplicable->typeInstance->VariableName;
     return ret;
 }
 void DesignEqualsImplementationClassLifeLine::streamOutClassLifelineReference(DesignEqualsImplementationProject *project, DesignEqualsImplementationClassLifeLine *classLifeline, QDataStream &out)

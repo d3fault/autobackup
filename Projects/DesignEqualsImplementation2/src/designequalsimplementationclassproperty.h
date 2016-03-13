@@ -4,19 +4,17 @@
 #include "type.h"
 #include "ihavetypeandvariablenameandpreferredtextualrepresentation.h"
 
-class DesignEqualsImplementationClassProperty : public TypeInstance, public IHaveTypeAndVariableNameAndPreferredTextualRepresentation
+class DesignEqualsImplementationClassProperty : public NonFunctionMember
 {
     Q_OBJECT
 public:
-    explicit DesignEqualsImplementationClassProperty(QObject *parent = 0);
-    explicit DesignEqualsImplementationClassProperty(const QString &propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange, QObject *parent = 0);
-    virtual QString typeString() { return Type; }
+    //explicit DesignEqualsImplementationClassProperty(QObject *parent = 0);
+    explicit DesignEqualsImplementationClassProperty(Type *propertyType, const QString &propertyName, Type *parentClassThatIamPropertyOf,  QObject *parent, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange);
+    virtual QString typeString() { return PropertyType; }
 
     //TODOoptional: private + getter/setter blah
-    QString Type;
-    QString Name;
-    bool HasInit;
-    QString OptionalInit;
+    QString PropertyType;
+    QString PropertyName;
     bool ReadOnly;
     bool NotifiesOnChange;
     //TODOoptional: a few others, such as "reset" (which should be combined with "default"/initial-value imo)

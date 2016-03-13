@@ -90,10 +90,11 @@ bool DesignEqualsImplementationClass::addNonFunctionMember(NonFunctionMember *no
     m_NonFunctionMembers << nonFunctionMember;
     return true;
 }
-DesignEqualsImplementationClassProperty *DesignEqualsImplementationClass::createNewProperty(const QString &propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange)
+DesignEqualsImplementationClassProperty *DesignEqualsImplementationClass::createNewProperty(Type *propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange)
 {
-    DesignEqualsImplementationClassProperty *newProperty = new DesignEqualsImplementationClassProperty(propertyType, propertyName, hasInit, optionalInit, readOnly, notifiesOnChange, this);
-    addProperty(newProperty);
+    DesignEqualsImplementationClassProperty *newProperty = new DesignEqualsImplementationClassProperty(propertyType, propertyName, this, this, hasInit, optionalInit, readOnly, notifiesOnChange);
+    addNonFunctionMember(newProperty);
+    //addProperty(newProperty);
     return newProperty;
 }
 void DesignEqualsImplementationClass::addProperty(DesignEqualsImplementationClassProperty *propertyToAdd)

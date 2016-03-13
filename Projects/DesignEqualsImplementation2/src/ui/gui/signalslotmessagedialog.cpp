@@ -347,13 +347,14 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
             //m_VariablesAvailableToSatisfyArgs.append(*(slotWithCurrentContext_OrZeroIfSourceIsActor->Arguments));
 
             //TODOmb: one hacky way to get user-typed C++ 'locals' here would be to do auto-completion for every letter of the alphabet (a-Z), since variables must start with that. There might be a better way, but this is the best I can think of atm that definitely would work
+            //If the user-C++ has a scoped pointer, we could intelligently count that as a 'local var' and make it eligible for a signal emit or slot invoke. We consider it a "pointer to whatever the scoped pointer's template type is", and automagically call QScopedPointer::take in the emit/invokeMethod. Maybe this idea sucks though since it now makes another slot responsible for what the user thought they already cleaned up. Makes more sense for QSharedPointer, but no magic 'take'ing is necessary in that case (pass the QSharedPointer itself!)
 
+#if 0
             Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArg, sourceSlot_OrZeroIfSourceIsActor->arguments())
             {
                 m_VariablesAvailableToSatisfyArgs.append(currentArg);
             }
             //m_VariablesAvailableToSatisfyArgs.append(*slotWithCurrentContext_OrZeroIfSourceIsActor->ParentClass->HasA_PrivateMemberClasses);
-#if 0
             Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentProperty, sourceSlot_OrZeroIfSourceIsActor->ParentClass->Properties)
             {
                 m_VariablesAvailableToSatisfyArgs.append(currentProperty);
@@ -425,7 +426,7 @@ SignalEmissionOrSlotInvocationContextVariables SignalSlotMessageDialog::slotInvo
     SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables;
     Q_FOREACH(QComboBox *currentArg, m_AllArgSatisfiers)
     {
-        slotInvocationContextVariables.append(qvariant_cast<IHaveTypeAndVariableNameAndPreferredTextualRepresentation*>(currentArg->currentData())->VariableName);
+        slotInvocationContextVariables.append(qvariant_cast<TypeInstance*>(currentArg->currentData())->VariableName);
     }
     return slotInvocationContextVariables;
 }
@@ -468,7 +469,7 @@ void SignalSlotMessageDialog::showSignalArgFillingIn()
         connect(currentArgSatisfiersComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(tryValidatingDialog()));
         currentArgSatisfiersComboBox->addItem(tr("Select variable for this arg..."));
         m_AllArgSatisfiers.append(currentArgSatisfiersComboBox);
-        Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArgSatisfier, m_VariablesAvailableToSatisfyArgs)
+        Q_FOREACH(TypeInstance *currentArgSatisfier, m_VariablesAvailableToSatisfyArgs)
         {
             currentArgSatisfiersComboBox->addItem(currentArgSatisfier->preferredTextualRepresentationOfTypeAndVariableTogether(), QVariant::fromValue(currentArgSatisfier));
         }
@@ -531,7 +532,7 @@ void SignalSlotMessageDialog::showSlotArgFillingIn()
             connect(currentArgSatisfiersComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(tryValidatingDialog()));
             currentArgSatisfiersComboBox->addItem(tr("Select variable for this arg..."));
             m_AllArgSatisfiers.append(currentArgSatisfiersComboBox);
-            Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArgSatisfier, m_VariablesAvailableToSatisfyArgs)
+            Q_FOREACH(TypeInstance *currentArgSatisfier, m_VariablesAvailableToSatisfyArgs)
             {
                 currentArgSatisfiersComboBox->addItem(currentArgSatisfier->preferredTextualRepresentationOfTypeAndVariableTogether(), QVariant::fromValue(currentArgSatisfier));
             }
@@ -732,8 +733,9 @@ void SignalSlotMessageDialog::handleOkAndMakeChildOfSignalSenderActionTriggered(
 
     //the toolbutton to get here wouldn't be shown if source is actor or if there's no dest
     DesignEqualsImplementationClass *sourceClass = m_SourceSlot_OrZeroIfSourceIsActor->ParentClass;
-    HasA_Private_Classes_Member *newHasAmember = sourceClass->createHasA_Private_Classes_Member(m_DestinationSlot_OrZeroIfNoDest->ParentClass);
-    m_DestinationClassLifeline_OrZeroIfNoDest->setInstanceInOtherClassIfApplicable(newHasAmember);
+    //HasA_Private_Classes_Member *newHasAmember = sourceClass->createHasA_Private_Classes_Member(m_DestinationSlot_OrZeroIfNoDest->ParentClass);
+    NonFunctionMember *newNonFunctionMember = sourceClass->createNewNonFunctionMember(m_DestinationSlot_OrZeroIfNoDest->ParentClass, "AUTONAMETODOreq", Visibility::Private, NonFunctionMemberOwnershipOfPointedToDataIfPointer::OwnsPointedToData);
+    m_DestinationClassLifeline_OrZeroIfNoDest->setInstanceInOtherClassIfApplicable(newNonFunctionMember);
     //accept();
 }
 bool SignalSlotMessageDialog::askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDeclarationIfAny_then_jitMaybeCreateSignalAndOrSlot_then_setSignalSlotResultPointersAsAppropriate_then_acceptDialog()

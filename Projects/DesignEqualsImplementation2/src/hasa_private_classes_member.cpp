@@ -17,6 +17,7 @@ QString HasA_Private_Classes_Member::typeString()
 {
     return m_MyClass->ClassName + " *";
 }
+#if 0
 QDataStream &operator<<(QDataStream &out, HasA_Private_Classes_Member &hasA_Private_Classes_Member)
 {
     //HasA_Private_Classes_Member_QDS(out, <<, hasA_Private_Classes_Member);
@@ -29,7 +30,7 @@ return qds;
 #endif
     //not serialized, but SET just before deserializing because the class hasA it, duh. out << hasA_Private_Classes_Member.m_MyClass->m_ParentProject->serializationClassIdForClass(hasA_Private_Classes_Member.m_MyClass);
     out << hasA_Private_Classes_Member.VariableName;
-    out << hasA_Private_Classes_Member.m_ParentClass->m_ParentProject->serializationClassIdForClass(hasA_Private_Classes_Member.m_ParentClass);
+    out << hasA_Private_Classes_Member.m_ParentClass->m_ParentProject->serializationTypeIdForType(hasA_Private_Classes_Member.m_ParentClass);
     return out;
 }
 QDataStream &operator>>(QDataStream &in, HasA_Private_Classes_Member &hasA_Private_Classes_Member)
@@ -42,7 +43,7 @@ QDataStream &operator>>(QDataStream &in, HasA_Private_Classes_Member &hasA_Priva
     in >> hasA_Private_Classes_Member.VariableName;
     int deserializationClassIdForParentClass;
     in >> deserializationClassIdForParentClass;
-    hasA_Private_Classes_Member.m_ParentClass = hasA_Private_Classes_Member.m_MyClass->m_ParentProject->classInstantiationFromSerializedClassId(deserializationClassIdForParentClass);
+    hasA_Private_Classes_Member.m_ParentClass = hasA_Private_Classes_Member.m_MyClass->m_ParentProject->typeFromSerializedTypeId(deserializationClassIdForParentClass);
     return in;
 }
 QDataStream &operator<<(QDataStream &out, HasA_Private_Classes_Member *hasA_Private_Classes_Member)
@@ -56,3 +57,4 @@ QDataStream &operator>>(QDataStream &in, HasA_Private_Classes_Member *hasA_Priva
     in >> *hasA_Private_Classes_Member;
     return in;
 }
+#endif

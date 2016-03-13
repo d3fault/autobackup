@@ -175,7 +175,7 @@ DesignEqualsImplementationClass *ClassInstanceChooserDialog::parentClassChosenTo
 void ClassInstanceChooserDialog::addAllPrivateHasAMembersThatAreOfAcertainTypeToExistingInstancesListWidget(DesignEqualsImplementationClass *classToIterate, DesignEqualsImplementationClass *typeOfClassWeAreInterestedInInstancesOf)
 {
     //TODOreq: if the existing instance is already making an appearance in this use case (and it is not us), then i'm pretty sure it shouldn't be shown in the existing instances list. it depends on whether or not there can be two class lifeline instances that are the same, which i'm pretty sure is not allowed
-    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, classToIterate->m_NonFunctionMembers)
+    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, classToIterate->nonFunctionMembers())
     {
         DesignEqualsImplementationClass *aClassThatIsANonFunctionMemberMaybe = qobject_cast<DesignEqualsImplementationClass*>(currentNonFunctionMember->typeInstance->type);
         if(!aClassThatIsANonFunctionMemberMaybe)

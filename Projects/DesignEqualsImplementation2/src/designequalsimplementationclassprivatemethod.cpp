@@ -23,7 +23,7 @@ QObject *DesignEqualsImplementationClassPrivateMethod::asQObject()
 
 void DesignEqualsImplementationClassPrivateMethod::streamOutPrivateMethodReference(DesignEqualsImplementationProject *project, DesignEqualsImplementationClassPrivateMethod *privateMethod, QDataStream &out)
 {
-    out << project->serializationClassIdForClass(privateMethod->ParentClass);
+    out << project->serializationTypeIdForType(privateMethod->ParentClass);
     out << privateMethod->ParentClass->serializationPrivateMethodIdForPrivateMethod(privateMethod);
 }
 DesignEqualsImplementationClassPrivateMethod *DesignEqualsImplementationClassPrivateMethod::streamInPrivateMethodReference(DesignEqualsImplementationProject *project, QDataStream &in)
@@ -32,7 +32,9 @@ DesignEqualsImplementationClassPrivateMethod *DesignEqualsImplementationClassPri
     in >> classIdOfClassThatHasPrivateMethod;
     int privateMethodId;
     in >> privateMethodId;
-    DesignEqualsImplementationClass *classThatHasPrivateMethod = project->classInstantiationFromSerializedClassId(classIdOfClassThatHasPrivateMethod);
+    DesignEqualsImplementationClass *classThatHasPrivateMethod = qobject_cast<DesignEqualsImplementationClass*>(project->typeFromSerializedTypeId(classIdOfClassThatHasPrivateMethod));
+    if(!classThatHasPrivateMethod)
+        qFatal("While trying to deserialize a private method, the type for which the private method allegedly belongs failed to be cast into a DesignEqualsImplementationClass. This is likely a programming bug on the serialization side of things, but who knows");
     return classThatHasPrivateMethod->privateMethodInstantatiationFromSerializedPrivateMethodId(privateMethodId);
 }
 #if 0

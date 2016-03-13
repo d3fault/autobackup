@@ -1,0 +1,3 @@
+It's said that "if you fail to plan, then you plan to fail". That is to say, failing to plan IS EQUAL TO planning to fail.
+
+However, in the software world, we (our software) must plan to fail (so that it can recover/minimize-losses/etc). Tons of planning goes into failing. We do plan to fail, but that does not mean we fail to plan, so the two are not equal. I guess it's better written: "If you fail to plan, then you ALSO plan to fail".

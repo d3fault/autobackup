@@ -21,6 +21,7 @@ public:
 
     QList<Type *> allKnownTypes() const;
     QList<QString> allKnownTypesNames() const;
+    Type *getOrCreateTypeFromName(const QString &typeName);
 
     //TODOoptional: private + getter/setter blah
     QString Name;
@@ -34,7 +35,7 @@ public:
     void addUseCase(DesignEqualsImplementationUseCase *newUseCase);
     QList<DesignEqualsImplementationUseCase*> useCases();
 
-    void noteDefinedElsewhereType(const QString &definedElsewhereType);
+    DefinedElsewhereType *noteDefinedElsewhereType(const QString &definedElsewhereType);
     QList<DefinedElsewhereType *> definedElsewhereTypes() const;
 
     //TODOreq: m_Classes should be private, but I had issues getting the getters/setters to play nicely with QDataStream. Maybe a simple "friend QDataStream;" would fix it (or similar), but I can't be fucked to even play around with it right now. STILL, after coding for a while you should check that all usages of m_Classes are only from within the getter/setters (more important is the setter, but still in principle the getter too)
@@ -42,9 +43,9 @@ public:
     QList<DesignEqualsImplementationUseCase*> m_UseCases;
     QList<DefinedElsewhereType*> m_DefinedElsewhereTypes;
 
-    //serialization and deserialization of a class REFERENCE
-    inline int serializationClassIdForClass(DesignEqualsImplementationClass *classToReturnSerializationIdFor) { return m_Classes.indexOf(classToReturnSerializationIdFor); }
-    inline DesignEqualsImplementationClass*classInstantiationFromSerializedClassId(int serializedClassId) { return m_Classes.at(serializedClassId); }
+    //serialization and deserialization of a type REFERENCE
+    int serializationTypeIdForType(Type *typeToReturnSerializationIdFor);
+    Type *typeFromSerializedTypeId(int serializedTypeId);
 
     //serializing and deserializing of a use case REFERENCE
     inline int serializationUseCaseIdForUseCase(DesignEqualsImplementationUseCase *useCase) { return m_UseCases.indexOf(useCase); }

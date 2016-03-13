@@ -74,14 +74,16 @@ DesignEqualsImplementationClassSlot* DesignEqualsImplementationClassSlot::stream
     in >> classIdOfClassTheSlotIsIn;
     int slotId;
     in >> slotId;
-    DesignEqualsImplementationClass *classTheSlotIsIn = project->classInstantiationFromSerializedClassId(classIdOfClassTheSlotIsIn);
+    DesignEqualsImplementationClass *classTheSlotIsIn = qobject_cast<DesignEqualsImplementationClass*>(project->typeFromSerializedTypeId(classIdOfClassTheSlotIsIn));
+    if(!classTheSlotIsIn)
+        qFatal("While trying to deserialize a slot, the type for which the slot allegedly belongs failed to be cast into a DesignEqualsImplementationClass. This is likely a programming bug on the serialization side of things, but who knows");
     return classTheSlotIsIn->slotInstantiationFromSerializedSlotId(slotId);
 }
 void DesignEqualsImplementationClassSlot::streamOutSlotReference(DesignEqualsImplementationProject *project, DesignEqualsImplementationClassSlot *slot, QDataStream &out) //TODOoptional: clean up other slot id uses to use this static method as well
 {
     //if we only stream out the slot id, we won't know which class it came from, so we need to stream out the class id too
     DesignEqualsImplementationClass *classTheSlotIsIn = slot->ParentClass;
-    out << project->serializationClassIdForClass(classTheSlotIsIn);
+    out << project->serializationTypeIdForType(classTheSlotIsIn);
     out << classTheSlotIsIn->serializationSlotIdForSlot(slot);
 }
 #if 0

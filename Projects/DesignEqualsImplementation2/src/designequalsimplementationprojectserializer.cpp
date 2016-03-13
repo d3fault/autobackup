@@ -83,11 +83,11 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
     Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToSerialize->m_Classes)
     {
         //Project Classes -- second interdependent class serializing (hasAs are classes, so we had to hold off on setting up the hasAs in order to avoid dependency problems)
-        projectDataStream << currentClass->m_NonFunctionMembers.size();
-        Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentClass->m_NonFunctionMembers)
+        projectDataStream << currentClass->nonFunctionMembers().size();
+        Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentClass->nonFunctionMembers())
         {
             //Project Class NonFunctionMembers
-            projectDataStream << projectToSerialize->serializationClassIdForClass(currentNonFunctionMember->m_MyClass);
+            projectDataStream << projectToSerialize->serializationTypeIdForType(currentNonFunctionMember->typeInstance->type);
             projectDataStream << currentNonFunctionMember->typeInstance->VariableName;
             //TODOreq: visibility, etc? also deserialization
         }
@@ -118,15 +118,17 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
         Q_FOREACH(DesignEqualsImplementationClassLifeLine *currentClassLifeLine, currentUseCase->m_ClassLifeLines)
         {
             //Project Use Case Class Lifelines
-            projectDataStream << projectToSerialize->serializationClassIdForClass(currentClassLifeLine->m_DesignEqualsImplementationClass);
+            projectDataStream << projectToSerialize->serializationTypeIdForType(currentClassLifeLine->m_DesignEqualsImplementationClass);
             projectDataStream << currentClassLifeLine->m_Position;
             projectDataStream << static_cast<quint8>(currentClassLifeLine->m_InstanceType);
             if(currentClassLifeLine->m_InstanceType == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline)
             {
+#if 0
                 //out << *currentClassLifeLine->m_InstanceInOtherClassIfApplicable;
-                DesignEqualsImplementationClass *parentClass = currentClassLifeLine->m_InstanceInOtherClassIfApplicable->m_ParentClass;
-                projectDataStream << projectToSerialize->serializationClassIdForClass(parentClass);
+                Type *parentClass = currentClassLifeLine->m_InstanceInOtherClassIfApplicable->parentClass();
+                projectDataStream << projectToSerialize->serializationTypeIdForType(parentClass);
                 projectDataStream << parentClass->serializationHasAIdForNonFunctionMember(currentClassLifeLine->m_InstanceInOtherClassIfApplicable);
+#endif
             }
 
             //is 'known' because use case hasA class lifeline: out << classLifeline.m_ParentProject->serializationUseCaseIdForUseCase(classLifeline.parentUseCase());
@@ -134,7 +136,7 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
             Q_FOREACH(DesignEqualsImplementationClassSlot* currentSlot, currentClassLifeLine->m_MySlotsAppearingInClassLifeLine)
             {
                 //Project Use Class Lifeline Slots
-                slotsAppearingInClassLifeline.append(qMakePair(projectToSerialize->serializationClassIdForClass(currentSlot->ParentClass), currentSlot->ParentClass->serializationSlotIdForSlot(currentSlot)));
+                slotsAppearingInClassLifeline.append(qMakePair(projectToSerialize->serializationTypeIdForType(currentSlot->ParentClass), currentSlot->ParentClass->serializationSlotIdForSlot(currentSlot)));
             }
             projectDataStream << slotsAppearingInClassLifeline;
         }
@@ -177,7 +179,7 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
 
             //Signal
             projectDataStream << currentUseCase->serializationClassLifelineIdForClassLifeline(currentSignalSlotActivation->SignalStatement_Key0_SourceClassLifeLine);
-            projectDataStream << qMakePair(projectToSerialize->serializationClassIdForClass(currentSignalSlotActivation->SignalStatement_Key1_SourceSlotItself->ParentClass), currentSignalSlotActivation->SignalStatement_Key1_SourceSlotItself->ParentClass->serializationSlotIdForSlot(currentSignalSlotActivation->SignalStatement_Key1_SourceSlotItself));
+            projectDataStream << qMakePair(projectToSerialize->serializationTypeIdForType(currentSignalSlotActivation->SignalStatement_Key1_SourceSlotItself->ParentClass), currentSignalSlotActivation->SignalStatement_Key1_SourceSlotItself->ParentClass->serializationSlotIdForSlot(currentSignalSlotActivation->SignalStatement_Key1_SourceSlotItself));
             projectDataStream << currentSignalSlotActivation->SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements;
 
             //Slots
@@ -185,7 +187,7 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
             Q_FOREACH(SlotConnectedToSignalTypedef *currentSlotAttachedToSignal, currentSignalSlotActivation->SlotsAttachedToTheSignal)
             {
                 projectDataStream << currentSlotAttachedToSignal->first;
-                projectDataStream << qMakePair(projectToSerialize->serializationClassIdForClass(currentSlotAttachedToSignal->second->ParentClass), currentSlotAttachedToSignal->second->ParentClass->serializationSlotIdForSlot(currentSlotAttachedToSignal->second));
+                projectDataStream << qMakePair(projectToSerialize->serializationTypeIdForType(currentSlotAttachedToSignal->second->ParentClass), currentSlotAttachedToSignal->second->ParentClass->serializationSlotIdForSlot(currentSlotAttachedToSignal->second));
             }
         }
 
@@ -215,6 +217,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
         projectDataStream >> classPosition;
         DesignEqualsImplementationClass *currentClass = projectToPopulate->createNewClass(currentClassName, classPosition);
 
+#if 0
         int numProperties;
         projectDataStream >>numProperties;
         for(int j = 0; j < numProperties; ++j)
@@ -224,6 +227,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             projectDataStream >> *currentProperty; //POD so...
             currentClass->addProperty(currentProperty);
         }
+#endif
 
         int numSignals;
         projectDataStream >> numSignals;
@@ -252,6 +256,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
     for(int i = 0; i < numClasses; ++i)
     {
         //Project Classes -- second interdependent class populating (hasAs are classes, so we had to hold off on setting up the hasAs in order to avoid dependency problems)
+#if 0
         int numHasAPrivateClassesMembers;
         projectDataStream >> numHasAPrivateClassesMembers;
         for(int j = 0; j < numHasAPrivateClassesMembers; ++j)
@@ -264,6 +269,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             projectDataStream >> hasAvariableName;
             currentClass->createHasA_Private_Classes_Member(projectToPopulate->classInstantiationFromSerializedClassId(hasAClassId), hasAvariableName);
         }
+#endif
     }
 
     int numUseCases;
@@ -294,7 +300,9 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             //Project Use Case Class Lifelines
             int classLifelineClassId;
             projectDataStream >> classLifelineClassId;
-            DesignEqualsImplementationClass *classLifelineClass = projectToPopulate->classInstantiationFromSerializedClassId(classLifelineClassId);
+            DesignEqualsImplementationClass *classLifelineClass = qobject_cast<DesignEqualsImplementationClass*>(projectToPopulate->typeFromSerializedTypeId(classLifelineClassId));
+            if(!classLifelineClass)
+                qFatal("While trying to deserialize a class lifeline, the type for which the class lifeline allegedly belongs failed to be cast into a DesignEqualsImplementationClass. This is likely a programming bug on the serialization side of things, but who knows");
             QPointF classLifelinePosition;
             projectDataStream >> classLifelinePosition;
             DesignEqualsImplementationClassLifeLine *currentClassLifeline = currentUseCase->createClassLifelineInUseCase(classLifelineClass, classLifelinePosition, false);
@@ -303,13 +311,15 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             currentClassLifeline->m_InstanceType = static_cast<DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassInstanceTypeEnum>(classLifelineInstanteType);
             if(currentClassLifeline->m_InstanceType == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline)
             {
+#if 0
                 int classIdofParentThatHasAus; //class id of parent that has us as a member
                 projectDataStream >> classIdofParentThatHasAus;
-                DesignEqualsImplementationClass *hasAparentClass = projectToPopulate->classInstantiationFromSerializedClassId(classIdofParentThatHasAus);
+                DesignEqualsImplementationClass *hasAparentClass = projectToPopulate->typeFromSerializedTypeId(classIdofParentThatHasAus);
                 int hasAid;
                 projectDataStream >> hasAid;
                 HasA_Private_Classes_Member *instanceInOtherClass = hasAparentClass->nonFunctionMemberFromNonFunctionMemberId(hasAid);
                 currentClassLifeline->setInstanceInOtherClassIfApplicable(instanceInOtherClass);
+#endif
             }
             currentClassLifeline->m_ParentUseCase = currentUseCase;
 
@@ -318,7 +328,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             Q_FOREACH(SerializableSlotIdType currentSlotReference, slotsAppearingInClassLifeline)
             {
                 //Project Use Class Lifeline Slots
-                currentClassLifeline->m_MySlotsAppearingInClassLifeLine.append(projectToPopulate->classInstantiationFromSerializedClassId(currentSlotReference.first)->slotInstantiationFromSerializedSlotId(currentSlotReference.second));
+                currentClassLifeline->m_MySlotsAppearingInClassLifeLine.append(qobject_cast<DesignEqualsImplementationClass*>(projectToPopulate->typeFromSerializedTypeId(currentSlotReference.first))->slotInstantiationFromSerializedSlotId(currentSlotReference.second));
             }
         }
 
@@ -395,7 +405,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             //SignalStatement_Key1_SourceSlotItself
             SerializableSlotIdType serializedSourceSlotId;
             projectDataStream >> serializedSourceSlotId;
-            signalSlotConnectionActivation->SignalStatement_Key1_SourceSlotItself = currentUseCase->m_DesignEqualsImplementationProject->classInstantiationFromSerializedClassId(serializedSourceSlotId.first)->slotInstantiationFromSerializedSlotId(serializedSourceSlotId.second);
+            signalSlotConnectionActivation->SignalStatement_Key1_SourceSlotItself = qobject_cast<DesignEqualsImplementationClass*>(currentUseCase->m_DesignEqualsImplementationProject->typeFromSerializedTypeId(serializedSourceSlotId.first))->slotInstantiationFromSerializedSlotId(serializedSourceSlotId.second);
 
             //SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements
             projectDataStream >> signalSlotConnectionActivation->SignalStatement_Key2_IndexInto_SlotsOrderedListOfStatements;
@@ -413,7 +423,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
                 //SlotInvokedThroughConnection_Key1_DestinationSlotItself
                 SerializableSlotIdType serializedDestinationedSlotId;
                 projectDataStream >> serializedDestinationedSlotId;
-                currentSlotConnectedToSignal->second = currentUseCase->m_DesignEqualsImplementationProject->classInstantiationFromSerializedClassId(serializedDestinationedSlotId.first)->slotInstantiationFromSerializedSlotId(serializedDestinationedSlotId.second); //TODOoptimization: class id is not needed, because class lifeline was just streamed, so can be determined indirectly
+                currentSlotConnectedToSignal->second = qobject_cast<DesignEqualsImplementationClass*>(currentUseCase->m_DesignEqualsImplementationProject->typeFromSerializedTypeId(serializedDestinationedSlotId.first))->slotInstantiationFromSerializedSlotId(serializedDestinationedSlotId.second); //TODOoptimization: class id is not needed, because class lifeline was just streamed, so can be determined indirectly
 
                 signalSlotConnectionActivation->SlotsAttachedToTheSignal.append(currentSlotConnectedToSignal);
             }

@@ -57,6 +57,15 @@ QList<QString> DesignEqualsImplementationProject::allKnownTypesNames() const
         ret << type->Name;
     return ret;
 }
+Type *DesignEqualsImplementationProject::getOrCreateTypeFromName(const QString &typeName)
+{
+    Q_FOREACH(Type *currentType, allKnownTypes())
+    {
+        if(currentType->Name == typeName) //TODOreq: I have no idea if typeName might have qualifiers or not. It shouldn't, but might? Qualifiers should only ever be in type INSTANCES
+            return currentType;
+    }
+    return noteDefinedElsewhereType(typeName);
+}
 void DesignEqualsImplementationProject::addClass(DesignEqualsImplementationClass *newClass)
 {
     connect(newClass, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
@@ -92,17 +101,35 @@ QList<DesignEqualsImplementationUseCase *> DesignEqualsImplementationProject::us
 {
     return m_UseCases;
 }
-void DesignEqualsImplementationProject::noteDefinedElsewhereType(const QString &definedElsewhereType)
+DefinedElsewhereType *DesignEqualsImplementationProject::noteDefinedElsewhereType(const QString &definedElsewhereType)
 {
     //note: at first i thought i'd need to 'ensure a defined elsewhere type is never noted more than once', BUT currently i am always building allKnownTypes using the defined elsewhere types, which means it would be impossible for me to detect a defined elsewhere type as a new type (which is prerequisite for me noting that it's defined elsewhere). still, a qset would de-dupe with ease if i ever can't make that guarantee in the future
 
     DefinedElsewhereType *newDefinedElsewhereType = new DefinedElsewhereType(this);
     newDefinedElsewhereType->Name = definedElsewhereType;
     m_DefinedElsewhereTypes.append(newDefinedElsewhereType); //TODOreq: [de-]serialize
+    return newDefinedElsewhereType;
 }
 QList<DefinedElsewhereType*> DesignEqualsImplementationProject::definedElsewhereTypes() const
 {
     return m_DefinedElsewhereTypes;
+}
+int DesignEqualsImplementationProject::serializationTypeIdForType(Type *typeToReturnSerializationIdFor)
+{
+    return allKnownTypes().indexOf(typeToReturnSerializationIdFor);
+#if 0 //TODOoptimization: don't rebuilt allKnownTypes for every request kek
+    int ret = m_Classes.indexOf(typeToReturnSerializationIdFor);
+    if(ret > -1)
+        return ret;
+
+    //not in m_Classes, search defined elsewhere types
+    ret = m_Classes.size();
+#endif
+}
+Type *DesignEqualsImplementationProject::typeFromSerializedTypeId(int serializedTypeId)
+{
+    return allKnownTypes().at(serializedTypeId); //TODOoptimization: don't rebuilt allKnownTypes for every request kek
+    //return m_Classes.at(serializedClassId);
 }
 QString DesignEqualsImplementationProject::projectFileName()
 {

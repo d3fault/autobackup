@@ -264,7 +264,7 @@ QString ClassEditorDialog::classDetailsAsHtmlString()
     }
     Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, m_ClassBeingEditted->Properties)
     {
-        classContentsString.append("<br />" + currentProperty->Type + " " + currentProperty->Name + ";"); //TODOoptional: visualize optional init value
+        classContentsString.append("<br />" + currentProperty->PropertyType + " " + currentProperty->PropertyName + ";"); //TODOoptional: visualize optional init value
     }
     if(m_ClassBeingEditted->Properties.size() > 0)
     {
@@ -364,7 +364,7 @@ void ClassEditorDialog::handleQuickAddNewPropertyButtonClicked()
     }
 
     //now create the new property itself
-    m_ClassBeingEditted->createNewProperty(propertyDeclarationParser.parsedPropertyType(), propertyDeclarationParser.parsedPropertyName(), propertyDeclarationParser.hasInit(), propertyDeclarationParser.optionalInit(), false, true); //TODOoptional: toolbutton for read-only or non-notifying etc etc
+    m_ClassBeingEditted->createNewProperty(m_CurrentProject->getOrCreateTypeFromName(propertyDeclarationParser.parsedPropertyType()), propertyDeclarationParser.parsedPropertyName(), propertyDeclarationParser.hasInit(), propertyDeclarationParser.optionalInit(), false, true); //TODOoptional: toolbutton for read-only or non-notifying etc etc
 
     m_QuickMemberAddLineEdit->clear();
     m_QuickMemberAddLineEdit->setFocus();
@@ -394,7 +394,7 @@ void ClassEditorDialog::handleAddPropertyButtonClicked()
     if(addPropertyFieldsAreSane())
     {
         //signal, slot invoke, or direct method call? blah, semantecs at this point...
-        m_ClassBeingEditted->createNewProperty(m_AddPropertyTypeLineEdit->text().trimmed(), m_AddPropertyNameLineEdit->text().trimmed(), false, "", m_AddPropertyReadOnlyCheckbox->isChecked(), m_AddPropertyNotifiesOnChangeCheckbox->isChecked()); //TODOoptional: init checkbox and init line edit (checkbox because they might want to init to empty string). the init line edit could be disabled when checkbox is unchecked
+        m_ClassBeingEditted->createNewProperty(m_CurrentProject->getOrCreateTypeFromName(m_AddPropertyTypeLineEdit->text().trimmed()), m_AddPropertyNameLineEdit->text().trimmed(), false, "", m_AddPropertyReadOnlyCheckbox->isChecked(), m_AddPropertyNotifiesOnChangeCheckbox->isChecked()); //TODOoptional: init checkbox and init line edit (checkbox because they might want to init to empty string). the init line edit could be disabled when checkbox is unchecked
         m_AddPropertyTypeLineEdit->clear();
         m_AddPropertyNameLineEdit->clear();
     }

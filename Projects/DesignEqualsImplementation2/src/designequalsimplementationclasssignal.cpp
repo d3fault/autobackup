@@ -21,12 +21,14 @@ DesignEqualsImplementationClassSignal *DesignEqualsImplementationClassSignal::st
     in >> classIdOfClassThatHasSignal;
     int signalId;
     in >> signalId;
-    DesignEqualsImplementationClass *classThatHasSignal = project->classInstantiationFromSerializedClassId(classIdOfClassThatHasSignal);
+    DesignEqualsImplementationClass *classThatHasSignal = qobject_cast<DesignEqualsImplementationClass*>(project->typeFromSerializedTypeId(classIdOfClassThatHasSignal));
+    if(!classThatHasSignal)
+        qFatal("While trying to deserialize a signal, the type for which the signal allegedly belongs failed to be cast into a DesignEqualsImplementationClass. This is likely a programming bug on the serialization side of things, but who knows");
     return classThatHasSignal->signalInstantiationFromSerializedSignalId(signalId);
 }
 void DesignEqualsImplementationClassSignal::streamOutSignalReference(DesignEqualsImplementationProject *project, DesignEqualsImplementationClassSignal *signal, QDataStream &out)
 {
-    out << project->serializationClassIdForClass(signal->ParentClass);
+    out << project->serializationTypeIdForType(signal->ParentClass);
     out << signal->ParentClass->serializationSignalIdForSignal(signal);
 }
 #if 0
