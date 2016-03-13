@@ -50,19 +50,12 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
     //Project
     projectDataStream << projectToSerialize->Name;
 
-    projectDataStream << projectToSerialize->m_Classes.size();
-    Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToSerialize->m_Classes)
+    projectDataStream << projectToSerialize->classes().size();
+    Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToSerialize->classes())
     {
         //Project Classes -- first declaration and most body serializing
         projectDataStream << currentClass->ClassName;
         projectDataStream << currentClass->Position;
-
-        projectDataStream << currentClass->Properties.size();
-        Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
-        {
-            //Project Class Properties
-            projectDataStream << *currentProperty; //POD so...
-        }
 
         projectDataStream << currentClass->m_MySignals.size();
         Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, currentClass->m_MySignals)
@@ -80,16 +73,33 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
             STREAM_OUT_METHOD_ARGUMENTS(projectDataStream, currentSlot)
         }
     }
-    Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToSerialize->m_Classes)
+    Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToSerialize->classes())
     {
-        //Project Classes -- second interdependent class serializing (hasAs are classes, so we had to hold off on setting up the hasAs in order to avoid dependency problems)
+        //TODOmb: when changing from Class to Type, caast to DefinedElsewhereType, then continue; if it succeeded. Class and ImplicitlySharedDataTypes do boh have NonFunctionMembers. also applies to deserializing ofc
+
+        //Project Classes -- NonFunctionMembers
         projectDataStream << currentClass->nonFunctionMembers().size();
         Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentClass->nonFunctionMembers())
         {
             //Project Class NonFunctionMembers
             projectDataStream << projectToSerialize->serializationTypeIdForType(currentNonFunctionMember->typeInstance->type);
             projectDataStream << currentNonFunctionMember->typeInstance->VariableName;
-            //TODOreq: visibility, etc? also deserialization
+            //projectDataStream << projectToSerialize->serializationTypeIdForType(currentNonFunctionMember->parentClass());
+            projectDataStream << currentNonFunctionMember->HasInit;
+            projectDataStream << currentNonFunctionMember->OptionalInit;
+            projectDataStream << static_cast<quint8>(currentNonFunctionMember->visibility);
+            projectDataStream << static_cast<quint8>(currentNonFunctionMember->OwnershipOfPointedTodataIfPointer);
+
+            bool isProperty = false;
+            DesignEqualsImplementationClassProperty *property = qobject_cast<DesignEqualsImplementationClassProperty*>(currentNonFunctionMember);
+            if(property)
+                isProperty = true;
+            projectDataStream << isProperty;
+            if(isProperty)
+            {
+                projectDataStream << property->ReadOnly;
+                projectDataStream << property->NotifiesOnChange;
+            }
         }
     }
 
@@ -123,12 +133,10 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
             projectDataStream << static_cast<quint8>(currentClassLifeLine->m_InstanceType);
             if(currentClassLifeLine->m_InstanceType == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline)
             {
-#if 0
                 //out << *currentClassLifeLine->m_InstanceInOtherClassIfApplicable;
                 Type *parentClass = currentClassLifeLine->m_InstanceInOtherClassIfApplicable->parentClass();
                 projectDataStream << projectToSerialize->serializationTypeIdForType(parentClass);
-                projectDataStream << parentClass->serializationHasAIdForNonFunctionMember(currentClassLifeLine->m_InstanceInOtherClassIfApplicable);
-#endif
+                projectDataStream << parentClass->serializationNonFunctionMemberIdForNonFunctionMember(currentClassLifeLine->m_InstanceInOtherClassIfApplicable);
             }
 
             //is 'known' because use case hasA class lifeline: out << classLifeline.m_ParentProject->serializationUseCaseIdForUseCase(classLifeline.parentUseCase());
@@ -217,18 +225,6 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
         projectDataStream >> classPosition;
         DesignEqualsImplementationClass *currentClass = projectToPopulate->createNewClass(currentClassName, classPosition);
 
-#if 0
-        int numProperties;
-        projectDataStream >>numProperties;
-        for(int j = 0; j < numProperties; ++j)
-        {
-            //Project Class Properties
-            DesignEqualsImplementationClassProperty *currentProperty = new DesignEqualsImplementationClassProperty(currentClass);
-            projectDataStream >> *currentProperty; //POD so...
-            currentClass->addProperty(currentProperty);
-        }
-#endif
-
         int numSignals;
         projectDataStream >> numSignals;
         for(int j = 0; j < numSignals; ++j)
@@ -255,21 +251,43 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
     }
     for(int i = 0; i < numClasses; ++i)
     {
-        //Project Classes -- second interdependent class populating (hasAs are classes, so we had to hold off on setting up the hasAs in order to avoid dependency problems)
-#if 0
-        int numHasAPrivateClassesMembers;
-        projectDataStream >> numHasAPrivateClassesMembers;
-        for(int j = 0; j < numHasAPrivateClassesMembers; ++j)
+        DesignEqualsImplementationClass *currentClass = projectToPopulate->classes().at(i);
+        int numNonFunctionMembers;
+        projectDataStream >> numNonFunctionMembers;
+        for(int j = 0; j < numNonFunctionMembers; ++j)
         {
-            DesignEqualsImplementationClass *currentClass = projectToPopulate->m_Classes.at(i);
-            //Project Class HasA Classes Members
-            int hasAClassId;
-            projectDataStream >> hasAClassId;
-            QString hasAvariableName;
-            projectDataStream >> hasAvariableName;
-            currentClass->createHasA_Private_Classes_Member(projectToPopulate->classInstantiationFromSerializedClassId(hasAClassId), hasAvariableName);
+            //Project Class NonFunctionMembers
+            int nonFunctionMemberTypeId;
+            projectDataStream >> nonFunctionMemberTypeId;
+            QString nonFunctionMemberVariableName;
+            projectDataStream >> nonFunctionMemberVariableName;
+            //int nonFunctionMemberParentId;
+            //projectDataStream >> nonFunctionMemberParentId;
+            bool hasInit;
+            projectDataStream >> hasInit;
+            QString optionalInit;
+            projectDataStream >> optionalInit;
+            quint8 visibility;
+            projectDataStream >> visibility;
+            quint8 ownershipOfPointedToDataIfpointer;
+            projectDataStream >> ownershipOfPointedToDataIfpointer;
+
+            bool isProperty;
+            projectDataStream >> isProperty;
+            if(isProperty)
+            {
+                bool readOnly;
+                projectDataStream >> readOnly;
+                bool notifiesOnChange;
+                projectDataStream >> notifiesOnChange;
+
+                currentClass->createNewProperty(projectToPopulate->typeFromSerializedTypeId(nonFunctionMemberTypeId), nonFunctionMemberVariableName, hasInit, optionalInit, readOnly, notifiesOnChange);
+            }
+            else
+            {
+                currentClass->createNewNonFunctionMember(projectToPopulate->typeFromSerializedTypeId(nonFunctionMemberTypeId), nonFunctionMemberVariableName, static_cast<Visibility::VisibilityEnum>(visibility), static_cast<NonFunctionMemberOwnershipOfPointedToDataIfPointer::NonFunctionMemberOwnershipOfPointedToDataIfPointerEnum>(ownershipOfPointedToDataIfpointer), hasInit, optionalInit);
+            }
         }
-#endif
     }
 
     int numUseCases;
@@ -311,15 +329,13 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             currentClassLifeline->m_InstanceType = static_cast<DesignEqualsImplementationClassLifeLine::DesignEqualsImplementationClassInstanceTypeEnum>(classLifelineInstanteType);
             if(currentClassLifeline->m_InstanceType == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline)
             {
-#if 0
                 int classIdofParentThatHasAus; //class id of parent that has us as a member
                 projectDataStream >> classIdofParentThatHasAus;
-                DesignEqualsImplementationClass *hasAparentClass = projectToPopulate->typeFromSerializedTypeId(classIdofParentThatHasAus);
-                int hasAid;
-                projectDataStream >> hasAid;
-                HasA_Private_Classes_Member *instanceInOtherClass = hasAparentClass->nonFunctionMemberFromNonFunctionMemberId(hasAid);
+                DesignEqualsImplementationClass *nonFunctionMemberParentClass = qobject_cast<DesignEqualsImplementationClass*>(projectToPopulate->typeFromSerializedTypeId(classIdofParentThatHasAus));
+                int nonFunctionMemberId;
+                projectDataStream >> nonFunctionMemberId;
+                NonFunctionMember *instanceInOtherClass = nonFunctionMemberParentClass->nonFunctionMemberFromNonFunctionMemberId(nonFunctionMemberId);
                 currentClassLifeline->setInstanceInOtherClassIfApplicable(instanceInOtherClass);
-#endif
             }
             currentClassLifeline->m_ParentUseCase = currentUseCase;
 

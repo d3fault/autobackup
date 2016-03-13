@@ -446,19 +446,21 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
                             << "#include <QObject>" << endl //TODOoptional: non-QObject classes? hmm nah because signals/slots based
                             << endl;
 
-
-    bool atLeastOneHasAPrivateMemberClass = false; //TODOreq: temp to get it to compile
-#if 0
     //Header's header's forward declares
-    bool atLeastOneHasAPrivateMemberClass = !currentClass->hasA_Private_Classes_Members().isEmpty(); //spacing
-    Q_FOREACH(HasA_Private_Classes_Member *currentPrivateMember, currentClass->hasA_Private_Classes_Members())
+    QList<NonFunctionMember*> pointerMembers;
+    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentClass->nonFunctionMembers())
+    {
+        if(currentNonFunctionMember->OwnershipOfPointedTodataIfPointer != NonFunctionMemberOwnershipOfPointedToDataIfPointer::NotPointer)
+            pointerMembers << currentNonFunctionMember;
+    }
+    bool atLeasteOneMemberIsApointer = !pointerMembers.isEmpty(); //spacing
+    Q_FOREACH(NonFunctionMember *currentPointerNonFunctionMember, pointerMembers)
     {
         //class Bar;
-        headerFileTextStream << "class " << currentPrivateMember->m_MyClass->ClassName << ";" << endl;
+        headerFileTextStream << "class " << currentPointerNonFunctionMember->typeInstance->type->Name << ";" << endl; //TODOreq: blah we don't want "class int; class bool; etc" -_-.... but we do want "class SomeMiscLibType;", so yea I need to use libclang to filter out built-in types here and possibly other places
     }
-    if(atLeastOneHasAPrivateMemberClass)
+    if(atLeasteOneMemberIsApointer)
         headerFileTextStream << endl; //OCD <3
-#endif
     headerFileTextStream    << "class " << currentClass->ClassName << " : public QObject" << endl
                             << "{" << endl
                             << DESIGNEQUALSIMPLEMENTATION_TAB << "Q_OBJECT" << endl;
@@ -506,24 +508,26 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     {
         headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->PropertyType << " " << memberNameForProperty(currentProperty->PropertyName) << ";" << endl;
     }
-    if(!currentClass->Properties.isEmpty() && atLeastOneHasAPrivateMemberClass) //TODOsanity: make a list of each of the visibility specifier entries, then process AT THE END whether or not to write a visibility specifier. there should be an "empty line" entry (like the one just below) that should be able to be "trimmed" if no statements are following (like the second half of this if statement does). the same kind of thing can/should be used to determine whether or not to do "{ }" or "{\n" (if any statements in block)
+    if(!currentClass->Properties.isEmpty() && atLeasteOneMemberIsApointer) //TODOsanity: make a list of each of the visibility specifier entries, then process AT THE END whether or not to write a visibility specifier. there should be an "empty line" entry (like the one just below) that should be able to be "trimmed" if no statements are following (like the second half of this if statement does). the same kind of thing can/should be used to determine whether or not to do "{ }" or "{\n" (if any statements in block)
     {
         headerFileTextStream << endl;
     }
 
     //Header's hasAPrivateMemberClass declarations
-    if(atLeastOneHasAPrivateMemberClass && !privateAccessSpecifierWritten)
+    if(atLeasteOneMemberIsApointer && !privateAccessSpecifierWritten)
     {
+        //TODOreq: refactor this shiz to be smarter. just because there's one member that's a pointer, doesn't mean it's a PRIVATE member. it used to be the case that it was always private (hasAprivateClasses days)
         headerFileTextStream << "private:" << endl;
         privateAccessSpecifierWritten = true;
     }
-#if 0
-    Q_FOREACH(HasA_Private_Classes_Member *currentPrivateMember, currentClass->hasA_Private_Classes_Members())
+    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentClass->nonFunctionMembers())
     {
+        if(currentNonFunctionMember->visibility != Visibility::Private)
+            continue; //TODOreq: similar for public/protected areas
         //Bar *m_Bar;
-        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentPrivateMember->preferredTextualRepresentationOfTypeAndVariableTogether() << ";" << endl;
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentNonFunctionMember->typeInstance->preferredTextualRepresentationOfTypeAndVariableTogether() << ";" << endl;
+        //TODOreq: Q_PROPERTIES need to iterate this list in the appropriate visibility places, try to cast to Property, then write getters/setters/signals, and even the invocation of the Q_PROPERTY macro ;oP. all we've done HERE is write the private m_Property
     }
-#endif
 
     //Source's header+constructor (the top bits, not the ".h" counter-part)
     DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "#include \"" << currentClass->headerFilenameOnly() << "\"" << endl
@@ -536,7 +540,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "#include \"" << currentPrivateMember->m_MyClass->headerFilenameOnly() << "\"" << endl;)
     }
 #endif
-    if(atLeastOneHasAPrivateMemberClass)
+    if(atLeasteOneMemberIsApointer)
     {
         DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << endl;)
     }

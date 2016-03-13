@@ -7,7 +7,7 @@
 
 struct Visibility
 {
-    enum VisibilityEnum { Public, Protected, Private };
+    enum VisibilityEnum { Public = 0, Protected = 1, Private = 2 };
 };
 class Type;
 struct TypeAncestor
@@ -36,9 +36,9 @@ struct NonFunctionMemberOwnershipOfPointedToDataIfPointer
 {
     enum NonFunctionMemberOwnershipOfPointedToDataIfPointerEnum
     {
-          NotPointer
-        , OwnsPointedToData
-        , DoesNotOwnPointedToData
+          NotPointer = 0
+        , OwnsPointedToData = 1
+        , DoesNotOwnPointedToData = 2
     };
 };
 class NonFunctionMember : public QObject
@@ -86,6 +86,8 @@ public:
     QList<NonFunctionMember*> nonFunctionMembers() const { return m_NonFunctionMembers; }
     virtual bool addNonFunctionMember(NonFunctionMember* nonFunctionMember)=0;
     NonFunctionMember *createNewNonFunctionMember(Type *typeOfNewNonFunctionMember, const QString &nameOfNewNonFunctionMember, Visibility::VisibilityEnum visibility = Visibility::Private, NonFunctionMemberOwnershipOfPointedToDataIfPointer::NonFunctionMemberOwnershipOfPointedToDataIfPointerEnum ownershipOfPointedToDataIfPointer = NonFunctionMemberOwnershipOfPointedToDataIfPointer::NotPointer, bool hasInit = false, const QString &optionalInit = QString());
+    int serializationNonFunctionMemberIdForNonFunctionMember(NonFunctionMember *nonFunctionMember) const;
+    NonFunctionMember *nonFunctionMemberFromNonFunctionMemberId(int nonFunctionMemberId) const;
 protected:
     QList<NonFunctionMember*> m_NonFunctionMembers; //they ARE non-function members, but the resulting code might still yield functions (getters & setters (d->pimpl for shared data and change checking+notification for Q_PROPERTY), change notifier signals in the case of Q_PROPERTIES)
 };

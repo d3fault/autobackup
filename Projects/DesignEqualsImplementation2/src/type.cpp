@@ -21,3 +21,11 @@ QString TypeInstance::preferredTextualRepresentationOfTypeAndVariableTogether() 
         return (ret + " " + VariableName);
     }
 }
+int Type::serializationNonFunctionMemberIdForNonFunctionMember(NonFunctionMember *nonFunctionMember) const
+{
+    return m_NonFunctionMembers.indexOf(nonFunctionMember);
+}
+NonFunctionMember *Type::nonFunctionMemberFromNonFunctionMemberId(int nonFunctionMemberId) const
+{
+    return m_NonFunctionMembers.at(nonFunctionMemberId);
+}

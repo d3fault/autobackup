@@ -1,5 +1,6 @@
 #ifndef HASA_PRIVATE_CLASSES_MEMBER_H
 #define HASA_PRIVATE_CLASSES_MEMBER_H
+#if 1
 
 #include "ihavetypeandvariablenameandpreferredtextualrepresentation.h"
 
@@ -25,4 +26,5 @@ QDataStream &operator>>(QDataStream &in, HasA_Private_Classes_Member *hasA_Priva
 
 Q_DECLARE_METATYPE(HasA_Private_Classes_Member*)
 
+#endif
 #endif // HASA_PRIVATE_CLASSES_MEMBER_H

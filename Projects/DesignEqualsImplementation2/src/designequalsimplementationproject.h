@@ -36,12 +36,11 @@ public:
     QList<DesignEqualsImplementationUseCase*> useCases();
 
     DefinedElsewhereType *noteDefinedElsewhereType(const QString &definedElsewhereType);
-    QList<DefinedElsewhereType *> definedElsewhereTypes() const;
+    //QList<DefinedElsewhereType*> definedElsewhereTypes() const;
 
     //TODOreq: m_Classes should be private, but I had issues getting the getters/setters to play nicely with QDataStream. Maybe a simple "friend QDataStream;" would fix it (or similar), but I can't be fucked to even play around with it right now. STILL, after coding for a while you should check that all usages of m_Classes are only from within the getter/setters (more important is the setter, but still in principle the getter too)
-    QList<DesignEqualsImplementationClass*> m_Classes;
+
     QList<DesignEqualsImplementationUseCase*> m_UseCases;
-    QList<DefinedElsewhereType*> m_DefinedElsewhereTypes;
 
     //serialization and deserialization of a type REFERENCE
     int serializationTypeIdForType(Type *typeToReturnSerializationIdFor);
@@ -57,7 +56,7 @@ public:
 
     inline DesignEqualsImplementationClass *classFromClassName(const QString &className)
     {
-        Q_FOREACH(DesignEqualsImplementationClass *currentClass, m_Classes)
+        Q_FOREACH(DesignEqualsImplementationClass *currentClass, classes())
         {
             if(currentClass->ClassName == className)
             {
@@ -71,6 +70,8 @@ public:
     //Temporary for code gen:
     bool writeTemporaryGlueCodeLines(const QString &destinationDirectoryPath);
 private:
+    QList<Type*> m_AllKnownTypes;
+
     bool generateSourceCodePrivate(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, bool generateCppEditModeDelimitingComments = false, int *out_LineNumberToJumpTo_OrZeroIfNotApplicable = 0, DesignEqualsImplementationClassSlot *slotWeWantLineNumberOf_OnlyWhenApplicable = 0, int statementIndexOfSlotToGetLineNumberOf_OnlyWhenApplicable = -1);
     bool tempGenerateHardcodedUiFiles(const QString &destinationDirectoryPath);
     bool allClassLifelinesInAllUseCasesInProjectHaveBeenAssignedInstances();

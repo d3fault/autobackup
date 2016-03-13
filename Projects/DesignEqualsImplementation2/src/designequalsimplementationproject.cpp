@@ -25,7 +25,7 @@ DesignEqualsImplementationProject::DesignEqualsImplementationProject(QObject *pa
 { }
 DesignEqualsImplementationProject::~DesignEqualsImplementationProject()
 {
-    qDeleteAll(m_Classes);
+    qDeleteAll(m_AllKnownTypes);
     qDeleteAll(m_UseCases);
 }
 DesignEqualsImplementationClass *DesignEqualsImplementationProject::createNewClass(const QString &newClassName, const QPointF &classPositionInGraphicsScene)
@@ -36,19 +36,9 @@ DesignEqualsImplementationClass *DesignEqualsImplementationProject::createNewCla
     addClass(newClass);
     return newClass;
 }
-//cat(classes + definedElsewhereTypes); //maybe more types  of types (xD) to come
 QList<Type*> DesignEqualsImplementationProject::allKnownTypes() const
 {
-    QList<Type*> ret;
-    Q_FOREACH(DesignEqualsImplementationClass *currentClass, m_Classes)
-    {
-        ret.append(currentClass);
-    }
-    Q_FOREACH(DefinedElsewhereType *currentDefinedElsewhereType, m_DefinedElsewhereTypes)
-    {
-        ret.append(currentDefinedElsewhereType);
-    }
-    return ret;
+    return m_AllKnownTypes;
 }
 QList<QString> DesignEqualsImplementationProject::allKnownTypesNames() const
 {
@@ -70,12 +60,19 @@ void DesignEqualsImplementationProject::addClass(DesignEqualsImplementationClass
 {
     connect(newClass, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
     newClass->m_ParentProject = this;
-    m_Classes.append(newClass);
+    m_AllKnownTypes.append(newClass);
     emit classAdded(newClass);
 }
-QList<DesignEqualsImplementationClass *> DesignEqualsImplementationProject::classes()
+QList<DesignEqualsImplementationClass*> DesignEqualsImplementationProject::classes()
 {
-    return m_Classes;
+    QList<DesignEqualsImplementationClass *> ret;
+    Q_FOREACH(Type *currentType, allKnownTypes())
+    {
+        DesignEqualsImplementationClass *maybe = qobject_cast<DesignEqualsImplementationClass*>(currentType);
+        if(maybe)
+            ret << maybe;
+    }
+    return ret;
 }
 #if 0
 DesignEqualsImplementationClassInstance* DesignEqualsImplementationProject::createTopLevelClassInstance(DesignEqualsImplementationClass *classToMakeTopLevelInstanceOf)
@@ -107,17 +104,27 @@ DefinedElsewhereType *DesignEqualsImplementationProject::noteDefinedElsewhereTyp
 
     DefinedElsewhereType *newDefinedElsewhereType = new DefinedElsewhereType(this);
     newDefinedElsewhereType->Name = definedElsewhereType;
-    m_DefinedElsewhereTypes.append(newDefinedElsewhereType); //TODOreq: [de-]serialize
+    m_AllKnownTypes.append(newDefinedElsewhereType); //TODOreq: [de-]serialize
     return newDefinedElsewhereType;
 }
+//TODOoptimization: vacuum types, since ones that used to be in project might not anymore. vacuum just before serialization imo
+#if 0
 QList<DefinedElsewhereType*> DesignEqualsImplementationProject::definedElsewhereTypes() const
 {
+    QList<DefinedElsewhereType*> ret;
+    Q_FOREACH(Type *currentType, allKnownTypes())
+    {
+        DefinedElsewhereType *maybe = qobject_cast<DefinedElsewhereType*>(currentType);
+        if(maybe)
+            ret << maybe;
+    }
     return m_DefinedElsewhereTypes;
 }
+#endif
 int DesignEqualsImplementationProject::serializationTypeIdForType(Type *typeToReturnSerializationIdFor)
 {
     return allKnownTypes().indexOf(typeToReturnSerializationIdFor);
-#if 0 //TODOoptimization: don't rebuilt allKnownTypes for every request kek
+#if 0
     int ret = m_Classes.indexOf(typeToReturnSerializationIdFor);
     if(ret > -1)
         return ret;
@@ -128,8 +135,7 @@ int DesignEqualsImplementationProject::serializationTypeIdForType(Type *typeToRe
 }
 Type *DesignEqualsImplementationProject::typeFromSerializedTypeId(int serializedTypeId)
 {
-    return allKnownTypes().at(serializedTypeId); //TODOoptimization: don't rebuilt allKnownTypes for every request kek
-    //return m_Classes.at(serializedClassId);
+    return allKnownTypes().at(serializedTypeId);
 }
 QString DesignEqualsImplementationProject::projectFileName()
 {
@@ -253,7 +259,7 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(DesignEqualsIm
     }
 
     //two steps because use cases append connect statements to class constructors before writing
-    Q_FOREACH(DesignEqualsImplementationClass *designEqualsImplementationClass, m_Classes)
+    Q_FOREACH(DesignEqualsImplementationClass *designEqualsImplementationClass, classes())
     {
         if(!projectGenerator.processClassStep0declaringClassInProject(designEqualsImplementationClass))
         {

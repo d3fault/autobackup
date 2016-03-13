@@ -37,6 +37,7 @@ liner gloves
 work gloves
 warm gloves
 fire gloves (welding gloves)
+^choose the right gloves for the job ;-)
 sun hat (full face. clothespins to keep it all together in wind)
 sunglasses
 beanie (half and/or full-faced?)
