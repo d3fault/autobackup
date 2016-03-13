@@ -177,14 +177,14 @@ void ClassInstanceChooserDialog::addAllPrivateHasAMembersThatAreOfAcertainTypeTo
     //TODOreq: if the existing instance is already making an appearance in this use case (and it is not us), then i'm pretty sure it shouldn't be shown in the existing instances list. it depends on whether or not there can be two class lifeline instances that are the same, which i'm pretty sure is not allowed
     Q_FOREACH(NonFunctionMember *currentNonFunctionMember, classToIterate->nonFunctionMembers())
     {
-        DesignEqualsImplementationClass *aClassThatIsANonFunctionMemberMaybe = qobject_cast<DesignEqualsImplementationClass*>(currentNonFunctionMember->typeInstance->type);
+        DesignEqualsImplementationClass *aClassThatIsANonFunctionMemberMaybe = qobject_cast<DesignEqualsImplementationClass*>(currentNonFunctionMember->type);
         if(!aClassThatIsANonFunctionMemberMaybe)
             continue; //only DesignEqualsImplementationClasses can be used as class lifeline instances. the other types don't have signals/slots!
 
         if(aClassThatIsANonFunctionMemberMaybe != typeOfClassWeAreInterestedInInstancesOf)
             continue;
 
-        QListWidgetItem *existingClassInstanceListWidgetItem = new QListWidgetItem(classToIterate->ClassName + "::" + currentNonFunctionMember->typeInstance->VariableName);
+        QListWidgetItem *existingClassInstanceListWidgetItem = new QListWidgetItem(classToIterate->ClassName + "::" + currentNonFunctionMember->VariableName);
         existingClassInstanceListWidgetItem->setData(Qt::UserRole, QVariant::fromValue(currentNonFunctionMember));
         m_ExistingInstancesListWidget->addItem(existingClassInstanceListWidgetItem);
     }

@@ -149,14 +149,6 @@ QList<QString> DesignEqualsImplementationClass::allMyAvailableMemberGettersWhenI
     return ret;
 }
 #endif
-QString DesignEqualsImplementationClass::headerFilenameOnly()
-{
-    return ClassName.toLower() + ".h";
-}
-QString DesignEqualsImplementationClass::sourceFilenameOnly()
-{
-    return ClassName.toLower() + ".cpp";
-}
 QString DesignEqualsImplementationClass::autoNameForNewChildMemberOfType(DesignEqualsImplementationClass *childMemberClassType) //TODOreq: check for collission with properties and signals/slots too, which are all technically "members" so I may refactor to account for that fact
 {
     int indexCurrentlyTestingForNameCollission = -1;
@@ -166,7 +158,7 @@ QString DesignEqualsImplementationClass::autoNameForNewChildMemberOfType(DesignE
         bool seenThisTime = false;
         Q_FOREACH(NonFunctionMember *currentNonFunctionMember, m_NonFunctionMembers)
         {
-            if(currentNonFunctionMember->typeInstance->VariableName == maybeVariableName)
+            if(currentNonFunctionMember->VariableName == maybeVariableName)
             {
                 seenThisTime = true;
                 break;

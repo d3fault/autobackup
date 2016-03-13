@@ -278,7 +278,7 @@ QString ClassEditorDialog::classDetailsAsHtmlString()
     }
     Q_FOREACH(NonFunctionMember *currentNonFunctionMember, m_ClassBeingEditted->nonFunctionMembers())
     {
-        classContentsString.append("<br />" + currentNonFunctionMember->typeInstance->preferredTextualRepresentationOfTypeAndVariableTogether());
+        classContentsString.append("<br />" + currentNonFunctionMember->preferredTextualRepresentationOfTypeAndVariableTogether());
     }
     if(m_ClassBeingEditted->nonFunctionMembers().size() > 0)
     {

@@ -133,7 +133,7 @@ QString DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::clas
     }
     Q_FOREACH(NonFunctionMember *currentNonFunctionMember, m_DesignEqualsImplementationClass->nonFunctionMembers())
     {
-        classContentsString.append("<br />-  " + currentNonFunctionMember->typeInstance->preferredTextualRepresentationOfTypeAndVariableTogether());
+        classContentsString.append("<br />-  " + currentNonFunctionMember->preferredTextualRepresentationOfTypeAndVariableTogether());
         ++numLinesOfText;
     }
     Q_FOREACH(DesignEqualsImplementationClassPrivateMethod *currentPrivateMethod, m_DesignEqualsImplementationClass->PrivateMethods)

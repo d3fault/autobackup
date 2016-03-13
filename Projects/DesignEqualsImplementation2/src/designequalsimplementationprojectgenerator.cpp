@@ -310,7 +310,7 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
                                         else //0b
                                         {
 #endif
-                                            appendConnectStatementToClassInitializationSequence(sharedParentOfSignalAndSlotForGettingConnectStatementInConstructorish, DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->typeInstance->VariableName, signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->typeInstance->VariableName, destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
+                                            appendConnectStatementToClassInitializationSequence(sharedParentOfSignalAndSlotForGettingConnectStatementInConstructorish, DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->VariableName, signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->VariableName, destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
                                             //                                    }
                                         }
                                     }
@@ -326,8 +326,8 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
                                         {
                                             //the class with the signal hasA the class with the slot
                                             //so the signal's constructor gets the connect statement
-                                            //classLifeline->designEqualsImplementationClass()->appendLineToClassConstructorTemporarily(DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->typeInstance->VariableName, currentStatement->toRawCppWithoutEndingSemicolon(), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->typeInstance->VariableName, destinationSlot->methodSignatureWithoutReturnType()));
-                                            appendConnectStatementToClassInitializationSequence(classLifeline->designEqualsImplementationClass(), DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(QString("this"), signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->typeInstance->VariableName, destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
+                                            //classLifeline->designEqualsImplementationClass()->appendLineToClassConstructorTemporarily(DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->VariableName, currentStatement->toRawCppWithoutEndingSemicolon(), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->VariableName, destinationSlot->methodSignatureWithoutReturnType()));
+                                            appendConnectStatementToClassInitializationSequence(classLifeline->designEqualsImplementationClass(), DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(QString("this"), signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), destinationSlotClassLifeline->instanceInOtherClassIfApplicable()->VariableName, destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
                                         }
 
                                     }
@@ -340,7 +340,7 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
                                         {
                                             //the class with the slot hasA the class with the signal
                                             //so the slot's constructor gets the connect statement
-                                            appendConnectStatementToClassInitializationSequence(destinationSlotClassLifeline->designEqualsImplementationClass(), DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->typeInstance->VariableName, signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), QString("this"), destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
+                                            appendConnectStatementToClassInitializationSequence(destinationSlotClassLifeline->designEqualsImplementationClass(), DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSemicolon(classLifeline->instanceInOtherClassIfApplicable()->VariableName, signalEmitStatement->signalToEmit()->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames), QString("this"), destinationSlot->methodSignatureWithoutReturnType(IDesignEqualsImplementationMethod::MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)));
                                         }
                                     }
 
@@ -450,14 +450,14 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     QList<NonFunctionMember*> pointerMembers;
     Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentClass->nonFunctionMembers())
     {
-        if(currentNonFunctionMember->OwnershipOfPointedTodataIfPointer != NonFunctionMemberOwnershipOfPointedToDataIfPointer::NotPointer)
+        if(currentNonFunctionMember->isPointer())
             pointerMembers << currentNonFunctionMember;
     }
     bool atLeasteOneMemberIsApointer = !pointerMembers.isEmpty(); //spacing
     Q_FOREACH(NonFunctionMember *currentPointerNonFunctionMember, pointerMembers)
     {
         //class Bar;
-        headerFileTextStream << "class " << currentPointerNonFunctionMember->typeInstance->type->Name << ";" << endl; //TODOreq: blah we don't want "class int; class bool; etc" -_-.... but we do want "class SomeMiscLibType;", so yea I need to use libclang to filter out built-in types here and possibly other places
+        headerFileTextStream << "class " << currentPointerNonFunctionMember->type->Name << ";" << endl; //TODOreq: blah we don't want "class int; class bool; etc" -_-.... but we do want "class SomeMiscLibType;", so yea I need to use libclang to filter out built-in types here and possibly other places
     }
     if(atLeasteOneMemberIsApointer)
         headerFileTextStream << endl; //OCD <3
@@ -525,21 +525,25 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         if(currentNonFunctionMember->visibility != Visibility::Private)
             continue; //TODOreq: similar for public/protected areas
         //Bar *m_Bar;
-        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentNonFunctionMember->typeInstance->preferredTextualRepresentationOfTypeAndVariableTogether() << ";" << endl;
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentNonFunctionMember->preferredTextualRepresentationOfTypeAndVariableTogether() << ";" << endl;
         //TODOreq: Q_PROPERTIES need to iterate this list in the appropriate visibility places, try to cast to Property, then write getters/setters/signals, and even the invocation of the Q_PROPERTY macro ;oP. all we've done HERE is write the private m_Property
     }
 
     //Source's header+constructor (the top bits, not the ".h" counter-part)
     DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "#include \"" << currentClass->headerFilenameOnly() << "\"" << endl
                             << endl;)
-    //Source's header PrivateMemberClasses includes
-#if 0
-    Q_FOREACH(HasA_Private_Classes_Member *currentPrivateMember, currentClass->hasA_Private_Classes_Members())
+    //Source's header PrivateMemberClasses includes -- TODOreq: these includes, and the forward declares in the .h file, should be de-duped
+    //TODOreq: if the NonFunctionMember is not a pointer, then the #include needs to go in the .h file (and should be de-duped ofc)
+    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentClass->nonFunctionMembers())
     {
         //#include "bar.h"
-        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "#include \"" << currentPrivateMember->m_MyClass->headerFilenameOnly() << "\"" << endl;)
+        if(!currentNonFunctionMember->isPointer())
+            continue; //non-pointers get included in the .h file
+        QString headerFilenameOnly = currentNonFunctionMember->type->headerFilenameOnly();
+        if(headerFilenameOnly.isEmpty())
+            continue; //built-ins (int, bool, etc)
+        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "#include \"" << headerFilenameOnly << "\"" << endl;)
     }
-#endif
     if(atLeasteOneMemberIsApointer)
     {
         DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << endl;)
@@ -556,13 +560,26 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         }
     }
     //Source's header PrivateMemberClasses constructor initializers
-#if 0
-    Q_FOREACH(HasA_Private_Classes_Member *currentPrivateMember, currentClass->hasA_Private_Classes_Members())
+    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentClass->nonFunctionMembers())
     {
         //, m_Bar(new Bar(this))
-        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << ", " << currentPrivateMember->VariableName << "(new " << currentPrivateMember->m_MyClass->ClassName << "(this))" << endl;) //TODOreq: for now all my objects need a QObject *parent=0 constructor, but since that's also a [fixable] requirement for my ObjectOnThreadGroup, no biggy. Still, would be nice to solve the threading issue and to allow constructor args here (RAII = pro)
+        //OR
+        //, m_SomeProperty(69)
+        QString newOrOptionalInitOrEmpty;
+        if(currentNonFunctionMember->OwnershipOfPointedTodataIfPointer == TypeInstanceOwnershipOfPointedToDataIfPointer::OwnsPointedToData)
+        {
+            newOrOptionalInitOrEmpty = "new " + currentNonFunctionMember->type->Name + "(this)";
+        }
+        else if(currentNonFunctionMember->HasInit)
+        {
+            newOrOptionalInitOrEmpty = currentNonFunctionMember->OptionalInit;
+        }
+
+        if(!newOrOptionalInitOrEmpty.isEmpty())
+        {
+            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << ", " << currentNonFunctionMember->VariableName << "(" << newOrOptionalInitOrEmpty << ")" << endl;) //TODOreq: for now all my objects need a QObject *parent=0 constructor, but since that's also a [fixable] requirement for my ObjectOnThreadGroup, no biggy. Still, would be nice to solve the threading issue and to allow constructor args here (RAII = pro)
+        }
     }
-#endif
 
     //Source constructor -- children connection statements (or just constructor statements, but as of writing they are only connect statements)
     QList<QString> classConstructorLines = m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements.value(currentClass);

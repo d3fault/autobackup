@@ -82,8 +82,8 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
         Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentClass->nonFunctionMembers())
         {
             //Project Class NonFunctionMembers
-            projectDataStream << projectToSerialize->serializationTypeIdForType(currentNonFunctionMember->typeInstance->type);
-            projectDataStream << currentNonFunctionMember->typeInstance->VariableName;
+            projectDataStream << projectToSerialize->serializationTypeIdForType(currentNonFunctionMember->type);
+            projectDataStream << currentNonFunctionMember->VariableName;
             //projectDataStream << projectToSerialize->serializationTypeIdForType(currentNonFunctionMember->parentClass());
             projectDataStream << currentNonFunctionMember->HasInit;
             projectDataStream << currentNonFunctionMember->OptionalInit;
@@ -285,7 +285,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             }
             else
             {
-                currentClass->createNewNonFunctionMember(projectToPopulate->typeFromSerializedTypeId(nonFunctionMemberTypeId), nonFunctionMemberVariableName, static_cast<Visibility::VisibilityEnum>(visibility), static_cast<NonFunctionMemberOwnershipOfPointedToDataIfPointer::NonFunctionMemberOwnershipOfPointedToDataIfPointerEnum>(ownershipOfPointedToDataIfpointer), hasInit, optionalInit);
+                currentClass->createNewNonFunctionMember(projectToPopulate->typeFromSerializedTypeId(nonFunctionMemberTypeId), nonFunctionMemberVariableName, static_cast<Visibility::VisibilityEnum>(visibility), static_cast<TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum>(ownershipOfPointedToDataIfpointer), hasInit, optionalInit);
             }
         }
     }

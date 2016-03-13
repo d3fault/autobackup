@@ -56,10 +56,6 @@ public:
 
     //QList<QString> allMyAvailableMemberGettersWhenInAnyOfMyOwnSlots_AsString();
 
-    QString headerFilenameOnly();
-    QString sourceFilenameOnly();
-
-
     //TODOoptional: should be private
     QList<DesignEqualsImplementationClassProperty*> Properties;
     QList<DesignEqualsImplementationClassSignal*> m_MySignals;

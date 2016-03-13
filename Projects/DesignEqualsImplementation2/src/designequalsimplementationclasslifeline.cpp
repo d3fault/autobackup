@@ -231,7 +231,7 @@ QString DesignEqualsImplementationClassLifeLine::instanceVariableName()
     if(m_InstanceType == UseCasesRootClassLifeline)
         ret = "this";
     else if(m_InstanceType == ChildMemberOfOtherClassLifeline)
-        ret = m_InstanceInOtherClassIfApplicable->typeInstance->VariableName;
+        ret = m_InstanceInOtherClassIfApplicable->VariableName;
     return ret;
 }
 void DesignEqualsImplementationClassLifeLine::streamOutClassLifelineReference(DesignEqualsImplementationProject *project, DesignEqualsImplementationClassLifeLine *classLifeline, QDataStream &out)
@@ -250,7 +250,7 @@ DesignEqualsImplementationClassLifeLine *DesignEqualsImplementationClassLifeLine
 }
 void DesignEqualsImplementationClassLifeLine::createNewNonFunctionMemberAndAssignItAsClassLifelineInstance(DesignEqualsImplementationClass *parentClassChosenToGetNewNonFunctionMember, DesignEqualsImplementationClass *typeOfNewNonFunctionMember, const QString &nameOfNewNonFunctionMember)
 {
-    assignNonFunctionMemberAsClassLifelineInstance(parentClassChosenToGetNewNonFunctionMember->createNewNonFunctionMember(typeOfNewNonFunctionMember, nameOfNewNonFunctionMember, Visibility::Private, NonFunctionMemberOwnershipOfPointedToDataIfPointer::OwnsPointedToData));
+    assignNonFunctionMemberAsClassLifelineInstance(parentClassChosenToGetNewNonFunctionMember->createNewNonFunctionMember(typeOfNewNonFunctionMember, nameOfNewNonFunctionMember, Visibility::Private, TypeInstanceOwnershipOfPointedToDataIfPointer::OwnsPointedToData));
 }
 void DesignEqualsImplementationClassLifeLine::assignNonFunctionMemberAsClassLifelineInstance(NonFunctionMember *chosenExistingNonFunctionMember)
 {
