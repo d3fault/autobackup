@@ -9,6 +9,7 @@ class DesignEqualsImplementationImplicitlySharedDataType : public Type
 public:
     explicit DesignEqualsImplementationImplicitlySharedDataType(QObject *parent = 0);
     bool addNonFunctionMember(NonFunctionMember *nonFunctionMember);
+    int typeType() const { return 1; }
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONIMPLICITLYSHAREDDATATYPE_H

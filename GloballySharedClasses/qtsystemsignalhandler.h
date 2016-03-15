@@ -14,6 +14,7 @@ struct QtSystemSignal
         , TerminateGracefully_aka_KillPid = 0x2
         , WindowClosed_Win32Only = 0x4
         , Hangup_aka_ReloadConfigurationPlx = 0x8
+        , Quit_aka_CtrlForwardSlash = 0x16 //or maybe it's backslash, fucking ambiguous name scheme, are we analyzing the top or the bottom of the slash?
         //TODOmb: USR1, USR2
     };
 };

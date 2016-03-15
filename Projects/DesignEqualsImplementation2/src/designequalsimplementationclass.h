@@ -82,6 +82,7 @@ public:
         }
         return false;
     }
+    int typeType() const { return 0; }
 private:
     friend class DesignEqualsImplementationProjectGenerator;
 signals:

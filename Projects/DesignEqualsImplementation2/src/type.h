@@ -84,6 +84,8 @@ public:
 
     QString headerFilenameOnly() const;
     QString sourceFilenameOnly() const;
+
+    virtual int typeType() const=0;
 protected:
     QList<NonFunctionMember*> m_NonFunctionMembers; //they ARE non-function members, but the resulting code might still yield functions (getters & setters (d->pimpl for shared data and change checking+notification for Q_PROPERTY), change notifier signals in the case of Q_PROPERTIES)
 };
@@ -98,6 +100,7 @@ public:
         qFatal("ERROR: tried to addNonFunctionMember() to a DefinedElsewhereType. The caller should have checked this");
         return false;
     }
+    int typeType() const { return 2; }
 };
 
 #endif // TYPE_H

@@ -9,6 +9,7 @@
 #include "designequalsimplementationslotinvocationstatement.h"
 #include "designequalsimplementationchunkofrawcppstatements.h"
 #include "designequalsimplementationclasslifeline.h"
+#include "designequalsimplementationimplicitlyshareddatatype.h"
 
 #define STREAM_OUT_METHOD_ARGUMENTS(qds, method) \
 int numArgs = method->m_Arguments.size(); \
@@ -49,6 +50,34 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
 
     //Project
     projectDataStream << projectToSerialize->Name;
+
+    projectDataStream << projectToSerialize->allKnownTypes().size();
+    //First just serialize the type type (d=iClass, ImplicitlyShared, or DefinedElsewhere -- lolwut) and name
+    int numTypesWithGreaterThanZeroDirectAncestors = 0;
+    Q_FOREACH(Type *currentType, projectToSerialize->allKnownTypes())
+    {
+        projectDataStream << currentType->typeType(); //lolwut
+        projectDataStream << currentType->Name;
+        if(!currentType->DirectAncestors.isEmpty())
+            ++numTypesWithGreaterThanZeroDirectAncestors; //just counting atm
+        //currentType->serializeDescendentDetails(projectDataStream); //TODOreq: include descendent type id i think?
+    }
+    //Now serialize the type ANCESTORS (which, themselves, are/depend-on types)
+    projectDataStream << numTypesWithGreaterThanZeroDirectAncestors;
+    Q_FOREACH(Type *currentType, projectToSerialize->allKnownTypes())
+    {
+        if(!currentType->DirectAncestors.isEmpty())
+        {
+            projectDataStream << projectToSerialize->serializationTypeIdForType(currentType);
+            projectDataStream << currentType->DirectAncestors.size();
+            Q_FOREACH(const TypeAncestor &currentAncestor, currentType->DirectAncestors)
+            {
+                projectDataStream << static_cast<quint8>(currentAncestor.visibility);
+                projectDataStream << projectToSerialize->serializationTypeIdForType(currentAncestor.type);
+            }
+        }
+    }
+
 
     projectDataStream << projectToSerialize->classes().size();
     Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToSerialize->classes())
@@ -214,6 +243,53 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
 
     //Project
     projectDataStream >> projectToPopulate->Name;
+
+    int numTypes;
+    projectDataStream >> numTypes;
+    for(int i = 0; i < numTypes; ++i)
+    {
+        int typeType; //lolwut
+        projectDataStream >> typeType;
+        Type *type;
+        switch(typeType)
+        {
+        case 0:
+            type = new DesignEqualsImplementationClass(projectToPopulate, projectToPopulate);
+            break;
+        case 1:
+            type = new DesignEqualsImplementationImplicitlySharedDataType(projectToPopulate);
+            break;
+        case 2:
+            type = new DefinedElsewhereType(projectToPopulate);
+        default: //ODOoptional: use enum so I don't need default case so adding types would give compiler error here (good!)
+            qFatal("invalid typeType! your guess is as good as mine");
+            break;
+        }
+        projectDataStream >> type->Name;
+    }
+    int numTypesWithAncestors;
+    projectDataStream >> numTypesWithAncestors;
+    for(int i = 0; i < numTypesWithAncestors; ++i)
+    {
+        int typeWithAncestorsTypeId;
+        projectDataStream >> typeWithAncestorsTypeId;
+        Type *typeWithAncestor = projectToPopulate->typeFromSerializedTypeId(typeWithAncestorsTypeId);
+        int numAncestors;
+        projectDataStream >> numAncestors;
+        for(int j = 0; j < numAncestors; ++j)
+        {
+            TypeAncestor ancestor;
+            quint8 visibility;
+            projectDataStream >> visibility;
+            ancestor.visibility = static_cast<Visibility::VisibilityEnum>(visibility);
+            int ancestorTypeId;
+            projectDataStream >> ancestorTypeId;
+            ancestor.type = projectToPopulate->typeFromSerializedTypeId(ancestorTypeId);
+            typeWithAncestor->DirectAncestors.append(ancestor);
+        }
+
+    }
+
     int numClasses;
     projectDataStream >> numClasses;
     for(int i = 0; i < numClasses; ++i)

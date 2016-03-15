@@ -71,6 +71,7 @@ QtSystemSignals QtSystemSignalHandler::defaultSystemSignalsToHandle()
     ret.insert(QtSystemSignal::Interrupt_aka_CtrlC);
     ret.insert(QtSystemSignal::TerminateGracefully_aka_KillPid);
     ret.insert(QtSystemSignal::WindowClosed_Win32Only);
+    ret.insert(QtSystemSignal::Quit_aka_CtrlForwardSlash);
     return ret;
 }
 void QtSystemSignalHandler::setSystemSignalsToHandle(const QtSystemSignals &systemSignalsToHandle)
@@ -126,6 +127,8 @@ QtSystemSignal::QtSystemSignalEnum QtSystemSignalHandler::osSignalToEnumSignal(i
         return QtSystemSignal::TerminateGracefully_aka_KillPid;
     case SIGHUP:
         return QtSystemSignal::Hangup_aka_ReloadConfigurationPlx;
+    case SIGQUIT:
+        return QtSystemSignal::Quit_aka_CtrlForwardSlash;
     default:
         return QtSystemSignal::Unhandled;
     }
@@ -141,6 +144,8 @@ int QtSystemSignalHandler::enumSignalToOsSignal(QtSystemSignal::QtSystemSignalEn
         return SIGTERM;
     case QtSystemSignal::Hangup_aka_ReloadConfigurationPlx:
         return SIGHUP;
+    case QtSystemSignal::Quit_aka_CtrlForwardSlash:
+        return SIGQUIT;
     default:
         return -1;
     }

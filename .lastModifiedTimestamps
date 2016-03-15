@@ -19,7 +19,7 @@ Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.whi
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
 Documents/minddump/:1457807660
 Documents/minddump/2016/:1457041476
-Documents/minddump/2016/3/:1457899441
+Documents/minddump/2016/3/:1458001187
 Documents/minddump/2016/3/1457041314-MTJ867.txt:1457227057
 Documents/minddump/2016/3/1457146085-MTJ851.txt:1457146284
 Documents/minddump/2016/3/1457226883-MTJ903.txt:1457226889
@@ -28,6 +28,8 @@ Documents/minddump/2016/3/1457294014-MTJ850.txt:1457294034
 Documents/minddump/2016/3/1457572625-MTJ845.txt:1457572828
 Documents/minddump/2016/3/1457832034-MTJ843.txt:1457832058
 Documents/minddump/2016/3/1457899389-MTJ856.txt:1457899430
+Documents/minddump/2016/3/1457911581-MTJ852.txt:1457911635
+Documents/minddump/2016/3/1458000758-TJ1656.txt:1458001447
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -40,11 +42,12 @@ Documents/minddump/couchbase/undocumented.tap.usage.you.niggers.that.example.the
 Documents/minddump/couchbase/versioning.in.the.client.store.all.revisions.and.potential.bug.detected.if.client.crashes.at.bad.time.txt:1339952430
 Documents/minddump/dreams/:1457142389
 Documents/minddump/dreams/2016/:1457142389
-Documents/minddump/dreams/2016/3/:1457900809
+Documents/minddump/dreams/2016/3/:1458007354
 Documents/minddump/dreams/2016/3/1457142106-TJ2185.txt:1457142365
 Documents/minddump/dreams/2016/3/1457727728-TJ1612.txt:1457729293
-Documents/minddump/dreams/2016/3/1457807808-MTJ860.txt:1457809547
+Documents/minddump/dreams/2016/3/1457807808-MTJ860.txt:1457996764
 Documents/minddump/dreams/2016/3/1457899463-LhX856.txt:1457900796
+Documents/minddump/dreams/2016/3/1458006774-TJ1983.txt:1458007349
 Documents/minddump/dreams/thoughtPainting/:1350916935
 Documents/minddump/dreams/thoughtPainting/lol.shitty.attempt.at.drawing.it.asldjfsadljfou.svg:1350916935
 Documents/minddump/dreams/thoughtPainting/teh.dream.lewlies.sadfjlksjf.txt:1350916497
@@ -2820,7 +2823,7 @@ Documents/minimalist.argument.against.copyright.and.patents.gsdjfsdofsdlfjksdlkf
 Documents/sup.txt:1396677921
 Documents/true.sdjflsjdflkjsdklfjdklsfdjslfjlksdjflksdjflksoeuwrldjflksdflk.txt:1434532699
 Documents/uhh.this.goes.here.too.an.d.yea.i.am.mhigh.txt:1396678563
-GloballySharedClasses/:1457481849
+GloballySharedClasses/:1458002878
 GloballySharedClasses/architecture/:1399320087
 GloballySharedClasses/architecture/ibusinessobject.cpp:1399321145
 GloballySharedClasses/architecture/ibusinessobject.h:1399319929
@@ -2922,8 +2925,8 @@ GloballySharedClasses/multiserverabstraction.pri:1370583845
 GloballySharedClasses/multiserverclientabstraction.pri:1370584222
 GloballySharedClasses/objectonthreadgroup.pri:1400281691
 GloballySharedClasses/objectonthreadhelper.pri:1353171209
-GloballySharedClasses/qtsystemsignalhandler.cpp:1457471295
-GloballySharedClasses/qtsystemsignalhandler.h:1457471119
+GloballySharedClasses/qtsystemsignalhandler.cpp:1458002878
+GloballySharedClasses/qtsystemsignalhandler.h:1458002724
 GloballySharedClasses/qtsystemsignalhandler.pri:1457481849
 GloballySharedClasses/savefileorstdout.cpp:1427401041
 GloballySharedClasses/savefileorstdout.h:1427401012
@@ -3305,7 +3308,7 @@ Projects/DesignEqualsImplementation2/design/use.case.is.series.of.either.slot.de
 Projects/DesignEqualsImplementation2/design/use.cases.define.slot.bodies.at.runtime.but.only.resolve.where.connect.statements.go.at.source.generation.time.txt:1408252978
 Projects/DesignEqualsImplementation2/design/when.to.do.the.cross.thread.call.analysis.optimization.sdfljsdlfjsdl.txt:1410402949
 Projects/DesignEqualsImplementation2/design/yep.lost.but.i.think.theres.a.solution.to.this.asldfjsdlfjoweurlkjsdflksdjf.txt:1405427545
-Projects/DesignEqualsImplementation2/src/:1457906692
+Projects/DesignEqualsImplementation2/src/:1457910447
 Projects/DesignEqualsImplementation2/src/ui/:1404302488
 Projects/DesignEqualsImplementation2/src/ui/cli/:1404302509
 Projects/DesignEqualsImplementation2/src/ui/cli/design.equals.implementation.cli.todo.txt:1404302604
@@ -3387,7 +3390,7 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationactor.h:14045
 Projects/DesignEqualsImplementation2/src/designequalsimplementationchunkofrawcppstatements.cpp:1425516166
 Projects/DesignEqualsImplementation2/src/designequalsimplementationchunkofrawcppstatements.h:1425516141
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.cpp:1457905122
-Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.h:1457905024
+Projects/DesignEqualsImplementation2/src/designequalsimplementationclass.h:1457908743
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifeline.cpp:1457906668
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifeline.h:1457755153
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclasslifelineunitofexecution.cpp:1405431299
@@ -3404,7 +3407,7 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationclassslot.cpp
 Projects/DesignEqualsImplementation2/src/designequalsimplementationclassslot.h:1425502817
 Projects/DesignEqualsImplementation2/src/designequalsimplementationcommon.h:1413769294
 Projects/DesignEqualsImplementation2/src/designequalsimplementationimplicitlyshareddatatype.cpp:1457904725
-Projects/DesignEqualsImplementation2/src/designequalsimplementationimplicitlyshareddatatype.h:1457754019
+Projects/DesignEqualsImplementation2/src/designequalsimplementationimplicitlyshareddatatype.h:1457908708
 Projects/DesignEqualsImplementation2/src/designequalsimplementationlenientpropertydeclarationparser.cpp:1453592203
 Projects/DesignEqualsImplementation2/src/designequalsimplementationlenientpropertydeclarationparser.h:1409071926
 Projects/DesignEqualsImplementation2/src/designequalsimplementationlenientsignalorslotsignaturerparser.cpp:1457741917
@@ -3415,7 +3418,7 @@ Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.cpp:1
 Projects/DesignEqualsImplementation2/src/designequalsimplementationproject.h:1457838965
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.cpp:1457906666
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectgenerator.h:1455928482
-Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.cpp:1457906668
+Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.cpp:1457909714
 Projects/DesignEqualsImplementation2/src/designequalsimplementationprojectserializer.h:1409871198
 Projects/DesignEqualsImplementation2/src/designequalsimplementationsignalemissionstatement.cpp:1425502817
 Projects/DesignEqualsImplementation2/src/designequalsimplementationsignalemissionstatement.h:1425502818
@@ -3438,8 +3441,8 @@ Projects/DesignEqualsImplementation2/src/ihavetypeandvariablenameandpreferredtex
 Projects/DesignEqualsImplementation2/src/libclangpch.h:1409068915
 Projects/DesignEqualsImplementation2/src/signalemissionorslotinvocationcontextvariables.cpp:1409796472
 Projects/DesignEqualsImplementation2/src/signalemissionorslotinvocationcontextvariables.h:1457903713
-Projects/DesignEqualsImplementation2/src/type.cpp:1457906668
-Projects/DesignEqualsImplementation2/src/type.h:1457906665
+Projects/DesignEqualsImplementation2/src/type.cpp:1457908608
+Projects/DesignEqualsImplementation2/src/type.h:1457908662
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/:1428920854
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/:1429353425
 Projects/DirectoriesOfAudioAndVideoFilesMuxerSyncer/src/cli/:1427138873
@@ -3529,7 +3532,7 @@ Projects/EasyTreeTotalSizeCalculator/src/easytreetotalsizecalculatorgui.h:137909
 Projects/EasyTreeTotalSizeCalculator/src/easytreetotalsizecalculatorwidget.cpp:1385305755
 Projects/EasyTreeTotalSizeCalculator/src/easytreetotalsizecalculatorwidget.h:1385062427
 Projects/EasyTreeTotalSizeCalculator/src/main.cpp:1379096657
-Projects/ForFun/:1454884246
+Projects/ForFun/:1457993527
 Projects/ForFun/CleanThreadingExample/:1351309213
 Projects/ForFun/CleanThreadingExample/src/:1367400384
 Projects/ForFun/CleanThreadingExample/src/CleanThreadingExample.pro:1351241028
@@ -3570,6 +3573,9 @@ Projects/ForFun/SimpleSingleFrontEndWithTwoBackEndsExample/src/simplesinglefront
 Projects/ForFun/Think0/:1454884246
 Projects/ForFun/Think0/src/:1454884847
 Projects/ForFun/Think0/src/main.cpp:1454884847
+Projects/ForFun/Universe0/:1457993527
+Projects/ForFun/Universe0/src/:1457996554
+Projects/ForFun/Universe0/src/main.cpp:1457996554
 Projects/GitBitShit/:1414205808
 Projects/GitBitShit/GitBitShitDaemon/:1427380548
 Projects/GitBitShit/GitBitShitDaemon/src/:1427380548
@@ -4021,7 +4027,7 @@ Projects/LossyDirectoryCopier/src/main.cpp:1386648220
 Projects/MindDumper/:1456174632
 Projects/MindDumper/design/:1456001533
 Projects/MindDumper/design/initial.idea.txt:1456001533
-Projects/MindDumper/src/:1457471562
+Projects/MindDumper/src/:1458002980
 Projects/MindDumper/src/MindDumper.pro:1457146853
 Projects/MindDumper/src/main.cpp:1456011400
 Projects/MindDumper/src/minddumpdocument.cpp:1456174998
