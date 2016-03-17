@@ -16,6 +16,6 @@ void HasA_Private_Classes_Member::setParentClass(DesignEqualsImplementationClass
 }
 QString HasA_Private_Classes_Member::typeString()
 {
-    return m_MyClass->ClassName + " *";
+    return m_MyClass->Name + " *";
 }
 #endif

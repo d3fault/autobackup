@@ -74,7 +74,7 @@ private slots:
     //reactor pattern slots
     void updateClassOverviewLabel();
 #if 0
-    void handlePropertyAdded(DesignEqualsImplementationClassProperty *propertyAdded);
+    void handleNonFunctionMemberAdded(NonFunctionMember *propertyAdded);
     void handleSignalAdded(DesignEqualsImplementationClassSignal *signalAdded);
     void handleSlotAdded(DesignEqualsImplementationClassSlot *slotAdded);
 #endif

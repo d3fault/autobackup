@@ -42,7 +42,7 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
         return;
     }
 
-    QLabel *currentClassBeingAssignedInstanceLabel = new QLabel(tr("Choose instance for object of type: ") + classLifelineForWhichAnInstanceIsBeingChosen->designEqualsImplementationClass()->ClassName);
+    QLabel *currentClassBeingAssignedInstanceLabel = new QLabel(tr("Choose instance for object of type: ") + classLifelineForWhichAnInstanceIsBeingChosen->designEqualsImplementationClass()->Name);
 
     //new instance
     QGroupBox *newInstanceGroupBox = new QGroupBox();
@@ -64,7 +64,7 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
             m_ExistingClassToUseAsParentForNewInstance = currentClass;
             firstClassAdded = false;
         }
-        m_ClassesInUseCaseAvailableForUseAsParentOfNewInstance->addItem(currentClass->ClassName, QVariant::fromValue(currentClass));
+        m_ClassesInUseCaseAvailableForUseAsParentOfNewInstance->addItem(currentClass->Name, QVariant::fromValue(currentClass));
     }
     m_NewInstanceNameLineEdit->setPlaceholderText(tr("Member Name")); //TODOoptional: m_Bar0, m_Bar1, etc auto-generated-but-editable-obviously
     newInstanceRow->addWidget(newChildMemberLabel);
@@ -99,7 +99,7 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
 
 #if 0 // OLD, needs refactoring
 
-    //m_ExistingInstancesListWidget->addItem(QObject::tr("New top-level instance of: ") + classBeingAdded->ClassName); //TODOreq: zero is special index
+    //m_ExistingInstancesListWidget->addItem(QObject::tr("New top-level instance of: ") + classBeingAdded->Name); //TODOreq: zero is special index
 
     //QList<DesignEqualsImplementationClassInstance*> potentialExistingInstances;
     Q_FOREACH(DesignEqualsImplementationClassInstance* currentTopLevelClassInstanceEntryType, useCaseClassIsBeingAddedTo->designEqualsImplementationProject()->topLevelClassInstances()) //Top level objects + heirarchies?
@@ -184,7 +184,7 @@ void ClassInstanceChooserDialog::addAllPrivateHasAMembersThatAreOfAcertainTypeTo
         if(aClassThatIsANonFunctionMemberMaybe != typeOfClassWeAreInterestedInInstancesOf)
             continue;
 
-        QListWidgetItem *existingClassInstanceListWidgetItem = new QListWidgetItem(classToIterate->ClassName + "::" + currentNonFunctionMember->VariableName);
+        QListWidgetItem *existingClassInstanceListWidgetItem = new QListWidgetItem(classToIterate->Name + "::" + currentNonFunctionMember->VariableName);
         existingClassInstanceListWidgetItem->setData(Qt::UserRole, QVariant::fromValue(currentNonFunctionMember));
         m_ExistingInstancesListWidget->addItem(existingClassInstanceListWidgetItem);
     }
@@ -194,7 +194,7 @@ void ClassInstanceChooserDialog::addAllPrivateHasAMembersThatAreOfAcertainTypeTo
         if(currentPrivateHasAClassMember->m_MyClass != typeOfClassWeAreInterestedInInstancesOf)
             continue;
 
-        QListWidgetItem *existingClassInstanceListWidgetItem = new QListWidgetItem(classToIterate->ClassName + "::" + currentPrivateHasAClassMember->VariableName);
+        QListWidgetItem *existingClassInstanceListWidgetItem = new QListWidgetItem(classToIterate->Name + "::" + currentPrivateHasAClassMember->VariableName);
         existingClassInstanceListWidgetItem->setData(Qt::UserRole, QVariant::fromValue(currentPrivateHasAClassMember));
         m_ExistingInstancesListWidget->addItem(existingClassInstanceListWidgetItem);
     }

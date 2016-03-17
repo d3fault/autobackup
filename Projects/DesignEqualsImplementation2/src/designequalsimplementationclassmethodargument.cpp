@@ -1,5 +1,5 @@
 #include "designequalsimplementationclassmethodargument.h"
-
+#if 0
 #include <QDataStream>
 
 #define DesignEqualsImplementationClassMethodArgument_QDS(qds, direction, argument) \
@@ -11,8 +11,7 @@ DesignEqualsImplementationClassMethodArgument::DesignEqualsImplementationClassMe
     : QObject(parent)
 { }
 DesignEqualsImplementationClassMethodArgument::DesignEqualsImplementationClassMethodArgument(const QString &variableName, QObject *parent)
-    : QObject(parent)
-    , IHaveTypeAndVariableNameAndPreferredTextualRepresentation(variableName)
+    : TypeInstance(type, variableName, parent)
 { }
 DesignEqualsImplementationClassMethodArgument::~DesignEqualsImplementationClassMethodArgument()
 { }
@@ -39,3 +38,4 @@ QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassMethodAr
     in >> *argument;
     return in;
 }
+#endif

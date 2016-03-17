@@ -156,7 +156,7 @@ const QRectF DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::minRect(
 }
 void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::privateConstructor()
 {
-    QString myToolTip = m_Slot->ParentClass->ClassName + "::";
+    QString myToolTip = m_Slot->ParentClass->Name + "::";
     if(m_Slot->Name.startsWith(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING_PREFIX))
     {
 #ifdef QT_DEBUG

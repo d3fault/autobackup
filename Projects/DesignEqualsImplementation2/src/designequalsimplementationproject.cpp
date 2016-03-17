@@ -31,10 +31,15 @@ DesignEqualsImplementationProject::~DesignEqualsImplementationProject()
 DesignEqualsImplementationClass *DesignEqualsImplementationProject::createNewClass(const QString &newClassName, const QPointF &classPositionInGraphicsScene)
 {
     DesignEqualsImplementationClass *newClass = new DesignEqualsImplementationClass(this);
-    newClass->ClassName = newClassName;
+    newClass->Name = newClassName;
     newClass->Position = classPositionInGraphicsScene;
     addClass(newClass);
     return newClass;
+}
+void DesignEqualsImplementationProject::addType(Type *type)
+{
+    m_AllKnownTypes << type;
+    //TODOoptional: make all appends to m_AllKnownTypes use this method, then add a "typeAdded" signal. ClassDiagramScene would be a listener of that signal, but I'm not sure whether or not I should visualize "types defined elsewhere" (perhaps that should be a dynamic user preference)
 }
 QList<Type*> DesignEqualsImplementationProject::allKnownTypes() const
 {
@@ -77,7 +82,7 @@ QList<DesignEqualsImplementationClass*> DesignEqualsImplementationProject::class
 #if 0
 DesignEqualsImplementationClassInstance* DesignEqualsImplementationProject::createTopLevelClassInstance(DesignEqualsImplementationClass *classToMakeTopLevelInstanceOf)
 {
-    DesignEqualsImplementationClassInstance *classInstance = new DesignEqualsImplementationClassInstance(classToMakeTopLevelInstanceOf, 0, 0, "topLevel_" + classToMakeTopLevelInstanceOf->ClassName); //TODOreq: auto increment for top level auto vars
+    DesignEqualsImplementationClassInstance *classInstance = new DesignEqualsImplementationClassInstance(classToMakeTopLevelInstanceOf, 0, 0, "topLevel_" + classToMakeTopLevelInstanceOf->Name); //TODOreq: auto increment for top level auto vars
     m_TopLevelClassInstances.append(classInstance);
     return classInstance;
 }
@@ -263,7 +268,7 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(DesignEqualsIm
     {
         if(!projectGenerator.processClassStep0declaringClassInProject(designEqualsImplementationClass))
         {
-            emit e(DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX ", class step 0, " + designEqualsImplementationClass->ClassName);
+            emit e(DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX ", class step 0, " + designEqualsImplementationClass->Name);
             return false;
         }
     }
@@ -290,7 +295,7 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(DesignEqualsIm
         //TODOreq: use case's exit signals should just be serialized/remembered. they are of design use, but of zero use when it comes to code generation (the signal is simply emitted). i was tempted to say "use case exit signals should generate temporary copies of the classes here, now with the exit signals inserted (temporary copies used to generate source code)", BUT as you can see that's wrong
         if(!projectGenerator.processClassStep1writingTheFile(designEqualsImplementationClass)) //bleh, async model breaks down here. can't be async _AND_ get a bool success value :(. also, TODOreq: maybe optional idfk, but the classes should maybe be organized into [sub-]directories instead of all being in the top most directory
         {
-            emit e(DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX + ", class step 1, " + designEqualsImplementationClass->ClassName);
+            emit e(DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX + ", class step 1, " + designEqualsImplementationClass->Name);
             return false;
         }
     }

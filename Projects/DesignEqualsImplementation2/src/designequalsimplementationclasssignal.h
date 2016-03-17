@@ -19,6 +19,8 @@ public:
 
     static DesignEqualsImplementationClassSignal *streamInSignalReference(DesignEqualsImplementationProject *project, QDataStream &in);
     static void streamOutSignalReference(DesignEqualsImplementationProject *project, DesignEqualsImplementationClassSignal *signal, QDataStream &out);
+protected:
+    QObject *asQObject() { return this; }
 };
 #if 0
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassSignal &signal);

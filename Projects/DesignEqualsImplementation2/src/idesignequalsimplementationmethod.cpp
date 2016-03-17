@@ -1,20 +1,12 @@
 #include "idesignequalsimplementationmethod.h"
 
-IDesignEqualsImplementationMethod::IDesignEqualsImplementationMethod()
-{ }
-IDesignEqualsImplementationMethod::~IDesignEqualsImplementationMethod()
+DesignEqualsImplementationClassMethodArgument *IDesignEqualsImplementationMethod::createNewArgument(Type *argumentType, const QString &argumentVariableName)
 {
-    qDeleteAll(m_Arguments);
-}
-DesignEqualsImplementationClassMethodArgument *IDesignEqualsImplementationMethod::createNewArgument(const QString &argumentType, const QString &argumentVariableName)
-{
-    DesignEqualsImplementationClassMethodArgument *newArgument = new DesignEqualsImplementationClassMethodArgument(); //TODOreq: can't set parent because i'm not a qobject even though all inheriters are
-    newArgument->Type = argumentType;
-    newArgument->VariableName = argumentVariableName;
+    DesignEqualsImplementationClassMethodArgument *newArgument = new DesignEqualsImplementationClassMethodArgument(argumentType, argumentVariableName, this->asQObject()); //TODOreq: can't set parent because i'm not a qobject even though all inheriters are
     m_Arguments.append(newArgument);
     return newArgument;
 }
-QList<DesignEqualsImplementationClassMethodArgument *> IDesignEqualsImplementationMethod::arguments()
+QList<DesignEqualsImplementationClassMethodArgument *> IDesignEqualsImplementationMethod::arguments() const
 {
     return m_Arguments;
 }
@@ -24,7 +16,7 @@ QList<MethodArgumentTypedef> IDesignEqualsImplementationMethod::argumentsAsMetho
     Q_FOREACH(DesignEqualsImplementationClassMethodArgument* currentArgument, m_Arguments)
     {
         MethodArgumentTypedef entry;
-        entry.first = currentArgument->Type;
+        entry.first = currentArgument->type->Name;
         entry.second = currentArgument->VariableName;
         ret.append(entry);
     }
@@ -50,7 +42,7 @@ QString IDesignEqualsImplementationMethod::argumentsToCommaSeparatedString(Metho
         }
         else if(methodSignatureFlagsEnum == MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames)
         {
-            const QByteArray &argTypeCstr = currentArgument->typeString().toUtf8();
+            const QByteArray &argTypeCstr = currentArgument->type->Name.toUtf8();
             argString.append(QMetaObject::normalizedType(argTypeCstr.constData()));
         }
 

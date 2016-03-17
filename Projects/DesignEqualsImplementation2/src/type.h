@@ -35,6 +35,7 @@ public:
         , VariableName(variableName)
         , OwnershipOfPointedTodataIfPointer(TypeInstanceOwnershipOfPointedToDataIfPointer::NotPointer)
     { }
+    static QString preferredTextualRepresentationOfTypeAndVariableTogether(const QString &qualifiedType, const QString &variableName);
     QString preferredTextualRepresentationOfTypeAndVariableTogether() const;
     bool isPointer() const;
 
@@ -77,7 +78,7 @@ public:
     QString Name;
 
     QList<NonFunctionMember*> nonFunctionMembers() const { return m_NonFunctionMembers; }
-    virtual bool addNonFunctionMember(NonFunctionMember* nonFunctionMember)=0;
+    virtual void addNonFunctionMember(NonFunctionMember* nonFunctionMember)=0;
     NonFunctionMember *createNewNonFunctionMember(Type *typeOfNewNonFunctionMember, const QString &nameOfNewNonFunctionMember, Visibility::VisibilityEnum visibility = Visibility::Private, TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum ownershipOfPointedToDataIfPointer = TypeInstanceOwnershipOfPointedToDataIfPointer::NotPointer, bool hasInit = false, const QString &optionalInit = QString());
     int serializationNonFunctionMemberIdForNonFunctionMember(NonFunctionMember *nonFunctionMember) const;
     NonFunctionMember *nonFunctionMemberFromNonFunctionMemberId(int nonFunctionMemberId) const;
@@ -85,22 +86,27 @@ public:
     QString headerFilenameOnly() const;
     QString sourceFilenameOnly() const;
 
-    virtual int typeType() const=0;
+    virtual int typeCategory() const=0;
 protected:
+    void addNonFunctionMemberPrivate(NonFunctionMember *nonFunctionMember);
+private:
     QList<NonFunctionMember*> m_NonFunctionMembers; //they ARE non-function members, but the resulting code might still yield functions (getters & setters (d->pimpl for shared data and change checking+notification for Q_PROPERTY), change notifier signals in the case of Q_PROPERTIES)
+protected: //signals:
+    virtual void nonFunctionMemberAdded(NonFunctionMember *nonFunctionMember)=0;
 };
 class DefinedElsewhereType : public Type
 {
     Q_OBJECT
 public:
     explicit DefinedElsewhereType(QObject *parent = 0) : Type(parent) { }
-    bool addNonFunctionMember(NonFunctionMember* nonFunctionMember)
+    void addNonFunctionMember(NonFunctionMember* nonFunctionMember)
     {
         Q_UNUSED(nonFunctionMember)
         qFatal("ERROR: tried to addNonFunctionMember() to a DefinedElsewhereType. The caller should have checked this");
-        return false;
     }
-    int typeType() const { return 2; }
+    int typeCategory() const { return 2; }
+signals:
+    void nonFunctionMemberAdded(NonFunctionMember *nonFunctionMember);
 };
 
 #endif // TYPE_H

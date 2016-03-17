@@ -48,7 +48,7 @@ bool DesignEqualsImplementationUseCase::allClassLifelinesInUseCaseHaveBeenAssign
     {
         if(!currentClassLifeline->hasBeenAssignedInstance())
         {
-            emit e("a class lifeline of type '" + currentClassLifeline->designEqualsImplementationClass()->ClassName + "' in use case '" + this->Name + "' has not been assigned an instance");
+            emit e("a class lifeline of type '" + currentClassLifeline->designEqualsImplementationClass()->Name + "' in use case '" + this->Name + "' has not been assigned an instance");
             return false;
         }
     }

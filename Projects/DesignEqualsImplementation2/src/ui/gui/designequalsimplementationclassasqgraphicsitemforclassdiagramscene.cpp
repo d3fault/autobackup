@@ -69,7 +69,7 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::mouseDo
 }
 QString DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::classDetailsAsHtmlString()
 {
-    QString classContentsString("<b>" + m_DesignEqualsImplementationClass->ClassName + "</b>"); //TODOoptional: figure out out how to center this in addition to bolding it (<center> didn't work)
+    QString classContentsString("<b>" + m_DesignEqualsImplementationClass->Name + "</b>"); //TODOoptional: figure out out how to center this in addition to bolding it (<center> didn't work)
     int numLinesOfText = 1;
 
 #if 0
@@ -83,7 +83,7 @@ QString DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::clas
     }
     Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, m_DesignEqualsImplementationClass->Properties)
     {
-        classContentsString.append("<br />Q_PROPERTY(" + m_DesignEqualsImplementationClass->ClassName + "::" + currentProperty->Type + "::" + currentProperty->Name + ");");
+        classContentsString.append("<br />Q_PROPERTY(" + m_DesignEqualsImplementationClass->Name + "::" + currentProperty->Type + "::" + currentProperty->Name + ");");
         ++numLinesOfText;
     }
     bool privateAccessorSpecified = false;
@@ -126,14 +126,9 @@ QString DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::clas
         ++numLinesOfText;
     }
 #endif
-    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, m_DesignEqualsImplementationClass->Properties)
-    {
-        classContentsString.append("<br />o  " + currentProperty->PropertyType + ": " + currentProperty->PropertyName); //TODOoptional: visualize optional init value
-        ++numLinesOfText;
-    }
     Q_FOREACH(NonFunctionMember *currentNonFunctionMember, m_DesignEqualsImplementationClass->nonFunctionMembers())
     {
-        classContentsString.append("<br />-  " + currentNonFunctionMember->preferredTextualRepresentationOfTypeAndVariableTogether());
+        classContentsString.append("<br />m  " + currentNonFunctionMember->preferredTextualRepresentationOfTypeAndVariableTogether()); //TODOmb: try to cast to property, display it differently
         ++numLinesOfText;
     }
     Q_FOREACH(DesignEqualsImplementationClassPrivateMethod *currentPrivateMethod, m_DesignEqualsImplementationClass->PrivateMethods)
@@ -180,7 +175,7 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::paint(Q
     //painter->setRenderHint(QPainter::Antialiasing, true); //TO DOneoptimization: maybe i can specify this somewhere else so i don't have to keep re-specifying it. also noticed noticeable slowdown when enabled lolol, BUT the level of sexiness hit maximum too. //TODOoptional: run-time option obviously makes a lot of sense
     painter->setBrush(Qt::transparent); //would do white, but i have to draw text first in order to get my bounding rect starting point guh, so a white fill on the rounded rect afterwards covers the words! fml
     painter->setPen(m_ClassBorderPen);
-    QString classContentsString(m_DesignEqualsImplementationClass->ClassName);
+    QString classContentsString(m_DesignEqualsImplementationClass->Name);
     int numLinesOfText = 1;
     Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, m_DesignEqualsImplementationClass->Properties)
     {
@@ -233,9 +228,9 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::paint(Q
     //int runningIforMarkingLinesToDrawSynchronizedWithLinesDeterminedForSpacing = 0;
     //indexesInto_i_inForLoopToActuallyDrawLinesFor.append(runningIforMarkingLinesToDrawSynchronizedWithLinesDeterminedForSpacing++);
     indexesInto_i_inForLoopToActuallyDrawLinesFor.append(0); //first line after class name
-    if(!m_DesignEqualsImplementationClass->Properties.isEmpty())
+    if(!m_DesignEqualsImplementationClass->properties().isEmpty())
     {
-        indexesInto_i_inForLoopToActuallyDrawLinesFor.append(indexesInto_i_inForLoopToActuallyDrawLinesFor.last()+m_DesignEqualsImplementationClass->Properties.size());
+        indexesInto_i_inForLoopToActuallyDrawLinesFor.append(indexesInto_i_inForLoopToActuallyDrawLinesFor.last()+m_DesignEqualsImplementationClass->properties().size());
     }
     if(!m_DesignEqualsImplementationClass->HasA_Private_Classes_Members.isEmpty())
     {
@@ -272,7 +267,7 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::paint(Q
     painter->restore();
 }
 #endif
-void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handlePropertyAdded(DesignEqualsImplementationClassProperty *propertyAdded)
+void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleNonFunctionMemberAdded(NonFunctionMember *propertyAdded)
 {
     Q_UNUSED(propertyAdded)
     //TODOreq: re-paint with new property

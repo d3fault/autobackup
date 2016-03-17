@@ -134,7 +134,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     {
         QToolButton *okToolButton = new QToolButton(this);
         QAction *okAction = new QAction(tr("Ok"), this);
-        QString okAndMakeChildOfSignalSenderText = "Ok and make this instance of " + destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->ClassName + " a child member of " + sourceSlot_OrZeroIfSourceIsActor->ParentClass->ClassName + " named: " + sourceSlot_OrZeroIfSourceIsActor->ParentClass->autoNameForNewChildMemberOfType(destinationSlotToInvoke_OrZeroIfNoDest->ParentClass);
+        QString okAndMakeChildOfSignalSenderText = "Ok and make this instance of " + destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->Name + " a child member of " + sourceSlot_OrZeroIfSourceIsActor->ParentClass->Name + " named: " + sourceSlot_OrZeroIfSourceIsActor->ParentClass->autoNameForNewChildMemberOfType(destinationSlotToInvoke_OrZeroIfNoDest->ParentClass);
         QAction *okAndMakeChildOfSignalSenderAction = new QAction(okAndMakeChildOfSignalSenderText, this); //TODOoptional: IDEALLY there'd be another action in the toolbutton to let you choose the member name too))
         okToolButton->setDefaultAction(okAction);
         okToolButton->addAction(okAndMakeChildOfSignalSenderAction);
@@ -349,12 +349,10 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
             //TODOmb: one hacky way to get user-typed C++ 'locals' here would be to do auto-completion for every letter of the alphabet (a-Z), since variables must start with that. There might be a better way, but this is the best I can think of atm that definitely would work
             //If the user-C++ has a scoped pointer, we could intelligently count that as a 'local var' and make it eligible for a signal emit or slot invoke. We consider it a "pointer to whatever the scoped pointer's template type is", and automagically call QScopedPointer::take in the emit/invokeMethod. Maybe this idea sucks though since it now makes another slot responsible for what the user thought they already cleaned up. Makes more sense for QSharedPointer, but no magic 'take'ing is necessary in that case (pass the QSharedPointer itself!)
 
-#if 0
-            Q_FOREACH(IHaveTypeAndVariableNameAndPreferredTextualRepresentation *currentArg, sourceSlot_OrZeroIfSourceIsActor->arguments())
+            Q_FOREACH(TypeInstance *currentArg, sourceSlot_OrZeroIfSourceIsActor->arguments())
             {
                 m_VariablesAvailableToSatisfyArgs.append(currentArg);
             }
-#endif
             Q_FOREACH(NonFunctionMember *currentNonFunctionMember, sourceSlot_OrZeroIfSourceIsActor->ParentClass->nonFunctionMembers())
             {
                 m_VariablesAvailableToSatisfyArgs.append(currentNonFunctionMember);
@@ -457,9 +455,7 @@ void SignalSlotMessageDialog::showSignalArgFillingIn()
     Q_FOREACH(MethodArgumentTypedef currentArgument, m_SignalArgumentsBeingFilledIn)
     {
         QHBoxLayout *currentArgRow = new QHBoxLayout();
-        DesignEqualsImplementationClassMethodArgument arg(currentArgument.second);
-        arg.Type = currentArgument.first;
-        currentArgRow->addWidget(new QLabel(arg.preferredTextualRepresentationOfTypeAndVariableTogether()));
+        currentArgRow->addWidget(new QLabel(DesignEqualsImplementationClassMethodArgument::preferredTextualRepresentationOfTypeAndVariableTogether(currentArgument.first, currentArgument.second))); //TODOreq: I have no idea if 'first' has qualifiers on it or not, or even if it should xD
         QComboBox *currentArgSatisfiersComboBox = new QComboBox();
         connect(currentArgSatisfiersComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(tryValidatingDialog()));
         currentArgSatisfiersComboBox->addItem(tr("Select variable for this arg..."));
@@ -520,9 +516,7 @@ void SignalSlotMessageDialog::showSlotArgFillingIn()
         Q_FOREACH(MethodArgumentTypedef currentArgument, m_SlotArgumentsBeingFilledIn)
         {
             QHBoxLayout *currentArgRow = new QHBoxLayout(); //TODOoptimization: one grid layout instead? fuck it
-            DesignEqualsImplementationClassMethodArgument arg(currentArgument.second);
-            arg.Type = currentArgument.first;
-            currentArgRow->addWidget(new QLabel(arg.preferredTextualRepresentationOfTypeAndVariableTogether()));
+            currentArgRow->addWidget(new QLabel(DesignEqualsImplementationClassMethodArgument::preferredTextualRepresentationOfTypeAndVariableTogether(currentArgument.first, currentArgument.second)));
             QComboBox *currentArgSatisfiersComboBox = new QComboBox(); //instead of listening to signals, i should just manually validate the dialog when ok is pressed (keep a list of combo boxes, ensure all indexes aren't zero)... only downside to that is that the ok button now can't be disabled :(... fffff. i guess whole dialog validation on ANY combo box signal change is a hacky/easy/unoptimal/functional solution TODOoptimization proper dat shit
             connect(currentArgSatisfiersComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(tryValidatingDialog()));
             currentArgSatisfiersComboBox->addItem(tr("Select variable for this arg..."));
@@ -752,6 +746,7 @@ bool SignalSlotMessageDialog::askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDe
         currentProject = m_DestinationClassLifeline_OrZeroIfNoDest->designEqualsImplementationClass()->m_ParentProject;
         newSignalOrSlotArgTypesSeen.append(m_ExistingSlotsComboBox->newTypesSeenInParsedFunctionDeclaration());
     }
+
     if(!newSignalOrSlotArgTypesSeen.isEmpty())
     {
         NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(newSignalOrSlotArgTypesSeen, currentProject, this);
@@ -767,6 +762,12 @@ bool SignalSlotMessageDialog::askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDe
         {
         case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::TypedInFunction:
             m_SignalToEmit = m_SourceClassLifeline_OrZeroIfSourceIsActor->designEqualsImplementationClass()->createNewSignal(m_ExistingSignalsComboBox->parsedFunctionName(), m_ExistingSignalsComboBox->parsedFunctionArguments());
+#if 0
+            Q_FOREACH(const QString &parsedArg, m_ExistingSignalsComboBox->parsedFunctionArguments())
+            {
+                m_SignalToEmit->createNewArgument(m_SourceSlot_OrZeroIfSourceIsActor->ParentClass->m_ParentProject->getOrCreateTypeFromName(parsedArg)); //TODOmb: instead of relying on getorCreateType, we could call newTypesDialog.newTypesSeen(), which returns a list of Type*s. it probably doesn't matter to much, but that way seems 'cleaner'
+            }
+#endif
         break;
         case ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ExistingFunction:
             m_SignalToEmit = qvariant_cast<DesignEqualsImplementationClassSignal*>(m_ExistingSignalsComboBox->itemData(m_ExistingSignalsComboBox->currentIndex()));

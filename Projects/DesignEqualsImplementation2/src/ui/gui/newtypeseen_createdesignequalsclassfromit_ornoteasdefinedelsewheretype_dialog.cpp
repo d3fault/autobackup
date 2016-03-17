@@ -61,6 +61,10 @@ QList<QString> NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewher
 {
     return buildTypesListDependingOnWhetherCreateClassIsChecked(false);
 }
+QList<Type*> NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::newTypesSeen() const
+{
+    return m_NewTypesSeen;
+}
 QList<QString> NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::buildTypesListDependingOnWhetherCreateClassIsChecked(bool checked) const
 {
     QList<QString> ret;
@@ -78,12 +82,13 @@ void NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dial
 {
     //in the project: for each new type, create classes OR note them as defined elsewhere
 
+    m_NewTypesSeen.clear();
     Q_FOREACH(const QString &currentNewDesignEqualsClass, typesDecidedToBeDesignEqualsImplementationClass())
     {
-        m_DesignEqualsImplementationProject->createNewClass(currentNewDesignEqualsClass);
+        m_NewTypesSeen << m_DesignEqualsImplementationProject->createNewClass(currentNewDesignEqualsClass);
     }
     Q_FOREACH(const QString &currentNewDefinedElsewhereType, typesDecidedToBeDefinedElsewhere())
     {
-        m_DesignEqualsImplementationProject->noteDefinedElsewhereType(currentNewDefinedElsewhereType);
+        m_NewTypesSeen << m_DesignEqualsImplementationProject->noteDefinedElsewhereType(currentNewDefinedElsewhereType);
     }
 }

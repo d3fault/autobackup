@@ -41,23 +41,20 @@ public:
 
     //TODOoptional: private + getter/setter blah
     DesignEqualsImplementationProject *m_ParentProject;
-    QString ClassName;
 
-    bool addNonFunctionMember(NonFunctionMember *nonFunctionMember);
+    void addNonFunctionMember(NonFunctionMember *nonFunctionMember);
 
     DesignEqualsImplementationClassProperty *createNewProperty(Type *propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange);
-    void addProperty(DesignEqualsImplementationClassProperty *propertyToAdd);
 
     //HasA_Private_Classes_Member *createHasA_Private_Classes_Member(DesignEqualsImplementationClass *memberClassType, const QString &variableName_OrLeaveBlankForAutoNumberedVariableName = QString());
 
+    QList<DesignEqualsImplementationClassProperty*> properties() const;
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
     QList<DesignEqualsImplementationClassSignal*> mySignals();
     QList<DesignEqualsImplementationClassSlot*> mySlots();
 
     //QList<QString> allMyAvailableMemberGettersWhenInAnyOfMyOwnSlots_AsString();
 
-    //TODOoptional: should be private
-    QList<DesignEqualsImplementationClassProperty*> Properties;
     QList<DesignEqualsImplementationClassSignal*> m_MySignals;
     QList<DesignEqualsImplementationClassSlot*> m_MySlots;
 
@@ -67,8 +64,6 @@ public:
     inline DesignEqualsImplementationClassSignal* signalInstantiationFromSerializedSignalId(int signalId) { return m_MySignals.at(signalId); }
     inline int serializationSlotIdForSlot(DesignEqualsImplementationClassSlot *theSlot) { return m_MySlots.indexOf(theSlot); } //TODOoptional: check return of indexOf, qFatal. also on similar methods throughout
     inline DesignEqualsImplementationClassSlot *slotInstantiationFromSerializedSlotId(int slotId) { return m_MySlots.at(slotId); }
-    inline int serializationHasAIdForNonFunctionMember(NonFunctionMember *theNonFunctionMember) { return m_NonFunctionMembers.indexOf(theNonFunctionMember); }
-    inline NonFunctionMember *nonFunctionMemberFromNonFunctionMemberId(int nonFunctionMemberId) { return m_NonFunctionMembers.at(nonFunctionMemberId); }
 
     QString autoNameForNewChildMemberOfType(DesignEqualsImplementationClass *childMemberClassType);
     QString nextTempUnnamedSlotName();
@@ -82,11 +77,11 @@ public:
         }
         return false;
     }
-    int typeType() const { return 0; }
+    int typeCategory() const { return 0; }
 private:
     friend class DesignEqualsImplementationProjectGenerator;
 signals:
-    void propertyAdded(DesignEqualsImplementationClassProperty*);
+    void nonFunctionMemberAdded(NonFunctionMember *nonFunctionMember);
     void hasAPrivateMemberClassAdded(HasA_Private_Classes_Member*); //declare meta type?
     void privateMethodAdded(DesignEqualsImplementationClassPrivateMethod*);
     void slotAdded(DesignEqualsImplementationClassSlot*);
@@ -139,7 +134,7 @@ public:
     }
     virtual QString typeString()
     {
-        return m_MyClass->ClassName + " *";
+        return m_MyClass->Name + " *";
     }
 
     DesignEqualsImplementationClass *m_MyClass;

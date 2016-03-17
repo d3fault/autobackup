@@ -10,17 +10,21 @@ NonFunctionMember *Type::createNewNonFunctionMember(Type *typeOfNewNonFunctionMe
     addNonFunctionMember(nonFunctionMember); //TODOoptional: the bool it returns is dumb. the qFatals are plenty, so change bool to void
     return nonFunctionMember;
 }
-QString TypeInstance::preferredTextualRepresentationOfTypeAndVariableTogether() const
+QString TypeInstance::preferredTextualRepresentationOfTypeAndVariableTogether(const QString &qualifiedType, const QString &variableName)
 {
-    QString ret(Qualifiers_LHS + type->Name + Qualifiers_RHS); //TODOreq: actually use lhs/rhs aside from just here
-    if(ret.endsWith("&") || ret.endsWith("*")) //etc
+    if(qualifiedType.endsWith("&") || qualifiedType.endsWith("*")) //etc
     {
-        return (ret + VariableName);
+        return (qualifiedType + variableName);
     }
     else
     {
-        return (ret + " " + VariableName);
+        return (qualifiedType + " " + variableName);
     }
+}
+QString TypeInstance::preferredTextualRepresentationOfTypeAndVariableTogether() const
+{
+    QString qualifiedType(Qualifiers_LHS + type->Name + Qualifiers_RHS); //TODOreq: actually use lhs/rhs aside from just here
+    return preferredTextualRepresentationOfTypeAndVariableTogether(qualifiedType, VariableName);
 }
 bool TypeInstance::isPointer() const
 {
@@ -52,4 +56,9 @@ QString Type::headerFilenameOnly() const
 QString Type::sourceFilenameOnly() const
 {
     return Name.toLower() + ".cpp";
+}
+void Type::addNonFunctionMemberPrivate(NonFunctionMember *nonFunctionMember)
+{
+    m_NonFunctionMembers << nonFunctionMember;
+    /*emit */nonFunctionMemberAdded(nonFunctionMember);
 }

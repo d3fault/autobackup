@@ -20,7 +20,7 @@ public:
     virtual QObject *asQObject();
 
     static void streamOutPrivateMethodReference(DesignEqualsImplementationProject *project, DesignEqualsImplementationClassPrivateMethod *privateMethod, QDataStream &out);
-    static DesignEqualsImplementationClassPrivateMethod* streamInPrivateMethodReference(DesignEqualsImplementationProject *project, QDataStream &in);
+    static DesignEqualsImplementationClassPrivateMethod* streamInPrivateMethodReference(DesignEqualsImplementationProject *project, QDataStream &in);    
 signals:
     void statementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *statementInserted);
 };

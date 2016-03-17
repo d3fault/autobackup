@@ -5,12 +5,12 @@
 #include <QList>
 #include <QPair>
 
+#include "type.h"
 #include "designequalsimplementationclassmethodargument.h"
 
 typedef QPair<QString /*type*/, QString /*name*/> MethodArgumentTypedef; //derp defined like twenty different places...
 
 class DesignEqualsImplementationClass;
-class DesignEqualsImplementationClassMethodArgument;
 
 class IDesignEqualsImplementationMethod
 {
@@ -21,21 +21,20 @@ public:
         , MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames
     };
 
-    explicit IDesignEqualsImplementationMethod();
-    virtual ~IDesignEqualsImplementationMethod();
-
-    DesignEqualsImplementationClassMethodArgument *createNewArgument(const QString &argumentType = QString(), const QString &argumentVariableName = QString());
+    DesignEqualsImplementationClassMethodArgument *createNewArgument(Type *argumentType, const QString &argumentVariableName);
 
     //TODOoptional: private + getter/setter blah
     QString Name;
-    QList<DesignEqualsImplementationClassMethodArgument*> arguments();
+    QList<DesignEqualsImplementationClassMethodArgument*> arguments() const;
     QList<MethodArgumentTypedef> argumentsAsMethodArgumentTypedefList() const;
     DesignEqualsImplementationClass *ParentClass;
 
     QString methodSignatureWithoutReturnType(MethodSignatureFlagsEnum methodSignatureFlagsEnum = MethodSignatureForVisualAppearanceContainsArgumentVariableNames);
     QString argumentsToCommaSeparatedString(MethodSignatureFlagsEnum methodSignatureFlagsEnum = MethodSignatureForVisualAppearanceContainsArgumentVariableNames);
 
-    //TODOoptional: should be private:
+protected:
+    virtual QObject *asQObject()=0;
+private:
     QList<DesignEqualsImplementationClassMethodArgument*> m_Arguments;
 };
 

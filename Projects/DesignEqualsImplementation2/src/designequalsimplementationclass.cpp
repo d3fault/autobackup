@@ -35,7 +35,6 @@ DesignEqualsImplementationClass::DesignEqualsImplementationClass(QObject *parent
 { }
 DesignEqualsImplementationClass::~DesignEqualsImplementationClass()
 {
-    qDeleteAll(Properties);
     //Q_FOREACH(HasA_Private_Classes_Members_ListEntryType *currentMember, HasA_PrivateMemberClasses)
     //{
     //    delete currentMember->m_DesignEqualsImplementationClass;
@@ -48,9 +47,9 @@ DesignEqualsImplementationClassSignal *DesignEqualsImplementationClass::createNe
 {
     DesignEqualsImplementationClassSignal *newSignal = new DesignEqualsImplementationClassSignal(this);
     newSignal->Name = newSignalName;
-    Q_FOREACH(const MethodArgumentTypedef &currentMethodArgument, newSignalArgs)
+    Q_FOREACH(const MethodArgumentTypedef &newSignalArg, newSignalArgs)
     {
-        newSignal->createNewArgument(currentMethodArgument.first, currentMethodArgument.second);
+        newSignal->createNewArgument(m_ParentProject->getOrCreateTypeFromName(newSignalArg.first), newSignalArg.second);
     }
     addSignal(newSignal);
     return newSignal;
@@ -65,9 +64,9 @@ DesignEqualsImplementationClassSlot *DesignEqualsImplementationClass::createwNew
 {
     DesignEqualsImplementationClassSlot *newSlot = new DesignEqualsImplementationClassSlot(this);
     newSlot->Name = newSlotName;
-    Q_FOREACH(const MethodArgumentTypedef &currentMethodArgument, newSlotArgs)
+    Q_FOREACH(const MethodArgumentTypedef &newSlotArg, newSlotArgs)
     {
-        newSlot->createNewArgument(currentMethodArgument.first, currentMethodArgument.second);
+        newSlot->createNewArgument(m_ParentProject->getOrCreateTypeFromName(newSlotArg.first), newSlotArg.second);
     }
     addSlot(newSlot);
     return newSlot;
@@ -85,22 +84,29 @@ void DesignEqualsImplementationClass::removeSlot(DesignEqualsImplementationClass
     slotToRemove->ParentClass = 0; //TODOreq: a slot without a parent is undefined
     //emit slotRemoved(slotToRemove);
 }
-bool DesignEqualsImplementationClass::addNonFunctionMember(NonFunctionMember *nonFunctionMember)
+void DesignEqualsImplementationClass::addNonFunctionMember(NonFunctionMember *nonFunctionMember)
 {
-    m_NonFunctionMembers << nonFunctionMember;
-    return true;
+    //DesignEqualsImplementationClass accepts any kind of NonFunctionMember
+    addNonFunctionMemberPrivate(nonFunctionMember);
 }
 DesignEqualsImplementationClassProperty *DesignEqualsImplementationClass::createNewProperty(Type *propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange)
 {
     DesignEqualsImplementationClassProperty *newProperty = new DesignEqualsImplementationClassProperty(propertyType, propertyName, this, this, hasInit, optionalInit, readOnly, notifiesOnChange);
     addNonFunctionMember(newProperty);
-    //addProperty(newProperty);
     return newProperty;
 }
-void DesignEqualsImplementationClass::addProperty(DesignEqualsImplementationClassProperty *propertyToAdd)
+QList<DesignEqualsImplementationClassProperty*> DesignEqualsImplementationClass::properties() const
 {
-    Properties.append(propertyToAdd);
-    emit propertyAdded(propertyToAdd);
+    //TODOoptimization: if callers call this multiple times in a row, they should re-use the first call. a different way to optimize yet is for the callers to do the qobject_cast'ing, but not all uses would warrant that (but if we're already iterating nonfunctionmembers, for example)
+    QList<DesignEqualsImplementationClassProperty*> ret;
+    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, nonFunctionMembers())
+    {
+        if(DesignEqualsImplementationClassProperty *memberAsPropertyMaybe = qobject_cast<DesignEqualsImplementationClassProperty*>(currentNonFunctionMember))
+        {
+            ret << memberAsPropertyMaybe;
+        }
+    }
+    return ret;
 }
 #if 0
 HasA_Private_Classes_Member *DesignEqualsImplementationClass::createHasA_Private_Classes_Member(DesignEqualsImplementationClass *memberClassType, const QString &variableName_OrLeaveBlankForAutoNumberedVariableName)
@@ -154,9 +160,9 @@ QString DesignEqualsImplementationClass::autoNameForNewChildMemberOfType(DesignE
     int indexCurrentlyTestingForNameCollission = -1;
     while(true)
     {
-        QString maybeVariableName = "m_" + DesignEqualsImplementationProjectGenerator::firstCharacterToUpper(childMemberClassType->ClassName) + QString::number(++indexCurrentlyTestingForNameCollission); //m_Foo0, m_Foo1, etc. TODOoptional: random 5 letter word from dictionary chosen, append two numbers also, so they are easier to differentiate/remember when using auto mode (although i probably won't use it myself (unless i'm in a rush)). //TODooptional: should the first m_Foo have a zero on the end or no? I'd say yes keep the zero, just makes it simpler LATER
+        QString maybeVariableName = "m_" + DesignEqualsImplementationProjectGenerator::firstCharacterToUpper(childMemberClassType->Name) + QString::number(++indexCurrentlyTestingForNameCollission); //m_Foo0, m_Foo1, etc. TODOoptional: random 5 letter word from dictionary chosen, append two numbers also, so they are easier to differentiate/remember when using auto mode (although i probably won't use it myself (unless i'm in a rush)). //TODooptional: should the first m_Foo have a zero on the end or no? I'd say yes keep the zero, just makes it simpler LATER
         bool seenThisTime = false;
-        Q_FOREACH(NonFunctionMember *currentNonFunctionMember, m_NonFunctionMembers)
+        Q_FOREACH(NonFunctionMember *currentNonFunctionMember, nonFunctionMembers())
         {
             if(currentNonFunctionMember->VariableName == maybeVariableName)
             {
@@ -183,7 +189,7 @@ QString DesignEqualsImplementationClass::nextTempUnnamedSlotName()
 }
 void DesignEqualsImplementationClass::setClassName(const QString &newClassName)
 {
-    ClassName = newClassName;
+    Name = newClassName;
 }
 void DesignEqualsImplementationClass::emitAllClassDetails()
 {

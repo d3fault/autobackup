@@ -23,7 +23,7 @@ QString DesignEqualsImplementationSlotInvocationStatement::toRawCppWithoutEnding
     QString argumentsString;
     Q_FOREACH(const QString &currentArgumentName, m_SlotInvocationContextVariables)
     {
-        const QByteArray &argTypeCstr = m_SlotToInvoke->arguments().at(currentArgumentIndex)->Type.toUtf8();
+        const QByteArray &argTypeCstr = m_SlotToInvoke->arguments().at(currentArgumentIndex)->type->Name.toUtf8();
         argumentsString.append(", Q_ARG(" + QMetaObject::normalizedType(argTypeCstr.constData()) + ", " + currentArgumentName + ")");
         ++currentArgumentIndex;
         if(currentArgumentIndex == maxArgs)

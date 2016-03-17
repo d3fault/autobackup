@@ -11,26 +11,27 @@
 #include "designequalsimplementationclasslifeline.h"
 #include "designequalsimplementationimplicitlyshareddatatype.h"
 
-#define STREAM_OUT_METHOD_ARGUMENTS(qds, method) \
-int numArgs = method->m_Arguments.size(); \
+#define STREAM_OUT_METHOD_ARGUMENTS(qds, method, project) \
+int numArgs = method->arguments().size(); \
 qds << numArgs; \
 for(int i = 0; i < numArgs; ++i) \
 { \
-    DesignEqualsImplementationClassMethodArgument *currentArgument = method->m_Arguments.at(i); \
-    qds << currentArgument->Type; \
+    DesignEqualsImplementationClassMethodArgument *currentArgument = method->arguments().at(i); \
+    qds << project->serializationTypeIdForType(currentArgument->type); \
     qds << currentArgument->VariableName; \
 }
 
-#define STREAM_IN_METHOD_ARGUMENTS(qds, methodArguments) \
+#define STREAM_IN_METHOD_ARGUMENTS(qds, method, project) \
 int numArgs; \
 qds >> numArgs; \
 for(int i = 0; i < numArgs; ++i) \
 { \
-    QString argType; \
+    int argTypeId; \
+    qds >> argTypeId; \
+    Type *argType = project->typeFromSerializedTypeId(argTypeId); \
     QString argName; \
-    qds >> argType; \
-    qds >> argType; \
-    methodArguments.append(qMakePair(argType, argName)); \
+    qds >> argName; \
+    method->createNewArgument(argType, argName); \
 }
 
 //not to be confused with project generation, this is saving/opening projects
@@ -56,7 +57,7 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
     int numTypesWithGreaterThanZeroDirectAncestors = 0;
     Q_FOREACH(Type *currentType, projectToSerialize->allKnownTypes())
     {
-        projectDataStream << currentType->typeType(); //lolwut
+        projectDataStream << currentType->typeCategory();
         projectDataStream << currentType->Name;
         if(!currentType->DirectAncestors.isEmpty())
             ++numTypesWithGreaterThanZeroDirectAncestors; //just counting atm
@@ -77,38 +78,40 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
             }
         }
     }
-
-
-    projectDataStream << projectToSerialize->classes().size();
-    Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToSerialize->classes())
+    //now do typeCategory specific serializing
+    Q_FOREACH(Type *currentType, projectToSerialize->allKnownTypes())
     {
-        //Project Classes -- first declaration and most body serializing
-        projectDataStream << currentClass->ClassName;
-        projectDataStream << currentClass->Position;
-
-        projectDataStream << currentClass->m_MySignals.size();
-        Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, currentClass->m_MySignals)
+        if(DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(currentType))
         {
-            //Project Class Signals
-            projectDataStream << currentSignal->Name;
-            STREAM_OUT_METHOD_ARGUMENTS(projectDataStream, currentSignal)
-        }
+            //Project Classes -- Position/signals/slots, but not NonFunctionMembers yet
+            projectDataStream << typeAsClass->Position;
 
-        projectDataStream << currentClass->m_MySlots.size();
-        Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, currentClass->m_MySlots)
-        {
-            //Project Class Slots
-            projectDataStream << currentSlot->Name;
-            STREAM_OUT_METHOD_ARGUMENTS(projectDataStream, currentSlot)
+            projectDataStream << typeAsClass->m_MySignals.size();
+            Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, typeAsClass->m_MySignals)
+            {
+                //Project Class Signals
+                projectDataStream << currentSignal->Name;
+                STREAM_OUT_METHOD_ARGUMENTS(projectDataStream, currentSignal, projectToSerialize)
+            }
+
+            projectDataStream << typeAsClass->m_MySlots.size();
+            Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, typeAsClass->m_MySlots)
+            {
+                //Project Class Slots
+                projectDataStream << currentSlot->Name;
+                STREAM_OUT_METHOD_ARGUMENTS(projectDataStream, currentSlot, projectToSerialize)
+            }
         }
+        //else if: nothing to do for ImplicitlyShared or DefinedElsewhere atm
     }
-    Q_FOREACH(DesignEqualsImplementationClass *currentClass, projectToSerialize->classes())
+    //Type NonFunctionMembers
+    Q_FOREACH(Type *currentType, projectToSerialize->allKnownTypes())
     {
-        //TODOmb: when changing from Class to Type, caast to DefinedElsewhereType, then continue; if it succeeded. Class and ImplicitlySharedDataTypes do boh have NonFunctionMembers. also applies to deserializing ofc
+        if(qobject_cast<DefinedElsewhereType*>(currentType))
+            continue; //can't have members (that we defined)
 
-        //Project Classes -- NonFunctionMembers
-        projectDataStream << currentClass->nonFunctionMembers().size();
-        Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentClass->nonFunctionMembers())
+        projectDataStream << currentType->nonFunctionMembers().size();
+        Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentType->nonFunctionMembers())
         {
             //Project Class NonFunctionMembers
             projectDataStream << projectToSerialize->serializationTypeIdForType(currentNonFunctionMember->type);
@@ -119,6 +122,8 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
             projectDataStream << static_cast<quint8>(currentNonFunctionMember->visibility);
             projectDataStream << static_cast<quint8>(currentNonFunctionMember->OwnershipOfPointedTodataIfPointer);
 
+            if(!qobject_cast<DesignEqualsImplementationClass*>(currentType))
+                continue; //only "Class"es can have Q_PROPERTY
             bool isProperty = false;
             DesignEqualsImplementationClassProperty *property = qobject_cast<DesignEqualsImplementationClassProperty*>(currentNonFunctionMember);
             if(property)
@@ -248,10 +253,10 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
     projectDataStream >> numTypes;
     for(int i = 0; i < numTypes; ++i)
     {
-        int typeType; //lolwut
-        projectDataStream >> typeType;
+        int typeCategory;
+        projectDataStream >> typeCategory;
         Type *type;
-        switch(typeType)
+        switch(typeCategory)
         {
         case 0:
             type = new DesignEqualsImplementationClass(projectToPopulate, projectToPopulate);
@@ -266,6 +271,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             break;
         }
         projectDataStream >> type->Name;
+        projectToPopulate->addType(type);
     }
     int numTypesWithAncestors;
     projectDataStream >> numTypesWithAncestors;
@@ -287,52 +293,48 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             ancestor.type = projectToPopulate->typeFromSerializedTypeId(ancestorTypeId);
             typeWithAncestor->DirectAncestors.append(ancestor);
         }
-
     }
-
-    int numClasses;
-    projectDataStream >> numClasses;
-    for(int i = 0; i < numClasses; ++i)
+    //now do typeCategory specific deserializing
+    Q_FOREACH(Type *currentType, projectToPopulate->allKnownTypes())
     {
-        //Project Classes -- first declaration and most body populating
-        QString currentClassName;
-        projectDataStream >> currentClassName;
-        QPointF classPosition;
-        projectDataStream >> classPosition;
-        DesignEqualsImplementationClass *currentClass = projectToPopulate->createNewClass(currentClassName, classPosition);
-
-        int numSignals;
-        projectDataStream >> numSignals;
-        for(int j = 0; j < numSignals; ++j)
+        if(DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(currentType))
         {
-            //Project Class Signals
-            QString signalName;
-            projectDataStream >> signalName;
-            QList<MethodArgumentTypedef> methodArguments;
-            STREAM_IN_METHOD_ARGUMENTS(projectDataStream, methodArguments)
-            currentClass->createNewSignal(signalName, methodArguments);
-        }
+            //Project Classes -- Position/signals/slots, but not NonFunctionMembers yet
+            projectDataStream >> typeAsClass->Position;
 
-        int numSlots;
-        projectDataStream >> numSlots;
-        for(int j = 0; j < numSlots; ++j)
-        {
-            //Project Class Slots
-            QString slotName;
-            projectDataStream >> slotName;
-            QList<MethodArgumentTypedef> methodArguments;
-            STREAM_IN_METHOD_ARGUMENTS(projectDataStream, methodArguments)
-            currentClass->createwNewSlot(slotName, methodArguments);
+            int numSignals;
+            projectDataStream >> numSignals;
+            for(int j = 0; j < numSignals; ++j)
+            {
+                //Project Class Signals
+                QString signalName;
+                projectDataStream >> signalName;
+                DesignEqualsImplementationClassSignal *theSignal = typeAsClass->createNewSignal(signalName);
+                STREAM_IN_METHOD_ARGUMENTS(projectDataStream, theSignal, projectToPopulate)
+            }
+
+            int numSlots;
+            projectDataStream >> numSlots;
+            for(int j = 0; j < numSlots; ++j)
+            {
+                //Project Class Slots
+                QString slotName;
+                projectDataStream >> slotName;
+                DesignEqualsImplementationClassSlot *theSlot = typeAsClass->createwNewSlot(slotName);
+                STREAM_IN_METHOD_ARGUMENTS(projectDataStream, theSlot, projectToPopulate)
+            }
         }
+        //else if: nothing to do for ImplicitlyShared or DefinedElsewhere atm
     }
-    for(int i = 0; i < numClasses; ++i)
+    //Type NonFunctionMembers
+    Q_FOREACH(Type *currentType, projectToPopulate->allKnownTypes())
     {
-        DesignEqualsImplementationClass *currentClass = projectToPopulate->classes().at(i);
+        if(qobject_cast<DefinedElsewhereType*>(currentType))
+            continue; //can't have members (that we defined)
         int numNonFunctionMembers;
         projectDataStream >> numNonFunctionMembers;
         for(int j = 0; j < numNonFunctionMembers; ++j)
         {
-            //Project Class NonFunctionMembers
             int nonFunctionMemberTypeId;
             projectDataStream >> nonFunctionMemberTypeId;
             QString nonFunctionMemberVariableName;
@@ -348,21 +350,25 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             quint8 ownershipOfPointedToDataIfpointer;
             projectDataStream >> ownershipOfPointedToDataIfpointer;
 
-            bool isProperty;
-            projectDataStream >> isProperty;
-            if(isProperty)
+            if(DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(currentType))
             {
-                bool readOnly;
-                projectDataStream >> readOnly;
-                bool notifiesOnChange;
-                projectDataStream >> notifiesOnChange;
+                //only "Class"es can have Q_PROPERTY
+                bool isProperty;
+                projectDataStream >> isProperty;
+                if(isProperty)
+                {
+                    bool readOnly;
+                    projectDataStream >> readOnly;
+                    bool notifiesOnChange;
+                    projectDataStream >> notifiesOnChange;
 
-                currentClass->createNewProperty(projectToPopulate->typeFromSerializedTypeId(nonFunctionMemberTypeId), nonFunctionMemberVariableName, hasInit, optionalInit, readOnly, notifiesOnChange);
+                    typeAsClass->createNewProperty(projectToPopulate->typeFromSerializedTypeId(nonFunctionMemberTypeId), nonFunctionMemberVariableName, hasInit, optionalInit, readOnly, notifiesOnChange);
+                    continue;
+                }
             }
-            else
-            {
-                currentClass->createNewNonFunctionMember(projectToPopulate->typeFromSerializedTypeId(nonFunctionMemberTypeId), nonFunctionMemberVariableName, static_cast<Visibility::VisibilityEnum>(visibility), static_cast<TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum>(ownershipOfPointedToDataIfpointer), hasInit, optionalInit);
-            }
+
+            //not a "Class" nor a Q_PROPERTY
+            currentType->createNewNonFunctionMember(projectToPopulate->typeFromSerializedTypeId(nonFunctionMemberTypeId), nonFunctionMemberVariableName, static_cast<Visibility::VisibilityEnum>(visibility), static_cast<TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum>(ownershipOfPointedToDataIfpointer), hasInit, optionalInit);
         }
     }
 

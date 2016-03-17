@@ -108,14 +108,14 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
 #if 0 //TODOinstancing
     if(classLifeLine->myInstanceInClassThatHasMe()->m_InstanceType.first)
     {
-        lifeLineTitleHtml += classLifeLine->myInstanceInClassThatHasMe()->m_MyClass->ClassName + "</b>" + "* " /*exception to the rule, I want the star to be close to the type and not the class that owns me*/ + classLifeLine->myInstanceInClassThatHasMe()->m_InstanceType.first->ClassName + "::" + classLifeLine->myInstanceInClassThatHasMe()->VariableName;
+        lifeLineTitleHtml += classLifeLine->myInstanceInClassThatHasMe()->m_MyClass->Name + "</b>" + "* " /*exception to the rule, I want the star to be close to the type and not the class that owns me*/ + classLifeLine->myInstanceInClassThatHasMe()->m_InstanceType.first->Name + "::" + classLifeLine->myInstanceInClassThatHasMe()->VariableName;
     }
     else
     {
-        lifeLineTitleHtml += classLifeLine->designEqualsImplementationClass()->ClassName + "</b>";
+        lifeLineTitleHtml += classLifeLine->designEqualsImplementationClass()->Name + "</b>";
     }
 #else
-    lifeLineTitleHtml += classLifeLine->designEqualsImplementationClass()->ClassName + "</b>";
+    lifeLineTitleHtml += classLifeLine->designEqualsImplementationClass()->Name + "</b>";
 #endif
 
     QGraphicsTextItem *classNameTextItem = new QGraphicsTextItem(this);
@@ -253,7 +253,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::paint(Q
     //draw class name and surrounding box
     painter->setPen(m_ClassBorderPen);
     QRectF resizeBoundingRectTo;
-    painter->drawText(boundingRect(), (Qt::AlignVCenter /*| Qt::TextDontClip*/), m_DesignEqualsImplementationClassLifeLine->designEqualsImplementationClass()->ClassName, &resizeBoundingRectTo); //TODOreq: unsafe pointer usage :)
+    painter->drawText(boundingRect(), (Qt::AlignVCenter /*| Qt::TextDontClip*/), m_DesignEqualsImplementationClassLifeLine->designEqualsImplementationClass()->Name, &resizeBoundingRectTo); //TODOreq: unsafe pointer usage :)
     QRectF roundedRect = resizeBoundingRectTo;
     roundedRect.setLeft(roundedRect.left()-(DESIGNEQUALSIMPLEMENTATION_GUI_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));
     roundedRect.setTop(roundedRect.top()-(DESIGNEQUALSIMPLEMENTATION_GUI_SPACING_FROM_CLASS_TEXT_TO_ROUNDED_RECT));

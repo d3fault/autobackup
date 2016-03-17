@@ -141,7 +141,7 @@ bool DesignEqualsImplementationProjectGenerator::processUseCase(DesignEqualsImpl
     {
         //Use case entry point (must be top level instance (for now))
         //Foo *foo = new Foo();
-        m_DesignEqualsImplementationProject->appendLineToTemporaryProjectGlueCode(classInstance->preferredTextualRepresentation() + " = new " + classInstance->m_MyClass->ClassName + "();");
+        m_DesignEqualsImplementationProject->appendLineToTemporaryProjectGlueCode(classInstance->preferredTextualRepresentation() + " = new " + classInstance->m_MyClass->Name + "();");
 
 
 
@@ -152,7 +152,7 @@ bool DesignEqualsImplementationProjectGenerator::processUseCase(DesignEqualsImpl
         //Child instance -- TODOoptional: seems to make more sense that this is created more permanently when the class adds a hasA. in fact wait i think i already have this done...
         //In Foo's constructor:
         //Bar *bar = new Bar(this);
-        classInstance->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfUseCasesRootClassLifeline.first->appendLineToClassConstructorTemporarily(classInstance->preferredTextualRepresentation() + " = new " + classInstance->m_MyClass->ClassName + "(this);");
+        classInstance->m_ParentClassInstanceThatHasMe_AndMyIndexIntoHisHasAThatIsMe_OrFirstIsZeroIfUseCasesRootClassLifeline.first->appendLineToClassConstructorTemporarily(classInstance->preferredTextualRepresentation() + " = new " + classInstance->m_MyClass->Name + "(this);");
 #endif
     }
 #endif
@@ -236,7 +236,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassesToDisk()
         DesignEqualsImplementationClass *currentClass =  classesToGenerateIterator.key();
         if(!writeClassToDisk(currentClass))
         {
-            emit e("failed to write class to disk: " + currentClass->ClassName);
+            emit e("failed to write class to disk: " + currentClass->Name);
             return false;
         }
     }
@@ -439,7 +439,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
 #endif
 
     //Header's header (wat) + constructor
-    QString myNameHeaderGuard = currentClass->ClassName.toUpper() + "_H";
+    QString myNameHeaderGuard = currentClass->Name.toUpper() + "_H";
     headerFileTextStream    << "#ifndef " << myNameHeaderGuard << endl
                             << "#define " << myNameHeaderGuard << endl
                             << endl
@@ -461,15 +461,15 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     }
     if(atLeasteOneMemberIsApointer)
         headerFileTextStream << endl; //OCD <3
-    headerFileTextStream    << "class " << currentClass->ClassName << " : public QObject" << endl
+    headerFileTextStream    << "class " << currentClass->Name << " : public QObject" << endl
                             << "{" << endl
                             << DESIGNEQUALSIMPLEMENTATION_TAB << "Q_OBJECT" << endl;
 
     //Header's Q_PROPERTY declarations
-    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
+    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->properties())
     {
         //Q_PROPERTY..
-        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "Q_PROPERTY(" + currentProperty->PropertyType << " " << firstCharacterToLower(currentProperty->PropertyName) << " READ " << getterNameForProperty(currentProperty->PropertyName); //here marks the first time i've ever actually used the Q_PROPERTY macro <3. i'm always just too lazy and don't see the benefit... but since code generator, the cost becomes/became zero xD
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "Q_PROPERTY(" + currentProperty->type->Name << " " << firstCharacterToLower(currentProperty->PropertyName) << " READ " << getterNameForProperty(currentProperty->PropertyName); //here marks the first time i've ever actually used the Q_PROPERTY macro <3. i'm always just too lazy and don't see the benefit... but since code generator, the cost becomes/became zero xD
         if(!currentProperty->ReadOnly)
             headerFileTextStream << " WRITE " << setterNameForProperty(currentProperty->PropertyName);
         if(currentProperty->NotifiesOnChange)
@@ -478,37 +478,37 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     }
 
     headerFileTextStream << "public:" << endl
-                            << DESIGNEQUALSIMPLEMENTATION_TAB << "explicit " << currentClass->ClassName << "(QObject *parent = 0);" << endl;
-    headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "virtual ~" << currentClass->ClassName << "();" << endl;
+                            << DESIGNEQUALSIMPLEMENTATION_TAB << "explicit " << currentClass->Name << "(QObject *parent = 0);" << endl;
+    headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "virtual ~" << currentClass->Name << "();" << endl;
 
     //Header's property getters and setters declarations
-    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
+    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->properties())
     {
         //Property getter
         //int x() const;
-        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->PropertyType << " " << getterNameForProperty(currentProperty->PropertyName) << "() const;" << endl;
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->type->Name << " " << getterNameForProperty(currentProperty->PropertyName) << "() const;" << endl;
 
         //Property setter
         if(!currentProperty->ReadOnly)
         {
             //void setX(int newX);
-            headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << setterNameForProperty(currentProperty->PropertyName) << "(" << currentProperty->PropertyType << " " << "new" << firstCharacterToUpper(currentProperty->PropertyName) << ");" << endl;
+            headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << setterNameForProperty(currentProperty->PropertyName) << "(" << currentProperty->type->Name << " " << "new" << firstCharacterToUpper(currentProperty->PropertyName) << ");" << endl;
         }
     }
 
     bool privateAccessSpecifierWritten = false;
-    if(!currentClass->Properties.isEmpty())
+    if(!currentClass->properties().isEmpty())
     {
         headerFileTextStream << "private:" << endl;
         privateAccessSpecifierWritten = true;
     }
 
     //Header's property member declarations
-    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
+    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->properties())
     {
-        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->PropertyType << " " << memberNameForProperty(currentProperty->PropertyName) << ";" << endl;
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->type->Name << " " << memberNameForProperty(currentProperty->PropertyName) << ";" << endl;
     }
-    if(!currentClass->Properties.isEmpty() && atLeasteOneMemberIsApointer) //TODOsanity: make a list of each of the visibility specifier entries, then process AT THE END whether or not to write a visibility specifier. there should be an "empty line" entry (like the one just below) that should be able to be "trimmed" if no statements are following (like the second half of this if statement does). the same kind of thing can/should be used to determine whether or not to do "{ }" or "{\n" (if any statements in block)
+    if(!currentClass->properties().isEmpty() && atLeasteOneMemberIsApointer) //TODOsanity: make a list of each of the visibility specifier entries, then process AT THE END whether or not to write a visibility specifier. there should be an "empty line" entry (like the one just below) that should be able to be "trimmed" if no statements are following (like the second half of this if statement does). the same kind of thing can/should be used to determine whether or not to do "{ }" or "{\n" (if any statements in block)
     {
         headerFileTextStream << endl;
     }
@@ -548,10 +548,10 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     {
         DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << endl;)
     }
-    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << currentClass->ClassName << "::" << currentClass->ClassName << "(QObject *parent)" << endl
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << currentClass->Name << "::" << currentClass->Name << "(QObject *parent)" << endl
                             << DESIGNEQUALSIMPLEMENTATION_TAB << ": QObject(parent)" << endl;)
     //Source's header Properties constructor initializers
-    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
+            Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->properties())
     {
         if(currentProperty->HasInit)
         {
@@ -598,17 +598,17 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     }
 
     //Source destructor
-    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << currentClass->ClassName << "::~" << currentClass->ClassName << "()" << endl
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << currentClass->Name << "::~" << currentClass->Name << "()" << endl
                             << "{ }" << endl;)
 
     //Source properties getters and setters definitions
-    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
+            Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->properties())
     {
         //int Class::x() const
         //{
         //  return m_X;
         //}
-        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << currentProperty->PropertyType << " " << currentClass->ClassName << "::" << getterNameForProperty(currentProperty->PropertyName) << "() const" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "return " << memberNameForProperty(currentProperty->PropertyName) << ";" << endl << "}" << endl;)
+        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << currentProperty->type->Name << " " << currentClass->Name << "::" << getterNameForProperty(currentProperty->PropertyName) << "() const" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "return " << memberNameForProperty(currentProperty->PropertyName) << ";" << endl << "}" << endl;)
 
         if(!currentProperty->ReadOnly)
         {
@@ -621,7 +621,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
             //  }
             //}
             const QString &newSetPropertyVariableName = "new" + firstCharacterToUpper(currentProperty->PropertyName);
-            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "void " << currentClass->ClassName << "::" << setterNameForProperty(currentProperty->PropertyName) << "(" << currentProperty->PropertyType << " " << "new" << firstCharacterToUpper(currentProperty->PropertyName) << ")" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "if(" << newSetPropertyVariableName << " != " << memberNameForProperty(currentProperty->PropertyName) << ")" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << memberNameForProperty(currentProperty->PropertyName) << " = " << newSetPropertyVariableName << ";" << endl;)
+            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "void " << currentClass->Name << "::" << setterNameForProperty(currentProperty->PropertyName) << "(" << currentProperty->type->Name << " " << "new" << firstCharacterToUpper(currentProperty->PropertyName) << ")" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "if(" << newSetPropertyVariableName << " != " << memberNameForProperty(currentProperty->PropertyName) << ")" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << memberNameForProperty(currentProperty->PropertyName) << " = " << newSetPropertyVariableName << ";" << endl;)
             if(currentProperty->NotifiesOnChange)
             {
                 DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << "emit " << changedSignalForProperty(currentProperty->PropertyName) << "(" << memberNameForProperty(currentProperty->PropertyName) << ");" << endl;)
@@ -645,7 +645,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
 
     //Property change notification signals
     bool gapBetweenRegularSignalsAndPropertyChangeSignalsWritten = false;
-    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->Properties)
+    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->properties())
     {
         if(currentProperty->NotifiesOnChange)
         {
@@ -661,7 +661,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
                 gapBetweenRegularSignalsAndPropertyChangeSignalsWritten = true;
             }
 
-            headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << changedSignalForProperty(currentProperty->PropertyName) << "(" << currentProperty->PropertyType << " " << "new" + firstCharacterToUpper(currentProperty->PropertyName) << ");" << endl;
+            headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << changedSignalForProperty(currentProperty->PropertyName) << "(" << currentProperty->type->Name << " " << "new" + firstCharacterToUpper(currentProperty->PropertyName) << ");" << endl;
         }
     }
 
@@ -673,7 +673,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         //Declare slot
         headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << currentSlot->methodSignatureWithoutReturnType() << ";" << endl;
         //Define slot
-        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "void " << currentClass->ClassName << "::" << currentSlot->methodSignatureWithoutReturnType() << endl
+        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "void " << currentClass->Name << "::" << currentSlot->methodSignatureWithoutReturnType() << endl
                                 << "{" << endl;)
 
         int statementInsertIndex = 0;
@@ -681,7 +681,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         {
             if(m_GenerateCppEditModeDelimitingComments)
             {
-                writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(sourceFileTextStream, currentClass->ClassName, currentClass->mySlots().indexOf(currentSlot), statementInsertIndex);
+                writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(sourceFileTextStream, currentClass->Name, currentClass->mySlots().indexOf(currentSlot), statementInsertIndex);
                 DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << endl;)
             }
 
@@ -707,7 +707,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         {
             //if(statementInsertIndex > 0)
                 //sourceFileTextStream << endl;
-            writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(sourceFileTextStream, currentClass->ClassName, currentClass->mySlots().indexOf(currentSlot), statementInsertIndex);
+            writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(sourceFileTextStream, currentClass->Name, currentClass->mySlots().indexOf(currentSlot), statementInsertIndex);
         }
         if(currentSlot->finishedOrExitSignal_OrZeroIfNone())
         {
@@ -732,7 +732,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     {
         if(!currentPrivateMember->m_MyClass->generateSourceCode(destinationDirectoryPath)) //TODOreq: a single press of generate source code should never write the same class file more than once (since i am probably calling generate source code more than once for some classes)
         {
-            emit e(DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX + currentPrivateMember->m_MyClass->ClassName);
+            emit e(DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX + currentPrivateMember->m_MyClass->Name);
             return false;
         }
     }
@@ -786,7 +786,7 @@ void DesignEqualsImplementationProjectGenerator::writePairOfDelimitedCommentsInB
 
     if(m_Out_LineNumberToJumpTo_OrZeroIfNotApplicable)
     {
-        if(className == m_SlotWeWantLineNumberOf_OnlyWhenApplicable->ParentClass->ClassName)
+        if(className == m_SlotWeWantLineNumberOf_OnlyWhenApplicable->ParentClass->Name)
         {
             if(slotIndex == m_SlotWeWantLineNumberOf_OnlyWhenApplicable->ParentClass->mySlots().indexOf(m_SlotWeWantLineNumberOf_OnlyWhenApplicable))
             {

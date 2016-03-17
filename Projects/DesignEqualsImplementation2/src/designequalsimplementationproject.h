@@ -19,6 +19,7 @@ public:
 
     DesignEqualsImplementationClass *createNewClass(const QString &newClassName = QString(), const QPointF &classPositionInGraphicsScene = QPointF());
 
+    void addType(Type *type);
     QList<Type *> allKnownTypes() const;
     QList<QString> allKnownTypesNames() const;
     Type *getOrCreateTypeFromName(const QString &typeName);
@@ -58,7 +59,7 @@ public:
     {
         Q_FOREACH(DesignEqualsImplementationClass *currentClass, classes())
         {
-            if(currentClass->ClassName == className)
+            if(currentClass->Name == className)
             {
                 return currentClass;
             }

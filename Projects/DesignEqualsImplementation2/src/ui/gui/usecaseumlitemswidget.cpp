@@ -35,7 +35,7 @@ void UseCaseUmlItemsWidget::startDrag(Qt::DropActions supportedActions)
     {
         DesignEqualsImplementationClass *classBeingAddedToUseCase = qvariant_cast<DesignEqualsImplementationClass*>(item->data(Qt::UserRole+1));
         dataStream << reinterpret_cast<quintptr>(classBeingAddedToUseCase); //TODOreq: ugly (but works). I don't think implicit sharing would help here, but really the fucking class name would be sufficient (would require refactor in backend, BUT even there class name is fine for identification (C++ spec demands that ;-P)
-        mimeData->setText(classBeingAddedToUseCase->ClassName);
+        mimeData->setText(classBeingAddedToUseCase->Name);
     }
     else
     {
@@ -59,7 +59,7 @@ void UseCaseUmlItemsWidget::addActor()
 }
 void UseCaseUmlItemsWidget::addClass(DesignEqualsImplementationClass *designEqualsImplementationClass)
 {
-    QListWidgetItem *newClassListWidgetItem = new QListWidgetItem(designEqualsImplementationClass->ClassName, this);
+    QListWidgetItem *newClassListWidgetItem = new QListWidgetItem(designEqualsImplementationClass->Name, this);
     newClassListWidgetItem->setData(Qt::UserRole, QVariant(false));
     newClassListWidgetItem->setData(Qt::UserRole+1, QVariant::fromValue<DesignEqualsImplementationClass*>(designEqualsImplementationClass));
     //umlClass->setIcon(QIcon(pixmap));

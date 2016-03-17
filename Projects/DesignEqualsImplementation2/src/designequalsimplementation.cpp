@@ -58,7 +58,7 @@ void DesignEqualsImplementation::newProject()
 
     //Foo
     DesignEqualsImplementationClass *fooClass = new DesignEqualsImplementationClass(testProject);
-    fooClass->ClassName = "Foo";
+    fooClass->Name = "Foo";
     DesignEqualsImplementationClassSlot *fooSlot = new DesignEqualsImplementationClassSlot(fooClass);
     fooSlot->Name = "fooSlot";
     DesignEqualsImplementationClassMethodArgument *fooSlotCuntArgument = new DesignEqualsImplementationClassMethodArgument(fooSlot);
@@ -73,7 +73,7 @@ void DesignEqualsImplementation::newProject()
 
     //Bar
     DesignEqualsImplementationClass *barClass = new DesignEqualsImplementationClass(testProject);
-    barClass->ClassName = "Bar";
+    barClass->Name = "Bar";
     DesignEqualsImplementationClassSlot *barSlot = new DesignEqualsImplementationClassSlot(barClass);
     barSlot->Name = "barSlot";
     DesignEqualsImplementationClassMethodArgument *barSlotCuntArgument = new DesignEqualsImplementationClassMethodArgument(barSlot);
