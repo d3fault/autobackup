@@ -36,7 +36,6 @@ signals:
     void editCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass);
 public slots:
     void handleNonFunctionMemberAdded(NonFunctionMember *propertyAdded);
-    void handleHasAPrivateMemberClassAdded(HasA_Private_Classes_Member*);
     void handlePrivateMethodAdded(DesignEqualsImplementationClassPrivateMethod*);
     void handleSlotAdded(DesignEqualsImplementationClassSlot *slotAdded);
     void handleSignalAdded(DesignEqualsImplementationClassSignal*);

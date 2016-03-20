@@ -10,7 +10,6 @@
 #include "designequalsimplementationclassprivatemethod.h"
 #include "designequalsimplementationclassslot.h"
 #include "designequalsimplementationclasssignal.h"
-#include "hasa_private_classes_member.h"
 #include "designequalsimplementationclassmethodargument.h"
 
 #define DesignEqualsImplementationClass_FAILED_TO_GENERATE_SOURCE_PREFIX "failed to generate source for: "
@@ -82,7 +81,6 @@ private:
     friend class DesignEqualsImplementationProjectGenerator;
 signals:
     void nonFunctionMemberAdded(NonFunctionMember *nonFunctionMember);
-    void hasAPrivateMemberClassAdded(HasA_Private_Classes_Member*); //declare meta type?
     void privateMethodAdded(DesignEqualsImplementationClassPrivateMethod*);
     void slotAdded(DesignEqualsImplementationClassSlot*);
     void signalAdded(DesignEqualsImplementationClassSignal*);

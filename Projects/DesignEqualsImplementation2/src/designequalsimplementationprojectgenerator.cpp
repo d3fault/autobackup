@@ -534,6 +534,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
                             << endl;)
     //Source's header PrivateMemberClasses includes -- TODOreq: these includes, and the forward declares in the .h file, should be de-duped
     //TODOreq: if the NonFunctionMember is not a pointer, then the #include needs to go in the .h file (and should be de-duped ofc)
+    //TODOoptional: I could probably harness libclang to remove 'redundant' #includes. For example if I have #include a.h and #include b.h, but b.h includes a.h, then I don't really need to include a.h since b.h does it for me. There is recursion involved if I do it properly :-P. And of course it goes without saying (...) that if I later remove B (and by extension, #include b.h), new project generations should start #including a.h again
     Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentClass->nonFunctionMembers())
     {
         //#include "bar.h"

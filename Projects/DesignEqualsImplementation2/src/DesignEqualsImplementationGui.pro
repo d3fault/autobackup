@@ -54,7 +54,6 @@ SOURCES += ui/gui/main.cpp\
     ui/gui/classinstancechooserdialog.cpp \
     ui/gui/sourceslotsnappingindicationvisualrepresentation.cpp \
     ui/gui/destinationslotsnappingindicationvisualrepresentation.cpp \
-    hasa_private_classes_member.cpp \
     designequalsimplementationprojectgenerator.cpp \
     ui/gui/classeditordialog.cpp \
     ui/gui/methodsingleargumentwidget.cpp \
@@ -115,14 +114,12 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     ui/gui/designequalsimplementationactorgraphicsitemforusecasescene.h \
     designequalsimplementationactor.h \
     ui/gui/signalslotconnectionactivationarrowforgraphicsscene.h \
-    ihavetypeandvariablenameandpreferredtextualrepresentation.h \
     ui/gui/signalslotmessagedialog.h \
     ui/gui/snappingindicationvisualrepresentation.h \
     designequalsimplementationsignalslotinterface.h \
     ui/gui/classinstancechooserdialog.h \
     ui/gui/sourceslotsnappingindicationvisualrepresentation.h \
     ui/gui/destinationslotsnappingindicationvisualrepresentation.h \
-    hasa_private_classes_member.h \
     designequalsimplementationprojectgenerator.h \
     ui/gui/classeditordialog.h \
     ui/gui/methodsingleargumentwidget.h \

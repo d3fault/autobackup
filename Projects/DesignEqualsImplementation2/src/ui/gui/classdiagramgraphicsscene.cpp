@@ -64,7 +64,6 @@ void ClassDiagramGraphicsScene::handleClassAdded(DesignEqualsImplementationClass
     connect(classAdded, SIGNAL(nonFunctionMemberAdded(NonFunctionMember*)), designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene, SLOT(handleNonFunctionMemberAdded(NonFunctionMember*)));
     connect(classAdded, SIGNAL(signalAdded(DesignEqualsImplementationClassSignal*)), designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene, SLOT(handleSignalAdded(DesignEqualsImplementationClassSignal*)));
     connect(classAdded, SIGNAL(slotAdded(DesignEqualsImplementationClassSlot*)), designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene, SLOT(handleSlotAdded(DesignEqualsImplementationClassSlot*)));
-    connect(classAdded, SIGNAL(hasAPrivateMemberClassAdded(HasA_Private_Classes_Member*)), designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene, SLOT(handleHasAPrivateMemberClassAdded(HasA_Private_Classes_Member*)));
 
     //LISTS!?!?
 

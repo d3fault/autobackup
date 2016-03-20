@@ -2,7 +2,6 @@
 #define DESIGNEQUALSIMPLEMENTATIONCLASSPROPERTY_H
 
 #include "type.h"
-#include "ihavetypeandvariablenameandpreferredtextualrepresentation.h"
 
 class DesignEqualsImplementationClassProperty : public NonFunctionMember
 {

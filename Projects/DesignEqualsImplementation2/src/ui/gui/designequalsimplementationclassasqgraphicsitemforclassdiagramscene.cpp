@@ -276,10 +276,6 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleN
 
     updateClassContentsGraphicsTextItem(); //TODOoptimization: don't update EVERYTHING, just append the new property, ditto for slots/signals/etc
 }
-void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handleHasAPrivateMemberClassAdded(HasA_Private_Classes_Member *)
-{
-    //TODOreq: eh i think the 'second' is already going to be added to the class diagram, so although we do want to draw it, we don't connect to it's signals (or maybe we DO because that is reactor pattern at it's finest??)
-}
 void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::handlePrivateMethodAdded(DesignEqualsImplementationClassPrivateMethod *)
 {
     //hmm starting to think i should have just emitted the lists themselves, since i'm now thinking i am going to store them in lists also xD

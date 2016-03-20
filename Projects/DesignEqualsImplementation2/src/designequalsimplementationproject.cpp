@@ -59,6 +59,9 @@ Type *DesignEqualsImplementationProject::getOrCreateTypeFromName(const QString &
         if(currentType->Name == typeName) //TODOreq: I have no idea if typeName might have qualifiers or not. It shouldn't, but might? Qualifiers should only ever be in type INSTANCES
             return currentType;
     }
+    QString warningMessage("WARNING: getorCreateTypeFromName could not 'get' the type, so one was 'created' via 'noteDefinedElsewhereType'. This is probably a bug (but is failing gracefully). The type name is: " + typeName);
+    std::string warningMessageStd = warningMessage.toStdString();
+    qWarning(warningMessageStd.c_str()); //TODOreq: delete this method and 'proper' the Types database system! This method just saves me a bit of refactoring so whatever...
     return noteDefinedElsewhereType(typeName);
 }
 void DesignEqualsImplementationProject::addClass(DesignEqualsImplementationClass *newClass)

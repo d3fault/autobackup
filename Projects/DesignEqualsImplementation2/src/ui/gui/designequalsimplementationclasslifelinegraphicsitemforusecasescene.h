@@ -13,7 +13,6 @@ class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassLifeLine;
 class DesignEqualsImplementationClassSlot;
 class DesignEqualsImplementationSlotGraphicsItemForUseCaseScene;
-class HasA_Private_Classes_Member;
 
 class DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene : public QObject, public QGraphicsRectItem
 {

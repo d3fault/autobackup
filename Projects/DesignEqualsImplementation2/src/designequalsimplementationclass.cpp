@@ -8,16 +8,6 @@
 #include "designequalsimplementationsignalemissionstatement.h"
 #include "designequalsimplementationprojectgenerator.h" //only for a few string utils (/lazy)
 
-#define DesignEqualsImplementationClass_QDS(qds, direction, designEqualsImplementationClass) \
-qds direction designEqualsImplementationClass.ClassName; \
-qds direction designEqualsImplementationClass.Properties; \
-qds direction designEqualsImplementationClass.m_HasA_Private_Classes_Members; \
-qds direction designEqualsImplementationClass.PrivateMethods; \
-qds direction designEqualsImplementationClass.m_MySlots; \
-qds direction designEqualsImplementationClass.m_MySignals; \
-return qds;
-
-//TODOoptional: auto-pimpl, since pimpl is cheap/awesome (and gives us implicit sharing when done properly) and increases source/binary compatibility. MAYBE it should be opt-in, but probably opt-out instead?
 #if 0
 DesignEqualsImplementationClassInstance *DesignEqualsImplementationClass::createClassInstance(DesignEqualsImplementationClassInstance *parent, const QString &optionalVariableName) //top-level objects don't need a variable name if there's only one use case being generated in lib mode, for example
 {
@@ -35,10 +25,6 @@ DesignEqualsImplementationClass::DesignEqualsImplementationClass(QObject *parent
 { }
 DesignEqualsImplementationClass::~DesignEqualsImplementationClass()
 {
-    //Q_FOREACH(HasA_Private_Classes_Members_ListEntryType *currentMember, HasA_PrivateMemberClasses)
-    //{
-    //    delete currentMember->m_DesignEqualsImplementationClass;
-    //}
     qDeleteAll(PrivateMethods);
     qDeleteAll(m_MySlots);
     qDeleteAll(m_MySignals);
@@ -195,24 +181,3 @@ void DesignEqualsImplementationClass::emitAllClassDetails()
 {
     //TODOreq
 }
-#if 0
-QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClass &designEqualsImplementationClass)
-{
-    DesignEqualsImplementationClass_QDS(out, <<, designEqualsImplementationClass);
-}
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass &designEqualsImplementationClass)
-{
-    DesignEqualsImplementationClass_QDS(in, >>, designEqualsImplementationClass);
-}
-QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClass *designEqualsImplementationClass)
-{
-    out << *designEqualsImplementationClass;
-    return out;
-}
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClass *designEqualsImplementationClass)
-{
-    designEqualsImplementationClass = new DesignEqualsImplementationClass();
-    in >> *designEqualsImplementationClass;
-    return in;
-}
-#endif
