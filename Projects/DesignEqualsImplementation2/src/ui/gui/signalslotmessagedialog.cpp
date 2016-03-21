@@ -723,7 +723,7 @@ void SignalSlotMessageDialog::handleOkAndMakeChildOfSignalSenderActionTriggered(
     //the toolbutton to get here wouldn't be shown if source is actor or if there's no dest
     DesignEqualsImplementationClass *sourceClass = m_SourceSlot_OrZeroIfSourceIsActor->ParentClass;
     Type *newNonFunctionMemberType = m_DestinationSlot_OrZeroIfNoDest->ParentClass;
-    NonFunctionMember *newNonFunctionMember = sourceClass->createNewNonFunctionMember(newNonFunctionMemberType, newNonFunctionMemberType->Name + " *", "AUTONAMETODOreq", Visibility::Private, TypeInstanceOwnershipOfPointedToDataIfPointer::OwnsPointedToData);
+    NonFunctionMember *newNonFunctionMember = sourceClass->createNewNonFunctionMember(newNonFunctionMemberType, newNonFunctionMemberType->Name + " *", QString(), Visibility::Private, TypeInstanceOwnershipOfPointedToDataIfPointer::OwnsPointedToData);
     m_DestinationClassLifeline_OrZeroIfNoDest->setInstanceInOtherClassIfApplicable(newNonFunctionMember);
     //accept();
 }

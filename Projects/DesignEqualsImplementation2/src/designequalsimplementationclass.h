@@ -45,8 +45,6 @@ public:
 
     DesignEqualsImplementationClassProperty *createNewProperty(Type *propertyType, const QString &qualifiedTypeString, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange);
 
-    //HasA_Private_Classes_Member *createHasA_Private_Classes_Member(DesignEqualsImplementationClass *memberClassType, const QString &variableName_OrLeaveBlankForAutoNumberedVariableName = QString());
-
     QList<DesignEqualsImplementationClassProperty*> properties() const;
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
     QList<DesignEqualsImplementationClassSignal*> mySignals();
@@ -64,7 +62,6 @@ public:
     inline int serializationSlotIdForSlot(DesignEqualsImplementationClassSlot *theSlot) { return m_MySlots.indexOf(theSlot); } //TODOoptional: check return of indexOf, qFatal. also on similar methods throughout
     inline DesignEqualsImplementationClassSlot *slotInstantiationFromSerializedSlotId(int slotId) { return m_MySlots.at(slotId); }
 
-    QString autoNameForNewChildMemberOfType(DesignEqualsImplementationClass *childMemberClassType);
     QString nextTempUnnamedSlotName();
 
     inline bool slotWithThisNameExists(const QString &slotName)

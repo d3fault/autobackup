@@ -94,29 +94,6 @@ QList<DesignEqualsImplementationClassProperty*> DesignEqualsImplementationClass:
     }
     return ret;
 }
-#if 0
-HasA_Private_Classes_Member *DesignEqualsImplementationClass::createHasA_Private_Classes_Member(DesignEqualsImplementationClass *memberClassType, const QString &variableName_OrLeaveBlankForAutoNumberedVariableName)
-{
-    //TODOreq: ensure all callers haven't already done the "new"
-
-    //TODOinstancing: DesignEqualsImplementationClassInstance *newInstance = new DesignEqualsImplementationClassInstance(hasA_Private_Class_Member, this, variableName);
-    //m_HasA_Private_Classes_Members.append(newInstance);
-
-    QString chosenVariableName = variableName_OrLeaveBlankForAutoNumberedVariableName;
-    if(variableName_OrLeaveBlankForAutoNumberedVariableName.trimmed().isEmpty())
-    {
-        chosenVariableName = autoNameForNewChildMemberOfType(memberClassType);
-    }
-
-    HasA_Private_Classes_Member *newMember = new HasA_Private_Classes_Member(); //TODOoptional: all these properties should maybe be required as constructor args
-    newMember->m_MyClass = memberClassType;
-    newMember->VariableName = chosenVariableName;
-    newMember->setParentClass(this);
-    m_NonFunctionMembers.append(newMember); //TODOreq: re-ordering needs to resynchronize
-
-    return newMember;
-}
-#endif
 QList<DesignEqualsImplementationClassSignal *> DesignEqualsImplementationClass::mySignals()
 {
     return m_MySignals;
@@ -141,27 +118,6 @@ QList<QString> DesignEqualsImplementationClass::allMyAvailableMemberGettersWhenI
     return ret;
 }
 #endif
-QString DesignEqualsImplementationClass::autoNameForNewChildMemberOfType(DesignEqualsImplementationClass *childMemberClassType) //TODOreq: check for collission with properties and signals/slots too, which are all technically "members" so I may refactor to account for that fact
-{
-    int indexCurrentlyTestingForNameCollission = -1;
-    while(true)
-    {
-        QString maybeVariableName = "m_" + DesignEqualsImplementationProjectGenerator::firstCharacterToUpper(childMemberClassType->Name) + QString::number(++indexCurrentlyTestingForNameCollission); //m_Foo0, m_Foo1, etc. TODOoptional: random 5 letter word from dictionary chosen, append two numbers also, so they are easier to differentiate/remember when using auto mode (although i probably won't use it myself (unless i'm in a rush)). //TODooptional: should the first m_Foo have a zero on the end or no? I'd say yes keep the zero, just makes it simpler LATER
-        bool seenThisTime = false;
-        Q_FOREACH(NonFunctionMember *currentNonFunctionMember, nonFunctionMembers())
-        {
-            if(currentNonFunctionMember->VariableName == maybeVariableName)
-            {
-                seenThisTime = true;
-                break;
-            }
-        }
-        if(!seenThisTime)
-        {
-            return maybeVariableName;
-        }
-    }
-}
 QString DesignEqualsImplementationClass::nextTempUnnamedSlotName()
 {
     QString ret;

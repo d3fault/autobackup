@@ -17,6 +17,7 @@ QString DesignEqualsImplementationClassProperty::propertyName() const
 }
 void DesignEqualsImplementationClassProperty::setPropertyName(const QString &propertyName)
 {
+    //TODOmb: if they type 'm_X' for the propertyName, we could parse/interpret it to mean 'x'. this might be one way of solving the below TODOreq even
     m_PropertyName = propertyName;
-    VariableName = DesignEqualsImplementationProjectGenerator::memberNameForProperty(propertyName);
+    VariableName = DesignEqualsImplementationProjectGenerator::memberNameForProperty(propertyName); //TODOreq: what if some code does NonFunctionMember->VarialbeName = "blah";. virtuals? protected inheritence? qFatal? don't? detect/parse/strip (in a virtual) 'm_' and setFirstCharacterToLower then assign to propertyName (so they both update each other?) <-- but what if no m_ was specified huehuehue (simple. INSERT IT!)
 }
