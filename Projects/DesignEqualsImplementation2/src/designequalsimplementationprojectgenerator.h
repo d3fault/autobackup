@@ -46,28 +46,6 @@ public:
         QString ret = "m_" + firstCharacterToUpper(thePropertyName);
         return ret;
     }
-private:
-    DesignEqualsImplementationProject *m_DesignEqualsImplementationProject;
-    DesignEqualsImplementationProject::ProjectGenerationMode m_ProjectGenerationMode;
-    QString m_DestinationDirectoryPath;
-
-    bool m_GenerateCppEditModeDelimitingComments;
-    int *m_Out_LineNumberToJumpTo_OrZeroIfNotApplicable;
-    DesignEqualsImplementationClassSlot *m_SlotWeWantLineNumberOf_OnlyWhenApplicable;
-    int m_StatementIndexOfSlotToGetLineNumberOf_OnlyWhenApplicable;
-    QByteArray m_NewlinesCounterHackInMemoryCopyOfSourceFileByteArray;
-    QTextStream m_NewlinesCounterHackInMemoryCopyOfSourceFileTextStream;
-
-    QHash<DesignEqualsImplementationClass*, QList<QString> /* connect statments in the key class's initialization sequence */> m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements;
-
-    //designEqualsImplementationUseCase, rootClassLifeline, designEqualsImplementationUseCase->m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.second
-    bool recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSlotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, DesignEqualsImplementationClassLifeLine *classLifeline, DesignEqualsImplementationClassSlot *slotToWalk);
-    bool writeClassToDisk(DesignEqualsImplementationClass *currentClass);
-    void appendConnectStatementToClassInitializationSequence(DesignEqualsImplementationClass *classToGetConnectStatementInInitializationSequence, const QString &connectStatement);
-    void writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(QTextStream &sourceFileTextStream, const QString &className, int slotIndex, int statementInsertIndex);
-    int numNewlinesInSourceFileAtThisPoint();
-
-
     static inline QString firstCharacterToLower(const QString &inputString)
     {
         QString ret = inputString;
@@ -94,6 +72,26 @@ private:
         QString ret = firstCharacterToLower(thePropertyName) + "Changed";
         return ret;
     }
+private:
+    DesignEqualsImplementationProject *m_DesignEqualsImplementationProject;
+    DesignEqualsImplementationProject::ProjectGenerationMode m_ProjectGenerationMode;
+    QString m_DestinationDirectoryPath;
+
+    bool m_GenerateCppEditModeDelimitingComments;
+    int *m_Out_LineNumberToJumpTo_OrZeroIfNotApplicable;
+    DesignEqualsImplementationClassSlot *m_SlotWeWantLineNumberOf_OnlyWhenApplicable;
+    int m_StatementIndexOfSlotToGetLineNumberOf_OnlyWhenApplicable;
+    QByteArray m_NewlinesCounterHackInMemoryCopyOfSourceFileByteArray;
+    QTextStream m_NewlinesCounterHackInMemoryCopyOfSourceFileTextStream;
+
+    QHash<DesignEqualsImplementationClass*, QList<QString> /* connect statments in the key class's initialization sequence */> m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements;
+
+    //designEqualsImplementationUseCase, rootClassLifeline, designEqualsImplementationUseCase->m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.second
+    bool recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSlotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, DesignEqualsImplementationClassLifeLine *classLifeline, DesignEqualsImplementationClassSlot *slotToWalk);
+    bool writeClassToDisk(DesignEqualsImplementationClass *currentClass);
+    void appendConnectStatementToClassInitializationSequence(DesignEqualsImplementationClass *classToGetConnectStatementInInitializationSequence, const QString &connectStatement);
+    void writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(QTextStream &sourceFileTextStream, const QString &className, int slotIndex, int statementInsertIndex);
+    int numNewlinesInSourceFileAtThisPoint();
 signals:
     void e(const QString &msg);
 };

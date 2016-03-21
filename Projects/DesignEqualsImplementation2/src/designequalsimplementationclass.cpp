@@ -94,11 +94,11 @@ QList<DesignEqualsImplementationClassProperty*> DesignEqualsImplementationClass:
     }
     return ret;
 }
-QList<DesignEqualsImplementationClassSignal *> DesignEqualsImplementationClass::mySignals()
+QList<DesignEqualsImplementationClassSignal*> DesignEqualsImplementationClass::mySignals() const
 {
     return m_MySignals;
 }
-QList<DesignEqualsImplementationClassSlot*> DesignEqualsImplementationClass::mySlots()
+QList<DesignEqualsImplementationClassSlot*> DesignEqualsImplementationClass::mySlots() const
 {
     return m_MySlots;
 }

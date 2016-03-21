@@ -47,8 +47,8 @@ public:
 
     QList<DesignEqualsImplementationClassProperty*> properties() const;
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
-    QList<DesignEqualsImplementationClassSignal*> mySignals();
-    QList<DesignEqualsImplementationClassSlot*> mySlots();
+    QList<DesignEqualsImplementationClassSignal*> mySignals() const;
+    QList<DesignEqualsImplementationClassSlot*> mySlots() const;
 
     //QList<QString> allMyAvailableMemberGettersWhenInAnyOfMyOwnSlots_AsString();
 

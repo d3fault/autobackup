@@ -12,7 +12,7 @@ NonFunctionMember *Type::createNewNonFunctionMember(Type *typeOfNewNonFunctionMe
     QString chosenVariableName = nameOfNewNonFunctionMember_OrEmptyStringToAutoGenerateOne;
     if(chosenVariableName.trimmed().isEmpty())
     {
-        chosenVariableName = autoNameForNewChildMemberOfType(typeOfNewNonFunctionMember->Name);
+        chosenVariableName = autoNameForNewChildMemberOfType(typeOfNewNonFunctionMember);
     }
 
     NonFunctionMember *nonFunctionMember = new NonFunctionMember(typeOfNewNonFunctionMember, qualifiedTypeString, chosenVariableName, this, this, hasInit, optionalInit); //TODOmb: private constructor + friend class Type; , so only Type can new NonFunctionMember
@@ -24,7 +24,7 @@ NonFunctionMember *Type::createNewNonFunctionMember(Type *typeOfNewNonFunctionMe
 //TODOreq: anything/everything that is checked against IN this method, should also check against this method when setting it's corresponding 'name'. idk whether it should be in the GUI (unacceptable dialogs, etc) or in the business logic or both or what, but all I know is that collisions [can] happen both ways and right now I'm only checking for collisions when doing 'autoName' shit for NonFunctionMember creation -- it can be put off as low priority since the C++ compiler will catch it for me :)
 bool Type::memberWithNameExists(const QString &memberNameToCheckForCollisions) const
 {
-    //TO DOnemb: for improved readibility (sanity), perhaps I should do case insensitive matching (.toLower both sides)
+    //TO DOnemb: for improved readibility (sanity), perhaps I should do case insensitive matching (.toLower both sides). TODOmb: 'lookalike' characters (zero and oh, etc), but however in those fuzzy matches, it should only issue a warning and give user an opportunity to change [or accept as is]
     QString memberLower = memberNameToCheckForCollisions.toLower();
     Q_FOREACH(NonFunctionMember *currentNonFunctionMember, nonFunctionMembers())
     {
@@ -50,7 +50,7 @@ bool Type::memberWithNameExists(const QString &memberNameToCheckForCollisions) c
             }
         }
     }
-    if(DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(this))
+    if(const DesignEqualsImplementationClass *typeAsClass = qobject_cast<const DesignEqualsImplementationClass*>(this))
     {
         //signals/slots
         Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, typeAsClass->mySignals())
