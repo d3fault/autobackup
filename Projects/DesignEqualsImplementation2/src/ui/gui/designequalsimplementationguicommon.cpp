@@ -4,7 +4,7 @@
 
 #include "../../designequalsimplementationproject.h"
 
-bool DesignEqualsImplementationGuiCommon::parseNewFunctionDefinitioin_then_askWhatToDoWithNewFunctionArgTypes(QWidget *parentWidget, DesignEqualsImplementationProject *currentProject, const QString &functionDefinitionToParse, QString *out_parsedFunctionName, QList<MethodArgumentTypedef> *out_parsedFunctionArgs)
+bool DesignEqualsImplementationGuiCommon::parseNewFunctionDefinitioin_then_askWhatToDoWithNewFunctionArgTypes(QWidget *parentWidget, DesignEqualsImplementationProject *currentProject, const QString &functionDefinitionToParse, QString *out_parsedFunctionName, QList<FunctionArgumentTypedef> *out_parsedFunctionArgs)
 {
     DesignEqualsImplementationLenientSignalOrSlotSignaturerParser functionSignatureParser(functionDefinitionToParse, currentProject->allKnownTypesNames());
     if(functionSignatureParser.hasError())
@@ -28,7 +28,7 @@ bool DesignEqualsImplementationGuiCommon::parseNewFunctionDefinitioin_then_askWh
 bool DesignEqualsImplementationGuiCommon::parseNewSignalDefinition_then_askWhatToDoWithNewSignalArgTypes_then_createNewSignal(QWidget *parentWidget, DesignEqualsImplementationClass *classToAddTheSignalTo, const QString &signalDefinitionToParse)
 {
     QString parsedSignalName;
-    QList<MethodArgumentTypedef> parsedSignalArguments;
+    QList<FunctionArgumentTypedef> parsedSignalArguments;
     if(!parseNewFunctionDefinitioin_then_askWhatToDoWithNewFunctionArgTypes(parentWidget, classToAddTheSignalTo->m_ParentProject, signalDefinitionToParse, &parsedSignalName, &parsedSignalArguments))
         return false;
 
@@ -39,7 +39,7 @@ bool DesignEqualsImplementationGuiCommon::parseNewSignalDefinition_then_askWhatT
 bool DesignEqualsImplementationGuiCommon::parseNewSlotDefinition_then_askWhatToDoWithNewSlotArgTypes_then_createNewSlot(QWidget *parentWidget, DesignEqualsImplementationClass *classToAddTheSlotTo, const QString &slotDefinitionToParse)
 {
     QString parsedSlotName;
-    QList<MethodArgumentTypedef> parsedSlotArguments;
+    QList<FunctionArgumentTypedef> parsedSlotArguments;
     if(!parseNewFunctionDefinitioin_then_askWhatToDoWithNewFunctionArgTypes(parentWidget, classToAddTheSlotTo->m_ParentProject, slotDefinitionToParse, &parsedSlotName, &parsedSlotArguments))
         return false;
 

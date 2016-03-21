@@ -7,8 +7,7 @@
 
 #include "type.h"
 #include "designequalsimplementationclassmethodargument.h"
-
-typedef QPair<QString /*type*/, QString /*name*/> MethodArgumentTypedef; //derp defined like twenty different places...
+#include "libclangfunctiondeclarationparser.h"
 
 class DesignEqualsImplementationClass;
 
@@ -21,12 +20,12 @@ public:
         , MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames
     };
 
-    DesignEqualsImplementationClassMethodArgument *createNewArgument(Type *argumentType, const QString &argumentVariableName);
+    DesignEqualsImplementationClassMethodArgument *createNewArgument(Type *argumentType, const QString &qualifiedArgumentTypeString, const QString &argumentVariableName);
 
     //TODOoptional: private + getter/setter blah
     QString Name;
     QList<DesignEqualsImplementationClassMethodArgument*> arguments() const;
-    QList<MethodArgumentTypedef> argumentsAsMethodArgumentTypedefList() const;
+    QList<FunctionArgumentTypedef> argumentsAsFunctionArgumentTypedefList() const;
     DesignEqualsImplementationClass *ParentClass;
 
     QString methodSignatureWithoutReturnType(MethodSignatureFlagsEnum methodSignatureFlagsEnum = MethodSignatureForVisualAppearanceContainsArgumentVariableNames);

@@ -8,7 +8,8 @@ class DesignEqualsImplementationLenientPropertyDeclarationParser
 {
 public:
     explicit DesignEqualsImplementationLenientPropertyDeclarationParser(const QString &propertyDeclaration, const QList<QString> &knownTypesToTypedefPrepend = QList<QString>());
-    QString parsedPropertyType() const;
+    QString parsedPropertyQualifiedType() const;
+    QString parsedPropertyUnqualifiedType() const;
     QString parsedPropertyName() const;
     bool hasInit() const;
     QString optionalInit() const;
@@ -22,7 +23,8 @@ private:
     friend class DesignEqualsImplementationLenientPropertyDeclarationParserRecursiveAstVisitor;
     friend class DesignEqualsImplementationLenientPropertyDeclarationParserDiagnosticConsumer;
 
-    QString m_ParsedPropertyType;
+    QString m_ParsedPropertyQualifiedType;
+    QString m_ParsedPropertyUnqualifiedType;
     QString m_ParsedPropertyName;
     bool m_HasInit;
     QString m_OptionalInit;

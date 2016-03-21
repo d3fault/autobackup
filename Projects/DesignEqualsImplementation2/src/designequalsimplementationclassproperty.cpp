@@ -12,8 +12,8 @@ DesignEqualsImplementationClassProperty::DesignEqualsImplementationClassProperty
     , NotifiesOnChange(false)
 { }
 #endif
-DesignEqualsImplementationClassProperty::DesignEqualsImplementationClassProperty(Type *propertyType, const QString &propertyName, Type *parentClassThatIamPropertyOf, QObject *parent, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange)
-    : NonFunctionMember(propertyType, DesignEqualsImplementationProjectGenerator::memberNameForProperty(propertyName), parentClassThatIamPropertyOf, parent, hasInit, optionalInit) //hack using generator like this.... but then again this entire fucking app is a hack. so ugly. I can't wait to redesign it in itself
+DesignEqualsImplementationClassProperty::DesignEqualsImplementationClassProperty(Type *propertyType, const QString &qualifiedTypeString, const QString &propertyName, Type *parentClassThatIamPropertyOf, QObject *parent, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange)
+    : NonFunctionMember(propertyType, qualifiedTypeString, DesignEqualsImplementationProjectGenerator::memberNameForProperty(propertyName), parentClassThatIamPropertyOf, parent, hasInit, optionalInit) //hack using generator like this.... but then again this entire fucking app is a hack. so ugly. I can't wait to redesign it in itself
     //, PropertyType(propertyType)
     , PropertyName(propertyName)
     , ReadOnly(readOnly)

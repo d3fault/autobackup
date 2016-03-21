@@ -1,6 +1,6 @@
 #include "designequalsimplementationlenientpropertydeclarationparser.h"
 
-//this file is copy/paste hackjob from DesignEqualsImplementationLenientSignalOrSlotSignaturerParser. i could probably merge the common functionality into a common base etc, but fuck that shit
+//this file is copy/paste hackjob from DesignEqualsImplementationLenientSignalOrSlotSignaturerParser (which itself was  copied (merge pending) into FunctionDeclarationParser). i could probably merge the common functionality into a common base etc, but fuck that shit
 
 #include "libclangpch.h"
 using namespace clang;
@@ -12,11 +12,19 @@ public:
         : m_Context(context)
         , m_DesignEqualsImplementationPropertyDeclarationParser(designEqualsImplementationPropertyDeclarationParser)
     { }
+    QualType recursivelyDereferenceToUltimatePointeeTypeAndDiscardQualifiersAndReferenceAmpersand(QualType qualifiedType) //TODOreq: put somewhere more... common... TODOoptional: ask on clang website what proper way to do this is. there might be 'qualifiers' I'm forgetting to strip off
+    {
+        while(qualifiedType->isPointerType())
+            qualifiedType = qualifiedType->getPointeeType();
+        return qualifiedType.getUnqualifiedType().getNonReferenceType();
+    }
     bool VisitVarDecl(VarDecl *varDecl)
     {
         ++m_DesignEqualsImplementationPropertyDeclarationParser->m_NumEncounteredPropertyDeclarations;
-        m_DesignEqualsImplementationPropertyDeclarationParser->m_ParsedPropertyType = QString::fromStdString(varDecl->getType().getAsString());
+        QualType propertyType = varDecl->getType();
+        m_DesignEqualsImplementationPropertyDeclarationParser->m_ParsedPropertyQualifiedType = QString::fromStdString(propertyType.getAsString());
         m_DesignEqualsImplementationPropertyDeclarationParser->m_ParsedPropertyName = QString::fromStdString(varDecl->getNameAsString());
+        m_DesignEqualsImplementationPropertyDeclarationParser->m_ParsedPropertyUnqualifiedType = QString::fromStdString(recursivelyDereferenceToUltimatePointeeTypeAndDiscardQualifiersAndReferenceAmpersand(propertyType).getAsString());
         if(varDecl->hasInit())
         {
             const Expr *varInit = varDecl->getInit();
@@ -135,10 +143,13 @@ DesignEqualsImplementationLenientPropertyDeclarationParser::DesignEqualsImplemen
         return;
     }
 }
-//with all qualifiers/asterisks/ampersands still attached, the type string
-QString DesignEqualsImplementationLenientPropertyDeclarationParser::parsedPropertyType() const
+QString DesignEqualsImplementationLenientPropertyDeclarationParser::parsedPropertyQualifiedType() const
 {
-    return m_ParsedPropertyType;
+    return m_ParsedPropertyQualifiedType;
+}
+QString DesignEqualsImplementationLenientPropertyDeclarationParser::parsedPropertyUnqualifiedType() const
+{
+    return m_ParsedPropertyUnqualifiedType;
 }
 bool DesignEqualsImplementationLenientPropertyDeclarationParser::hasError() const
 {

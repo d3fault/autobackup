@@ -12,6 +12,12 @@ public:
         : m_Context(context)
         , m_DesignEqualsImplementationFunctionDefinitionParser(designEqualsImplementationFunctionDefinitionParser)
     { }
+    QualType recursivelyDereferenceToUltimatePointeeTypeAndDiscardQualifiersAndReferenceAmpersand(QualType qualifiedType)
+    {
+        while(qualifiedType->isPointerType())
+            qualifiedType = qualifiedType->getPointeeType();
+        return qualifiedType.getUnqualifiedType().getNonReferenceType();
+    }
     bool VisitFunctionDecl(FunctionDecl *functionDecl)
     {
         ++m_DesignEqualsImplementationFunctionDefinitionParser->m_NumEncounteredFunctionDeclarations;
@@ -22,7 +28,11 @@ public:
         {
             const ParmVarDecl *currentParam = functionDecl->getParamDecl(i);
             QualType currentParamQualType = currentParam->getType(); //tempted to hang onto the QualType itself, but idfk how to deserialize/load back into one later on :(
-            m_DesignEqualsImplementationFunctionDefinitionParser->m_ParsedFunctionArguments.append(qMakePair(QString::fromStdString(currentParamQualType.getAsString()), QString::fromStdString(currentParam->getNameAsString())));
+            FunctionArgumentTypedef methodArgument;
+            methodArgument.QualifiedType = QString::fromStdString(currentParamQualType.getAsString());
+            methodArgument.NonQualifiedType = QString::fromStdString(recursivelyDereferenceToUltimatePointeeTypeAndDiscardQualifiersAndReferenceAmpersand(currentParamQualType).getAsString());
+            methodArgument.Name = QString::fromStdString(currentParam->getNameAsString());
+            m_DesignEqualsImplementationFunctionDefinitionParser->m_ParsedFunctionArguments.append(methodArgument);
         }
         return true;
     }
@@ -166,7 +176,7 @@ QList<QString> DesignEqualsImplementationLenientSignalOrSlotSignaturerParser::ne
 {
     return m_NewTypesSeenInFunctionDeclaration;
 }
-QList<MethodArgumentTypedef> DesignEqualsImplementationLenientSignalOrSlotSignaturerParser::parsedFunctionArguments() const
+QList<FunctionArgumentTypedef> DesignEqualsImplementationLenientSignalOrSlotSignaturerParser::parsedFunctionArguments() const
 {
     return m_ParsedFunctionArguments;
 }

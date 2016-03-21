@@ -22,7 +22,7 @@ public:
     void addType(Type *type);
     QList<Type *> allKnownTypes() const;
     QList<QString> allKnownTypesNames() const;
-    Type *getOrCreateTypeFromName(const QString &typeName);
+    Type *getOrCreateTypeFromName(const QString &nonQualifiedTypeName);
 
     //TODOoptional: private + getter/setter blah
     QString Name;

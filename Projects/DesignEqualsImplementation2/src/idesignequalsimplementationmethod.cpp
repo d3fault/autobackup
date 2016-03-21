@@ -1,8 +1,8 @@
 #include "idesignequalsimplementationmethod.h"
 
-DesignEqualsImplementationClassMethodArgument *IDesignEqualsImplementationMethod::createNewArgument(Type *argumentType, const QString &argumentVariableName)
+DesignEqualsImplementationClassMethodArgument *IDesignEqualsImplementationMethod::createNewArgument(Type *argumentType, const QString &qualifiedArgumentTypeString, const QString &argumentVariableName)
 {
-    DesignEqualsImplementationClassMethodArgument *newArgument = new DesignEqualsImplementationClassMethodArgument(argumentType, argumentVariableName, this->asQObject()); //TODOreq: can't set parent because i'm not a qobject even though all inheriters are
+    DesignEqualsImplementationClassMethodArgument *newArgument = new DesignEqualsImplementationClassMethodArgument(argumentType, qualifiedArgumentTypeString, argumentVariableName, this->asQObject()); //TODOreq: can't set parent because i'm not a qobject even though all inheriters are
     m_Arguments.append(newArgument);
     return newArgument;
 }
@@ -10,14 +10,15 @@ QList<DesignEqualsImplementationClassMethodArgument *> IDesignEqualsImplementati
 {
     return m_Arguments;
 }
-QList<MethodArgumentTypedef> IDesignEqualsImplementationMethod::argumentsAsMethodArgumentTypedefList() const
+QList<FunctionArgumentTypedef> IDesignEqualsImplementationMethod::argumentsAsFunctionArgumentTypedefList() const
 {
-    QList<MethodArgumentTypedef> ret;
+    QList<FunctionArgumentTypedef> ret;
     Q_FOREACH(DesignEqualsImplementationClassMethodArgument* currentArgument, m_Arguments)
     {
-        MethodArgumentTypedef entry;
-        entry.first = currentArgument->type->Name;
-        entry.second = currentArgument->VariableName;
+        FunctionArgumentTypedef entry;
+        entry.NonQualifiedType = currentArgument->type->Name;
+        entry.QualifiedType = currentArgument->qualifiedType();
+        entry.Name = currentArgument->VariableName;
         ret.append(entry);
     }
     return ret;

@@ -29,13 +29,13 @@ DesignEqualsImplementationClass::~DesignEqualsImplementationClass()
     qDeleteAll(m_MySlots);
     qDeleteAll(m_MySignals);
 }
-DesignEqualsImplementationClassSignal *DesignEqualsImplementationClass::createNewSignal(const QString &newSignalName, const QList<MethodArgumentTypedef> &newSignalArgs)
+DesignEqualsImplementationClassSignal *DesignEqualsImplementationClass::createNewSignal(const QString &newSignalName, const QList<FunctionArgumentTypedef> &newSignalArgs)
 {
     DesignEqualsImplementationClassSignal *newSignal = new DesignEqualsImplementationClassSignal(this);
     newSignal->Name = newSignalName;
-    Q_FOREACH(const MethodArgumentTypedef &newSignalArg, newSignalArgs)
+    Q_FOREACH(const FunctionArgumentTypedef &newSignalArg, newSignalArgs)
     {
-        newSignal->createNewArgument(m_ParentProject->getOrCreateTypeFromName(newSignalArg.first), newSignalArg.second);
+        newSignal->createNewArgument(m_ParentProject->getOrCreateTypeFromName(newSignalArg.NonQualifiedType), newSignalArg.QualifiedType, newSignalArg.Name);
     }
     addSignal(newSignal);
     return newSignal;
@@ -46,13 +46,13 @@ void DesignEqualsImplementationClass::addSignal(DesignEqualsImplementationClassS
     m_MySignals.append(signalToAdd);
     emit signalAdded(signalToAdd);
 }
-DesignEqualsImplementationClassSlot *DesignEqualsImplementationClass::createwNewSlot(const QString &newSlotName, const QList<MethodArgumentTypedef> &newSlotArgs)
+DesignEqualsImplementationClassSlot *DesignEqualsImplementationClass::createwNewSlot(const QString &newSlotName, const QList<FunctionArgumentTypedef> &newSlotArgs)
 {
     DesignEqualsImplementationClassSlot *newSlot = new DesignEqualsImplementationClassSlot(this);
     newSlot->Name = newSlotName;
-    Q_FOREACH(const MethodArgumentTypedef &newSlotArg, newSlotArgs)
+    Q_FOREACH(const FunctionArgumentTypedef &newSlotArg, newSlotArgs)
     {
-        newSlot->createNewArgument(m_ParentProject->getOrCreateTypeFromName(newSlotArg.first), newSlotArg.second);
+        newSlot->createNewArgument(m_ParentProject->getOrCreateTypeFromName(newSlotArg.NonQualifiedType), newSlotArg.QualifiedType, newSlotArg.Name);
     }
     addSlot(newSlot);
     return newSlot;
@@ -75,9 +75,9 @@ void DesignEqualsImplementationClass::addNonFunctionMember(NonFunctionMember *no
     //DesignEqualsImplementationClass accepts any kind of NonFunctionMember
     addNonFunctionMemberPrivate(nonFunctionMember);
 }
-DesignEqualsImplementationClassProperty *DesignEqualsImplementationClass::createNewProperty(Type *propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange)
+DesignEqualsImplementationClassProperty *DesignEqualsImplementationClass::createNewProperty(Type *propertyType, const QString &qualifiedTypeString, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange)
 {
-    DesignEqualsImplementationClassProperty *newProperty = new DesignEqualsImplementationClassProperty(propertyType, propertyName, this, this, hasInit, optionalInit, readOnly, notifiesOnChange);
+    DesignEqualsImplementationClassProperty *newProperty = new DesignEqualsImplementationClassProperty(propertyType, qualifiedTypeString, propertyName, this, this, hasInit, optionalInit, readOnly, notifiesOnChange);
     addNonFunctionMember(newProperty);
     return newProperty;
 }

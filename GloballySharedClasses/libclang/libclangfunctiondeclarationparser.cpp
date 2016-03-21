@@ -10,6 +10,12 @@ public:
         : m_Context(context)
         , m_LibClangFunctionDeclarationParser(libClangFunctionDeclarationParser)
     { }
+    QualType recursivelyDereferenceToUltimatePointeeTypeAndDiscardQualifiersAndReferenceAmpersand(QualType qualifiedType) //TODOoptional: ask on clang website what proper way to do this is. there might be 'qualifiers' I'm forgetting to strip off
+    {
+        while(qualifiedType->isPointerType())
+            qualifiedType = qualifiedType->getPointeeType();
+        return qualifiedType.getUnqualifiedType().getNonReferenceType();
+    }
     bool VisitFunctionDecl(FunctionDecl *functionDecl)
     {
         ++m_LibClangFunctionDeclarationParser->m_NumEncounteredFunctionDeclarations;
@@ -20,7 +26,11 @@ public:
         {
             const ParmVarDecl *currentParam = functionDecl->getParamDecl(i);
             QualType currentParamQualType = currentParam->getType(); //tempted to hang onto the QualType itself, but idfk how to deserialize/load back into one later on :(
-            m_LibClangFunctionDeclarationParser->m_ParsedFunctionArguments.append(qMakePair(QString::fromStdString(currentParamQualType.getAsString()), QString::fromStdString(currentParam->getNameAsString())));
+            FunctionArgumentTypedef functionArgument;
+            functionArgument.QualifiedType = QString::fromStdString(currentParamQualType.getAsString());
+            functionArgument.NonQualifiedType = QString::fromStdString(recursivelyDereferenceToUltimatePointeeTypeAndDiscardQualifiersAndReferenceAmpersand(currentParamQualType).getAsString());
+            functionArgument.Name = QString::fromStdString(currentParam->getNameAsString());
+            m_LibClangFunctionDeclarationParser->m_ParsedFunctionArguments.append(functionArgument);
         }
         return true;
     }

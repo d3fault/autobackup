@@ -17,7 +17,9 @@ qds << numArgs; \
 for(int i = 0; i < numArgs; ++i) \
 { \
     DesignEqualsImplementationClassMethodArgument *currentArgument = method->arguments().at(i); \
+    qds << currentArgument->Qualifiers_LHS; \
     qds << project->serializationTypeIdForType(currentArgument->type); \
+    qds << currentArgument->Qualifiers_RHS; \
     qds << currentArgument->VariableName; \
 }
 
@@ -26,12 +28,17 @@ int numArgs; \
 qds >> numArgs; \
 for(int i = 0; i < numArgs; ++i) \
 { \
+    QString qualifiersLhs; \
+    qds >> qualifiersLhs; \
     int argTypeId; \
     qds >> argTypeId; \
     Type *argType = project->typeFromSerializedTypeId(argTypeId); \
+    QString qualifiersRhs; \
+    qds >> qualifiersRhs; \
     QString argName; \
     qds >> argName; \
-    method->createNewArgument(argType, argName); \
+    QString qualifiedArgType(qualifiersLhs + argType->Name + qualifiersRhs); \
+    method->createNewArgument(argType, qualifiedArgType, argName); \
 }
 
 //not to be confused with project generation, this is saving/opening projects
@@ -114,7 +121,9 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
         Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentType->nonFunctionMembers())
         {
             //Project Class NonFunctionMembers
+            projectDataStream << currentNonFunctionMember->Qualifiers_LHS;
             projectDataStream << projectToSerialize->serializationTypeIdForType(currentNonFunctionMember->type);
+            projectDataStream << currentNonFunctionMember->Qualifiers_RHS;
             projectDataStream << currentNonFunctionMember->VariableName;
             //projectDataStream << projectToSerialize->serializationTypeIdForType(currentNonFunctionMember->parentClass());
             projectDataStream << currentNonFunctionMember->HasInit;
@@ -335,8 +344,12 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
         projectDataStream >> numNonFunctionMembers;
         for(int j = 0; j < numNonFunctionMembers; ++j)
         {
+            QString qualifiersLhs;
+            projectDataStream >> qualifiersLhs;
             int nonFunctionMemberTypeId;
             projectDataStream >> nonFunctionMemberTypeId;
+            QString qualifiersRhs;
+            projectDataStream >> qualifiersRhs;
             QString nonFunctionMemberVariableName;
             projectDataStream >> nonFunctionMemberVariableName;
             //int nonFunctionMemberParentId;
@@ -350,6 +363,9 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             quint8 ownershipOfPointedToDataIfpointer;
             projectDataStream >> ownershipOfPointedToDataIfpointer;
 
+            Type *nonFunctionMemberType = projectToPopulate->typeFromSerializedTypeId(nonFunctionMemberTypeId);
+            QString qualifiedTypeString = qualifiersLhs + nonFunctionMemberType->Name + qualifiersRhs; //TODOoptional: a slightly more proper way would be to have a NonMemberFunction constructor overload that takes the LHS/RHS as separate args, rather than just one constructor that parses a qualifiedTypeString. fuck it for now
+
             if(DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(currentType))
             {
                 //only "Class"es can have Q_PROPERTY
@@ -362,13 +378,13 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
                     bool notifiesOnChange;
                     projectDataStream >> notifiesOnChange;
 
-                    typeAsClass->createNewProperty(projectToPopulate->typeFromSerializedTypeId(nonFunctionMemberTypeId), nonFunctionMemberVariableName, hasInit, optionalInit, readOnly, notifiesOnChange);
+                    typeAsClass->createNewProperty(nonFunctionMemberType, qualifiedTypeString, nonFunctionMemberVariableName, hasInit, optionalInit, readOnly, notifiesOnChange);
                     continue;
                 }
             }
 
             //not a "Class" nor a Q_PROPERTY
-            currentType->createNewNonFunctionMember(projectToPopulate->typeFromSerializedTypeId(nonFunctionMemberTypeId), nonFunctionMemberVariableName, static_cast<Visibility::VisibilityEnum>(visibility), static_cast<TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum>(ownershipOfPointedToDataIfpointer), hasInit, optionalInit);
+            currentType->createNewNonFunctionMember(nonFunctionMemberType, qualifiedTypeString, nonFunctionMemberVariableName, static_cast<Visibility::VisibilityEnum>(visibility), static_cast<TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum>(ownershipOfPointedToDataIfpointer), hasInit, optionalInit);
         }
     }
 

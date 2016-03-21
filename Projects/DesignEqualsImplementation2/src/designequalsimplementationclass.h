@@ -31,10 +31,10 @@ public:
     bool generateSourceCode(const QString &destinationDirectoryPath);
     virtual ~DesignEqualsImplementationClass();
 
-    DesignEqualsImplementationClassSignal *createNewSignal(const QString &newSignalName = QString(), const QList<MethodArgumentTypedef> &newSignalArgs = QList<MethodArgumentTypedef>());
+    DesignEqualsImplementationClassSignal *createNewSignal(const QString &newSignalName = QString(), const QList<FunctionArgumentTypedef> &newSignalArgs = QList<FunctionArgumentTypedef>());
     void addSignal(DesignEqualsImplementationClassSignal *signalToAdd);
 
-    DesignEqualsImplementationClassSlot *createwNewSlot(const QString &newSlotName = QString(), const QList<MethodArgumentTypedef> &newSlotArgs = QList<MethodArgumentTypedef>());
+    DesignEqualsImplementationClassSlot *createwNewSlot(const QString &newSlotName = QString(), const QList<FunctionArgumentTypedef> &newSlotArgs = QList<FunctionArgumentTypedef>());
     void addSlot(DesignEqualsImplementationClassSlot *slotToAdd);
     void removeSlot(DesignEqualsImplementationClassSlot *slotToRemove);
 
@@ -43,7 +43,7 @@ public:
 
     void addNonFunctionMember(NonFunctionMember *nonFunctionMember);
 
-    DesignEqualsImplementationClassProperty *createNewProperty(Type *propertyType, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange);
+    DesignEqualsImplementationClassProperty *createNewProperty(Type *propertyType, const QString &qualifiedTypeString, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange);
 
     //HasA_Private_Classes_Member *createHasA_Private_Classes_Member(DesignEqualsImplementationClass *memberClassType, const QString &variableName_OrLeaveBlankForAutoNumberedVariableName = QString());
 

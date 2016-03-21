@@ -40,7 +40,7 @@ private:
 
 struct FunctionDecomposerDiagnosticConsumer : clang::DiagnosticConsumer
 {
-    llvm::OwningPtr<DiagnosticConsumer> m_Proxy;
+    std::unique_ptr<DiagnosticConsumer> m_Proxy;
     FunctionDecomposerDiagnosticConsumer(DiagnosticConsumer *previous, FunctionDecomposerWithNewTypeDetector *functionDecomposerWithNewTypeDetector)
         : m_Proxy(previous)
         , m_FunctionDecomposerWithNewTypeDetector(functionDecomposerWithNewTypeDetector)

@@ -12,7 +12,7 @@ public:
     explicit DesignEqualsImplementationLenientSignalOrSlotSignaturerParser(const QString &functionDeclaration, const QList<QString> &knownTypesToTypedefPrepend = QList<QString>());
     QString parsedFunctionName() const;
     QList<QString> newTypesSeenInFunctionDeclaration() const;
-    QList<MethodArgumentTypedef> parsedFunctionArguments() const;
+    QList<FunctionArgumentTypedef> parsedFunctionArguments() const;
 
     int m_NumEncounteredFunctionDeclarations;
 
@@ -25,7 +25,7 @@ private:
     QString m_ParsedFunctionName;
     QList<QString> m_UnknownTypesDetectedInLastRunToolOnCodeIteration;
     QList<QString> m_NewTypesSeenInFunctionDeclaration;
-    QList<MethodArgumentTypedef> m_ParsedFunctionArguments;
+    QList<FunctionArgumentTypedef> m_ParsedFunctionArguments;
 
     bool m_HasError;
     QString m_MostRecentError; //could use queue/list/whatever, fuck it

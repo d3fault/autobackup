@@ -352,7 +352,7 @@ void ClassEditorDialog::handleQuickAddNewPropertyButtonClicked()
     }
 
     //now create the new property itself
-    m_ClassBeingEditted->createNewProperty(m_CurrentProject->getOrCreateTypeFromName(propertyDeclarationParser.parsedPropertyType()), propertyDeclarationParser.parsedPropertyName(), propertyDeclarationParser.hasInit(), propertyDeclarationParser.optionalInit(), false, true); //TODOoptional: toolbutton for read-only or non-notifying etc etc
+    m_ClassBeingEditted->createNewProperty(m_CurrentProject->getOrCreateTypeFromName(propertyDeclarationParser.parsedPropertyUnqualifiedType()), propertyDeclarationParser.parsedPropertyQualifiedType(), propertyDeclarationParser.parsedPropertyName(), propertyDeclarationParser.hasInit(), propertyDeclarationParser.optionalInit(), false, true); //TODOoptional: toolbutton for read-only or non-notifying etc etc
 
     m_QuickMemberAddLineEdit->clear();
     m_QuickMemberAddLineEdit->setFocus();
@@ -382,7 +382,7 @@ void ClassEditorDialog::handleAddPropertyButtonClicked()
     if(addPropertyFieldsAreSane())
     {
         //signal, slot invoke, or direct method call? blah, semantecs at this point...
-        m_ClassBeingEditted->createNewProperty(m_CurrentProject->getOrCreateTypeFromName(m_AddPropertyTypeLineEdit->text().trimmed()), m_AddPropertyNameLineEdit->text().trimmed(), false, "", m_AddPropertyReadOnlyCheckbox->isChecked(), m_AddPropertyNotifiesOnChangeCheckbox->isChecked()); //TODOoptional: init checkbox and init line edit (checkbox because they might want to init to empty string). the init line edit could be disabled when checkbox is unchecked
+        m_ClassBeingEditted->createNewProperty(m_CurrentProject->getOrCreateTypeFromName(m_AddPropertyTypeLineEdit->text().trimmed()), m_AddPropertyTypeLineEdit->text().trimmed(), m_AddPropertyNameLineEdit->text().trimmed(), false, "", m_AddPropertyReadOnlyCheckbox->isChecked(), m_AddPropertyNotifiesOnChangeCheckbox->isChecked()); //TODOoptional: init checkbox and init line edit (checkbox because they might want to init to empty string). the init line edit could be disabled when checkbox is unchecked
         m_AddPropertyTypeLineEdit->clear();
         m_AddPropertyNameLineEdit->clear();
     }
@@ -413,7 +413,7 @@ void ClassEditorDialog::handleAddSlotButtonClicked()
 
     if(addSlotFieldsAreSane())
     {
-        QList<MethodArgumentTypedef> slotArguments;
+        QList<FunctionArgumentTypedef> slotArguments;
         int argCount = m_AddSlotArgumentsVLayout->count();
         for(int i = 0; i < argCount; ++i)
         {
@@ -422,7 +422,8 @@ void ClassEditorDialog::handleAddSlotButtonClicked()
             const QString &argumentName = currentArgumentWidget->argumentName();
             if(argumentType.isEmpty() || argumentName.isEmpty())
                 continue; //return? would there be more if an empty row is encountered? guess it depends on user. continue is best i guess
-            slotArguments.append(qMakePair(argumentType, argumentName));
+            FunctionArgumentTypedef slotArgument; //TODOreq: delete these non-clang member adder tabs, since I RELY on libclang to get the unqualified type out of the qualified type
+            slotArguments.append(slotArgument);
             //methodToAddArgumentsTo->createNewArgument(argumentType, argumentName);
         }
 

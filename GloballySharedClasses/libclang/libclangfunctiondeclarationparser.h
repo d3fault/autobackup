@@ -5,8 +5,12 @@
 #include <QList>
 #include <QPair>
 
-typedef QPair<QString /*arg type*/, QString /*arg name*/> FunctionArgumentTypedef;
-
+struct FunctionArgumentTypedef
+{
+    QString NonQualifiedType;
+    QString QualifiedType;
+    QString Name;
+};
 class LibClangFunctionDeclarationParser
 {
 public:

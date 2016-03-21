@@ -81,13 +81,13 @@ private slots:
     //void handleSignalsComboBoxResultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType);
     //void handleSignalsComboBoxSyntaxIsValidChanged(bool syntaxIsValid);
     //void handleParsedSignalNameChanged(const QString &parsedSignalName);
-    //void handleParsedSignalArgumentsChanged(QList<MethodArgumentTypedef> parsedSignalArguments);
+    //void handleParsedSignalArgumentsChanged(QList<FunctionArgumentTypedef> parsedSignalArguments);
     void handleSelectedSignalChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType);
 
     //void handleSlotsComboBoxResultTypeChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType);
     //void handleSlotsComboBoxSyntaxIsValidChanged(bool syntaxIsValid);
     //void handleParsedSlotNameChanged(const QString &parsedSlotName);
-    //void handleParsedSlotArgumentsChanged(const QList<MethodArgumentTypedef> &parsedSlotArguments);
+    //void handleParsedSlotArgumentsChanged(const QList<FunctionArgumentTypedef> &parsedSlotArguments);
     void handleSelectedSlotChanged(ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType resultType);
 
     void tryValidatingDialog();

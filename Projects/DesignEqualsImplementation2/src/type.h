@@ -29,13 +29,18 @@ class TypeInstance : public QObject
 {
     Q_OBJECT
 public:
-    explicit TypeInstance(Type *type, const QString &variableName, QObject *parent = 0)
+    explicit TypeInstance(Type *type, const QString &qualifiedTypeString, const QString &variableName, QObject *parent = 0)
         : QObject(parent)
         , type(type)
         , VariableName(variableName)
         , OwnershipOfPointedTodataIfPointer(TypeInstanceOwnershipOfPointedToDataIfPointer::NotPointer)
-    { }
+    {
+        parseQualifiedTypeString(qualifiedTypeString);
+    }
     static QString preferredTextualRepresentationOfTypeAndVariableTogether(const QString &qualifiedType, const QString &variableName);
+    void parseQualifiedTypeString(const QString &qualifiedTypeString);
+    QString nonQualifiedType() const;
+    QString qualifiedType() const;
     QString preferredTextualRepresentationOfTypeAndVariableTogether() const;
     bool isPointer() const;
 
@@ -51,8 +56,8 @@ class NonFunctionMember : public TypeInstance
 {
     Q_OBJECT
 public:
-    explicit NonFunctionMember(Type *type, const QString &variableName, Type *parentClassThatIamMemberOf, QObject *parent, bool hasInit = false, const QString &optionalInit = QString())
-        : TypeInstance(type, variableName, parent)
+    explicit NonFunctionMember(Type *type, const QString &qualifiedTypeString, const QString &variableName, Type *parentClassThatIamMemberOf, QObject *parent, bool hasInit = false, const QString &optionalInit = QString())
+        : TypeInstance(type, qualifiedTypeString, variableName, parent)
         , visibility(Visibility::Private)
         , HasInit(hasInit)
         , OptionalInit(optionalInit)
@@ -79,7 +84,7 @@ public:
 
     QList<NonFunctionMember*> nonFunctionMembers() const { return m_NonFunctionMembers; }
     virtual void addNonFunctionMember(NonFunctionMember* nonFunctionMember)=0;
-    NonFunctionMember *createNewNonFunctionMember(Type *typeOfNewNonFunctionMember, const QString &nameOfNewNonFunctionMember, Visibility::VisibilityEnum visibility = Visibility::Private, TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum ownershipOfPointedToDataIfPointer = TypeInstanceOwnershipOfPointedToDataIfPointer::NotPointer, bool hasInit = false, const QString &optionalInit = QString());
+    NonFunctionMember *createNewNonFunctionMember(Type *typeOfNewNonFunctionMember, const QString &qualifiedTypeString, const QString &nameOfNewNonFunctionMember, Visibility::VisibilityEnum visibility = Visibility::Private, TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum ownershipOfPointedToDataIfPointer = TypeInstanceOwnershipOfPointedToDataIfPointer::NotPointer, bool hasInit = false, const QString &optionalInit = QString());
     int serializationNonFunctionMemberIdForNonFunctionMember(NonFunctionMember *nonFunctionMember) const;
     NonFunctionMember *nonFunctionMemberFromNonFunctionMemberId(int nonFunctionMemberId) const;
 
