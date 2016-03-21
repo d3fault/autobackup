@@ -61,7 +61,7 @@ bool TypeInstance::isPointer() const
     break;
     //the lack of a default: means that if we add to the enum, we'll be forced to update this method :)
     }
-    //TODOmb: analyze Qualifiers_RHS for an asterisk??? if so, should probably do it during parseQualifiedTypeString and then set the enum accordingly (default to non-owner pointer when asterisk seen, ofc)
+    //TODOmb: analyze Qualifiers_RHS for an asterisk??? if so, should probably do it during parseQualifiedTypeString and then set the enum accordingly (default to non-owner pointer when asterisk seen, ofc). additionally, i should first check that it's not ALREADY set to OwnsPointedToData. if that's the case, just 'return;' without any asterisk analysis
 }
 int Type::serializationNonFunctionMemberIdForNonFunctionMember(NonFunctionMember *nonFunctionMember) const
 {

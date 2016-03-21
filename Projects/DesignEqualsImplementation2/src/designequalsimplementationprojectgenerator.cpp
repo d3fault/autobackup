@@ -469,11 +469,11 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->properties())
     {
         //Q_PROPERTY..
-        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "Q_PROPERTY(" + currentProperty->type->Name << " " << firstCharacterToLower(currentProperty->PropertyName) << " READ " << getterNameForProperty(currentProperty->PropertyName); //here marks the first time i've ever actually used the Q_PROPERTY macro <3. i'm always just too lazy and don't see the benefit... but since code generator, the cost becomes/became zero xD
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "Q_PROPERTY(" + currentProperty->type->Name << " " << firstCharacterToLower(currentProperty->propertyName()) << " READ " << getterNameForProperty(currentProperty->propertyName()); //here marks the first time i've ever actually used the Q_PROPERTY macro <3. i'm always just too lazy and don't see the benefit... but since code generator, the cost becomes/became zero xD
         if(!currentProperty->ReadOnly)
-            headerFileTextStream << " WRITE " << setterNameForProperty(currentProperty->PropertyName);
+            headerFileTextStream << " WRITE " << setterNameForProperty(currentProperty->propertyName());
         if(currentProperty->NotifiesOnChange)
-            headerFileTextStream << " NOTIFY " << changedSignalForProperty(currentProperty->PropertyName);
+            headerFileTextStream << " NOTIFY " << changedSignalForProperty(currentProperty->propertyName());
         headerFileTextStream << ")" << endl;
     }
 
@@ -486,13 +486,13 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     {
         //Property getter
         //int x() const;
-        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->type->Name << " " << getterNameForProperty(currentProperty->PropertyName) << "() const;" << endl;
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->type->Name << " " << getterNameForProperty(currentProperty->propertyName()) << "() const;" << endl;
 
         //Property setter
         if(!currentProperty->ReadOnly)
         {
             //void setX(int newX);
-            headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << setterNameForProperty(currentProperty->PropertyName) << "(" << currentProperty->type->Name << " " << "new" << firstCharacterToUpper(currentProperty->PropertyName) << ");" << endl;
+            headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << setterNameForProperty(currentProperty->propertyName()) << "(" << currentProperty->type->Name << " " << "new" << firstCharacterToUpper(currentProperty->propertyName()) << ");" << endl;
         }
     }
 
@@ -506,7 +506,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     //Header's property member declarations
     Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->properties())
     {
-        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->type->Name << " " << memberNameForProperty(currentProperty->PropertyName) << ";" << endl;
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->type->Name << " " << currentProperty->VariableName << ";" << endl;
     }
     if(!currentClass->properties().isEmpty() && atLeasteOneMemberIsApointer) //TODOsanity: make a list of each of the visibility specifier entries, then process AT THE END whether or not to write a visibility specifier. there should be an "empty line" entry (like the one just below) that should be able to be "trimmed" if no statements are following (like the second half of this if statement does). the same kind of thing can/should be used to determine whether or not to do "{ }" or "{\n" (if any statements in block)
     {
@@ -557,7 +557,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         if(currentProperty->HasInit)
         {
             //, m_SomeBoolProperty(true)
-            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << ", " << memberNameForProperty(currentProperty->PropertyName) << "(" << currentProperty->OptionalInit << ")" << endl;) //TODOoptional: a way to use one of currentClass's constructor args (or even multiple but omg my brain) as the init for a given property. should be 'smart'
+            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << ", " << currentProperty->VariableName << "(" << currentProperty->OptionalInit << ")" << endl;) //TODOoptional: a way to use one of currentClass's constructor args (or even multiple but omg my brain) as the init for a given property. should be 'smart'
         }
     }
     //Source's header PrivateMemberClasses constructor initializers
@@ -609,7 +609,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
         //{
         //  return m_X;
         //}
-        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << currentProperty->type->Name << " " << currentClass->Name << "::" << getterNameForProperty(currentProperty->PropertyName) << "() const" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "return " << memberNameForProperty(currentProperty->PropertyName) << ";" << endl << "}" << endl;)
+        DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << currentProperty->type->Name << " " << currentClass->Name << "::" << getterNameForProperty(currentProperty->propertyName()) << "() const" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "return " << currentProperty->VariableName << ";" << endl << "}" << endl;)
 
         if(!currentProperty->ReadOnly)
         {
@@ -621,11 +621,11 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
             //    emit xChanged(m_X);
             //  }
             //}
-            const QString &newSetPropertyVariableName = "new" + firstCharacterToUpper(currentProperty->PropertyName);
-            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "void " << currentClass->Name << "::" << setterNameForProperty(currentProperty->PropertyName) << "(" << currentProperty->type->Name << " " << "new" << firstCharacterToUpper(currentProperty->PropertyName) << ")" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "if(" << newSetPropertyVariableName << " != " << memberNameForProperty(currentProperty->PropertyName) << ")" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << memberNameForProperty(currentProperty->PropertyName) << " = " << newSetPropertyVariableName << ";" << endl;)
+            const QString &newSetPropertyVariableName = "new" + firstCharacterToUpper(currentProperty->propertyName());
+            DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "void " << currentClass->Name << "::" << setterNameForProperty(currentProperty->propertyName()) << "(" << currentProperty->type->Name << " " << "new" << firstCharacterToUpper(currentProperty->propertyName()) << ")" << endl << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "if(" << newSetPropertyVariableName << " != " << currentProperty->VariableName << ")" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << "{" << endl << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->VariableName << " = " << newSetPropertyVariableName << ";" << endl;)
             if(currentProperty->NotifiesOnChange)
             {
-                DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << "emit " << changedSignalForProperty(currentProperty->PropertyName) << "(" << memberNameForProperty(currentProperty->PropertyName) << ");" << endl;)
+                DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << DESIGNEQUALSIMPLEMENTATION_TAB << "emit " << changedSignalForProperty(currentProperty->propertyName()) << "(" << currentProperty->VariableName << ");" << endl;)
             }
             DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << DESIGNEQUALSIMPLEMENTATION_TAB << "}" << endl << "}" << endl;)
         }
@@ -662,7 +662,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
                 gapBetweenRegularSignalsAndPropertyChangeSignalsWritten = true;
             }
 
-            headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << changedSignalForProperty(currentProperty->PropertyName) << "(" << currentProperty->type->Name << " " << "new" + firstCharacterToUpper(currentProperty->PropertyName) << ");" << endl;
+            headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << changedSignalForProperty(currentProperty->propertyName()) << "(" << currentProperty->type->Name << " " << "new" + firstCharacterToUpper(currentProperty->propertyName()) << ");" << endl;
         }
     }
 
