@@ -25,7 +25,7 @@ private:
 signals:
     void addUmlItemRequested(UmlItemsTypedef umlItemType, QPointF position);
 private slots:
-    void handleClassAdded(DesignEqualsImplementationClass *classAdded);
+    void handleTypeAdded(Type *typeAdded);
 };
 
 #endif // CLASSDIAGRAMGRAPHICSSCENE_H

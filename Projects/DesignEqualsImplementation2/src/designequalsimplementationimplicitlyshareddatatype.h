@@ -2,6 +2,7 @@
 #define DESIGNEQUALSIMPLEMENTATIONIMPLICITLYSHAREDDATATYPE_H
 
 #include "type.h"
+#include "idesignequalsimplementationvisuallyrepresenteditem.h"
 
 class DesignEqualsImplementationImplicitlySharedDataType : public Type
 {

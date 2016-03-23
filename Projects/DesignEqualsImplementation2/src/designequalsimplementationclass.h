@@ -20,7 +20,7 @@ class DesignEqualsImplementationProject;
 
 //TODOinstancing: class DesignEqualsImplementationClassInstance;
 
-class DesignEqualsImplementationClass : public Type, public IDesignEqualsImplementationVisuallyRepresentedItem
+class DesignEqualsImplementationClass : public Type
 {
     Q_OBJECT
 public:

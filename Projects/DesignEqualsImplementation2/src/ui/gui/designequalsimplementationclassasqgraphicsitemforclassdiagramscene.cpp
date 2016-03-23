@@ -13,10 +13,11 @@
 #include "../../designequalsimplementationproject.h"
 
 //TODOmb: considering changing this to a qpixmap in a graphics scene instead, where teh pixmap is drawn only when the class changes, update called once, then it's simply provided to qgraphicsview (svg might be more optimized?)... i'm going to wait on making a decision until i try to reuse the code for getting the "uml class" drag drop thingo to use the same shape (in designEquals1, i rendered to pixmap for that). i do know one thing, what i'm doing now is hella laggy (but works so fuck it)
-DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationProject *currentProject, QGraphicsItem *graphicsParent, QObject *qobjectParent)
+//TODOreq: s/Class/Type
+DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(Type *designEqualsImplementationClass, DesignEqualsImplementationProject *currentProject, QGraphicsItem *graphicsParent, QObject *qobjectParent)
     : QObject(qobjectParent)
     , QGraphicsRectItem(graphicsParent)
-    , m_DesignEqualsImplementationClass(designEqualsImplementationClass)
+    , m_Type(designEqualsImplementationClass)
     , m_CurrentProject(currentProject)
 {
     setFlag(QGraphicsItem::ItemIsMovable, true);
@@ -35,26 +36,25 @@ DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEquals
     m_ClassContentsGraphicsTextItem = new QGraphicsTextItem(this);
     updateClassContentsGraphicsTextItem();
 
-    connect(this, SIGNAL(editCppModeRequested(DesignEqualsImplementationClass*)), currentProject, SLOT(handleEditCppModeRequested(DesignEqualsImplementationClass*)));
+    connect(this, SIGNAL(editCppModeRequested(Type*)), currentProject, SLOT(handleEditCppModeRequested(Type*)));
 }
 void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     QMenu menu;
     QAction *classEditorAction = menu.addAction(tr("Class Editor"));
     QAction *editCppAction = menu.addAction(tr("Edit C++"));
-    QAction *removeClassFromProjectAction = menu.addAction(tr("Remove Class From Project"));
+    QAction *removeClassFromProjectAction = menu.addAction(tr("Remove Class From Project -- TODO"));
     QAction *selectedAction = menu.exec(event->screenPos());
     if(!selectedAction)
         return;
     if(selectedAction == classEditorAction)
     {
-        ClassEditorDialog classEditorDialog(m_DesignEqualsImplementationClass, m_CurrentProject);
-        if(classEditorDialog.exec() != QDialog::Accepted)
-            return;
+        ClassEditorDialog classEditorDialog(m_Type, m_CurrentProject);
+        classEditorDialog.exec();
     }
-    if(selectedAction == editCppAction)
+    else if(selectedAction == editCppAction)
     {
-        emit editCppModeRequested(m_DesignEqualsImplementationClass);
+        emit editCppModeRequested(m_Type);
     }
     else if(selectedAction == removeClassFromProjectAction) //etc
     {
@@ -64,12 +64,12 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::context
 void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
-    ClassEditorDialog classEditorDialog(m_DesignEqualsImplementationClass, m_CurrentProject);
+    ClassEditorDialog classEditorDialog(m_Type, m_CurrentProject);
     classEditorDialog.exec();
 }
 QString DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::classDetailsAsHtmlString()
 {
-    QString classContentsString("<b>" + m_DesignEqualsImplementationClass->Name + "</b>"); //TODOoptional: figure out out how to center this in addition to bolding it (<center> didn't work)
+    QString classContentsString("<b>" + m_Type->Name + "</b>"); //TODOoptional: figure out out how to center this in addition to bolding it (<center> didn't work)
     int numLinesOfText = 1;
 
 #if 0
@@ -126,22 +126,22 @@ QString DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::clas
         ++numLinesOfText;
     }
 #endif
-    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, m_DesignEqualsImplementationClass->nonFunctionMembers())
+    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, m_Type->nonFunctionMembers())
     {
         classContentsString.append("<br />m  " + currentNonFunctionMember->preferredTextualRepresentationOfTypeAndVariableTogether()); //TODOmb: try to cast to property, display it differently
         ++numLinesOfText;
     }
-    Q_FOREACH(DesignEqualsImplementationClassPrivateMethod *currentPrivateMethod, m_DesignEqualsImplementationClass->PrivateMethods)
+    Q_FOREACH(DesignEqualsImplementationClassPrivateMethod *currentPrivateMethod, m_Type->PrivateMethods)
     {
         classContentsString.append("<br />-  " + currentPrivateMethod->Name); //TODOreq: methodSignature
         ++numLinesOfText;
     }
-    Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, m_DesignEqualsImplementationClass->mySignals())
+    Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, m_Type->mySignals())
     {
         classContentsString.append("<br />)) " + currentSignal->methodSignatureWithoutReturnType());
         ++numLinesOfText;
     }
-    Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, m_DesignEqualsImplementationClass->mySlots())
+    Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, m_Type->mySlots())
     {
         if(!currentSlot->Name.startsWith(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING_PREFIX))
         {

@@ -22,7 +22,7 @@ private:
     DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *m_ParentSlotGraphicsItem;
     QGraphicsTextItem *m_TextGraphicsItem;
 signals:
-    void editCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, int statementIndexOfSlot);
+    void editCppModeRequested(Type *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, int statementIndexOfSlot);
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCHUNKOFRAWCPPSTATEMENTSGRAPHICSITEMFORUSECASESCENE_H

@@ -20,15 +20,19 @@ ClassDiagramUmlItemsWidget::ClassDiagramUmlItemsWidget(QWidget *parent)
     setSpacing(5);
     setDropIndicatorShown(true);
 
+    QListWidgetItem *umlClassInterface = new QListWidgetItem(tr("Abstract Class (Interface)"), this);
+    umlClassInterface->setData(Qt::UserRole, QVariant(static_cast<UmlItemsTypedef>(DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS_INTERFACE)));
+    //umlClass->setIcon(QIcon(pixmap));
+    umlClassInterface->setFlags(DESIGNEQUALSIMPLEMENTATION_GUI_DRAG_DROP_LIST_WIDGET_ITEM_FLAGS);
+
     QListWidgetItem *umlClass = new QListWidgetItem(tr("Class"), this);
     umlClass->setData(Qt::UserRole, QVariant(static_cast<UmlItemsTypedef>(DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS)));
     //umlClass->setIcon(QIcon(pixmap));
     umlClass->setFlags(DESIGNEQUALSIMPLEMENTATION_GUI_DRAG_DROP_LIST_WIDGET_ITEM_FLAGS);
 
-    QListWidgetItem *umlClassInterface = new QListWidgetItem(tr("Abstract Class (Interface)"), this);
-    umlClassInterface->setData(Qt::UserRole, QVariant(static_cast<UmlItemsTypedef>(DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_CLASS_INTERFACE)));
-    //umlClass->setIcon(QIcon(pixmap));
-    umlClassInterface->setFlags(DESIGNEQUALSIMPLEMENTATION_GUI_DRAG_DROP_LIST_WIDGET_ITEM_FLAGS);
+    QListWidgetItem *implicitlySharedDataType = new QListWidgetItem(tr("Implicitly Shared Data Type"), this);
+    implicitlySharedDataType->setData(Qt::UserRole, QVariant(static_cast<UmlItemsTypedef>(DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_IMPLICITLY_SHARED_DATA_TYPE))); //TODOoptional: would have been much smarter to store Type* factories in the data, but whatever
+    implicitlySharedDataType->setFlags(DESIGNEQUALSIMPLEMENTATION_GUI_DRAG_DROP_LIST_WIDGET_ITEM_FLAGS);
 }
 void ClassDiagramUmlItemsWidget::startDrag(Qt::DropActions supportedActions)
 {

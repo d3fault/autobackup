@@ -9,6 +9,7 @@
 
 #include "designequalsimplementationprojectgenerator.h"
 #include "designequalsimplementationchunkofrawcppstatements.h"
+#include "designequalsimplementationimplicitlyshareddatatype.h"
 
 #define DesignEqualsImplementationProject_SERIALIZATION_VERSION 1
 
@@ -25,21 +26,23 @@ DesignEqualsImplementationProject::DesignEqualsImplementationProject(QObject *pa
 { }
 DesignEqualsImplementationProject::~DesignEqualsImplementationProject()
 {
-    qDeleteAll(m_AllKnownTypes);
     qDeleteAll(m_UseCases);
 }
 DesignEqualsImplementationClass *DesignEqualsImplementationProject::createNewClass(const QString &newClassName, const QPointF &classPositionInGraphicsScene)
 {
-    DesignEqualsImplementationClass *newClass = new DesignEqualsImplementationClass(this);
+    DesignEqualsImplementationClass *newClass = new DesignEqualsImplementationClass(this, this);
     newClass->Name = newClassName;
     newClass->Position = classPositionInGraphicsScene;
-    addClass(newClass);
+    addType(newClass);
     return newClass;
 }
-void DesignEqualsImplementationProject::addType(Type *type)
+DesignEqualsImplementationImplicitlySharedDataType *DesignEqualsImplementationProject::createNewImplicitlySharedDataType(const QString &newImplicitlySharedDataTypeName, const QPointF &positionInGraphicsScene)
 {
-    m_AllKnownTypes << type;
-    //TODOoptional: make all appends to m_AllKnownTypes use this method, then add a "typeAdded" signal. ClassDiagramScene would be a listener of that signal, but I'm not sure whether or not I should visualize "types defined elsewhere" (perhaps that should be a dynamic user preference)
+    DesignEqualsImplementationImplicitlySharedDataType *newDataType = new DesignEqualsImplementationImplicitlySharedDataType(this);
+    newDataType->Name = newImplicitlySharedDataTypeName;
+    newDataType->Position = positionInGraphicsScene;
+    addType(newDataType);
+    return newDataType;
 }
 QList<Type*> DesignEqualsImplementationProject::allKnownTypes() const
 {
@@ -64,12 +67,14 @@ Type *DesignEqualsImplementationProject::getOrCreateTypeFromName(const QString &
     qWarning(warningMessageStd.c_str()); //TODOreq: delete this method and 'proper' the Types database system! This method just saves me a bit of refactoring so whatever...
     return noteDefinedElsewhereType(nonQualifiedTypeName);
 }
-void DesignEqualsImplementationProject::addClass(DesignEqualsImplementationClass *newClass)
+void DesignEqualsImplementationProject::addType(Type *newType)
 {
-    connect(newClass, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
-    newClass->m_ParentProject = this;
-    m_AllKnownTypes.append(newClass);
-    emit classAdded(newClass);
+    //TODOoptional: make all appends to m_AllKnownTypes use this method, then add a "typeAdded" signal. ClassDiagramScene would be a listener of that signal, but I'm not sure whether or not I should visualize "types defined elsewhere" (perhaps that should be a dynamic user preference)
+
+    connect(newType, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
+    newType->m_ParentProject = this;
+    m_AllKnownTypes.append(newType);
+    emit typeAdded(newType);
 }
 QList<DesignEqualsImplementationClass*> DesignEqualsImplementationProject::classes()
 {
@@ -461,6 +466,11 @@ void DesignEqualsImplementationProject::handleAddUmlItemRequested(UmlItemsTypede
         //TODOreq
     }
         break;
+    case DESIGNEQUALSIMPLEMENTATION_MIME_DATA_VALUE_UML_IMPLICITLY_SHARED_DATA_TYPE:
+    {
+        createNewImplicitlySharedDataType("NewImplicitlySharedDataType1", position); //TODOreq: auto incrementing
+    }
+        break;
     }
 }
 void DesignEqualsImplementationProject::handleNewUseCaseRequested()
@@ -470,7 +480,7 @@ void DesignEqualsImplementationProject::handleNewUseCaseRequested()
     addUseCase(useCase);
 }
 //TODOoptional: don't require CLOSING qt creator before sucking the changes back in. if they save-all in qt creator and then press a button in d=i, we could THEN suck in the changes [using the exact same code already here]. HOWEVER, going to edit C++ mode _AGAIN_ should then overwrite the existing project, which is fine because qt creator can handle it (it just pops up "want to load the changes?" and you press yes)
-void DesignEqualsImplementationProject::handleEditCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, int statementIndexOfSlot)
+void DesignEqualsImplementationProject::handleEditCppModeRequested(Type *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, int statementIndexOfSlot)
 {
     QStringList possibleQtCreatorPaths;
     possibleQtCreatorPaths << "/usr/bin/qtcreator" << "/home/d3fault/Qt5.4.1/Tools/QtCreator/bin/qtcreator" << "/home/user/Qt5.2.0/Tools/QtCreator/bin/qtcreator"; //TODOreq: cli arg and/or qsettings value and/or "sensible defaults" on per-OS basis

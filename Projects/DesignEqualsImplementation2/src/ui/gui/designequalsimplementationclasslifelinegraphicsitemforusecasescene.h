@@ -46,7 +46,7 @@ private:
     DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *createAndInsertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot);
 signals:
     void slotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem);
-    void editCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass);
+    void editCppModeRequested(Type *designEqualsImplementationClass);
 private slots:
     void handleSlotInsertedIntoClassLifeLine(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot);
     void handleSlotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot *slotRemoved);

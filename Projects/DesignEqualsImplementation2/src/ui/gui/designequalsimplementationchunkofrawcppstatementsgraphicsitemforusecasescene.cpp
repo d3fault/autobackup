@@ -20,7 +20,7 @@ DesignEqualsImplementationChunkOfRawCppStatementsGraphicsItemForUseCaseScene::De
     m_TextGraphicsItem = new QGraphicsTextItem(QObject::tr("C++"), this);
     setRect(childrenBoundingRect());
 
-    connect(this, SIGNAL(editCppModeRequested(DesignEqualsImplementationClass*,DesignEqualsImplementationClassSlot*,int)), parentSlotGraphicsItem->underlyingSlot()->ParentClass->m_ParentProject, SLOT(handleEditCppModeRequested(DesignEqualsImplementationClass*,DesignEqualsImplementationClassSlot*,int)));
+    connect(this, SIGNAL(editCppModeRequested(Type*,DesignEqualsImplementationClassSlot*,int)), parentSlotGraphicsItem->underlyingSlot()->ParentClass->m_ParentProject, SLOT(handleEditCppModeRequested(Type*,DesignEqualsImplementationClassSlot*,int)));
 }
 void DesignEqualsImplementationChunkOfRawCppStatementsGraphicsItemForUseCaseScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {

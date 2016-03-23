@@ -44,26 +44,33 @@ void ClassDiagramGraphicsScene::privateConstructor(DesignEqualsImplementationPro
     connect(this, SIGNAL(addUmlItemRequested(UmlItemsTypedef,QPointF)), designEqualsImplementationProject, SLOT(handleAddUmlItemRequested(UmlItemsTypedef,QPointF)));
 
     //responses
-    connect(designEqualsImplementationProject, SIGNAL(classAdded(DesignEqualsImplementationClass*)), this, SLOT(handleClassAdded(DesignEqualsImplementationClass*))); //TODOreq: deleting a part of a class in class diagram might completely invalidate a use case, so either that should trigger the entire deletion of said use case (after warning), or force them into going and fixing the use case, or similar
+    connect(designEqualsImplementationProject, SIGNAL(typeAdded(Type*)), this, SLOT(handleTypeAdded(Type*))); //TODOreq: deleting a part of a class in class diagram might completely invalidate a use case, so either that should trigger the entire deletion of said use case (after warning), or force them into going and fixing the use case, or similar
 
     Q_FOREACH(DesignEqualsImplementationClass *currentClass, designEqualsImplementationProject->classes()) //TODOreq: we probably want implicitly shared data types here too
     {
-        handleClassAdded(currentClass); //deserializing/loading
+        handleTypeAdded(currentClass); //deserializing/loading
     }
 }
 bool ClassDiagramGraphicsScene::wantDragDropEvent(QGraphicsSceneDragDropEvent *event)
 {
     return (event->dropAction() == Qt::LinkAction && event->mimeData()->hasFormat(DESIGNEQUALSIMPLEMENTATION_MIME_TYPE_UML_CLASS_DIAGRAM_OBJECT));
 }
-void ClassDiagramGraphicsScene::handleClassAdded(DesignEqualsImplementationClass *classAdded)
+void ClassDiagramGraphicsScene::handleTypeAdded(Type *typeAdded)
 {
-    DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene *designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene = new DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(classAdded, m_CurrentProject); //scene takes ownership at addItem
-    designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene->setPos(classAdded->Position);
+    if(qobject_cast<DefinedElsewhereType*>(typeAdded))
+        return; //we don't show DefinedElsewhereTypes on the class diagram (as their own rectangles, that is. we of course show them as members of other [non-DefinedElsewhereType] 'rectangles'
+
+    DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene *designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene = new DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(typeAdded, m_CurrentProject); //scene takes ownership at addItem
+    designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene->setPos(typeAdded->Position);
     //TODOreq: listen to move signals so the backend serializes later click-drag-rearranges from user
 
-    connect(classAdded, SIGNAL(nonFunctionMemberAdded(NonFunctionMember*)), designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene, SLOT(handleNonFunctionMemberAdded(NonFunctionMember*)));
-    connect(classAdded, SIGNAL(signalAdded(DesignEqualsImplementationClassSignal*)), designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene, SLOT(handleSignalAdded(DesignEqualsImplementationClassSignal*)));
-    connect(classAdded, SIGNAL(slotAdded(DesignEqualsImplementationClassSlot*)), designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene, SLOT(handleSlotAdded(DesignEqualsImplementationClassSlot*)));
+    connect(typeAdded, SIGNAL(nonFunctionMemberAdded(NonFunctionMember*)), designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene, SLOT(handleNonFunctionMemberAdded(NonFunctionMember*)));
+
+    if(DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(typeAdded))
+    {
+        connect(typeAsClass, SIGNAL(signalAdded(DesignEqualsImplementationClassSignal*)), designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene, SLOT(handleSignalAdded(DesignEqualsImplementationClassSignal*)));
+        connect(typeAsClass, SIGNAL(slotAdded(DesignEqualsImplementationClassSlot*)), designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene, SLOT(handleSlotAdded(DesignEqualsImplementationClassSlot*)));
+    }
 
     //LISTS!?!?
 
@@ -72,5 +79,5 @@ void ClassDiagramGraphicsScene::handleClassAdded(DesignEqualsImplementationClass
     //QList<DesignEqualsImplementationClassSignal*> Signals;
 
     addItem(designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene); //TODOoptimization: when open existing project, perhaps addItem should be delayed until after the backend says "all project details emitted", so that tons of repaints aren't triggered. there's lots of solutions to this problem however
-    QMetaObject::invokeMethod(classAdded, "emitAllClassDetails");
+    QMetaObject::invokeMethod(typeAdded, "emitAllClassDetails");
 }

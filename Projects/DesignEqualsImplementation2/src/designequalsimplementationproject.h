@@ -9,6 +9,8 @@
 #include "designequalsimplementationusecase.h"
 #include "type.h"
 
+class DesignEqualsImplementationImplicitlySharedDataType;
+
 class DesignEqualsImplementationProject : public QObject
 {
     Q_OBJECT
@@ -18,6 +20,7 @@ public:
     ~DesignEqualsImplementationProject();
 
     DesignEqualsImplementationClass *createNewClass(const QString &newClassName = QString(), const QPointF &classPositionInGraphicsScene = QPointF());
+    DesignEqualsImplementationImplicitlySharedDataType *createNewImplicitlySharedDataType(const QString &newImplicitlySharedDataTypeName = QString(), const QPointF &positionInGraphicsScene = QPointF());
 
     void addType(Type *type);
     QList<Type *> allKnownTypes() const;
@@ -27,7 +30,6 @@ public:
     //TODOoptional: private + getter/setter blah
     QString Name;
 
-    void addClass(DesignEqualsImplementationClass* newClass);
     QList<DesignEqualsImplementationClass*> classes();
 
     //DesignEqualsImplementationClassInstance *createTopLevelClassInstance(DesignEqualsImplementationClass* classToMakeTopLevelInstanceOf);
@@ -85,14 +87,14 @@ private:
 #endif
 signals:
     void useCaseAdded(DesignEqualsImplementationUseCase*);
-    void classAdded(DesignEqualsImplementationClass*);
+    void typeAdded(Type*);
     void sourceCodeGenerated(bool);
     void e(const QString &);
 public slots:
     void emitAllClassesAndUseCasesInProject();
     void handleAddUmlItemRequested(UmlItemsTypedef umlItemType, QPointF position);
     void handleNewUseCaseRequested();
-    void handleEditCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass = 0, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot = 0, int statementIndexOfSlot = -1);
+    void handleEditCppModeRequested(Type *designEqualsImplementationClass = 0, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot = 0, int statementIndexOfSlot = -1);
     void generateSourceCode(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
 };
 #if 0

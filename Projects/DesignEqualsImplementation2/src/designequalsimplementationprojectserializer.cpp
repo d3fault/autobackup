@@ -88,11 +88,12 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
     //now do typeCategory specific serializing
     Q_FOREACH(Type *currentType, projectToSerialize->allKnownTypes())
     {
+        if(!qobject_cast<DefinedElsewhereType*>(currentType))
+            projectDataStream << currentType->Position; //DefinedElsewhereTypes don't use this because they are not in the class diagram scene
+
         if(DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(currentType))
         {
             //Project Classes -- Position/signals/slots, but not NonFunctionMembers yet
-            projectDataStream << typeAsClass->Position;
-
             projectDataStream << typeAsClass->m_MySignals.size();
             Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, typeAsClass->m_MySignals)
             {
@@ -109,7 +110,6 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
                 STREAM_OUT_METHOD_ARGUMENTS(projectDataStream, currentSlot, projectToSerialize)
             }
         }
-        //else if: nothing to do for ImplicitlyShared or DefinedElsewhere atm
     }
     //Type NonFunctionMembers
     Q_FOREACH(Type *currentType, projectToSerialize->allKnownTypes())
@@ -306,11 +306,12 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
     //now do typeCategory specific deserializing
     Q_FOREACH(Type *currentType, projectToPopulate->allKnownTypes())
     {
+        if(!qobject_cast<DefinedElsewhereType*>(currentType))
+            projectDataStream >> currentType->Position; //DefinedElsewhereTypes don't use this because they are not in the class diagram scene
+
         if(DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(currentType))
         {
             //Project Classes -- Position/signals/slots, but not NonFunctionMembers yet
-            projectDataStream >> typeAsClass->Position;
-
             int numSignals;
             projectDataStream >> numSignals;
             for(int j = 0; j < numSignals; ++j)
@@ -333,7 +334,6 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
                 STREAM_IN_METHOD_ARGUMENTS(projectDataStream, theSlot, projectToPopulate)
             }
         }
-        //else if: nothing to do for ImplicitlyShared or DefinedElsewhere atm
     }
     //Type NonFunctionMembers
     Q_FOREACH(Type *currentType, projectToPopulate->allKnownTypes())

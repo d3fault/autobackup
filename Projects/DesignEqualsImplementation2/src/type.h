@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QScopedPointer>
 #include <QList>
+#include <QPointF>
 
 //TODOreq: namespace this shiz
 struct Visibility
@@ -38,6 +39,7 @@ public:
         parseQualifiedTypeString(qualifiedTypeString);
     }
     static QString preferredTextualRepresentationOfTypeAndVariableTogether(const QString &qualifiedType, const QString &variableName);
+    static bool isPointer(const QString &qualifiers_RHS_or_BothSidesIsFineToo);
     void parseQualifiedTypeString(const QString &qualifiedTypeString);
     QString nonQualifiedType() const;
     QString qualifiedType() const;
@@ -81,6 +83,7 @@ public:
     QList<TypeAncestor> DirectAncestors; //those ancestors can have ancestors too, just like good ole inheritence
 
     QString Name;
+    QPointF Position; //DefinedElsewhereType does not use this, since it is not in/on the class diagram scene (but I might change my mind about that later)
 
     QList<NonFunctionMember*> nonFunctionMembers() const { return m_NonFunctionMembers; }
     virtual void addNonFunctionMember(NonFunctionMember* nonFunctionMember)=0;

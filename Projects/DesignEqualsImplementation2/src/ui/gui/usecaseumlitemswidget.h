@@ -18,7 +18,7 @@ private:
     void addClass(DesignEqualsImplementationClass *designEqualsImplementationClass);
 public slots:
     void handleNowShowingProject(DesignEqualsImplementationProject *project);
-    void handleClassAdded(DesignEqualsImplementationClass *designEqualsImplementationClass);
+    void handleTypeAdded(Type *typeAdded);
 };
 
 #endif // USECASEUMLITEMSWIDGET_H

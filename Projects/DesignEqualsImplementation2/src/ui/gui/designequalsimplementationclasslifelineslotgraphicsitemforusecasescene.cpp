@@ -189,7 +189,7 @@ void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::privateConstruct
     }
     repositionExistingStatementsAndSnapPoints(); //regardless of any statements, we always want at least 1 snap point to be positioned
 
-    connect(this, SIGNAL(editCppModeRequested(DesignEqualsImplementationClass*,DesignEqualsImplementationClassSlot*)), m_Slot->ParentClass->m_ParentProject, SLOT(handleEditCppModeRequested(DesignEqualsImplementationClass*,DesignEqualsImplementationClassSlot*)));
+    connect(this, SIGNAL(editCppModeRequested(Type*,DesignEqualsImplementationClassSlot*)), m_Slot->ParentClass->m_ParentProject, SLOT(handleEditCppModeRequested(Type*,DesignEqualsImplementationClassSlot*)));
 }
 void DesignEqualsImplementationSlotGraphicsItemForUseCaseScene::insertStatementGraphicsItem(int indexInsertedInto, IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *statementInserted)
 {

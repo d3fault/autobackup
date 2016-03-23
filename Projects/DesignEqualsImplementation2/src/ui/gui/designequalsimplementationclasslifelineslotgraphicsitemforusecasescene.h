@@ -49,7 +49,7 @@ private:
     qreal calculateMyRectHeightUsingExistingStatements();
 signals:
     void geometryChanged();
-    void editCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot);
+    void editCppModeRequested(Type *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot);
 private slots:
     void handleStatementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *statementInserted);
 };

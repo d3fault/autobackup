@@ -5,6 +5,7 @@
 #include "libclangpch.h"
 using namespace clang;
 
+//TODOreq: s/Property/NonFunctionMember
 class DesignEqualsImplementationLenientPropertyDeclarationParserRecursiveAstVisitor : public RecursiveASTVisitor<DesignEqualsImplementationLenientPropertyDeclarationParserRecursiveAstVisitor>
 {
 public:

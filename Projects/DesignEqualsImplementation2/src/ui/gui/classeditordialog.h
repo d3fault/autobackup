@@ -10,6 +10,7 @@ class QVBoxLayout;
 
 class DesignEqualsImplementationProject;
 class MethodSingleArgumentWidget;
+class Type;
 class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassProperty;
 class IDesignEqualsImplementationMethod;
@@ -20,9 +21,10 @@ class ClassEditorDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ClassEditorDialog(DesignEqualsImplementationClass *classToEdit, DesignEqualsImplementationProject *currentProject, QWidget *parent = 0, Qt::WindowFlags f = 0);
+    explicit ClassEditorDialog(Type *typeToEdit, DesignEqualsImplementationProject *currentProject, QWidget *parent = 0, Qt::WindowFlags f = 0);
 private:
-    DesignEqualsImplementationClass *m_ClassBeingEditted;
+    Type *m_TypeBeingEditted;
+    bool m_TypeIsQObjectDerived;
     DesignEqualsImplementationProject *m_CurrentProject;
 
     QLineEdit *m_QuickMemberAddLineEdit;
@@ -45,6 +47,9 @@ private:
     bool addSlotFieldsAreSane();
 
     QWidget *createMainClassEditorTab();
+    QWidget *createQObjectDerivedMainClassEditorBodyWidget();
+    QWidget *createNonQObjectDerivedMainClassEditorBodyWidget();
+
     QWidget *createPropertiesClassEditorTab();
     QWidget *createSignalsClassEditorTab();
     QWidget *createSlotsClassEditorTab();
@@ -52,11 +57,11 @@ private:
     QString classDetailsAsHtmlString();
 signals:
     void e(const QString &);
-    void editCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass);
+    void editCppModeRequested(Type *designEqualsImplementationClass);
 private slots:
     void handleEditCppButtonClicked();
 
-    void handleQuickAddNewPropertyButtonClicked();
+    void addNewNonFunctionMember();
     void handleQuickAddNewSignalButtonClicked();
     void handleQuickAddNewSlotButtonClicked();
 

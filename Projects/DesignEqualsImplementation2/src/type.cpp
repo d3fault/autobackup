@@ -89,6 +89,11 @@ QString TypeInstance::preferredTextualRepresentationOfTypeAndVariableTogether(co
         return (qualifiedType + " " + variableName);
     }
 }
+bool TypeInstance::isPointer(const QString &qualifiers_RHS_or_BothSidesIsFineToo)
+{
+    //TODOreq: PRETTY SURE you can't have an asterisk on the LHS for a type instance declaration, but if you can then I need to mandate that it's RHS only (and can split by type name to get it if need be)
+    return qualifiers_RHS_or_BothSidesIsFineToo.contains("*");
+}
 //ehh a bit hacky but gets the job done
 void TypeInstance::parseQualifiedTypeString(const QString &qualifiedTypeString)
 {
@@ -101,6 +106,9 @@ void TypeInstance::parseQualifiedTypeString(const QString &qualifiedTypeString)
     Qualifiers_LHS = split.first();
     Qualifiers_RHS = split.last();
     //TODOoptional: LHS should be left-trimmed, RHS should be right-trimmed, but we want to keep the whitespace "on the variableName side(s)" intact
+
+    if(isPointer(Qualifiers_RHS) && OwnershipOfPointedTodataIfPointer != TypeInstanceOwnershipOfPointedToDataIfPointer::OwnsPointedToData)
+        OwnershipOfPointedTodataIfPointer = TypeInstanceOwnershipOfPointedToDataIfPointer::DoesNotOwnPointedToData; //we see the asterisk and bump up the enum to "does not own pointer". NOTE: it's CRUCIAL that we don't have the ability to set OwnershipOfPointedTodataIfPointer via a constructor arg and it's set later after the constructor, because otherwise this might override ... nvm I can put a safety meausre in :)
 }
 QString TypeInstance::nonQualifiedType() const
 {

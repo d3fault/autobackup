@@ -497,21 +497,7 @@ bool DesignEqualsImplementationProjectGenerator::writeClassToDisk(DesignEqualsIm
     }
 
     bool privateAccessSpecifierWritten = false;
-    if(!currentClass->properties().isEmpty())
-    {
-        headerFileTextStream << "private:" << endl;
-        privateAccessSpecifierWritten = true;
-    }
-
-    //Header's property member declarations
-    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->properties())
-    {
-        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentProperty->type->Name << " " << currentProperty->VariableName << ";" << endl;
-    }
-    if(!currentClass->properties().isEmpty() && atLeasteOneMemberIsApointer) //TODOsanity: make a list of each of the visibility specifier entries, then process AT THE END whether or not to write a visibility specifier. there should be an "empty line" entry (like the one just below) that should be able to be "trimmed" if no statements are following (like the second half of this if statement does). the same kind of thing can/should be used to determine whether or not to do "{ }" or "{\n" (if any statements in block)
-    {
-        headerFileTextStream << endl;
-    }
+    //TODOsanity: make a list of each of the visibility specifier entries, then process AT THE END whether or not to write a visibility specifier. there should be an "empty line" entry (like the one just below) that should be able to be "trimmed" if no statements are following (like the second half of this if statement does). the same kind of thing can/should be used to determine whether or not to do "{ }" or "{\n" (if any statements in block)
 
     //Header's hasAPrivateMemberClass declarations
     if(atLeasteOneMemberIsApointer && !privateAccessSpecifierWritten)

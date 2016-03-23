@@ -75,7 +75,10 @@ void UseCaseUmlItemsWidget::handleNowShowingProject(DesignEqualsImplementationPr
         addClass(currentClass);
     }
 }
-void UseCaseUmlItemsWidget::handleClassAdded(DesignEqualsImplementationClass *designEqualsImplementationClass)
+void UseCaseUmlItemsWidget::handleTypeAdded(Type *typeAdded)
 {
-    addClass(designEqualsImplementationClass);
+    DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(typeAdded);
+    if(!typeAsClass)
+        return; //only interested in QObject "classes", the other types don't have signals/slots
+    addClass(typeAsClass);
 }

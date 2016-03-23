@@ -101,7 +101,6 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     ui/gui/designequalsimplementationusecaseaswidgetfortab.h \
     ui/gui/designequalsimplementationclassasqgraphicsitemforclassdiagramscene.h \
     ui/gui/designequalsimplementationguicommon.h \
-    idesignequalsimplementationvisuallyrepresenteditem.h \
     ui/gui/classdiagramgraphicsscene.h \
     ui/gui/ihaveagraphicsviewandscene.h \
     ui/gui/usecasegraphicsscene.h \

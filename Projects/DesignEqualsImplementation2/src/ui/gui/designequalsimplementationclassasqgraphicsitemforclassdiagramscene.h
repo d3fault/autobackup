@@ -16,7 +16,7 @@ class DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene : publi
 {
     Q_OBJECT
 public:
-    explicit DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(DesignEqualsImplementationClass *designEqualsImplementationClass, DesignEqualsImplementationProject *currentProject, QGraphicsItem *graphicsParent = 0, QObject *qobjectParent = 0);
+    explicit DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(Type *designEqualsImplementationClass, DesignEqualsImplementationProject *currentProject, QGraphicsItem *graphicsParent = 0, QObject *qobjectParent = 0);
     //virtual QRectF boundingRect() const;
     //virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 protected:
@@ -24,7 +24,7 @@ protected:
     virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 private:
     QGraphicsTextItem *m_ClassContentsGraphicsTextItem;
-    DesignEqualsImplementationClass *m_DesignEqualsImplementationClass;
+    Type *m_Type;
     DesignEqualsImplementationProject *m_CurrentProject;
     QRectF m_BoundingRect;
     QPen m_ClassBorderPen;
@@ -33,7 +33,7 @@ private:
     QString classDetailsAsHtmlString();
     void updateClassContentsGraphicsTextItem();
 signals:
-    void editCppModeRequested(DesignEqualsImplementationClass *designEqualsImplementationClass);
+    void editCppModeRequested(Type *type);
 public slots:
     void handleNonFunctionMemberAdded(NonFunctionMember *propertyAdded);
     void handlePrivateMethodAdded(DesignEqualsImplementationClassPrivateMethod*);
