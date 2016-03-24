@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QGraphicsRectItem>
 
+class DesignEqualsImplementationType;
 class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassSlot;
 class DesignEqualsImplementationChunkOfRawCppStatements;
@@ -22,7 +23,7 @@ private:
     DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *m_ParentSlotGraphicsItem;
     QGraphicsTextItem *m_TextGraphicsItem;
 signals:
-    void editCppModeRequested(Type *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, int statementIndexOfSlot);
+    void editCppModeRequested(DesignEqualsImplementationType *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, int statementIndexOfSlot);
 };
 
 #endif // DESIGNEQUALSIMPLEMENTATIONCHUNKOFRAWCPPSTATEMENTSGRAPHICSITEMFORUSECASESCENE_H

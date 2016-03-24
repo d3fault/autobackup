@@ -5,6 +5,7 @@
 #include "isnappablesourcegraphicsitem.h"
 
 class DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene;
+class DesignEqualsImplementationType;
 class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassSlot;
 class IDesignEqualsImplementationHaveOrderedListOfStatements;
@@ -49,7 +50,7 @@ private:
     qreal calculateMyRectHeightUsingExistingStatements();
 signals:
     void geometryChanged();
-    void editCppModeRequested(Type *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot);
+    void editCppModeRequested(DesignEqualsImplementationType *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot);
 private slots:
     void handleStatementInserted(int indexInsertedInto, IDesignEqualsImplementationStatement_OrChunkOfRawCppStatements *statementInserted);
 };

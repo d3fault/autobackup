@@ -7,7 +7,7 @@
 
 class QButtonGroup;
 
-class Type;
+class DesignEqualsImplementationType;
 class DesignEqualsImplementationProject;
 
 typedef QPair<QString, QButtonGroup*> TypesAndTheirDecisionRadioGroups;
@@ -18,7 +18,7 @@ class NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dia
 public:
     enum TypesCanBeQObjectDerivedEnum { TypesCanBeQObjectDerived, TypesCannotBeQObjectDerived };
     explicit NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(const QList<QString> listOfTypesToDecideOn, DesignEqualsImplementationProject *designEqualsImplementationProject, TypesCanBeQObjectDerivedEnum typesCanBeQObjectDerived, QWidget *parent = 0, Qt::WindowFlags f = 0);
-    QList<Type*> newTypesSeen() const;
+    QList<DesignEqualsImplementationType*> newTypesSeen() const;
 private:
     static const int QObjectDerivedRadioButtonId;
     static const int ImplicitlySharedRadioButtonId;
@@ -28,7 +28,7 @@ private:
     TypesCanBeQObjectDerivedEnum m_TypesCanBeQObjectDerived;
     QList<TypesAndTheirDecisionRadioGroups> m_TypesAndTheirDecisionRadioGroups;
 
-    QList<Type*> m_NewTypesSeen;
+    QList<DesignEqualsImplementationType*> m_NewTypesSeen;
 private slots:
     void selectAllByButtonId(int buttonId);
     void handleDialogAccepted();

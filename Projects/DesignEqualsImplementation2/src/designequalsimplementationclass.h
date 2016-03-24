@@ -19,7 +19,7 @@ class DesignEqualsImplementationProject;
 
 //TODOinstancing: class DesignEqualsImplementationClassInstance;
 
-class DesignEqualsImplementationClass : public Type
+class DesignEqualsImplementationClass : public DesignEqualsImplementationType
 {
     Q_OBJECT
 public:
@@ -39,7 +39,7 @@ public:
 
     void addNonFunctionMember(NonFunctionMember *nonFunctionMember);
 
-    DesignEqualsImplementationClassProperty *createNewProperty(Type *propertyType, const QString &qualifiedTypeString, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange);
+    DesignEqualsImplementationClassProperty *createNewProperty(DesignEqualsImplementationType *propertyType, const QString &qualifiedTypeString, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange);
 
     QList<DesignEqualsImplementationClassProperty*> properties() const;
     QList<DesignEqualsImplementationClassPrivateMethod*> PrivateMethods;
@@ -77,9 +77,6 @@ signals:
     void privateMethodAdded(DesignEqualsImplementationClassPrivateMethod*);
     void slotAdded(DesignEqualsImplementationClassSlot*);
     void signalAdded(DesignEqualsImplementationClassSignal*);
-public slots:
-    void setClassName(const QString &newClassName);
-    void emitAllClassDetails();
 };
 #if 0
 QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClass &designEqualsImplementationClass);

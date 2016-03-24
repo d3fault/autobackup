@@ -62,10 +62,10 @@ bool DesignEqualsImplementationProjectGenerator::generateProjectFileAndWriteItTo
 
     bool firstClass = true;
     projectFileTextStream << "HEADERS +=" DESIGNEQUALSIMPLEMENTATION_TAB;
-    QListIterator<Type*> typeIterator(m_DesignEqualsImplementationProject->allKnownTypes());
+    QListIterator<DesignEqualsImplementationType*> typeIterator(m_DesignEqualsImplementationProject->allKnownTypes());
     while(typeIterator.hasNext())
     {
-        Type *currentType = typeIterator.next();
+        DesignEqualsImplementationType *currentType = typeIterator.next();
         if(qobject_cast<DefinedElsewhereType*>(currentType))
             continue;
         if(!firstClass)
@@ -73,8 +73,7 @@ bool DesignEqualsImplementationProjectGenerator::generateProjectFileAndWriteItTo
         projectFileTextStream << currentType->headerFilenameOnly();
         firstClass = false;
     }
-    if(firstClass)
-        projectFileTextStream << endl; //when there are no classes = don't put "SOURCES +=" on same line as "HEADERS +="
+    projectFileTextStream << endl;
 
     projectFileTextStream << endl;
 
@@ -83,7 +82,7 @@ bool DesignEqualsImplementationProjectGenerator::generateProjectFileAndWriteItTo
     typeIterator.toFront();
     while(typeIterator.hasNext())
     {
-        Type *currentType = typeIterator.next();
+        DesignEqualsImplementationType *currentType = typeIterator.next();
         if(qobject_cast<DefinedElsewhereType*>(currentType))
             continue;
         if(!firstClass)
@@ -91,8 +90,7 @@ bool DesignEqualsImplementationProjectGenerator::generateProjectFileAndWriteItTo
         projectFileTextStream << currentType->sourceFilenameOnly();
         firstClass = false;
     }
-    if(firstClass)
-        projectFileTextStream << endl; //when there are no classes = don't put any lines after SOURCES += on same line
+    projectFileTextStream << endl;
 
     return true;
 }
@@ -230,7 +228,7 @@ while(classLifelinesInUseCaseIterator.hasNext())
 }
 bool DesignEqualsImplementationProjectGenerator::writeAllTypesToDisk()
 {
-    Q_FOREACH(Type *currentType, m_DesignEqualsImplementationProject->allKnownTypes())
+    Q_FOREACH(DesignEqualsImplementationType *currentType, m_DesignEqualsImplementationProject->allKnownTypes())
     {
         if(!writeTypeToDisk(currentType))
         {
@@ -401,7 +399,7 @@ bool DesignEqualsImplementationProjectGenerator::recursivelyWalkSlotInUseCaseMod
     }
     return true;
 }
-bool DesignEqualsImplementationProjectGenerator::writeTypeToDisk(Type *currentType)
+bool DesignEqualsImplementationProjectGenerator::writeTypeToDisk(DesignEqualsImplementationType *currentType)
 {
     if(qobject_cast<DefinedElsewhereType*>(currentType))
         return true; //nothing to do/write
@@ -474,15 +472,17 @@ bool DesignEqualsImplementationProjectGenerator::writeTypeToDisk(Type *currentTy
 
     //Header's header guard (bottom)
     headerFileTextStream << endl << "#endif // " << myNameHeaderGuard << endl;
+
+    return true;
 }
-bool DesignEqualsImplementationProjectGenerator::writeQObjectDerivedClassToDisk(DesignEqualsImplementationClass *qobjectDerivedClass, const QDataStream &headerFileTextStream, const QDataStream &sourceFileTextStream)
+bool DesignEqualsImplementationProjectGenerator::writeQObjectDerivedClassToDisk(DesignEqualsImplementationClass *currentClass, QTextStream &headerFileTextStream, QTextStream &sourceFileTextStream)
 {
     headerFileTextStream << "#include <QObject>" << endl //TODOoptional: only specify QObject-ancestor include (as it includes QObject implicitly)
     << endl;
 
     //Header's header's forward declares
     QList<NonFunctionMember*> pointerMembers;
-    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, qobjectDerivedClass->nonFunctionMembers())
+    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentClass->nonFunctionMembers())
     {
         if(currentNonFunctionMember->isPointer())
             pointerMembers << currentNonFunctionMember;
@@ -495,12 +495,12 @@ bool DesignEqualsImplementationProjectGenerator::writeQObjectDerivedClassToDisk(
     }
     if(atLeasteOneMemberIsApointer)
         headerFileTextStream << endl; //OCD <3
-    headerFileTextStream    << "class " << qobjectDerivedClass->Name << " : public QObject" << endl
+    headerFileTextStream    << "class " << currentClass->Name << " : public QObject" << endl
                             << "{" << endl
                             << DESIGNEQUALSIMPLEMENTATION_TAB << "Q_OBJECT" << endl;
 
     //Header's Q_PROPERTY declarations
-    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, qobjectDerivedClass->properties())
+    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->properties())
     {
         //Q_PROPERTY..
         headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "Q_PROPERTY(" + currentProperty->type->Name << " " << firstCharacterToLower(currentProperty->propertyName()) << " READ " << getterNameForProperty(currentProperty->propertyName()); //here marks the first time i've ever actually used the Q_PROPERTY macro <3. i'm always just too lazy and don't see the benefit... but since code generator, the cost becomes/became zero xD
@@ -512,11 +512,11 @@ bool DesignEqualsImplementationProjectGenerator::writeQObjectDerivedClassToDisk(
     }
 
     headerFileTextStream << "public:" << endl
-                            << DESIGNEQUALSIMPLEMENTATION_TAB << "explicit " << qobjectDerivedClass->Name << "(QObject *parent = 0);" << endl;
-    headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "virtual ~" << qobjectDerivedClass->Name << "();" << endl;
+                            << DESIGNEQUALSIMPLEMENTATION_TAB << "explicit " << currentClass->Name << "(QObject *parent = 0);" << endl;
+    headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "virtual ~" << currentClass->Name << "();" << endl;
 
     //Header's property getters and setters declarations
-    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, qobjectDerivedClass->properties())
+    Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->properties())
     {
         //Property getter
         //int x() const;
@@ -540,7 +540,7 @@ bool DesignEqualsImplementationProjectGenerator::writeQObjectDerivedClassToDisk(
         headerFileTextStream << "private:" << endl;
         privateAccessSpecifierWritten = true;
     }
-    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, qobjectDerivedClass->nonFunctionMembers())
+    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentClass->nonFunctionMembers())
     {
         if(currentNonFunctionMember->visibility != Visibility::Private)
             continue; //TODOreq: similar for public/protected areas
@@ -567,7 +567,7 @@ bool DesignEqualsImplementationProjectGenerator::writeQObjectDerivedClassToDisk(
     {
         DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << endl;)
     }
-    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << qobjectDerivedClass->Name << "::" << qobjectDerivedClass->Name << "(QObject *parent)" << endl
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << currentClass->Name << "::" << currentClass->Name << "(QObject *parent)" << endl
                             << DESIGNEQUALSIMPLEMENTATION_TAB << ": QObject(parent)" << endl;)
     //Source's header Properties constructor initializers
             Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, currentClass->properties())
@@ -579,7 +579,7 @@ bool DesignEqualsImplementationProjectGenerator::writeQObjectDerivedClassToDisk(
         }
     }
     //Source's header PrivateMemberClasses constructor initializers
-    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, qobjectDerivedClass->nonFunctionMembers())
+    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, currentClass->nonFunctionMembers())
     {
         //, m_Bar(new Bar(this))
         //OR
@@ -601,7 +601,7 @@ bool DesignEqualsImplementationProjectGenerator::writeQObjectDerivedClassToDisk(
     }
 
     //Source constructor -- children connection statements (or just constructor statements, but as of writing they are only connect statements)
-    QList<QString> classConstructorLines = m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements.value(qobjectDerivedClass);
+    QList<QString> classConstructorLines = m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements.value(currentClass);
     if(classConstructorLines.isEmpty())
     {
         DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "{ }" << endl;)
@@ -617,7 +617,7 @@ bool DesignEqualsImplementationProjectGenerator::writeQObjectDerivedClassToDisk(
     }
 
     //Source destructor
-    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << qobjectDerivedClass->Name << "::~" << qobjectDerivedClass->Name << "()" << endl
+    DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << currentClass->Name << "::~" << currentClass->Name << "()" << endl
                             << "{ }" << endl;)
 
     //Source properties getters and setters definitions
@@ -756,7 +756,8 @@ bool DesignEqualsImplementationProjectGenerator::writeQObjectDerivedClassToDisk(
 #endif
     return true;
 }
-bool DesignEqualsImplementationProjectGenerator::writeImplicitlySharedDataTypeToDisk(DesignEqualsImplementationImplicitlySharedDataType *implicitlySharedDataType, const QDataStream &headerFileTextStream, const QDataStream &sourceFileTextStream)
+//TODOreq: declare metatype, generate+register qdatastream operators, etc
+bool DesignEqualsImplementationProjectGenerator::writeImplicitlySharedDataTypeToDisk(DesignEqualsImplementationImplicitlySharedDataType *implicitlySharedDataType, QTextStream &headerFileTextStream, QTextStream &sourceFileTextStream)
 {
     headerFileTextStream << "#include <QSharedDataPointer>" << endl
     << endl;
@@ -771,7 +772,7 @@ bool DesignEqualsImplementationProjectGenerator::writeImplicitlySharedDataTypeTo
         headerFileTextStream << endl;
 
     //class FooData;
-    headerFileTextStream << implicitlySharedDataType->privateImplementationTypeName() << ";" << endl
+    headerFileTextStream << "class " << implicitlySharedDataType->privateImplementationTypeName() << ";" << endl
     << endl;
 
     //class Foo (...)
@@ -779,9 +780,11 @@ bool DesignEqualsImplementationProjectGenerator::writeImplicitlySharedDataTypeTo
     << "{" << endl
     << "public:" << endl
     << DESIGNEQUALSIMPLEMENTATION_TAB << implicitlySharedDataType->Name << "();" << endl
-    << DESIGNEQUALSIMPLEMENTATION_TAB << implicitlySharedDataType->Name << "(const " << implicitlySharedDataType->Name <<  "&other);" << endl
-    << DESIGNEQUALSIMPLEMENTATION_TAB << implicitlySharedDataType->Name << " &operator=(const " << implicitlySharedDataType->Name <<  "&rhs);" << endl
+    << DESIGNEQUALSIMPLEMENTATION_TAB << implicitlySharedDataType->Name << "(const " << implicitlySharedDataType->Name <<  " &other);" << endl
+    << DESIGNEQUALSIMPLEMENTATION_TAB << implicitlySharedDataType->Name << " &operator=(const " << implicitlySharedDataType->Name <<  " &rhs);" << endl
     << DESIGNEQUALSIMPLEMENTATION_TAB << "~" << implicitlySharedDataType->Name << "();" << endl;
+    if(!implicitlySharedDataType->nonFunctionMembers().isEmpty())
+        headerFileTextStream << endl;
     //TODOreq: visibility doesn't make any sense in the context of implicitly shared data types. so I'm going to assume all NonFunctionMembers are "public"
     Q_FOREACH(NonFunctionMember *currentNonFunctionMember, implicitlySharedDataType->nonFunctionMembers())
     {
@@ -796,6 +799,8 @@ bool DesignEqualsImplementationProjectGenerator::writeImplicitlySharedDataTypeTo
 
     //Source additional include
     DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "#include <QSharedData>" << endl;)
+
+    sourceFileTextStream << endl;
 
     //class FooData : public QSharedData (...)
     /*Macros always fuck with my spacing: I don't think I want/need to "edit C++" of implicitly shared data type anyways...  DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "class " << implicitlySharedDataType->privateImplementationTypeName() << " : public QSharedData" << endl
@@ -863,13 +868,13 @@ bool DesignEqualsImplementationProjectGenerator::writeImplicitlySharedDataTypeTo
     //Foo's NonFunctionMember's getters/setters
     Q_FOREACH(NonFunctionMember *currentNonFunctionMember, implicitlySharedDataType->nonFunctionMembers())
     {
-        //Bar getBar() const { return d->bar; }
-        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << currentNonFunctionMember->qualifiedType() << " " /*TODOreq: we DON'T want an extra space if qualified type ends with * or & */ << getterNameForProperty(currentNonFunctionMember->VariableName) << "() const" << endl
+        //Bar Foo::getBar() const { return d->bar; }
+        sourceFileTextStream << currentNonFunctionMember->qualifiedType() << " " /*TODOreq: we DON'T want an extra space if qualified type ends with * or & */ << implicitlySharedDataType->Name << "::" << getterNameForProperty(currentNonFunctionMember->VariableName) << "() const" << endl
         << "{" << endl
         << DESIGNEQUALSIMPLEMENTATION_TAB << "return d->" << currentNonFunctionMember->VariableName << ";" << endl
         << "}" << endl;
-        //void setBar(Bar bar) { d->bar = bar; }
-        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << "void " << setterNameForProperty(currentNonFunctionMember->VariableName) << "(" << currentNonFunctionMember->preferredTextualRepresentationOfTypeAndVariableTogether() << ")" << endl
+        //void Foo::setBar(Bar bar) { d->bar = bar; }
+        sourceFileTextStream << "void " << implicitlySharedDataType->Name << "::" << setterNameForProperty(currentNonFunctionMember->VariableName) << "(" << currentNonFunctionMember->preferredTextualRepresentationOfTypeAndVariableTogether() << ")" << endl
     << "{" << endl
     << DESIGNEQUALSIMPLEMENTATION_TAB << "d->" << currentNonFunctionMember->VariableName << " = " << currentNonFunctionMember->VariableName << ";" << endl //Yo dawg I heard u leik code so we put code in your code so you can code while you code
     << "}" << endl;
@@ -877,6 +882,8 @@ bool DesignEqualsImplementationProjectGenerator::writeImplicitlySharedDataTypeTo
     //Foo~Foo { }
     sourceFileTextStream << implicitlySharedDataType->Name << "::~" << implicitlySharedDataType->Name << "()" << endl
     << "{ }" << endl;
+
+    return true;
 }
 void DesignEqualsImplementationProjectGenerator::appendConnectStatementToClassInitializationSequence(DesignEqualsImplementationClass *classToGetConnectStatementInInitializationSequence, const QString &connectStatement)
 {

@@ -142,7 +142,7 @@ void DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::private
     connect(classLifeLine, SIGNAL(slotInsertedIntoClassLifeLine(int,DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotInsertedIntoClassLifeLine(int, DesignEqualsImplementationClassSlot*)));
     connect(classLifeLine, SIGNAL(slotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot*)));
 
-    connect(this, SIGNAL(editCppModeRequested(Type*)), m_DesignEqualsImplementationClassLifeLine->designEqualsImplementationClass()->m_ParentProject, SLOT(handleEditCppModeRequested(Type*)));
+    connect(this, SIGNAL(editCppModeRequested(DesignEqualsImplementationType*)), m_DesignEqualsImplementationClassLifeLine->designEqualsImplementationClass()->m_ParentProject, SLOT(handleEditCppModeRequested(DesignEqualsImplementationType*)));
 }
 DesignEqualsImplementationSlotGraphicsItemForUseCaseScene* DesignEqualsImplementationClassLifeLineGraphicsItemForUseCaseScene::createAndInsertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot)
 {

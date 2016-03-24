@@ -7,7 +7,7 @@
 #include "designequalsimplementationclassproperty.h"
 
 //tl;dr: using C++ to model C++. My brain is full of fuck and oh it feels so good [man]
-NonFunctionMember *Type::createNewNonFunctionMember(Type *typeOfNewNonFunctionMember, const QString &qualifiedTypeString, const QString &nameOfNewNonFunctionMember_OrEmptyStringToAutoGenerateOne, Visibility::VisibilityEnum visibility, TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum ownershipOfPointedToDataIfPointer, bool hasInit, const QString &optionalInit)
+NonFunctionMember *DesignEqualsImplementationType::createNewNonFunctionMember(DesignEqualsImplementationType *typeOfNewNonFunctionMember, const QString &qualifiedTypeString, const QString &nameOfNewNonFunctionMember_OrEmptyStringToAutoGenerateOne, Visibility::VisibilityEnum visibility, TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum ownershipOfPointedToDataIfPointer, bool hasInit, const QString &optionalInit)
 {
     QString chosenVariableName = nameOfNewNonFunctionMember_OrEmptyStringToAutoGenerateOne;
     if(chosenVariableName.trimmed().isEmpty())
@@ -22,7 +22,7 @@ NonFunctionMember *Type::createNewNonFunctionMember(Type *typeOfNewNonFunctionMe
     return nonFunctionMember;
 }
 //TODOreq: anything/everything that is checked against IN this method, should also check against this method when setting it's corresponding 'name'. idk whether it should be in the GUI (unacceptable dialogs, etc) or in the business logic or both or what, but all I know is that collisions [can] happen both ways and right now I'm only checking for collisions when doing 'autoName' shit for NonFunctionMember creation -- it can be put off as low priority since the C++ compiler will catch it for me :)
-bool Type::memberWithNameExists(const QString &memberNameToCheckForCollisions) const
+bool DesignEqualsImplementationType::memberWithNameExists(const QString &memberNameToCheckForCollisions) const
 {
     //TO DOnemb: for improved readibility (sanity), perhaps I should do case insensitive matching (.toLower both sides). TODOmb: 'lookalike' characters (zero and oh, etc), but however in those fuzzy matches, it should only issue a warning and give user an opportunity to change [or accept as is]
     QString memberLower = memberNameToCheckForCollisions.toLower();
@@ -67,7 +67,7 @@ bool Type::memberWithNameExists(const QString &memberNameToCheckForCollisions) c
     return false;
 }
 //TODOblah: can't normal NonFunctionMembers have getters and setters? well obviously yes. I guess atm I'm saying "NonFunctionMembers are their visibility ONLY, if you want getters/setters, use Q_PROPERTY". if I ever refactor to allow NonFunctionMembers to have getters/setters, I need to also search for those collisions in autoNameForNewChildOfType
-QString Type::autoNameForNewChildMemberOfType(Type *childMemberClassType) const //TODOreq: check for collission with properties and signals/slots too, which are all technically "members" so I may refactor to account for that fact. actually tbh I'm not sure if methods collide, but they might (and I usually assume they DO to be on the safe side). it also applies to getters/setters/changedNotifiers
+QString DesignEqualsImplementationType::autoNameForNewChildMemberOfType(DesignEqualsImplementationType *childMemberClassType) const //TODOreq: check for collission with properties and signals/slots too, which are all technically "members" so I may refactor to account for that fact. actually tbh I'm not sure if methods collide, but they might (and I usually assume they DO to be on the safe side). it also applies to getters/setters/changedNotifiers
 {
     int indexCurrentlyTestingForNameCollission = -1;
     QString ret;
@@ -137,24 +137,28 @@ bool TypeInstance::isPointer() const
     }
     //TODOmb: analyze Qualifiers_RHS for an asterisk??? if so, should probably do it during parseQualifiedTypeString and then set the enum accordingly (default to non-owner pointer when asterisk seen, ofc). additionally, i should first check that it's not ALREADY set to OwnsPointedToData. if that's the case, just 'return;' without any asterisk analysis
 }
-int Type::serializationNonFunctionMemberIdForNonFunctionMember(NonFunctionMember *nonFunctionMember) const
+int DesignEqualsImplementationType::serializationNonFunctionMemberIdForNonFunctionMember(NonFunctionMember *nonFunctionMember) const
 {
     return m_NonFunctionMembers.indexOf(nonFunctionMember);
 }
-NonFunctionMember *Type::nonFunctionMemberFromNonFunctionMemberId(int nonFunctionMemberId) const
+NonFunctionMember *DesignEqualsImplementationType::nonFunctionMemberFromNonFunctionMemberId(int nonFunctionMemberId) const
 {
     return m_NonFunctionMembers.at(nonFunctionMemberId);
 }
-QString Type::headerFilenameOnly() const
+QString DesignEqualsImplementationType::headerFilenameOnly() const
 {
     return Name.toLower() + ".h"; //TODOreq: we don't want int.h, bool.h, etc (same with .cpp). Ideally a type can/does specify N headers it requires. Our DesignEqualsImplementationClass, however, does just use type.name.toLower() ofc...
 }
-QString Type::sourceFilenameOnly() const
+QString DesignEqualsImplementationType::sourceFilenameOnly() const
 {
     return Name.toLower() + ".cpp";
 }
-void Type::addNonFunctionMemberPrivate(NonFunctionMember *nonFunctionMember)
+void DesignEqualsImplementationType::addNonFunctionMemberPrivate(NonFunctionMember *nonFunctionMember)
 {
     m_NonFunctionMembers << nonFunctionMember;
     /*emit */nonFunctionMemberAdded(nonFunctionMember);
+}
+void DesignEqualsImplementationType::setClassName(const QString &newClassName)
+{
+    Name = newClassName; // s/Class/Type (it's a slot)
 }

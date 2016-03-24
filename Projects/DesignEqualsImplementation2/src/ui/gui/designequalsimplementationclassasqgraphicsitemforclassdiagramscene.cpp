@@ -14,7 +14,7 @@
 
 //TODOmb: considering changing this to a qpixmap in a graphics scene instead, where teh pixmap is drawn only when the class changes, update called once, then it's simply provided to qgraphicsview (svg might be more optimized?)... i'm going to wait on making a decision until i try to reuse the code for getting the "uml class" drag drop thingo to use the same shape (in designEquals1, i rendered to pixmap for that). i do know one thing, what i'm doing now is hella laggy (but works so fuck it)
 //TODOreq: s/Class/Type
-DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(Type *designEqualsImplementationClass, DesignEqualsImplementationProject *currentProject, QGraphicsItem *graphicsParent, QObject *qobjectParent)
+DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene(DesignEqualsImplementationType *designEqualsImplementationClass, DesignEqualsImplementationProject *currentProject, QGraphicsItem *graphicsParent, QObject *qobjectParent)
     : QObject(qobjectParent)
     , QGraphicsRectItem(graphicsParent)
     , m_Type(designEqualsImplementationClass)
@@ -36,7 +36,7 @@ DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::DesignEquals
     m_ClassContentsGraphicsTextItem = new QGraphicsTextItem(this);
     updateClassContentsGraphicsTextItem();
 
-    connect(this, SIGNAL(editCppModeRequested(Type*)), currentProject, SLOT(handleEditCppModeRequested(Type*)));
+    connect(this, SIGNAL(editCppModeRequested(DesignEqualsImplementationType*)), currentProject, SLOT(handleEditCppModeRequested(DesignEqualsImplementationType*)));
 }
 void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
@@ -83,7 +83,7 @@ QString DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::clas
     }
     Q_FOREACH(DesignEqualsImplementationClassProperty *currentProperty, m_DesignEqualsImplementationClass->Properties)
     {
-        classContentsString.append("<br />Q_PROPERTY(" + m_DesignEqualsImplementationClass->Name + "::" + currentProperty->Type + "::" + currentProperty->Name + ");");
+        classContentsString.append("<br />Q_PROPERTY(" + m_DesignEqualsImplementationClass->Name + "::" + currentProperty->type->Name + "::" + currentProperty->Name + ");");
         ++numLinesOfText;
     }
     bool privateAccessorSpecified = false;
@@ -131,26 +131,29 @@ QString DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::clas
         classContentsString.append("<br />m  " + currentNonFunctionMember->preferredTextualRepresentationOfTypeAndVariableTogether()); //TODOmb: try to cast to property, display it differently
         ++numLinesOfText;
     }
-    Q_FOREACH(DesignEqualsImplementationClassPrivateMethod *currentPrivateMethod, m_Type->PrivateMethods)
+    if(DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(m_Type))
     {
-        classContentsString.append("<br />-  " + currentPrivateMethod->Name); //TODOreq: methodSignature
-        ++numLinesOfText;
-    }
-    Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, m_Type->mySignals())
-    {
-        classContentsString.append("<br />)) " + currentSignal->methodSignatureWithoutReturnType());
-        ++numLinesOfText;
-    }
-    Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, m_Type->mySlots())
-    {
-        if(!currentSlot->Name.startsWith(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING_PREFIX))
+        Q_FOREACH(DesignEqualsImplementationClassPrivateMethod *currentPrivateMethod, typeAsClass->PrivateMethods)
         {
-            classContentsString.append("<br />+  " + currentSlot->methodSignatureWithoutReturnType());
+            classContentsString.append("<br />-  " + currentPrivateMethod->Name); //TODOreq: methodSignature
             ++numLinesOfText;
         }
-        else
+        Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, typeAsClass->mySignals())
         {
-            //TODOoptional: we definitely don't want to SHOW the name of the unnamed slots (ugly temp hack string), but maybe indicate how many unnamed slots the class has (but don't say "zero" ofc -- when in the class editor, such unnamed slots would be double-clickable and that takes us to the use case they are in)
+            classContentsString.append("<br />)) " + currentSignal->methodSignatureWithoutReturnType());
+            ++numLinesOfText;
+        }
+        Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, typeAsClass->mySlots())
+        {
+            if(!currentSlot->Name.startsWith(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING_PREFIX))
+            {
+                classContentsString.append("<br />+  " + currentSlot->methodSignatureWithoutReturnType());
+                ++numLinesOfText;
+            }
+            else
+            {
+                //TODOoptional: we definitely don't want to SHOW the name of the unnamed slots (ugly temp hack string), but maybe indicate how many unnamed slots the class has (but don't say "zero" ofc -- when in the class editor, such unnamed slots would be double-clickable and that takes us to the use case they are in)
+            }
         }
     }
     return classContentsString;
@@ -160,7 +163,7 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::updateC
     m_ClassContentsGraphicsTextItem->setHtml(classDetailsAsHtmlString());
     setRect(childrenBoundingRect());
 }
-#if 0 //i believe there's some line drawing logic (in between the member types) i want to grab out of this before removing altogether
+#if 0 //i believe there's some line drawing logic (in between the member Types) i want to grab out of this before removing altogether
 QRectF DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::boundingRect() const
 {
     return m_BoundingRect;
@@ -223,7 +226,7 @@ void DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::paint(Q
     bool drawingFirstLine = true; //Line between class name and rest should be same as border width
     --numLinesOfText; //This might look like an off by one, but I decided not to draw the very last/bottom line because it looks retarded
 
-    //Only draw lines between class sub-types (signals/slots/private-methods/etc)
+    //Only draw lines between class sub-Types (signals/slots/private-methods/etc)
     QList<int> indexesInto_i_inForLoopToActuallyDrawLinesFor; //we still need to know the position of all lines for proper spacing
     //int runningIforMarkingLinesToDrawSynchronizedWithLinesDeterminedForSpacing = 0;
     //indexesInto_i_inForLoopToActuallyDrawLinesFor.append(runningIforMarkingLinesToDrawSynchronizedWithLinesDeterminedForSpacing++);

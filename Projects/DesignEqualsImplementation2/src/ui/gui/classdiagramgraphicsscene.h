@@ -4,7 +4,7 @@
 #include "idesignequalsimplementationgraphicsscene.h"
 #include "../../designequalsimplementationcommon.h"
 
-class Type;
+class DesignEqualsImplementationType;
 class DesignEqualsImplementationProject;
 class DesignEqualsImplementationClass;
 
@@ -26,7 +26,7 @@ private:
 signals:
     void addUmlItemRequested(UmlItemsTypedef umlItemType, QPointF position);
 private slots:
-    void handleTypeAdded(Type *typeAdded);
+    void handleTypeAdded(DesignEqualsImplementationType *typeAdded);
 };
 
 #endif // CLASSDIAGRAMGRAPHICSSCENE_H

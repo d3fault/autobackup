@@ -19,7 +19,7 @@ QString DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSe
     return QString("connect(" + signalObjectVariableName + ", SIGNAL(" + signalNameIncludingNormalizedArgs + "), " +  slotObjectVariableName + ", SLOT(" + slotNameIncludingNormalizedArgs + "));");
 }
 DesignEqualsImplementationClass::DesignEqualsImplementationClass(QObject *parent, DesignEqualsImplementationProject *parentProject)
-    : Type(parent, parentProject)
+    : DesignEqualsImplementationType(parent, parentProject)
 { }
 DesignEqualsImplementationClass::~DesignEqualsImplementationClass()
 {
@@ -73,7 +73,7 @@ void DesignEqualsImplementationClass::addNonFunctionMember(NonFunctionMember *no
     //DesignEqualsImplementationClass accepts any kind of NonFunctionMember
     addNonFunctionMemberPrivate(nonFunctionMember);
 }
-DesignEqualsImplementationClassProperty *DesignEqualsImplementationClass::createNewProperty(Type *propertyType, const QString &qualifiedTypeString, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange)
+DesignEqualsImplementationClassProperty *DesignEqualsImplementationClass::createNewProperty(DesignEqualsImplementationType *propertyType, const QString &qualifiedTypeString, const QString &propertyName, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange)
 {
     DesignEqualsImplementationClassProperty *newProperty = new DesignEqualsImplementationClassProperty(propertyType, qualifiedTypeString, propertyName, this, this, hasInit, optionalInit, readOnly, notifiesOnChange);
     addNonFunctionMember(newProperty);
@@ -126,12 +126,4 @@ QString DesignEqualsImplementationClass::nextTempUnnamedSlotName()
     }
     while(slotWithThisNameExists(ret));
     return ret;
-}
-void DesignEqualsImplementationClass::setClassName(const QString &newClassName)
-{
-    Name = newClassName;
-}
-void DesignEqualsImplementationClass::emitAllClassDetails()
-{
-    //TODOreq
 }

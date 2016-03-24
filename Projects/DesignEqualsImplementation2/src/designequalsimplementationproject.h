@@ -22,10 +22,10 @@ public:
     DesignEqualsImplementationClass *createNewClass(const QString &newClassName = QString(), const QPointF &classPositionInGraphicsScene = QPointF());
     DesignEqualsImplementationImplicitlySharedDataType *createNewImplicitlySharedDataType(const QString &newImplicitlySharedDataTypeName = QString(), const QPointF &positionInGraphicsScene = QPointF());
 
-    void addType(Type *type);
-    QList<Type *> allKnownTypes() const;
+    void addType(DesignEqualsImplementationType *type);
+    QList<DesignEqualsImplementationType *> allKnownTypes() const;
     QList<QString> allKnownTypesNames() const;
-    Type *getOrCreateTypeFromName(const QString &nonQualifiedTypeName);
+    DesignEqualsImplementationType *getOrCreateTypeFromName(const QString &nonQualifiedTypeName);
 
     //TODOoptional: private + getter/setter blah
     QString Name;
@@ -46,8 +46,8 @@ public:
     QList<DesignEqualsImplementationUseCase*> m_UseCases;
 
     //serialization and deserialization of a type REFERENCE
-    int serializationTypeIdForType(Type *typeToReturnSerializationIdFor);
-    Type *typeFromSerializedTypeId(int serializedTypeId);
+    int serializationTypeIdForType(DesignEqualsImplementationType *typeToReturnSerializationIdFor);
+    DesignEqualsImplementationType *typeFromSerializedTypeId(int serializedTypeId);
 
     //serializing and deserializing of a use case REFERENCE
     inline int serializationUseCaseIdForUseCase(DesignEqualsImplementationUseCase *useCase) { return m_UseCases.indexOf(useCase); }
@@ -73,7 +73,7 @@ public:
     //Temporary for code gen:
     bool writeTemporaryGlueCodeLines(const QString &destinationDirectoryPath);
 private:
-    QList<Type*> m_AllKnownTypes;
+    QList<DesignEqualsImplementationType*> m_AllKnownTypes;
 
     bool generateSourceCodePrivate(ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath, bool generateCppEditModeDelimitingComments = false, int *out_LineNumberToJumpTo_OrZeroIfNotApplicable = 0, DesignEqualsImplementationClassSlot *slotWeWantLineNumberOf_OnlyWhenApplicable = 0, int statementIndexOfSlotToGetLineNumberOf_OnlyWhenApplicable = -1);
     bool tempGenerateHardcodedUiFiles(const QString &destinationDirectoryPath);
@@ -87,14 +87,14 @@ private:
 #endif
 signals:
     void useCaseAdded(DesignEqualsImplementationUseCase*);
-    void typeAdded(Type*);
+    void typeAdded(DesignEqualsImplementationType*);
     void sourceCodeGenerated(bool);
     void e(const QString &);
 public slots:
     void emitAllClassesAndUseCasesInProject();
     void handleAddUmlItemRequested(UmlItemsTypedef umlItemType, QPointF position);
     void handleNewUseCaseRequested();
-    void handleEditCppModeRequested(Type *designEqualsImplementationClass = 0, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot = 0, int statementIndexOfSlot = -1);
+    void handleEditCppModeRequested(DesignEqualsImplementationType *designEqualsImplementationClass = 0, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot = 0, int statementIndexOfSlot = -1);
     void generateSourceCode(DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode, const QString &destinationDirectoryPath);
 };
 #if 0

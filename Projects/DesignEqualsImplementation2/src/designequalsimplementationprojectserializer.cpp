@@ -32,7 +32,7 @@ for(int i = 0; i < numArgs; ++i) \
     qds >> qualifiersLhs; \
     int argTypeId; \
     qds >> argTypeId; \
-    Type *argType = project->typeFromSerializedTypeId(argTypeId); \
+    DesignEqualsImplementationType *argType = project->typeFromSerializedTypeId(argTypeId); \
     QString qualifiersRhs; \
     qds >> qualifiersRhs; \
     QString argName; \
@@ -62,7 +62,7 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
     projectDataStream << projectToSerialize->allKnownTypes().size();
     //First just serialize the type type (d=iClass, ImplicitlyShared, or DefinedElsewhere -- lolwut) and name
     int numTypesWithGreaterThanZeroDirectAncestors = 0;
-    Q_FOREACH(Type *currentType, projectToSerialize->allKnownTypes())
+    Q_FOREACH(DesignEqualsImplementationType *currentType, projectToSerialize->allKnownTypes())
     {
         projectDataStream << currentType->typeCategory();
         projectDataStream << currentType->Name;
@@ -72,7 +72,7 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
     }
     //Now serialize the type ANCESTORS (which, themselves, are/depend-on types)
     projectDataStream << numTypesWithGreaterThanZeroDirectAncestors;
-    Q_FOREACH(Type *currentType, projectToSerialize->allKnownTypes())
+    Q_FOREACH(DesignEqualsImplementationType *currentType, projectToSerialize->allKnownTypes())
     {
         if(!currentType->DirectAncestors.isEmpty())
         {
@@ -86,7 +86,7 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
         }
     }
     //now do typeCategory specific serializing
-    Q_FOREACH(Type *currentType, projectToSerialize->allKnownTypes())
+    Q_FOREACH(DesignEqualsImplementationType *currentType, projectToSerialize->allKnownTypes())
     {
         if(!qobject_cast<DefinedElsewhereType*>(currentType))
             projectDataStream << currentType->Position; //DefinedElsewhereTypes don't use this because they are not in the class diagram scene
@@ -112,7 +112,7 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
         }
     }
     //Type NonFunctionMembers
-    Q_FOREACH(Type *currentType, projectToSerialize->allKnownTypes())
+    Q_FOREACH(DesignEqualsImplementationType *currentType, projectToSerialize->allKnownTypes())
     {
         if(qobject_cast<DefinedElsewhereType*>(currentType))
             continue; //can't have members (that we defined)
@@ -177,7 +177,7 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
             if(currentClassLifeLine->m_InstanceType == DesignEqualsImplementationClassLifeLine::ChildMemberOfOtherClassLifeline)
             {
                 //out << *currentClassLifeLine->m_InstanceInOtherClassIfApplicable;
-                Type *parentClass = currentClassLifeLine->m_InstanceInOtherClassIfApplicable->parentClass();
+                DesignEqualsImplementationType *parentClass = currentClassLifeLine->m_InstanceInOtherClassIfApplicable->parentClass();
                 projectDataStream << projectToSerialize->serializationTypeIdForType(parentClass);
                 projectDataStream << parentClass->serializationNonFunctionMemberIdForNonFunctionMember(currentClassLifeLine->m_InstanceInOtherClassIfApplicable);
             }
@@ -264,7 +264,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
     {
         int typeCategory;
         projectDataStream >> typeCategory;
-        Type *type;
+        DesignEqualsImplementationType *type;
         switch(typeCategory)
         {
         case 0:
@@ -288,7 +288,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
     {
         int typeWithAncestorsTypeId;
         projectDataStream >> typeWithAncestorsTypeId;
-        Type *typeWithAncestor = projectToPopulate->typeFromSerializedTypeId(typeWithAncestorsTypeId);
+        DesignEqualsImplementationType *typeWithAncestor = projectToPopulate->typeFromSerializedTypeId(typeWithAncestorsTypeId);
         int numAncestors;
         projectDataStream >> numAncestors;
         for(int j = 0; j < numAncestors; ++j)
@@ -304,7 +304,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
         }
     }
     //now do typeCategory specific deserializing
-    Q_FOREACH(Type *currentType, projectToPopulate->allKnownTypes())
+    Q_FOREACH(DesignEqualsImplementationType *currentType, projectToPopulate->allKnownTypes())
     {
         if(!qobject_cast<DefinedElsewhereType*>(currentType))
             projectDataStream >> currentType->Position; //DefinedElsewhereTypes don't use this because they are not in the class diagram scene
@@ -336,7 +336,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
         }
     }
     //Type NonFunctionMembers
-    Q_FOREACH(Type *currentType, projectToPopulate->allKnownTypes())
+    Q_FOREACH(DesignEqualsImplementationType *currentType, projectToPopulate->allKnownTypes())
     {
         if(qobject_cast<DefinedElsewhereType*>(currentType))
             continue; //can't have members (that we defined)
@@ -363,7 +363,7 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             quint8 ownershipOfPointedToDataIfpointer;
             projectDataStream >> ownershipOfPointedToDataIfpointer;
 
-            Type *nonFunctionMemberType = projectToPopulate->typeFromSerializedTypeId(nonFunctionMemberTypeId);
+            DesignEqualsImplementationType *nonFunctionMemberType = projectToPopulate->typeFromSerializedTypeId(nonFunctionMemberTypeId);
             QString qualifiedTypeString = qualifiersLhs + nonFunctionMemberType->Name + qualifiersRhs; //TODOoptional: a slightly more proper way would be to have a NonMemberFunction constructor overload that takes the LHS/RHS as separate args, rather than just one constructor that parses a qualifiedTypeString. fuck it for now
 
             if(DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(currentType))

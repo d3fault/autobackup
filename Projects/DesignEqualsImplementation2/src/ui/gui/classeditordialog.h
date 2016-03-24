@@ -10,7 +10,7 @@ class QVBoxLayout;
 
 class DesignEqualsImplementationProject;
 class MethodSingleArgumentWidget;
-class Type;
+class DesignEqualsImplementationType;
 class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassProperty;
 class IDesignEqualsImplementationMethod;
@@ -21,9 +21,9 @@ class ClassEditorDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ClassEditorDialog(Type *typeToEdit, DesignEqualsImplementationProject *currentProject, QWidget *parent = 0, Qt::WindowFlags f = 0);
+    explicit ClassEditorDialog(DesignEqualsImplementationType *typeToEdit, DesignEqualsImplementationProject *currentProject, QWidget *parent = 0, Qt::WindowFlags f = 0);
 private:
-    Type *m_TypeBeingEditted;
+    DesignEqualsImplementationType *m_TypeBeingEditted;
     bool m_TypeIsQObjectDerived;
     DesignEqualsImplementationProject *m_CurrentProject;
 
@@ -57,7 +57,7 @@ private:
     QString classDetailsAsHtmlString();
 signals:
     void e(const QString &);
-    void editCppModeRequested(Type *designEqualsImplementationClass);
+    void editCppModeRequested(DesignEqualsImplementationType *designEqualsImplementationClass);
 private slots:
     void handleEditCppButtonClicked();
 

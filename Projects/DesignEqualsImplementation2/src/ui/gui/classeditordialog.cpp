@@ -32,7 +32,7 @@
 //TODOoptional: when there's a signal, we can have multiple slots. they may all be created IN the signal slot editor. as a special case, pressing enter in the "quick add new slot" line edit should not accept the dialog (like usual) but should instead add new line edit for the next slot. Pressing enter when the line edit is empty (so pressing enter twice in a row) accepts the dialog like normal
 //TODOreq: class editor -> slots tab... to allow them to do the non-quick-add, or re-order/re-name/etc, which after dialog is 'done' means we need to refresh ourself (just like after instance chooser is accepted)
 //TODOreq: s/Class/Type
-ClassEditorDialog::ClassEditorDialog(Type *typeToEdit, DesignEqualsImplementationProject *currentProject, QWidget *parent, Qt::WindowFlags f)
+ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationType *typeToEdit, DesignEqualsImplementationProject *currentProject, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     , m_TypeBeingEditted(typeToEdit)
     , m_TypeIsQObjectDerived(false)
@@ -44,8 +44,13 @@ ClassEditorDialog::ClassEditorDialog(Type *typeToEdit, DesignEqualsImplementatio
         accept();
         return;
     }
-    if(qobject_cast<DesignEqualsImplementationClass*>(typeToEdit))
+    if(DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(typeToEdit))
+    {
         m_TypeIsQObjectDerived = true;
+
+        connect(typeAsClass, SIGNAL(signalAdded(DesignEqualsImplementationClassSignal*)), this, SLOT(updateClassOverviewLabel()));
+        connect(typeAsClass, SIGNAL(slotAdded(DesignEqualsImplementationClassSlot*)), this, SLOT(updateClassOverviewLabel()));
+    }
 
     setWindowTitle(tr("Class Editor"));
 
@@ -98,15 +103,13 @@ ClassEditorDialog::ClassEditorDialog(Type *typeToEdit, DesignEqualsImplementatio
 
     //reactor pattern, gui responding to our own edits <3
     connect(typeToEdit, SIGNAL(nonFunctionMemberAdded(NonFunctionMember*)), this, SLOT(updateClassOverviewLabel()));
-    connect(typeToEdit, SIGNAL(signalAdded(DesignEqualsImplementationClassSignal*)), this, SLOT(updateClassOverviewLabel()));
-    connect(typeToEdit, SIGNAL(slotAdded(DesignEqualsImplementationClassSlot*)), this, SLOT(updateClassOverviewLabel()));
 #if 0
     connect(classToEdit, SIGNAL(nonFunctionMemberAdded(NonFunctionMember*)), this, SLOT(handleNonFunctionMemberAdded(NonFunctionMember*)));
     connect(classToEdit, SIGNAL(signalAdded(DesignEqualsImplementationClassSignal*)), this, SLOT(handleSignalAdded(DesignEqualsImplementationClassSignal*)));
     connect(classToEdit, SIGNAL(slotAdded(DesignEqualsImplementationClassSlot*)), this, SLOT(handleSlotAdded(DesignEqualsImplementationClassSlot*)));
 #endif
 
-    connect(this, SIGNAL(editCppModeRequested(Type*)), currentProject, SLOT(handleEditCppModeRequested(Type*)));
+    connect(this, SIGNAL(editCppModeRequested(DesignEqualsImplementationType*)), currentProject, SLOT(handleEditCppModeRequested(DesignEqualsImplementationType*)));
 
     m_QuickMemberAddLineEdit->setFocus();
 }
@@ -304,54 +307,57 @@ QString ClassEditorDialog::classDetailsAsHtmlString()
         classContentsString.append("<br />");
     }
 
-    //Private Methods
-    if(m_TypeBeingEditted->PrivateMethods.size() > 0)
+    if(DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(m_TypeBeingEditted))
     {
-        classContentsString.append("<br /><b>Private Methods<b>");
-    }
-    Q_FOREACH(DesignEqualsImplementationClassPrivateMethod *currentPrivateMethod, m_TypeBeingEditted->PrivateMethods)
-    {
-        classContentsString.append("<br />" + currentPrivateMethod->Name); //TODOreq: methodSignature
-    }
-    if(m_TypeBeingEditted->PrivateMethods.size() > 0)
-    {
-        classContentsString.append("<br />");
-    }
-
-    //Signals
-    if(m_TypeBeingEditted->mySignals().size() > 0)
-    {
-        classContentsString.append("<br /><b>Signals</b>");
-    }
-    Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, m_TypeBeingEditted->mySignals())
-    {
-        classContentsString.append("<br />" + currentSignal->methodSignatureWithoutReturnType());
-    }
-    if(m_TypeBeingEditted->mySignals().size() > 0)
-    {
-        classContentsString.append("<br />");
-    }
-
-    //Slots
-    bool noSlotsThatArentTempSlotMagicalNameString = true;
-    QString slotTempHtml;
-    Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, m_TypeBeingEditted->mySlots())
-    {
-        if(!currentSlot->Name.startsWith(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING_PREFIX))
+        //Private Methods
+        if(typeAsClass->PrivateMethods.size() > 0)
         {
-            slotTempHtml.append("<br />" + currentSlot->methodSignatureWithoutReturnType());
-            noSlotsThatArentTempSlotMagicalNameString = false;
+            classContentsString.append("<br /><b>Private Methods<b>");
         }
-        else
+        Q_FOREACH(DesignEqualsImplementationClassPrivateMethod *currentPrivateMethod, typeAsClass->PrivateMethods)
         {
-            //TODOoptional: we definitely don't want to SHOW the name of the unnamed slots (ugly temp hack string), but maybe indicate how many unnamed slots the class has (but don't say "zero" ofc -- when in the class editor, such unnamed slots would be double-clickable and that takes us to the use case they are in)
+            classContentsString.append("<br />" + currentPrivateMethod->Name); //TODOreq: methodSignature
         }
-    }
-    if(!noSlotsThatArentTempSlotMagicalNameString)
-    {
-        classContentsString.append("<br /><b>Slots</b>");
-        classContentsString.append(slotTempHtml);
-        classContentsString.append("<br />");
+        if(typeAsClass->PrivateMethods.size() > 0)
+        {
+            classContentsString.append("<br />");
+        }
+
+        //Signals
+        if(typeAsClass->mySignals().size() > 0)
+        {
+            classContentsString.append("<br /><b>Signals</b>");
+        }
+        Q_FOREACH(DesignEqualsImplementationClassSignal *currentSignal, typeAsClass->mySignals())
+        {
+            classContentsString.append("<br />" + currentSignal->methodSignatureWithoutReturnType());
+        }
+        if(typeAsClass->mySignals().size() > 0)
+        {
+            classContentsString.append("<br />");
+        }
+
+        //Slots
+        bool noSlotsThatArentTempSlotMagicalNameString = true;
+        QString slotTempHtml;
+        Q_FOREACH(DesignEqualsImplementationClassSlot *currentSlot, typeAsClass->mySlots())
+        {
+            if(!currentSlot->Name.startsWith(UseCaseGraphicsScene_TEMP_SLOT_MAGICAL_NAME_STRING_PREFIX))
+            {
+                slotTempHtml.append("<br />" + currentSlot->methodSignatureWithoutReturnType());
+                noSlotsThatArentTempSlotMagicalNameString = false;
+            }
+            else
+            {
+                //TODOoptional: we definitely don't want to SHOW the name of the unnamed slots (ugly temp hack string), but maybe indicate how many unnamed slots the class has (but don't say "zero" ofc -- when in the class editor, such unnamed slots would be double-clickable and that takes us to the use case they are in)
+            }
+        }
+        if(!noSlotsThatArentTempSlotMagicalNameString)
+        {
+            classContentsString.append("<br /><b>Slots</b>");
+            classContentsString.append(slotTempHtml);
+            classContentsString.append("<br />");
+        }
     }
 
     return classContentsString;
@@ -377,7 +383,7 @@ void ClassEditorDialog::addNewNonFunctionMember()
     //the property might be a new type, so ask the user how to handle it
     if(!nonFunctionMemberParser.newTypesSeenInPropertyDeclaration().isEmpty())
     {
-        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(nonFunctionMemberParser.newTypesSeenInPropertyDeclaration(), m_CurrentProject, this);
+        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(nonFunctionMemberParser.newTypesSeenInPropertyDeclaration(), m_CurrentProject, (m_TypeIsQObjectDerived ? NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::TypesCanBeQObjectDerived : NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::TypesCannotBeQObjectDerived), this);
         if(newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.exec() != QDialog::Accepted)
             return;
     }
@@ -392,7 +398,7 @@ void ClassEditorDialog::addNewNonFunctionMember()
     //now create the new member itself
     if(makeItAQ_PROPERTY)
     {
-        m_TypeBeingEditted->createNewProperty(m_CurrentProject->getOrCreateTypeFromName(nonFunctionMemberParser.parsedPropertyUnqualifiedType()), nonFunctionMemberParser.parsedPropertyQualifiedType(), nonFunctionMemberParser.parsedPropertyName(), nonFunctionMemberParser.hasInit(), nonFunctionMemberParser.optionalInit(), false, true); //TODOoptional: toolbutton for read-only or non-notifying etc etc
+        static_cast<DesignEqualsImplementationClass*>(m_TypeBeingEditted)->createNewProperty(m_CurrentProject->getOrCreateTypeFromName(nonFunctionMemberParser.parsedPropertyUnqualifiedType()), nonFunctionMemberParser.parsedPropertyQualifiedType(), nonFunctionMemberParser.parsedPropertyName(), nonFunctionMemberParser.hasInit(), nonFunctionMemberParser.optionalInit(), false, true); //TODOoptional: toolbutton for read-only or non-notifying etc etc
     }
     else
     {
@@ -408,7 +414,7 @@ void ClassEditorDialog::addNewNonFunctionMember()
 }
 void ClassEditorDialog::handleQuickAddNewSignalButtonClicked()
 {
-    if(!DesignEqualsImplementationGuiCommon::parseNewSignalDefinition_then_askWhatToDoWithNewSignalArgTypes_then_createNewSignal(this, m_TypeBeingEditted, m_QuickMemberAddLineEdit->text()))
+    if(!DesignEqualsImplementationGuiCommon::parseNewSignalDefinition_then_askWhatToDoWithNewSignalArgTypes_then_createNewSignal(this, static_cast<DesignEqualsImplementationClass*>(m_TypeBeingEditted), m_QuickMemberAddLineEdit->text()))
         return;
 
     m_QuickMemberAddLineEdit->clear();
@@ -417,7 +423,7 @@ void ClassEditorDialog::handleQuickAddNewSignalButtonClicked()
 //TODOreq: either manually filter "_Bool" to "bool", or figure out how to get clang to give me the cpp version of a bool :-P
 void ClassEditorDialog::handleQuickAddNewSlotButtonClicked()
 {
-    if(!DesignEqualsImplementationGuiCommon::parseNewSlotDefinition_then_askWhatToDoWithNewSlotArgTypes_then_createNewSlot(this, m_TypeBeingEditted, m_QuickMemberAddLineEdit->text()))
+    if(!DesignEqualsImplementationGuiCommon::parseNewSlotDefinition_then_askWhatToDoWithNewSlotArgTypes_then_createNewSlot(this, static_cast<DesignEqualsImplementationClass*>(m_TypeBeingEditted), m_QuickMemberAddLineEdit->text()))
         return;
 
     m_QuickMemberAddLineEdit->clear();
@@ -425,6 +431,7 @@ void ClassEditorDialog::handleQuickAddNewSlotButtonClicked()
 }
 void ClassEditorDialog::handleAddPropertyButtonClicked()
 {
+#if 0
     if(addPropertyFieldsAreSane())
     {
         //signal, slot invoke, or direct method call? blah, semantecs at this point...
@@ -432,6 +439,7 @@ void ClassEditorDialog::handleAddPropertyButtonClicked()
         m_AddPropertyTypeLineEdit->clear();
         m_AddPropertyNameLineEdit->clear();
     }
+#endif
 }
 void ClassEditorDialog::handleAddSlotAddArgButtonClicked()
 {
@@ -455,6 +463,7 @@ void ClassEditorDialog::handleDeleteArgumentRequested(MethodSingleArgumentWidget
 }
 void ClassEditorDialog::handleAddSlotButtonClicked()
 {
+#if 0
     //TODOreq: a lot of this method, including calls it makes, is unfinished.. but i am also considering refactoring it tons so...
 
     if(addSlotFieldsAreSane())
@@ -479,6 +488,7 @@ void ClassEditorDialog::handleAddSlotButtonClicked()
         m_AddSlotNameLineEdit->clear();
         //TODOreq: reset the args layout
     }
+#endif
 }
 void ClassEditorDialog::handleDoneButtonClicked()
 {

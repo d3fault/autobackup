@@ -75,7 +75,7 @@ void UseCaseUmlItemsWidget::handleNowShowingProject(DesignEqualsImplementationPr
         addClass(currentClass);
     }
 }
-void UseCaseUmlItemsWidget::handleTypeAdded(Type *typeAdded)
+void UseCaseUmlItemsWidget::handleTypeAdded(DesignEqualsImplementationType *typeAdded)
 {
     DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(typeAdded);
     if(!typeAsClass)

@@ -10,10 +10,11 @@
 #include <QPushButton>
 
 #include "../../designequalsimplementationproject.h"
+#include "../../designequalsimplementationimplicitlyshareddatatype.h"
 
-int NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::QObjectDerivedRadioButtonId = 0;
-int NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::ImplicitlySharedRadioButtonId = 1;
-int NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::DefinedElsewhereRadioButtonId = 2;
+const int NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::QObjectDerivedRadioButtonId = 0;
+const int NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::ImplicitlySharedRadioButtonId = 1;
+const int NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::DefinedElsewhereRadioButtonId = 2;
 
 //TO DOnereq: convert from a single checkbox into 3x radio buttons (Class, Implicitly Shared Data Type, Defined Elsewhere). Default to Class. There needs to be a (bool/enum) constructor arg that makes Class column gray'd out or missing (in which case we default to Data), because Data can't have Class children. There needs to be an "all to this" button for each column
 NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(const QList<QString> listOfTypesToDecideOn, DesignEqualsImplementationProject *designEqualsImplementationProject, TypesCanBeQObjectDerivedEnum typesCanBeQObjectDerived, QWidget *parent, Qt::WindowFlags f)
@@ -61,7 +62,7 @@ NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::N
     connect(allDefinedElsewherePushButton, SIGNAL(clicked()), selectAllSignalMapper, SLOT(map()));
 
     connect(selectAllSignalMapper, SIGNAL(mapped(int)), this, SLOT(selectAllByButtonId(int)));
-
+    ++row;
 
     Q_FOREACH(const QString &currentTypeToDecideOn, listOfTypesToDecideOn)
     {
@@ -73,20 +74,23 @@ NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::N
         {
             QRadioButton *qobjectAkaClassRadioButton = new QRadioButton();
             radioButtonGroup->addButton(qobjectAkaClassRadioButton, QObjectDerivedRadioButtonId);
-            gridLayout->addWidget(qobjectAkaClassRadioButton, row, ++col);
+            gridLayout->addWidget(qobjectAkaClassRadioButton, row, ++col, 1, 1, Qt::AlignHCenter);
             qobjectAkaClassRadioButton->setChecked(true);
         }
         else
             implicitlySharedDataTypeRadioButton->setChecked(true);
 
         radioButtonGroup->addButton(implicitlySharedDataTypeRadioButton, ImplicitlySharedRadioButtonId);
-        gridLayout->addWidget(implicitlySharedDataTypeRadioButton, row, ++col);
+        gridLayout->addWidget(implicitlySharedDataTypeRadioButton, row, ++col, 1, 1, Qt::AlignHCenter);
 
         QRadioButton *definedElsewhereRadioButton = new QRadioButton();
         radioButtonGroup->addButton(definedElsewhereRadioButton, DefinedElsewhereRadioButtonId);
-        gridLayout->addWidget(definedElsewhereRadioButton, row, ++col);
+        gridLayout->addWidget(definedElsewhereRadioButton, row, ++col, 1, 1, Qt::AlignHCenter);
 
-        m_TypesAndTheirDecisionRadioGroups << radioButtonGroup;
+        TypesAndTheirDecisionRadioGroups typeAndItsDecisionRadioGroup;
+        typeAndItsDecisionRadioGroup.first = currentTypeToDecideOn;
+        typeAndItsDecisionRadioGroup.second = radioButtonGroup;
+        m_TypesAndTheirDecisionRadioGroups << typeAndItsDecisionRadioGroup;
         ++row;
     }
     //internallyDesignedOrExternallyDefinedCheckbox->setToolTip(tr("If you un-check this, the new type will still be usable, but it will be noted as being 'defined elsewhere' (such as in a 3rd party library). You can even specify the necessary #includes that will be placed automatically whenever the externally defined type is referenced in the project from the blah blah blah dialog")); //TODOreq: make the blah blah blah dialog and explain properly how to get there
@@ -108,7 +112,7 @@ NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::N
     connect(okButton, SIGNAL(clicked()), this, SLOT(accept()));
     connect(this, SIGNAL(accepted()), this, SLOT(handleDialogAccepted()));
 }
-QList<Type*> NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::newTypesSeen() const
+QList<DesignEqualsImplementationType*> NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::newTypesSeen() const
 {
     return m_NewTypesSeen;
 }

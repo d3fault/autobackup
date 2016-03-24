@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core
+QT       -= gui
 
 TARGET = AntiKeyAndMouseLoggerCli
 CONFIG   += console

@@ -20,7 +20,7 @@ public:
         , MethodSignatureNormalizedAndDoesNotContainArgumentsVariableNames
     };
 
-    DesignEqualsImplementationClassMethodArgument *createNewArgument(Type *argumentType, const QString &qualifiedArgumentTypeString, const QString &argumentVariableName);
+    DesignEqualsImplementationClassMethodArgument *createNewArgument(DesignEqualsImplementationType *argumentType, const QString &qualifiedArgumentTypeString, const QString &argumentVariableName);
 
     //TODOoptional: private + getter/setter blah
     QString Name;

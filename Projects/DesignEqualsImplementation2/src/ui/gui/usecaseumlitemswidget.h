@@ -4,6 +4,7 @@
 #include <QListWidget>
 
 class DesignEqualsImplementationProject;
+class DesignEqualsImplementationType;
 class DesignEqualsImplementationClass;
 
 class UseCaseUmlItemsWidget : public QListWidget
@@ -18,7 +19,7 @@ private:
     void addClass(DesignEqualsImplementationClass *designEqualsImplementationClass);
 public slots:
     void handleNowShowingProject(DesignEqualsImplementationProject *project);
-    void handleTypeAdded(Type *typeAdded);
+    void handleTypeAdded(DesignEqualsImplementationType *typeAdded);
 };
 
 #endif // USECASEUMLITEMSWIDGET_H

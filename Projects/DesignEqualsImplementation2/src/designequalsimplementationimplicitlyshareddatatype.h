@@ -3,7 +3,7 @@
 
 #include "type.h"
 
-class DesignEqualsImplementationImplicitlySharedDataType : public Type
+class DesignEqualsImplementationImplicitlySharedDataType : public DesignEqualsImplementationType
 {
     Q_OBJECT
 public:

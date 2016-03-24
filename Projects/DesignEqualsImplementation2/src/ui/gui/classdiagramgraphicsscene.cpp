@@ -44,7 +44,7 @@ void ClassDiagramGraphicsScene::privateConstructor(DesignEqualsImplementationPro
     connect(this, SIGNAL(addUmlItemRequested(UmlItemsTypedef,QPointF)), designEqualsImplementationProject, SLOT(handleAddUmlItemRequested(UmlItemsTypedef,QPointF)));
 
     //responses
-    connect(designEqualsImplementationProject, SIGNAL(typeAdded(Type*)), this, SLOT(handleTypeAdded(Type*))); //TODOreq: deleting a part of a class in class diagram might completely invalidate a use case, so either that should trigger the entire deletion of said use case (after warning), or force them into going and fixing the use case, or similar
+    connect(designEqualsImplementationProject, SIGNAL(typeAdded(DesignEqualsImplementationType*)), this, SLOT(handleTypeAdded(DesignEqualsImplementationType*))); //TODOreq: deleting a part of a class in class diagram might completely invalidate a use case, so either that should trigger the entire deletion of said use case (after warning), or force them into going and fixing the use case, or similar
 
     Q_FOREACH(DesignEqualsImplementationClass *currentClass, designEqualsImplementationProject->classes()) //TODOreq: we probably want implicitly shared data types here too
     {
@@ -55,7 +55,7 @@ bool ClassDiagramGraphicsScene::wantDragDropEvent(QGraphicsSceneDragDropEvent *e
 {
     return (event->dropAction() == Qt::LinkAction && event->mimeData()->hasFormat(DESIGNEQUALSIMPLEMENTATION_MIME_TYPE_UML_CLASS_DIAGRAM_OBJECT));
 }
-void ClassDiagramGraphicsScene::handleTypeAdded(Type *typeAdded)
+void ClassDiagramGraphicsScene::handleTypeAdded(DesignEqualsImplementationType *typeAdded)
 {
     if(qobject_cast<DefinedElsewhereType*>(typeAdded))
         return; //we don't show DefinedElsewhereTypes on the class diagram (as their own rectangles, that is. we of course show them as members of other [non-DefinedElsewhereType] 'rectangles'
@@ -79,5 +79,5 @@ void ClassDiagramGraphicsScene::handleTypeAdded(Type *typeAdded)
     //QList<DesignEqualsImplementationClassSignal*> Signals;
 
     addItem(designEqualsImplementationClassAsQGraphicsItemForClassDiagramScene); //TODOoptimization: when open existing project, perhaps addItem should be delayed until after the backend says "all project details emitted", so that tons of repaints aren't triggered. there's lots of solutions to this problem however
-    QMetaObject::invokeMethod(typeAdded, "emitAllClassDetails");
+    //QMetaObject::invokeMethod(typeAdded, "emitAllClassDetails");
 }

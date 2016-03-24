@@ -1,6 +1,6 @@
 #include "idesignequalsimplementationmethod.h"
 
-DesignEqualsImplementationClassMethodArgument *IDesignEqualsImplementationMethod::createNewArgument(Type *argumentType, const QString &qualifiedArgumentTypeString, const QString &argumentVariableName)
+DesignEqualsImplementationClassMethodArgument *IDesignEqualsImplementationMethod::createNewArgument(DesignEqualsImplementationType *argumentType, const QString &qualifiedArgumentTypeString, const QString &argumentVariableName)
 {
     DesignEqualsImplementationClassMethodArgument *newArgument = new DesignEqualsImplementationClassMethodArgument(argumentType, qualifiedArgumentTypeString, argumentVariableName, this->asQObject()); //TODOreq: can't set parent because i'm not a qobject even though all inheriters are
     m_Arguments.append(newArgument);

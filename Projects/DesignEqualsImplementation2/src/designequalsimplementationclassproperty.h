@@ -7,7 +7,7 @@ class DesignEqualsImplementationClassProperty : public NonFunctionMember
 {
     Q_OBJECT
 public:
-    explicit DesignEqualsImplementationClassProperty(Type *propertyType, const QString &qualifiedTypeString, const QString &propertyName, Type *parentClassThatIamPropertyOf,  QObject *parent, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange);
+    explicit DesignEqualsImplementationClassProperty(DesignEqualsImplementationType *propertyType, const QString &qualifiedTypeString, const QString &propertyName, DesignEqualsImplementationType *parentClassThatIamPropertyOf,  QObject *parent, bool hasInit, const QString &optionalInit, bool readOnly, bool notifiesOnChange);
 
     QString propertyName() const;
     void setPropertyName(const QString &propertyName);

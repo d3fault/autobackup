@@ -722,7 +722,7 @@ void SignalSlotMessageDialog::handleOkAndMakeChildOfSignalSenderActionTriggered(
 
     //the toolbutton to get here wouldn't be shown if source is actor or if there's no dest
     DesignEqualsImplementationClass *sourceClass = m_SourceSlot_OrZeroIfSourceIsActor->ParentClass;
-    Type *newNonFunctionMemberType = m_DestinationSlot_OrZeroIfNoDest->ParentClass;
+    DesignEqualsImplementationType *newNonFunctionMemberType = m_DestinationSlot_OrZeroIfNoDest->ParentClass;
     NonFunctionMember *newNonFunctionMember = sourceClass->createNewNonFunctionMember(newNonFunctionMemberType, newNonFunctionMemberType->Name + " *", QString(), Visibility::Private, TypeInstanceOwnershipOfPointedToDataIfPointer::OwnsPointedToData);
     m_DestinationClassLifeline_OrZeroIfNoDest->setInstanceInOtherClassIfApplicable(newNonFunctionMember);
     //accept();
@@ -749,7 +749,7 @@ bool SignalSlotMessageDialog::askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDe
 
     if(!newSignalOrSlotArgTypesSeen.isEmpty())
     {
-        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(newSignalOrSlotArgTypesSeen, currentProject, this);
+        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(newSignalOrSlotArgTypesSeen, currentProject, NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::TypesCanBeQObjectDerived, this);
         if(newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.exec() != QDialog::Accepted)
         {
             return false;

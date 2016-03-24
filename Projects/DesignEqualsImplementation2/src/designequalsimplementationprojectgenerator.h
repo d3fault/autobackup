@@ -93,9 +93,9 @@ private:
             listToKeepDeduped->append(whatToInsert);
     }
     bool recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSlotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, DesignEqualsImplementationClassLifeLine *classLifeline, DesignEqualsImplementationClassSlot *slotToWalk);
-    bool writeTypeToDisk(Type *currentType);
-    bool writeQObjectDerivedClassToDisk(DesignEqualsImplementationClass *qobjectDerivedClass, const QDataStream &headerFileTextStream, const QDataStream &sourceFileTextStream);
-    bool writeImplicitlySharedDataTypeToDisk(DesignEqualsImplementationImplicitlySharedDataType *implicitlySharedDataType, const QDataStream &headerFileTextStream, const QDataStream &sourceFileTextStream);
+    bool writeTypeToDisk(DesignEqualsImplementationType *currentType);
+    bool writeQObjectDerivedClassToDisk(DesignEqualsImplementationClass *currentClass, QTextStream &headerFileTextStream, QTextStream &sourceFileTextStream);
+    bool writeImplicitlySharedDataTypeToDisk(DesignEqualsImplementationImplicitlySharedDataType *implicitlySharedDataType, QTextStream &headerFileTextStream, QTextStream &sourceFileTextStream);
     void appendConnectStatementToClassInitializationSequence(DesignEqualsImplementationClass *classToGetConnectStatementInInitializationSequence, const QString &connectStatement);
     void writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(QTextStream &sourceFileTextStream, const QString &className, int slotIndex, int statementInsertIndex);
     int numNewlinesInSourceFileAtThisPoint();

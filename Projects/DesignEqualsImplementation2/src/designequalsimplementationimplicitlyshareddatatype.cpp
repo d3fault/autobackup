@@ -4,7 +4,7 @@
 #include "designequalsimplementationclassproperty.h"
 
 DesignEqualsImplementationImplicitlySharedDataType::DesignEqualsImplementationImplicitlySharedDataType(QObject *parent, DesignEqualsImplementationProject *parentProject)
-    : Type(parent, parentProject)
+    : DesignEqualsImplementationType(parent, parentProject)
 { }
 void DesignEqualsImplementationImplicitlySharedDataType::addNonFunctionMember(NonFunctionMember *nonFunctionMember)
 {

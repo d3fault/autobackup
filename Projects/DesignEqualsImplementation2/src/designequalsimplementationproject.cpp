@@ -44,20 +44,20 @@ DesignEqualsImplementationImplicitlySharedDataType *DesignEqualsImplementationPr
     addType(newDataType);
     return newDataType;
 }
-QList<Type*> DesignEqualsImplementationProject::allKnownTypes() const
+QList<DesignEqualsImplementationType*> DesignEqualsImplementationProject::allKnownTypes() const
 {
     return m_AllKnownTypes;
 }
 QList<QString> DesignEqualsImplementationProject::allKnownTypesNames() const
 {
     QList<QString> ret;
-    Q_FOREACH(Type *type, allKnownTypes())
+    Q_FOREACH(DesignEqualsImplementationType *type, allKnownTypes())
         ret << type->Name;
     return ret;
 }
-Type *DesignEqualsImplementationProject::getOrCreateTypeFromName(const QString &nonQualifiedTypeName)
+DesignEqualsImplementationType *DesignEqualsImplementationProject::getOrCreateTypeFromName(const QString &nonQualifiedTypeName)
 {
-    Q_FOREACH(Type *currentType, allKnownTypes())
+    Q_FOREACH(DesignEqualsImplementationType *currentType, allKnownTypes())
     {
         if(currentType->Name == nonQualifiedTypeName)
             return currentType;
@@ -67,7 +67,7 @@ Type *DesignEqualsImplementationProject::getOrCreateTypeFromName(const QString &
     qWarning(warningMessageStd.c_str()); //TODOreq: delete this method and 'proper' the Types database system! This method just saves me a bit of refactoring so whatever...
     return noteDefinedElsewhereType(nonQualifiedTypeName);
 }
-void DesignEqualsImplementationProject::addType(Type *newType)
+void DesignEqualsImplementationProject::addType(DesignEqualsImplementationType *newType)
 {
     //TODOoptional: make all appends to m_AllKnownTypes use this method, then add a "typeAdded" signal. ClassDiagramScene would be a listener of that signal, but I'm not sure whether or not I should visualize "types defined elsewhere" (perhaps that should be a dynamic user preference)
 
@@ -78,7 +78,7 @@ void DesignEqualsImplementationProject::addType(Type *newType)
 QList<DesignEqualsImplementationClass*> DesignEqualsImplementationProject::classes()
 {
     QList<DesignEqualsImplementationClass *> ret;
-    Q_FOREACH(Type *currentType, allKnownTypes())
+    Q_FOREACH(DesignEqualsImplementationType *currentType, allKnownTypes())
     {
         DesignEqualsImplementationClass *maybe = qobject_cast<DesignEqualsImplementationClass*>(currentType);
         if(maybe)
@@ -124,7 +124,7 @@ DefinedElsewhereType *DesignEqualsImplementationProject::noteDefinedElsewhereTyp
 QList<DefinedElsewhereType*> DesignEqualsImplementationProject::definedElsewhereTypes() const
 {
     QList<DefinedElsewhereType*> ret;
-    Q_FOREACH(Type *currentType, allKnownTypes())
+    Q_FOREACH(DesignEqualsImplementationType *currentType, allKnownTypes())
     {
         DefinedElsewhereType *maybe = qobject_cast<DefinedElsewhereType*>(currentType);
         if(maybe)
@@ -133,7 +133,7 @@ QList<DefinedElsewhereType*> DesignEqualsImplementationProject::definedElsewhere
     return m_DefinedElsewhereTypes;
 }
 #endif
-int DesignEqualsImplementationProject::serializationTypeIdForType(Type *typeToReturnSerializationIdFor)
+int DesignEqualsImplementationProject::serializationTypeIdForType(DesignEqualsImplementationType *typeToReturnSerializationIdFor)
 {
     return allKnownTypes().indexOf(typeToReturnSerializationIdFor);
 #if 0
@@ -145,7 +145,7 @@ int DesignEqualsImplementationProject::serializationTypeIdForType(Type *typeToRe
     ret = m_Classes.size();
 #endif
 }
-Type *DesignEqualsImplementationProject::typeFromSerializedTypeId(int serializedTypeId)
+DesignEqualsImplementationType *DesignEqualsImplementationProject::typeFromSerializedTypeId(int serializedTypeId)
 {
     return allKnownTypes().at(serializedTypeId);
 }
@@ -479,7 +479,7 @@ void DesignEqualsImplementationProject::handleNewUseCaseRequested()
     addUseCase(useCase);
 }
 //TODOoptional: don't require CLOSING qt creator before sucking the changes back in. if they save-all in qt creator and then press a button in d=i, we could THEN suck in the changes [using the exact same code already here]. HOWEVER, going to edit C++ mode _AGAIN_ should then overwrite the existing project, which is fine because qt creator can handle it (it just pops up "want to load the changes?" and you press yes)
-void DesignEqualsImplementationProject::handleEditCppModeRequested(Type *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, int statementIndexOfSlot)
+void DesignEqualsImplementationProject::handleEditCppModeRequested(DesignEqualsImplementationType *designEqualsImplementationClass, DesignEqualsImplementationClassSlot *designEqualsImplementationClassSlot, int statementIndexOfSlot)
 {
     QStringList possibleQtCreatorPaths;
     possibleQtCreatorPaths << "/usr/bin/qtcreator" << "/home/d3fault/Qt5.4.1/Tools/QtCreator/bin/qtcreator" << "/home/user/Qt5.2.0/Tools/QtCreator/bin/qtcreator"; //TODOreq: cli arg and/or qsettings value and/or "sensible defaults" on per-OS basis

@@ -12,10 +12,10 @@ struct Visibility
 {
     enum VisibilityEnum { Public = 0, Protected = 1, Private = 2 };
 };
-class Type;
+class DesignEqualsImplementationType;
 struct TypeAncestor
 {
-    Type *type;
+    DesignEqualsImplementationType *type;
     Visibility::VisibilityEnum visibility;
 };
 struct TypeInstanceOwnershipOfPointedToDataIfPointer
@@ -31,7 +31,7 @@ class TypeInstance : public QObject
 {
     Q_OBJECT
 public:
-    explicit TypeInstance(Type *type, const QString &qualifiedTypeString, const QString &variableName, QObject *parent = 0)
+    explicit TypeInstance(DesignEqualsImplementationType *type, const QString &qualifiedTypeString, const QString &variableName, QObject *parent = 0)
         : QObject(parent)
         , type(type)
         , VariableName(variableName)
@@ -47,7 +47,7 @@ public:
     QString preferredTextualRepresentationOfTypeAndVariableTogether() const;
     bool isPointer() const;
 
-    Type *type;
+    DesignEqualsImplementationType *type;
     QString Qualifiers_LHS;
     QString Qualifiers_RHS;
 
@@ -59,7 +59,7 @@ class NonFunctionMember : public TypeInstance
 {
     Q_OBJECT
 public:
-    explicit NonFunctionMember(Type *type, const QString &qualifiedTypeString, const QString &variableName, Type *parentClassThatIamMemberOf, QObject *parent, bool hasInit = false, const QString &optionalInit = QString())
+    explicit NonFunctionMember(DesignEqualsImplementationType *type, const QString &qualifiedTypeString, const QString &variableName, DesignEqualsImplementationType *parentClassThatIamMemberOf, QObject *parent, bool hasInit = false, const QString &optionalInit = QString())
         : TypeInstance(type, qualifiedTypeString, variableName, parent)
         , visibility(Visibility::Private)
         , HasInit(hasInit)
@@ -67,20 +67,20 @@ public:
         , m_ParentTypeThatIamMemberOf(parentClassThatIamMemberOf)
     { }
 
-    Type *parentClass() const { return m_ParentTypeThatIamMemberOf; }
+    DesignEqualsImplementationType *parentClass() const { return m_ParentTypeThatIamMemberOf; }
     Visibility::VisibilityEnum visibility;
     bool HasInit;
     QString OptionalInit;
     //NOTE: for now, owning the pointer and having an init are mutually exclusive, since their functionality overlaps
 private:
-    Type *m_ParentTypeThatIamMemberOf;
+    DesignEqualsImplementationType *m_ParentTypeThatIamMemberOf;
 };
 Q_DECLARE_METATYPE(NonFunctionMember*)
-class Type : public QObject
+class DesignEqualsImplementationType : public QObject
 {
     Q_OBJECT
 public:
-    explicit Type(QObject *parent, DesignEqualsImplementationProject *parentProject)
+    explicit DesignEqualsImplementationType(QObject *parent, DesignEqualsImplementationProject *parentProject)
         : QObject(parent)
         , m_ParentProject(parentProject)
     { }
@@ -93,9 +93,9 @@ public:
 
     QList<NonFunctionMember*> nonFunctionMembers() const { return m_NonFunctionMembers; }
     virtual void addNonFunctionMember(NonFunctionMember* nonFunctionMember)=0; //TODOmb: protected?
-    NonFunctionMember *createNewNonFunctionMember(Type *typeOfNewNonFunctionMember, const QString &qualifiedTypeString, const QString &nameOfNewNonFunctionMember = QString(), Visibility::VisibilityEnum visibility = Visibility::Private, TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum ownershipOfPointedToDataIfPointer = TypeInstanceOwnershipOfPointedToDataIfPointer::NotPointer, bool hasInit = false, const QString &optionalInit = QString());
+    NonFunctionMember *createNewNonFunctionMember(DesignEqualsImplementationType *typeOfNewNonFunctionMember, const QString &qualifiedTypeString, const QString &nameOfNewNonFunctionMember = QString(), Visibility::VisibilityEnum visibility = Visibility::Private, TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum ownershipOfPointedToDataIfPointer = TypeInstanceOwnershipOfPointedToDataIfPointer::NotPointer, bool hasInit = false, const QString &optionalInit = QString());
     bool memberWithNameExists(const QString &memberNameToCheckForCollisions) const;
-    QString autoNameForNewChildMemberOfType(Type *childMemberClassType) const;
+    QString autoNameForNewChildMemberOfType(DesignEqualsImplementationType *childMemberClassType) const;
     int serializationNonFunctionMemberIdForNonFunctionMember(NonFunctionMember *nonFunctionMember) const;
     NonFunctionMember *nonFunctionMemberFromNonFunctionMemberId(int nonFunctionMemberId) const;
 
@@ -111,12 +111,14 @@ protected: //signals: //TODOreq: i AM a qobject, so this isn't necessary
     virtual void nonFunctionMemberAdded(NonFunctionMember *nonFunctionMember)=0;
 signals:
     void e(const QString &msg);
+public slots:
+    void setClassName(const QString &newClassName);
 };
-class DefinedElsewhereType : public Type
+class DefinedElsewhereType : public DesignEqualsImplementationType
 {
     Q_OBJECT
 public:
-    explicit DefinedElsewhereType(QObject *parent, DesignEqualsImplementationProject *parentProject) : Type(parent, parentProject) { }
+    explicit DefinedElsewhereType(QObject *parent, DesignEqualsImplementationProject *parentProject) : DesignEqualsImplementationType(parent, parentProject) { }
     void addNonFunctionMember(NonFunctionMember* nonFunctionMember)
     {
         Q_UNUSED(nonFunctionMember)

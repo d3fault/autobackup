@@ -16,7 +16,7 @@ bool DesignEqualsImplementationGuiCommon::parseNewFunctionDefinitioin_then_askWh
     //account for any new param type that is unknown to us
     if(!functionSignatureParser.newTypesSeenInFunctionDeclaration().isEmpty())
     {
-        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(functionSignatureParser.newTypesSeenInFunctionDeclaration(), currentProject, parentWidget);
+        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(functionSignatureParser.newTypesSeenInFunctionDeclaration(), currentProject, NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::TypesCanBeQObjectDerived, parentWidget); //TODOreq: need more args passed to us to decide if types can or cannot be qobject derived (enum). HOWEVER atm all callers of this method are in fact QObjects (so sub-types can be QObjects)
         if(newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.exec() != QDialog::Accepted)
             return false;
     }

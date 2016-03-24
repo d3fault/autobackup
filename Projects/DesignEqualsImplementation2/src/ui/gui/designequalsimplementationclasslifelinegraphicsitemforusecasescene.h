@@ -9,6 +9,7 @@
 class QGraphicsSceneContextMenuEvent;
 
 class UseCaseGraphicsScene;
+class DesignEqualsImplementationType;
 class DesignEqualsImplementationClass;
 class DesignEqualsImplementationClassLifeLine;
 class DesignEqualsImplementationClassSlot;
@@ -46,7 +47,7 @@ private:
     DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *createAndInsertSlotGraphicsItem(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot);
 signals:
     void slotGraphicsItemInsertedIntoClassLifeLineGraphicsItem(DesignEqualsImplementationSlotGraphicsItemForUseCaseScene *slotGraphicsItem);
-    void editCppModeRequested(Type *designEqualsImplementationClass);
+    void editCppModeRequested(DesignEqualsImplementationType *designEqualsImplementationClass);
 private slots:
     void handleSlotInsertedIntoClassLifeLine(int indexInsertedInto, DesignEqualsImplementationClassSlot *slot);
     void handleSlotRemovedFromClassLifeLine(DesignEqualsImplementationClassSlot *slotRemoved);
