@@ -38,7 +38,7 @@ DesignEqualsImplementationClass *DesignEqualsImplementationProject::createNewCla
 }
 DesignEqualsImplementationImplicitlySharedDataType *DesignEqualsImplementationProject::createNewImplicitlySharedDataType(const QString &newImplicitlySharedDataTypeName, const QPointF &positionInGraphicsScene)
 {
-    DesignEqualsImplementationImplicitlySharedDataType *newDataType = new DesignEqualsImplementationImplicitlySharedDataType(this);
+    DesignEqualsImplementationImplicitlySharedDataType *newDataType = new DesignEqualsImplementationImplicitlySharedDataType(this, this);
     newDataType->Name = newImplicitlySharedDataTypeName;
     newDataType->Position = positionInGraphicsScene;
     addType(newDataType);
@@ -72,7 +72,6 @@ void DesignEqualsImplementationProject::addType(Type *newType)
     //TODOoptional: make all appends to m_AllKnownTypes use this method, then add a "typeAdded" signal. ClassDiagramScene would be a listener of that signal, but I'm not sure whether or not I should visualize "types defined elsewhere" (perhaps that should be a dynamic user preference)
 
     connect(newType, SIGNAL(e(QString)), this, SIGNAL(e(QString)));
-    newType->m_ParentProject = this;
     m_AllKnownTypes.append(newType);
     emit typeAdded(newType);
 }
@@ -115,7 +114,7 @@ DefinedElsewhereType *DesignEqualsImplementationProject::noteDefinedElsewhereTyp
 {
     //note: at first i thought i'd need to 'ensure a defined elsewhere type is never noted more than once', BUT currently i am always building allKnownTypes using the defined elsewhere types, which means it would be impossible for me to detect a defined elsewhere type as a new type (which is prerequisite for me noting that it's defined elsewhere). still, a qset would de-dupe with ease if i ever can't make that guarantee in the future
 
-    DefinedElsewhereType *newDefinedElsewhereType = new DefinedElsewhereType(this);
+    DefinedElsewhereType *newDefinedElsewhereType = new DefinedElsewhereType(this, this);
     newDefinedElsewhereType->Name = definedElsewhereType;
     m_AllKnownTypes.append(newDefinedElsewhereType); //TODOreq: [de-]serialize
     return newDefinedElsewhereType;
@@ -308,7 +307,7 @@ bool DesignEqualsImplementationProject::generateSourceCodePrivate(DesignEqualsIm
         }
     }
 #endif
-    if(!projectGenerator.writeClassesToDisk())
+    if(!projectGenerator.writeAllTypesToDisk())
     {
         emit e("failed to write project files to disk");
         return false;

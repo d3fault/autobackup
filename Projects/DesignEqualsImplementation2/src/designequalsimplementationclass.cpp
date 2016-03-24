@@ -19,9 +19,7 @@ QString DesignEqualsImplementationClass::generateRawConnectStatementWithEndingSe
     return QString("connect(" + signalObjectVariableName + ", SIGNAL(" + signalNameIncludingNormalizedArgs + "), " +  slotObjectVariableName + ", SLOT(" + slotNameIncludingNormalizedArgs + "));");
 }
 DesignEqualsImplementationClass::DesignEqualsImplementationClass(QObject *parent, DesignEqualsImplementationProject *parentProject)
-    : Type(parent)
-    , IDesignEqualsImplementationVisuallyRepresentedItem()
-    , m_ParentProject(parentProject)
+    : Type(parent, parentProject)
 { }
 DesignEqualsImplementationClass::~DesignEqualsImplementationClass()
 {

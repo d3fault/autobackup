@@ -24,7 +24,7 @@ public:
     bool processClassStep0declaringClassInProject(DesignEqualsImplementationClass *designEqualsImplementationClass);
     bool processUseCase(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase);
     //bool processClassStep1writingTheFile(DesignEqualsImplementationClass *designEqualsImplementationClass);
-    bool writeClassesToDisk();
+    bool writeAllTypesToDisk();
 
     DesignEqualsImplementationProject::ProjectGenerationMode projectGenerationMode() const;
     void setProjectGenerationMode(const DesignEqualsImplementationProject::ProjectGenerationMode &projectGenerationMode);
@@ -87,8 +87,15 @@ private:
     QHash<DesignEqualsImplementationClass*, QList<QString> /* connect statments in the key class's initialization sequence */> m_ClassesInThisProjectGenerate_AndTheirCorrespondingConstructorConnectStatements;
 
     //designEqualsImplementationUseCase, rootClassLifeline, designEqualsImplementationUseCase->m_UseCaseSlotEntryPointOnRootClassLifeline_OrFirstIsZeroIfNoneConnectedFromActorYet.second
+    static inline void insertIntoListOnce(QList<QString> *listToKeepDeduped, const QString &whatToInsert)
+    {
+        if(!listToKeepDeduped->contains(whatToInsert))
+            listToKeepDeduped->append(whatToInsert);
+    }
     bool recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSlotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, DesignEqualsImplementationClassLifeLine *classLifeline, DesignEqualsImplementationClassSlot *slotToWalk);
-    bool writeClassToDisk(DesignEqualsImplementationClass *currentClass);
+    bool writeTypeToDisk(Type *currentType);
+    bool writeQObjectDerivedClassToDisk(DesignEqualsImplementationClass *qobjectDerivedClass, const QDataStream &headerFileTextStream, const QDataStream &sourceFileTextStream);
+    bool writeImplicitlySharedDataTypeToDisk(DesignEqualsImplementationImplicitlySharedDataType *implicitlySharedDataType, const QDataStream &headerFileTextStream, const QDataStream &sourceFileTextStream);
     void appendConnectStatementToClassInitializationSequence(DesignEqualsImplementationClass *classToGetConnectStatementInInitializationSequence, const QString &connectStatement);
     void writePairOfDelimitedCommentsInBetweenWhichAchunkOfRawCppStatementsCanBeWritten(QTextStream &sourceFileTextStream, const QString &className, int slotIndex, int statementInsertIndex);
     int numNewlinesInSourceFileAtThisPoint();

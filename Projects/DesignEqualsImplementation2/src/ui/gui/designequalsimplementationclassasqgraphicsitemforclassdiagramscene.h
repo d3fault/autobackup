@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QPen>
 
-#include "../../designequalsimplementationclass.h"
+#include "../../type.h"
 
 class QGraphicsSceneContextMenuEvent;
 class QGraphicsSceneMouseEvent;

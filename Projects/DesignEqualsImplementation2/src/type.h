@@ -6,7 +6,8 @@
 #include <QList>
 #include <QPointF>
 
-//TODOreq: namespace this shiz
+class DesignEqualsImplementationProject;
+
 struct Visibility
 {
     enum VisibilityEnum { Public = 0, Protected = 1, Private = 2 };
@@ -79,14 +80,19 @@ class Type : public QObject
 {
     Q_OBJECT
 public:
-    explicit Type(QObject *parent = 0) : QObject(parent) { }
+    explicit Type(QObject *parent, DesignEqualsImplementationProject *parentProject)
+        : QObject(parent)
+        , m_ParentProject(parentProject)
+    { }
     QList<TypeAncestor> DirectAncestors; //those ancestors can have ancestors too, just like good ole inheritence
 
     QString Name;
     QPointF Position; //DefinedElsewhereType does not use this, since it is not in/on the class diagram scene (but I might change my mind about that later)
 
+    DesignEqualsImplementationProject *m_ParentProject;
+
     QList<NonFunctionMember*> nonFunctionMembers() const { return m_NonFunctionMembers; }
-    virtual void addNonFunctionMember(NonFunctionMember* nonFunctionMember)=0;
+    virtual void addNonFunctionMember(NonFunctionMember* nonFunctionMember)=0; //TODOmb: protected?
     NonFunctionMember *createNewNonFunctionMember(Type *typeOfNewNonFunctionMember, const QString &qualifiedTypeString, const QString &nameOfNewNonFunctionMember = QString(), Visibility::VisibilityEnum visibility = Visibility::Private, TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum ownershipOfPointedToDataIfPointer = TypeInstanceOwnershipOfPointedToDataIfPointer::NotPointer, bool hasInit = false, const QString &optionalInit = QString());
     bool memberWithNameExists(const QString &memberNameToCheckForCollisions) const;
     QString autoNameForNewChildMemberOfType(Type *childMemberClassType) const;
@@ -101,14 +107,16 @@ protected:
     void addNonFunctionMemberPrivate(NonFunctionMember *nonFunctionMember);
 private:
     QList<NonFunctionMember*> m_NonFunctionMembers; //they ARE non-function members, but the resulting code might still yield functions (getters & setters (d->pimpl for shared data and change checking+notification for Q_PROPERTY), change notifier signals in the case of Q_PROPERTIES)
-protected: //signals:
+protected: //signals: //TODOreq: i AM a qobject, so this isn't necessary
     virtual void nonFunctionMemberAdded(NonFunctionMember *nonFunctionMember)=0;
+signals:
+    void e(const QString &msg);
 };
 class DefinedElsewhereType : public Type
 {
     Q_OBJECT
 public:
-    explicit DefinedElsewhereType(QObject *parent = 0) : Type(parent) { }
+    explicit DefinedElsewhereType(QObject *parent, DesignEqualsImplementationProject *parentProject) : Type(parent, parentProject) { }
     void addNonFunctionMember(NonFunctionMember* nonFunctionMember)
     {
         Q_UNUSED(nonFunctionMember)

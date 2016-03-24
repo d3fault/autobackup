@@ -2,15 +2,15 @@
 #define DESIGNEQUALSIMPLEMENTATIONIMPLICITLYSHAREDDATATYPE_H
 
 #include "type.h"
-#include "idesignequalsimplementationvisuallyrepresenteditem.h"
 
 class DesignEqualsImplementationImplicitlySharedDataType : public Type
 {
     Q_OBJECT
 public:
-    explicit DesignEqualsImplementationImplicitlySharedDataType(QObject *parent = 0);
+    explicit DesignEqualsImplementationImplicitlySharedDataType(QObject *parent, DesignEqualsImplementationProject *parentProject);
     void addNonFunctionMember(NonFunctionMember *nonFunctionMember);
     int typeCategory() const { return 1; }
+    QString privateImplementationTypeName() const;
 signals:
     void nonFunctionMemberAdded(NonFunctionMember *nonFunctionMember);
 };

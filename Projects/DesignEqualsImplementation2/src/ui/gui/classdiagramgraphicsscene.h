@@ -4,6 +4,7 @@
 #include "idesignequalsimplementationgraphicsscene.h"
 #include "../../designequalsimplementationcommon.h"
 
+class Type;
 class DesignEqualsImplementationProject;
 class DesignEqualsImplementationClass;
 

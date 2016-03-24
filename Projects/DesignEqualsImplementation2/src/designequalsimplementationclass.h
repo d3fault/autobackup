@@ -2,7 +2,6 @@
 #define DESIGNEQUALSIMPLEMENTATIONCLASS_H
 
 #include "type.h"
-#include "idesignequalsimplementationvisuallyrepresenteditem.h"
 
 #include <QPair>
 
@@ -37,9 +36,6 @@ public:
     DesignEqualsImplementationClassSlot *createwNewSlot(const QString &newSlotName = QString(), const QList<FunctionArgumentTypedef> &newSlotArgs = QList<FunctionArgumentTypedef>());
     void addSlot(DesignEqualsImplementationClassSlot *slotToAdd);
     void removeSlot(DesignEqualsImplementationClassSlot *slotToRemove);
-
-    //TODOoptional: private + getter/setter blah
-    DesignEqualsImplementationProject *m_ParentProject;
 
     void addNonFunctionMember(NonFunctionMember *nonFunctionMember);
 
@@ -81,7 +77,6 @@ signals:
     void privateMethodAdded(DesignEqualsImplementationClassPrivateMethod*);
     void slotAdded(DesignEqualsImplementationClassSlot*);
     void signalAdded(DesignEqualsImplementationClassSignal*);
-    void e(const QString &);
 public slots:
     void setClassName(const QString &newClassName);
     void emitAllClassDetails();

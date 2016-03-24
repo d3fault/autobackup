@@ -3,8 +3,8 @@
 #include "designequalsimplementationclass.h"
 #include "designequalsimplementationclassproperty.h"
 
-DesignEqualsImplementationImplicitlySharedDataType::DesignEqualsImplementationImplicitlySharedDataType(QObject *parent)
-    : Type(parent)
+DesignEqualsImplementationImplicitlySharedDataType::DesignEqualsImplementationImplicitlySharedDataType(QObject *parent, DesignEqualsImplementationProject *parentProject)
+    : Type(parent, parentProject)
 { }
 void DesignEqualsImplementationImplicitlySharedDataType::addNonFunctionMember(NonFunctionMember *nonFunctionMember)
 {
@@ -21,4 +21,8 @@ void DesignEqualsImplementationImplicitlySharedDataType::addNonFunctionMember(No
     }
 
     addNonFunctionMemberPrivate(nonFunctionMember);
+}
+QString DesignEqualsImplementationImplicitlySharedDataType::privateImplementationTypeName() const
+{
+    return Name + "Data"; //TODOreq: check against this in member name collisions? wait no it's a type, so in type name collisions (which I don't even have coded atm)
 }

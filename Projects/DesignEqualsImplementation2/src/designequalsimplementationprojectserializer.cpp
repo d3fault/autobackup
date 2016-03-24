@@ -271,10 +271,10 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             type = new DesignEqualsImplementationClass(projectToPopulate, projectToPopulate);
             break;
         case 1:
-            type = new DesignEqualsImplementationImplicitlySharedDataType(projectToPopulate);
+            type = new DesignEqualsImplementationImplicitlySharedDataType(projectToPopulate, projectToPopulate);
             break;
         case 2:
-            type = new DefinedElsewhereType(projectToPopulate);
+            type = new DefinedElsewhereType(projectToPopulate, projectToPopulate);
         default: //ODOoptional: use enum so I don't need default case so adding types would give compiler error here (good!)
             qFatal("invalid typeType! your guess is as good as mine");
             break;
