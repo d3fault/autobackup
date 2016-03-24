@@ -5,7 +5,7 @@
 #include <QList>
 #include <QPair>
 
-#include "type.h"
+#include "designequalsimplementationtype.h"
 #include "designequalsimplementationclassmethodargument.h"
 #include "libclangfunctiondeclarationparser.h"
 

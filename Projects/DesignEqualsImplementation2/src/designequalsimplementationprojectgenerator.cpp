@@ -756,7 +756,8 @@ bool DesignEqualsImplementationProjectGenerator::writeQObjectDerivedClassToDisk(
 #endif
     return true;
 }
-//TODOreq: declare metatype, generate+register qdatastream operators, etc
+//TODOreq: generate+register qdatastream operators. it's done automatically if all member types (RECURSIVELY) are _not_ DefinedElsewhereTypes. If any member type (recursively) is a DefinedElsewhereType, we give them a dialog asking if they want to generate QDataStream operators (their answer can be remembered/defaulted/pref'd in the Options menu). They can choose to generate QDataStream operators that simply skip over the DefinedElsewhere child (recursively) members, or they can choose to not skip over the DefinedElsewhere members when streaming, in which case they are responsible for creating+registering the qdatastream operators for the DefinedElsewhere type
+//TODOreq: maybe even register debug stream operators, and this has the same automagic logic as the qdatastream members in terms of DefinedElsewhereTypes
 bool DesignEqualsImplementationProjectGenerator::writeImplicitlySharedDataTypeToDisk(DesignEqualsImplementationImplicitlySharedDataType *implicitlySharedDataType, QTextStream &headerFileTextStream, QTextStream &sourceFileTextStream)
 {
     headerFileTextStream << "#include <QSharedDataPointer>" << endl
@@ -765,7 +766,7 @@ bool DesignEqualsImplementationProjectGenerator::writeImplicitlySharedDataTypeTo
     //#include "bar.h"
     QList<QString> nonFunctionMemberIncludesDeduped; //QSet would be easier, but then I lose my ordering :(
     Q_FOREACH(NonFunctionMember *currentNonFunctionMember, implicitlySharedDataType->nonFunctionMembers())
-        insertIntoListOnce(&nonFunctionMemberIncludesDeduped, currentNonFunctionMember->type->headerFilenameOnly());
+        insertIntoListOnce(&nonFunctionMemberIncludesDeduped, currentNonFunctionMember->type->includes());
     Q_FOREACH(const QString &currentInclude, nonFunctionMemberIncludesDeduped)
         headerFileTextStream << "#include \"" << currentInclude << "\"" << endl;
     if(!nonFunctionMemberIncludesDeduped.isEmpty())
@@ -779,8 +780,24 @@ bool DesignEqualsImplementationProjectGenerator::writeImplicitlySharedDataTypeTo
     headerFileTextStream << "class " << implicitlySharedDataType->Name << endl
     << "{" << endl
     << "public:" << endl
-    << DESIGNEQUALSIMPLEMENTATION_TAB << implicitlySharedDataType->Name << "();" << endl
-    << DESIGNEQUALSIMPLEMENTATION_TAB << implicitlySharedDataType->Name << "(const " << implicitlySharedDataType->Name <<  " &other);" << endl
+    << DESIGNEQUALSIMPLEMENTATION_TAB << implicitlySharedDataType->Name << "();" << endl;
+    //Foo(Bar b, Zed z, Etc etc, int x = 69);
+    if(!implicitlySharedDataType->nonFunctionMembers().isEmpty())
+    {
+        headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << implicitlySharedDataType->Name << "(";
+        bool firstNonFunctionMember = true;
+        Q_FOREACH(NonFunctionMember *currentNonFunctionMember, implicitlySharedDataType->nonFunctionMembers_OrderedCorrectlyAsMuchAsPossibleButWithMembersThatHaveOptionalInitAtTheEnd())
+        {
+            if(!firstNonFunctionMember)
+                headerFileTextStream << ", ";
+            firstNonFunctionMember = false;
+            headerFileTextStream << currentNonFunctionMember->preferredTextualRepresentationOfTypeAndVariableTogether();
+            if(currentNonFunctionMember->HasInit)
+                headerFileTextStream << " = " << currentNonFunctionMember->OptionalInit;
+        }
+        headerFileTextStream << ");" << endl;
+    }
+    headerFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << implicitlySharedDataType->Name << "(const " << implicitlySharedDataType->Name <<  " &other);" << endl
     << DESIGNEQUALSIMPLEMENTATION_TAB << implicitlySharedDataType->Name << " &operator=(const " << implicitlySharedDataType->Name <<  " &rhs);" << endl
     << DESIGNEQUALSIMPLEMENTATION_TAB << "~" << implicitlySharedDataType->Name << "();" << endl;
     if(!implicitlySharedDataType->nonFunctionMembers().isEmpty())
@@ -795,7 +812,8 @@ bool DesignEqualsImplementationProjectGenerator::writeImplicitlySharedDataTypeTo
     }
     headerFileTextStream << "private:" << endl
     << DESIGNEQUALSIMPLEMENTATION_TAB << "QSharedDataPointer<" << implicitlySharedDataType->privateImplementationTypeName() << "> d;" << endl
-    << "};" << endl;
+    << "};" << endl
+    << "Q_DECLARE_METATYPE(" << implicitlySharedDataType->Name << ")" << endl;
 
     //Source additional include
     DesignEqualsImplementationProjectGenerator_STREAM_TO_SOURCE_FILE_MACRO_HACKS_YOLO( << "#include <QSharedData>" << endl;)
@@ -852,7 +870,22 @@ bool DesignEqualsImplementationProjectGenerator::writeImplicitlySharedDataTypeTo
     //Foo::Foo(Bar b, Zed z, Etc etc) (...)
     if(!implicitlySharedDataType->nonFunctionMembers().isEmpty())
     {
-        //TODOreq(KISS): sourceFileTextStream << implicitlySharedDataType->Name << "::" << implicitlySharedDataType->Name << "(";
+        sourceFileTextStream << implicitlySharedDataType->Name << "::" << implicitlySharedDataType->Name << "(";
+        bool firstNonFunctionMember = true;
+        Q_FOREACH(NonFunctionMember *currentNonFunctionMember, implicitlySharedDataType->nonFunctionMembers_OrderedCorrectlyAsMuchAsPossibleButWithMembersThatHaveOptionalInitAtTheEnd())
+        {
+            if(!firstNonFunctionMember)
+                sourceFileTextStream << ", ";
+            firstNonFunctionMember = false;
+            sourceFileTextStream << currentNonFunctionMember->preferredTextualRepresentationOfTypeAndVariableTogether();
+        }
+        sourceFileTextStream << ")" << endl;
+        sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << ": d(new " << implicitlySharedDataType->privateImplementationTypeName() << ")" << endl;
+        Q_FOREACH(NonFunctionMember *currentNonFunctionMember, implicitlySharedDataType->nonFunctionMembers())
+        {
+            sourceFileTextStream << DESIGNEQUALSIMPLEMENTATION_TAB << ", d." << currentNonFunctionMember->VariableName << "(" << currentNonFunctionMember->VariableName << ")" << endl;
+        }
+        sourceFileTextStream << "{ }" << endl;
     }
     //Foo::Foo(const Foo &other) (...)
     sourceFileTextStream << implicitlySharedDataType->Name << "::" << implicitlySharedDataType->Name << "(const " << implicitlySharedDataType->Name << " &other)" << endl

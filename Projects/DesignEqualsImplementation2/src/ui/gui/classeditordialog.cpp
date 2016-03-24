@@ -35,7 +35,7 @@
 ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationType *typeToEdit, DesignEqualsImplementationProject *currentProject, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     , m_TypeBeingEditted(typeToEdit)
-    , m_TypeIsQObjectDerived(false)
+    , m_TypeBeingEdittedIsQObjectDerived(false)
     , m_CurrentProject(currentProject)
 {
     if(qobject_cast<DefinedElsewhereType*>(typeToEdit))
@@ -46,7 +46,7 @@ ClassEditorDialog::ClassEditorDialog(DesignEqualsImplementationType *typeToEdit,
     }
     if(DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(typeToEdit))
     {
-        m_TypeIsQObjectDerived = true;
+        m_TypeBeingEdittedIsQObjectDerived = true;
 
         connect(typeAsClass, SIGNAL(signalAdded(DesignEqualsImplementationClassSignal*)), this, SLOT(updateClassOverviewLabel()));
         connect(typeAsClass, SIGNAL(slotAdded(DesignEqualsImplementationClassSlot*)), this, SLOT(updateClassOverviewLabel()));
@@ -161,7 +161,7 @@ QWidget *ClassEditorDialog:: createMainClassEditorTab()
     m_QuickMemberAddLineEdit = new QLineEdit(); //TODOoptional: decide what to do when return is pressed lol. slot? if that's the case then slot should become the left-most of the three and bolded
     m_QuickMemberAddLineEdit->setPlaceholderText(tr("New member signature..."));
 
-    if(m_TypeIsQObjectDerived)
+    if(m_TypeBeingEdittedIsQObjectDerived)
         mainClassEditorTabLayout->addWidget(createQObjectDerivedMainClassEditorBodyWidget());
     else
         mainClassEditorTabLayout->addWidget(createNonQObjectDerivedMainClassEditorBodyWidget());
@@ -383,27 +383,27 @@ void ClassEditorDialog::addNewNonFunctionMember()
     //the property might be a new type, so ask the user how to handle it
     if(!nonFunctionMemberParser.newTypesSeenInPropertyDeclaration().isEmpty())
     {
-        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(nonFunctionMemberParser.newTypesSeenInPropertyDeclaration(), m_CurrentProject, (m_TypeIsQObjectDerived ? NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::TypesCanBeQObjectDerived : NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::TypesCannotBeQObjectDerived), this);
+        NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(nonFunctionMemberParser.newTypesSeenInPropertyDeclaration(), m_CurrentProject, (m_TypeBeingEdittedIsQObjectDerived ? NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::TypesCanBeQObjectDerived : NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::TypesCannotBeQObjectDerived), this);
         if(newTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog.exec() != QDialog::Accepted)
             return;
     }
 
-    bool makeItAQ_PROPERTY = false;
-    if(m_TypeIsQObjectDerived)
+    bool makeNewMemberAQ_PROPERTY = false;
+    if(m_TypeBeingEdittedIsQObjectDerived)
     {
         //TODOreq: once I have the Q_PROPERTY checkbox, i'd then check it here. for now all QObject's members are Q_PROPERTIES kek
-        makeItAQ_PROPERTY = true;
+        makeNewMemberAQ_PROPERTY = true;
     }
 
     //now create the new member itself
-    if(makeItAQ_PROPERTY)
+    if(makeNewMemberAQ_PROPERTY)
     {
         static_cast<DesignEqualsImplementationClass*>(m_TypeBeingEditted)->createNewProperty(m_CurrentProject->getOrCreateTypeFromName(nonFunctionMemberParser.parsedPropertyUnqualifiedType()), nonFunctionMemberParser.parsedPropertyQualifiedType(), nonFunctionMemberParser.parsedPropertyName(), nonFunctionMemberParser.hasInit(), nonFunctionMemberParser.optionalInit(), false, true); //TODOoptional: toolbutton for read-only or non-notifying etc etc
     }
     else
     {
         //not a Q_PROPERTY
-        m_TypeBeingEditted->createNewNonFunctionMember(m_CurrentProject->getOrCreateTypeFromName(nonFunctionMemberParser.parsedPropertyUnqualifiedType()), nonFunctionMemberParser.parsedPropertyQualifiedType(), DesignEqualsImplementationProjectGenerator::memberNameForProperty(nonFunctionMemberParser.parsedPropertyName()) /*TODOreq: do I really want to add m_?*/, Visibility::Private /*TODOreq: visibility radio*/, TypeInstance::isPointer(nonFunctionMemberParser.parsedPropertyQualifiedType()) ? TypeInstanceOwnershipOfPointedToDataIfPointer::DoesNotOwnPointedToData : TypeInstanceOwnershipOfPointedToDataIfPointer::NotPointer /*TODOreq: ask them if they want to own the pointer. one way to automagically determine that they do want to own the pointer is if the qualified type is pointer AND they put " = new Bar" in the OptionalInit. if we only detect it being a pointer, then we should ask. aww fuck atm OptionalInit and OwnsPointedToData are mutually exclusive, and an init of "= new Bar" wants to be both*/, nonFunctionMemberParser.hasInit(), nonFunctionMemberParser.optionalInit());
+        m_TypeBeingEditted->createNewNonFunctionMember(m_CurrentProject->getOrCreateTypeFromName(nonFunctionMemberParser.parsedPropertyUnqualifiedType()), nonFunctionMemberParser.parsedPropertyQualifiedType(), nonFunctionMemberParser.parsedPropertyName(), Visibility::Private /*TODOreq: visibility radio*/, TypeInstance::isPointer(nonFunctionMemberParser.parsedPropertyQualifiedType()) ? TypeInstanceOwnershipOfPointedToDataIfPointer::DoesNotOwnPointedToData : TypeInstanceOwnershipOfPointedToDataIfPointer::NotPointer /*TODOreq: ask them if they want to own the pointer. one way to automagically determine that they do want to own the pointer is if the qualified type is pointer AND they put " = new Bar" in the OptionalInit. if we only detect it being a pointer, then we should ask. aww fuck atm OptionalInit and OwnsPointedToData are mutually exclusive, and an init of "= new Bar" wants to be both*/, nonFunctionMemberParser.hasInit(), nonFunctionMemberParser.optionalInit());
     }
 
     m_QuickMemberAddLineEdit->clear();

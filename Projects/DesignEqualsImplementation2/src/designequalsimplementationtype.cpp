@@ -1,4 +1,4 @@
-#include "type.h"
+#include "designequalsimplementationtype.h"
 
 #include <QStringList>
 
@@ -153,6 +153,12 @@ QString DesignEqualsImplementationType::sourceFilenameOnly() const
 {
     return Name.toLower() + ".cpp";
 }
+QStringList DesignEqualsImplementationType::includes() const
+{
+    if(const DefinedElsewhereType *currentNonFunctionMemberTypeAsDefinedElsewhereType = qobject_cast<const DefinedElsewhereType*>(this))
+        return currentNonFunctionMemberTypeAsDefinedElsewhereType->definedElsewhereIncludes();
+    return QStringList() << headerFilenameOnly();
+}
 void DesignEqualsImplementationType::addNonFunctionMemberPrivate(NonFunctionMember *nonFunctionMember)
 {
     m_NonFunctionMembers << nonFunctionMember;
@@ -161,4 +167,18 @@ void DesignEqualsImplementationType::addNonFunctionMemberPrivate(NonFunctionMemb
 void DesignEqualsImplementationType::setClassName(const QString &newClassName)
 {
     Name = newClassName; // s/Class/Type (it's a slot)
+}
+QList<NonFunctionMember *> DesignEqualsImplementationType::nonFunctionMembers_OrderedCorrectlyAsMuchAsPossibleButWithMembersThatHaveOptionalInitAtTheEnd() const
+{
+    QList<NonFunctionMember*> ret;
+    QList<NonFunctionMember*> haveInit;
+    Q_FOREACH(NonFunctionMember *currentNonFunctionMember, nonFunctionMembers())
+    {
+        if(currentNonFunctionMember->HasInit)
+            haveInit << currentNonFunctionMember;
+        else
+            ret << currentNonFunctionMember;
+    }
+    ret << haveInit;
+    return ret;
 }

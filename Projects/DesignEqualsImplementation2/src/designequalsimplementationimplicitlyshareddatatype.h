@@ -1,7 +1,7 @@
 #ifndef DESIGNEQUALSIMPLEMENTATIONIMPLICITLYSHAREDDATATYPE_H
 #define DESIGNEQUALSIMPLEMENTATIONIMPLICITLYSHAREDDATATYPE_H
 
-#include "type.h"
+#include "designequalsimplementationtype.h"
 
 class DesignEqualsImplementationImplicitlySharedDataType : public DesignEqualsImplementationType
 {

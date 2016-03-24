@@ -1,10 +1,11 @@
-#ifndef TYPE_H
-#define TYPE_H
+#ifndef DESIGNEQUALSIMPLEMENTATIONTYPE_H
+#define DESIGNEQUALSIMPLEMENTATIONTYPE_H
 
 #include <QObject>
 #include <QScopedPointer>
 #include <QList>
 #include <QPointF>
+#include <QStringList>
 
 class DesignEqualsImplementationProject;
 
@@ -92,6 +93,7 @@ public:
     DesignEqualsImplementationProject *m_ParentProject;
 
     QList<NonFunctionMember*> nonFunctionMembers() const { return m_NonFunctionMembers; }
+    QList<NonFunctionMember*> nonFunctionMembers_OrderedCorrectlyAsMuchAsPossibleButWithMembersThatHaveOptionalInitAtTheEnd() const;
     virtual void addNonFunctionMember(NonFunctionMember* nonFunctionMember)=0; //TODOmb: protected?
     NonFunctionMember *createNewNonFunctionMember(DesignEqualsImplementationType *typeOfNewNonFunctionMember, const QString &qualifiedTypeString, const QString &nameOfNewNonFunctionMember = QString(), Visibility::VisibilityEnum visibility = Visibility::Private, TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum ownershipOfPointedToDataIfPointer = TypeInstanceOwnershipOfPointedToDataIfPointer::NotPointer, bool hasInit = false, const QString &optionalInit = QString());
     bool memberWithNameExists(const QString &memberNameToCheckForCollisions) const;
@@ -101,6 +103,7 @@ public:
 
     QString headerFilenameOnly() const;
     QString sourceFilenameOnly() const;
+    QStringList includes() const;
 
     virtual int typeCategory() const=0;
 protected:
@@ -119,6 +122,7 @@ class DefinedElsewhereType : public DesignEqualsImplementationType
     Q_OBJECT
 public:
     explicit DefinedElsewhereType(QObject *parent, DesignEqualsImplementationProject *parentProject) : DesignEqualsImplementationType(parent, parentProject) { }
+    QStringList definedElsewhereIncludes() const { return QStringList(); } //note: does not contain (had:include) the "#include " part or even the double quotes, just the file path of the include
     void addNonFunctionMember(NonFunctionMember* nonFunctionMember)
     {
         Q_UNUSED(nonFunctionMember)
@@ -129,4 +133,4 @@ signals:
     void nonFunctionMemberAdded(NonFunctionMember *nonFunctionMember);
 };
 
-#endif // TYPE_H
+#endif // DESIGNEQUALSIMPLEMENTATIONTYPE_H

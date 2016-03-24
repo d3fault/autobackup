@@ -92,6 +92,11 @@ private:
         if(!listToKeepDeduped->contains(whatToInsert))
             listToKeepDeduped->append(whatToInsert);
     }
+    static inline void insertIntoListOnce(QList<QString> *listToKeepDeduped, const QStringList &whatToInsert)
+    {
+        Q_FOREACH(const QString &currentEntry, whatToInsert)
+            insertIntoListOnce(listToKeepDeduped, currentEntry);
+    }
     bool recursivelyWalkSlotInUseCaseModeAndAddAllAdditionalSlotsRelevantToThisUseCaseToQueueForGeneratingConnectStatements(DesignEqualsImplementationUseCase *designEqualsImplementationUseCase, DesignEqualsImplementationClassLifeLine *classLifeline, DesignEqualsImplementationClassSlot *slotToWalk);
     bool writeTypeToDisk(DesignEqualsImplementationType *currentType);
     bool writeQObjectDerivedClassToDisk(DesignEqualsImplementationClass *currentClass, QTextStream &headerFileTextStream, QTextStream &sourceFileTextStream);

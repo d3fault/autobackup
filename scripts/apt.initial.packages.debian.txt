@@ -4,6 +4,8 @@ build-essential cmake pkg-config checkinstall automake autoconf libtool valgrind
 stable main X:
 smart-notifier gsmartcontrol arduino keepassx xul-ext-noscript xul-ext-tabmixplus xul-ext-adblock-plus xul-ext-flashgot mplayer gimp dia inkscape gv xscreensaver xscreensaver-data-extra openjdk-7-jdk mesa-common-dev x11vnc keynav xvkbd xauth
 
+stable main noX (some are X but work fine with just ssh X11 forwarding) lxc container missing derps: nano less xfce4-terminal xterm
+
 //^yes, mesa-common-dev is needed even with a proprietary graphics driver. it installs OpenGL headers (btw, make sure there's a symlink similar to the one generated from: `ln -s /usr/lib/x86_64-linux-gnu/nvidia/libGL.so.1 /usr/lib/libGL.so`. The mesa libGL works as well)
 
 

@@ -6,7 +6,7 @@
 #include <QList>
 #include <QMap>
 
-#include "type.h"
+#include "designequalsimplementationtype.h"
 
 class DesignEqualsImplementationProject;
 class DesignEqualsImplementationClass;

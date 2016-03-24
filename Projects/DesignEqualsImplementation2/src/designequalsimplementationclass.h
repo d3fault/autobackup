@@ -1,7 +1,7 @@
 #ifndef DESIGNEQUALSIMPLEMENTATIONCLASS_H
 #define DESIGNEQUALSIMPLEMENTATIONCLASS_H
 
-#include "type.h"
+#include "designequalsimplementationtype.h"
 
 #include <QPair>
 

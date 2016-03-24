@@ -7,7 +7,7 @@
 #include "designequalsimplementationcommon.h"
 #include "designequalsimplementationclass.h" //TODOoptional: forward declare in this + tons of similar classes
 #include "designequalsimplementationusecase.h"
-#include "type.h"
+#include "designequalsimplementationtype.h"
 
 class DesignEqualsImplementationImplicitlySharedDataType;
 

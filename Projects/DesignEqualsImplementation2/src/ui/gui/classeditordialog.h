@@ -24,7 +24,7 @@ public:
     explicit ClassEditorDialog(DesignEqualsImplementationType *typeToEdit, DesignEqualsImplementationProject *currentProject, QWidget *parent = 0, Qt::WindowFlags f = 0);
 private:
     DesignEqualsImplementationType *m_TypeBeingEditted;
-    bool m_TypeIsQObjectDerived;
+    bool m_TypeBeingEdittedIsQObjectDerived;
     DesignEqualsImplementationProject *m_CurrentProject;
 
     QLineEdit *m_QuickMemberAddLineEdit;

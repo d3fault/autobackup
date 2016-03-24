@@ -1,7 +1,7 @@
 #ifndef DESIGNEQUALSIMPLEMENTATIONCLASSPROPERTY_H
 #define DESIGNEQUALSIMPLEMENTATIONCLASSPROPERTY_H
 
-#include "type.h"
+#include "designequalsimplementationtype.h"
 
 class DesignEqualsImplementationClassProperty : public NonFunctionMember
 {

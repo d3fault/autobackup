@@ -1,7 +1,7 @@
 #ifndef DESIGNEQUALSIMPLEMENTATIONCLASSMETHODARGUMENT_H
 #define DESIGNEQUALSIMPLEMENTATIONCLASSMETHODARGUMENT_H
 
-#include "type.h"
+#include "designequalsimplementationtype.h"
 typedef TypeInstance DesignEqualsImplementationClassMethodArgument; //the typedef is still useful because it helps readability/understandbility. Not all TypeInstances are Arguments, but all Arguments are TypeInstances. I should change the name to d=iFunctionArgument TODOoptional
 
 #if 0

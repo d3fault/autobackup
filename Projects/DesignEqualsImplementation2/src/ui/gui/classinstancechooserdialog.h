@@ -5,7 +5,7 @@
 #include <QList>
 #include <QStack>
 
-#include "../../type.h"
+#include "../../designequalsimplementationtype.h"
 
 class QRadioButton;
 class QComboBox;

@@ -126,12 +126,27 @@ QString DesignEqualsImplementationClassAsQGraphicsItemForClassDiagramScene::clas
         ++numLinesOfText;
     }
 #endif
+    DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(m_Type);
     Q_FOREACH(NonFunctionMember *currentNonFunctionMember, m_Type->nonFunctionMembers())
     {
-        classContentsString.append("<br />m  " + currentNonFunctionMember->preferredTextualRepresentationOfTypeAndVariableTogether()); //TODOmb: try to cast to property, display it differently
+        QString visibilityVisualHtml;
+        if(typeAsClass) //all members of implicitly shared data types are 'public'
+        {
+            switch(currentNonFunctionMember->visibility)
+            {
+            case Visibility::Public:
+                visibilityVisualHtml = "+ ";
+                break;
+            case Visibility::Protected: //TODOoptional: use something else
+            case Visibility::Private:
+                visibilityVisualHtml = "- ";
+                break;
+            }
+        }
+        classContentsString.append("<br />" + visibilityVisualHtml + currentNonFunctionMember->preferredTextualRepresentationOfTypeAndVariableTogether()); //TODOmb: try to cast to property, display it differently
         ++numLinesOfText;
     }
-    if(DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(m_Type))
+    if(typeAsClass)
     {
         Q_FOREACH(DesignEqualsImplementationClassPrivateMethod *currentPrivateMethod, typeAsClass->PrivateMethods)
         {
