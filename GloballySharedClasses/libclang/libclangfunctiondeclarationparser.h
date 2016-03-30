@@ -5,11 +5,19 @@
 #include <QList>
 #include <QPair>
 
-struct FunctionArgumentTypedef
+struct ParsedTypeInstance
 {
+    enum ParsedTypeInstanceCategoryEnum
+    {
+          KnownTypeButNotABuiltIn
+        , BuiltIn
+        , Unknown
+    };
+
     QString NonQualifiedType;
     QString QualifiedType;
     QString Name;
+    ParsedTypeInstanceCategoryEnum ParsedTypeInstanceCategory;
 };
 class LibClangFunctionDeclarationParser
 {
@@ -20,7 +28,7 @@ public:
     void parseFunctionDeclaration(const QString &functionDeclaration, const QList<QString> &knownTypesToTypedefPrepend = QList<QString>());
     QString parsedFunctionName() const;
     QList<QString> newTypesSeenInFunctionDeclaration() const;
-    QList<FunctionArgumentTypedef> parsedFunctionArguments() const;
+    QList<ParsedTypeInstance> parsedFunctionArguments() const;
 
     bool hasError() const;
     QString mostRecentError() const;
@@ -28,11 +36,12 @@ private:
     friend class LibClangFunctionDeclarationParserRecursiveAstVisitor;
     friend class LibClangFunctionDeclarationParserDiagnosticConsumer;
 
+    QList<QString> m_KnownTypesToTypedefPrepend;
     int m_NumEncounteredFunctionDeclarations;
     QString m_ParsedFunctionName;
     QList<QString> m_UnknownTypesDetectedInLastRunToolOnCodeIteration;
     QList<QString> m_NewTypesSeenInFunctionDeclaration;
-    QList<FunctionArgumentTypedef> m_ParsedFunctionArguments;
+    QList<ParsedTypeInstance> m_ParsedFunctionArguments;
 
     bool m_HasError;
     QString m_MostRecentError; //could use queue/list/whatever, fuck it

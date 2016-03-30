@@ -146,9 +146,9 @@ QList<QString> ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompleti
 {
     return m_SyntaxIsValid ? LibClangFunctionDeclarationParser::newTypesSeenInFunctionDeclaration() : QList<QString>();
 }
-QList<FunctionArgumentTypedef> ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::parsedFunctionArguments() const
+QList<ParsedTypeInstance> ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::parsedFunctionArguments() const
 {
-    return m_SyntaxIsValid ? LibClangFunctionDeclarationParser::parsedFunctionArguments() : QList<FunctionArgumentTypedef>();
+    return m_SyntaxIsValid ? LibClangFunctionDeclarationParser::parsedFunctionArguments() : QList<ParsedTypeInstance>();
 }
 QString ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::mostRecentSyntaxError() const
 {
@@ -158,11 +158,11 @@ void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIf
 {
     QString sourceCode;
     int line = 1;
-    Q_FOREACH(const QString &knownType, m_AllKnownTypes)
+    Q_FOREACH(const QString &knownType, m_AllKnownTypesExcludingBuiltIns)
     {
         sourceCode.append("typedef int " + knownType + ";\n");
     }
-    line += m_AllKnownTypes.size();
+    line += m_AllKnownTypesExcludingBuiltIns.size();
     QString lineOfInterest;
     lineOfInterest.append("static ");
     if(!lineEditText.trimmed().startsWith("void")) //typing void in the line edit is optional
@@ -266,7 +266,7 @@ void ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIf
     if(checkSyntax)
     {
         //if we get here, there are either no parenthesis at all, or there is a close parenthesis to match the open parenthesis
-        parseFunctionDeclaration(newEditText, m_AllKnownTypes);
+        parseFunctionDeclaration(newEditText, m_AllKnownTypesExcludingBuiltIns);
         m_SyntaxIsValid = !hasError();
     }
     else

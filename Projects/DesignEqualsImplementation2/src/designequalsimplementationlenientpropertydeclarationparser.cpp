@@ -26,6 +26,21 @@ public:
         m_DesignEqualsImplementationPropertyDeclarationParser->m_ParsedPropertyQualifiedType = QString::fromStdString(propertyType.getAsString());
         m_DesignEqualsImplementationPropertyDeclarationParser->m_ParsedPropertyName = QString::fromStdString(varDecl->getNameAsString());
         m_DesignEqualsImplementationPropertyDeclarationParser->m_ParsedPropertyUnqualifiedType = QString::fromStdString(recursivelyDereferenceToUltimatePointeeTypeAndDiscardQualifiersAndReferenceAmpersand(propertyType).getAsString());
+
+        //TODOoptonal: this following chunk to determine the typeCategory enum was copy/pasted from LibClangFunctionDeclarationParser, so it and tons of other stuff in this class can probably be abstracted into a common parent
+        if(m_DesignEqualsImplementationPropertyDeclarationParser->m_NewTypesSeenInPropertyDeclaration.contains(m_DesignEqualsImplementationPropertyDeclarationParser->m_ParsedPropertyUnqualifiedType))
+        {
+            m_DesignEqualsImplementationPropertyDeclarationParser->m_ParsedPropertyTypeInstanceCategory = ParsedTypeInstance::Unknown;
+        }
+        else if(m_DesignEqualsImplementationPropertyDeclarationParser->m_KnownTypesToTypedefPrepend.contains(m_DesignEqualsImplementationPropertyDeclarationParser->m_ParsedPropertyUnqualifiedType))
+        {
+            m_DesignEqualsImplementationPropertyDeclarationParser->m_ParsedPropertyTypeInstanceCategory = ParsedTypeInstance::KnownTypeButNotABuiltIn;
+        }
+        else
+        {
+            m_DesignEqualsImplementationPropertyDeclarationParser->m_ParsedPropertyTypeInstanceCategory = ParsedTypeInstance::BuiltIn;
+        }
+
         if(varDecl->hasInit())
         {
             const Expr *varInit = varDecl->getInit();
@@ -104,7 +119,8 @@ private:
 
 //lenient because allows semi-colon to be missing
 DesignEqualsImplementationLenientPropertyDeclarationParser::DesignEqualsImplementationLenientPropertyDeclarationParser(const QString &propertyDeclaration, const QList<QString> &knownTypesToTypedefPrepend)
-    : m_HasInit(false)
+    : m_KnownTypesToTypedefPrepend(knownTypesToTypedefPrepend)
+    , m_HasInit(false)
     , m_NumEncounteredPropertyDeclarations(0)
     , m_HasError(false)
 {
@@ -151,6 +167,10 @@ QString DesignEqualsImplementationLenientPropertyDeclarationParser::parsedProper
 QString DesignEqualsImplementationLenientPropertyDeclarationParser::parsedPropertyUnqualifiedType() const
 {
     return m_ParsedPropertyUnqualifiedType;
+}
+ParsedTypeInstance::ParsedTypeInstanceCategoryEnum DesignEqualsImplementationLenientPropertyDeclarationParser::parsedPropertyTypeInstanceCategory() const
+{
+    return m_ParsedPropertyTypeInstanceCategory;
 }
 bool DesignEqualsImplementationLenientPropertyDeclarationParser::hasError() const
 {

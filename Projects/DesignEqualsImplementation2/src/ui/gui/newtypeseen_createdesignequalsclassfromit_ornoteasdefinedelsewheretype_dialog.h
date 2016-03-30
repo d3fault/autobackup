@@ -5,6 +5,8 @@
 
 #include <QPair>
 
+#include "libclangfunctiondeclarationparser.h"
+
 class QButtonGroup;
 
 class DesignEqualsImplementationType;
@@ -17,7 +19,8 @@ class NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dia
     Q_OBJECT
 public:
     enum TypesCanBeQObjectDerivedEnum { TypesCanBeQObjectDerived, TypesCannotBeQObjectDerived };
-    explicit NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(const QList<QString> listOfTypesToDecideOn, DesignEqualsImplementationProject *designEqualsImplementationProject, TypesCanBeQObjectDerivedEnum typesCanBeQObjectDerived, QWidget *parent = 0, Qt::WindowFlags f = 0);
+    //static bool atLeastOneParsedTypeNeedsDecidingOn(const QList<ParsedTypeInstance> &parsedTypesPossiblyNeedingDecidingOn);
+    explicit NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(const QList<QString> listOfUnknownParsedTypes, DesignEqualsImplementationProject *designEqualsImplementationProject, TypesCanBeQObjectDerivedEnum typesCanBeQObjectDerived, QWidget *parent = 0, Qt::WindowFlags f = 0);
     QList<DesignEqualsImplementationType*> newTypesSeen() const;
 private:
     static const int QObjectDerivedRadioButtonId;

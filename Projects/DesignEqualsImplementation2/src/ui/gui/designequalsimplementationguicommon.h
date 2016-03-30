@@ -2,9 +2,10 @@
 #define DESIGNEQUALSIMPLEMENTATIONGUICOMMON_H
 
 #include "newtypeseen_createdesignequalsclassfromit_ornoteasdefinedelsewheretype_dialog.h"
-#include "../../designequalsimplementationlenientsignalorslotsignaturerparser.h"
+#include "libclangfunctiondeclarationparser.h"
 
 class DesignEqualsImplementationProject;
+class DesignEqualsImplementationClass;
 
 #define DESIGNEQUALSIMPLEMENTATION_GUI_SNAP_INDICATION_COLOR Qt::red
 
@@ -39,10 +40,12 @@ Q_DECLARE_METATYPE(DesignEqualsImplementationMouseModeEnum)
 #define DESIGNEQUALSIMPLEMENTATION_MIME_TYPE_UML_USE_CASE_OBJECT \
     DESIGNEQUALSIMPLEMENTATION_MIME_TYPE_UML_PREFIX "use-case-object"
 
+class TypeInstance;
 class DesignEqualsImplementationGuiCommon
 {
 private:
-    static bool parseNewFunctionDefinitioin_then_askWhatToDoWithNewFunctionArgTypes(QWidget *parentWidget, DesignEqualsImplementationProject *currentProject, const QString &functionDefinitionToParse, QString *out_parsedFunctionName, QList<FunctionArgumentTypedef> *out_parsedFunctionArgs);
+    static bool parseNewFunctionDefinitioin_then_askWhatToDoWithNewFunctionArgTypes(QWidget *parentWidget, DesignEqualsImplementationProject *currentProject, const QString &functionDefinitionToParse, QString *out_parsedFunctionName, QList<ParsedTypeInstance> *out_parsedFunctionArgs);
+    //static bool convertAllParsedTypeInstancesIntoRealTypeInstances(const QList<ParsedTypeInstance> &parsedTypeInstances, DesignEqualsImplementationProject *project, QList<TypeInstance*> *out_RealTypeInstances);
 public:
     static bool parseNewSignalDefinition_then_askWhatToDoWithNewSignalArgTypes_then_createNewSignal(QWidget *parentWidget, DesignEqualsImplementationClass *classToAddTheSignalTo, const QString &signalDefinitionToParse);
     static bool parseNewSlotDefinition_then_askWhatToDoWithNewSlotArgTypes_then_createNewSlot(QWidget *parentWidget, DesignEqualsImplementationClass *classToAddTheSlotTo, const QString &slotDefinitionToParse);

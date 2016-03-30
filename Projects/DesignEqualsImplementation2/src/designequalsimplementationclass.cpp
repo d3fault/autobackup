@@ -27,11 +27,11 @@ DesignEqualsImplementationClass::~DesignEqualsImplementationClass()
     qDeleteAll(m_MySlots);
     qDeleteAll(m_MySignals);
 }
-DesignEqualsImplementationClassSignal *DesignEqualsImplementationClass::createNewSignal(const QString &newSignalName, const QList<FunctionArgumentTypedef> &newSignalArgs)
+DesignEqualsImplementationClassSignal *DesignEqualsImplementationClass::createNewSignal(const QString &newSignalName, const QList<ParsedTypeInstance> &newSignalArgs)
 {
     DesignEqualsImplementationClassSignal *newSignal = new DesignEqualsImplementationClassSignal(this);
     newSignal->Name = newSignalName;
-    Q_FOREACH(const FunctionArgumentTypedef &newSignalArg, newSignalArgs)
+    Q_FOREACH(const ParsedTypeInstance &newSignalArg, newSignalArgs)
     {
         newSignal->createNewArgument(m_ParentProject->getOrCreateTypeFromName(newSignalArg.NonQualifiedType), newSignalArg.QualifiedType, newSignalArg.Name);
     }
@@ -44,11 +44,11 @@ void DesignEqualsImplementationClass::addSignal(DesignEqualsImplementationClassS
     m_MySignals.append(signalToAdd);
     emit signalAdded(signalToAdd);
 }
-DesignEqualsImplementationClassSlot *DesignEqualsImplementationClass::createwNewSlot(const QString &newSlotName, const QList<FunctionArgumentTypedef> &newSlotArgs)
+DesignEqualsImplementationClassSlot *DesignEqualsImplementationClass::createwNewSlot(const QString &newSlotName, const QList<ParsedTypeInstance> &newSlotArgs)
 {
     DesignEqualsImplementationClassSlot *newSlot = new DesignEqualsImplementationClassSlot(this);
     newSlot->Name = newSlotName;
-    Q_FOREACH(const FunctionArgumentTypedef &newSlotArg, newSlotArgs)
+    Q_FOREACH(const ParsedTypeInstance &newSlotArg, newSlotArgs)
     {
         newSlot->createNewArgument(m_ParentProject->getOrCreateTypeFromName(newSlotArg.NonQualifiedType), newSlotArg.QualifiedType, newSlotArg.Name);
     }

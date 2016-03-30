@@ -25,12 +25,12 @@ public:
     ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot(QWidget *parent = 0);
     bool isInitialized() const { return m_IsInitialized; }
     //ResultType resultType() const { return m_ResultType; }
-    void insertKnownTypes(const QStringList &knownTypes) { m_AllKnownTypes.append(knownTypes); }
+    void insertKnownTypesExcludingBuiltIns(const QStringList &knownTypesExcludingBuiltIns) { m_AllKnownTypesExcludingBuiltIns.append(knownTypesExcludingBuiltIns); }
     bool syntaxIsValid() const;
 
     //only valid when resultType == NewResult && m_SyntaxIsValid == true
     QString parsedFunctionName() const;
-    QList<FunctionArgumentTypedef> parsedFunctionArguments() const;
+    QList<ParsedTypeInstance> parsedFunctionArguments() const;
     QList<QString> newTypesSeenInParsedFunctionDeclaration() const;
     QString mostRecentSyntaxError() const;
 protected:
@@ -41,7 +41,7 @@ private:
     bool m_IsInitialized;
     //ResultType m_ResultType;
     bool m_SyntaxIsValid;
-    QStringList m_AllKnownTypes;
+    QStringList m_AllKnownTypesExcludingBuiltIns;
     QCompleter *m_CompleterPopup;
 
     CXIndex m_ClangIndex;

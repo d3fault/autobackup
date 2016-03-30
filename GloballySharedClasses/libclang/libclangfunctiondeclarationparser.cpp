@@ -26,10 +26,25 @@ public:
         {
             const ParmVarDecl *currentParam = functionDecl->getParamDecl(i);
             QualType currentParamQualType = currentParam->getType(); //tempted to hang onto the QualType itself, but idfk how to deserialize/load back into one later on :(
-            FunctionArgumentTypedef functionArgument;
+            ParsedTypeInstance functionArgument;
             functionArgument.QualifiedType = QString::fromStdString(currentParamQualType.getAsString());
             functionArgument.NonQualifiedType = QString::fromStdString(recursivelyDereferenceToUltimatePointeeTypeAndDiscardQualifiersAndReferenceAmpersand(currentParamQualType).getAsString());
             functionArgument.Name = QString::fromStdString(currentParam->getNameAsString());
+
+            if(m_LibClangFunctionDeclarationParser->m_NewTypesSeenInFunctionDeclaration.contains(functionArgument.NonQualifiedType))
+            {
+                //TODOlater (pending a refactor): I should make m_NewTypesSeenInFunctionDeclaration private and callers use this enum, but however it's still useful here/now to get to this block. it still deserves to exist, just privately
+                functionArgument.ParsedTypeInstanceCategory = ParsedTypeInstance::Unknown;
+            }
+            else if(m_LibClangFunctionDeclarationParser->m_KnownTypesToTypedefPrepend.contains(functionArgument.NonQualifiedType))
+            {
+                functionArgument.ParsedTypeInstanceCategory = ParsedTypeInstance::KnownTypeButNotABuiltIn;
+            }
+            else //deductive reasoning yo: else if(currentParamQualType->isBuiltinType()) //we have to check this AFTER checking KnownToDefinedEqualsExcludingBuiltIns because oure 'known' types would be considered builtins by clang since it works on the canonical type
+            {
+                functionArgument.ParsedTypeInstanceCategory = ParsedTypeInstance::BuiltIn;
+            }
+
             m_LibClangFunctionDeclarationParser->m_ParsedFunctionArguments.append(functionArgument);
         }
         return true;
@@ -114,6 +129,7 @@ void LibClangFunctionDeclarationParser::reset()
 void LibClangFunctionDeclarationParser::parseFunctionDeclaration(const QString &functionDeclaration, const QList<QString> &knownTypesToTypedefPrepend)
 {
     reset();
+    m_KnownTypesToTypedefPrepend = knownTypesToTypedefPrepend;
 
     QString mutableFunctionDeclaration(functionDeclaration);
     if(!mutableFunctionDeclaration.trimmed().startsWith("void "))
@@ -190,7 +206,7 @@ QList<QString> LibClangFunctionDeclarationParser::newTypesSeenInFunctionDeclarat
 {
     return m_NewTypesSeenInFunctionDeclaration;
 }
-QList<FunctionArgumentTypedef> LibClangFunctionDeclarationParser::parsedFunctionArguments() const
+QList<ParsedTypeInstance> LibClangFunctionDeclarationParser::parsedFunctionArguments() const
 {
     return m_ParsedFunctionArguments;
 }

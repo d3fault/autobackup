@@ -30,10 +30,10 @@ public:
     bool generateSourceCode(const QString &destinationDirectoryPath);
     virtual ~DesignEqualsImplementationClass();
 
-    DesignEqualsImplementationClassSignal *createNewSignal(const QString &newSignalName = QString(), const QList<FunctionArgumentTypedef> &newSignalArgs = QList<FunctionArgumentTypedef>());
+    DesignEqualsImplementationClassSignal *createNewSignal(const QString &newSignalName = QString(), const QList<ParsedTypeInstance> &newSignalArgs = QList<ParsedTypeInstance>());
     void addSignal(DesignEqualsImplementationClassSignal *signalToAdd);
 
-    DesignEqualsImplementationClassSlot *createwNewSlot(const QString &newSlotName = QString(), const QList<FunctionArgumentTypedef> &newSlotArgs = QList<FunctionArgumentTypedef>());
+    DesignEqualsImplementationClassSlot *createwNewSlot(const QString &newSlotName = QString(), const QList<ParsedTypeInstance> &newSlotArgs = QList<ParsedTypeInstance>());
     void addSlot(DesignEqualsImplementationClassSlot *slotToAdd);
     void removeSlot(DesignEqualsImplementationClassSlot *slotToRemove);
 

@@ -59,7 +59,6 @@ SOURCES += ui/gui/main.cpp\
     ui/gui/methodsingleargumentwidget.cpp \
     ui/gui/tabemittinglineedit.cpp \
     ui/gui/newtypeseen_createdesignequalsclassfromit_ornoteasdefinedelsewheretype_dialog.cpp \
-    designequalsimplementationlenientsignalorslotsignaturerparser.cpp \
     designequalsimplementationlenientpropertydeclarationparser.cpp \
     designequalsimplementationprivatemethodsynchronouscallstatement.cpp \
     idesignequalsimplementationstatement.cpp \
@@ -124,7 +123,6 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     ui/gui/methodsingleargumentwidget.h \
     ui/gui/tabemittinglineedit.h \
     ui/gui/newtypeseen_createdesignequalsclassfromit_ornoteasdefinedelsewheretype_dialog.h \
-    designequalsimplementationlenientsignalorslotsignaturerparser.h \
     designequalsimplementationlenientpropertydeclarationparser.h \
     designequalsimplementationprivatemethodsynchronouscallstatement.h \
     designequalsimplementationprojectserializer.h \
@@ -139,7 +137,8 @@ HEADERS  += ui/gui/designequalsimplementationmainwindow.h \
     designequalsimplementationchunkofrawcppstatements.h \
     ui/gui/designequalsimplementationchunkofrawcppstatementsgraphicsitemforusecasescene.h \
     designequalsimplementationimplicitlyshareddatatype.h \
-    designequalsimplementationtype.h
+    designequalsimplementationtype.h \
+    builtintype.h
 
 include(../../../GloballySharedClasses/libclangfunctiondeclarationparser.pri)
 include(../../../GloballySharedClasses/comboboxwithautocompletionofexistingsignalsorslotsandautocompletionofargsifnewsignalorslot.pri)

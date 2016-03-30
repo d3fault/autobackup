@@ -20,7 +20,6 @@
 #include "../../designequalsimplementationclass.h"
 #include "../../designequalsimplementationclasslifeline.h"
 #include "../../designequalsimplementationclasslifelineunitofexecution.h"
-#include "../../designequalsimplementationlenientsignalorslotsignaturerparser.h"
 
 //TODOreq: SignalSlotMessageEditorDialog (creation + editting-later-on using same widget) would be best
 //TODOreq: signal/slot mode, slot args populated by signal args, can have less than signal arg count, but arg-ordering and arg-type matter
@@ -300,7 +299,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
                     continue;
                 m_ExistingSlotsComboBox->addItem(currentSlot->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSlot));
             }
-            m_ExistingSlotsComboBox->insertKnownTypes(destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->m_ParentProject->allKnownTypesNames());
+            m_ExistingSlotsComboBox->insertKnownTypesExcludingBuiltIns(destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->m_ParentProject->allKnownTypesNamesExcludingBuiltIns());
         }
     }
 
@@ -341,7 +340,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
             {
                 m_ExistingSignalsComboBox->addItem(currentSignal->methodSignatureWithoutReturnType(), QVariant::fromValue(currentSignal));
             }
-            m_ExistingSignalsComboBox->insertKnownTypes(sourceSlot_OrZeroIfSourceIsActor->ParentClass->m_ParentProject->allKnownTypesNames());
+            m_ExistingSignalsComboBox->insertKnownTypesExcludingBuiltIns(sourceSlot_OrZeroIfSourceIsActor->ParentClass->m_ParentProject->allKnownTypesNamesExcludingBuiltIns());
 
             //fill in list of variables in current context to use for satisfying whatever slot they choose's arguments. TODOreq: prefix the "source" of the arg satisfier, and perhaps sort them by that too. "my-method-arguments", "my-class-members", etc)
             //m_VariablesAvailableToSatisfyArgs.append(*(slotWithCurrentContext_OrZeroIfSourceIsActor->Arguments));
@@ -452,7 +451,7 @@ void SignalSlotMessageDialog::showSignalArgFillingIn()
     m_SignalArgsFillingInWidget = new QWidget();
     QVBoxLayout *argsFillingInLayout = new QVBoxLayout(); //TODOreq: a scroll bar may be needed if the slot has too many args, but really 10 is a decent soft limit that Qt uses also... any more and you suck at designing :-P
     argsFillingInLayout->addWidget(new QLabel(QObject::tr("Fill in the arguments for: ") + m_SignalNameHavingArgsFilledIn), 0, Qt::AlignLeft);
-    Q_FOREACH(FunctionArgumentTypedef currentArgument, m_SignalArgumentsBeingFilledIn)
+    Q_FOREACH(ParsedTypeInstance currentArgument, m_SignalArgumentsBeingFilledIn)
     {
         QHBoxLayout *currentArgRow = new QHBoxLayout();
         currentArgRow->addWidget(new QLabel(DesignEqualsImplementationClassMethodArgument::preferredTextualRepresentationOfTypeAndVariableTogether(currentArgument.QualifiedType, currentArgument.Name)));
@@ -513,7 +512,7 @@ void SignalSlotMessageDialog::showSlotArgFillingIn()
         m_SlotArgsFillingInWidget = new QWidget();
         QVBoxLayout *argsFillingInLayout = new QVBoxLayout(); //TODOreq: a scroll bar may be needed if the slot has too many args, but really 10 is a decent soft limit that Qt uses also... any more and you suck at designing :-P
         argsFillingInLayout->addWidget(new QLabel(QObject::tr("Fill in the arguments for: ") + m_SlotNameHavingArgsFilledIn), 0, Qt::AlignLeft);
-        Q_FOREACH(FunctionArgumentTypedef currentArgument, m_SlotArgumentsBeingFilledIn)
+        Q_FOREACH(ParsedTypeInstance currentArgument, m_SlotArgumentsBeingFilledIn)
         {
             QHBoxLayout *currentArgRow = new QHBoxLayout(); //TODOoptimization: one grid layout instead? fuck it
             currentArgRow->addWidget(new QLabel(DesignEqualsImplementationClassMethodArgument::preferredTextualRepresentationOfTypeAndVariableTogether(currentArgument.QualifiedType, currentArgument.Name)));
@@ -570,7 +569,7 @@ bool SignalSlotMessageDialog::allArgSatisfiersAreValid()
         if(m_SignalArgumentsBeingFilledIn.size() < m_SlotArgumentsBeingFilledIn.size())
             return false; //TODOmb: notify them of why the dialog can't be accept()'d
         int currentArgIndex = 0;
-        Q_FOREACH(FunctionArgumentTypedef currentSlotArgument, m_SlotArgumentsBeingFilledIn)
+        Q_FOREACH(ParsedTypeInstance currentSlotArgument, m_SlotArgumentsBeingFilledIn)
         {
             const QByteArray &slotArgTypeCstr = currentSlotArgument.QualifiedType.toUtf8();
             const QByteArray &signalArgTypeCstr = m_SignalArgumentsBeingFilledIn.at(currentArgIndex++).QualifiedType.toUtf8();
@@ -736,15 +735,17 @@ bool SignalSlotMessageDialog::askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDe
     //but first, create or mark as defined elsewhere, any new types seen in signal/slot args
     DesignEqualsImplementationProject *currentProject;
     QList<QString> newSignalOrSlotArgTypesSeen;
-    if(m_SignalsCheckbox->isChecked() && m_SignalResultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::TypedInFunction && (!m_ExistingSignalsComboBox->newTypesSeenInParsedFunctionDeclaration().isEmpty()))
+    if(m_SignalsCheckbox->isChecked() && m_SignalResultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::TypedInFunction)
     {
         currentProject = m_SourceClassLifeline_OrZeroIfSourceIsActor->designEqualsImplementationClass()->m_ParentProject;
         newSignalOrSlotArgTypesSeen.append(m_ExistingSignalsComboBox->newTypesSeenInParsedFunctionDeclaration());
+        currentProject->ensureParsedBuiltInTypesHaveTypes(m_ExistingSignalsComboBox->parsedFunctionArguments());
     }
-    else if(m_SlotsCheckbox->isChecked() && m_SlotResultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::TypedInFunction && (!m_ExistingSlotsComboBox->newTypesSeenInParsedFunctionDeclaration().isEmpty()))
+    else if(m_SlotsCheckbox->isChecked() && m_SlotResultType == ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::TypedInFunction)
     {
         currentProject = m_DestinationClassLifeline_OrZeroIfNoDest->designEqualsImplementationClass()->m_ParentProject;
         newSignalOrSlotArgTypesSeen.append(m_ExistingSlotsComboBox->newTypesSeenInParsedFunctionDeclaration());
+        currentProject->ensureParsedBuiltInTypesHaveTypes(m_ExistingSignalsComboBox->parsedFunctionArguments());
     }
 
     if(!newSignalOrSlotArgTypesSeen.isEmpty())

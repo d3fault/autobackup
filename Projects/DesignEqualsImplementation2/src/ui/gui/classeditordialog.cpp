@@ -373,12 +373,23 @@ void ClassEditorDialog::addNewNonFunctionMember()
     //TODOreq: differentiating member pointer owned (instantiated) vs. not owned (not instantiated, passed in somehow) = ??????????????????
 
 
-    DesignEqualsImplementationLenientPropertyDeclarationParser nonFunctionMemberParser(m_QuickMemberAddLineEdit->text(), m_CurrentProject->allKnownTypesNames());
+    DesignEqualsImplementationLenientPropertyDeclarationParser nonFunctionMemberParser(m_QuickMemberAddLineEdit->text(), m_CurrentProject->allKnownTypesNamesExcludingBuiltIns());
     if(nonFunctionMemberParser.hasError())
     {
         QMessageBox::critical(this, tr("Error"), nonFunctionMemberParser.mostRecentError()); //TODOreq: show the details in-app in a qplaintextedit
         return;
     }
+
+    //begin a bit hacky
+    ParsedTypeInstance parsedNonFunctionMemberAsParsedTypeInstance;
+    parsedNonFunctionMemberAsParsedTypeInstance.NonQualifiedType = nonFunctionMemberParser.parsedPropertyUnqualifiedType();
+    parsedNonFunctionMemberAsParsedTypeInstance.ParsedTypeInstanceCategory =  nonFunctionMemberParser.parsedPropertyTypeInstanceCategory();
+    //yea there are more members i can asssign, but only nonqualifeid type and the type category are needed for m_CurrentProject->ensureParsedBuiltInTypesHaveTypes
+    QList<ParsedTypeInstance> listLoL;
+    listLoL << parsedNonFunctionMemberAsParsedTypeInstance;
+    //end a bit hacky
+
+    m_CurrentProject->ensureParsedBuiltInTypesHaveTypes(listLoL);
 
     //the property might be a new type, so ask the user how to handle it
     if(!nonFunctionMemberParser.newTypesSeenInPropertyDeclaration().isEmpty())

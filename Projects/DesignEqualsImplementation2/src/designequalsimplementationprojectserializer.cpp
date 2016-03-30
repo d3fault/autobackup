@@ -10,6 +10,7 @@
 #include "designequalsimplementationchunkofrawcppstatements.h"
 #include "designequalsimplementationclasslifeline.h"
 #include "designequalsimplementationimplicitlyshareddatatype.h"
+#include "builtintype.h"
 
 #define STREAM_OUT_METHOD_ARGUMENTS(qds, method, project) \
 int numArgs = method->arguments().size(); \
@@ -275,8 +276,12 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
             break;
         case 2:
             type = new DefinedElsewhereType(projectToPopulate, projectToPopulate);
+            break;
+        case 3:
+            type = new BuiltInType(projectToPopulate, projectToPopulate);
+            break;
         default: //ODOoptional: use enum so I don't need default case so adding types would give compiler error here (good!)
-            qFatal("invalid typeType! your guess is as good as mine");
+            qFatal("invalid typeCategory! your guess is as good as mine");
             break;
         }
         projectDataStream >> type->Name;

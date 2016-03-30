@@ -17,11 +17,23 @@ const int NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType
 const int NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::DefinedElsewhereRadioButtonId = 2;
 
 //TO DOnereq: convert from a single checkbox into 3x radio buttons (Class, Implicitly Shared Data Type, Defined Elsewhere). Default to Class. There needs to be a (bool/enum) constructor arg that makes Class column gray'd out or missing (in which case we default to Data), because Data can't have Class children. There needs to be an "all to this" button for each column
-NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(const QList<QString> listOfTypesToDecideOn, DesignEqualsImplementationProject *designEqualsImplementationProject, TypesCanBeQObjectDerivedEnum typesCanBeQObjectDerived, QWidget *parent, Qt::WindowFlags f)
+#if 0
+bool NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::atLeastOneParsedTypeNeedsDecidingOn(const QList<ParsedTypeInstance> &parsedTypesPossiblyNeedingDecidingOn)
+{
+    Q_FOREACH(const ParsedTypeInstance &currentParsedTypeInstance, parsedTypesPossiblyNeedingDecidingOn)
+    {
+        if(currentParsedTypeInstance.ParsedTypeInstanceCategory == ParsedTypeInstance::Unknown)
+            return true;
+    }
+    return false;
+}
+#endif
+NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog(const QList<QString> listOfUnknownParsedTypes, DesignEqualsImplementationProject *designEqualsImplementationProject, TypesCanBeQObjectDerivedEnum typesCanBeQObjectDerived, QWidget *parent, Qt::WindowFlags f)
     : QDialog(parent, f)
     , m_DesignEqualsImplementationProject(designEqualsImplementationProject)
     , m_TypesCanBeQObjectDerived(typesCanBeQObjectDerived)
 {
+    //TODOlater (pending a refactor): listOfUnknownParsedTypes will have dupes in it. we need to dedupe when asking the end-user, but then re-dupe (so they can be matched up with ALL args) when the api user gets them back from us
     //TODOoptional: scroll bars in case there are a fucking shit load of new types (afaik, c[++] doesn't set a limit on num params)
 
     //too long and unseen, maybe set minwidth for it? setWindowTitle(tr("For each of these never before seen types..."));
@@ -41,33 +53,36 @@ NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::N
     col = 0; //\r
     ++row; //\n
 
-    QSignalMapper *selectAllSignalMapper = new QSignalMapper(this);
-
-    if(m_TypesCanBeQObjectDerived == TypesCanBeQObjectDerived)
+    if(listOfUnknownParsedTypes.size() > 1)
     {
-        QPushButton *allQObjectDerivedPushButton = new QPushButton(tr("Select All"));
-        gridLayout->addWidget(allQObjectDerivedPushButton, row, ++col);
-        selectAllSignalMapper->setMapping(allQObjectDerivedPushButton, QObjectDerivedRadioButtonId);
-        connect(allQObjectDerivedPushButton, SIGNAL(clicked()), selectAllSignalMapper, SLOT(map()));
+        QSignalMapper *selectAllSignalMapper = new QSignalMapper(this);
+
+        if(m_TypesCanBeQObjectDerived == TypesCanBeQObjectDerived)
+        {
+            QPushButton *allQObjectDerivedPushButton = new QPushButton(tr("Select All"));
+            gridLayout->addWidget(allQObjectDerivedPushButton, row, ++col);
+            selectAllSignalMapper->setMapping(allQObjectDerivedPushButton, QObjectDerivedRadioButtonId);
+            connect(allQObjectDerivedPushButton, SIGNAL(clicked()), selectAllSignalMapper, SLOT(map()));
+        }
+
+        QPushButton *allImplicitlySharedPushButton = new QPushButton(tr("Select All"));
+        gridLayout->addWidget(allImplicitlySharedPushButton, row, ++col);
+        selectAllSignalMapper->setMapping(allImplicitlySharedPushButton, ImplicitlySharedRadioButtonId);
+        connect(allImplicitlySharedPushButton, SIGNAL(clicked()), selectAllSignalMapper, SLOT(map()));
+
+        QPushButton *allDefinedElsewherePushButton = new QPushButton(tr("Select All"));
+        gridLayout->addWidget(allDefinedElsewherePushButton, row, ++col);
+        selectAllSignalMapper->setMapping(allDefinedElsewherePushButton, DefinedElsewhereRadioButtonId);
+        connect(allDefinedElsewherePushButton, SIGNAL(clicked()), selectAllSignalMapper, SLOT(map()));
+
+        connect(selectAllSignalMapper, SIGNAL(mapped(int)), this, SLOT(selectAllByButtonId(int)));
+        ++row;
     }
 
-    QPushButton *allImplicitlySharedPushButton = new QPushButton(tr("Select All"));
-    gridLayout->addWidget(allImplicitlySharedPushButton, row, ++col);
-    selectAllSignalMapper->setMapping(allImplicitlySharedPushButton, ImplicitlySharedRadioButtonId);
-    connect(allImplicitlySharedPushButton, SIGNAL(clicked()), selectAllSignalMapper, SLOT(map()));
-
-    QPushButton *allDefinedElsewherePushButton = new QPushButton(tr("Select All"));
-    gridLayout->addWidget(allDefinedElsewherePushButton, row, ++col);
-    selectAllSignalMapper->setMapping(allDefinedElsewherePushButton, DefinedElsewhereRadioButtonId);
-    connect(allDefinedElsewherePushButton, SIGNAL(clicked()), selectAllSignalMapper, SLOT(map()));
-
-    connect(selectAllSignalMapper, SIGNAL(mapped(int)), this, SLOT(selectAllByButtonId(int)));
-    ++row;
-
-    Q_FOREACH(const QString &currentTypeToDecideOn, listOfTypesToDecideOn)
+    Q_FOREACH(const QString &currentTypeToMakeKnown, listOfUnknownParsedTypes)
     {
         col = -1;
-        gridLayout->addWidget(new QLabel(currentTypeToDecideOn), row, ++col);
+        gridLayout->addWidget(new QLabel(currentTypeToMakeKnown), row, ++col);
         QButtonGroup *radioButtonGroup = new QButtonGroup(this);
         QRadioButton *implicitlySharedDataTypeRadioButton = new QRadioButton();
         if(typesCanBeQObjectDerived == TypesCanBeQObjectDerived)
@@ -88,7 +103,7 @@ NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::N
         gridLayout->addWidget(definedElsewhereRadioButton, row, ++col, 1, 1, Qt::AlignHCenter);
 
         TypesAndTheirDecisionRadioGroups typeAndItsDecisionRadioGroup;
-        typeAndItsDecisionRadioGroup.first = currentTypeToDecideOn;
+        typeAndItsDecisionRadioGroup.first = currentTypeToMakeKnown;
         typeAndItsDecisionRadioGroup.second = radioButtonGroup;
         m_TypesAndTheirDecisionRadioGroups << typeAndItsDecisionRadioGroup;
         ++row;

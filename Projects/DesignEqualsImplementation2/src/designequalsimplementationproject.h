@@ -25,6 +25,7 @@ public:
     void addType(DesignEqualsImplementationType *type);
     QList<DesignEqualsImplementationType *> allKnownTypes() const;
     QList<QString> allKnownTypesNames() const;
+    QList<QString> allKnownTypesNamesExcludingBuiltIns() const;
     DesignEqualsImplementationType *getOrCreateTypeFromName(const QString &nonQualifiedTypeName);
 
     //TODOoptional: private + getter/setter blah
@@ -40,6 +41,9 @@ public:
 
     DefinedElsewhereType *noteDefinedElsewhereType(const QString &definedElsewhereType);
     //QList<DefinedElsewhereType*> definedElsewhereTypes() const;
+
+    void ensureParsedBuiltInTypesHaveTypes(const QList<ParsedTypeInstance> &parsedTypes);
+    void noteBuiltInType(const QString &builtInType);
 
     //TODOreq: m_Classes should be private, but I had issues getting the getters/setters to play nicely with QDataStream. Maybe a simple "friend QDataStream;" would fix it (or similar), but I can't be fucked to even play around with it right now. STILL, after coding for a while you should check that all usages of m_Classes are only from within the getter/setters (more important is the setter, but still in principle the getter too)
 

@@ -25,7 +25,7 @@ public:
     //TODOoptional: private + getter/setter blah
     QString Name;
     QList<DesignEqualsImplementationClassMethodArgument*> arguments() const;
-    QList<FunctionArgumentTypedef> argumentsAsFunctionArgumentTypedefList() const;
+    QList<ParsedTypeInstance> argumentsAsFunctionArgumentTypedefList() const;
     DesignEqualsImplementationClass *ParentClass;
 
     QString methodSignatureWithoutReturnType(MethodSignatureFlagsEnum methodSignatureFlagsEnum = MethodSignatureForVisualAppearanceContainsArgumentVariableNames);

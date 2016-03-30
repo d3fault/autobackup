@@ -128,7 +128,7 @@ public:
         Q_UNUSED(nonFunctionMember)
         qFatal("ERROR: tried to addNonFunctionMember() to a DefinedElsewhereType. The caller should have checked this");
     }
-    int typeCategory() const { return 2; }
+    virtual int typeCategory() const { return 2; }
 signals:
     void nonFunctionMemberAdded(NonFunctionMember *nonFunctionMember);
 };

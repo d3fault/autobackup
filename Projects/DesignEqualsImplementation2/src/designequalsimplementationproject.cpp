@@ -10,6 +10,7 @@
 #include "designequalsimplementationprojectgenerator.h"
 #include "designequalsimplementationchunkofrawcppstatements.h"
 #include "designequalsimplementationimplicitlyshareddatatype.h"
+#include "builtintype.h"
 
 #define DesignEqualsImplementationProject_SERIALIZATION_VERSION 1
 
@@ -53,6 +54,17 @@ QList<QString> DesignEqualsImplementationProject::allKnownTypesNames() const
     QList<QString> ret;
     Q_FOREACH(DesignEqualsImplementationType *type, allKnownTypes())
         ret << type->Name;
+    return ret;
+}
+QList<QString> DesignEqualsImplementationProject::allKnownTypesNamesExcludingBuiltIns() const
+{
+    //TODOoptimization: idfk but something
+    QList<QString> ret;
+    Q_FOREACH(DesignEqualsImplementationType *currentType, allKnownTypes())
+    {
+        if(!qobject_cast<BuiltInType*>(currentType))
+            ret << currentType->Name;
+    }
     return ret;
 }
 DesignEqualsImplementationType *DesignEqualsImplementationProject::getOrCreateTypeFromName(const QString &nonQualifiedTypeName)
@@ -116,8 +128,22 @@ DefinedElsewhereType *DesignEqualsImplementationProject::noteDefinedElsewhereTyp
 
     DefinedElsewhereType *newDefinedElsewhereType = new DefinedElsewhereType(this, this);
     newDefinedElsewhereType->Name = definedElsewhereType;
-    m_AllKnownTypes.append(newDefinedElsewhereType); //TODOreq: [de-]serialize
+    m_AllKnownTypes.append(newDefinedElsewhereType);
     return newDefinedElsewhereType;
+}
+void DesignEqualsImplementationProject::ensureParsedBuiltInTypesHaveTypes(const QList<ParsedTypeInstance> &parsedTypes)
+{
+    Q_FOREACH(const ParsedTypeInstance &currentType, parsedTypes)
+    {
+        if(currentType.ParsedTypeInstanceCategory == ParsedTypeInstance::BuiltIn)
+            noteBuiltInType(currentType.NonQualifiedType);
+    }
+}
+void DesignEqualsImplementationProject::noteBuiltInType(const QString &builtInType)
+{
+    BuiltInType *newBuiltInType = new BuiltInType(this, this);
+    newBuiltInType->Name = builtInType;
+    m_AllKnownTypes.append(newBuiltInType);
 }
 //TODOoptimization: vacuum types, since ones that used to be in project might not anymore. vacuum just before serialization imo
 #if 0

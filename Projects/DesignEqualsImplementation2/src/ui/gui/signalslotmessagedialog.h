@@ -58,10 +58,10 @@ private:
     ComboBoxWithAutoCompletionOfExistingSignalsOrSlotsAndAutoCompletionOfArgsIfNewSignalOrSlot::ResultType m_SlotResultType;
 
     QString m_SignalNameHavingArgsFilledIn;
-    QList<FunctionArgumentTypedef> m_SignalArgumentsBeingFilledIn;
+    QList<ParsedTypeInstance> m_SignalArgumentsBeingFilledIn;
 
     QString m_SlotNameHavingArgsFilledIn;
-    QList<FunctionArgumentTypedef> m_SlotArgumentsBeingFilledIn;
+    QList<ParsedTypeInstance> m_SlotArgumentsBeingFilledIn;
 
     void showSignalArgFillingIn();
     void collapseSignalArgFillingIn();

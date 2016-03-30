@@ -10,12 +10,12 @@ QList<DesignEqualsImplementationClassMethodArgument *> IDesignEqualsImplementati
 {
     return m_Arguments;
 }
-QList<FunctionArgumentTypedef> IDesignEqualsImplementationMethod::argumentsAsFunctionArgumentTypedefList() const
+QList<ParsedTypeInstance> IDesignEqualsImplementationMethod::argumentsAsFunctionArgumentTypedefList() const
 {
-    QList<FunctionArgumentTypedef> ret;
+    QList<ParsedTypeInstance> ret;
     Q_FOREACH(DesignEqualsImplementationClassMethodArgument* currentArgument, m_Arguments)
     {
-        FunctionArgumentTypedef entry;
+        ParsedTypeInstance entry;
         entry.NonQualifiedType = currentArgument->type->Name;
         entry.QualifiedType = currentArgument->qualifiedType();
         entry.Name = currentArgument->VariableName;
