@@ -758,6 +758,7 @@ bool DesignEqualsImplementationProjectGenerator::writeQObjectDerivedClassToDisk(
 }
 //TODOreq: generate+register qdatastream operators. it's done automatically if all member types (RECURSIVELY) are _not_ DefinedElsewhereTypes. If any member type (recursively) is a DefinedElsewhereType, we give them a dialog asking if they want to generate QDataStream operators (their answer can be remembered/defaulted/pref'd in the Options menu). They can choose to generate QDataStream operators that simply skip over the DefinedElsewhere child (recursively) members, or they can choose to not skip over the DefinedElsewhere members when streaming, in which case they are responsible for creating+registering the qdatastream operators for the DefinedElsewhere type
 //TODOreq: maybe even register debug stream operators, and this has the same automagic logic as the qdatastream members in terms of DefinedElsewhereTypes
+//TODOreq: qHash (and equality operator) function, so the ISDT can be used as  key in a QHash/QSet. same automagic logic as qdatastream members (all recursive children yada yada)
 bool DesignEqualsImplementationProjectGenerator::writeImplicitlySharedDataTypeToDisk(DesignEqualsImplementationImplicitlySharedDataType *implicitlySharedDataType, QTextStream &headerFileTextStream, QTextStream &sourceFileTextStream)
 {
     headerFileTextStream << "#include <QSharedDataPointer>" << endl

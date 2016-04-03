@@ -131,13 +131,15 @@ DefinedElsewhereType *DesignEqualsImplementationProject::noteDefinedElsewhereTyp
     m_AllKnownTypes.append(newDefinedElsewhereType);
     return newDefinedElsewhereType;
 }
+void DesignEqualsImplementationProject::ensureParsedBuiltInTypeHasType(const QString &parsedUnqualifiedType, ParsedTypeInstance::ParsedTypeInstanceCategoryEnum parsedTypeCategory)
+{
+    if(parsedTypeCategory == ParsedTypeInstance::BuiltIn && (!allKnownTypesNames().contains(parsedUnqualifiedType)))
+        noteBuiltInType(parsedUnqualifiedType);
+}
 void DesignEqualsImplementationProject::ensureParsedBuiltInTypesHaveTypes(const QList<ParsedTypeInstance> &parsedTypes)
 {
     Q_FOREACH(const ParsedTypeInstance &currentType, parsedTypes)
-    {
-        if(currentType.ParsedTypeInstanceCategory == ParsedTypeInstance::BuiltIn)
-            noteBuiltInType(currentType.NonQualifiedType);
-    }
+        ensureParsedBuiltInTypeHasType(currentType.NonQualifiedType, currentType.ParsedTypeInstanceCategory);
 }
 void DesignEqualsImplementationProject::noteBuiltInType(const QString &builtInType)
 {
@@ -146,7 +148,7 @@ void DesignEqualsImplementationProject::noteBuiltInType(const QString &builtInTy
     m_AllKnownTypes.append(newBuiltInType);
 }
 //TODOoptimization: vacuum types, since ones that used to be in project might not anymore. vacuum just before serialization imo
-#if 0
+#if 0 //NOTE: if uncommenting, modifications need to be made to filter out BuiltInTypes (since they inherit DefinedElsewhereType). or maybe they don't need to be filtered out, it depends on the use case
 QList<DefinedElsewhereType*> DesignEqualsImplementationProject::definedElsewhereTypes() const
 {
     QList<DefinedElsewhereType*> ret;

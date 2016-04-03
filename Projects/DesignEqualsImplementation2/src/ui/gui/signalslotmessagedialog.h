@@ -45,7 +45,7 @@ private:
     bool m_DestinationIsActor;
     //DesignEqualsImplementationClassSlot *m_SlotWithCurrentContext_OrZeroIfSourceIsActor;
     QList<TypeInstance*>  m_VariablesAvailableToSatisfyArgs;
-    QList<QComboBox*> m_AllArgSatisfiers;
+    QList<QComboBox*> m_AllArgComboBoxesNeedingSatisfication;
     QWidget *m_SignalArgsFillingInWidget;
     QWidget *m_SlotArgsFillingInWidget;
 

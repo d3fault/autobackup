@@ -42,6 +42,7 @@ public:
     DefinedElsewhereType *noteDefinedElsewhereType(const QString &definedElsewhereType);
     //QList<DefinedElsewhereType*> definedElsewhereTypes() const;
 
+    void ensureParsedBuiltInTypeHasType(const QString &parsedUnqualifiedType, ParsedTypeInstance::ParsedTypeInstanceCategoryEnum parsedTypeCategory);
     void ensureParsedBuiltInTypesHaveTypes(const QList<ParsedTypeInstance> &parsedTypes);
     void noteBuiltInType(const QString &builtInType);
 

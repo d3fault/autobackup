@@ -380,16 +380,7 @@ void ClassEditorDialog::addNewNonFunctionMember()
         return;
     }
 
-    //begin a bit hacky
-    ParsedTypeInstance parsedNonFunctionMemberAsParsedTypeInstance;
-    parsedNonFunctionMemberAsParsedTypeInstance.NonQualifiedType = nonFunctionMemberParser.parsedPropertyUnqualifiedType();
-    parsedNonFunctionMemberAsParsedTypeInstance.ParsedTypeInstanceCategory =  nonFunctionMemberParser.parsedPropertyTypeInstanceCategory();
-    //yea there are more members i can asssign, but only nonqualifeid type and the type category are needed for m_CurrentProject->ensureParsedBuiltInTypesHaveTypes
-    QList<ParsedTypeInstance> listLoL;
-    listLoL << parsedNonFunctionMemberAsParsedTypeInstance;
-    //end a bit hacky
-
-    m_CurrentProject->ensureParsedBuiltInTypesHaveTypes(listLoL);
+    m_CurrentProject->ensureParsedBuiltInTypeHasType(nonFunctionMemberParser.parsedPropertyUnqualifiedType(), nonFunctionMemberParser.parsedPropertyTypeInstanceCategory());
 
     //the property might be a new type, so ask the user how to handle it
     if(!nonFunctionMemberParser.newTypesSeenInPropertyDeclaration().isEmpty())

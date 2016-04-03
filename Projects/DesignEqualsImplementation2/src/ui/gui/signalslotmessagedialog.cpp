@@ -414,9 +414,9 @@ DesignEqualsImplementationClassSlot *SignalSlotMessageDialog::slotToInvoke_OrZer
 }
 SignalEmissionOrSlotInvocationContextVariables SignalSlotMessageDialog::slotInvocationContextVariables() const
 {
-    //Doesn't do validation checking. The dialog returning Accepted does though
+    //Doesn't do validation checking. tryValidatingDialog() does though, so if the dialog was accept()'d, the return values of this method are valid
     SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables;
-    Q_FOREACH(QComboBox *currentArg, m_AllArgSatisfiers)
+    Q_FOREACH(QComboBox *currentArg, m_AllArgComboBoxesNeedingSatisfication)
     {
         slotInvocationContextVariables.append(qvariant_cast<TypeInstance*>(currentArg->currentData())->VariableName);
     }
@@ -431,13 +431,13 @@ void SignalSlotMessageDialog::showSignalArgFillingIn()
 {
     if(m_SlotArgsFillingInWidget)
     {
-        m_AllArgSatisfiers.clear();
+        m_AllArgComboBoxesNeedingSatisfication.clear();
         delete m_SlotArgsFillingInWidget;
         m_SlotArgsFillingInWidget = 0;
     }
     if(m_SignalArgsFillingInWidget)
     {
-        m_AllArgSatisfiers.clear();
+        m_AllArgComboBoxesNeedingSatisfication.clear();
         delete m_SignalArgsFillingInWidget;
         m_SignalArgsFillingInWidget = 0;
     }
@@ -458,7 +458,10 @@ void SignalSlotMessageDialog::showSignalArgFillingIn()
         QComboBox *currentArgSatisfiersComboBox = new QComboBox();
         connect(currentArgSatisfiersComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(tryValidatingDialog()));
         currentArgSatisfiersComboBox->addItem(tr("Select variable for this arg..."));
-        m_AllArgSatisfiers.append(currentArgSatisfiersComboBox);
+        m_AllArgComboBoxesNeedingSatisfication.append(currentArgSatisfiersComboBox);
+        DesignEqualsImplementationClass *sourceClass = m_SourceClassLifeline_OrZeroIfSourceIsActor->designEqualsImplementationClass();
+        currentArgSatisfiersComboBox->addItem(tr("[CREATE member: ") + currentArgument.QualifiedType + " " /*TODOreq: to space or not to space*/ + sourceClass->Name + "::" + sourceClass->autoNameForNewChildMemberOfType(currentArgument.NonQualifiedType) + "]"); //bleh, more 'special' combo box indexes. would be better to use the dataRole shiz more intelligently. variants have isNull can convert etc etc built in...
+        //^TODOreq: subsequent uses of a 'new arg type' in this same function declaration (as another arg) will all use the m_Type0 name :( since they're "ghost" (not yet created), so we need a way to make them 0,1,2,etc
         Q_FOREACH(TypeInstance *currentArgSatisfier, m_VariablesAvailableToSatisfyArgs)
         {
             currentArgSatisfiersComboBox->addItem(currentArgSatisfier->preferredTextualRepresentationOfTypeAndVariableTogether(), QVariant::fromValue(currentArgSatisfier));
@@ -476,7 +479,7 @@ void SignalSlotMessageDialog::collapseSignalArgFillingIn()
 {
     if(m_SignalArgsFillingInWidget)
     {
-        m_AllArgSatisfiers.clear();
+        m_AllArgComboBoxesNeedingSatisfication.clear();
         delete m_SignalArgsFillingInWidget;
         m_SignalArgsFillingInWidget = 0;
     }
@@ -500,7 +503,7 @@ void SignalSlotMessageDialog::showSlotArgFillingIn()
 
     if(m_SlotArgsFillingInWidget)
     {
-        m_AllArgSatisfiers.clear();
+        m_AllArgComboBoxesNeedingSatisfication.clear();
         delete m_SlotArgsFillingInWidget;
         m_SlotArgsFillingInWidget = 0;
     }
@@ -519,7 +522,8 @@ void SignalSlotMessageDialog::showSlotArgFillingIn()
             QComboBox *currentArgSatisfiersComboBox = new QComboBox(); //instead of listening to signals, i should just manually validate the dialog when ok is pressed (keep a list of combo boxes, ensure all indexes aren't zero)... only downside to that is that the ok button now can't be disabled :(... fffff. i guess whole dialog validation on ANY combo box signal change is a hacky/easy/unoptimal/functional solution TODOoptimization proper dat shit
             connect(currentArgSatisfiersComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(tryValidatingDialog()));
             currentArgSatisfiersComboBox->addItem(tr("Select variable for this arg..."));
-            m_AllArgSatisfiers.append(currentArgSatisfiersComboBox);
+            m_AllArgComboBoxesNeedingSatisfication.append(currentArgSatisfiersComboBox);
+            //TODOreq: we need the "[CREATE member ...]" shiz here for a slot invoke just like for signal emits (copy/paste)
             Q_FOREACH(TypeInstance *currentArgSatisfier, m_VariablesAvailableToSatisfyArgs)
             {
                 currentArgSatisfiersComboBox->addItem(currentArgSatisfier->preferredTextualRepresentationOfTypeAndVariableTogether(), QVariant::fromValue(currentArgSatisfier));
@@ -539,7 +543,7 @@ void SignalSlotMessageDialog::collapseSlotArgFillingIn()
     if(m_SlotArgsFillingInWidget)
     {
         if(!m_SignalArgsFillingInWidget)
-            m_AllArgSatisfiers.clear();
+            m_AllArgComboBoxesNeedingSatisfication.clear();
         delete m_SlotArgsFillingInWidget;
         m_SlotArgsFillingInWidget = 0;
     }
@@ -547,7 +551,7 @@ void SignalSlotMessageDialog::collapseSlotArgFillingIn()
 bool SignalSlotMessageDialog::allArgSatisfiersAreValid()
 {
     //Check arg satisfiers validity (for either signal or slot)
-    Q_FOREACH(QComboBox *currentComboBox, m_AllArgSatisfiers)
+    Q_FOREACH(QComboBox *currentComboBox, m_AllArgComboBoxesNeedingSatisfication)
     {
         if(currentComboBox->currentIndex() == 0) //TODOlater: type checking before even putting it in combo box of selectable items (inheritence means this is a bitch)
             return false;
@@ -728,7 +732,7 @@ void SignalSlotMessageDialog::handleOkAndMakeChildOfSignalSenderActionTriggered(
 }
 bool SignalSlotMessageDialog::askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDeclarationIfAny_then_jitMaybeCreateSignalAndOrSlot_then_setSignalSlotResultPointersAsAppropriate_then_acceptDialog()
 {
-    //syntax is already known to be valid, otherwise we never would have gotten here because this slot was invoked by the accepted() signal
+    //syntax is already known to be valid
 
     //if using signal and result type == new, jit create the d=i signal, then set m_SignalToEmit pointer to it. ez pz
 
