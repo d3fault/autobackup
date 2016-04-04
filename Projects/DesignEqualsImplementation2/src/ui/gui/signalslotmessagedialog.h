@@ -18,6 +18,16 @@ class DesignEqualsImplementationClassLifeLine;
 class IHaveTypeAndVariableNameAndPreferredTextualRepresentation;
 class TypeInstance;
 
+struct ArgNeedingSatisficationListType
+{
+    ArgNeedingSatisficationListType(const ParsedTypeInstance &parsedArgTypeInstance, QComboBox *argsToSatisfyComboBox)
+        : parsedArgTypeInstance(parsedArgTypeInstance)
+        , ArgsToSatisfyComboBox(argsToSatisfyComboBox)
+    { }
+    ParsedTypeInstance parsedArgTypeInstance;
+    QComboBox *ArgsToSatisfyComboBox;
+};
+
 class SignalSlotMessageDialog : public QDialog
 {
     Q_OBJECT
@@ -45,7 +55,7 @@ private:
     bool m_DestinationIsActor;
     //DesignEqualsImplementationClassSlot *m_SlotWithCurrentContext_OrZeroIfSourceIsActor;
     QList<TypeInstance*>  m_VariablesAvailableToSatisfyArgs;
-    QList<QComboBox*> m_AllArgComboBoxesNeedingSatisfication;
+    QList<ArgNeedingSatisficationListType> m_AllArgComboBoxesNeedingSatisfication;
     QWidget *m_SignalArgsFillingInWidget;
     QWidget *m_SlotArgsFillingInWidget;
 
@@ -98,6 +108,8 @@ private slots:
     void handleOkAndMakeChildOfSignalSenderActionTriggered();
 
     bool askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDeclarationIfAny_then_jitMaybeCreateSignalAndOrSlot_then_setSignalSlotResultPointersAsAppropriate_then_acceptDialog();
+
+    void jitCreateNonMemberFunctionsChosenForArgSlotFillingIn();
 };
 
 #endif // SIGNALSLOTMESSAGEDIALOG_H

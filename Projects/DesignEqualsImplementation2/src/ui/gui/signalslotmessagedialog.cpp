@@ -21,6 +21,8 @@
 #include "../../designequalsimplementationclasslifeline.h"
 #include "../../designequalsimplementationclasslifelineunitofexecution.h"
 
+#define SPECIAL_INDEX_TO_JITCREATE_CONTEXTVARIABLEARG_AS_MEMBER_OF_SOURCE 1
+
 //TODOreq: SignalSlotMessageEditorDialog (creation + editting-later-on using same widget) would be best
 //TODOreq: signal/slot mode, slot args populated by signal args, can have less than signal arg count, but arg-ordering and arg-type matter
 //TODOreq: if Foo hasA Bar, we cannot invoke handleFooSignal DIRECTLY from within barSlot. Bar needs either barSignal to be connected to handleFooSignal in the UML/Design (easy), or a pointer to Foo must be somehow communicated to Bar (during construction works). As of right now, trying to INVOKE (directly) handleBarSignal from barSlot gives an invalid slot invocation statement (there is no variable name of Foo, so it looks like this: "invokeMethod(, "handleBarSignal);, obviously not valid. Ideally we could support both variations, but until then the GUI should at least not allow direct invocation on anything that doesn't have a name to refer to the target by
@@ -133,7 +135,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     {
         QToolButton *okToolButton = new QToolButton(this);
         QAction *okAction = new QAction(tr("Ok"), this);
-        QString okAndMakeChildOfSignalSenderText = "Ok and make this instance of " + destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->Name + " a child member of " + sourceSlot_OrZeroIfSourceIsActor->ParentClass->Name + " named: " + sourceSlot_OrZeroIfSourceIsActor->ParentClass->autoNameForNewChildMemberOfType(destinationSlotToInvoke_OrZeroIfNoDest->ParentClass);
+        QString okAndMakeChildOfSignalSenderText = "Ok and make this instance of " + destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->Name + " a child member of " + sourceSlot_OrZeroIfSourceIsActor->ParentClass->Name + " named: " + sourceSlot_OrZeroIfSourceIsActor->ParentClass->autoNameForNewChildMemberOfType(destinationSlotToInvoke_OrZeroIfNoDest->ParentClass->Name);
         QAction *okAndMakeChildOfSignalSenderAction = new QAction(okAndMakeChildOfSignalSenderText, this); //TODOoptional: IDEALLY there'd be another action in the toolbutton to let you choose the member name too))
         okToolButton->setDefaultAction(okAction);
         okToolButton->addAction(okAndMakeChildOfSignalSenderAction);
@@ -402,7 +404,7 @@ SignalSlotMessageDialog::SignalSlotMessageDialog(DesignEqualsImplementationUseCa
     else if(m_SlotsWidget->isEnabled())
         m_ExistingSlotsComboBox->setFocus();
 
-    //connect(this, SIGNAL(accepted()), this, SLOT(askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDeclarationIfAny_then_jitMaybeCreateSignalAndOrSlot_then_setSignalSlotResultPointersAsAppropriate_then_acceptDialog()));
+    connect(this, SIGNAL(accepted()), this, SLOT(jitCreateNonMemberFunctionsChosenForArgSlotFillingIn()));
 }
 DesignEqualsImplementationClassSignal *SignalSlotMessageDialog::signalToEmit_OrZeroIfNone() const
 {
@@ -416,9 +418,9 @@ SignalEmissionOrSlotInvocationContextVariables SignalSlotMessageDialog::slotInvo
 {
     //Doesn't do validation checking. tryValidatingDialog() does though, so if the dialog was accept()'d, the return values of this method are valid
     SignalEmissionOrSlotInvocationContextVariables slotInvocationContextVariables;
-    Q_FOREACH(QComboBox *currentArg, m_AllArgComboBoxesNeedingSatisfication)
+    Q_FOREACH(const ArgNeedingSatisficationListType &currentArg, m_AllArgComboBoxesNeedingSatisfication)
     {
-        slotInvocationContextVariables.append(qvariant_cast<TypeInstance*>(currentArg->currentData())->VariableName);
+        slotInvocationContextVariables.append(qvariant_cast<TypeInstance*>(currentArg.ArgsToSatisfyComboBox->currentData()));
     }
     return slotInvocationContextVariables;
 }
@@ -458,10 +460,10 @@ void SignalSlotMessageDialog::showSignalArgFillingIn()
         QComboBox *currentArgSatisfiersComboBox = new QComboBox();
         connect(currentArgSatisfiersComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(tryValidatingDialog()));
         currentArgSatisfiersComboBox->addItem(tr("Select variable for this arg..."));
-        m_AllArgComboBoxesNeedingSatisfication.append(currentArgSatisfiersComboBox);
+        m_AllArgComboBoxesNeedingSatisfication.append(ArgNeedingSatisficationListType(currentArgument, currentArgSatisfiersComboBox));
         DesignEqualsImplementationClass *sourceClass = m_SourceClassLifeline_OrZeroIfSourceIsActor->designEqualsImplementationClass();
-        currentArgSatisfiersComboBox->addItem(tr("[CREATE member: ") + currentArgument.QualifiedType + " " /*TODOreq: to space or not to space*/ + sourceClass->Name + "::" + sourceClass->autoNameForNewChildMemberOfType(currentArgument.NonQualifiedType) + "]"); //bleh, more 'special' combo box indexes. would be better to use the dataRole shiz more intelligently. variants have isNull can convert etc etc built in...
-        //^TODOreq: subsequent uses of a 'new arg type' in this same function declaration (as another arg) will all use the m_Type0 name :( since they're "ghost" (not yet created), so we need a way to make them 0,1,2,etc
+        currentArgSatisfiersComboBox->insertItem(SPECIAL_INDEX_TO_JITCREATE_CONTEXTVARIABLEARG_AS_MEMBER_OF_SOURCE, tr("[CREATE member: ") + currentArgument.QualifiedType + " " /*TODOreq: to space or not to space*/ + sourceClass->Name + "::" + sourceClass->autoNameForNewChildMemberOfType(currentArgument.NonQualifiedType) + "]"); //bleh, more 'special' combo box indexes. would be better to use the dataRole shiz more intelligently. variants have isNull can convert etc etc built in...
+        //^TODOreq: subsequent uses of a 'new arg type' in this same function declaration (as another arg) will all use the m_Type0 name :( since they're "ghost" (not yet created), so we need a way to make them 0,1,2,etc. luckily, the error is only VISUAL. it's done in the backend properly
         Q_FOREACH(TypeInstance *currentArgSatisfier, m_VariablesAvailableToSatisfyArgs)
         {
             currentArgSatisfiersComboBox->addItem(currentArgSatisfier->preferredTextualRepresentationOfTypeAndVariableTogether(), QVariant::fromValue(currentArgSatisfier));
@@ -497,9 +499,8 @@ void SignalSlotMessageDialog::maybeShowSlotArgFillingInUsingAppropriateComboBoxV
 void SignalSlotMessageDialog::showSlotArgFillingIn()
 {
     if(m_SourceIsActor)
-    {
         return;
-    }
+    DesignEqualsImplementationClass *sourceClass = m_SourceSlot_OrZeroIfSourceIsActor->ParentClass;
 
     if(m_SlotArgsFillingInWidget)
     {
@@ -522,8 +523,8 @@ void SignalSlotMessageDialog::showSlotArgFillingIn()
             QComboBox *currentArgSatisfiersComboBox = new QComboBox(); //instead of listening to signals, i should just manually validate the dialog when ok is pressed (keep a list of combo boxes, ensure all indexes aren't zero)... only downside to that is that the ok button now can't be disabled :(... fffff. i guess whole dialog validation on ANY combo box signal change is a hacky/easy/unoptimal/functional solution TODOoptimization proper dat shit
             connect(currentArgSatisfiersComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(tryValidatingDialog()));
             currentArgSatisfiersComboBox->addItem(tr("Select variable for this arg..."));
-            m_AllArgComboBoxesNeedingSatisfication.append(currentArgSatisfiersComboBox);
-            //TODOreq: we need the "[CREATE member ...]" shiz here for a slot invoke just like for signal emits (copy/paste)
+            m_AllArgComboBoxesNeedingSatisfication.append(ArgNeedingSatisficationListType(currentArgument, currentArgSatisfiersComboBox));
+            currentArgSatisfiersComboBox->insertItem(SPECIAL_INDEX_TO_JITCREATE_CONTEXTVARIABLEARG_AS_MEMBER_OF_SOURCE, tr("[CREATE member: ") + currentArgument.QualifiedType + " " /*TODOreq: to space or not to space*/ + sourceClass->Name + "::" + sourceClass->autoNameForNewChildMemberOfType(currentArgument.NonQualifiedType) + "]");
             Q_FOREACH(TypeInstance *currentArgSatisfier, m_VariablesAvailableToSatisfyArgs)
             {
                 currentArgSatisfiersComboBox->addItem(currentArgSatisfier->preferredTextualRepresentationOfTypeAndVariableTogether(), QVariant::fromValue(currentArgSatisfier));
@@ -551,9 +552,9 @@ void SignalSlotMessageDialog::collapseSlotArgFillingIn()
 bool SignalSlotMessageDialog::allArgSatisfiersAreValid()
 {
     //Check arg satisfiers validity (for either signal or slot)
-    Q_FOREACH(QComboBox *currentComboBox, m_AllArgComboBoxesNeedingSatisfication)
+    Q_FOREACH(const ArgNeedingSatisficationListType &currentArg, m_AllArgComboBoxesNeedingSatisfication)
     {
-        if(currentComboBox->currentIndex() == 0) //TODOlater: type checking before even putting it in combo box of selectable items (inheritence means this is a bitch)
+        if(currentArg.ArgsToSatisfyComboBox->currentIndex() == 0) //TODOlater: type checking before even putting it in combo box of selectable items (inheritence means this is a bitch)
             return false;
 #if 0
         if(m_SignalsCheckbox->isChecked())
@@ -810,4 +811,19 @@ bool SignalSlotMessageDialog::askUserWhatToDoWithNewArgTypesInNewSignalOrSlotsDe
 
     accept();
     return true;
+}
+void SignalSlotMessageDialog::jitCreateNonMemberFunctionsChosenForArgSlotFillingIn()
+{
+    //sane && accepted() a this point (if only that were the case IRL bawwwwwwwwwwwwwwwwwwwwwwwwwwww ;oP)
+    if(!m_SourceClassLifeline_OrZeroIfSourceIsActor)
+        return;
+    DesignEqualsImplementationClass *sourceClass = m_SourceClassLifeline_OrZeroIfSourceIsActor->m_DesignEqualsImplementationClass;
+    Q_FOREACH(const ArgNeedingSatisficationListType &currentArg, m_AllArgComboBoxesNeedingSatisfication)
+    {
+        if(currentArg.ArgsToSatisfyComboBox->currentIndex() != SPECIAL_INDEX_TO_JITCREATE_CONTEXTVARIABLEARG_AS_MEMBER_OF_SOURCE)
+            continue;
+        DesignEqualsImplementationType *argType = sourceClass->m_ParentProject->getOrCreateTypeFromName(currentArg.parsedArgTypeInstance.NonQualifiedType); //NewTypesSeen dialog has already been shown/accepted
+        TypeInstance *newArgTypeInstance = sourceClass->createNewNonFunctionMember(argType, currentArg.parsedArgTypeInstance.QualifiedType);
+        currentArg.ArgsToSatisfyComboBox->setItemData(SPECIAL_INDEX_TO_JITCREATE_CONTEXTVARIABLEARG_AS_MEMBER_OF_SOURCE, QVariant::fromValue(newArgTypeInstance));
+    }
 }

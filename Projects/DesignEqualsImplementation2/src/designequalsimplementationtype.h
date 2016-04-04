@@ -97,7 +97,7 @@ public:
     virtual void addNonFunctionMember(NonFunctionMember* nonFunctionMember)=0; //TODOmb: protected?
     NonFunctionMember *createNewNonFunctionMember(DesignEqualsImplementationType *typeOfNewNonFunctionMember, const QString &qualifiedTypeString, const QString &nameOfNewNonFunctionMember = QString(), Visibility::VisibilityEnum visibility = Visibility::Private, TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum ownershipOfPointedToDataIfPointer = TypeInstanceOwnershipOfPointedToDataIfPointer::NotPointer, bool hasInit = false, const QString &optionalInit = QString());
     bool memberWithNameExists(const QString &memberNameToCheckForCollisions) const;
-    QString autoNameForNewChildMemberOfType(DesignEqualsImplementationType *childMemberClassType) const;
+    QString autoNameForNewChildMemberOfType(const QString &childMemberClassType) const;
     int serializationNonFunctionMemberIdForNonFunctionMember(NonFunctionMember *nonFunctionMember) const;
     NonFunctionMember *nonFunctionMemberFromNonFunctionMemberId(int nonFunctionMemberId) const;
 

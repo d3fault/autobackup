@@ -12,7 +12,7 @@ NonFunctionMember *DesignEqualsImplementationType::createNewNonFunctionMember(De
     QString chosenVariableName = nameOfNewNonFunctionMember_OrEmptyStringToAutoGenerateOne;
     if(chosenVariableName.trimmed().isEmpty())
     {
-        chosenVariableName = autoNameForNewChildMemberOfType(typeOfNewNonFunctionMember);
+        chosenVariableName = autoNameForNewChildMemberOfType(typeOfNewNonFunctionMember->Name);
     }
 
     NonFunctionMember *nonFunctionMember = new NonFunctionMember(typeOfNewNonFunctionMember, qualifiedTypeString, chosenVariableName, this, this, hasInit, optionalInit); //TODOmb: private constructor + friend class Type; , so only Type can new NonFunctionMember
@@ -67,13 +67,13 @@ bool DesignEqualsImplementationType::memberWithNameExists(const QString &memberN
     return false;
 }
 //TODOblah: can't normal NonFunctionMembers have getters and setters? well obviously yes. I guess atm I'm saying "NonFunctionMembers are their visibility ONLY, if you want getters/setters, use Q_PROPERTY". if I ever refactor to allow NonFunctionMembers to have getters/setters, I need to also search for those collisions in autoNameForNewChildOfType
-QString DesignEqualsImplementationType::autoNameForNewChildMemberOfType(DesignEqualsImplementationType *childMemberClassType) const //TODOreq: check for collission with properties and signals/slots too, which are all technically "members" so I may refactor to account for that fact. actually tbh I'm not sure if methods collide, but they might (and I usually assume they DO to be on the safe side). it also applies to getters/setters/changedNotifiers
+QString DesignEqualsImplementationType::autoNameForNewChildMemberOfType(const QString &childMemberClassType) const //TODOreq: check for collission with properties and signals/slots too, which are all technically "members" so I may refactor to account for that fact. actually tbh I'm not sure if methods collide, but they might (and I usually assume they DO to be on the safe side). it also applies to getters/setters/changedNotifiers
 {
     int indexCurrentlyTestingForNameCollission = -1;
     QString ret;
     do
     {
-        ret = "m_" + DesignEqualsImplementationProjectGenerator::firstCharacterToUpper(childMemberClassType->Name) + QString::number(++indexCurrentlyTestingForNameCollission); //m_Foo0, m_Foo1, etc. TODOoptional: random 5 letter word from dictionary chosen, append two numbers also, so they are easier to differentiate/remember when using auto mode (although i probably won't use it myself (unless i'm in a rush)). //TODooptional: should the first m_Foo have a zero on the end or no? I'd say yes keep the zero, just makes it simpler LATER
+        ret = "m_" + DesignEqualsImplementationProjectGenerator::firstCharacterToUpper(childMemberClassType) + QString::number(++indexCurrentlyTestingForNameCollission); //m_Foo0, m_Foo1, etc. TODOoptional: random 5 letter word from dictionary chosen, append two numbers also, so they are easier to differentiate/remember when using auto mode (although i probably won't use it myself (unless i'm in a rush)). //TODooptional: should the first m_Foo have a zero on the end or no? I'd say yes keep the zero, just makes it simpler LATER
     }
     while(memberWithNameExists(ret));
     return ret;

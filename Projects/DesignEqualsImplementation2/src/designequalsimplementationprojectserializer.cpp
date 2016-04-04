@@ -215,7 +215,9 @@ void DesignEqualsImplementationProjectSerializer::serializeProjectToIoDevice(Des
             {
                 //Project Class Slots Statements -- I don't think it's necessary since we iterate the slots the same way we create them, but we might need a slotId to know which slot these statements belong to
                 projectDataStream << static_cast<quint8>(currentStatement->StatementType);
+#ifndef TEMP_DONT_SERIALIZE_CONTEXTVARIABLES
                 currentStatement->streamOut(projectToSerialize, projectDataStream);
+#endif
             }
         }
     }
@@ -497,7 +499,9 @@ void DesignEqualsImplementationProjectSerializer::deserializeProjectFromIoDevice
                     statement = new DesignEqualsImplementationChunkOfRawCppStatements();
                     break;
                 }
+#ifndef TEMP_DONT_SERIALIZE_CONTEXTVARIABLES
                 statement->streamIn(projectToPopulate, projectDataStream); //TO DOnereq: i am pretty sure this needs to happen on another/later iteration of the slots, because not all slots/signals/etc have been instantiated (and hell, not even all the classes have been instantiated either!). similar to the 'second interdependent class populating' below. dependency problems sums it up perfectly. i probably DON'T need to move the stream out code, but i should keep them nice and lined up so that's reason enough to yes move it. it should probably come after the [similar] m_HasA_Private_Classes_Members second iteration, becuase these statements themselves MIGHT depend on those as well! not sure though. the statement populating must come after SIGNAL/SLOT/PRIVATE-METHOD (and any other 'statement type')
+#endif
                 currentSlot->m_OrderedListOfStatements.append(statement);
             }
         }

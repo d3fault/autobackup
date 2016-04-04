@@ -1,18 +1,15 @@
 #include "signalemissionorslotinvocationcontextvariables.h"
 
-#if 0
 #include <QDataStream>
 
-#define SignalEmissionOrSlotInvocationContextVariables_QDS(qds, direction, signalEmissionOrSlotInvocationContextVariables) \
-qds direction signalEmissionOrSlotInvocationContextVariables.OrderedListOfNamesOfVariablesWithinScopeWhenSignalEmissionOrSlotInvocationOccurrs_ToUseForSignalEmissionOrSlotInvocationArguments; \
-return qds;
-
-QDataStream &operator<<(QDataStream &out, const SignalEmissionOrSlotInvocationContextVariables &contextVariables)
+#ifndef TEMP_DONT_SERIALIZE_CONTEXTVARIABLES
+void streamOutSignalEmissionOrSlotInvocationContextVariables(SignalEmissionOrSlotInvocationContextVariables *contextVariables, QDataStream &out)
 {
-    SignalEmissionOrSlotInvocationContextVariables_QDS(out, <<, contextVariables)
-}
-QDataStream &operator>>(QDataStream &in, SignalEmissionOrSlotInvocationContextVariables &contextVariables)
-{
-    SignalEmissionOrSlotInvocationContextVariables_QDS(in, >>, contextVariables)
+    qint32 size = contextVariables->size();
+    out << size;
+    Q_FOREACH(const TypeInstance *currentContextVariable, contextVariables)
+    {
+        out << currentContextVariable->p
+    }
 }
 #endif

@@ -21,10 +21,10 @@ QString DesignEqualsImplementationSlotInvocationStatement::toRawCppWithoutEnding
     int currentArgumentIndex = 0;
     int maxArgs = m_SlotToInvoke->arguments().size();
     QString argumentsString;
-    Q_FOREACH(const QString &currentArgumentName, m_SlotInvocationContextVariables)
+    Q_FOREACH(const TypeInstance *currentArgument, m_SlotInvocationContextVariables)
     {
         const QByteArray &argTypeCstr = m_SlotToInvoke->arguments().at(currentArgumentIndex)->type->Name.toUtf8();
-        argumentsString.append(", Q_ARG(" + QMetaObject::normalizedType(argTypeCstr.constData()) + ", " + currentArgumentName + ")");
+        argumentsString.append(", Q_ARG(" + QMetaObject::normalizedType(argTypeCstr.constData()) + ", " + currentArgument->VariableName + ")");
         ++currentArgumentIndex;
         if(currentArgumentIndex == maxArgs)
             break; //prevent potential out of bounds 3 lines up: Arguments.at -- TODOoptional: sanitize ui so they can't provide more arguments than the slot will take (TODOoptional: sanitize deserialization for same thing)
@@ -43,7 +43,9 @@ void DesignEqualsImplementationSlotInvocationStatement::streamIn(DesignEqualsImp
 {
     m_ClassLifelineWhoseSlotIsToBeInvoked = DesignEqualsImplementationClassLifeLine::streamInClassLifelineReference(project, in);
     m_SlotToInvoke = DesignEqualsImplementationClassSlot::streamInSlotReference(project, in);
-    in >> m_SlotInvocationContextVariables; //TODOoptimization: dictionary/id (just like classes/slots/etc) for the variable names. fuck it for now
+#ifndef TEMP_DONT_SERIALIZE_CONTEXTVARIABLES
+    in >> m_SlotInvocationContextVariables;
+#endif
 }
 void DesignEqualsImplementationSlotInvocationStatement::streamOut(DesignEqualsImplementationProject *project, QDataStream &out)
 {

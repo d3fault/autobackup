@@ -14,11 +14,11 @@ QString DesignEqualsImplementationPrivateMethodSynchronousCallStatement::toRawCp
     //like a slot invoke or signal emit, but a good old c++ call
     QString ret(m_PrivateMethodToCall->Name + "(");
     bool firstArg = true;
-    Q_FOREACH(const QString &currentArgVarName, m_PrivateMethodArguments)
+    Q_FOREACH(const TypeInstance *currentArg, m_PrivateMethodArguments)
     {
         if(!firstArg)
             ret.append(", ");
-        ret.append(currentArgVarName);
+        ret.append(currentArg->VariableName);
         firstArg = false;
     }
     ret.append(")");
@@ -27,10 +27,14 @@ QString DesignEqualsImplementationPrivateMethodSynchronousCallStatement::toRawCp
 void DesignEqualsImplementationPrivateMethodSynchronousCallStatement::streamIn(DesignEqualsImplementationProject *project, QDataStream &in)
 {
     DesignEqualsImplementationClassPrivateMethod::streamInPrivateMethodReference(project, in);
+#ifndef TEMP_DONT_SERIALIZE_CONTEXTVARIABLES
     in >> m_PrivateMethodArguments;
+#endif
 }
 void DesignEqualsImplementationPrivateMethodSynchronousCallStatement::streamOut(DesignEqualsImplementationProject *project, QDataStream &out)
 {
     DesignEqualsImplementationClassPrivateMethod::streamOutPrivateMethodReference(project, m_PrivateMethodToCall, out);
+#ifndef TEMP_DONT_SERIALIZE_CONTEXTVARIABLES
     out << m_PrivateMethodArguments;
+#endif
 }

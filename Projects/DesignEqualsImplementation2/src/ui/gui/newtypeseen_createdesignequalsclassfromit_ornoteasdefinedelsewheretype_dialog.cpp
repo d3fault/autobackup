@@ -17,6 +17,7 @@ const int NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType
 const int NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::DefinedElsewhereRadioButtonId = 2;
 
 //TO DOnereq: convert from a single checkbox into 3x radio buttons (Class, Implicitly Shared Data Type, Defined Elsewhere). Default to Class. There needs to be a (bool/enum) constructor arg that makes Class column gray'd out or missing (in which case we default to Data), because Data can't have Class children. There needs to be an "all to this" button for each column
+//TODOreq: either spacing or a visible black grid around the headers
 #if 0
 bool NewTypeSeen_CreateDesignEqualsClassFromIt_OrNoteAsDefinedElsewhereType_dialog::atLeastOneParsedTypeNeedsDecidingOn(const QList<ParsedTypeInstance> &parsedTypesPossiblyNeedingDecidingOn)
 {

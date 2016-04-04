@@ -89,7 +89,7 @@ ClassInstanceChooserDialog::ClassInstanceChooserDialog(DesignEqualsImplementatio
             atLeastOneOtherClassLifeline = true;
 
             //atLeastOne also used hackily as a "firstAdded" detector for auto variable name selection
-            m_NewInstanceNameLineEdit->setText(currentClass->autoNameForNewChildMemberOfType(classLifelineForWhichAnInstanceIsBeingChosen->designEqualsImplementationClass())); //when new drop-down is chosen, a new auto-name for the chosen class is generated, UNLESS user has manually typed anything ever (during the lifetime of this modal dialog). TODOoptional: set focus to the line edit and select the "0" portion of it (the auto-generated portion), allowing them to type immediately and have that portion of it replaced. ex: m_Foo0 and the zero is highlighted ready for replacing with something more descriptive. this same feature could appear in many different places throughout app. In fact, that portion of text could be highlighted right when the dialog is first shown
+            m_NewInstanceNameLineEdit->setText(currentClass->autoNameForNewChildMemberOfType(classLifelineForWhichAnInstanceIsBeingChosen->designEqualsImplementationClass()->Name)); //when new drop-down is chosen, a new auto-name for the chosen class is generated, UNLESS user has manually typed anything ever (during the lifetime of this modal dialog). TODOoptional: set focus to the line edit and select the "0" portion of it (the auto-generated portion), allowing them to type immediately and have that portion of it replaced. ex: m_Foo0 and the zero is highlighted ready for replacing with something more descriptive. this same feature could appear in many different places throughout app. In fact, that portion of text could be highlighted right when the dialog is first shown
         }
 
         //TODOreq: two instances of same type (allowed in use case) should only be added once. just keep track of the classes already added and make sure it's not already added, simple
@@ -313,7 +313,7 @@ void ClassInstanceChooserDialog::handleClassesInUseCaseAvailableForUseAsParentOf
     m_ExistingClassToUseAsParentForNewInstance = qvariant_cast<DesignEqualsImplementationClass*>(m_ClassesInUseCaseAvailableForUseAsParentOfNewInstance->itemData(newIndex));
     if(!m_UserIsTypingInCustomVariableNameSoDontSuggestAutoName || m_NewInstanceNameLineEdit->text().trimmed().isEmpty())
     {
-        m_NewInstanceNameLineEdit->setText(m_ExistingClassToUseAsParentForNewInstance->autoNameForNewChildMemberOfType(m_ClassLifelineForWhichAnInstanceIsBeingChosen->designEqualsImplementationClass()));
+        m_NewInstanceNameLineEdit->setText(m_ExistingClassToUseAsParentForNewInstance->autoNameForNewChildMemberOfType(m_ClassLifelineForWhichAnInstanceIsBeingChosen->designEqualsImplementationClass()->Name));
     }
     //tryValidatingDialog();
 }

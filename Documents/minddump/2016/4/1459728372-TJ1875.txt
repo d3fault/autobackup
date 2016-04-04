@@ -1,0 +1,8 @@
+class Information : public Energy { }
+class Water : public Energy { }
+
+class Spice : public Energy { }
+class Worm : public Spice { } //the spice IS the worm
+
+He who controls the energy, controls the universe.
+Energy that energies the energy, energies the energy.
