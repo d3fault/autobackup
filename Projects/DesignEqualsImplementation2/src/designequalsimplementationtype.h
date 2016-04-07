@@ -55,6 +55,19 @@ public:
     QString VariableName;
 
     TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum OwnershipOfPointedTodataIfPointer; //tells us whether or not to do a '[typeInstance.variableName] = new [typeInstance.type.Name](this)' in constructor initialization. OT'ish: if it's not a QObject derived object, we should throw that bitch in a scoped pointer
+
+    void streamOutReference(QDataStream &out, DesignEqualsImplementationProject *project);
+    static TypeInstance *streamInReferenceAndReturnPointerToIt(QDataStream &in, DesignEqualsImplementationProject *project);
+protected:
+    enum TypeInstanceCategory //for [de]serialization only
+    {
+          SlotArgumentTypeInstance = 0
+        , PrivateMethodArgumentTypeInstance = 1
+        , NonFunctionMemberTypeInstance = 2
+        //, SlotLocal, PrivateMethodLocal // TODOmb
+        //,  Global //Hopefully never used
+    };
+    virtual TypeInstanceCategory typeInstanceCategory()=0;
 };
 class NonFunctionMember : public TypeInstance
 {
@@ -73,6 +86,8 @@ public:
     bool HasInit;
     QString OptionalInit;
     //NOTE: for now, owning the pointer and having an init are mutually exclusive, since their functionality overlaps
+protected:
+    TypeInstanceCategory typeInstanceCategory();
 private:
     DesignEqualsImplementationType *m_ParentTypeThatIamMemberOf;
 };

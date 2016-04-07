@@ -2,7 +2,7 @@
 
 DesignEqualsImplementationClassMethodArgument *IDesignEqualsImplementationMethod::createNewArgument(DesignEqualsImplementationType *argumentType, const QString &qualifiedArgumentTypeString, const QString &argumentVariableName)
 {
-    DesignEqualsImplementationClassMethodArgument *newArgument = new DesignEqualsImplementationClassMethodArgument(argumentType, qualifiedArgumentTypeString, argumentVariableName, this->asQObject()); //TODOreq: can't set parent because i'm not a qobject even though all inheriters are
+    DesignEqualsImplementationClassMethodArgument *newArgument = new DesignEqualsImplementationClassMethodArgument(this, argumentType, qualifiedArgumentTypeString, argumentVariableName, asQObject());
     m_Arguments.append(newArgument);
     return newArgument;
 }
@@ -51,4 +51,12 @@ QString IDesignEqualsImplementationMethod::argumentsToCommaSeparatedString(Metho
         firstArg = false;
     }
     return argString;
+}
+int IDesignEqualsImplementationMethod::serializationArgumentIdForArgument(DesignEqualsImplementationClassMethodArgument *argument)
+{
+    return m_Arguments.indexOf(argument);
+}
+DesignEqualsImplementationClassMethodArgument *IDesignEqualsImplementationMethod::argumentInstantiationFromSerializedArgumentId(int argumentId)
+{
+    return m_Arguments.at(argumentId);
 }

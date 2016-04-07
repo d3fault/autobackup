@@ -33,15 +33,10 @@ DesignEqualsImplementationClassSignal *DesignEqualsImplementationSignalEmissionS
 void DesignEqualsImplementationSignalEmissionStatement::streamIn(DesignEqualsImplementationProject *project, QDataStream &in)
 {
     m_SignalToEmit = DesignEqualsImplementationClassSignal::streamInSignalReference(project, in);
-#ifndef TEMP_DONT_SERIALIZE_CONTEXTVARIABLES
-    in >> m_SignalEmissionContextVariablesForSignalArguments;
-#endif
+    SignalEmissionOrSlotInvocationContextVariables::streamIn(project, &m_SignalEmissionContextVariablesForSignalArguments, in);
 }
 void DesignEqualsImplementationSignalEmissionStatement::streamOut(DesignEqualsImplementationProject *project, QDataStream &out)
 {
     DesignEqualsImplementationClassSignal::streamOutSignalReference(project, m_SignalToEmit, out);
-#ifndef TEMP_DONT_SERIALIZE_CONTEXTVARIABLES
-    streamOutSignalEmissionOrSlotInvocationContextVariables(&m_SignalEmissionContextVariablesForSignalArguments, out);
-    out << m_SignalEmissionContextVariablesForSignalArguments;
-#endif
+    SignalEmissionOrSlotInvocationContextVariables::streamOut(project, &m_SignalEmissionContextVariablesForSignalArguments, out);
 }

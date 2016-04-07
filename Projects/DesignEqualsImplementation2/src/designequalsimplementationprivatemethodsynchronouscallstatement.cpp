@@ -27,14 +27,10 @@ QString DesignEqualsImplementationPrivateMethodSynchronousCallStatement::toRawCp
 void DesignEqualsImplementationPrivateMethodSynchronousCallStatement::streamIn(DesignEqualsImplementationProject *project, QDataStream &in)
 {
     DesignEqualsImplementationClassPrivateMethod::streamInPrivateMethodReference(project, in);
-#ifndef TEMP_DONT_SERIALIZE_CONTEXTVARIABLES
-    in >> m_PrivateMethodArguments;
-#endif
+    SignalEmissionOrSlotInvocationContextVariables::streamIn(project, &m_PrivateMethodArguments, in);
 }
 void DesignEqualsImplementationPrivateMethodSynchronousCallStatement::streamOut(DesignEqualsImplementationProject *project, QDataStream &out)
 {
     DesignEqualsImplementationClassPrivateMethod::streamOutPrivateMethodReference(project, m_PrivateMethodToCall, out);
-#ifndef TEMP_DONT_SERIALIZE_CONTEXTVARIABLES
-    out << m_PrivateMethodArguments;
-#endif
+    SignalEmissionOrSlotInvocationContextVariables::streamOut(project, &m_PrivateMethodArguments, out);
 }

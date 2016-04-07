@@ -1,41 +1,18 @@
 #include "designequalsimplementationclassmethodargument.h"
-#if 0
-#include <QDataStream>
 
-#define DesignEqualsImplementationClassMethodArgument_QDS(qds, direction, argument) \
-qds direction argument.Type; \
-qds direction argument.VariableName; \
-return qds;
+#include "designequalsimplementationclassslot.h"
+#include "designequalsimplementationclassprivatemethod.h"
 
-DesignEqualsImplementationClassMethodArgument::DesignEqualsImplementationClassMethodArgument(QObject *parent)
-    : QObject(parent)
+DesignEqualsImplementationClassMethodArgument::DesignEqualsImplementationClassMethodArgument(IDesignEqualsImplementationMethod *parentMethod, DesignEqualsImplementationType *type, const QString &qualifiedTypeString, const QString &variableName, QObject *parent)
+    : TypeInstance(type, qualifiedTypeString, variableName, parent)
+    , ParentMethod(parentMethod)
 { }
-DesignEqualsImplementationClassMethodArgument::DesignEqualsImplementationClassMethodArgument(const QString &variableName, QObject *parent)
-    : TypeInstance(type, variableName, parent)
-{ }
-DesignEqualsImplementationClassMethodArgument::~DesignEqualsImplementationClassMethodArgument()
-{ }
-QString DesignEqualsImplementationClassMethodArgument::typeString()
+TypeInstance::TypeInstanceCategory DesignEqualsImplementationClassMethodArgument::typeInstanceCategory()
 {
-    return Type;
+    if(qobject_cast<DesignEqualsImplementationClassSlot*>(ParentMethod->asQObject()))
+        return SlotArgumentTypeInstance;
+    else if(qobject_cast<DesignEqualsImplementationClassPrivateMethod*>(ParentMethod->asQObject()))
+        return PrivateMethodArgumentTypeInstance;
+    qFatal("Couldn't decide on a type instance category");
+    return SlotArgumentTypeInstance; //just so the compiler stfus
 }
-QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassMethodArgument &argument)
-{
-    DesignEqualsImplementationClassMethodArgument_QDS(out, <<, argument)
-}
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassMethodArgument &argument)
-{
-    DesignEqualsImplementationClassMethodArgument_QDS(in, >>, argument)
-}
-QDataStream &operator<<(QDataStream &out, DesignEqualsImplementationClassMethodArgument *argument)
-{
-    out << *argument;
-    return out;
-}
-QDataStream &operator>>(QDataStream &in, DesignEqualsImplementationClassMethodArgument *argument)
-{
-    argument = new DesignEqualsImplementationClassMethodArgument();
-    in >> *argument;
-    return in;
-}
-#endif

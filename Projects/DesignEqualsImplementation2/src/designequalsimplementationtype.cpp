@@ -5,6 +5,7 @@
 #include "designequalsimplementationprojectgenerator.h"
 #include "designequalsimplementationclass.h"
 #include "designequalsimplementationclassproperty.h"
+#include "designequalsimplementationclassmethodargument.h"
 
 //tl;dr: using C++ to model C++. My brain is full of fuck and oh it feels so good [man]
 NonFunctionMember *DesignEqualsImplementationType::createNewNonFunctionMember(DesignEqualsImplementationType *typeOfNewNonFunctionMember, const QString &qualifiedTypeString, const QString &nameOfNewNonFunctionMember_OrEmptyStringToAutoGenerateOne, Visibility::VisibilityEnum visibility, TypeInstanceOwnershipOfPointedToDataIfPointer::TypeInstanceOwnershipOfPointedToDataIfPointerEnum ownershipOfPointedToDataIfPointer, bool hasInit, const QString &optionalInit)
@@ -128,13 +129,58 @@ bool TypeInstance::isPointer() const
     {
     case TypeInstanceOwnershipOfPointedToDataIfPointer::DoesNotOwnPointedToData:
     case TypeInstanceOwnershipOfPointedToDataIfPointer::OwnsPointedToData:
-        return true;
+    return true;
     break;
     case TypeInstanceOwnershipOfPointedToDataIfPointer::NotPointer:
-        return false;
+    return false;
     break;
     //the lack of a default: means that if we add to the enum, we'll be forced to update this method :)
     }
+}
+void TypeInstance::streamOutReference(QDataStream &out, DesignEqualsImplementationProject *project)
+{
+    out << static_cast<quint8>(typeInstanceCategory());
+
+    DesignEqualsImplementationType *typeInstanceOwnerType;
+    switch(typeInstanceCategory())
+    {
+    case SlotArgumentTypeInstance:
+    case PrivateMethodArgumentTypeInstance:
+        typeInstanceOwnerType = qobject_cast<DesignEqualsImplementationClassMethodArgument*>(this)->ParentMethod->ParentClass;
+    break;
+    case NonFunctionMemberTypeInstance:
+        typeInstanceOwnerType = qobject_cast<NonFunctionMember*>(this)->parentClass();
+    break;
+    }
+    out << project->serializationTypeIdForType(typeInstanceOwnerType);
+
+    if(NonFunctionMember *thisAsNonFunctionMember = qobject_cast<NonFunctionMember*>(this))
+    {
+        out << thisAsNonFunctionMember->parentClass()->serializationNonFunctionMemberIdForNonFunctionMember(thisAsNonFunctionMember);
+        return;
+    }
+
+    DesignEqualsImplementationClassMethodArgument *thisAsMethodArgument = qobject_cast<DesignEqualsImplementationClassMethodArgument*>(this);
+    if(!thisAsMethodArgument)
+        qFatal("TypeInstanceCategory was argument, but failed to cast typeinstance into argument O_o");
+    DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(typeInstanceOwnerType);
+    if(!typeAsClass)
+        qFatal("TypeInstanceCategory was argument, but failed to cast Type to Class");
+
+    IDesignEqualsImplementationMethod *method = thisAsMethodArgument->ParentMethod;
+    switch(typeInstanceCategory())
+    {
+    case SlotArgumentTypeInstance:
+        out << typeAsClass->serializationSlotIdForSlot(qobject_cast<DesignEqualsImplementationClassSlot*>(method->asQObject()));
+    break;
+    case PrivateMethodArgumentTypeInstance:
+        out << typeAsClass->serializationPrivateMethodIdForPrivateMethod(qobject_cast<DesignEqualsImplementationClassPrivateMethod*>(method->asQObject()));
+    break;
+    case NonFunctionMemberTypeInstance:
+        //already handled above
+    break;
+    }
+    out << method->serializationArgumentIdForArgument(thisAsMethodArgument);
 }
 int DesignEqualsImplementationType::serializationNonFunctionMemberIdForNonFunctionMember(NonFunctionMember *nonFunctionMember) const
 {
@@ -180,4 +226,52 @@ QList<NonFunctionMember *> DesignEqualsImplementationType::nonFunctionMembers_Or
     }
     ret << haveInit;
     return ret;
+}
+TypeInstance *TypeInstance::streamInReferenceAndReturnPointerToIt(QDataStream &in, DesignEqualsImplementationProject *project)
+{
+    quint8 typeInstanceCategoryId;
+    in >> typeInstanceCategoryId;
+    TypeInstanceCategory typeInstanceCategory = static_cast<TypeInstanceCategory>(typeInstanceCategoryId);
+
+    //all categories have this atm, but for example a Global TypeInstance wouldn't (it's 'parent' would be the project itself), in which case the streaming of it needs to go in a/the switch statement
+    int serializedTypeId;
+    in >> serializedTypeId;
+    DesignEqualsImplementationType *typeInstanceOwnerType = project->typeFromSerializedTypeId(serializedTypeId);
+
+    int typeInstanceMemberId; //could be the id of the type instance itself, in the case of NonFunctionMembers, or could be the id of the slot/private-method, in the case of being an _argument_ of one of those
+    in >> typeInstanceMemberId;
+    switch(typeInstanceCategory)
+    {
+    case NonFunctionMemberTypeInstance:
+    return typeInstanceOwnerType->nonFunctionMemberFromNonFunctionMemberId(typeInstanceMemberId);
+    break;
+    case SlotArgumentTypeInstance:
+    case PrivateMethodArgumentTypeInstance:
+        //do nothing (yet)
+    break;
+    }
+
+    DesignEqualsImplementationClass *typeAsClass = qobject_cast<DesignEqualsImplementationClass*>(typeInstanceOwnerType);
+    if(!typeAsClass)
+        qFatal("Slot argument or private method argument context variable found, but type was not QObject derived");
+    IDesignEqualsImplementationMethod *method;
+    switch(typeInstanceCategory)
+    {
+    case SlotArgumentTypeInstance:
+        method = typeAsClass->slotInstantiationFromSerializedSlotId(typeInstanceMemberId);
+    break;
+    case PrivateMethodArgumentTypeInstance:
+        method = typeAsClass->privateMethodInstantatiationFromSerializedPrivateMethodId(typeInstanceMemberId);
+    break;
+    case NonFunctionMemberTypeInstance:
+        //already handled above
+    break;
+    }
+    int argumentIndex; //or argumentId, smaeshit really
+    in >> argumentIndex;
+    return method->argumentInstantiationFromSerializedArgumentId(argumentIndex);
+}
+TypeInstance::TypeInstanceCategory NonFunctionMember::typeInstanceCategory()
+{
+    return NonFunctionMemberTypeInstance;
 }

@@ -31,7 +31,8 @@ public:
     QString methodSignatureWithoutReturnType(MethodSignatureFlagsEnum methodSignatureFlagsEnum = MethodSignatureForVisualAppearanceContainsArgumentVariableNames);
     QString argumentsToCommaSeparatedString(MethodSignatureFlagsEnum methodSignatureFlagsEnum = MethodSignatureForVisualAppearanceContainsArgumentVariableNames);
 
-protected:
+    int serializationArgumentIdForArgument(DesignEqualsImplementationClassMethodArgument *argument);
+    DesignEqualsImplementationClassMethodArgument *argumentInstantiationFromSerializedArgumentId(int argumentId);
     virtual QObject *asQObject()=0;
 private:
     QList<DesignEqualsImplementationClassMethodArgument*> m_Arguments;

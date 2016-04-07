@@ -43,15 +43,13 @@ void DesignEqualsImplementationSlotInvocationStatement::streamIn(DesignEqualsImp
 {
     m_ClassLifelineWhoseSlotIsToBeInvoked = DesignEqualsImplementationClassLifeLine::streamInClassLifelineReference(project, in);
     m_SlotToInvoke = DesignEqualsImplementationClassSlot::streamInSlotReference(project, in);
-#ifndef TEMP_DONT_SERIALIZE_CONTEXTVARIABLES
-    in >> m_SlotInvocationContextVariables;
-#endif
+    SignalEmissionOrSlotInvocationContextVariables::streamIn(project, &m_SlotInvocationContextVariables, in);
 }
 void DesignEqualsImplementationSlotInvocationStatement::streamOut(DesignEqualsImplementationProject *project, QDataStream &out)
 {
     DesignEqualsImplementationClassLifeLine::streamOutClassLifelineReference(project, m_ClassLifelineWhoseSlotIsToBeInvoked, out);
     DesignEqualsImplementationClassSlot::streamOutSlotReference(project, m_SlotToInvoke, out);
-    out << m_SlotInvocationContextVariables;
+    SignalEmissionOrSlotInvocationContextVariables::streamOut(project, &m_SlotInvocationContextVariables, out);
 }
 DesignEqualsImplementationClassLifeLine *DesignEqualsImplementationSlotInvocationStatement::classLifelineWhoseSlotIsToBeInvoked() const
 {
