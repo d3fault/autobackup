@@ -719,6 +719,7 @@ int main(int argc, char *argv[]) //TODOoptional: "minNumReplicas" cli arg (hardc
 
     //delete sources (ffffffff one typo and I'm dead (is why I exit on ANY error))
     //TODOreq: uncomment these when you're confident in the script
+    //TODOyes: Compare dest fs size before/after copy. If there was not a gain in size, [oh wait other processes fml (I guess we could instruct them not to use other processes while running the app? that's kind of unreasonable, but actually easily accomplished)]. well anyways back to the orig idea even if it might be flawed: ask the user if they want to continue with the delete, if it's shown (using _a_ method, fs size comparison (before/after) being just one) that nothing has been copied. "Warning: Nothing has been copied. Are you sure you want to continue with the delete?" <-- fkn serious business m8
     qDebug() << "NOTE: sources are _not_ being deleted. The code to do that is written but commented out";
     //RETURN_ONE_IF_RECURSIVE_DELETE_OR_REMAKE_FAILS(audioSource)
     //RETURN_ONE_IF_RECURSIVE_DELETE_OR_REMAKE_FAILS(videoSource)

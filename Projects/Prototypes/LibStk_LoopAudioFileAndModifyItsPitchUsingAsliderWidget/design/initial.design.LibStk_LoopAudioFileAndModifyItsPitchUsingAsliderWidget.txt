@@ -1,0 +1,6 @@
+title. too fkn stoned to write more m8
+
+setFrequency or pitchBend? idk trial n error <3
+
+
+TODOmb: after getting the first version working (using RtAudio), strip the RtAudio dep out and use QAudioOutput instead. hell I might need to do this anyways in order to _correctly_ integrate with Qt's event loop architecture. this actually doesn't sound that hard, I've mucked about with QAudioOutput plenty of times. it's the synthesis of audio BYTES that I'm using Synthesis Toolkit for, not the playing back of those bytes...

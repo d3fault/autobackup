@@ -3146,9 +3146,9 @@ Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/Sft
 Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/src/sftpuploadandrenameallvideosegmentsinfolder.pri:1427300106
 Projects/AVMuxScript/Night/:1427393545
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/:1428921487
-Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/:1429353422
+Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/:1505705595
 Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/BackupReplicateDeleteMuxAndUmountCli.pro:1427089056
-Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/main.cpp:1453589653
+Projects/AVMuxScript/Night/BackupReplicateDeleteMuxAndUmount/src/main.cpp:1505705592
 Projects/AVMuxScript/TailPropagateToWorldPlx/:1427488295
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/:1428929952
 Projects/AVMuxScript/TailPropagateToWorldPlx/WatchSigsFileAndPostChangesToUsenet/src/:1428101299
@@ -4349,7 +4349,7 @@ Projects/ProjectGoOutside/handicapped.audience.is.a.side.effect.but.this.is.huge
 Projects/ProjectGoOutside/i.could.use.this.as.a.name.of.my.stream.channel.show.or.whatever.its.called.txt:1355727455
 Projects/ProjectGoOutside/no.fingers.left.behind.what.a.perfectly.good.waste.of.evolved.filanges.txt:1330161715
 Projects/ProjectGoOutside/wasdf.com.home.for.fingers.software.and.setup.but.also.for.controlling.windows.linux.etc.TITLE.FOR.DOMAIN.txt:1341829441
-Projects/Prototypes/:1457297073
+Projects/Prototypes/:1505705689
 Projects/Prototypes/AdDoublesRawMathLaunchSim/:1427380548
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/:1427380548
 Projects/Prototypes/AdDoublesRawMathLaunchSim/src/AdDoublesRawMathLaunchSim.pro:1390329374
@@ -4605,6 +4605,9 @@ Projects/Prototypes/IntentionalImproperRoundingBitcoinWithdrawalFeesAlwaysUp/:14
 Projects/Prototypes/IntentionalImproperRoundingBitcoinWithdrawalFeesAlwaysUp/src/:1427380549
 Projects/Prototypes/IntentionalImproperRoundingBitcoinWithdrawalFeesAlwaysUp/src/IntentionalImproperRoundingBitcoinWithdrawalFeesAlwaysUpCli.pro:1418371742
 Projects/Prototypes/IntentionalImproperRoundingBitcoinWithdrawalFeesAlwaysUp/src/main.cpp:1418388249
+Projects/Prototypes/LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget/:1505705692
+Projects/Prototypes/LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget/design/:1505705719
+Projects/Prototypes/LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget/design/initial.design.LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget.txt:1505705736
 Projects/Prototypes/MouseControlWhileIconified/:1350874094
 Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/:1351841105
 Projects/Prototypes/MouseControlWhileIconified/MouseControlWhileIconified/MouseControlWhileIconified.pro:1351840253
