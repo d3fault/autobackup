@@ -1,0 +1,15 @@
+A service whose output is similar to "quick dirty static git web", in that it outputs websites/html.
+
+A repo's post-commit githook connects to the QLocalServer service (could be remote, but we clearly just 'remoted' during the git-push that got us here). The post-commit githook uses it's own path to determine where to put it's contents 'on the server', but it still modifies a root 'index.html' to auto-blog (publish) about it.
+
+The reason it's a "service" is so multiple repos' post-commit hooks don't race for the index.html file modification (and file 'locks' are stupid/improper).
+
+The root idea was much simpler than this all (I'm still keeping it hella KISS, my mind is racing): Take picture on phone -> it auto publishes in html/timeline shiz.
+
+"Pictures" is both a specific/specialized "front-end" app communicating with the "back-end" service (which must also know how to render each 'type' of front-end (Picture, Text, Video, etc)) and also a repo itself (TODOoptimization: year/month/day 'sub-folderization', prefereably with each subfolder a git submodule but lol -- and prefereably each new 'front-end' has that folderization shiz automagically, eg inherit some interface/base-class that does folderization etc etc).
+
+There could also be a "Generic Document Publisher" front-end that attempts to guess the type (so it renders correctly) but can still just upload as an application/octet-stream if not.
+
+___Both the "Generic Document Publisher" and "Picture Publisher" have a "drag file here and/or browse button", but only the "Picture Publisher" has a "Take Picture" button/functionality as that is obviously specific to Pictures. Clearly the "Generic Document Publisher" could have also have buttons like that, but you'd first need to say (say in some file menu) what kind of a document you want to publish. Ideally they would both use the same QWidgets for "Take Picture", and I see no reason why they couldn't.
+
+So to start I'll KISS: ImageFilePath (hardcoded) -> git add it -> git commit it -> git push it -> post-commit hook calls an app (to become a service later) that creates the html to render it and also updates the index.html in the 'root'.
