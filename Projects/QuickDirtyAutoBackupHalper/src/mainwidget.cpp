@@ -406,7 +406,7 @@ void mainWidget::handleCommitButtonClicked()
 
     if(commitMessage.contains(m_DateTimeSpecialString))
     {
-        commitMessage.replace(m_DateTimeSpecialString, QDateTime::currentDateTime().toString(Qt::ISODate)); //TODOreq: would be better if I did this one line before calling commitProcess.start()... because I noticed (and lol'd) that there's a few seconds (and growing) difference between the special string in commit message and the git-specific one (but who gives a shit). On the other hand, it makes for a funnily interesting statistic (and when I upgrade computers, it should shrink/regrow etc :-P) (TODOreq: graph this before death)
+        commitMessage.replace(m_DateTimeSpecialString, QDateTime::currentDateTime().toString(Qt::RFC2822Date)); //TODOreq: would be better if I did this one line before calling commitProcess.start()... because I noticed (and lol'd) that there's a few seconds (and growing) difference between the special string in commit message and the git-specific one (but who gives a shit). On the other hand, it makes for a funnily interesting statistic (and when I upgrade computers, it should shrink/regrow etc :-P) (TODOreq: graph this before death)
     }
 
     emit commitRequested(commitMessage, m_DeviceAndPasswordPathsToBePopulatedJustBeforeMountRequestedOrPersistRequestedOrCommit, workingDirString, mountedSubDirToBareRepoString, dirStructureFileNameString, m_FilenameIgnoreList, m_FilenameEndsWithIgnoreList, m_DirnameIgnoreList, m_DirnameEndsWithIgnoreList, m_PushEvenWhenNothingToCommitCheckbox->isChecked(), m_SignCommitCheckbox->isChecked()); //an emit instead of invokeMethod because of the existene of "connectToBusiness". it's just proper'er (one less error message potentially)
