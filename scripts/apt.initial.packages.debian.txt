@@ -1,8 +1,8 @@
 stable main noX:
-build-essential cmake pkg-config checkinstall automake autoconf libtool valgrind smartmontools ntfs-3g dosfstools testdisk git subversion libcurl4-openssl-dev libcurl4-doc curl p7zip-full zip unzip tree strace netcat yasm libsox-dev sox opus-tools libopus-dev zlib1g-dev libtheora-dev libevent-dev libssl-d* libgstreamer-plugins-base0.10-dev libxslt1-dev libcap2-bin libasound2-dev alsa-utils libv4l-dev rtorrent gdb libclang-dev llvm-dev clang lldb libboost-all-dev libboost-doc tmux libtcplay-dev tcplay needrestart libcrypto++-dev libcrypto++-doc fbterm fbi libstk0-dev stk-doc sshfs libgit2-dev libtorrent-rasterbar-d* info apt-rdepends lxc libvirt-bin debootstrap ebtables dnsmasq btrfs-tools apt-file bc
+build-essential cmake pkg-config checkinstall automake autoconf libtool valgrind smartmontools ntfs-3g dosfstools testdisk git subversion libcurl4-openssl-dev libcurl4-doc curl p7zip-full zip unzip tree strace netcat yasm libsox-dev sox opus-tools libopus-dev zlib1g-dev libtheora-dev libevent-dev libssl-d* libgstreamer-plugins-base0.10-dev libxslt1-dev libcap2-bin libasound2-dev alsa-utils libv4l-dev rtorrent gdb libclang-dev llvm-dev clang lldb libboost-all-dev libboost-doc tmux libtcplay-dev tcplay needrestart libcrypto++-dev libcrypto++-doc fbterm fbi libstk0-dev stk-doc sshfs libgit2-dev libtorrent-rasterbar-d* info apt-rdepends lxc libvirt-bin debootstrap ebtables dnsmasq btrfs-tools apt-file bc libfuse-dev aufs-tools
 
 stable main X:
-smart-notifier gsmartcontrol arduino keepassx xul-ext-noscript xul-ext-tabmixplus xul-ext-adblock-plus xul-ext-flashgot mplayer gimp dia inkscape gv xscreensaver xscreensaver-data-extra openjdk-7-jdk mesa-common-dev x11vnc keynav xvkbd xauth
+smart-notifier gsmartcontrol arduino keepassx xul-ext-noscript xul-ext-tabmixplus xul-ext-adblock-plus xul-ext-flashgot mplayer gimp dia inkscape gv xscreensaver xscreensaver-data-extra openjdk-7-jdk mesa-common-dev x11vnc keynav xvkbd xauth pavucontrol
 
 stable main noX (some are X but work fine with just ssh X11 forwarding) lxc container missing derps: nano less xfce4-terminal xterm
 
