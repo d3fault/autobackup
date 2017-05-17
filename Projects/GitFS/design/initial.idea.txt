@@ -1,0 +1,23 @@
+Combine fuse (libfuse) with git (libgit). This is probably the best solution to the "large files in git" problem, since it's 100% compatible with vanilla git.
+
+Explaination of the app: mount a [bare (but not necessarily (but there's really no reason to use the app with a NON-bare repo))] git repo as a filesystem. If the repo is huge and contains huge files, this makes it so you don't have to "check out" a _COPY_ of the [latest version of the] files in said repo.
+
+At first I thought it'd be only able to read from git repos (and indeed that should be the starting point version 0.1), but after thinking about it further writing wouldn't be so hard to implement.
+
+A 'cousin' of this app is sshfs (and many others like it).
+
+Example theoretical commands (syntax will probably change):
+gitfs /path/to/bare/repo /some/mount/point #checks out HEAD for writing
+gitfs --read-only --commit 09f9hexCommitId /path/to/bare/repo /some/mount/point #--read-only and --commit can be used by themselves of course
+...and of course there are tags and branches to consider
+
+Once mounted for writing, the following two hypothetical commands could be used:
+gitfs add .
+gitfs commit -am "Add Large Videos"
+
+^Or the "gitfs add" could be implied (and therefore a non-existent command) whenever you copy a file into the mounted gitfs folder. I'm unsure at this point whether or not "gitfs add" should exist, but "gitfs commit" definitely should.
+
+I've already used libgit before, and I read a libfuse example, so I'm 99% sure I can connect the two to code this app. I think it's simple and useful enough for submission to debian. I should also note that there's no reason for this app to use Qt.
+
+
+Arguably this is a superior design than git itself (since you don't need repoHeadSize*2 free storage space at a _minimum_)! However, Linus' goals when designing git were for git to be "the STUPID content tracker". Depending on fuse limits portability severely, and _being_ a filesystem is much too "smart" for a "stupid" content tracker. So this app only complements git and is not meant to replace it. It is merely a [hacky?] solution to working with big files in git and is not intended to be used of software development.
