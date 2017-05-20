@@ -1,9 +1,8 @@
 INCLUDEPATH *= $$system(pwd)/lib
 
 HEADERS *= $$system(pwd)/lib/wasdf.h \
-    lib/wasdfarduino.h \
-    lib/wasdfcalibrator.h \
-    lib/wasdfcalibrationconfiguration.h
+    $$system(pwd)/lib/wasdfarduino.h \
+    $$system(pwd)/lib/wasdfcalibrator.h
 SOURCES *= $$system(pwd)/lib/wasdf.cpp \
-    lib/wasdfarduino.cpp \
-    lib/wasdfcalibrator.cpp
+    $$system(pwd)/lib/wasdfarduino.cpp \
+    $$system(pwd)/lib/wasdfcalibrator.cpp

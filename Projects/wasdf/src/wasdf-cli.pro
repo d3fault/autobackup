@@ -8,7 +8,7 @@ QT       += core serialport
 QT       -= gui
 
 TARGET = wasdf-cli
-CONFIG   += console
+CONFIG   += console c++11
 CONFIG   -= app_bundle
 
 TEMPLATE = app

@@ -3,6 +3,8 @@
 
 #include <QtSerialPort/QSerialPort>
 
+enum class Finger;
+
 class WasdfArduino : private QSerialPort
 {
     Q_OBJECT

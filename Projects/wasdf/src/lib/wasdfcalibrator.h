@@ -3,8 +3,11 @@
 
 #include <QObject>
 
+#include <QHash>
+
 #include "wasdf.h"
-#include "wasdfcalibrationconfiguration.h"
+
+class QTimer;
 
 class WasdfCalibrator : public QObject
 {
@@ -12,14 +15,27 @@ class WasdfCalibrator : public QObject
 public:
     explicit WasdfCalibrator(QObject *parent = 0);
 private:
-    void calibrateNextFingerAndEmitCalibrationCompleteAfterLastFinger();
+    struct PinCalibrationData
+    {
+        int PreviousPinPosition = 0;
+        long AccumulatedDistanceThePinHasMoved = 0;
+    };
 
-    Finger m_FingerCurrentlyBeingCalibrated;
+    //void calibrateNextFingerAndEmitCalibrationCompleteAfterLastFinger();
+    int getPinNumberWithTheFurthestAccumulatedDistanceTraveled();
+
+    QHash<int /*pin number on arduino*/, PinCalibrationData> m_AccumulatedDistancesEachAnalogPinMoved_ByAnalogPinId;
+    QTimer *m_Timer;
+    //Finger m_FingerCurrentlyBeingCalibrated;
     WasdfCalibrationConfiguration m_Calibration;
 signals:
+    void o(const QString &msg);
     void calibrationComplete(const WasdfCalibrationConfiguration &calibrationConfiguration);
 public slots:
+    void handleAnalogPinReadingChanged(int pinNumberOnArduino, int newPinPosition);
     void startCalibrating();
+private slots:
+    void handleTimerTimedOut();
 };
 
 #endif // WASDFCALIBRATOR_H

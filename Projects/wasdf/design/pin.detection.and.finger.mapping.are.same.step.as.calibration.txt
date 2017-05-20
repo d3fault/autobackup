@@ -22,3 +22,19 @@ Hmm ok forelobe'd it: after saying "move your pinky as far as you can", we can s
 Maybe instead of a constant ~5 sec, a min/max timeout should be used: wait a min of 2 sec and a max of 15 sec. Once ~50% range of _only_ 1 of the 10 fingers has been "used"/utilized/calibrated _AND_ 2 sec (min) has elapsed, we move on. But if 15 seconds has elapsed, we'll settle with whatever finger moved the most (maybe a min of 10% utilization though?). If more than 1 finger utilizes >= ~50% range before that 2 seconds minimum, we tell the user to keep the other 9 fingers still and then start the process over (wait another 2 sec) -- loops infinitely until they behave (shit there are people with diseases who literally can't keep their hands still xDDDDD (but there are also people with greater than and less than 10 fingers (and same with the 2 hands assumption!))).
 
 s/LeftPinky/RightIndex -- it just makes more sense for right index to be the "next"/confirm/A(in video game console terms)/yes/OK/etc finger rather than the awkward left pinky.
+
+
+After sleeping on it I realized two things:
+1) Don't need to have the step 1 above "move all 10 of your fingers". Since we are going to calibrate each finger anyways, pin detection can be done at the same time.
+2) The concept of "50%" does not exist until AFTER calibrated. At least not accurately. 0-1023 is the range of the analog sensors, but in reality much less of that range will actually be used (and it [probably] won't start at 0 nor end at 1023, it will be some segment in between) -- that's the whole point of calibration, to determine the range actually used (both by the sensors AND the specific fingers (my pinky has less range than my index finger, for example))! Still there are two solutions (and ideally combining the two somehow would be best): a) the sensor that uses up the most range of 0-1023 is the finger we told them to move. b) the sensor that moves THE MOST (back and forth and back and forth. we keep track of "total distance moved") is the finger we told them to move. I actually like (b) better than (a) and can't off the top of my head think of a way to combine the two, so fuck it (b) it is! (weird I just came up with both (a) and (b) while writing out (2) :-D)
+
+
+#########Ok so to restate the revised design clearly succinctly:
+0) Move your right index finger
+	After a couple seconds we select the analog pin that moved the most (total distance wise, not just the one that utilized the most of the 0-1023 range)
+1) Either repeat (0) for the other 9 fingers, or use the right index finger from now on as an OK/Next(finger) trigger -- either one works. Fuck deciding now, I'll code (0) first and let it sit in ye ole' subconscience
+
+
+TODOprobably: for step (0) just above there should maybe be a MINIMUM THRESHOLD of an amount of the 0-1023 range being utilized. people with that shaky hand disease might have an ultra fast vibrating finger that gives us a false positive for the "total distance moved". they might go from 0-5 (out of 0-1023) over and over REALLY fast unintentionally... and it might just marginally beat out their _intended_ finger that has a much larger range utilization. this shouldn't be in the first version, since it complicates things too much and is a corner case as well
+
+TODOmb: like fps video games give you a chance (and preferably in-game, too!) to "invert" your aiming joystick, I too should give users a chance to change from their RIGHT index finger to their LEFT. My UIs should never say "curl your right index finger to continue", they should say "press [your?] OK [finger?] to continue"
