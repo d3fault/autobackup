@@ -15,22 +15,20 @@ WasdfCalibrator::WasdfCalibrator(QObject *parent)
     m_Timer->setSingleShot(true);
     connect(m_Timer, &QTimer::timeout, this, &WasdfCalibrator::handleTimerTimedOut);
 }
-int WasdfCalibrator::getPinNumberWithTheFurthestAccumulatedDistanceTraveled()
+WasdfCalibrator::PinNumDetectionAndCalibrationData WasdfCalibrator::getPinCalibrationDataWithTheFurthestAccumulatedDistanceTraveled()
 {
-    int currentPinIdWinning = 0;
-    long accumulatedDistanceOfCurrentPinWinning = 0;
-    QHashIterator<int /*pin number on arduino*/, PinCalibrationData> it(m_AccumulatedDistancesEachAnalogPinMoved_ByAnalogPinId);
+    PinNumDetectionAndCalibrationData currentPinDataWinning;
+    QHashIterator<int /*pin number on arduino*/, PinNumDetectionAndCalibrationData> it(m_AccumulatedDistancesEachAnalogPinMoved_ByAnalogPinId);
     while(it.hasNext())
     {
         it.next();
-        if(it.value().AccumulatedDistanceThePinHasMoved > accumulatedDistanceOfCurrentPinWinning)
+        if(it.value().AccumulatedDistanceThePinHasMoved > currentPinDataWinning.AccumulatedDistanceThePinHasMoved)
         {
-            currentPinIdWinning = it.key();
-            accumulatedDistanceOfCurrentPinWinning = it.value().AccumulatedDistanceThePinHasMoved;
+            currentPinDataWinning = it.value();
         }
     }
     //TODOreq: error checking? what if all pins didn't move at all for example, would likely mean the arduino is wired wrong
-    return currentPinIdWinning;
+    return currentPinDataWinning;
 }
 #if 0
 void WasdfCalibrator::calibrateNextFingerAndEmitCalibrationCompleteAfterLastFinger()
@@ -46,8 +44,16 @@ void WasdfCalibrator::calibrateNextFingerAndEmitCalibrationCompleteAfterLastFing
 #endif
 void WasdfCalibrator::handleAnalogPinReadingChanged(int pinNumberOnArduino, int newPinPosition)
 {
-    PinCalibrationData currentPinData = m_AccumulatedDistancesEachAnalogPinMoved_ByAnalogPinId.value(pinNumberOnArduino, PinCalibrationData());
+    PinNumDetectionAndCalibrationData currentPinData = m_AccumulatedDistancesEachAnalogPinMoved_ByAnalogPinId.value(pinNumberOnArduino, PinNumDetectionAndCalibrationData());
+
+    //this line of code is to enable analog pin number detection:
     currentPinData.AccumulatedDistanceThePinHasMoved += static_cast<long>(abs(currentPinData.PreviousPinPosition - newPinPosition));
+
+    //these next few lines of code are for finger movement range calibration:
+    currentPinData.PinCalibrationData.AnalogPinIdOnArduino = pinNumberOnArduino;
+    currentPinData.PinCalibrationData.MaxValue = qMax(currentPinData.PinCalibrationData.MaxValue, newPinPosition);
+    currentPinData.PinCalibrationData.MinValue = qMin(currentPinData.PinCalibrationData.MinValue, newPinPosition);
+
     m_AccumulatedDistancesEachAnalogPinMoved_ByAnalogPinId.insert(pinNumberOnArduino, currentPinData);
 }
 void WasdfCalibrator::startCalibrating()
@@ -61,12 +67,9 @@ void WasdfCalibrator::handleTimerTimedOut()
 {
     //pseudo: RightIndexFinger = m_FingerThatMovedTheMostTotalDistance;
 
-    int pinNumberOfRightIndexFinger = getPinNumberWithTheFurthestAccumulatedDistanceTraveled();
-    WasdfCalibrationFingerConfiguration fingerConfiguration = m_Calibration.value(Finger::RightIndex_Finger6, WasdfCalibrationFingerConfiguration());
-    fingerConfiguration.AnalogPinIdOnArduino = pinNumberOfRightIndexFinger;
-    //TODOreq: we should have min/max values at this point and should assign them to fingerConfiguration
-    m_Calibration.insert(Finger::RightIndex_Finger6, fingerConfiguration);
-    emit o("We've determined that your right index finger is connected to arduino's analog pin #" + QString::number(pinNumberOfRightIndexFinger));
+    PinNumDetectionAndCalibrationData pinCalibrationDataOfRightIndexFinger = getPinCalibrationDataWithTheFurthestAccumulatedDistanceTraveled();
+    m_Calibration.insert(Finger::RightIndex_Finger6, pinCalibrationDataOfRightIndexFinger.PinCalibrationData);
+    emit o("We've determined that your right index finger is connected to arduino's analog pin #" + QString::number(pinCalibrationDataOfRightIndexFinger.PinCalibrationData.AnalogPinIdOnArduino));
 
     //TODreq: eventually:
     emit calibrationComplete(m_Calibration);

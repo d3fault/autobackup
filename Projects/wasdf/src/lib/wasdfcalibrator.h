@@ -15,16 +15,20 @@ class WasdfCalibrator : public QObject
 public:
     explicit WasdfCalibrator(QObject *parent = 0);
 private:
-    struct PinCalibrationData
+    struct PinNumDetectionAndCalibrationData
     {
+        //these two variables are used for pin number detection:
         int PreviousPinPosition = 0;
         long AccumulatedDistanceThePinHasMoved = 0;
+
+        //this struct is used for finger movement range calibration:
+        WasdfCalibrationFingerConfiguration PinCalibrationData;
     };
 
     //void calibrateNextFingerAndEmitCalibrationCompleteAfterLastFinger();
-    int getPinNumberWithTheFurthestAccumulatedDistanceTraveled();
+    PinNumDetectionAndCalibrationData getPinCalibrationDataWithTheFurthestAccumulatedDistanceTraveled();
 
-    QHash<int /*pin number on arduino*/, PinCalibrationData> m_AccumulatedDistancesEachAnalogPinMoved_ByAnalogPinId;
+    QHash<int /*pin number on arduino*/, PinNumDetectionAndCalibrationData> m_AccumulatedDistancesEachAnalogPinMoved_ByAnalogPinId;
     QTimer *m_Timer;
     //Finger m_FingerCurrentlyBeingCalibrated;
     WasdfCalibrationConfiguration m_Calibration;
