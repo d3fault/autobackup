@@ -1,0 +1,24 @@
+This increases my workload quite a bit, but I just realized that pin detection (which analog pings are actually in use for a given arduino) and finger mapping (which analog pins map to which fingers) should almost certainly be done at the same time as calibration (what range does each finger use between 0 and 1023?).
+
+The steps are as follows:
+
+0) Move all 10 of your fingers
+	Then we watch EVERY analog pin until 10 show movement before moving on and saying "Good"
+1) Now move your left pinky in as far as you can back and forth
+	Knowing when to move on poses a problem. We could wait 5 seconds, but what if they don't move their pinky at all? For the OTHER 9 fingers, we could use the pinky (or perhaps right index should come first) as a 'next' key, but that very first finger poses a problem. There's also [...gonna continue writing below...]
+	Repeat for the other 9 fingers
+2) Calibration complete
+
+
+
+
+...There's also the problem that they might move the wrong (non-requested) fingers accidentally, so perhaps there needs to be a "is this right?" confirmation or some sort of (visual?) feedback so they know they're mapping their finger(s) to the right pin(s). My plan up until a few mins ago was to have an 11th form of input: a simple pushbutton that says "next" every time it's pressed. But is that an overkill solution? Will that 11th input just sit there and do nothing for the remainder of the wasdf use? Isn't 10 analog inputs FUCKING PLENTY? (yes!)
+
+Fuck in all honesty I think I need to sleep on this problem. I never until today considered realtime pin mapping, so I haven't had the chance to let my subconscience tackle it. That 11th input (pushbutton) solution (and the inferior "use first calibrated finger as 'next' button from then on (inferior because how to calibrate first finger?)) have been sitting in my subconscience for years now xD.
+
+
+Hmm ok forelobe'd it: after saying "move your pinky as far as you can", we can simply watch all 10 pins for ~5 seconds and the pinky is the one that moves the MOST. After that we can use the pinky itself as a 'next' key (the threshold for boolean/binary activation should maybe be calibrated before moving onto the next 9 if that's the case TODOmb), or we can simply use the ~5 sec strat for the other 9.
+
+Maybe instead of a constant ~5 sec, a min/max timeout should be used: wait a min of 2 sec and a max of 15 sec. Once ~50% range of _only_ 1 of the 10 fingers has been "used"/utilized/calibrated _AND_ 2 sec (min) has elapsed, we move on. But if 15 seconds has elapsed, we'll settle with whatever finger moved the most (maybe a min of 10% utilization though?). If more than 1 finger utilizes >= ~50% range before that 2 seconds minimum, we tell the user to keep the other 9 fingers still and then start the process over (wait another 2 sec) -- loops infinitely until they behave (shit there are people with diseases who literally can't keep their hands still xDDDDD (but there are also people with greater than and less than 10 fingers (and same with the 2 hands assumption!))).
+
+s/LeftPinky/RightIndex -- it just makes more sense for right index to be the "next"/confirm/A(in video game console terms)/yes/OK/etc finger rather than the awkward left pinky.

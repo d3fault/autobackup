@@ -28,7 +28,7 @@ public:
       , A2_LeftMiddle = LeftMiddle_A2
 
       , LeftIndex_A3 = 3
-      , A3_LeftIndex
+      , A3_LeftIndex = LeftIndex_A3
 
       , LeftThumb_A4 = 4
       , A4_LeftThumb = LeftThumb_A4

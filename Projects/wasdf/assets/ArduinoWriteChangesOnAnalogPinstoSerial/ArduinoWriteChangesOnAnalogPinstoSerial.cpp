@@ -58,7 +58,7 @@ struct Hand
 {
     void setupHand(bool leftTrue_rightFalse)
     {
-        //TODOreq: the arduino micro doesn't use analog pins 0-9 (note that finger 9 below maps to pin A11), so the following mappings are arduino micro specific. there should obviously be some way to use this code with other boards of course (even a mapping 'file' is better than hardcoding it here)
+        //TODOreq: the arduino micro doesn't use analog pins 0-9 (note that finger 9 below maps to pin A11), so the following mappings are arduino micro specific. there should obviously be some way to use this code with other boards of course (even a mapping 'file' is better than hardcoding it here). the BEST solution is to, before/during calibration, 'probe' every analog port to see if it's wired, and then to have the user tell us which finger that pin corresponds to.. then to yea save it in some ~/.config 'profile' thingo. for now I'm fine with hardcoding the pin mappings since my target is to get range-of-fingers realtime-with-feedback calibration working [first]. I wonder what happens when you read an analog pin that has nothing attached... it returns 0. in any case and whatever value it is, it shouldn't "move" (I hope)
         //TODOreq:^I also need to change the MusicFingers serial READ code (runs on PC) to use 0-9 and not the whacky micro-specific mapping like in the previous version of this code
 
         if(leftTrue_rightFalse)
@@ -73,11 +73,11 @@ struct Hand
         else
         {
             //right hand
-            Fingers[5].setStringAndIntPinIds("5", A5);
-            Fingers[6].setStringAndIntPinIds("6", A8);
-            Fingers[7].setStringAndIntPinIds("7", A9);
-            Fingers[8].setStringAndIntPinIds("8", A10);
-            Fingers[9].setStringAndIntPinIds("9", A11);
+            Fingers[0].setStringAndIntPinIds("5", A5);
+            Fingers[1].setStringAndIntPinIds("6", A8);
+            Fingers[2].setStringAndIntPinIds("7", A9);
+            Fingers[3].setStringAndIntPinIds("8", A10);
+            Fingers[4].setStringAndIntPinIds("9", A11);
         }
     }
     void reportFingerMovementOverSerialPort()
