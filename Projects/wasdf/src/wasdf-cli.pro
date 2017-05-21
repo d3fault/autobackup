@@ -13,6 +13,9 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-SOURCES += cli/main.cpp
+SOURCES += cli/main.cpp \
+    cli/wasdfcli.cpp
 
 include(wasdf.pri)
+
+HEADERS += cli/wasdfcli.h

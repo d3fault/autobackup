@@ -41,6 +41,7 @@ enum class Finger
   , RightPinky_Finger9 = 9
   , Finger9_RightPinky = RightPinky_Finger9
 };
+QString fingerEnumToHumanReadableString(Finger finger);
 inline uint qHash(const Finger &key, uint seed)
 {
     return qHash(static_cast<uint>(key), seed);
@@ -60,12 +61,15 @@ class Wasdf : public QObject
 public:
     explicit Wasdf(QObject *parent = 0);
 private:
-
     void startWasdfActualSinceCalibrated();
 
     WasdfArduino *m_Arduino;
     QPointer<WasdfCalibrator> m_Calibrator;
     WasdfCalibrationConfiguration m_Calibration;
+signals:
+    void e(const QString &msg);
+    void o(const QString &msg);
+    void wasdfFinished(bool success);
 public slots:
     void startWasdf();
 private slots:

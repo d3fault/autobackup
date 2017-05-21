@@ -5,6 +5,7 @@
 
 #include "wasdf.h"
 
+//Calibrator or Calibrater? fuggit~
 //need to write this somewhere to remember/understand it better: DURING calibration there's information pertaining to every pin (>= 10) on the arduino, but AFTER calibration we only want to emit/deliver information pertaining to exactly 10 pins. it's our job as the calibrator to figure out which 10. it is (was) slightly confusing that there are 2 sets of "configutations"
 WasdfCalibrator::WasdfCalibrator(QObject *parent)
     : QObject(parent)
@@ -46,7 +47,7 @@ void WasdfCalibrator::handleAnalogPinReadingChanged(int pinNumberOnArduino, int 
 {
     PinNumDetectionAndCalibrationData currentPinData = m_AccumulatedDistancesEachAnalogPinMoved_ByAnalogPinId.value(pinNumberOnArduino, PinNumDetectionAndCalibrationData());
 
-    //this line of code is to enable analog pin number detection:
+    //this line of code is to facilitate analog pin number detection:
     currentPinData.AccumulatedDistanceThePinHasMoved += static_cast<long>(abs(currentPinData.PreviousPinPosition - newPinPosition));
 
     //these next few lines of code are for finger movement range calibration:

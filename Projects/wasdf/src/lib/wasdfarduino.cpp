@@ -30,16 +30,16 @@ void WasdfArduino::openSerialPortIfNotOpen()
 {
     if(m_SerialPort->isOpen())
     {
-        if(!m_SerialPort->open(QIODevice::ReadWrite /*QIODevice::Text <-- apparently not supported, but I guess it's text by default?*/))
+        if(!m_SerialPort->open(QIODevice::ReadWrite /*QIODevice::Text <-- apparently not supported, but I guess it's text by default? <- nope it's binary but eh ascii isn't so hard to work with anyways. my protocol will be pure ascii*/))
         {
-            emit e("failed to open serial port \"" + m_SerialPort->portName() + "\" for reading/writing"); //TODOreq: connect all output/error signals (not just this class)
+            emit e("failed to open serial port \"" + m_SerialPort->portName() + "\" for reading/writing");
             //TODOreq: error out, return false or emit finished(false) etc
         }
     }
 }
 void WasdfArduino::startInCalibrationMode()
 {
-    //in calibration mode, arduino sends _ALL_ (not just 10) analog pin readings over serial
+    //in calibration mode, arduino sends _ALL_ (not just 10) analog pin readings over serial (TODOmb: user can pass an --exclude-analog-pins flag in case they're using the other analog pins for something else (but then they'd need to modify the sketch anyways, so maybe this isn't necessary?)
 
     disconnect(m_SerialPort, SIGNAL(readyRead())); //TODOreq: for some reason this fails with qt5-style pmf syntax. maybe a newer version of Qt doesn't (otherwise file a bugreport)
     connect(m_SerialPort, &QSerialPort::readyRead, this, &WasdfArduino::handleSerialPortReadyReadCalibrationMode);

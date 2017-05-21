@@ -15,14 +15,6 @@ class WasdfArduino : public QObject
 public:
     explicit WasdfArduino(QObject *parent = 0);
 private:
-#if 0 //different readyRead handlers is better/cleaner :)
-    enum class WasdfArduinoMode
-    {
-          Calibrating = 0x001
-        , Report10fingerMovements = 0x010
-        , ControlMouseAndKeyboard = 0x100 //TODOreq: I forget how to properly set up 'flags' that can be combined, this might be wrong (also calibrating can never be used with any other modes, but eh)
-    };
-#endif
     void openSerialPortIfNotOpen();
 
     QSerialPort *m_SerialPort;

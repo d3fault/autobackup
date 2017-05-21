@@ -115,7 +115,7 @@ struct Hands
 
 struct Mode
 {
-    enum ModeEnum
+    enum ModeEnum //TODOreq: I forget how to properly set up 'flags' that can be combined, this might be wrong (also calibrating can never be used with any other modes, but eh)
     {
           DoNothingMode = 0x000
         , Calibrating = 0x001
