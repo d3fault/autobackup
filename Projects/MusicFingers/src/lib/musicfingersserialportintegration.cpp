@@ -41,7 +41,7 @@ MusicFingersSerialPortIntegration::~MusicFingersSerialPortIntegration()
 { }
 void MusicFingersSerialPortIntegration::privateConstructor()
 {
-    setBaudRate(QSerialPort::Baud9600); //TODOoptional: QSerialPortInfo supplies a list of "standard baud rates" that the serial port supports
+    setBaudRate(QSerialPort::Baud9600);
     connect(this, SIGNAL(readyRead()), this, SLOT(handleSerialPortReadyRead()));
 }
 void MusicFingersSerialPortIntegration::processLineOfFingerMovementProtocol(const QString &lineOfFingerMovementProtocol)
