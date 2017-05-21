@@ -18,23 +18,20 @@ Wasdf::Wasdf(QObject *parent)
 }
 void Wasdf::startWasdfActualSinceCalibrated()
 {
-#ifdef TEMP_DSFLJDS
-    m_Arduino.setMode(Normal, m_CalibrationConfig); //TODOreq: this is where the 10 fingers get mapped to the 10 pins
-#endif
+    connect(m_Arduino, &WasdfArduino::fingerMoved, this, &Wasdf::handleFingerMoved);
+    m_Arduino->start(m_Calibration);
 }
 void Wasdf::startWasdf()
 {
-    //m_Arduino.startCommunicatingOverSerialPort();
     QSettings settings;
     bool isCalibrated = settings.value(SETTINGS_KEY_IS_CALIBRATED, false).toBool();
     if(!isCalibrated)
     {
-#ifdef TEMP_DSFLJDS
-        m_Arduino.setMode(Calibrating); //TODOreq: arduino sends _ALL_ (not just 10) analog pin readings over serial
-#endif
+        m_Arduino->startInCalibrationMode();
         m_Calibrator = new WasdfCalibrator(this);
+        connect(m_Arduino, &WasdfArduino::analogPinReadingChangedDuringCalibration, m_Calibrator.data(), &WasdfCalibrator::handleAnalogPinReadingChanged);
         connect(m_Calibrator.data(), &WasdfCalibrator::calibrationComplete, this, &Wasdf::handleCalibrationComplete);
-        QMetaObject::invokeMethod(m_Calibrator.data(), "startCalibrating");
+        m_Calibrator->startCalibrating();
     }
     else
     {
@@ -46,9 +43,17 @@ void Wasdf::startWasdf()
 }
 void Wasdf::handleCalibrationComplete(const WasdfCalibrationConfiguration &calibrationConfiguration)
 {
-    //m_WasdfCalibrationConfiguration = calibrationConfiguration;
+    m_Calibration = calibrationConfiguration;
     //TODoreq: write calibrationConfiguration to settings
     if(!m_Calibrator.isNull())
+    {
+        disconnect(m_Arduino, &WasdfArduino::analogPinReadingChangedDuringCalibration, m_Calibrator.data(), &WasdfCalibrator::handleAnalogPinReadingChanged);
         m_Calibrator->deleteLater();
+    }
     startWasdfActualSinceCalibrated();
+}
+void Wasdf::handleFingerMoved(Finger finger, int newPosition)
+{
+    //TODOreq: it's business time
+    qDebug("I have stripped down to my business socks");
 }

@@ -65,11 +65,12 @@ private:
 
     WasdfArduino *m_Arduino;
     QPointer<WasdfCalibrator> m_Calibrator;
-    //WasdfCalibrationConfiguration m_WasdfCalibrationConfiguration;
+    WasdfCalibrationConfiguration m_Calibration;
 public slots:
     void startWasdf();
 private slots:
     void handleCalibrationComplete(const WasdfCalibrationConfiguration &calibrationConfiguration);
+    void handleFingerMoved(Finger finger, int newPosition);
 };
 
 #endif // WASDF_H

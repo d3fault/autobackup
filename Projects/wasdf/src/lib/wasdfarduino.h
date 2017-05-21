@@ -1,17 +1,25 @@
 #ifndef WASDFARDUINO_H
 #define WASDFARDUINO_H
 
-#include <QtSerialPort/QSerialPort>
+#include "wasdf.h"
 
-enum class Finger;
+class QSerialPort;
 
-class WasdfArduino : private QSerialPort
+class WasdfArduino : public QObject
 {
     Q_OBJECT
 public:
     explicit WasdfArduino(QObject *parent = 0);
+private:
+    QSerialPort *m_SerialPort;
 signals:
+    void analogPinReadingChangedDuringCalibration(int analogPinId, int newPosition);
     void fingerMoved(Finger finger, int newPosition);
+public slots:
+    void startInCalibrationMode();
+    void start(const WasdfCalibrationConfiguration &calibrationConfig);
+private slots:
+    void handleSerialPortReadyRead();
 };
 
 #endif // WASDFARDUINO_H

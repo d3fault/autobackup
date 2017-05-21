@@ -1,0 +1,1 @@
+I got over my fear/hatred of new versions of C++. The CppCoreGuidelines talk by the man himself certainly helped, but what did it was when I realized that LLVM/Clang can parse C++14/etc and spit out ANSI C :-D.
