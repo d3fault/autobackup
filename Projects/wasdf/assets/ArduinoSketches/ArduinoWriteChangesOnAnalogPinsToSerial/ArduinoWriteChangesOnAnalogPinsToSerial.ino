@@ -1,5 +1,9 @@
 //rewriting the first version of this instead of just removing calibration because I also want to try to not to use pp defines/macros. pure C++ is cleaner and easier to read/modify. aside from that it's just a functionally equivalent rewrite (with the calibration stripped out since that's going to be done on the PC side)
 
+#if (NUM_ANALOG_INPUTS < 10)
+#error "Your board does not support at least 10 analog inputs" //TODOmb: fail gracefully. but don't simply uncomment this, otherwise we will probably have a memory access violation in this code. namely when we try to pull out the "old" sensor value of finger9, but we only allocated (on the stack) an array of size NUM_ANALOG_INPUTS to hold our old sensor values
+#endif
+
 static const int NUM_HANDS = 2;
 static const int NUM_FINGERS_PER_HAND = 5;
 
