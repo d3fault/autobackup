@@ -47,7 +47,7 @@ void Wasdf::startWasdf()
     {
         //TODOreq: read WasdfCalibrationConfiguration out of the settings (or maybe just read values on-demand when needed)
         //m_WasdfCalibrationConfiguration = ;
-        qDebug("Calibration read from settings");
+        emit o("Calibration read from settings");
         startWasdfActualSinceCalibrated();
     }
 }

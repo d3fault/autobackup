@@ -2,6 +2,7 @@
 
 #include <QtSerialPort/QSerialPort>
 #include <QStringList>
+#include <QDebug>
 
 #include "wasdf.h"
 
@@ -24,7 +25,7 @@ WasdfArduino::WasdfArduino(QObject *parent)
     , m_SerialPort(new QSerialPort("/dev/ttyACM0", this)) //TODOreq: be able to choose different serial ports at runtime, MusicFingers has some of this implemented (using ugly defines kek) and some decent ideas such as "use the _one_ containing the string 'arduino'" etc
     , m_SerialPortTextStream(m_SerialPort)
 {
-    m_SerialPort->setBaudRate(QSerialPort::Baud9600); //TODOoptional: QSerialPortInfo supplies a list of "standard baud rates" that the serial port supports
+    m_SerialPort->setBaudRate(QSerialPort::Baud38400);
 }
 void WasdfArduino::openSerialPortIfNotOpen()
 {
@@ -71,12 +72,24 @@ void WasdfArduino::handleSerialPortReadyReadCalibrationMode()
         QString line = m_SerialPortTextStream.readLine();
         //line is simply: "[pinId]:[sensorValue]"
         QStringList lineSplitAtColon = line.split(":");
-        Q_ASSERT(lineSplitAtColon.size() == 2); //TODOmb: instead of these asserts, we should just silently ignore errors? still this is useful for debugging
-        bool stringToIntConvertedOk;
-        int analogPinId = lineSplitAtColon.first().toInt(&stringToIntConvertedOk);
-        Q_ASSERT(stringToIntConvertedOk);
-        int sensorValue = lineSplitAtColon.at(1).toInt(&stringToIntConvertedOk);
-        Q_ASSERT(stringToIntConvertedOk);
+        if(lineSplitAtColon.size() != 2)
+        {
+            qDebug() << "line didn't split evenly into 2 parts:" << line; //TODOmb: use emit v() for verbose or some such instead? in general I don't like to use qDebug/etc in my proper apps
+            continue;
+        }
+        bool convertOk;
+        int analogPinId = lineSplitAtColon.first().toInt(&convertOk);
+        if(!convertOk)
+        {
+            qDebug() << "lhs of colon didn't convert to int:" << line;
+            continue;
+        }
+        int sensorValue = lineSplitAtColon.at(1).toInt(&convertOk);
+        if(!convertOk)
+        {
+            qDebug() << "rhs of colon didn't convert to int:" << line;
+            continue;
+        }
         emit analogPinReadingChangedDuringCalibration(analogPinId, sensorValue);
     }
 }

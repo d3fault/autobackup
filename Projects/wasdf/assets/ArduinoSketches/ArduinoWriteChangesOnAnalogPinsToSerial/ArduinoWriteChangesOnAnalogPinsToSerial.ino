@@ -132,29 +132,48 @@ Hands hands;
 
 void setup()
 {
-    Serial.begin(9600);
+    Serial.begin(38400 /*, SERIAL_8O2 TODOreq: I want to try out "Odd" (that's an oh not a zero in between 8 and 2) parity and 2 stop bits to see if it improves reliability, but I keep getting an error that begin() only takes one argument wtf? maybe I need to upgrade? but it doesn't even look like debian stretch bumped the version at all (except a small patch). the define SERIAL_8O2 does in fact exist, so wtf?*/);
     for(int i = 0; i < NUM_ANALOG_PINS_TOTAL; ++i)
         CalibrationDataOldSensorValues[i] = 0;
     CurrentMode = Mode::DoNothingMode;
     inputCommandString.reserve(512); //TODOreq: ensure command strings never grow beyond 512 bytes
     while(!Serial) ; //wait for serial port to connect. Needed for Leonardo/Micro only. I intentionally put the String::reserve command (and other cmds) in between this and Serial.begin() in case the connect happens asynchronously (idfk tbh, but it might), in which case I may have saved an entire millisecond!!!
 }
+void readAndReportChangedToAnalogPin(int pinId, int indexIntoCalibrationDataOldSensorValues)
+{
+    int oldSensorValue = CalibrationDataOldSensorValues[indexIntoCalibrationDataOldSensorValues];
+    int newSensorValue = analogRead(pinId);
+    if(newSensorValueHasChangedEnoughThatWeWantToReportIt(oldSensorValue, newSensorValue))
+    {
+        Serial.print(pinId);
+        Serial.print(":");
+        Serial.println(newSensorValue);
+        CalibrationDataOldSensorValues[indexIntoCalibrationDataOldSensorValues] = newSensorValue;
+    }
+}
 void calibrationLoop()
 {
+#if 0 //TODOreq: I need to do more research (requiring better internets and psbly IRC) to see if this can be worked out somehow. maybe each board defines it's number of analog pins somewhere and I can use that? In my testing of the following code on my arduino micro I kept seeing either pin 18 (which I think is A0) win 50% of the time and pin 32 win 50% of the time (pin 32 is maybe ground or power of my potentiometer, since the micro doesn't have A15!! idk that's just a guess but both 18 and 32 seemed to move whenever I slid that fucker back and forth). so at least I've found the answer to my question: no in fact the arduino does not report '0' when the requested analog pin DNE :( -- but maybe I can patch it so that it does :)??
+
     //int afterA15 = A0 + NUM_ANALOG_PINS_TOTAL;
     //for(int i = A0, j = 0; i < afterA15; ++i, ++j)
     for(int j = 0, i = A0; j < NUM_ANALOG_PINS_TOTAL; ++j, ++i) //TODOreq: verify that A0 -> A15 is linear and doesn't skip any numbers. basically verify that ++i on A0 gives us A1 and so on all the way to A15 -- otherwise I'll have to hardcode each call to them
     {
-        int oldSensorValue = CalibrationDataOldSensorValues[j];
-        int newSensorValue = analogRead(i);
-        if(newSensorValueHasChangedEnoughThatWeWantToReportIt(oldSensorValue, newSensorValue))
-        {
-            Serial.print(i);
-            Serial.print(":");
-            Serial.println(newSensorValue);
-            CalibrationDataOldSensorValues[j] = newSensorValue;
-        }
+        readAndReportPin(i, j);
     }
+#else
+    //hard-coded arduino-micro specific analog pins xD. well the 10 pins are hardcoded, but at least I'm on the right track for determining on the fly which finger maps to which [of the 10]
+    readAndReportPinOverSerial(A0, 0);
+    readAndReportPinOverSerial(A1, 1);
+    readAndReportPinOverSerial(A2, 2);
+    readAndReportPinOverSerial(A3, 3);
+    readAndReportPinOverSerial(A4, 4);
+    readAndReportPinOverSerial(A5, 5);
+    readAndReportPinOverSerial(A8, 6);
+    readAndReportPinOverSerial(A9, 7);
+    readAndReportPinOverSerial(A10, 8);
+    readAndReportPinOverSerial(A11, 9);
+#endif
 }
 void processInputCommandString()
 {
