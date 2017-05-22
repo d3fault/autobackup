@@ -5,6 +5,7 @@
 
 #include "wasdfarduino.h"
 #include "wasdfcalibrator.h"
+#include "wasdfcalibrationconfigurationsettingsreaderwriter.h"
 
 #define SETTINGS_KEY_IS_CALIBRATED "isCalibrated"
 
@@ -15,16 +16,14 @@ Wasdf::Wasdf(QObject *parent)
     QCoreApplication::setOrganizationName("wasdf organization");
     QCoreApplication::setOrganizationDomain("wasdf.com");
     QCoreApplication::setApplicationName("wasdf");
+    QSettings::setDefaultFormat(QSettings::IniFormat);
 
     connect(m_Arduino, &WasdfArduino::e, this, &Wasdf::e);
 }
 void Wasdf::startWasdfActualSinceCalibrated()
 {
-    emit wasdfFinished(true); //TODOreq: this is only here for testing
-    return;
-
     connect(m_Arduino, &WasdfArduino::fingerMoved, this, &Wasdf::handleFingerMoved);
-    m_Arduino->start(m_Calibration);
+    m_Arduino->start(m_Calibration); //TODOoptimization: once the AtRestPosition or AtRestMinValue/AtRestMinValue stuff is implemented, it would be best if the arduino was told of those values and DIDN'T WRITE TO SERIAL whenever a finger was considered "at rest"... as opposed to us filtering that out on the PC side. the quieter we keep the serial line, the less chance of corruption/errors
 }
 void Wasdf::startWasdf()
 {
@@ -45,8 +44,7 @@ void Wasdf::startWasdf()
     }
     else
     {
-        //TODOreq: read WasdfCalibrationConfiguration out of the settings (or maybe just read values on-demand when needed)
-        //m_WasdfCalibrationConfiguration = ;
+        WasdfCalibrationConfigurationSettingsReaderWriter::readFromSettings(settings, &m_Calibration);
         emit o("Calibration read from settings");
         startWasdfActualSinceCalibrated();
     }
@@ -54,7 +52,8 @@ void Wasdf::startWasdf()
 void Wasdf::handleCalibrationComplete(const WasdfCalibrationConfiguration &calibrationConfiguration)
 {
     m_Calibration = calibrationConfiguration;
-    //TODoreq: write calibrationConfiguration to settings
+    QSettings settings;
+    WasdfCalibrationConfigurationSettingsReaderWriter::writeToSettings(settings, calibrationConfiguration);
     if(!m_Calibrator.isNull())
     {
         disconnect(m_Arduino, &WasdfArduino::analogPinReadingChangedDuringCalibration, m_Calibrator.data(), &WasdfCalibrator::handleAnalogPinReadingChanged);
@@ -65,6 +64,13 @@ void Wasdf::handleCalibrationComplete(const WasdfCalibrationConfiguration &calib
 void Wasdf::handleFingerMoved(Finger finger, int newPosition)
 {
     emit o("Finger '" + fingerEnumToHumanReadableString(finger) + "' moved to position: " + QString::number(newPosition));
+
+
+    //TODOreq: this is only here for testing
+    static int numMovementsReceived = 0;
+    ++numMovementsReceived;
+    if(numMovementsReceived == 2000)
+        emit wasdfFinished(true);
 }
 QString fingerEnumToHumanReadableString(Finger finger)
 {

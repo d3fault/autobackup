@@ -138,7 +138,7 @@ void setup()
     for(int i = 0; i < NUM_ANALOG_INPUTS; ++i)
         CalibrationDataOldSensorValues[i] = 0;
     CurrentMode = Mode::DoNothingMode;
-    inputCommandString.reserve(512); //TODOreq: ensure command strings never grow beyond 512 bytes
+    inputCommandString.reserve(1024); //TODOreq: calculate the max string length and reserve that much (or maybe a little more to be on the safe side). it can be determined because the values only take up so many characters. only thing is maybe the arduino mega 2560x1000 might have 999999999999 analog pins xDDDD, ya know what I mean??
     while(!Serial) ; //wait for serial port to connect. Needed for Leonardo/Micro only. I intentionally put the String::reserve command (and other cmds) in between this and Serial.begin() in case the connect happens asynchronously (idfk tbh, but it might), in which case I may have saved an entire millisecond!!!
 }
 void readAndReportChangesToAnalogPinOverSerial(int pinId, int indexIntoCalibrationDataOldSensorValues)
@@ -155,31 +155,24 @@ void readAndReportChangesToAnalogPinOverSerial(int pinId, int indexIntoCalibrati
 }
 void calibrationLoop()
 {
-#if 1
     for(int j = 0, i = A0; j < NUM_ANALOG_INPUTS; ++j, ++i)
     {
         readAndReportChangesToAnalogPinOverSerial(i, j);
     }
-#else
-    //hard-coded arduino-micro specific analog pins xD. well the 10 pins are hardcoded, but at least I'm on the right track for determining on the fly which finger maps to which [of the 10]
-    readAndReportChangesToAnalogPinOverSerial(A0, 0);
-    readAndReportChangesToAnalogPinOverSerial(A1, 1);
-    readAndReportChangesToAnalogPinOverSerial(A2, 2);
-    readAndReportChangesToAnalogPinOverSerial(A3, 3);
-    readAndReportChangesToAnalogPinOverSerial(A4, 4);
-    readAndReportChangesToAnalogPinOverSerial(A5, 5);
-    readAndReportChangesToAnalogPinOverSerial(A8, 6);
-    readAndReportChangesToAnalogPinOverSerial(A9, 7);
-    readAndReportChangesToAnalogPinOverSerial(A10, 8);
-    readAndReportChangesToAnalogPinOverSerial(A11, 9);
-#endif
 }
 void processInputCommandString()
 {
     if(inputCommandString == "calibrate")
     {
         CurrentMode = Mode::Calibrating;
-        return;
+    }
+    else if(inputCommandString.startsWith("startWithPinToFingerMap:"))
+    {
+        //TODOreq:
+    }
+    else
+    {
+        //TODOreq: blink pin 13 rapidly to indicate an error. longer term should request the command is re-sent
     }
 }
 void loop()
