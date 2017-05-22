@@ -6,6 +6,7 @@
 #include <QHash>
 
 #include "wasdf.h"
+#include "fingeriteratororderedbymostusedfingers.h"
 
 class QTimer;
 
@@ -25,12 +26,14 @@ private:
         WasdfCalibrationFingerConfiguration PinCalibrationData;
     };
 
-    //void calibrateNextFingerAndEmitCalibrationCompleteAfterLastFinger();
+    void calibrateNextFingerAndEmitCalibrationCompleteAfterLastFinger();
+    void calibrateFingerAndThenCallCalibrateNextFingerAgain(Finger fingerToCalibrate);
     PinNumDetectionAndCalibrationData getPinCalibrationDataWithTheFurthestAccumulatedDistanceTraveled();
 
     QHash<int /*pin number on arduino*/, PinNumDetectionAndCalibrationData> m_AccumulatedDistancesEachAnalogPinMoved_ByAnalogPinId;
     QTimer *m_Timer;
-    //Finger m_FingerCurrentlyBeingCalibrated;
+    FingerIteratorOrderedByMostUsedFingers m_OrderedFingerIterator;
+    Finger m_FingerCurrentlyBeingCalibrated;
     WasdfCalibrationConfiguration m_Calibration;
 signals:
     void o(const QString &msg);
