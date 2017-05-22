@@ -12,7 +12,7 @@ WasdfCalibrator::WasdfCalibrator(QObject *parent)
     , m_Timer(new QTimer(this))
     //, m_FingerCurrentlyBeingCalibrated(Finger0)
 {
-    m_Timer->setInterval(3000);
+    m_Timer->setInterval(5000);
     m_Timer->setSingleShot(true);
     connect(m_Timer, &QTimer::timeout, this, &WasdfCalibrator::handleTimerTimedOut);
 }

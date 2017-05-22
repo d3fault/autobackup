@@ -20,6 +20,9 @@ Wasdf::Wasdf(QObject *parent)
 }
 void Wasdf::startWasdfActualSinceCalibrated()
 {
+    emit wasdfFinished(true); //TODOreq: this is only here for testing
+    return;
+
     connect(m_Arduino, &WasdfArduino::fingerMoved, this, &Wasdf::handleFingerMoved);
     m_Arduino->start(m_Calibration);
 }
@@ -62,7 +65,6 @@ void Wasdf::handleCalibrationComplete(const WasdfCalibrationConfiguration &calib
 void Wasdf::handleFingerMoved(Finger finger, int newPosition)
 {
     emit o("Finger '" + fingerEnumToHumanReadableString(finger) + "' moved to position: " + QString::number(newPosition));
-    emit wasdfFinished(true); //TODOreq: this is only here for testing
 }
 QString fingerEnumToHumanReadableString(Finger finger)
 {

@@ -1,6 +1,6 @@
 //rewriting the first version of this instead of just removing calibration because I also want to try to not to use pp defines/macros. pure C++ is cleaner and easier to read/modify. aside from that it's just a functionally equivalent rewrite (with the calibration stripped out since that's going to be done on the PC side)
 
-static const int NUM_ANALOG_PINS_TOTAL = 15; //TODOreq: find a good maximum. maybe use whatever my mega 2560 uses (and cross fingers that boards with fewer analog pins don't crash (could always patch arduino sauce so it returns 0 when requested pin DNE))
+static const int NUM_ANALOG_PINS_TOTAL = 16; //TODOreq: find a good maximum. mega 2560 has 16. (cross fingers that boards with fewer analog pins don't crash (could always patch arduino sauce so it returns 0 when requested pin DNE))
 
 static const int NUM_HANDS = 2;
 static const int NUM_FINGERS_PER_HAND = 5;
@@ -94,7 +94,7 @@ struct Hand
     Finger_aka_AnalogPin Fingers[NUM_FINGERS_PER_HAND];
 };
 
-struct Hands
+struct Hands //eh hands class should have just contained 10 fingers (instead of 2 hands each containing 5 fingers), but not about to un-code it xD
 {
     explicit Hands()
     {
@@ -141,7 +141,9 @@ void setup()
 }
 void calibrationLoop()
 {
-    for(int i = A0, j = 0; i < NUM_ANALOG_PINS_TOTAL; ++i, ++j)
+    //int afterA15 = A0 + NUM_ANALOG_PINS_TOTAL;
+    //for(int i = A0, j = 0; i < afterA15; ++i, ++j)
+    for(int j = 0, i = A0; j < NUM_ANALOG_PINS_TOTAL; ++j, ++i) //TODOreq: verify that A0 -> A15 is linear and doesn't skip any numbers. basically verify that ++i on A0 gives us A1 and so on all the way to A15 -- otherwise I'll have to hardcode each call to them
     {
         int oldSensorValue = CalibrationDataOldSensorValues[j];
         int newSensorValue = analogRead(i);
@@ -154,8 +156,27 @@ void calibrationLoop()
         }
     }
 }
+void processInputCommandString()
+{
+    if(inputCommandString == "calibrate")
+    {
+        CurrentMode = Mode::Calibrating;
+        return;
+    }
+}
 void loop()
 {
+    while(Serial.available())
+    {
+        char inChar = (char)Serial.read();
+        if(inChar == '\n')
+        {
+            processInputCommandString();
+            inputCommandString = "";
+        }
+        else
+            inputCommandString += inChar;
+    }
     switch(CurrentMode) //TODOreq: this switch case doesn't support simultaneous 10-fingers and keyboardMouse modes
     {
         case Mode::Sending10FingerMovementsMode:
@@ -173,25 +194,4 @@ void loop()
     }
 
     delay(2); //TODOreq: this might fuck up MOUSE MOVEMENT, everything else should be fine with it tho
-}
-void processInputCommandString()
-{
-    if(inputCommandString == "calibrate")
-    {
-        CurrentMode = Mode::Calibrating;
-        return;
-    }
-}
-void serialEvent()
-{
-    while(Serial.available())
-    {
-        char inChar = (char)Serial.read();
-        inputCommandString += inChar;
-        if(inChar == '\n')
-        {
-            processInputCommandString();
-            inputCommandString = "";
-        }
-    }
 }

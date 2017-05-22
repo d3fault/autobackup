@@ -21,14 +21,14 @@
 //TODOreq: the arduino could persist calibration/configuration to it's EEPROM, which would allow users to take their arduino around to various computers and use them without needing to recalibrate. The protocol would need to be more robust (we first query the arduino to see if it has a stored conf), but it wouldn't be too difficult to implement
 WasdfArduino::WasdfArduino(QObject *parent)
     : QObject(parent)
-    , m_SerialPort(new QSerialPort(this))
+    , m_SerialPort(new QSerialPort("/dev/ttyACM0", this)) //TODOreq: be able to choose different serial ports at runtime, MusicFingers has some of this implemented (using ugly defines kek) and some decent ideas such as "use the _one_ containing the string 'arduino'" etc
     , m_SerialPortTextStream(m_SerialPort)
 {
     m_SerialPort->setBaudRate(QSerialPort::Baud9600); //TODOoptional: QSerialPortInfo supplies a list of "standard baud rates" that the serial port supports
 }
 void WasdfArduino::openSerialPortIfNotOpen()
 {
-    if(m_SerialPort->isOpen())
+    if(!m_SerialPort->isOpen())
     {
         if(!m_SerialPort->open(QIODevice::ReadWrite /*QIODevice::Text <-- apparently not supported, but I guess it's text by default? <- nope it's binary but eh ascii isn't so hard to work with anyways. my protocol will be pure ascii*/))
         {
@@ -36,6 +36,11 @@ void WasdfArduino::openSerialPortIfNotOpen()
             //TODOreq: error out, return false or emit finished(false) etc
         }
     }
+}
+void WasdfArduino::sendCommandToArduino(const QString &command)
+{
+    m_SerialPortTextStream << command << "\n"; //don't use endl, that uses \r\n sometimes I think but might be wrong since the QIODevice isn't using QIODevice::Text? fuggit
+    m_SerialPortTextStream.flush();
 }
 void WasdfArduino::startInCalibrationMode()
 {
@@ -46,8 +51,7 @@ void WasdfArduino::startInCalibrationMode()
 
     openSerialPortIfNotOpen();
 
-    m_SerialPortTextStream << "calibrate" << endl; //TODOmb: these strings should be in a shared header, shared between the arduino sketch and this sauce
-    m_SerialPortTextStream.flush(); //TODOmb: encapsulate writes so I can't forget to flush (and psbly an endl)
+    sendCommandToArduino("calibrate"); //TODOreq: these strings should be in a shared header, shared between the arduino sketch and this sauce
 }
 void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
 {
@@ -58,8 +62,7 @@ void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
 
     openSerialPortIfNotOpen();
 
-    m_SerialPortTextStream << "start[BLAH:MAP:0:5:A7:ETC:TODOreq]" << endl;
-    m_SerialPortTextStream.flush();
+    //TODOreq: sendCommandToArduino("start[BLAH:MAP:0:5:A7:ETC:TODOreq]");
 }
 void WasdfArduino::handleSerialPortReadyReadCalibrationMode()
 {
