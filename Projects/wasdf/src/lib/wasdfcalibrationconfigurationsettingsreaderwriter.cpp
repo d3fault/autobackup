@@ -19,7 +19,7 @@ void WasdfCalibrationConfigurationSettingsReaderWriter::writeToSettings(QSetting
         settings.setArrayIndex(i);
         it.next();
 
-        settings.setValue(WasdfCalibrationConfigurationSettingsReaderWriter_FINGER_KEY, /*fingerEnumToHumanReadableString*/static_cast<int>(it.key()));
+        settings.setValue(WasdfCalibrationConfigurationSettingsReaderWriter_FINGER_KEY, /*fingerEnumToHumanReadableString*/static_cast<int>(it.key())); //I thought (while laying in bed last night) about maybe using this int-converted value in place of "i" for the settings array, but then I'd have to convert the hash to a map before inserting (not hard at all!) and idk it just might lead to problems if for example a "FingerNegative1_InvalidFinger" ever gets introduced. it's also why I changed various static_casts to int instead of uint. you never know what design changes you'll make in the future
         settings.setValue(WasdfCalibrationConfigurationSettingsReaderWriter_KEY_ANALOG_PIN_ON_ARDUINO, it.value().AnalogPinIdOnArduino);
         settings.setValue(WasdfCalibrationConfigurationSettingsReaderWriter_KEY_MINVALUE, it.value().MinValue);
         settings.setValue(WasdfCalibrationConfigurationSettingsReaderWriter_KEY_MAXVALUE, it.value().MaxValue);
