@@ -79,7 +79,7 @@ void WasdfCalibrator::handleTimerTimedOut()
 
     PinNumDetectionAndCalibrationData pinCalibrationDataOfFingerCurrentlyBeingCalibrated = getPinCalibrationDataWithTheFurthestAccumulatedDistanceTraveled();
 
-    m_AtRestDetector.weJustFinishedCalibratingThisAnalogPinId(pinCalibrationDataOfFingerCurrentlyBeingCalibrated.PinCalibrationData.AnalogPinIdOnArduino);
+    m_AtRestDetector.weJustFinishedCalibratingThisAnalogPinId(m_FingerCurrentlyBeingCalibrated, pinCalibrationDataOfFingerCurrentlyBeingCalibrated.PinCalibrationData.AnalogPinIdOnArduino);
 
     m_Calibration.insert(m_FingerCurrentlyBeingCalibrated, pinCalibrationDataOfFingerCurrentlyBeingCalibrated.PinCalibrationData);
 
