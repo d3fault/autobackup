@@ -4,10 +4,9 @@
 #include <QMutableHashIterator>
 
 //TODOmb: like I'm pushing this functionality into it's own class, so too should I (probably/maybe, but also maybe not [yet] if it's too much work to refactor xD) push the "analog pin detection" and "normal use range detection" into their own classes. Additionally, all calibration related classes should go in a ./calibration subfolder. The WasdfCalibrator should simply hasA these 3 types of calibration 'mode' thingies (for lack of a better word)
-//TODOreq: use assloads of typedefs to make the nested templates easier to understand
 void WasdfCalibrationAtRestDetector::addAnalogPinPosition(int analogPinId, int newPinPosition)
 {
-    m_CurrentAllAnalogPinPositions_ByAnalogPinId.value(analogPinId, QSharedPointer<QList<int> >(new QList<int /*sensor value*/>()))->append(newPinPosition);
+    m_CurrentAllAnalogPinPositions_ByAnalogPinId.value(analogPinId, SharedPointerToListOfIntSensorValues(new QList<int /*sensor value*/>()))->append(newPinPosition);
 }
 void WasdfCalibrationAtRestDetector::weJustFinishedCalibratingThisAnalogPinId(Finger fingerWeJustFinishedCalibrating, int analogPinWeJustFinishedCalibrating)
 {
@@ -17,12 +16,12 @@ void WasdfCalibrationAtRestDetector::weJustFinishedCalibratingThisAnalogPinId(Fi
     //now discard all position data for fingers on the same hand <---- NVM. although we know the finger that was just calibrated, we have no idea (yet) what finger the rest of them are (ok that's only partially true. as we get nearer and nearer to the last finger we know more and more fingers. still, simpler to discard "same hand" values at the very end in finalize, when we know ALL fingers)
 
     //1) average all the remaining at rest positions gathered in the last 5 seconds
-    QHashIterator<int /*pin number on arduino*/, QSharedPointer<QList<int /*sensor value*/> > > it(m_CurrentAllAnalogPinPositions_ByAnalogPinId);
+    QHashIterator<int /*pin number on arduino*/, SharedPointerToListOfIntSensorValues> it(m_CurrentAllAnalogPinPositions_ByAnalogPinId);
     while(it.hasNext())
     {
         it.next();
         int average = calculateAverage(*(it.value().data()));
-        m_AveragedAtRestValuesGatheredWhileCalibratingFingers_ByFinger.value(fingerWeJustFinishedCalibrating, QSharedPointer<QList<QPair<int /*pin number on arduino*/, int /*sensor value*/> > >(new QList<QPair<int,int> >()))->append(qMakePair(it.key(), average));
+        m_AveragedAtRestValuesGatheredWhileCalibratingFingers_ByFinger.value(fingerWeJustFinishedCalibrating, SharedPointerToListOf_PinNumbersAndSensorValues(new QList<PinNumberAndSensorValue>()))->append(PinNumberAndSensorValue(it.key(), average));
     }
 
     //2) clear the 'current' lists for the next 5 seconds of calibration (assuming there will be more, but it doesn't matter if there isn't)
