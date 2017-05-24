@@ -62,6 +62,7 @@ struct WasdfCalibrationFingerConfiguration
 class WasdfCalibrationConfiguration : public QHash<Finger, WasdfCalibrationFingerConfiguration>
 {
 public:
+    static void calculateAtRestRange(const WasdfCalibrationFingerConfiguration &fingerConfiguration, int *out_AtRestMin, int *out_AtRestMax);
     bool hasFingerWithAnalogPinId(int analogPinId) const;
     Finger getFingerByAnalogPinId(int analogPinId) const;
 };

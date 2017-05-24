@@ -66,6 +66,39 @@ void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
 
     openSerialPortIfNotOpen();
 
+#if 1
+    QHashIterator<Finger, WasdfCalibrationFingerConfiguration> it(calibrationConfig);
+    QString startCommand("startReportingThesePinsExcludingTheirAtRestRanges:");
+    bool first = true;
+    while(it.hasNext())
+    {
+        it.next();
+        if(!first)
+            startCommand.append(";"); //TODOreq: semi-colon delim in shared header
+        first = false;
+        //startCommand.append(static_cast<int>(it.key())); //the arduino doesn't give a fuck (at this point in my design. might change in the future) which analog pins correspond to which fingers, we (the PC) simply tell it which 10 pins to report (and which ranges of values to ignore for each of those 10 pins)
+        //startCommand.append(",");
+        startCommand.append(it.value().AnalogPinIdOnArduino);
+        startCommand.append(","); //TODOreq: comma delim in shared header
+
+        int atRestMin, atRestMax;
+        WasdfCalibrationConfiguration::calculateAtRestRange(it.value(), &atRestMin, &atRestMax);
+
+        startCommand.append(atRestMin);
+        startCommand.append(",");
+        startCommand.append(atRestMax);
+    }
+
+    //example start command:
+    //startWithPinAtRestRanges:18,0,1023;19,1,1022;28,50,950;...
+    //18 = analog pin id
+    //0 = min at rest value
+    //1023 = max at rest value
+    //repeat for each finger, separated by semicolon
+    //note: the analog pins can be sent in any order. the semicolons separate each finger and are in order of finger id (0-9)
+
+#else //There's really only ONE reason to send the finger map to the arduino: to store it in it's eeprom. that should be implemented at a later date, on a rainy day. What we SHOULD send to the arduino during the 'start' command, however, is the "at rest range". Sure I could send the finger map over and have the arduino do the map/constrain calls, but the PC has assloads more processing power (and spare lines of code) than the arduino so it should be the one to do it. Sending over the "at rest range" is a good idea though because it will keep the Serial line much quieter (and dead silent if there's finger no movement on any of the 10 fingers). TODOreq: "at rest range", if calculated using a hardcoded percentage (~10%), might cover the entire range of their normal min/max usage! so NO movements would ever be detected. that 10% needs to be "10% of their calibrated range", not "10% of the total range (0-1023)". ----The _FOLLOWING_ ifdef'd out code sends over the finger map (but is missing the "at rest range" stuff), but the _ABOVE_ code sends over the "at rest range" stuff only---- (the amount of values sent over is the same so they appear almost identical (and indeed were copy/paste), but the values sent are completely different)
+
     QHashIterator<Finger, WasdfCalibrationFingerConfiguration> it(calibrationConfig);
     QString startCommand("startWithPinToFingerMap:");
     bool first = true;
@@ -91,6 +124,7 @@ void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
     //1023 = max value
     //repeat for each finger, separated by semicolon
     //note: the analog pins can be sent in any order. the semicolons separate each finger and are in order of finger id (0-9)
+#endif
 
     //TODOreq: on arduino side we do splitByColon then splitBySemiColon then splitByComma
 
@@ -129,6 +163,10 @@ void WasdfArduino::handleSerialPortReadyReadCalibrationMode()
             qDebug() << "sensor value on rhs of colon was out of bounds:" << line;
             continue;
         }
+
+        //should I map the raw sensor values to the calibrated range here? should wasdf do it when it receives the signal emitted below? I think it kind of makes sense to do it right here, because Wasdf called m_Arduino.start(m_Calibration) ... so it makes sense that m_Arduino (this class) reports mapped/calibrated values
+        //TODOreq: map the sensor value to 0-1023. wait no map it to their min/max range, wait no it's a 2 step process, map it to their min/max range and then map that to 0-1023? ehh need to think a little harder on this xD. there's also "constrain" to consider. also the above error checking needs to be modified accordingly
+
         emit analogPinReadingChangedDuringCalibration(analogPinId, sensorValue);
     }
 }

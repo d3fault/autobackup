@@ -166,13 +166,16 @@ void processInputCommandString()
     {
         CurrentMode = Mode::Calibrating;
     }
-    else if(inputCommandString.startsWith("startWithPinToFingerMap:"))
+    else if(inputCommandString.startsWith("startReportingThesePinsExcludingTheirAtRestRanges:"))
     {
         //TODOreq:
+        //where the fuck is my String.split!?!? aww come pls don't make me use indexOf :(
+        //*cough* json *cough*
+
     }
     else
     {
-        //TODOreq: blink pin 13 rapidly to indicate an error. longer term should request the command is re-sent
+        //TODOreq: blink pin 13 rapidly to indicate an error. longer term should request the command is re-sent. note: even if the checksum succeeds we still might get an invalid command (checksums aren't perfect), we we'd STILL want to request the command is re-sent. if however 50 invalid commands are received IN A ROW, then we would want to go into blink-13-error-mode as that indicates a bug
     }
 }
 void loop()
