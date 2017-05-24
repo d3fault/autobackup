@@ -14,21 +14,21 @@ public:
     void weJustFinishedCalibratingThisAnalogPinId(Finger fingerWeJustFinishedCalibrating, int analogPinWeJustFinishedCalibrating);
     void finalize(WasdfCalibrationConfiguration *out_Calibration);
 private:
-    struct PinNumberAndSensorValue
+    struct PinNumberAndAtRestValue
     {
-        PinNumberAndSensorValue(int pinNumber, int sensorValue)
+        PinNumberAndAtRestValue(int pinNumber, int atRestValue)
             : PinNumber(pinNumber)
-            , SensorValue(sensorValue)
+            , AtRestValue(atRestValue)
         { }
         int PinNumber;
-        int SensorValue;
+        int AtRestValue;
     };
-    typedef QSharedPointer<QList<int/*sensor value*/> > SharedPointerToListOfIntSensorValues;
-    typedef QSharedPointer<QList<PinNumberAndSensorValue> > SharedPointerToListOf_PinNumbersAndSensorValues;
+    typedef QSharedPointer<QList<int/*at rest value*/> > SharedPointerToListOfIntAtRestValues;
+    typedef QSharedPointer<QList<PinNumberAndAtRestValue> > SharedPointerToListOf_PinNumbersAndAtRestValues;
 
     int calculateAverage(const QList<int> &numbersToAverageTogether);
-    QHash<int /*pin number on arduino*/, SharedPointerToListOfIntSensorValues> m_CurrentAllAnalogPinPositions_ByAnalogPinId;
-    QHash<Finger /*finger that was being calibrated when we gathered these averages*/, SharedPointerToListOf_PinNumbersAndSensorValues> m_AveragedAtRestValuesGatheredWhileCalibratingFingers_ByFinger;
+    QHash<int /*pin number on arduino*/, SharedPointerToListOfIntAtRestValues> m_CurrentAllAnalogPinPositions_ByAnalogPinId;
+    QHash<Finger /*finger that was being calibrated when we gathered these averages*/, SharedPointerToListOf_PinNumbersAndAtRestValues> m_AveragedAtRestValuesGatheredWhileCalibratingFingers_ByFinger;
 };
 
 #endif // WASDFCALIBRATIONATRESTDETECTOR_H

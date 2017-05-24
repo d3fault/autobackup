@@ -59,13 +59,19 @@ struct WasdfCalibrationFingerConfiguration
     //int AtRestMaxValue;
 };
 
-typedef QHash<Finger, WasdfCalibrationFingerConfiguration> WasdfCalibrationConfiguration;
+class WasdfCalibrationConfiguration : public QHash<Finger, WasdfCalibrationFingerConfiguration>
+{
+public:
+    bool hasFingerWithAnalogPinId(int analogPinId) const;
+    Finger getFingerByAnalogPinId(int analogPinId) const;
+};
 
 class Wasdf : public QObject
 {
     Q_OBJECT
 public:
     explicit Wasdf(QObject *parent = 0);
+    static bool fingerIsLeftHand(Finger finger);
 private:
     void startWasdfActualSinceCalibrated();
 

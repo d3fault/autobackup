@@ -20,6 +20,28 @@ Wasdf::Wasdf(QObject *parent)
 
     connect(m_Arduino, &WasdfArduino::e, this, &Wasdf::e);
 }
+bool Wasdf::fingerIsLeftHand(Finger finger)
+{
+    switch(finger)
+    {
+        case Finger::LeftPinky_Finger0:
+        case Finger::LeftRing_Finger1:
+        case Finger::LeftMiddle_Finger2:
+        case Finger::LeftIndex_Finger3:
+        case Finger::LeftThumb_Finger4:
+            return true;
+        break;
+
+        case Finger::RightThumb_Finger5:
+        case Finger::RightIndex_Finger6:
+        case Finger::RightMiddle_Finger7:
+        case Finger::RightRing_Finger8:
+        case Finger::RightPinky_Finger9:
+            return false;
+        break;
+    }
+    return true; //shouldn't (won't) get here
+}
 void Wasdf::startWasdfActualSinceCalibrated()
 {
     connect(m_Arduino, &WasdfArduino::fingerMoved, this, &Wasdf::handleFingerMoved);
@@ -109,4 +131,29 @@ QString fingerEnumToHumanReadableString(Finger finger)
         break;
     }
     return "#error finger#"; //should (will) never get here
+}
+bool WasdfCalibrationConfiguration::hasFingerWithAnalogPinId(int analogPinId) const
+{
+    QHashIterator<Finger, WasdfCalibrationFingerConfiguration> it(*this);
+    while(it.hasNext())
+    {
+        it.next();
+        if(it.value().AnalogPinIdOnArduino == analogPinId)
+            return true;
+    }
+    return false;
+}
+Finger WasdfCalibrationConfiguration::getFingerByAnalogPinId(int analogPinId) const
+{
+    //NOTE: a finger with that analog pin id MUST exist or the program crashes xD. use hasFingerWithAnalogPinId() first
+
+    QHashIterator<Finger, WasdfCalibrationFingerConfiguration> it(*this);
+    while(it.hasNext())
+    {
+        it.next();
+        if(it.value().AnalogPinIdOnArduino == analogPinId)
+            return it.key();
+    }
+    qFatal("WasdfCalibrationConfiguration::getFingerByAnalogPinId called with invalid pinId. make sure it exists first by calling WasdfCalibrationConfiguration::hasFingerWithAnalogPinId");
+    return Finger::Finger0_LeftPinky; //won't get here
 }
