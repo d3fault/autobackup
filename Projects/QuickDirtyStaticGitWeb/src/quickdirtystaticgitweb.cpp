@@ -638,12 +638,12 @@ QString QuickDirtyStaticGitWeb::cssStyleTag()
 }
 QString QuickDirtyStaticGitWeb::bodyHeader()
 {
-    QString ret("<body>\n<center><a href='/index.html'>Home</a> <a href='/archive.html'>Archive</a> <a href='https://github.com/d3faultdotxbe/autobackup'>Code</a> <a href='/about.html'>About</a></center>\n<br />\n");
+    QString ret("<body>\n<center><a href='/index.html'>Home</a> <a href='/archive.html'>Archive</a> <a href='https://github.com/d3fault/autobackup'>Code</a> <a href='/about.html'>About</a></center>\n<br />\n");
     return ret;
 }
 QString QuickDirtyStaticGitWeb::bodyFooter()
 {
-    QString ret("<br />\n<center>Download my brain: <a href='https://github.com/d3faultdotxbe/binaryMeta/raw/master/d3faults.brain.torrent'>Torrent</a><br />\n");
+    QString ret("<br />\n<center>This site is <a href='https://github.com/d3fault/autobackup/tree/master/Projects/QuickDirtyStaticGitWeb/src'>Open Source</a><br />\nDownload my brain: <a href='https://github.com/d3fault/binaryMeta/raw/master/d3faults.brain.torrent'>Torrent</a><br />\n");
     ret.append("Bitcoin: 1FwZENuqEHHNCAz4fiWbJWSknV4BhWLuYm</center></body></html>");
     return ret;
 }
