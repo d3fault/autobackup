@@ -1,8 +1,7 @@
 #!/bin/bash
 exit 1
 
-#TODOreq: implement it
-#For doing "unattended upgrades" on a remote server, the following strategy can be used (note: I am aware debian has an unattended-upgrades package, but I don't trust it -- wtf does it do when an upgrade asks me a question? how could that package possibly know my answer?)
+#For doing "unattended upgrades" on a remote server, the following strategy is used (note: I am aware debian has an unattended-upgrades package, but I don't trust it -- wtf does it do when an upgrade asks me a question? how could that package possibly know my answer?)
 
 #0) A tmux session is launched as root on the remote server
 #1) A while true loop in bash, sleeping ~24 hours at the end of each iteration
@@ -17,3 +16,18 @@ exit 1
 
 #TODOmb: instead of running once every 24 hours, run on an event: whenever a DSA is posted. all I'd have to do is subscribe to the mailing list :). I'm not sure if backports has it's own DSA mailing list, it might (and don't backports get upgraded differently anyways (by specifying install again? I forget)) -- doing this would [probably] be less bandwidth wasteful (might be more wasteful xD) and would [definitely] pull in security patches MUCH faster
 #TODOoptimization: optimization of above comment^ ... I could parse the relevant packages from the DSA and then determine (systematically) if it even affects me (or my dependencies). I'm not sure exactly how to do that (apt and/or dpkg magic), but I'm 99% sure it's possible. This would cause me to only ever use bandwidth when I need it (aside from polling an email server a bunch LoLoL (or being an email server (fuck that..... but maybe)))
+
+while :
+do
+    #TODOreq: get pid of process launched in background. for now fuck it, killall works
+    ./sleepFor45minsThenEmailAdminThenPause.sh > /dev/null 2>&1 & # no point in putting the contents of that simple script here, since the "email admin" part will be server-specific (and I also don't know a/the command to do it yet). but the first line will be "sleep 2700" (45 mins)
+
+    apt-get update
+    apt-get upgrade -y
+
+    #if there are testing/sid packages installed, to "upgrade" those you'd need to do an "apt-get install -t testing-or-sid package1 package2 etc" here
+
+    killall sleepFor45minsThenEmailAdminThenPause.sh
+    echo "Sleeping for a day"
+    sleep 86400 #24 hours
+done
