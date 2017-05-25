@@ -5117,11 +5117,11 @@ Projects/QuickDirtyStaticGitWeb/:1454466181
 Projects/QuickDirtyStaticGitWeb/design/:1457815076
 Projects/QuickDirtyStaticGitWeb/design/home.page.choose.your.content.catgory.shiz.txt:1457815076
 Projects/QuickDirtyStaticGitWeb/design/some.improvements.txt:1454715632
-Projects/QuickDirtyStaticGitWeb/src/:1454903933
+Projects/QuickDirtyStaticGitWeb/src/:1495687465
 Projects/QuickDirtyStaticGitWeb/src/QuickDirtyStaticGitWebCli.pro:1454466807
 Projects/QuickDirtyStaticGitWeb/src/main.cpp:1454107041
-Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitweb.cpp:1455510976
-Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitweb.h:1454903904
+Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitweb.cpp:1495687400
+Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitweb.h:1495687209
 Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitwebcli.cpp:1454107568
 Projects/QuickDirtyStaticGitWeb/src/quickdirtystaticgitwebcli.h:1454107534
 Projects/RecursiveFileStringReplaceRenamer/:1388246494
@@ -6430,7 +6430,7 @@ scripts/best.rsync.command.txt:1427098358
 scripts/cleanAptEtc.sh:1350618598
 scripts/cmd.to.make.torrent.with.lots.of.relevant.trackers.txt:1426427907
 scripts/copy.ldd.dependencies.automatically.woot.txt:1442694424
-scripts/d3faults.superior.unattended-upgrades.sh:1495684771
+scripts/d3faults.superior.unattended-upgrades.sh:1495685149
 scripts/debian.squeeze.dell.mini.9.post.install.instructions.txt:1368042665
 scripts/dedicated.server.domain.name.associating.txt:1409246698
 scripts/design.for.new.auto-commit.infrastructure.that.is.basic.incremement.of.current.auto-commit.but.nowhere.near.what.i.want.ultimately.txt:1343536975

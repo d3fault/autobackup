@@ -20,7 +20,7 @@ exit 1
 while :
 do
     #TODOreq: get pid of process launched in background. for now fuck it, killall works
-    ./sleepFor45minsThenEmailAdminThenPause.sh > /dev/null 2>&1 & # no point in putting the contents of that simple script here, since the "email admin" part will be server-specific (and I also don't know a/the command to do it yet). but the first line will be "sleep 2700" (45 mins)
+    ./sleepFor45minsThenEmailAdminThenPause.sh > /dev/null 2>&1 & # no point in putting the contents of that simple script here, since the "email admin" part will be server-specific (and I also don't know a/the command to do it yet ("sendemail" sounds promising xD)). but the first line will be "sleep 2700" (45 mins)
 
     apt-get update
     apt-get upgrade -y

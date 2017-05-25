@@ -29,6 +29,7 @@ typedef QScopedPointer<QuickDirtyStaticGitWebResultEmitter> ScopedQuickDirtyStat
 
 class QProcess;
 class ArchiveHtmls;
+class QDateTime;
 
 class QuickDirtyStaticGitWeb : public QObject
 {
@@ -55,6 +56,7 @@ private:
     QPair<bool, QString> getHeadCommitId();
     static inline QString diffFileName(const QString &diffFromCommitId, const QString &diffToCommitId) { return "diff/" + diffFromCommitId + ".." + diffToCommitId; }
     QString createdFileHtml(const QString &htmlEncodedFilePath, qint64 fileTimestamp/*, const QString &unencodedFilePath*/);
+    static void setDateTimeToTimezoneOfWhereILive(QDateTime *dateTimeWithTimezoneOfWhereILiveNotWhereTheFuckingServerIsLocated);
     QString modifiedFileHtml(const QString &diffHtmlFilePath, const QString &htmlEncodedFilePath, qint64 modificationTimestamp);
     bool ensureAllParentDirectoriesExistInTempPlaintextDirMakingThemIfNeeded(const QString &filePathOf_FILE_notDir);
     bool ensureAllParentDirectoriesExistMakingThemIfNeeded(const QString &filePathOf_FILE_notDir);

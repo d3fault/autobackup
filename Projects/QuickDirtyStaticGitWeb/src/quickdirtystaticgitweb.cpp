@@ -5,6 +5,7 @@
 #include <QFileInfo>
 #include <QTextStream>
 #include <QDateTime>
+#include <QTimeZone>
 #include <QDir>
 #include <QDirIterator>
 
@@ -173,13 +174,21 @@ QString QuickDirtyStaticGitWeb::createdFileHtml(const QString &htmlEncodedFilePa
 //    ret.append("</blockquote>");
     return ret;*/
 }
+void QuickDirtyStaticGitWeb::setDateTimeToTimezoneOfWhereILive(QDateTime *dateTimeWithTimezoneOfWhereILiveNotWhereTheFuckingServerIsLocated)
+{
+    QByteArray desiredTimezoneIanaId("America/Los_Angeles"); //Note: if I move from california to somewhere else, update this
+    if(QTimeZone::isTimeZoneIdAvailable(desiredTimezoneIanaId))
+        dateTimeWithTimezoneOfWhereILiveNotWhereTheFuckingServerIsLocated->setTimeZone(QTimeZone(desiredTimezoneIanaId));
+}
 QString QuickDirtyStaticGitWeb::modifiedFileHtml(const QString &diffHtmlFilePath, const QString &htmlEncodedFilePath, qint64 modificationTimestamp)
 {
 //    QString htmlExt(".html");
 //    QString actualFileName = htmlEncodedFilePath;
 //    if(actualFileName.endsWith(htmlExt))
 //        actualFileName.chop(htmlExt.length());
-    return QString(QDateTime::fromMSecsSinceEpoch(modificationTimestamp*1000).toString(QUICK_DIRTY_STATIC_GIT_WEB_DATETIME_FORMAT_STRING) + " -- d3fault <a href='" + diffHtmlFilePath + "'>" A_STRING_IN_MODIFIED_FILE_HTML_KEK_HACK "='" + htmlEncodedFilePath + ".html'>" + htmlEncodedFilePath + "</a>");
+    QDateTime lastModifiedDateTime = QDateTime::fromMSecsSinceEpoch(modificationTimestamp*1000);
+    setDateTimeToTimezoneOfWhereILive(&lastModifiedDateTime);
+    return QString(lastModifiedDateTime.toString(QUICK_DIRTY_STATIC_GIT_WEB_DATETIME_FORMAT_STRING) + " -- d3fault <a href='" + diffHtmlFilePath + "'>" A_STRING_IN_MODIFIED_FILE_HTML_KEK_HACK "='" + htmlEncodedFilePath + ".html'>" + htmlEncodedFilePath + "</a>");
 }
 bool QuickDirtyStaticGitWeb::ensureAllParentDirectoriesExistInTempPlaintextDirMakingThemIfNeeded(const QString &filePathOf_FILE_notDir)
 {
@@ -281,7 +290,9 @@ bool QuickDirtyStaticGitWeb::rewriteStaleArchiveHtmls(ArchiveHtmls *archiveHtmls
                 QString htmlExt(".html");
                 if(actualFilename.endsWith(".html"))
                     actualFilename.chop(htmlExt.length());
-                archiveMonthHtmlFileTextStream << "<tr class='" + QString(even ? "d0" : "d1") + "'><td>" << QDateTime::fromMSecsSinceEpoch(monthEntriesIterator.key() * 1000).toString(QUICK_DIRTY_STATIC_GIT_WEB_DATETIME_FORMAT_STRING) << " -- " << "<a href='" << htmlEscapedPath << "'>" << actualFilename << "</a></td></tr>\n";
+                QDateTime lastModifiedDateTime = QDateTime::fromMSecsSinceEpoch(monthEntriesIterator.key() * 1000);
+                setDateTimeToTimezoneOfWhereILive(&lastModifiedDateTime);
+                archiveMonthHtmlFileTextStream << "<tr class='" + QString(even ? "d0" : "d1") + "'><td>" << lastModifiedDateTime.toString(QUICK_DIRTY_STATIC_GIT_WEB_DATETIME_FORMAT_STRING) << " -- " << "<a href='" << htmlEscapedPath << "'>" << actualFilename << "</a></td></tr>\n";
                 even = !even;
             }
             archiveMonthHtmlFileTextStream << "</table></center>";
@@ -1365,7 +1376,9 @@ void QuickDirtyStaticGitWeb::generateStaticGitWeb(const QString &sourceInputRepo
             QString pathHtmlEscapedActualFileName = indexHtmlEntry.first.toHtmlEscaped();
             QString pathHtmlEscaped = pathHtmlEscapedActualFileName + ".html";
             QFileInfo theHtmlFileInfo = m_DestinationOutputStaticGitWebRepo + indexHtmlEntry.first + ".html";
-            tehHtmlz.append(theHtmlFileInfo.lastModified().toString(QUICK_DIRTY_STATIC_GIT_WEB_DATETIME_FORMAT_STRING) + " -- d3fault created the file: <a href='" + pathHtmlEscaped + "'>" + pathHtmlEscapedActualFileName + "</a><br /><pre><blockquote cite='" + pathHtmlEscaped + "'>");
+            QDateTime lastModifiedDateTime = theHtmlFileInfo.lastModified();
+            setDateTimeToTimezoneOfWhereILive(&lastModifiedDateTime);
+            tehHtmlz.append(lastModifiedDateTime.toString(QUICK_DIRTY_STATIC_GIT_WEB_DATETIME_FORMAT_STRING) + " -- d3fault created the file: <a href='" + pathHtmlEscaped + "'>" + pathHtmlEscapedActualFileName + "</a><br /><pre><blockquote cite='" + pathHtmlEscaped + "'>");
 
             QFile file(appendSlashIfNeeded(m_TempDirOfUnHtmlizedFileContentsOfFilesAddedOrModifiedDuringThisAppSession->path()) + indexHtmlEntry.first);
             if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
