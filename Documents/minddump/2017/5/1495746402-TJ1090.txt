@@ -1,0 +1,6 @@
+re: my comment on qt3d 2.0's new blog post
+"a mode (disabled by default) where smaller images for use in LOD are automatically generated (and cached) by Qt 3D rather than manually by the coder. there could be some compression ratio property to tune it or something. idk maybe you guys have this in the works"
+
+auto-tune would be best, detecting the optimal compression ratio of (least lossy image while knowing, in advance, that we have the cpu/gpu/etc power to compress the images at that compression ratio without there being any slowdown in the 3D scene below theHertzOfTheMonitor (or maybe 60 fps is a better number (it certainly gives us more room to work with), since some hertz are overkill high. obviously user configurable though (directly (in args/settings) and indirectly (through monitor)))
+
+I think I've already written a proof of concept of a "determine num of [arbitrary] actions per second that can be performed in N amount of time" that could be used in realtime for auto-tune/determining-of-that-compression-ratio-property

@@ -45,7 +45,7 @@ bool Wasdf::fingerIsLeftHand(Finger finger)
 void Wasdf::startWasdfActualSinceCalibrated()
 {
     connect(m_Arduino, &WasdfArduino::fingerMoved, this, &Wasdf::handleFingerMoved);
-    m_Arduino->start(m_Calibration); //TODOoptimization: once the AtRestPosition or AtRestMinValue/AtRestMinValue stuff is implemented, it would be best if the arduino was told of those values and DIDN'T WRITE TO SERIAL whenever a finger was considered "at rest"... as opposed to us filtering that out on the PC side. the quieter we keep the serial line, the less chance of corruption/errors
+    //TODOreq: this is only commented out for testing: m_Arduino->start(m_Calibration); //TODOoptimization: once the AtRestPosition or AtRestMinValue/AtRestMinValue stuff is implemented, it would be best if the arduino was told of those values and DIDN'T WRITE TO SERIAL whenever a finger was considered "at rest"... as opposed to us filtering that out on the PC side. the quieter we keep the serial line, the less chance of corruption/errors
 }
 void Wasdf::startWasdf()
 {
@@ -85,14 +85,22 @@ void Wasdf::handleCalibrationComplete(const WasdfCalibrationConfiguration &calib
 }
 void Wasdf::handleFingerMoved(Finger finger, int newPosition)
 {
+    //TODOreq: [BEGIN] this is only here for testing
+    if(finger != Finger::RightIndex_Finger6)
+        return;
+    //TODOreq: [END] this is only here for testing
+
+
     emit o("Finger '" + fingerEnumToHumanReadableString(finger) + "' moved to position: " + QString::number(newPosition));
+    //TODOreq: emit signalForModulesToListenTo(finger, newPosition); //example modules are: MusicCreation, CustomGesturesThatTriggerArbitraryActions /*and by Actions I mean Code*/, and possibly even a KeyboardAndMouse mode if I want to support more Arduino boards. Oh I think there is (at the very least, because long term I definitely want to persist the stream of input (and ideally the "states" of the modules if they can't be fully reproduced using that persisted input stream)) "Keyboard/Mouse" dupe channel mode[le] since idfk how to read the USB keyboard/mouse channel that the Leonardo/micro use. The sketch that calls Mouse.move(to) should be the same sketch that calls Serial.prinln(serializedMouseMoveEvent). They should be only 1 line of code apart and their structures identical (formed one from the other, or at the same time intelligently). This signal should be in the "signals: */private:*/" visibility (non-existent visibility xD (actually you know what there's no bad reason why someone else might want to instantiate Wasdf and then connect to that signal (publicly), so nvm it should NOT be foe-declared-private like this /*private:*/). still I want Wasdf instance to own (be parent of) the modules that the signal I emit are connected to, so yea in that usage of the signal it does make sense that it's "private") of Wasdf
 
 
-    //TODOreq: this is only here for testing
+    //TODOreq: [BEGIN] this is only here for testing
     static int numMovementsReceived = 0;
     ++numMovementsReceived;
     if(numMovementsReceived == 2000)
         emit wasdfFinished(true);
+    //TODOreq: [END] this is only here for testing
 }
 QString fingerEnumToHumanReadableString(Finger finger)
 {
