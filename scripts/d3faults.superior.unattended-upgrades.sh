@@ -1,6 +1,22 @@
 #!/bin/bash
 exit 1
 
+#########Example of sleepFor45minsThenEmailAdminThenPause.sh (skip this for general introduction to script)##
+
+##Note: this example script requires these packages to be installed: apt-get install sendemail libio-socket-ssl-perl libnet-smtp-ssl-perl libnet-ssleay-perl
+##^I'm actually not sure that ibnet-smtp-ssl-perl is required but w/e too lazy to confirm it isn't (and it makes sense that it would be required)
+
+##!/bin/bash
+#sleep 2700
+#sendemail -f root-server-upgrader@example.com -t your-email-address@example.com -u "Server upgrade pending" -m "apt-get upgrade didn't finish in less than 45 minutes, so this most likely means that the upgrade process is waiting for a response to a question it asked you. ssh in as roo and tmux attach to be able to answer the question(s)" -s smtp.example.com:587 -o tls=yes -xu your-email-address@example.com -xp YourPasswordGoesHere
+#pause
+#
+
+#########End Example of sleepFor45minsThenEmailAdminThenPause.sh
+
+
+## General Introduction ##
+
 #For doing "unattended upgrades" on a remote server, the following strategy is used (note: I am aware debian has an unattended-upgrades package, but I don't trust it -- wtf does it do when an upgrade asks me a question? how could that package possibly know my answer?)
 
 #0) A tmux session is launched as root on the remote server
@@ -19,15 +35,25 @@ exit 1
 
 while :
 do
-    #TODOreq: get pid of process launched in background. for now fuck it, killall works
-    ./sleepFor45minsThenEmailAdminThenPause.sh > /dev/null 2>&1 & # no point in putting the contents of that simple script here, since the "email admin" part will be server-specific (and I also don't know a/the command to do it yet ("sendemail" sounds promising xD)). but the first line will be "sleep 2700" (45 mins)
+    echo "Starting background process that sleeps for 45 minutes then sends you an email"
+    if [[ -x "./sleepFor45minsThenEmailAdminThenPause.sh" ]]
+    then
+        ./sleepFor45minsThenEmailAdminThenPause.sh > /dev/null 2>&1 & # the "email admin" part will be server-specific. check the top of this file for an example script
+    else
+        echo "error, helper script not found or is not executable: ./sleepFor45minsThenEmailAdminThenPause.sh (you must create that script. check this script for an example of it). make sure you also run: chmod u+x sleepFor45minsThenEmailAdminThenPause.sh"
+        exit 1
+    fi
+
+    pidoflastcommand="${!}" #store pid of process launched in background so we can kill it later before it sends that email out
 
     apt-get update
     apt-get upgrade -y
 
     #if there are testing/sid packages installed, to "upgrade" those you'd need to do an "apt-get install -t testing-or-sid package1 package2 etc" here
 
-    killall sleepFor45minsThenEmailAdminThenPause.sh
+    echo "Killing  background process that sleeps for 45 minutes then sends you an email (so it won't send you that email)"
+    kill "${pidoflastcommand}"
     echo "Sleeping for a day"
     sleep 86400 #24 hours
+    echo "Waking up. Another day, another dollar."
 done

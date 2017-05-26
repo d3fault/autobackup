@@ -9,6 +9,8 @@
 
 #define SETTINGS_KEY_IS_CALIBRATED "isCalibrated"
 
+//TODOreq: I should always keep this app compiling. At the top of QuickDirtyStaticGitweb (maybe this should go on wasdf.com, but it makes no difference at this point), I should have an image showing the pc <--usb--> arduino <--10x finger lines--> 10x fingers. Then below it links to binaries for "the big 3" operating systems (or can detect OS in js (nah fuck js. ok well the <noscript> would be the big 3 links)). Preferably the binaries are auto-built and auto-deployed. Just like a lot of projects have "nightlies"... mine should be redeployed with every commit/push
+//TODOreq: ^that implies I use a GUI instead of a CLI. The overwhelming vast majority of users double click on cli apps and wonder why nothing happened (or maybe the DID notice the terminal flash for a brief second and then disappear, but they don't understand wtf that means). Honestly GUI is only barely more difficult to code anyways (or maybe not even. perhaps just the same amount of difficulty to code (perhaps less)). I do still want to not DEPEND on gui to be able to use this (Wasdf) class (and therefore _all_ functionality of wasdf, hopefully), but yea that's obvious. Also I should make the switch to GUI sooner rather than later (and play catch up with the less used CLI (bbbbut scriptability..... ffffff (oh wait it's a lib ;-P))
 Wasdf::Wasdf(QObject *parent)
     : QObject(parent)
     , m_Arduino(new WasdfArduino(this))

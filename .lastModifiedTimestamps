@@ -44,7 +44,7 @@ Documents/minddump/2016/4/1459968855-LhX846.txt:1459969203
 Documents/minddump/2016/4/1459969303-nnS846.txt:1459969688
 Documents/minddump/2016/4/1459984685-TJ2423.txt:1459985236
 Documents/minddump/2017/:1495179528
-Documents/minddump/2017/5/:1495746832
+Documents/minddump/2017/5/:1495773022
 Documents/minddump/2017/5/1495171253-Kauai.0a-MTJ783.txt:1495179507
 Documents/minddump/2017/5/1495214940-MTJ843.txt:1495215210
 Documents/minddump/2017/5/1495323758-TJ2659.txt:1495323774
@@ -60,6 +60,7 @@ Documents/minddump/2017/5/1495743524-MTJ808.txt:1495743667
 Documents/minddump/2017/5/1495743760-MTJ814.txt:1495743877
 Documents/minddump/2017/5/1495743948-LhX814.txt:1495743976
 Documents/minddump/2017/5/1495746402-TJ1090.txt:1495746813
+Documents/minddump/2017/5/1495772765-TJ1174.txt:1495773022
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -5909,15 +5910,15 @@ Projects/wasdf/design/:1495748160
 Projects/wasdf/design/mouse.action.serialization.stream.is.likely.to.become.desynced.and.cause.total.system.failure.here.is.a.solution.to.it.but.also.the.keyboard.could.desync.too.etc.txt:1495748160
 Projects/wasdf/design/pin.detection.and.finger.mapping.are.same.step.as.calibration.txt:1495315077
 Projects/wasdf/design/renaming.from.MusicFingers.txt:1495250184
-Projects/wasdf/src/:1495747607
+Projects/wasdf/src/:1495770684
 Projects/wasdf/src/cli/:1495395081
 Projects/wasdf/src/cli/main.cpp:1495395081
 Projects/wasdf/src/cli/wasdfcli.cpp:1495394570
 Projects/wasdf/src/cli/wasdfcli.h:1495394574
-Projects/wasdf/src/lib/:1495746931
+Projects/wasdf/src/lib/:1495770648
 Projects/wasdf/src/lib/fingeriteratororderedbymostusedfingers.cpp:1495480054
 Projects/wasdf/src/lib/fingeriteratororderedbymostusedfingers.h:1495480049
-Projects/wasdf/src/lib/wasdf.cpp:1495746931
+Projects/wasdf/src/lib/wasdf.cpp:1495770648
 Projects/wasdf/src/lib/wasdf.h:1495654643
 Projects/wasdf/src/lib/wasdfarduino.cpp:1495656263
 Projects/wasdf/src/lib/wasdfarduino.h:1495419683
@@ -6401,7 +6402,7 @@ Solutions/launchASEPbecauseRedAlert/video.bytestream.design.rofl.so.ghetto.and.p
 Solutions/standard.wt.deploy.arguments.to.get.clean.urls.working.properly.txt:1398266138
 licenses/:1398086549
 licenses/license.dpl.txt:1388242176
-scripts/:1495684771
+scripts/:1495772455
 scripts/LiveCDinstallAndConfigExtra/:1338074874
 scripts/LiveCDinstallAndConfigExtra/download.all.MY.rpms.sh:1338074340
 scripts/LiveCDinstallAndConfigExtra/firefox.prefs.additions.txt:1338110610
@@ -6437,7 +6438,7 @@ scripts/best.rsync.command.txt:1427098358
 scripts/cleanAptEtc.sh:1350618598
 scripts/cmd.to.make.torrent.with.lots.of.relevant.trackers.txt:1426427907
 scripts/copy.ldd.dependencies.automatically.woot.txt:1442694424
-scripts/d3faults.superior.unattended-upgrades.sh:1495685149
+scripts/d3faults.superior.unattended-upgrades.sh:1495772455
 scripts/debian.squeeze.dell.mini.9.post.install.instructions.txt:1368042665
 scripts/dedicated.server.domain.name.associating.txt:1409246698
 scripts/design.for.new.auto-commit.infrastructure.that.is.basic.incremement.of.current.auto-commit.but.nowhere.near.what.i.want.ultimately.txt:1343536975
@@ -6453,6 +6454,7 @@ scripts/laptop.screen.only.sh:1350618576
 scripts/mount.2x.750gb.drives.sh:1350716644
 scripts/new.os.install.cloning.from.the.bare.repo.safely.by.specifying.file.colon.slash.slash.txt:1350441253
 scripts/polaroid.backup.and.shred.sh:1422524231
+scripts/pushTextToAnyUsbFilesystemConnected.sh:1495748717
 scripts/qtCreatorCustomStyle.xml:1427771912
 scripts/rasperryPiVideoCaptureScript.sh:1428911257
 scripts/recursive.gpg.sign.txt:1426425284
