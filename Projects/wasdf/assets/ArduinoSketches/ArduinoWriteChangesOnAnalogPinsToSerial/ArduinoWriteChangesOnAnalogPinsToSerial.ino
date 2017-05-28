@@ -1,5 +1,7 @@
 //rewriting the first version of this instead of just removing calibration because I also want to try to not to use pp defines/macros. pure C++ is cleaner and easier to read/modify. aside from that it's just a functionally equivalent rewrite (with the calibration stripped out since that's going to be done on the PC side)
 
+#include <Arduino.h> //for NUM_ANALOG_INPUTS
+
 #if (NUM_ANALOG_INPUTS < 10)
 #error "Your board does not support at least 10 analog inputs" //TODOmb: fail gracefully. but don't simply uncomment this, otherwise we will probably have a memory access violation in this code. namely when we try to pull out the "old" sensor value of finger9, but we only allocated (on the stack) an array of size NUM_ANALOG_INPUTS to hold our old sensor values
 #endif
@@ -10,6 +12,7 @@ static const int NUM_FINGERS_PER_HAND = 5;
 static const int HALF_THRESHOLD_FOR_NOTIFYING_OF_CHANGE = 2; //TODOoptional: this could be determined during 'calibration' (so it'd be received from PC over serial). example instructions to uesr for determining it: "move your right index finger as little as possible until you see on screen that it's registered" or some such (haven't thought this through very much, maybe it's dumb idea)
 
 //TODOmb: when in calibrating mode maybe I should blink pin 13 rapidly, and when normal mode starts I should do 3 long pulses and then disable it (because leaving it on is dumb)
+//TODOreq: during testing I noticed that the analog pin values with no sensor connected were "floating". not floating point or whatever, but their values were not zero and they also weren't consistent. they seemed to change WITH the analog pin that had a sensor connected, as it moved (I only tested with 1, but it probably applies with more than 1), but their values didn't match. I need to verify that my "pin detection" stuff is ok/safe to use (it seems to be fine despite that random floating/changing, but maybe I'm only getting lucky). If it isn't, I need to "require" 10 pins always connected, and only do FINGER DETECTION only by using the same code that I do right now for "pin detection to finger mapping", but altered slightly to only do it on  10 pins.  The default analog pins should be 0-9, but there should be a way for the user to pass in pins ("range" parsing is perhaps (but perhaps not after more thinking about it) a GUI thing, the business object wants those pin numbers in a QList<int>). What I need to verify is that the "total accrued distance moved" will always be greater on anlog pins with sensors connected; greater than pins with no sensors connected. but for now I'll just say fuck it (but maybe once 10 are connected it won't work ofc)
 bool newSensorValueHasChangedEnoughThatWeWantToReportIt(int oldSensorValue, int newSensorValue)
 {
     /*if(NewSensorValue == OldSensorValue)

@@ -5,8 +5,9 @@
 #define WasdfCalibrationConfigurationSettingsReaderWriter_FINGERS_ARRAY "fingers"
 #define WasdfCalibrationConfigurationSettingsReaderWriter_FINGER_KEY "finger"
 #define WasdfCalibrationConfigurationSettingsReaderWriter_KEY_ANALOG_PIN_ON_ARDUINO "analogPin"
-#define WasdfCalibrationConfigurationSettingsReaderWriter_KEY_MINVALUE "minValue"
-#define WasdfCalibrationConfigurationSettingsReaderWriter_KEY_MAXVALUE "maxValue"
+#define WasdfCalibrationConfigurationSettingsReaderWriter_KEY_MIN_VALUE "minValue"
+#define WasdfCalibrationConfigurationSettingsReaderWriter_KEY_MAX_VALUE "maxValue"
+#define WasdfCalibrationConfigurationSettingsReaderWriter_KEY_AT_REST_POSITION "atRestPosition"
 
 //TODOreq: "profiles"
 void WasdfCalibrationConfigurationSettingsReaderWriter::writeToSettings(QSettings &settings, const WasdfCalibrationConfiguration &wasdfCalibrationConfiguration)
@@ -21,9 +22,9 @@ void WasdfCalibrationConfigurationSettingsReaderWriter::writeToSettings(QSetting
 
         settings.setValue(WasdfCalibrationConfigurationSettingsReaderWriter_FINGER_KEY, /*fingerEnumToHumanReadableString*/static_cast<int>(it.key())); //I thought (while laying in bed last night) about maybe using this int-converted value in place of "i" for the settings array, but then I'd have to convert the hash to a map before inserting (not hard at all!) and idk it just might lead to problems if for example a "FingerNegative1_InvalidFinger" ever gets introduced. it's also why I changed various static_casts to int instead of uint. you never know what design changes you'll make in the future
         settings.setValue(WasdfCalibrationConfigurationSettingsReaderWriter_KEY_ANALOG_PIN_ON_ARDUINO, it.value().AnalogPinIdOnArduino);
-        settings.setValue(WasdfCalibrationConfigurationSettingsReaderWriter_KEY_MINVALUE, it.value().MinValue);
-        settings.setValue(WasdfCalibrationConfigurationSettingsReaderWriter_KEY_MAXVALUE, it.value().MaxValue);
-        settings.endGroup();
+        settings.setValue(WasdfCalibrationConfigurationSettingsReaderWriter_KEY_MIN_VALUE, it.value().MinValue);
+        settings.setValue(WasdfCalibrationConfigurationSettingsReaderWriter_KEY_MAX_VALUE, it.value().MaxValue);
+        settings.setValue(WasdfCalibrationConfigurationSettingsReaderWriter_KEY_AT_REST_POSITION, it.value().AtRestPosition);
 
         ++i;
     }
@@ -41,8 +42,9 @@ void WasdfCalibrationConfigurationSettingsReaderWriter::readFromSettings(QSettin
         Finger finger = static_cast<Finger>(settings.value(WasdfCalibrationConfigurationSettingsReaderWriter_FINGER_KEY).toInt(/*TODOmb: &convertOk error checking that converted to int was successful. also applies to the next few lines of code*/));
         WasdfCalibrationFingerConfiguration fingerConfigutation;
         fingerConfigutation.AnalogPinIdOnArduino = settings.value(WasdfCalibrationConfigurationSettingsReaderWriter_KEY_ANALOG_PIN_ON_ARDUINO).toInt();
-        fingerConfigutation.MinValue = settings.value(WasdfCalibrationConfigurationSettingsReaderWriter_KEY_MINVALUE).toInt();
-        fingerConfigutation.MaxValue = settings.value(WasdfCalibrationConfigurationSettingsReaderWriter_KEY_MAXVALUE).toInt();
+        fingerConfigutation.MinValue = settings.value(WasdfCalibrationConfigurationSettingsReaderWriter_KEY_MIN_VALUE).toInt();
+        fingerConfigutation.MaxValue = settings.value(WasdfCalibrationConfigurationSettingsReaderWriter_KEY_MAX_VALUE).toInt();
+        fingerConfigutation.AtRestPosition = settings.value(WasdfCalibrationConfigurationSettingsReaderWriter_KEY_AT_REST_POSITION).toInt();
 
         *out_wasdfCalibrationConfiguration->insert(finger, fingerConfigutation);
     }

@@ -1,1 +1,12 @@
 I need to realtime replay my serialized wasdf actions (the raw user input stream) on a different computer, then overlay the mouse--- scratch that, compare the sha512 of the screenshots of the computers (every GUI piece must be deterministic (and that's pretty ez tbh)). but anyways the original idea (involving mouse) was that I need to overlay the mouses of the separate computer(s) to make sure they don't get out of sync. like I mean the leonardo/micro "special" (real?) usb channel might get out of sync with my KeyboardAndMouse "dupe" channel that is getting sent over the Serial port. If the different channels of KeyboardAndMouse input [streams] get desynchronized and not corrected (and the differences would likely multiply as time grew), the entire serialized user input becomes useless. The serialization has failed (save for maybe keystrokes. I guess yea this is about mouse. but that's the thing, the mouse controls a TON of actions on the computer [that we want to be replayable FROM that user input stream].
+
+The easiest way to "sync" is to just move your mouse into one of the corners and intentionally "overshoot it" so that the replayed mouse overlay (which is desync'd) lines up with (in that corner) the system mouse.
+
+If I am the one "simulating" (synthesizing is better word for it imo, but the OS hooks usually call it "simulate") the mouse actions to to the OS in the first place (and what I serialize is the same exact thing as what I send to the OS) then there might not be this desync problem in the first place.
+
+My worries pretty much boil down to this:
+on the arduino in loop() somewhere I call:
+Mouse.move(16, 420); //only works on micro/leonardo
+and
+Serial.print(Serialize(MouseMovement(16, 420)));
+^yes they are both the same data and sent "at the same time", but they take different USB channels so I have no fucking clue that they'll be "processed" by the "cpu" at the same "time". I need to be able to guarantee that (or use the above desync correction). Being the "synthesizer/simulator" does simplify things quite a bit, and I'm pretty sure making an abstract base class/interface (with "the big 3" implementing that interface) as mostly just a copy/paste job. I could maybe even gift that to Qt (so I don't have to maintain/update it).
