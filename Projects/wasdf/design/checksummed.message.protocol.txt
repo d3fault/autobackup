@@ -1,0 +1,7 @@
+binary protocol: SYNC,checksumOfSize,size,checksumOfData,data
+"size" is sizeof(checksumOfData) + sizeOf(data)
+
+the reason we send the checksum of the size is in case the size is corrupt and huuuuge, it might cause us to become waaay out of sync with the serialized message stream (cause us to miss a lot of messages (unless we saved a copy before doing the checksum and replayed them, but fuck that)), because we can't perform the checksum later until _all_ data has been read in. checksum of size is just an early warning system. yes it adds overhead but it also adds simplicity (or, decreases complexity? sameshit).
+
+
+oh and OT but I still want to write it somewhere fuck: we have to search for the word "SYNC" in all 4 types that are sent following a SYNC (including the boundaries from 1 type to the next). we have to search for that false positive "SYNC" _before_ we send (on sender side), and we have to take measures so that it doesn't say "SYNC" accidentally. this is a TODOreq and is somewhat important, but shouldn't go in initially because it makes the task of implementing the protocol initially too complicated.

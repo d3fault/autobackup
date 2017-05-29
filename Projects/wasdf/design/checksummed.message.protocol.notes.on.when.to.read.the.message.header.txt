@@ -1,0 +1,8 @@
+we want to wait before we see N bytes before checking/verifying that we have a valid message header.
+
+N bytes being sizeof(SYNC) + sizeof(checksumOfSize) + sizeof(dataSize)
+
+we could read SYNC and then keep an eye out for checksumOfSize and then keep an eye out for dataSize, but we might as well keep it simpler for ourselves by not reading that data from Serial until all 3 pieces of the header are already available. this gives us just 2 code paths: "watching for message header", "reading in message data [and will call a callback when the num bytes have been read in]"
+
+
+TODOreq: of course, we still need to scan the remainder of that "potential header" for the word SYNC even if the first 4 bytes that we read in weren't SYNC. any candidate for "SYNC" gets repositioned (putchar? maybe there's a peek?) so that it will be detected by the same "watching for message header" code that got us here in the first place
