@@ -17,7 +17,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1495179528
+Documents/minddump/:1496039992
 Documents/minddump/2016/:1459724150
 Documents/minddump/2016/3/:1459367409
 Documents/minddump/2016/3/1457041314-MTJ867.txt:1457227057
@@ -1438,6 +1438,7 @@ Documents/minddump/lakjfasldfjasdlfjkasdoffsldkfwaoeurlksjfdsdflaskdfjwoeryklfha
 Documents/minddump/laksdjflksjflkjsflkjslkfjsdlkjfsdofuadslfjsdlfkjsldkfjsdljfsldkfjoueljflksd.txt:1407742803
 Documents/minddump/laksjdflksdjafousdlfjoisduflkjouiwerlkjouilsjdfousdflkjouwer.txt:1370738200
 Documents/minddump/lasdfjsadofiuwerlkjasfoiywrasufdioawerlkjsoafiusdflkj.txt:1337283195
+Documents/minddump/lasdjfldksjflksdjfoiuwelrjosuflsdfjsofiudslkfjsdofiulk.txt:1496039992
 Documents/minddump/lasdjflkasdjfousdfljsdufiosdiuflkwjeoruouodifsldfkjsdfouil.txt:1384063062
 Documents/minddump/lasdjkfdsfjsadfouwerlsjdfiawhrlksdjfoiuwerlk.txt:1344286047
 Documents/minddump/lasdjkflkasjdfosudfwerwreqrlkjweorulksdjfosdufljsdfousdflkjsdfousdlfkj.txt:1371780408
@@ -4097,15 +4098,15 @@ Projects/LossyDirectoryCopier/src/main.cpp:1386648220
 Projects/MindDumper/:1496033126
 Projects/MindDumper/design/:1456001533
 Projects/MindDumper/design/initial.idea.txt:1456001533
-Projects/MindDumper/src/:1496034000
+Projects/MindDumper/src/:1496042951
 Projects/MindDumper/src/MindDumper.pro:1496029635
 Projects/MindDumper/src/main.cpp:1495215671
 Projects/MindDumper/src/minddumpdocument.cpp:1456174998
 Projects/MindDumper/src/minddumpdocument.h:1456171263
-Projects/MindDumper/src/minddumperfirstlaunchdirselector.cpp:1496033461
-Projects/MindDumper/src/minddumperfirstlaunchdirselector.h:1496033218
-Projects/MindDumper/src/minddumpermainwindow.cpp:1496033186
-Projects/MindDumper/src/minddumpermainwindow.h:1496029290
+Projects/MindDumper/src/minddumperfirstlaunchdirselector.cpp:1496042740
+Projects/MindDumper/src/minddumperfirstlaunchdirselector.h:1496042377
+Projects/MindDumper/src/minddumpermainwindow.cpp:1496042109
+Projects/MindDumper/src/minddumpermainwindow.h:1496040818
 Projects/MouseAndOrMotionViewMaker/:1427380548
 Projects/MouseAndOrMotionViewMaker/design/:1396053309
 Projects/MouseAndOrMotionViewMaker/design/initial.idea.txt:1396053674

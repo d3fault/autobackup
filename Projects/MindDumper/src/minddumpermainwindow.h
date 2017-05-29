@@ -18,6 +18,8 @@ protected:
     bool handleSignal(int sig);
     virtual void closeEvent(QCloseEvent *theCloseEvent);
 private:
+    bool isSane(const QString &dirToSanitize, bool errorOut = false);
+
     QString m_MindDumpDirectoryWithSlashAppended;
     QTabWidget *m_TabWidget;
 

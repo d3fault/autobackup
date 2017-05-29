@@ -38,10 +38,6 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
         doQueuedClose();
         return;
     }
-    else if(argz.size() == 1)
-    {
-        m_MindDumpDirectoryWithSlashAppended = appendSlashIfNeeded(argz.takeFirst());
-    }
 
     QCoreApplication::setOrganizationName("MindDumperOrganization");
     QCoreApplication::setOrganizationDomain("MindDumperDomain");
@@ -51,43 +47,61 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
     QString minddumpDirectoryInSettings = settings.value(MINDDUMP_DIRECTORY_SETTINGS_KEY).toString();
     bool firstLaunch = settings.value(FIRST_LAUNCH_SETTINGS_KEY, true).toBool();
     bool minddumpDirIsInSettings = !(minddumpDirectoryInSettings.trimmed().isEmpty());
-    if(firstLaunch || (!minddumpDirIsInSettings))
+
+    bool askUserForExistingWritableDir = true;
+    if(argz.size() == 1)
     {
-        //TODOreq: show welcome/browse-for-directory widget
-        //TODOreq: they might have supplied a dir as an app arg, so prepopulate the line edit with that to save them time
-        settings.setValue(FIRST_LAUNCH_SETTINGS_KEY, false);
-        MindDumperFirstLaunchDirSelector dirSelector(m_MindDumpDirectoryWithSlashAppended);
-        dirSelector.setModal(true);
-        dirSelector.setWindowModality(Qt::ApplicationModal);
-        int dialogResultCode = dirSelector.exec();
-        if(dialogResultCode != QDialog::Accepted)
+        QString dirPassedInViaArg = argz.first();
+        m_MindDumpDirectoryWithSlashAppended = appendSlashIfNeeded(dirPassedInViaArg);
+        if(isSane(dirPassedInViaArg))
         {
-            doQueuedClose();
-            return;
+            askUserForExistingWritableDir = false;
         }
-        m_MindDumpDirectoryWithSlashAppended = appendSlashIfNeeded(dirSelector.selectedDir());
     }
     else if(minddumpDirIsInSettings)
     {
-        if(m_MindDumpDirectoryWithSlashAppended.isEmpty()) //it might have been already set via app arg above
+        m_MindDumpDirectoryWithSlashAppended = appendSlashIfNeeded(minddumpDirectoryInSettings);
+        if(isSane(minddumpDirectoryInSettings))
         {
-            m_MindDumpDirectoryWithSlashAppended = appendSlashIfNeeded(minddumpDirectoryInSettings);
+            askUserForExistingWritableDir = false;
         }
     }
 
-    QFileInfo fileInfo(m_MindDumpDirectoryWithSlashAppended);
-    if(!fileInfo.isDir())
+    if(firstLaunch)
     {
-        QMessageBox::critical(this, tr("Critical Error!"), tr("Path either does not exist or is not a directory: ") + m_MindDumpDirectoryWithSlashAppended);
-        doQueuedClose();
-        return;
+        settings.setValue(FIRST_LAUNCH_SETTINGS_KEY, false);
+        askUserForExistingWritableDir = true; //even if an existing dir is passed in via arg (or somehow settings), our first launch always shows the dialog
     }
-    if(!fileInfo.isWritable())
+
+    if(askUserForExistingWritableDir)
     {
-        QMessageBox::critical(this, tr("Critical Error!"), tr("Path is not writable: ") + m_MindDumpDirectoryWithSlashAppended);
-        doQueuedClose();
-        return;
+        QString chosenExistingWritableDir;
+        bool firstLoop = true;
+        do
+        {
+            if(!firstLoop)
+            {
+                QMessageBox::warning(this, tr("Invalid Directory"), tr("The directory you selected was either non-existent or you don't have permission to write files there"));
+            }
+            firstLoop = false;
+            MindDumperFirstLaunchDirSelector dirSelector(m_MindDumpDirectoryWithSlashAppended /*argz.size() == 1 ? argz.first() : QString()*/);
+            dirSelector.setModal(true);
+            dirSelector.setWindowModality(Qt::ApplicationModal);
+            int dialogResultCode = dirSelector.exec();
+            if(dialogResultCode != QDialog::Accepted)
+            {
+                doQueuedClose();
+                return;
+            }
+            chosenExistingWritableDir = appendSlashIfNeeded(dirSelector.selectedDir());
+
+        } while(!isSane(chosenExistingWritableDir));
+        m_MindDumpDirectoryWithSlashAppended = appendSlashIfNeeded(chosenExistingWritableDir);
     }
+
+    if(!isSane(m_MindDumpDirectoryWithSlashAppended, true))
+        return;
+
     settings.setValue(MINDDUMP_DIRECTORY_SETTINGS_KEY, m_MindDumpDirectoryWithSlashAppended);
 
     restoreGeometry(settings.value("geometry").toByteArray());
@@ -216,6 +230,29 @@ void MindDumperMainWindow::closeEvent(QCloseEvent *theCloseEvent)
     //settings.setValue("windowState", saveState());
 
     QMainWindow::closeEvent(theCloseEvent);
+}
+bool MindDumperMainWindow::isSane(const QString &dirToSanitize, bool errorOut)
+{
+    QFileInfo fileInfo(dirToSanitize);
+    if(!fileInfo.isDir())
+    {
+        if(errorOut)
+        {
+            QMessageBox::critical(this, tr("Critical Error!"), tr("Path either does not exist or is not a directory: ") + dirToSanitize);
+            doQueuedClose();
+        }
+        return false;
+    }
+    if(!fileInfo.isWritable())
+    {
+        if(errorOut)
+        {
+            QMessageBox::critical(this, tr("Critical Error!"), tr("Path is not writable: ") + dirToSanitize);
+            doQueuedClose();
+        }
+        return false;
+    }
+    return true;
 }
 MindDumpDocument *MindDumperMainWindow::createAndAddMindDumpDocument()
 {
