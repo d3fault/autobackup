@@ -1,0 +1,3 @@
+The easiest way to make an STD (standardized testing document) is to film (screen record) yourself using every feature of an app. Even as new features are added, you could still concat that new video onto the older video.
+
+Thinking about "what to test" is a painfully boring subject, but being mostly braindead while following the same tests happening on video (differences will JUMP OUT) is ez and you can also be more confident that you performed every test (doing the testing from memory always leaves you asking-yourself/wondering if you left any tests of features out.

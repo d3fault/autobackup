@@ -46,7 +46,7 @@ MindDumperFirstLaunchDirSelector::MindDumperFirstLaunchDirSelector(const QString
     QLabel *welcomeText = new QLabel("Welcome. Please choose a MindDumper directory to save your files in. In that directory, your files will be stored in a folder named after the year, and then a subfolder named after the month.\n\nSo for example if you choose: " + mindDumpDirectoryPrepopulatedGuess + "\nThen we will save files like this: " + appendSlashIfNeeded(mindDumpDirectoryPrepopulatedGuess) + currentYearNumberAsString + "/" + currentMonthNumberAsString + "/example.txt\n\n");
     welcomeText->setWordWrap(true);
     myLayout->addWidget(welcomeText);
-    m_MindDumpDirectoryRow = new LabelLineEditBrowseButton("Save files in folder:");
+    m_MindDumpDirectoryRow = new LabelLineEditBrowseButton("Save files in folder:", LabelLineEditBrowseButton::OpenDirectoryMode);
     myLayout->addLayout(m_MindDumpDirectoryRow);
     QHBoxLayout *quitAndOkButtonsRow = new QHBoxLayout();
     QPushButton *quitButton = new QPushButton("&Quit");
