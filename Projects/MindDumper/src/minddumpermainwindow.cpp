@@ -13,7 +13,11 @@
 #include <QToolBar>
 
 #include "qtsystemsignalhandler.h"
+#include "minddumperfirstlaunchdirselector.h"
 #include "minddumpdocument.h"
+
+#define MINDDUMP_DIRECTORY_SETTINGS_KEY "minddumpDirectory"
+#define FIRST_LAUNCH_SETTINGS_KEY "firstLaunch"
 
 //TODOreq: asterisk in tab title when unsaved, asterisk in window title when any tab unsaved
 MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
@@ -26,13 +30,51 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
     connect(systemSignalHandler, SIGNAL(systemSignalReceived(QtSystemSignal::QtSystemSignalEnum)), this, SLOT(handleSystemSignalInterruptOrTerminateReceived()));
     QStringList argz = qApp->arguments();
     argz.removeFirst(); //app filename
-    if(argz.size() != 1)
+
+    //TODOreq: arg passed in overrides 'default profile minddump directory', or even just plainly 'minddumpDirectory' (before 'profiles' gets implemented)
+    if(argz.size() > 1)
     {
-        QMessageBox::critical(this, tr("Critical Error!"), tr("The first argument provided to this application must be the path of your minddump directory. Quitting"));
+        QMessageBox::critical(this, tr("Critical Error!"), tr("There can only be one (optional) argument provided to this application (the path of your minddump directory). Quitting"));
         doQueuedClose();
         return;
     }
-    m_MindDumpDirectoryWithSlashAppended = appendSlashIfNeeded(argz.takeFirst());
+    else if(argz.size() == 1)
+    {
+        m_MindDumpDirectoryWithSlashAppended = appendSlashIfNeeded(argz.takeFirst());
+    }
+
+    QCoreApplication::setOrganizationName("MindDumperOrganization");
+    QCoreApplication::setOrganizationDomain("MindDumperDomain");
+    QCoreApplication::setApplicationName("MindDumper");
+
+    QSettings settings;
+    QString minddumpDirectoryInSettings = settings.value(MINDDUMP_DIRECTORY_SETTINGS_KEY).toString();
+    bool firstLaunch = settings.value(FIRST_LAUNCH_SETTINGS_KEY, true).toBool();
+    bool minddumpDirIsInSettings = !(minddumpDirectoryInSettings.trimmed().isEmpty());
+    if(firstLaunch || (!minddumpDirIsInSettings))
+    {
+        //TODOreq: show welcome/browse-for-directory widget
+        //TODOreq: they might have supplied a dir as an app arg, so prepopulate the line edit with that to save them time
+        settings.setValue(FIRST_LAUNCH_SETTINGS_KEY, false);
+        MindDumperFirstLaunchDirSelector dirSelector(m_MindDumpDirectoryWithSlashAppended);
+        dirSelector.setModal(true);
+        dirSelector.setWindowModality(Qt::ApplicationModal);
+        int dialogResultCode = dirSelector.exec();
+        if(dialogResultCode != QDialog::Accepted)
+        {
+            doQueuedClose();
+            return;
+        }
+        m_MindDumpDirectoryWithSlashAppended = appendSlashIfNeeded(dirSelector.selectedDir());
+    }
+    else if(minddumpDirIsInSettings)
+    {
+        if(m_MindDumpDirectoryWithSlashAppended.isEmpty()) //it might have been already set via app arg above
+        {
+            m_MindDumpDirectoryWithSlashAppended = appendSlashIfNeeded(minddumpDirectoryInSettings);
+        }
+    }
+
     QFileInfo fileInfo(m_MindDumpDirectoryWithSlashAppended);
     if(!fileInfo.isDir())
     {
@@ -46,11 +88,8 @@ MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
         doQueuedClose();
         return;
     }
+    settings.setValue(MINDDUMP_DIRECTORY_SETTINGS_KEY, m_MindDumpDirectoryWithSlashAppended);
 
-    QCoreApplication::setOrganizationName("MindDumperOrganization");
-    QCoreApplication::setOrganizationDomain("MindDumperDomain");
-    QCoreApplication::setApplicationName("MindDumper");
-    QSettings settings;
     restoreGeometry(settings.value("geometry").toByteArray());
     //restoreState(settings.value("windowState").toByteArray());
 
@@ -373,5 +412,6 @@ void MindDumperMainWindow::handleSystemSignalInterruptOrTerminateReceived()
 }
 void MindDumperMainWindow::doQueuedClose()
 {
+    //TODOmb: this->setEnabled(false);
     QMetaObject::invokeMethod(this, "close", Qt::QueuedConnection);
 }

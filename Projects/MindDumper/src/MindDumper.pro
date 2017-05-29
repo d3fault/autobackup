@@ -13,9 +13,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         minddumpermainwindow.cpp \
-    minddumpdocument.cpp
+    minddumpdocument.cpp \
+    minddumperfirstlaunchdirselector.cpp
 
 HEADERS  += minddumpermainwindow.h \
-    minddumpdocument.h
+    minddumpdocument.h \
+    minddumperfirstlaunchdirselector.h
 
 include(../../../GloballySharedClasses/qtsystemsignalhandler.pri)
+include(../../../GloballySharedClasses/labellineeditbrowsebutton.pri)
