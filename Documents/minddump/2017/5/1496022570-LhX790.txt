@@ -1,0 +1,1 @@
+If I only ever know unix time (seconds since epoch), I can do exactly that (assuming I don't [subconsciously] calculate the "date" using that number (but eh that math is hard without calculator). OT: and yea I know there are tricks to make it easier to calculate in your head, but I have no use for those because my computer does all my calculations for me.
