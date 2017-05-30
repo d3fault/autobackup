@@ -27,6 +27,52 @@ bool newSensorValueHasChangedEnoughThatWeWantToReportIt(int oldSensorValue, int 
 
     return false;
 }
+class Syncer
+{
+public:
+    Syncer()
+        : m_Sync("SYNC") //TODOreq: use definition in header shared between PC and Arduino
+    {
+        reset();
+    }
+    bool tryToGetSyncedOnBytesAvailable()
+    {
+        while(Serial.available())
+        {
+            m_LastReadChar = (char)Serial.read();
+            return handleLastReadCharAndReturnTrueIfItSyncedUs();
+        }
+        return false;
+    }
+private:
+    bool handleLastReadCharAndReturnTrueIfItSyncedUs()
+    {
+        static const int sizeOfSync = sync.length();
+        if(m_LastReadChar == sync.at(m_CurrentIndexOfCharLookingFor))
+        {
+            if(m_CurrentIndexOfCharLookingFor == (sizeOfSync - 1))
+            {
+                reset();
+                return true;
+            }
+            ++m_CurrentIndexOfCharLookingFor;
+            return false; //getting closer, just not enough chars yet
+        }
+        else
+        {
+            reset();
+            return handleLastReadCharAndReturnTrueIfItSyncedUs(); //we try again, because for example SSYNC (note the 2 S's in a row. just because the char we just read wasn't what we were looking for, doesn't mean it's not a valid char for SYNC starting). sure it won't ever return true unless SYNC is 1 char long lol, but we still want to "handle" it
+        }
+    }
+    void reset()
+    {
+        m_CurrentIndexOfCharLookingFor = 0;
+    }
+
+    String m_Sync;
+    char m_LastReadChar;
+    int m_CurrentIndexOfCharLookingFor;
+};
 class Finger_aka_AnalogPin
 {
 public:
@@ -130,6 +176,7 @@ struct Mode
 };
 
 //Globals
+Syncer syncer;
 int CalibrationDataOldSensorValues[NUM_ANALOG_INPUTS];
 String inputCommandString;
 Mode::ModeEnum CurrentMode;
@@ -183,6 +230,16 @@ void processInputCommandString()
 }
 void loop()
 {
+    //static const int numBytesToWaitForBeforePee
+    if(!syncer.tryToGetSyncedOnBytesAvailable())
+    {
+        delay(1); //TODOoptimization: might mess up mouse movement. "spinning" the cpu isn't sooooo bad xD
+        return;
+    }
+    //TODOreq: at this point we know that SYNC was just read from Serial
+
+
+    //TODOreq: merge below with above
     while(Serial.available())
     {
         char inChar = (char)Serial.read();
