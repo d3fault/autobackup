@@ -2,8 +2,15 @@
 
 #include <Arduino.h> //for NUM_ANALOG_INPUTS
 
+static const char Sync[4] = { 'S', 'Y', 'N', 'C' }; //TODOreq: use definition in header shared between PC and Arduino
+static const int SizeOfaChecksum = 16; //MD5
+static const int MESSAGE_HEADER_SIZE = (sizeof(Sync) + sizeof(SizeOfaChecksum /*checksum of size of data*/) + sizeof(int /*size of data*/) + sizeof(SizeOfaChecksum /*checksum of data*/));
+
 #if (NUM_ANALOG_INPUTS < 10)
 #error "Your board does not support at least 10 analog inputs" //TODOmb: fail gracefully. but don't simply uncomment this, otherwise we will probably have a memory access violation in this code. namely when we try to pull out the "old" sensor value of finger9, but we only allocated (on the stack) an array of size NUM_ANALOG_INPUTS to hold our old sensor values
+#endif
+#if (MESSAGE_HEADER_SIZE > 64)
+#error "Message header size (which is fixed) is bigger than 64 bytes (Serial port's internal buffer size)!"
 #endif
 
 static const int NUM_HANDS = 2;
@@ -11,7 +18,6 @@ static const int NUM_FINGERS_PER_HAND = 5;
 
 static const int HALF_THRESHOLD_FOR_NOTIFYING_OF_CHANGE = 2; //TODOoptional: this could be determined during 'calibration' (so it'd be received from PC over serial). example instructions to uesr for determining it: "move your right index finger as little as possible until you see on screen that it's registered" or some such (haven't thought this through very much, maybe it's dumb idea)
 
-static const int SizeOfaChecksum = 16; //MD5
 static const int MAX_MESSAGE_SIZE = 1024;
 
 //TODOmb: when in calibrating mode maybe I should blink pin 13 rapidly, and when normal mode starts I should do 3 long pulses and then disable it (because leaving it on is dumb)
@@ -53,7 +59,6 @@ class MessageHeaderReader
 {
 public:
     MessageHeaderReader()
-        : m_Sync("SYNC") //TODOreq: use definition in header shared between PC and Arduino
     {
         reset();
     }
@@ -84,29 +89,28 @@ public:
 private:
     bool enoughBytesForEntireMessageHeaderAreAvailable()
     {
-        static const int MessageHeaderSize = m_Sync.length() + sizeof(SizeOfaChecksum /*checksumOfSizeOfData*/) + sizeof(int /*sizeOfData*/) + sizeof(m_ChecksumOfData);
-        return (Serial.available() >= MessageHeaderSize);
+        return (Serial.available() >= MESSAGE_HEADER_SIZE);
     }
     bool tryToGetSyncedOnBytesAvailable()
     {
         while(enoughBytesForEntireMessageHeaderAreAvailable()) //TODOreq: Serial has an internal buffer of 64 bytes, so waiting for the entire message header (or entire message) before reading is BAD PLAN. need my own buffer :( because I don't see a way to make Serial's buffer bigger. well ok maybe it's ok strat for header(confirm it TODOreq), but is not ok strat for the data/message itself
         {
             m_LastReadChar = (char)Serial.read();
-            return handleLastReadCharAndReturnTrueIfItSyncedUs();
+            if(handleLastReadCharAndReturnTrueIfItSyncedUs())
+                return true;
         }
         return false;
     }
     bool handleLastReadCharAndReturnTrueIfItSyncedUs()
     {
-        static const int sizeOfSync = m_Sync.length();
-        if(m_LastReadChar == m_Sync.charAt(m_CurrentIndexOfCharLookingFor))
+        if(m_LastReadChar == Sync[m_CurrentIndexOfCharLookingFor])
         {
-            if(m_CurrentIndexOfCharLookingFor == (sizeOfSync - 1))
+            ++m_CurrentIndexOfCharLookingFor;
+            if(m_CurrentIndexOfCharLookingFor == sizeof(Sync))
             {
                 reset();
                 return true;
             }
-            ++m_CurrentIndexOfCharLookingFor;
             return false; //getting closer, just not enough chars yet
         }
         else
@@ -125,7 +129,6 @@ private:
         m_CurrentIndexOfCharLookingFor = 0;
     }
 
-    String m_Sync;
     char m_LastReadChar;
     int m_CurrentIndexOfCharLookingFor;
     char m_ChecksumOfData[SizeOfaChecksum];
@@ -238,7 +241,7 @@ int CalibrationDataOldSensorValues[NUM_ANALOG_INPUTS];
 Mode::ModeEnum CurrentMode;
 Hands hands;
 bool searchingForHeader;
-char *potentialMessage;
+char *inputCommandBuffer;
 
 void setup()
 {
@@ -248,7 +251,7 @@ void setup()
     CurrentMode = Mode::DoNothingMode;
     //inputCommandString.reserve(1024); //TODOreq: calculate the max string length and reserve that much (or maybe a little more to be on the safe side). it can be determined because the values only take up so many characters. only thing is maybe the arduino mega 2560x1000 might have 999999999999 analog pins xDDDD, ya know what I mean??
     searchingForHeader = true;
-    potentialMessage = new char(MAX_MESSAGE_SIZE);
+    inputCommandBuffer = new char(MAX_MESSAGE_SIZE); //TODOoptimization: never call new after takeoff. the md5 lib I'm gonna be using looks suspect af
     while(!Serial) ; //wait for serial port to connect. Needed for Leonardo/Micro only. I intentionally put the String::reserve command (and other cmds) in between this and Serial.begin() in case the connect happens asynchronously (idfk tbh, but it might), in which case I may have saved an entire millisecond!!!
 }
 void readAndReportChangesToAnalogPinOverSerial(int pinId, int indexIntoCalibrationDataOldSensorValues)
@@ -292,6 +295,7 @@ void processInputCommandString(const char *inputCommandString)
     }
 }
 int messageSize_OrZeroIfStillReadingHeader;
+int numBytesOfMessageReadSoFar;
 void business()
 {
     switch(CurrentMode) //TODOreq: this switch case doesn't support simultaneous 10-fingers and keyboardMouse modes
@@ -313,38 +317,38 @@ void business()
     //now check for input commands
     if(searchingForHeader)
     {
-        //static const int numBytesToWaitForBeforePee
         messageSize_OrZeroIfStillReadingHeader = messageHeaderReader.messageSize_OrZeroIfStillReadingHeader();
         if(messageSize_OrZeroIfStillReadingHeader < 1)
         {
-            //delay(1); //TODOoptimization: might mess up mouse movement. "spinning" the cpu isn't sooooo bad xD
             return;
         }
         searchingForHeader = false;
+        numBytesOfMessageReadSoFar = 0;
     }
     //at this point we know that a message header was just read from Serial, and messageSize_OrZeroIfStillReadingHeader contains it's message size (but that doesn't mean that many bytes are available on Serial.available())
-    if((messageSize_OrZeroIfStillReadingHeader + 1 /*plus 1 for null term*/) > MAX_MESSAGE_SIZE)
+    if((messageSize_OrZeroIfStillReadingHeader + 1 /*plus 1 for null term we add on below*/) > MAX_MESSAGE_SIZE)
     {
         fatalErrorBlinkPin13();
     }
-    if(Serial.available() >= messageSize_OrZeroIfStillReadingHeader)
+    int numBytesOfMessageLeft = messageSize_OrZeroIfStillReadingHeader - numBytesOfMessageReadSoFar;
+    int numBytesToRead = min(numBytesOfMessageLeft, Serial.available());
+    if(numBytesToRead < 1)
+        return;
+    Serial.readBytes((inputCommandBuffer+numBytesOfMessageReadSoFar), numBytesToRead); //I love shitty (c-style) APIs :)
+    numBytesOfMessageReadSoFar += numBytesToRead;
+    if(numBytesOfMessageReadSoFar < messageSize_OrZeroIfStillReadingHeader)
+        return;
+    inputCommandBuffer[messageSize_OrZeroIfStillReadingHeader] = '\n';
+    if(checksum(inputCommandBuffer) == messageHeaderReader.checksumOfData())
     {
-        Serial.readBytes(potentialMessage, messageSize_OrZeroIfStillReadingHeader);
-        potentialMessage[messageSize_OrZeroIfStillReadingHeader] = '\n';
-
-        //TODOreq: maybe set to true later instead?
-        searchingForHeader = true;
-
-        if(checksum(potentialMessage) == messageHeaderReader.checksumOfData())
-        {
-            processInputCommandString(potentialMessage);
-        }
-        else
-        {
-            //TODOmb: start looking for SYNC again right after the SYNC we just saw to get us here? how it currently works is we start looking for SYNC after the [just-confirmed-malformed] message has already been read in
-            fatalErrorBlinkPin13();
-        }
+        processInputCommandString(inputCommandBuffer);
     }
+    else
+    {
+        //TODOmb: start looking for SYNC again right after the SYNC we just saw to get us here? how it currently works is we start looking for SYNC after the [just-confirmed-malformed] message has already been read in
+        fatalErrorBlinkPin13();
+    }
+    searchingForHeader = true;
 }
 void loop()
 {
