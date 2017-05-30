@@ -1,6 +1,8 @@
 //rewriting the first version of this instead of just removing calibration because I also want to try to not to use pp defines/macros. pure C++ is cleaner and easier to read/modify. aside from that it's just a functionally equivalent rewrite (with the calibration stripped out since that's going to be done on the PC side)
 
 #include <Arduino.h> //for NUM_ANALOG_INPUTS
+#include <MD5.h> //for checksum
+//#include <ArduinoJson.h> //for sanity
 
 static const char Sync[4] = { 'S', 'Y', 'N', 'C' }; //TODOreq: use definition in header shared between PC and Arduino
 static const int SizeOfaChecksum = 16; //MD5
@@ -51,9 +53,11 @@ bool newSensorValueHasChangedEnoughThatWeWantToReportIt(int oldSensorValue, int 
 
     return false;
 }
-char *checksum(char *dataToChecksum)
+//TODOreq: callers must free the ptr returned from checksum
+unsigned char *checksum(char *dataToChecksum, size_t sizeOfDataToChecksum)
 {
-    return 0; //TODOreq
+    /*unsigned char* hash =*/ return MD5::make_hash(dataToChecksum, sizeOfDataToChecksum);
+    //could convert ot hex by calling make_digest, but it's not going to be read by a human anyways so no need (can also remove make_digest from the lib in order to save space)
 }
 class MessageHeaderReader
 {
@@ -67,21 +71,24 @@ public:
         if(!tryToGetSyncedOnBytesAvailable())
             return 0;
         //SYNC was seen if we get here. we also know that there's enough bytes available on Serial for the rest of the message header
-        char checksumOfSizeOfData[SizeOfaChecksum]; //wow fucking mouthful/confusing (but accurate). err nvm I renamed it for other reasons: it used to be checksumOfSize[sizeOfChecksum]
-        Serial.readBytes(checksumOfSizeOfData, SizeOfaChecksum);
+        unsigned char checksumOfSizeOfData_Read[SizeOfaChecksum]; //wow fucking mouthful/confusing (but accurate). err nvm I renamed it for other reasons: it used to be checksumOfSize[sizeOfChecksum]
+        Serial.readBytes((char*)checksumOfSizeOfData_Read, SizeOfaChecksum);
         int sizeOfData;
         Serial.readBytes((char*)(&sizeOfData), sizeof(sizeOfData)); //this might not work because of endianness and other retardation
-        if(checksumOfSizeOfData != checksum((char*)(&sizeOfData)))
+        unsigned char *checksumOfSizeOfData_Calculated = checksum((char*)(&sizeOfData), sizeof(sizeOfData));
+        bool checksumsMatch = (checksumOfSizeOfData_Read == checksumOfSizeOfData_Calculated);
+        free(checksumOfSizeOfData_Calculated);
+        if(!checksumsMatch)
         {
             //reset();
             //TODOprobably: I suppose we SHOULD start looking for the next SYNC immediately after the one that we saw to get us here. maybe that one was a false positive and there was a legit one immediately after it! fuck, my brain!! still, this should work... eventually(?)...
             fatalErrorBlinkPin13();
             return 0;
         }
-        Serial.readBytes(m_ChecksumOfData, SizeOfaChecksum);
+        Serial.readBytes((char*)m_ChecksumOfData, SizeOfaChecksum);
         return sizeOfData;
     }
-    char *checksumOfData()
+    unsigned char *checksumOfData()
     {
         return m_ChecksumOfData;
     }
@@ -131,7 +138,7 @@ private:
 
     char m_LastReadChar;
     int m_CurrentIndexOfCharLookingFor;
-    char m_ChecksumOfData[SizeOfaChecksum];
+    unsigned char m_ChecksumOfData[SizeOfaChecksum];
 };
 class Finger_aka_AnalogPin
 {
@@ -339,7 +346,10 @@ void business()
     if(numBytesOfMessageReadSoFar < messageSize_OrZeroIfStillReadingHeader)
         return;
     inputCommandBuffer[messageSize_OrZeroIfStillReadingHeader] = '\n';
-    if(checksum(inputCommandBuffer) == messageHeaderReader.checksumOfData())
+    unsigned char *checksumOfData_Calculated = checksum(inputCommandBuffer, messageSize_OrZeroIfStillReadingHeader);
+    bool checksumsMatch = (checksumOfData_Calculated == messageHeaderReader.checksumOfData());
+    free(checksumOfData_Calculated);
+    if(checksumsMatch)
     {
         processInputCommandString(inputCommandBuffer);
     }
