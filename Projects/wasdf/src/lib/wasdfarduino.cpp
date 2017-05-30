@@ -3,6 +3,7 @@
 #include <QtSerialPort/QSerialPort>
 #include <QStringList>
 #include <QHashIterator>
+#include <QCryptographicHash>
 #include <QDebug>
 
 #include "wasdf.h"
@@ -40,11 +41,35 @@ void WasdfArduino::openSerialPortIfNotOpen()
         }
     }
 }
+QByteArray WasdfArduino::checksum(const QByteArray &input)
+{
+    return QCryptographicHash::hash(input, QCryptographicHash::Md5); //MD5 is overkill for checksum, but underkill for cyrpto. I had trouble getting numerous other checksums and cryptographic hashes working on my arduino (or they had insufficient (or no) licensing)
+}
 void WasdfArduino::sendCommandToArduino(const QString &commandToSendToArduino)
 {
-    Q_ASSERT(commandToSendToArduino.length() < (1024)); //TODOreq: 1024 should be in a shared header file between sketch and this. the arduino calls String.reserve(1024) in setup()
-    m_SerialPortTextStream << commandToSendToArduino << "\n"; //don't use endl, that uses \r\n sometimes I think but might be wrong since the QIODevice isn't using QIODevice::Text? fuggit
-    m_SerialPortTextStream.flush();
+    //send SYNC, then checksumOfSize, then sizeOfData, then checksumOfData, then commandToSendToArduino, which should (will TODOreq) be a json document in string form
+    //m_SerialPortTextStream << "SYNC";
+    //m_SerialPortTextStream << checksumOfData;
+    //^this isn't like QDataStream, I'm sending the ASCII representation of numbers when I do it like this. so maybe I should NOT use a textStream so my commands are binary? the problem, then, becomes portability. I'm pretty damn sure Arduino uses a stable integer size, so if I use qint32 (etc) then I should be able to always work with arduino
+    QByteArray sync("SYNC"); //TODOoptimization: make this a member and it's initialization in construction phase
+    QByteArray commandToSendToArduinoAsLatin1(commandToSendToArduino.toLatin1());
+    typedef qint32 size_t_ofSizeOfCommand;
+    size_t_ofSizeOfCommand sizeOfCommand = commandToSendToArduino.size();
+    QByteArray sizeOfCommandAsByteArray = QByteArray::fromRawData((const char*)(&sizeOfCommand), sizeof(size_t_ofSizeOfCommand));
+    QByteArray checksumOfSizeOfCommand = checksum(sizeOfCommandAsByteArray);
+    qDebug() << checksumOfSizeOfCommand.size(); //TODOreq: this is for testing only. I think it should be 4 bytes?
+    QByteArray checksumOfCommand = checksum(commandToSendToArduinoAsLatin1);
+
+    m_SerialPort->write(sync); //fixed size
+    m_SerialPort->write(checksumOfSizeOfCommand); //fixed size
+    m_SerialPort->write(sizeOfCommandAsByteArray); //fixed size
+    m_SerialPort->write(checksumOfCommand); //fixed size
+    m_SerialPort->write(commandToSendToArduinoAsLatin1); //variable size
+
+    //TODOreq: merge below with above
+    //Q_ASSERT(commandToSendToArduino.length() < (1024)); //TODOreq: 1024 should be in a shared header file between sketch and this. the arduino calls String.reserve(1024) in setup()
+    //m_SerialPortTextStream << commandToSendToArduino << "\n"; //don't use endl, that uses \r\n sometimes I think but might be wrong since the QIODevice isn't using QIODevice::Text? fuggit
+    //m_SerialPortTextStream.flush();
 }
 void WasdfArduino::startInCalibrationMode()
 {

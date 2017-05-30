@@ -16,6 +16,7 @@ public:
     explicit WasdfArduino(QObject *parent = 0);
 private:
     void openSerialPortIfNotOpen();
+    static QByteArray checksum(const QByteArray &input);
     void sendCommandToArduino(const QString &command);
 
     QSerialPort *m_SerialPort;
