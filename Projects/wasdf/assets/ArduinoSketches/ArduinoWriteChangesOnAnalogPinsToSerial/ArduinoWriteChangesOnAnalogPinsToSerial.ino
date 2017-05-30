@@ -25,18 +25,19 @@ static const int MAX_MESSAGE_SIZE = 1024;
 //TODOmb: when in calibrating mode maybe I should blink pin 13 rapidly, and when normal mode starts I should do 3 long pulses and then disable it (because leaving it on is dumb)
 //TODOreq: during testing I noticed that the analog pin values with no sensor connected were "floating". not floating point or whatever, but their values were not zero and they also weren't consistent. they seemed to change WITH the analog pin that had a sensor connected, as it moved (I only tested with 1, but it probably applies with more than 1), but their values didn't match. I need to verify that my "pin detection" stuff is ok/safe to use (it seems to be fine despite that random floating/changing, but maybe I'm only getting lucky). If it isn't, I need to "require" 10 pins always connected, and only do FINGER DETECTION only by using the same code that I do right now for "pin detection to finger mapping", but altered slightly to only do it on  10 pins.  The default analog pins should be 0-9, but there should be a way for the user to pass in pins ("range" parsing is perhaps (but perhaps not after more thinking about it) a GUI thing, the business object wants those pin numbers in a QList<int>). What I need to verify is that the "total accrued distance moved" will always be greater on anlog pins with sensors connected; greater than pins with no sensors connected. but for now I'll just say fuck it (but maybe once 10 are connected it won't work ofc)
 //TODOreq: any time a message header doesn't check out (checksum failure) or the data doesn't check out (checksum failure or just unknown command (same thing as message), we should just blink pin 13 to indicate error. this would at the very least tell us we need to reset the arduino. since input commands are so rare (FOR NOW. for my 0.1 target), so too will be the errors where I need to restart the arduino. ultimately though it would be nice to be fault tolerant, and there are TODOreq comments littered in this code indicating places where faults are detected
-void fatalErrorBlinkPin13()
+void fatalErrorBlinkPin13(int blinkIntervalSec)
 {
     //hmm I thought about keeping track of the time using millis etc, but might as well just use a while(true) loop to simplify my life. this is a FATAL error after all :-D
+    int blinkIntervalMSec = blinkIntervalSec*1000; //TODOkek: blink in morse code spelling out the function that called fatalErrorBlinkPin13() or the line number (if this wasn't a single-file dev enviornment (which is dumb, fkn arduino meh) then I'd say out put the filename and line number). of course another way of solving it is to attach an LCD, but that is not as kek
     pinMode(13, OUTPUT);
     while(true)
     {
         while(Serial.available())
             Serial.read();
         digitalWrite(13, HIGH);
-        delay(100);
+        delay(blinkIntervalMSec);
         digitalWrite(13, LOW);
-        delay(100);
+        delay(blinkIntervalMSec);
     }
 }
 bool newSensorValueHasChangedEnoughThatWeWantToReportIt(int oldSensorValue, int newSensorValue)
@@ -82,7 +83,7 @@ public:
         {
             //reset();
             //TODOprobably: I suppose we SHOULD start looking for the next SYNC immediately after the one that we saw to get us here. maybe that one was a false positive and there was a legit one immediately after it! fuck, my brain!! still, this should work... eventually(?)...
-            fatalErrorBlinkPin13();
+            fatalErrorBlinkPin13(1);
             return 0;
         }
         Serial.readBytes((char*)m_ChecksumOfData, SizeOfaChecksum);
@@ -124,7 +125,7 @@ private:
         {
             reset();
 
-            fatalErrorBlinkPin13();
+            fatalErrorBlinkPin13(2);
             return false;
             //TODOreq: handle SYNC failures gracefully ofc. I think the below recursive call (to us) will in fact give an infinite loop (never returning to original caller), but it's KINDA on the right track
 
@@ -298,7 +299,7 @@ void processInputCommandString(const char *inputCommandString)
     else
     {
         //TODOreq: blink pin 13 rapidly to indicate an error. longer term should request the command is re-sent. note: even if the checksum succeeds we still might get an invalid command (checksums aren't perfect), we we'd STILL want to request the command is re-sent. if however 50 invalid commands are received IN A ROW, then we would want to go into blink-13-error-mode as that indicates a bug
-        fatalErrorBlinkPin13();
+        fatalErrorBlinkPin13(3);
     }
 }
 int messageSize_OrZeroIfStillReadingHeader;
@@ -335,7 +336,7 @@ void business()
     //at this point we know that a message header was just read from Serial, and messageSize_OrZeroIfStillReadingHeader contains it's message size (but that doesn't mean that many bytes are available on Serial.available())
     if((messageSize_OrZeroIfStillReadingHeader + 1 /*plus 1 for null term we add on below*/) > MAX_MESSAGE_SIZE)
     {
-        fatalErrorBlinkPin13();
+        fatalErrorBlinkPin13(4);
     }
     int numBytesOfMessageLeft = messageSize_OrZeroIfStillReadingHeader - numBytesOfMessageReadSoFar;
     int numBytesToRead = min(numBytesOfMessageLeft, Serial.available());
@@ -356,7 +357,7 @@ void business()
     else
     {
         //TODOmb: start looking for SYNC again right after the SYNC we just saw to get us here? how it currently works is we start looking for SYNC after the [just-confirmed-malformed] message has already been read in
-        fatalErrorBlinkPin13();
+        fatalErrorBlinkPin13(5);
     }
     searchingForHeader = true;
 }

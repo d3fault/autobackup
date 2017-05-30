@@ -43,14 +43,40 @@ void WasdfArduino::openSerialPortIfNotOpen()
 }
 QByteArray WasdfArduino::checksum(const QByteArray &input)
 {
-    return QCryptographicHash::hash(input, QCryptographicHash::Md5); //MD5 is overkill for checksum, but underkill for cyrpto. I had trouble getting numerous other checksums and cryptographic hashes working on my arduino (or they had insufficient (or no) licensing)
+    return QCryptographicHash::hash(input, QCryptographicHash::Md5); //MD5 is overkill for checksum, but underkill for crypto. I had trouble getting numerous other checksums and cryptographic hashes working on my arduino (or they had insufficient (or no) licensing)
 }
 void WasdfArduino::sendCommandToArduino(const QString &commandToSendToArduino)
 {
-    //send SYNC, then checksumOfSize, then sizeOfData, then checksumOfData, then commandToSendToArduino, which should (will TODOreq) be a json document in string form
-    //m_SerialPortTextStream << "SYNC";
-    //m_SerialPortTextStream << checksumOfData;
-    //^this isn't like QDataStream, I'm sending the ASCII representation of numbers when I do it like this. so maybe I should NOT use a textStream so my commands are binary? the problem, then, becomes portability. I'm pretty damn sure Arduino uses a stable integer size, so if I use qint32 (etc) then I should be able to always work with arduino
+    //send SYNC, then checksumOfSizeOfData, then sizeOfData, then checksumOfData, then commandToSendToArduino, which should (will TODOreq) be a json document in string form
+    static const QString delim(","); //TODOreq: in shared headers
+
+    //send SYNC
+    m_SerialPortTextStream << "SYNC";
+    m_SerialPortTextStream << delim;
+
+    //send checksumOfSizeOfData
+    QString sizeofDataAsString = QString::number(commandToSendToArduino.size());
+    QByteArray sizeOfCommandAsByteArray(sizeofDataAsString.toLatin1());
+    QByteArray checksumOfSizeOfCommand = checksum(sizeOfCommandAsByteArray);
+    QString checksumOfSizeOfCommandAsString = QString(checksumOfSizeOfCommand);
+    m_SerialPortTextStream << checksumOfSizeOfCommandAsString; //TODOreq: s/Command/Data/Message (idc which, but keep it uniform mother fucker (eh "command" makes sense from wasdf business logic, but "message" and "data" make sense from "message header reader" perspective))
+    m_SerialPortTextStream << delim;
+
+    //send sizeOfData
+    m_SerialPortTextStream << sizeofDataAsString;
+    m_SerialPortTextStream << delim;
+
+    //send checksumOfData
+    QByteArray commandToSendToArduinoAsLatin1(commandToSendToArduino.toLatin1());
+    QByteArray checksumOfCommand = checksum(commandToSendToArduinoAsLatin1);
+    QString checksumOfCommandAsString = QString(checksumOfCommand);
+    m_SerialPortTextStream << checksumOfCommandAsString;
+    m_SerialPortTextStream << delim;
+
+    //send commandToSendToArduino
+    m_SerialPortTextStream << commandToSendToArduino;
+
+#if 0 //turns out I do need to send things over as ASCII. arduino uses 2-byte int size wtf??? I can't be fucked. I'm going to checksum (hash) the STRING representation of shit instead of the raw bytes
     QByteArray sync("SYNC"); //TODOoptimization: make this a member and it's initialization in construction phasemmandToSendToArduino.toLatin1());
     QByteArray commandToSendToArduinoAsLatin1(commandToSendToArduino.toLatin1());
     qint32 sizeOfCommand = commandToSendToArduino.size();
@@ -64,6 +90,7 @@ void WasdfArduino::sendCommandToArduino(const QString &commandToSendToArduino)
     m_SerialPort->write(sizeOfCommandAsByteArray); //fixed size
     m_SerialPort->write(checksumOfCommand); //fixed size
     m_SerialPort->write(commandToSendToArduinoAsLatin1); //variable size
+#endif
 
     //TODOreq: merge below with above
     //Q_ASSERT(commandToSendToArduino.length() < (1024)); //TODOreq: 1024 should be in a shared header file between sketch and this. the arduino calls String.reserve(1024) in setup()
@@ -161,6 +188,7 @@ void WasdfArduino::handleSerialPortReadyReadCalibrationMode()
     while(m_SerialPort->canReadLine())
     {
         QString line = m_SerialPortTextStream.readLine();
+        emit e("raw line read from serial: " + line); //TODOreq: this is only here for testing
         //line is simply: "[pinId]:[sensorValue]"
         QStringList lineSplitAtColon = line.split(":");
         if(lineSplitAtColon.size() != 2)
