@@ -27,24 +27,53 @@ bool newSensorValueHasChangedEnoughThatWeWantToReportIt(int oldSensorValue, int 
 
     return false;
 }
-class Syncer
+static const int SizeOfaChecksum = 16; //MD5
+class MessageHeaderReader
 {
 public:
-    Syncer()
+    MessageHeaderReader()
         : m_Sync("SYNC") //TODOreq: use definition in header shared between PC and Arduino
     {
         reset();
     }
+    int messageSize_OrZeroIfStillReadingHeader()
+    {
+        if(!tryToGetSyncedOnBytesAvailable())
+            return 0;
+        //SYNC was seen if we get here. we also know that there's enough bytes available on Serial for the rest of the message header
+        byte checksumOfSizeOfData[SizeOfaChecksum]; //wow fucking mouthful/confusing (but accurate). err nvm I renamed it for other reasons: it used to be checksumOfSize[sizeOfChecksum]
+        Serial.read(checksumOfSizeOfData, SizeOfaChecksum);
+        int sizeOfData;
+        Serial.read((byte[])sizeOfData, sizeof(sizeOfData));
+        if(checksumOfSizeOfData != checksum(sizeOfData))
+        {
+            reset();
+            //TODOprobably: I suppose we SHOULD start looking for the next SYNC immediately after the one that we saw to get us here. maybe that one was a false positive and there was a legit one immediately after it! fuck, my brain!! still, this should work... eventually(?)...
+            return 0;
+        }
+        Serial.read(m_ChecksumOfData, SizeOfaChecksum);
+        return sizeOfData;
+    }
+    byte checkksumOfData[SizeOfaChecksum]()
+    {
+        return m_ChecksumOfData;
+    }
+
+private:
+    bool enoughBytesForEntireMessageHeaderAreAvailable()
+    {
+        static const int MessageHeaderSize = m_Sync.length() + sizeof(checksumOfSize) + sizeof(sizeOfData) + sizeof(checksumOfData);
+        return (Serial.available() >= MessageHeaderSize);
+    }
     bool tryToGetSyncedOnBytesAvailable()
     {
-        while(Serial.available())
+        while(enoughBytesForEntireMessageHeaderAreAvailable())
         {
             m_LastReadChar = (char)Serial.read();
             return handleLastReadCharAndReturnTrueIfItSyncedUs();
         }
         return false;
     }
-private:
     bool handleLastReadCharAndReturnTrueIfItSyncedUs()
     {
         static const int sizeOfSync = sync.length();
@@ -72,6 +101,7 @@ private:
     String m_Sync;
     char m_LastReadChar;
     int m_CurrentIndexOfCharLookingFor;
+    byte m_ChecksumOfData[SizeOfaChecksum];
 };
 class Finger_aka_AnalogPin
 {
@@ -176,12 +206,12 @@ struct Mode
 };
 
 //Globals
-Syncer syncer;
+MessageHeaderReader messageHeaderReader;
 int CalibrationDataOldSensorValues[NUM_ANALOG_INPUTS];
-String inputCommandString;
 Mode::ModeEnum CurrentMode;
 Hands hands;
 
+bool searchingForHeader;
 void setup()
 {
     Serial.begin(38400 /*, SERIAL_8O2 TODOreq: I want to try out "Odd" (that's an oh not a zero in between 8 and 2) parity and 2 stop bits to see if it improves reliability, but I keep getting an error that begin() only takes one argument wtf? maybe I need to upgrade? but it doesn't even look like debian stretch bumped the version at all (except a small patch). the define SERIAL_8O2 does in fact exist, so wtf?*/);
@@ -189,6 +219,7 @@ void setup()
         CalibrationDataOldSensorValues[i] = 0;
     CurrentMode = Mode::DoNothingMode;
     inputCommandString.reserve(1024); //TODOreq: calculate the max string length and reserve that much (or maybe a little more to be on the safe side). it can be determined because the values only take up so many characters. only thing is maybe the arduino mega 2560x1000 might have 999999999999 analog pins xDDDD, ya know what I mean??
+    searchingForHeader = true;
     while(!Serial) ; //wait for serial port to connect. Needed for Leonardo/Micro only. I intentionally put the String::reserve command (and other cmds) in between this and Serial.begin() in case the connect happens asynchronously (idfk tbh, but it might), in which case I may have saved an entire millisecond!!!
 }
 void readAndReportChangesToAnalogPinOverSerial(int pinId, int indexIntoCalibrationDataOldSensorValues)
@@ -228,29 +259,9 @@ void processInputCommandString()
         //TODOreq: blink pin 13 rapidly to indicate an error. longer term should request the command is re-sent. note: even if the checksum succeeds we still might get an invalid command (checksums aren't perfect), we we'd STILL want to request the command is re-sent. if however 50 invalid commands are received IN A ROW, then we would want to go into blink-13-error-mode as that indicates a bug
     }
 }
+int messageSize;
 void loop()
 {
-    //static const int numBytesToWaitForBeforePee
-    if(!syncer.tryToGetSyncedOnBytesAvailable())
-    {
-        delay(1); //TODOoptimization: might mess up mouse movement. "spinning" the cpu isn't sooooo bad xD
-        return;
-    }
-    //TODOreq: at this point we know that SYNC was just read from Serial
-
-
-    //TODOreq: merge below with above
-    while(Serial.available())
-    {
-        char inChar = (char)Serial.read();
-        if(inChar == '\n')
-        {
-            processInputCommandString();
-            inputCommandString = "";
-        }
-        else
-            inputCommandString += inChar;
-    }
     switch(CurrentMode) //TODOreq: this switch case doesn't support simultaneous 10-fingers and keyboardMouse modes
     {
         case Mode::Sending10FingerMovementsMode:
@@ -265,6 +276,33 @@ void loop()
         case Mode::DoNothingMode:
             delay(50); //mb this saves battery? w/e lol
         break;
+    }
+
+    //now check for input commands
+    if(searchingForHeader)
+    {
+        //static const int numBytesToWaitForBeforePee
+        messageSize = messageHeaderReader.messageSize_OrZeroIfStillReadingHeader();
+        if(messageSize < 1)
+        {
+            delay(1); //TODOoptimization: might mess up mouse movement. "spinning" the cpu isn't sooooo bad xD
+            return;
+        }
+        searchingForHeader = false;
+    }
+    //at this point we know that a message header was just read from Serial, and messageSize_OrZeroIfStillReadingHeader contains it's message size (but that doesn't mean that many bytes are available on Serial.available())
+    if(Serial.available() >= messageSize)
+    {
+        Serial.readBytes(potentialMessage, messageSize);
+
+        //TODOreq: maybe set to true later instead?
+        searchingForHeader = true;
+
+        if(checksum(potentialMessage) == messageHeaderReader.checkksumOfData())
+        {
+            processInputCommandString(potentialMessage);
+        }
+        //else: TODOmb: start looking for SYNC again right after the SYNC we just saw to get us here? how it currently works is we start looking for SYNC after the [just-confirmed-malformed] message has already been read in
     }
 
     delay(2); //TODOreq: this might fuck up MOUSE MOVEMENT, everything else should be fine with it tho

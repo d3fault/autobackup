@@ -51,13 +51,12 @@ void WasdfArduino::sendCommandToArduino(const QString &commandToSendToArduino)
     //m_SerialPortTextStream << "SYNC";
     //m_SerialPortTextStream << checksumOfData;
     //^this isn't like QDataStream, I'm sending the ASCII representation of numbers when I do it like this. so maybe I should NOT use a textStream so my commands are binary? the problem, then, becomes portability. I'm pretty damn sure Arduino uses a stable integer size, so if I use qint32 (etc) then I should be able to always work with arduino
-    QByteArray sync("SYNC"); //TODOoptimization: make this a member and it's initialization in construction phase
+    QByteArray sync("SYNC"); //TODOoptimization: make this a member and it's initialization in construction phasemmandToSendToArduino.toLatin1());
     QByteArray commandToSendToArduinoAsLatin1(commandToSendToArduino.toLatin1());
-    typedef qint32 size_t_ofSizeOfCommand;
-    size_t_ofSizeOfCommand sizeOfCommand = commandToSendToArduino.size();
-    QByteArray sizeOfCommandAsByteArray = QByteArray::fromRawData((const char*)(&sizeOfCommand), sizeof(size_t_ofSizeOfCommand));
+    qint32 sizeOfCommand = commandToSendToArduino.size();
+    QByteArray sizeOfCommandAsByteArray = QByteArray::fromRawData((const char*)(&sizeOfCommand), sizeof(sizeOfCommand));
     QByteArray checksumOfSizeOfCommand = checksum(sizeOfCommandAsByteArray);
-    qDebug() << checksumOfSizeOfCommand.size(); //TODOreq: this is for testing only. I think it should be 4 bytes?
+    qDebug() << checksumOfSizeOfCommand.size(); //TODOreq: this is for testing only. I think it should be 32 hex digits times 4 bytes per digit = 128-bits, or 16 bytes
     QByteArray checksumOfCommand = checksum(commandToSendToArduinoAsLatin1);
 
     m_SerialPort->write(sync); //fixed size
