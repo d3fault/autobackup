@@ -1,3 +1,5 @@
-at your leisure (unordered):
+at your leisure (semi-ordered (do what you feel, electric eel)):
+minddumper: last modified timestamp in filename; remove HARD dep on `touch`, but still use it on *nix
+minddumper -> "Projects" link on page
+wasdf
 d=i -> make osios using d=i -> make d=i using d=i as a tab in osios (and everything that implies, such as timelinized actions)
-music fingers

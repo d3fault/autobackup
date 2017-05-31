@@ -44,7 +44,7 @@ Documents/minddump/2016/4/1459968855-LhX846.txt:1459969203
 Documents/minddump/2016/4/1459969303-nnS846.txt:1459969688
 Documents/minddump/2016/4/1459984685-TJ2423.txt:1459985236
 Documents/minddump/2017/:1495179528
-Documents/minddump/2017/5/:1496184085
+Documents/minddump/2017/5/:1496186514
 Documents/minddump/2017/5/1495171253-Kauai.0a-MTJ783.txt:1495179507
 Documents/minddump/2017/5/1495214940-MTJ843.txt:1495215210
 Documents/minddump/2017/5/1495323758-TJ2659.txt:1495323774
@@ -71,6 +71,7 @@ Documents/minddump/2017/5/1496023209-MTJ782.txt:1496023629
 Documents/minddump/2017/5/1496023906-MTJ789.txt:1496024169
 Documents/minddump/2017/5/1496026719-MTJ876.txt:1496026750
 Documents/minddump/2017/5/1496183595-LhX832.txt:1496184067
+Documents/minddump/2017/5/1496186493-TJ1445.txt:1496186625
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -5924,8 +5925,8 @@ Projects/libAvGraphicsItem3/src/main.cpp:1327003410
 Projects/wasdf/:1496105472
 Projects/wasdf/assets/:1463107603
 Projects/wasdf/assets/ArduinoSketches/:1463107625
-Projects/wasdf/assets/ArduinoSketches/ArduinoWriteChangesOnAnalogPinsToSerial/:1496185352
-Projects/wasdf/assets/ArduinoSketches/ArduinoWriteChangesOnAnalogPinsToSerial/ArduinoWriteChangesOnAnalogPinsToSerial.ino:1496185352
+Projects/wasdf/assets/ArduinoSketches/ArduinoWriteChangesOnAnalogPinsToSerial/:1496267593
+Projects/wasdf/assets/ArduinoSketches/ArduinoWriteChangesOnAnalogPinsToSerial/ArduinoWriteChangesOnAnalogPinsToSerial.ino:1496267593
 Projects/wasdf/assets/ArduinoSketches/ArduinoWriteChangesOnAnalogPinsToSerial/Makefile:1495394559
 Projects/wasdf/design/:1496025670
 Projects/wasdf/design/checksummed.message.protocol.notes.on.when.to.read.the.message.header.txt:1496025871
@@ -6498,4 +6499,4 @@ scripts/zoom.backup.and.shred.sh:1351237228
 copyright.txt:1388203681
 license.dpl.txt:1388242176
 pseudo.git.submodules.temphack.txt:1442777728
-todo.txt:1457214212
+todo.txt:1496259381

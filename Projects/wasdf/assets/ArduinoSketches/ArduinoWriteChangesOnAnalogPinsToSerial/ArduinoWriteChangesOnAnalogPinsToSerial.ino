@@ -4,9 +4,8 @@
 #include <MD5.h> //for checksum
 //#include <ArduinoJson.h> //for sanity
 
-static const char Sync[4] = { 'S', 'Y', 'N', 'C' }; //TODOreq: use definition in header shared between PC and Arduino
+static const String Sync("SYNC"); //TODOreq: use definition in header shared between PC and Arduino
 static const int SizeOfaChecksum = 16; //MD5
-static const int MESSAGE_HEADER_SIZE = (sizeof(Sync) + sizeof(SizeOfaChecksum /*checksum of size of data*/) + sizeof(int /*size of data*/) + sizeof(SizeOfaChecksum /*checksum of data*/));
 
 #if (NUM_ANALOG_INPUTS < 10)
 #error "Your board does not support at least 10 analog inputs" //TODOmb: fail gracefully. but don't simply uncomment this, otherwise we will probably have a memory access violation in this code. namely when we try to pull out the "old" sensor value of finger9, but we only allocated (on the stack) an array of size NUM_ANALOG_INPUTS to hold our old sensor values
@@ -28,7 +27,7 @@ static const int MAX_MESSAGE_SIZE = 1024;
 void fatalErrorBlinkPin13(int blinkIntervalSec)
 {
     //hmm I thought about keeping track of the time using millis etc, but might as well just use a while(true) loop to simplify my life. this is a FATAL error after all :-D
-    int blinkIntervalMSec = blinkIntervalSec*1000; //TODOkek: blink in morse code spelling out the function that called fatalErrorBlinkPin13() or the line number (if this wasn't a single-file dev enviornment (which is dumb, fkn arduino meh) then I'd say out put the filename and line number). of course another way of solving it is to attach an LCD, but that is not as kek
+    int blinkIntervalMSec = blinkIntervalSec*1000; //TODOkek: blink in morse code spelling out the function that called fatalErrorBlinkPin13() or the line number (if this wasn't a single-file dev enviornment (which is dumb, fkn arduino meh) then I'd say out put the filename in addition to the line number). of course another way of solving it is to attach an LCD (or dump stack trace over Serial?), but that is not as kek
     pinMode(13, OUTPUT);
     while(true)
     {
@@ -54,93 +53,6 @@ bool newSensorValueHasChangedEnoughThatWeWantToReportIt(int oldSensorValue, int 
 
     return false;
 }
-//TODOreq: callers must free the ptr returned from checksum
-unsigned char *checksum(char *dataToChecksum, size_t sizeOfDataToChecksum)
-{
-    /*unsigned char* hash =*/ return MD5::make_hash(dataToChecksum, sizeOfDataToChecksum);
-    //could convert ot hex by calling make_digest, but it's not going to be read by a human anyways so no need (can also remove make_digest from the lib in order to save space)
-}
-class MessageHeaderReader
-{
-public:
-    MessageHeaderReader()
-    {
-        reset();
-    }
-    int messageSize_OrZeroIfStillReadingHeader()
-    {
-        if(!tryToGetSyncedOnBytesAvailable())
-            return 0;
-        //SYNC was seen if we get here. we also know that there's enough bytes available on Serial for the rest of the message header
-        unsigned char checksumOfSizeOfData_Read[SizeOfaChecksum]; //wow fucking mouthful/confusing (but accurate). err nvm I renamed it for other reasons: it used to be checksumOfSize[sizeOfChecksum]
-        Serial.readBytes((char*)checksumOfSizeOfData_Read, SizeOfaChecksum);
-        int sizeOfData;
-        Serial.readBytes((char*)(&sizeOfData), sizeof(sizeOfData)); //this might not work because of endianness and other retardation
-        unsigned char *checksumOfSizeOfData_Calculated = checksum((char*)(&sizeOfData), sizeof(sizeOfData));
-        bool checksumsMatch = (checksumOfSizeOfData_Read == checksumOfSizeOfData_Calculated);
-        free(checksumOfSizeOfData_Calculated);
-        if(!checksumsMatch)
-        {
-            //reset();
-            //TODOprobably: I suppose we SHOULD start looking for the next SYNC immediately after the one that we saw to get us here. maybe that one was a false positive and there was a legit one immediately after it! fuck, my brain!! still, this should work... eventually(?)...
-            fatalErrorBlinkPin13(1);
-            return 0;
-        }
-        Serial.readBytes((char*)m_ChecksumOfData, SizeOfaChecksum);
-        return sizeOfData;
-    }
-    unsigned char *checksumOfData()
-    {
-        return m_ChecksumOfData;
-    }
-
-private:
-    bool enoughBytesForEntireMessageHeaderAreAvailable()
-    {
-        return (Serial.available() >= MESSAGE_HEADER_SIZE);
-    }
-    bool tryToGetSyncedOnBytesAvailable()
-    {
-        while(enoughBytesForEntireMessageHeaderAreAvailable()) //TODOreq: Serial has an internal buffer of 64 bytes, so waiting for the entire message header (or entire message) before reading is BAD PLAN. need my own buffer :( because I don't see a way to make Serial's buffer bigger. well ok maybe it's ok strat for header(confirm it TODOreq), but is not ok strat for the data/message itself
-        {
-            m_LastReadChar = (char)Serial.read();
-            if(handleLastReadCharAndReturnTrueIfItSyncedUs())
-                return true;
-        }
-        return false;
-    }
-    bool handleLastReadCharAndReturnTrueIfItSyncedUs()
-    {
-        if(m_LastReadChar == Sync[m_CurrentIndexOfCharLookingFor])
-        {
-            ++m_CurrentIndexOfCharLookingFor;
-            if(m_CurrentIndexOfCharLookingFor == sizeof(Sync))
-            {
-                reset();
-                return true;
-            }
-            return false; //getting closer, just not enough chars yet
-        }
-        else
-        {
-            reset();
-
-            fatalErrorBlinkPin13(2);
-            return false;
-            //TODOreq: handle SYNC failures gracefully ofc. I think the below recursive call (to us) will in fact give an infinite loop (never returning to original caller), but it's KINDA on the right track
-
-            //return handleLastReadCharAndReturnTrueIfItSyncedUs(); //we try again, because for example SSYNC (note the 2 S's in a row. just because the char we just read wasn't what we were looking for, doesn't mean it's not a valid char for SYNC starting). sure it won't ever return true unless SYNC is 1 char long lol, but we still want to "handle" it
-        }
-    }
-    void reset()
-    {
-        m_CurrentIndexOfCharLookingFor = 0;
-    }
-
-    char m_LastReadChar;
-    int m_CurrentIndexOfCharLookingFor;
-    unsigned char m_ChecksumOfData[SizeOfaChecksum];
-};
 class Finger_aka_AnalogPin
 {
 public:
@@ -242,14 +154,222 @@ struct Mode
         , KeyboardAndMouseMode = 0x100
     };
 };
+void checksum(const String &dataToChecksum, String *out_HexChecksum)
+{
+    int dataLength = dataToChecksum.length();
+    char *dataAsCharArray = new char(dataLength);
+    dataToChecksum.toCharArray(dataAsCharArray, dataLength);
+    unsigned char *rawChecksum = MD5::make_hash(dataAsCharArray, dataLength);
+    char *hexChecksum_or_HexcumWoopsFreudianSlip = MD5::make_digest(rawChecksum, 16); //TODOoptimization: in theory no need to conver to hex because it's not going to be read by a human (could also remove make_digest from the md5lib in order to save space)
+    *out_HexChecksum = hexChecksum_or_HexcumWoopsFreudianSlip;
+
+    //TODOoptimization: all 3 ptrs that are free'd here could probably be setup once in setup() and then re-used every time checksum() is called (and never freed because there's no shutdown() function xD)
+    free(hexChecksum_or_HexcumWoopsFreudianSlip);
+    free(rawChecksum);
+    free(dataAsCharArray);
+}
+class MessageHeaderReader
+{
+private:
+    enum MessageHeaderReaderState
+    {
+          LookingForSync = 0
+        , ReadingChecksumOfSizeOfData = 1
+        , ReadingSizeOfData = 2
+        , ReadingChecksumOfData = 3
+    };
+    MessageHeaderReaderState m_State;
+
+    bool tryReadUntilComma()
+    {
+        //TO DOnereq: the json inputCommand must not contain the word "SYNC". it can and will contain assloads of commas, which yes if we do get out of sync will trigger this shiz yada yada, but it's fine as long as SYNC isn't seen. actually fuck it, come to think of it even that doesn't matter... because the fkn checksums gotta check out ;-P. my protocol is finally robust
+        while(Serial.available())
+        {
+            char inChar = (char)Serial.read();
+            if(inChar == ',') //TODOreq: shared delim def in header
+                return true;
+            m_MessageHeaderBuffer += inChar;
+
+            if(m_MessageHeaderBuffer.length() > SizeOfLargestHeaderComponent)
+            {
+                //while reading here and filling up m_MessageHeaderBuffer, we need to also occassionally shrink it. if we got out of sync then it might grow quite large before we see a comma again. the max size it needs to be is the biggest size of the 3 different message headers, so I'm guessing the hex encoding of [either of] the checksum[s] is going to be the biggest and therefore the max size we should allow m_MessageHeaderBuffer to become. we should drop characters starting from the very left, since new ones are appended on the right
+                m_MessageHeaderBuffer = m_MessageHeaderBuffer.substring(1);
+            }
+        }
+        return false;
+    }
+public:
+    MessageHeaderReader()
+        : m_State(LookingForSync)
+        , SizeOfLargestHeaderComponent(SizeOfaChecksum /*16 hex digits for MD5 Checksums*/)
+    { }
+    bool tryReadMessageHeader(int *out_MessageSize)
+    {
+        switch(m_State)
+        {
+            case LookingForSync:
+            {
+                if(!tryReadUntilComma())
+                {
+                    return false;
+                    break;
+                }
+                if(m_MessageHeaderBuffer.endsWith(Sync))
+                {
+                    m_State = ReadingChecksumOfSizeOfData;
+                }
+                m_MessageHeaderBuffer = "";
+            }
+            //INTENTIONALLY NOT BREAKING HERE
+            case ReadingChecksumOfSizeOfData:
+            {
+                if(!tryReadUntilComma())
+                {
+                    return false;
+                    break;
+                }
+                m_ParsedChecksumOfSizeOfData = m_MessageHeaderBuffer;
+                m_MessageHeaderBuffer = "";
+                m_State = ReadingSizeOfData;
+            }
+            //INTENTIONALLY NOT BREAKING HERE
+            case ReadingSizeOfData:
+            {
+                if(!tryReadUntilComma())
+                {
+                    return false;
+                    break;
+                }
+                m_ParsedSizeOfData = m_MessageHeaderBuffer.toInt();
+                m_ParsedSizeOfDataAsString = m_MessageHeaderBuffer;
+                m_MessageHeaderBuffer = "";
+                checksum(m_ParsedSizeOfDataAsString, &m_CalculatedChecksumOfSizeOfData);
+                if(m_CalculatedChecksumOfSizeOfData != m_ParsedChecksumOfSizeOfData)
+                {
+                    fatalErrorBlinkPin13(2); //TODOreq: remove this call to fatal when "requesting message is re-sent" is implemented
+                    m_State = LookingForSync;
+                    return false;
+                    break;
+                }
+                m_State = ReadingChecksumOfData;
+            }
+            //INTENTIONALLY NOT BREAKING HERE
+            case ReadingChecksumOfData:
+            {
+                if(!tryReadUntilComma())
+                {
+                    return false;
+                    break;
+                }
+                m_ParsedMessageChecksum = m_MessageHeaderBuffer; //we have to wait until we read in the data before using this checksum
+                m_MessageHeaderBuffer = "";
+                *out_MessageSize = m_ParsedSizeOfData;
+                m_State = LookingForSync;
+                return true;
+            }
+            break;
+        }
+    }
+    const String &parsedMessageChecksum() const
+    {
+        return m_ParsedMessageChecksum;
+    }
+private:
+    const int SizeOfLargestHeaderComponent;
+
+    String m_MessageHeaderBuffer;
+
+    String m_ParsedChecksumOfSizeOfData;
+    int m_ParsedSizeOfData;
+    String m_ParsedSizeOfDataAsString;
+    String m_CalculatedChecksumOfSizeOfData;
+
+    String m_ParsedMessageChecksum;
+};
+class MessageReader
+{
+private:
+    bool messageChecksumIsValid()
+    {
+        checksum(m_MessageBuffer, &m_CalculatedMessageChecksum);
+        if(m_CalculatedMessageChecksum == m_MessageHeaderReader.parsedMessageChecksum())
+        {
+            return true;
+        }
+        else
+        {
+            fatalErrorBlinkPin13(3); //TODOreq: remove this call to fatal when "requesting message is re-sent" is implemented
+        }
+        return false;
+    }
+    bool tryReadMessageActual(String *out_Message)
+    {
+        int numBytesToRead = min(m_NumBytesOfMessageLeft, Serial.available());
+        if(numBytesToRead < 1)
+            return false;
+        for(int i = 0; i < numBytesToRead; ++i)
+        {
+            m_MessageBuffer += (char)Serial.read(); //TODOoptimization: read chunks. idfk how on arduino tho kek
+        }
+        m_NumBytesOfMessageLeft -= numBytesToRead;
+        if(m_NumBytesOfMessageLeft < 1)
+        {
+            //woot read in all of a message
+            //now verify it's checksum
+            m_HaveReadMessageHeader = false; //so next time we call tryReadMessage we'll be back to looking for the header
+            if(messageChecksumIsValid())
+            {
+                *out_Message = m_MessageBuffer; //TODOoptimization: if this is deep copy, which it probably is, avoid it
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+public:
+    MessageReader()
+        : m_HaveReadMessageHeader(false)
+    { }
+    bool tryReadMessage(String *out_Message)
+    {
+        if(!m_HaveReadMessageHeader)
+        {
+            if(!m_MessageHeaderReader.tryReadMessageHeader(&m_MessageSize))
+            {
+                return false;
+            }
+            else
+            {
+                if(m_MessageSize > MAX_MESSAGE_SIZE)
+                {
+                    fatalErrorBlinkPin13(4);
+                    return false;
+                }
+                m_HaveReadMessageHeader = true;
+                m_NumBytesOfMessageLeft = m_MessageSize;
+                m_MessageBuffer = "";
+            }
+        }
+
+        //if we get here we've read the message header. either just now or on a previous call to tryReadMessage. it also means m_MessageSize is valid
+        return tryReadMessageActual(out_Message);
+    }
+private:
+    String m_MessageBuffer;
+    MessageHeaderReader m_MessageHeaderReader;
+    int m_MessageSize;
+    bool m_HaveReadMessageHeader;
+    int m_NumBytesOfMessageLeft;
+    String m_CalculatedMessageChecksum;
+};
+
 
 //Globals
-MessageHeaderReader messageHeaderReader;
 int CalibrationDataOldSensorValues[NUM_ANALOG_INPUTS];
 Mode::ModeEnum CurrentMode;
 Hands hands;
-bool searchingForHeader;
-char *inputCommandBuffer;
+String inputCommandBuffer;
+MessageReader messageReader;
 
 void setup()
 {
@@ -257,9 +377,8 @@ void setup()
     for(int i = 0; i < NUM_ANALOG_INPUTS; ++i)
         CalibrationDataOldSensorValues[i] = 0;
     CurrentMode = Mode::DoNothingMode;
-    //inputCommandString.reserve(1024); //TODOreq: calculate the max string length and reserve that much (or maybe a little more to be on the safe side). it can be determined because the values only take up so many characters. only thing is maybe the arduino mega 2560x1000 might have 999999999999 analog pins xDDDD, ya know what I mean??
-    searchingForHeader = true;
-    inputCommandBuffer = new char(MAX_MESSAGE_SIZE); //TODOoptimization: never call new after takeoff. the md5 lib I'm gonna be using looks suspect af
+    inputCommandBuffer.reserve(MAX_MESSAGE_SIZE); //TODOreq: calculate the max string length and reserve that much (or maybe a little more to be on the safe side). it can be determined because the values only take up so many characters. only thing is maybe the arduino mega 2560x1000 might have 999999999999 analog pins xDDDD, ya know what I mean??
+    //inputCommandBuffer = new char(MAX_MESSAGE_SIZE); //TODOoptimization: never call new after takeoff. the md5 lib I'm gonna be using looks suspect af
     while(!Serial) ; //wait for serial port to connect. Needed for Leonardo/Micro only. I intentionally put the String::reserve command (and other cmds) in between this and Serial.begin() in case the connect happens asynchronously (idfk tbh, but it might), in which case I may have saved an entire millisecond!!!
 }
 void readAndReportChangesToAnalogPinOverSerial(int pinId, int indexIntoCalibrationDataOldSensorValues)
@@ -281,7 +400,7 @@ void calibrationLoop()
         readAndReportChangesToAnalogPinOverSerial(i, j);
     }
 }
-void processInputCommandString(const char *inputCommandString)
+void processInputCommandString(const String &inputCommandString)
 {
     if(inputCommandString == "calibrate")
     {
@@ -299,12 +418,10 @@ void processInputCommandString(const char *inputCommandString)
     else
     {
         //TODOreq: blink pin 13 rapidly to indicate an error. longer term should request the command is re-sent. note: even if the checksum succeeds we still might get an invalid command (checksums aren't perfect), we we'd STILL want to request the command is re-sent. if however 50 invalid commands are received IN A ROW, then we would want to go into blink-13-error-mode as that indicates a bug
-        fatalErrorBlinkPin13(3);
+        fatalErrorBlinkPin13(1);
     }
 }
-int messageSize_OrZeroIfStillReadingHeader;
-int numBytesOfMessageReadSoFar;
-void business()
+void sendOutputIfAny()
 {
     switch(CurrentMode) //TODOreq: this switch case doesn't support simultaneous 10-fingers and keyboardMouse modes
     {
@@ -321,48 +438,14 @@ void business()
             //I used to hav a delay(50) here, until I learned that Serial has internal buffer size of only 64 bytes
         break;
     }
-
-    //now check for input commands
-    if(searchingForHeader)
-    {
-        messageSize_OrZeroIfStillReadingHeader = messageHeaderReader.messageSize_OrZeroIfStillReadingHeader();
-        if(messageSize_OrZeroIfStillReadingHeader < 1)
-        {
-            return;
-        }
-        searchingForHeader = false;
-        numBytesOfMessageReadSoFar = 0;
-    }
-    //at this point we know that a message header was just read from Serial, and messageSize_OrZeroIfStillReadingHeader contains it's message size (but that doesn't mean that many bytes are available on Serial.available())
-    if((messageSize_OrZeroIfStillReadingHeader + 1 /*plus 1 for null term we add on below*/) > MAX_MESSAGE_SIZE)
-    {
-        fatalErrorBlinkPin13(4);
-    }
-    int numBytesOfMessageLeft = messageSize_OrZeroIfStillReadingHeader - numBytesOfMessageReadSoFar;
-    int numBytesToRead = min(numBytesOfMessageLeft, Serial.available());
-    if(numBytesToRead < 1)
-        return;
-    Serial.readBytes((inputCommandBuffer+numBytesOfMessageReadSoFar), numBytesToRead); //I love shitty (c-style) APIs :)
-    numBytesOfMessageReadSoFar += numBytesToRead;
-    if(numBytesOfMessageReadSoFar < messageSize_OrZeroIfStillReadingHeader)
-        return;
-    inputCommandBuffer[messageSize_OrZeroIfStillReadingHeader] = '\n';
-    unsigned char *checksumOfData_Calculated = checksum(inputCommandBuffer, messageSize_OrZeroIfStillReadingHeader);
-    bool checksumsMatch = (checksumOfData_Calculated == messageHeaderReader.checksumOfData());
-    free(checksumOfData_Calculated);
-    if(checksumsMatch)
-    {
+}
+void receiveInputIfAny()
+{
+    if(messageReader.tryReadMessage(&inputCommandBuffer))
         processInputCommandString(inputCommandBuffer);
-    }
-    else
-    {
-        //TODOmb: start looking for SYNC again right after the SYNC we just saw to get us here? how it currently works is we start looking for SYNC after the [just-confirmed-malformed] message has already been read in
-        fatalErrorBlinkPin13(5);
-    }
-    searchingForHeader = true;
 }
 void loop()
 {
-    business();
-    //I used to hav a delay(2) here, until I learned that Serial has internal buffer size of only 64 bytes
+    sendOutputIfAny();
+    receiveInputIfAny();
 }
