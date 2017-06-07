@@ -17,7 +17,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1496099624
+Documents/minddump/:1496866161
 Documents/minddump/2016/:1459724150
 Documents/minddump/2016/3/:1459367409
 Documents/minddump/2016/3/1457041314-MTJ867.txt:1457227057
@@ -43,7 +43,7 @@ Documents/minddump/2016/4/1459728372-TJ1875.txt:1459728515
 Documents/minddump/2016/4/1459968855-LhX846.txt:1459969203
 Documents/minddump/2016/4/1459969303-nnS846.txt:1459969688
 Documents/minddump/2016/4/1459984685-TJ2423.txt:1459985236
-Documents/minddump/2017/:1495179528
+Documents/minddump/2017/:1496865440
 Documents/minddump/2017/5/:1496186514
 Documents/minddump/2017/5/1495171253-Kauai.0a-MTJ783.txt:1495179507
 Documents/minddump/2017/5/1495214940-MTJ843.txt:1495215210
@@ -72,6 +72,10 @@ Documents/minddump/2017/5/1496023906-MTJ789.txt:1496024169
 Documents/minddump/2017/5/1496026719-MTJ876.txt:1496026750
 Documents/minddump/2017/5/1496183595-LhX832.txt:1496184067
 Documents/minddump/2017/5/1496186493-TJ1445.txt:1496186625
+Documents/minddump/2017/6/:1496868108
+Documents/minddump/2017/6/1496865346-MTJ790.txt:1496865427
+Documents/minddump/2017/6/1496866314-MTJ831.txt:1496866709
+Documents/minddump/2017/6/1496866714-LhX831.txt:1496868086
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -2592,6 +2596,7 @@ Documents/minddump/sldfkjalskdjflksjdflksjdfosduflkwjerousdfjsdflkjreoi.txt:1396
 Documents/minddump/sldfkjalskjdflksjdflkjsldkfjlskjflaskjdflskjdfouwerl.txt:1399325635
 Documents/minddump/sldfkjasdofuwlrkjsafdihsdfkajoruwerlksjdfourl.txt:1345058845
 Documents/minddump/sldfkjasljfsalkjdflskdjflksdjflskjdflskdjfouwelrkjosufdlksjdfosuidfl.txt:1381338846
+Documents/minddump/sldfkjdlsfkjsdlfkjsdflkjsdlkfjlskfjsdlkfjsdlkfjdlskjf.txt:1496866161
 Documents/minddump/sldfkjlksdjfklsdjfkljsdklfjklsdjfklsjdfkljsdlkfjsdlkfjklsdjflk.txt:1425320245
 Documents/minddump/sldfkjlsdjfljdlfjsldfjslkdjflskdjflksdjflkjsdflkjsdlkfjsldkjflksdjfouewlrk.txt:1423616587
 Documents/minddump/sldfkjlsdkfjsldkjfouwerljksodfulsdfjoufsdlkjweorulsjfd.txt:1381327973
@@ -6458,7 +6463,7 @@ scripts/win/zoom.cygwin.commands.sh:1320861500
 scripts/win/zoom.sync.with.3x.750gb.drives.bat:1320860540
 scripts/apt.initial.packages.debian.txt:1495325315
 scripts/base64theSha1SumOfAFileProperly.sh:1424394103
-scripts/best.rsync.command.txt:1427098358
+scripts/best.rsync.command.txt:1496723495
 scripts/cleanAptEtc.sh:1350618598
 scripts/cmd.to.make.torrent.with.lots.of.relevant.trackers.txt:1426427907
 scripts/copy.ldd.dependencies.automatically.woot.txt:1442694424

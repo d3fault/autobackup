@@ -1,2 +1,10 @@
 cd into target dir (don't use asterisk (./*) otherwise you miss hidden files) and then:
+
+"Best" is relative and dependent on perspective/context, so choose either (a) or (b) below.
+
+a) If you are copy/pasting from a local source to a local dest (you don't expect failure) then it's safest to never overwrite. We make would-be overwrites later detectable too, just to be able to double check that they never [almost] happened as that would indicate an error in (potentially) a backup solution (script or whatever):
+a) tl;dr) Don't overwrite ever:
 rsync -avhh --progress --protect-args --backup --suffix=~accidentallyOverwrittenDuringSyncAt-`date +%s` ./ /path/to/dest
+
+b) If you are transferring over a network ([network] failure is much more likely) and want to resume the transfer of the file on subsequent attempts:
+rsync -avhh --progress --protect-args --partial ./ /path/to/dest
