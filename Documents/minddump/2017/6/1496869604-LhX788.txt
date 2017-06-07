@@ -1,0 +1,10 @@
+in programming, you redefine. but if you capture every commit, it's art (well it still is even if you don't).
+
+it's art in the macro sense
+but every loc is art
+anyways you go back and edit the shit out of your code so that it doesn't even look the same. the old art is now gone'ish ("ish" because it's still in the git commit history). a better way of saying it is that the old art is not any longer part of the newer segment of new projectArt releases.
+
+it changes, so entire pieces could be deleted.
+but of course, new ones form.
+
+I like the analogy "can't dig a hole without also making a mountain or vice versa(s/dig/make)"
