@@ -43,7 +43,7 @@ void WasdfArduino::openSerialPortIfNotOpen()
 }
 QByteArray WasdfArduino::checksum(const QByteArray &input)
 {
-    return QCryptographicHash::hash(input, QCryptographicHash::Md5); //MD5 is overkill for checksum, but underkill for crypto. I had trouble getting numerous other checksums and cryptographic hashes working on my arduino (or they had insufficient (or no) licensing)
+    return QCryptographicHash::hash(input, QCryptographicHash::Md5).toHex(); //MD5 is overkill for checksum, but underkill for crypto. I had trouble getting numerous other checksums and cryptographic hashes working on my arduino (or they had insufficient (or no) licensing)
 }
 void WasdfArduino::sendCommandToArduino(const QString &commandToSendToArduino)
 {
@@ -76,6 +76,11 @@ void WasdfArduino::sendCommandToArduino(const QString &commandToSendToArduino)
     //send commandToSendToArduino
     m_SerialPortTextStream << commandToSendToArduino;
 
+    //TODOreq: merge this assert with above
+    //Q_ASSERT(commandToSendToArduino.length() < (1024)); //TODOreq: 1024 should be in a shared header file between sketch and this. the arduino calls String.reserve(1024) in setup()
+    //m_SerialPortTextStream << commandToSendToArduino << "\n"; //don't use endl, that uses \r\n sometimes I think but might be wrong since the QIODevice isn't using QIODevice::Text? fuggit -- we don't need a newline delim anymore because our protocol specifies the "message size". we read "message size" bytes, then immediately start looking for the next SYNC... so I'm 99% sure newline (or a delim in between messages, of any kind) isn't needed anymore
+    m_SerialPortTextStream.flush();
+
 #if 0 //turns out I do need to send things over as ASCII. arduino uses 2-byte int size wtf??? I can't be fucked. I'm going to checksum (hash) the STRING representation of shit instead of the raw bytes
     QByteArray sync("SYNC"); //TODOoptimization: make this a member and it's initialization in construction phasemmandToSendToArduino.toLatin1());
     QByteArray commandToSendToArduinoAsLatin1(commandToSendToArduino.toLatin1());
@@ -91,11 +96,6 @@ void WasdfArduino::sendCommandToArduino(const QString &commandToSendToArduino)
     m_SerialPort->write(checksumOfCommand); //fixed size
     m_SerialPort->write(commandToSendToArduinoAsLatin1); //variable size
 #endif
-
-    //TODOreq: merge below with above
-    //Q_ASSERT(commandToSendToArduino.length() < (1024)); //TODOreq: 1024 should be in a shared header file between sketch and this. the arduino calls String.reserve(1024) in setup()
-    //m_SerialPortTextStream << commandToSendToArduino << "\n"; //don't use endl, that uses \r\n sometimes I think but might be wrong since the QIODevice isn't using QIODevice::Text? fuggit
-    //m_SerialPortTextStream.flush();
 }
 void WasdfArduino::startInCalibrationMode()
 {

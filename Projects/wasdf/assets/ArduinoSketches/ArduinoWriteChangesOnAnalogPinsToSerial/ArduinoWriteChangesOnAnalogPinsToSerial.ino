@@ -5,7 +5,7 @@
 //#include <ArduinoJson.h> //for sanity
 
 static const String Sync("SYNC"); //TODOreq: use definition in header shared between PC and Arduino
-static const int SizeOfaChecksum = 16; //MD5
+static const int SizeOfaChecksum = 32; //MD5 uses 32x 4-bit hex digits (128-bits total). since we're passing the hex md5 as a "string", we need 32 bytes to hold it
 
 #if (NUM_ANALOG_INPUTS < 10)
 #error "Your board does not support at least 10 analog inputs" //TODOmb: fail gracefully. but don't simply uncomment this, otherwise we will probably have a memory access violation in this code. namely when we try to pull out the "old" sensor value of finger9, but we only allocated (on the stack) an array of size NUM_ANALOG_INPUTS to hold our old sensor values
@@ -157,16 +157,16 @@ struct Mode
 void checksum(const String &dataToChecksum, String *out_HexChecksum)
 {
     int dataLength = dataToChecksum.length();
-    char *dataAsCharArray = new char(dataLength);
-    dataToChecksum.toCharArray(dataAsCharArray, dataLength);
+    int dataLengthIncludingNullTerminator = dataLength + 1;
+    char dataAsCharArray[dataLengthIncludingNullTerminator]; //I thought this was illegal to use a non-const array size, but uhhhh it's compiling/working just fine... maybe arduino doesn't use real C++ after all?? or maybe I'm just retarded? seriously wtf I thought non-const array sizes needed to use new/delete (heap vs stack)
+    dataToChecksum.toCharArray(dataAsCharArray, dataLengthIncludingNullTerminator);
     unsigned char *rawChecksum = MD5::make_hash(dataAsCharArray, dataLength);
-    char *hexChecksum_or_HexcumWoopsFreudianSlip = MD5::make_digest(rawChecksum, 16); //TODOoptimization: in theory no need to conver to hex because it's not going to be read by a human (could also remove make_digest from the md5lib in order to save space)
+    char *hexChecksum_or_HexcumWoopsFreudianSlip = MD5::make_digest(rawChecksum, 16); //I have no idea why this 2nd arg is 16 instead of 32. //TODOoptimization: in theory no need to conver to hex because it's not going to be read by a human (could also remove make_digest from the md5lib in order to save space)
     *out_HexChecksum = hexChecksum_or_HexcumWoopsFreudianSlip;
 
-    //TODOoptimization: all 3 ptrs that are free'd here could probably be setup once in setup() and then re-used every time checksum() is called (and never freed because there's no shutdown() function xD)
+    //TODOoptimization: both ptrs that are free'd here could probably be setup once in setup() and then re-used every time checksum() is called (and never freed because there's no shutdown() function xD)
     free(hexChecksum_or_HexcumWoopsFreudianSlip);
     free(rawChecksum);
-    free(dataAsCharArray);
 }
 class MessageHeaderReader
 {
@@ -201,7 +201,7 @@ private:
 public:
     MessageHeaderReader()
         : m_State(LookingForSync)
-        , SizeOfLargestHeaderComponent(SizeOfaChecksum /*16 hex digits for MD5 Checksums*/)
+        , SizeOfLargestHeaderComponent(SizeOfaChecksum /*32 hex digits for MD5 Checksums*/)
     { }
     bool tryReadMessageHeader(int *out_MessageSize)
     {
