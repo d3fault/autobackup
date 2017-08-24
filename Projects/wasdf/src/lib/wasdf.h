@@ -48,6 +48,8 @@ inline uint qHash(const Finger &key, uint seed)
 }
 struct WasdfCalibrationFingerConfiguration
 {
+    void calculateAtRestRange(int *out_AtRestMin, int *out_AtRestMax) const;
+
     int AnalogPinIdOnArduino = -1;
     int MinValue = 1023; //TODOreq: ctrl+shift+f all non-comment instances of '1023' (and 0) and replace them all with a common constant declared at the top of this file
     int MaxValue = 0;
@@ -62,7 +64,6 @@ struct WasdfCalibrationFingerConfiguration
 class WasdfCalibrationConfiguration : public QHash<Finger, WasdfCalibrationFingerConfiguration>
 {
 public:
-    static void calculateAtRestRange(const WasdfCalibrationFingerConfiguration &fingerConfiguration, int *out_AtRestMin, int *out_AtRestMax);
     bool hasFingerWithAnalogPinId(int analogPinId) const;
     Finger getFingerByAnalogPinId(int analogPinId) const;
 };

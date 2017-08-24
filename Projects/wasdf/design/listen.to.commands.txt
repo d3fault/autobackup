@@ -1,0 +1,14 @@
+I should play, with smoothing (akin to autotune), the frequencies of the commands.
+
+It should be a toggleable mode, app-wide. Every "plugin"(?) (module?) that runs commands has the audio for that command played, but first run through a normalizer to make it sound halfway decent (otherwise it'd sound like white noise).
+
+
+The state of each finger is recorded in time.
+-Commands are run from gestures
+-Sounds are played from the movements made to form those gestures with your hands
+
+^both are reproduceable in a timeline. you can save space by having them both refer to "the state of each finger as it is recorded in time".
+Just also have 2 modules that react to finger movement position changes that the core emits.
+
+
+If I "play" (listen to) my commands, I think I'll hear patterns. I can then go from there.

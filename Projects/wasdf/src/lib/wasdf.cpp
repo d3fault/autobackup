@@ -142,16 +142,16 @@ QString fingerEnumToHumanReadableString(Finger finger)
     }
     return "#error finger#"; //should (will) never get here
 }
-void WasdfCalibrationConfiguration::calculateAtRestRange(const WasdfCalibrationFingerConfiguration &fingerConfiguration, int *out_AtRestMin, int *out_AtRestMax)
+void WasdfCalibrationFingerConfiguration::calculateAtRestRange(int *out_AtRestMin, int *out_AtRestMax) const
 {
 #define WASDF_AT_REST_RANGE_PERCENT 10
     //calculate range based on AtRestValue using a hardcdoed percentage _OF_ the calibrated MinValue<-->MaxValue range (not of 0-1023)
     //constrain it to within MinValue<-->MaxValue (inclusive) too
     qreal halfAtRestRangePercent = static_cast<qreal>(WASDF_AT_REST_RANGE_PERCENT) / 2.0; //half for the upper range, half for the lower range
-    qreal calibratedTotalRange = qAbs(fingerConfiguration.MaxValue - fingerConfiguration.MinValue);
+    qreal calibratedTotalRange = qAbs(MaxValue - MinValue);
     int halfAtRestRange = qRound(calibratedTotalRange * (halfAtRestRangePercent / 100.0));
-    *out_AtRestMin = qMax(fingerConfiguration.AtRestPosition - halfAtRestRange, fingerConfiguration.MinValue); //get the higher of the 2 values: calculated at rest min vs. calibrated min value
-    *out_AtRestMax = qMin(fingerConfiguration.AtRestPosition + halfAtRestRange, fingerConfiguration.MaxValue); //get the lower of the 2 values: calculated at rest max vs. calibrated max value
+    *out_AtRestMin = qMax(AtRestPosition - halfAtRestRange, MinValue); //get the higher of the 2 values: calculated at rest min vs. calibrated min value
+    *out_AtRestMax = qMin(AtRestPosition + halfAtRestRange, MaxValue); //get the lower of the 2 values: calculated at rest max vs. calibrated max value
 }
 bool WasdfCalibrationConfiguration::hasFingerWithAnalogPinId(int analogPinId) const
 {

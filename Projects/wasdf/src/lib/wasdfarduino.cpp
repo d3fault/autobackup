@@ -4,6 +4,9 @@
 #include <QStringList>
 #include <QHashIterator>
 #include <QCryptographicHash>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonArray>
 #include <QDebug>
 
 #include "wasdf.h"
@@ -45,9 +48,17 @@ QByteArray WasdfArduino::checksum(const QByteArray &input)
 {
     return QCryptographicHash::hash(input, QCryptographicHash::Md5).toHex(); //MD5 is overkill for checksum, but underkill for crypto. I had trouble getting numerous other checksums and cryptographic hashes working on my arduino (or they had insufficient (or no) licensing)
 }
-void WasdfArduino::sendCommandToArduino(const QString &commandToSendToArduino)
+QString WasdfArduino::jsonObjectToQString(const QJsonObject &jsonObject)
 {
-    //send SYNC, then checksumOfSizeOfData, then sizeOfData, then checksumOfData, then commandToSendToArduino, which should (will TODOreq) be a json document in string form
+    QJsonDocument jsonDocument(jsonObject);
+    QString ret(jsonDocument.toJson(QJsonDocument::Compact));
+    return ret;
+}
+void WasdfArduino::sendRawCommandToArduino(const QString &commandToSendToArduino)
+{
+    qDebug() << "commandToSendToArduino:" << commandToSendToArduino; //TODOreq: this is only here for testing
+
+    //send SYNC, then checksumOfSizeOfData, then sizeOfData, then checksumOfData, then commandToSendToArduino, which is a json document in string form
     static const QString delim(","); //TODOreq: in shared headers
 
     //send SYNC
@@ -106,7 +117,12 @@ void WasdfArduino::startInCalibrationMode()
 
     openSerialPortIfNotOpen();
 
-    sendCommandToArduino("calibrate"); //TODOreq: these strings should be in a shared header, shared between the arduino sketch and this sauce
+    QJsonObject calibrateCommandJsonObject;
+    QJsonValue calibrateCommandJsonValue(QString("calibrate"));
+    calibrateCommandJsonObject.insert("command", calibrateCommandJsonValue);
+
+    QString calibrateCommandJson = jsonObjectToQString(calibrateCommandJsonObject);
+    sendRawCommandToArduino(calibrateCommandJson); //TODOreq: these strings should be in a shared header, shared between the arduino sketch and this sauce
 }
 void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
 {
@@ -117,7 +133,7 @@ void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
 
     openSerialPortIfNotOpen();
 
-#if 1
+#if 0
     QHashIterator<Finger, WasdfCalibrationFingerConfiguration> it(calibrationConfig);
     QString startCommand("startReportingThesePinsExcludingTheirAtRestRanges:");
     bool first = true;
@@ -148,7 +164,8 @@ void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
     //repeat for each finger, separated by semicolon
     //note: the analog pins can be sent in any order. the semicolons separate each finger and are in order of finger id (0-9)
 
-#else //There's really only ONE reason to send the finger map to the arduino: to store it in it's eeprom. that should be implemented at a later date, on a rainy day. What we SHOULD send to the arduino during the 'start' command, however, is the "at rest range". Sure I could send the finger map over and have the arduino do the map/constrain calls, but the PC has assloads more processing power (and spare lines of code) than the arduino so it should be the one to do it. Sending over the "at rest range" is a good idea though because it will keep the Serial line much quieter (and dead silent if there's finger no movement on any of the 10 fingers). TODOreq: "at rest range", if calculated using a hardcoded percentage (~10%), might cover the entire range of their normal min/max usage! so NO movements would ever be detected. that 10% needs to be "10% of their calibrated range", not "10% of the total range (0-1023)". ----The _FOLLOWING_ ifdef'd out code sends over the finger map (but is missing the "at rest range" stuff), but the _ABOVE_ code sends over the "at rest range" stuff only---- (the amount of values sent over is the same so they appear almost identical (and indeed were copy/paste), but the values sent are completely different)
+#endif
+#if 0 //There's really only ONE reason to send the finger map to the arduino: to store it in it's eeprom. that should be implemented at a later date, on a rainy day. What we SHOULD send to the arduino during the 'start' command, however, is the "at rest range". Sure I could send the finger map over and have the arduino do the map/constrain calls, but the PC has assloads more processing power (and spare lines of code) than the arduino so it should be the one to do it. Sending over the "at rest range" is a good idea though because it will keep the Serial line much quieter (and dead silent if there's finger no movement on any of the 10 fingers). TODOreq: "at rest range", if calculated using a hardcoded percentage (~10%), might cover the entire range of their normal min/max usage! so NO movements would ever be detected. that 10% needs to be "10% of their calibrated range", not "10% of the total range (0-1023)". ----The _FOLLOWING_ ifdef'd out code sends over the finger map (but is missing the "at rest range" stuff), but the _ABOVE_ code sends over the "at rest range" stuff only---- (the amount of values sent over is the same so they appear almost identical (and indeed were copy/paste), but the values sent are completely different)
 
     QHashIterator<Finger, WasdfCalibrationFingerConfiguration> it(calibrationConfig);
     QString startCommand("startWithPinToFingerMap:");
@@ -179,7 +196,42 @@ void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
 
     //TODOreq: on arduino side we do splitByColon then splitBySemiColon then splitByComma
 
-    sendCommandToArduino(startCommand); //TODOreq: because serial is a piece of shit it sometimes gives us corrupt data. the arduino should be able to request a re-send of a command (and should maybe use a "SYNC" magic header thing just before that command, because who the fuck knows where we are) if a received command (not just start command) is mal-formed. however on the arduino->pc side of things it's ok if we just silently drop malformed messages (we receive finger movement messages at such a high rate that a few malformed ones is no biggy). still, parity and/or checksums for sending BOTH ways would be nice. TODOoptimization: if I send "checksumm'd messages" from arduino to pc, I should probably combine all 10 finger sensor readings into a single message, otherwise the overhead of messages might take up a large proportion of the bandwidth
+
+
+    //TODOreq: merge below with above
+
+    QJsonObject startCommandJsonObject;
+
+    QJsonValue startCommandJsonValue(QString("start"));
+    startCommandJsonObject.insert("command", startCommandJsonValue);
+
+    //TODOreq: insert "at rest ranges" as args to the "start" command
+#if 0
+    for(int i = 0; i < 10; ++i)
+    {
+
+    }
+#endif
+    QJsonObject fingersAtRestRanges;
+    QHashIterator<Finger, WasdfCalibrationFingerConfiguration> it(calibrationConfig);
+    while(it.hasNext())
+    {
+        it.next();
+        Finger fing = it.key();
+        WasdfCalibrationFingerConfiguration fingConf = it.value();
+        int atRestMin, atRestMax;
+        fingConf.calculateAtRestRange(&atRestMin, &atRestMax);
+        QJsonObject fingerJsonObject;
+        fingerJsonObject.insert("atRestMin", atRestMin);
+        fingerJsonObject.insert("atRestMax", atRestMax);
+        fingersAtRestRanges.insert(QString::number(static_cast<int>(fing)), fingerJsonObject);
+    }
+    startCommandJsonObject.insert("fingersAtRestRanges", fingersAtRestRanges);
+
+    QString startCommandJson = jsonObjectToQString(startCommandJsonObject);
+    sendRawCommandToArduino(startCommandJson);
+
+    //sendRawCommandToArduino(startCommand); //TODOreq: because serial is a piece of shit it sometimes gives us corrupt data. the arduino should be able to request a re-send of a command (and should maybe use a "SYNC" magic header thing just before that command, because who the fuck knows where we are) if a received command (not just start command) is mal-formed. however on the arduino->pc side of things it's ok if we just silently drop malformed messages (we receive finger movement messages at such a high rate that a few malformed ones is no biggy). still, parity and/or checksums for sending BOTH ways would be nice. TODOoptimization: if I send "checksumm'd messages" from arduino to pc, I should probably combine all 10 finger sensor readings into a single message, otherwise the overhead of messages might take up a large proportion of the bandwidth
     //TODOmb: for arduino->pc (or maybe both ways). moving to a very simple (not checksum'd) BEGINSYNC/ENDSYNC (with the colon separated message in between those 2 SYNCs) would probably be a good enough error detection (and more importantly, error ignoring) strategy
     //TODOprobably ------ JSON JSON JSON ------ checksum'd JSON (the checksum is not IN the json, but the checksum 'surrounds'/validates the JSON). if this protocol gets complex AT ALL (and the above comments indicate it might), JSON JSON JSON JSON
 }

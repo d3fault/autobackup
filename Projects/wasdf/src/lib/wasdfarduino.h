@@ -17,7 +17,8 @@ public:
 private:
     void openSerialPortIfNotOpen();
     static QByteArray checksum(const QByteArray &input);
-    void sendCommandToArduino(const QString &command);
+    static QString jsonObjectToQString(const QJsonObject &jsonObject);
+    void sendRawCommandToArduino(const QString &command);
 
     QSerialPort *m_SerialPort;
     QTextStream m_SerialPortTextStream;
