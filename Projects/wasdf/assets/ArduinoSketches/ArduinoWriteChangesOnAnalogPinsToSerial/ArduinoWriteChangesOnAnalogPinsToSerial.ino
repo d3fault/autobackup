@@ -105,7 +105,8 @@ void sendMessageToPc(const String &jsonString)
     //send over Serial: SYNC,checksumOfSize,Size,checksumOfData,Data
     //where jsonString is Data
 
-    Serial.print("SYNC,");
+    Serial.print(Sync);
+    Serial.print(",");
     String jsonSizeString = String(jsonString.length());
     String checksumOfSize;
     checksum(jsonSizeString, &checksumOfSize);
@@ -139,8 +140,7 @@ public:
         }
         if(atLeastOneFingerMoved)
         {
-            //TODOreq: send checksumm'd bulk'd json object of finger movements
-            //TODOreq: even though the arduino2pc protocol is extremely simple atm and never changes from "analogPinId:newValue", I still want to convert it to json so I can 'bundle' all 10 finger movements into a single json object and (this is the key part) I send that jsonString over using the "SYNC,checksumOfSize,Size,checksumOfData,Data" protocol -- the same protocol used for pc2arduino comm (would be nice if they could share code). Yes I don't need to convert to json, BUT checksumming each "pinId:newValue" _line_ is inefficient as fuck, and "batching" them into 10 is a million times easier using json. thus, json is warranted
+            //even though the arduino2pc protocol is extremely simple atm and never changes from "analogPinId:newValue", I still want to convert it to json so I can 'bundle' all 10 finger movements into a single json object and (this is the key part) I send that jsonString over using the "SYNC,checksumOfSize,Size,checksumOfData,Data" protocol -- the same protocol used for pc2arduino comm (would be nice if they could share code). Yes I don't need to convert to json, BUT checksumming each "pinId:newValue" _line_ is inefficient as fuck, and "batching" them into 10 is a million times easier using json. thus, json is warranted
 
             StaticJsonBuffer<200> jsonBuffer; //TODOreq: pick a good size
             JsonObject &myObject = jsonBuffer.createObject();;
@@ -399,23 +399,50 @@ void setup()
     //inputCommandBuffer = new char(MAX_MESSAGE_SIZE); //TODOoptimization: never call new after takeoff. the md5 lib I'm gonna be using looks suspect af
     while(!Serial) ; //wait for serial port to connect. Needed for Leonardo/Micro only. I intentionally put the String::reserve command (and other cmds) in between this and Serial.begin() in case the connect happens asynchronously (idfk tbh, but it might), in which case I may have saved an entire millisecond!!!
 }
-void readAndReportChangesToAnalogPinOverSerial(int pinId, int indexIntoCalibrationDataOldSensorValues)
+bool analogPinSensorValueChangedDuringCalibration(int pinId, int indexIntoCalibrationDataOldSensorValues)
 {
     int oldSensorValue = CalibrationDataOldSensorValues[indexIntoCalibrationDataOldSensorValues];
     int newSensorValue = analogRead(pinId);
     if(newSensorValueHasChangedEnoughThatWeWantToReportIt(oldSensorValue, newSensorValue))
     {
+        /*
         Serial.print(pinId);
         Serial.print(":");
         Serial.println(newSensorValue);
+        */
         CalibrationDataOldSensorValues[indexIntoCalibrationDataOldSensorValues] = newSensorValue;
+        return true;
     }
+    return false;
 }
 void calibrationLoop()
 {
+    int CalibrationDataOldSensorValues_IndexesThatMoved[NUM_ANALOG_INPUTS];
+    int currentIndex_CalibrationDataOldSensorValues_IndexesThatMoved = 0;
+
+    bool atLeastOneAnalogPinSensorValueChanged = false;
     for(int j = 0, i = A0; j < NUM_ANALOG_INPUTS; ++j, ++i)
     {
-        readAndReportChangesToAnalogPinOverSerial(i, j);
+        if(analogPinSensorValueChangedDuringCalibration(i, j))
+        {
+            atLeastOneAnalogPinSensorValueChanged = true;
+            CalibrationDataOldSensorValues_IndexesThatMoved[currentIndex_CalibrationDataOldSensorValues_IndexesThatMoved] = i;
+            ++currentIndex_CalibrationDataOldSensorValues_IndexesThatMoved;
+        }
+    }
+    if(atLeastOneAnalogPinSensorValueChanged)
+    {
+        StaticJsonBuffer<200> jsonBuffer; //TODOreq: pick a good size
+        JsonObject &myObject = jsonBuffer.createObject();;
+        for(int i = 0; i < currentIndex_CalibrationDataOldSensorValues_IndexesThatMoved; ++i)
+        {
+            int indexIntoCalibrationDataOfAnalogPinThatMoved = CalibrationDataOldSensorValues_IndexesThatMoved[i];
+            int newSensorValue = CalibrationDataOldSensorValues[indexIntoCalibrationDataOfAnalogPinThatMoved];
+            myObject[String(A0 + indexIntoCalibrationDataOfAnalogPinThatMoved)] = newSensorValue;
+        }
+        String jsonString; //TODOoptimization: re-use. maybe need to clear() in between each printTo call?
+        myObject.printTo(jsonString);
+        sendMessageToPc(jsonString);
     }
 }
 int parseAndSanitizeAnalogPinIdFromForeignString(const String &foreignString)
