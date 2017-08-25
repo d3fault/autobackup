@@ -205,26 +205,20 @@ void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
     QJsonValue startCommandJsonValue(QString("start"));
     startCommandJsonObject.insert("command", startCommandJsonValue);
 
-    //TODOreq: insert "at rest ranges" as args to the "start" command
-#if 0
-    for(int i = 0; i < 10; ++i)
-    {
-
-    }
-#endif
+    //insert "at rest ranges" as args to the "start" command
     QJsonObject fingersAtRestRanges;
     QHashIterator<Finger, WasdfCalibrationFingerConfiguration> it(calibrationConfig);
     while(it.hasNext())
     {
         it.next();
-        Finger fing = it.key();
+        //Finger fing = it.key();
         WasdfCalibrationFingerConfiguration fingConf = it.value();
         int atRestMin, atRestMax;
         fingConf.calculateAtRestRange(&atRestMin, &atRestMax);
         QJsonObject fingerJsonObject;
         fingerJsonObject.insert("atRestMin", atRestMin);
         fingerJsonObject.insert("atRestMax", atRestMax);
-        fingersAtRestRanges.insert(QString::number(static_cast<int>(fing)), fingerJsonObject);
+        fingersAtRestRanges.insert(QString::number(fingConf.AnalogPinIdOnArduino), fingerJsonObject); //TODOreq: what happens when same key is inserted twice? during testing especially this is going to happen, but even until I solve the "floating values" problem I still might see "same key" occurances. Ideally I'd never use the same key twice, because my calibrator would know not to emit that
     }
     startCommandJsonObject.insert("fingersAtRestRanges", fingersAtRestRanges);
 

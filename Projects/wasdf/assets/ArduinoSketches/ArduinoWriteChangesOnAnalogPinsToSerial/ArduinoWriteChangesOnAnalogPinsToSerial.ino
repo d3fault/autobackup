@@ -2,20 +2,22 @@
 
 #include <Arduino.h> //for NUM_ANALOG_INPUTS
 #include <MD5.h> //for checksum
-//#include <ArduinoJson.h> //for sanity
+#include <ArduinoJson.h> //for sanity
 
 static const String Sync("SYNC"); //TODOreq: use definition in header shared between PC and Arduino
 static const int SizeOfaChecksum = 32; //MD5 uses 32x 4-bit hex digits (128-bits total). since we're passing the hex md5 as a "string", we need 32 bytes to hold it
 
-#if (NUM_ANALOG_INPUTS < 10)
+static const int NUM_FINGERS = 10;
+
+#if (NUM_ANALOG_INPUTS < NUM_FINGERS)
 #error "Your board does not support at least 10 analog inputs" //TODOmb: fail gracefully. but don't simply uncomment this, otherwise we will probably have a memory access violation in this code. namely when we try to pull out the "old" sensor value of finger9, but we only allocated (on the stack) an array of size NUM_ANALOG_INPUTS to hold our old sensor values
 #endif
 #if (MESSAGE_HEADER_SIZE > 64)
 #error "Message header size (which is fixed) is bigger than 64 bytes (Serial port's internal buffer size)!"
 #endif
 
-static const int NUM_HANDS = 2;
-static const int NUM_FINGERS_PER_HAND = 5;
+static const int MinAnalogPinId = A0;
+static const int MaxAnalogPinId = (A0 + (NUM_ANALOG_INPUTS-1));
 
 static const int HALF_THRESHOLD_FOR_NOTIFYING_OF_CHANGE = 2; //TODOoptional: this could be determined during 'calibration' (so it'd be received from PC over serial). example instructions to uesr for determining it: "move your right index finger as little as possible until you see on screen that it's registered" or some such (haven't thought this through very much, maybe it's dumb idea)
 
@@ -53,21 +55,26 @@ bool newSensorValueHasChangedEnoughThatWeWantToReportIt(int oldSensorValue, int 
 
     return false;
 }
-class Finger_aka_AnalogPin
+class Finger_aka_AnalogPin //TODOmb: shared declaration between PC and Arduino?
 {
 public:
     explicit Finger_aka_AnalogPin()
         : NewSensorValue(0)
         , OldSensorValue(0)
     { }
-    void setStringAndIntPinIds(const char *stringPinId, int intPinId)
+    void initialize(int analogPinId, int atRestMin, int atRestMax)
     {
-        StringPinId = stringPinId;
-        IntPinId = intPinId;
+        StringPinId = String(analogPinId);
+        IntPinId = analogPinId;
+        AtRestMin = atRestMin;
+        AtRestMax = atRestMax;
+        //TODOmb: sanitize at rest min/max here, fatal13 otherwise? idk I mean we've already verified the checksum of the data.. so.... yea idk tbh because it's still "foreign" data...? I guess this applies to pinId as well so fk idk lol what to assume... but FOR NOW at least I'll assume checksum valid == data valid (sane, within range, etc)
     }
     void reportMovementOverSerialPort()
     {
         NewSensorValue = analogRead(IntPinId);
+        if(NewSensorValue <= AtRestMax && NewSensorValue >= AtRestMin)
+            return; //finger is within "at rest" range, so just return
         if(newSensorValueHasChangedEnoughThatWeWantToReportIt(OldSensorValue, NewSensorValue))
         {
             Serial.print(StringPinId);
@@ -78,70 +85,32 @@ public:
     }
     ~Finger_aka_AnalogPin() { }
 
-    const char *StringPinId;
+    String StringPinId;
     int IntPinId;
     int NewSensorValue;
     int OldSensorValue;
-
+    int AtRestMin;
+    int AtRestMax;
 private:
     explicit Finger_aka_AnalogPin(const Finger_aka_AnalogPin &other) { } //delete
 };
 
-struct Hand
+class Hands
 {
-    void setupHand(bool leftTrue_rightFalse)
-    {
-        //TODOreq: the arduino micro doesn't use analog pins 0-9 (note that finger 9 below maps to pin A11), so the following mappings are arduino micro specific. there should obviously be some way to use this code with other boards of course (even a mapping 'file' is better than hardcoding it here). the BEST solution is to, before/during calibration, 'probe' every analog port to see if it's wired, and then to have the user tell us which finger that pin corresponds to.. then to yea save it in some ~/.config 'profile' thingo. for now I'm fine with hardcoding the pin mappings since my target is to get range-of-fingers realtime-with-feedback calibration working [first]. I wonder what happens when you read an analog pin that has nothing attached... it returns 0. in any case and whatever value it is, it shouldn't "move" (I hope)
-        //TODOreq:^I also need to change the MusicFingers serial READ code (runs on PC) to use 0-9 and not the whacky micro-specific mapping like in the previous version of this code
-
-        //TODOreq: this obviously needs to be refactored to use the calibration data received from the PC
-        if(leftTrue_rightFalse)
-        {
-            //left hand
-            Fingers[0].setStringAndIntPinIds("0", A0);
-            Fingers[1].setStringAndIntPinIds("1", A1);
-            Fingers[2].setStringAndIntPinIds("2", A2);
-            Fingers[3].setStringAndIntPinIds("3", A3);
-            Fingers[4].setStringAndIntPinIds("4", A4);
-        }
-        else
-        {
-            //right hand
-            Fingers[0].setStringAndIntPinIds("5", A5);
-            Fingers[1].setStringAndIntPinIds("6", A8);
-            Fingers[2].setStringAndIntPinIds("7", A9);
-            Fingers[3].setStringAndIntPinIds("8", A10);
-            Fingers[4].setStringAndIntPinIds("9", A11);
-        }
-    }
+public:
     void reportFingerMovementOverSerialPort()
     {
-        for(int i = 0; i < NUM_FINGERS_PER_HAND; ++i)
+        for(int i = 0; i < NUM_FINGERS; ++i)
         {
             Fingers[i].reportMovementOverSerialPort();
         }
     }
-
-    Finger_aka_AnalogPin Fingers[NUM_FINGERS_PER_HAND];
-};
-
-struct Hands //eh hands class should have just contained 10 fingers (instead of 2 hands each containing 5 fingers), but not about to un-code it xD
-{
-    explicit Hands()
+    void initializeFinger(int fingerArrayIndex, int analogPinId, int atRestMin, int atRestMax)
     {
-        hands[0].setupHand(true);
-        hands[1].setupHand(false);
+        Fingers[fingerArrayIndex].initialize(analogPinId, atRestMin, atRestMax);
     }
-
-    void reportFingerMovementOverSerialPort()
-    {
-        for(int i = 0; i < NUM_HANDS; ++i)
-        {
-            hands[i].reportFingerMovementOverSerialPort();
-        }
-    }
-
-    Hand hands[NUM_HANDS];
+private:
+    Finger_aka_AnalogPin Fingers[NUM_FINGERS];
 };
 
 struct Mode
@@ -400,21 +369,61 @@ void calibrationLoop()
         readAndReportChangesToAnalogPinOverSerial(i, j);
     }
 }
+int parseAndSanitizeAnalogPinIdFromForeignString(const String &foreignString)
+{
+    int ret = foreignString.toInt();
+    //if(ret < 0 || ret > 9)
+    if(ret < MinAnalogPinId || ret > MaxAnalogPinId)
+    {
+        fatalErrorBlinkPin13(7);
+        return 69; //this never gets called because fatalErrorBlinkPin13() never returns
+    }
+    return ret;
+}
 void processInputCommandString(const String &inputCommandString)
 {
-    if(inputCommandString == "calibrate")
+    StaticJsonBuffer<200> jsonBuffer; //TODOreq: pick a good size
+    const JsonObject &rootJsonObject = jsonBuffer.parseObject(inputCommandString);
+    if(!rootJsonObject.success())
+    {
+        fatalErrorBlinkPin13(5);
+        return;
+    }
+
+    const char* command = rootJsonObject["command"];
+    if(command == "calibrate")
     {
         CurrentMode = Mode::Calibrating;
     }
-#if 0 //TODOreq
-    else if(inputCommandString.startsWith("startReportingThesePinsExcludingTheirAtRestRanges:"))
+    else if(command == "start")
     {
-        //TODOreq:
-        //where the fuck is my String.split!?!? aww come pls don't make me use indexOf :(
-        //*cough* json *cough*
-
+        CurrentMode = Mode::Sending10FingerMovementsMode;
+        //the "used analog pin IDs" (connected to the 10 fingers) is sent as args (TODOreq: make sure PC isn't sending "0-9" but is instead sending the analog pin IDs corresponding to fingers 0-9
+        //retrive atRestMin/Max from json, corresponding to the analog pin IDs being used
+        const JsonObject &atRestPositionsJsonObject = rootJsonObject["fingersAtRestRanges"];
+        JsonObject::const_iterator it = atRestPositionsJsonObject.begin();
+        int i = 0; //we don't care whether or not this finger2analogPinId mapping is correct or not, it's merely used as array index. we only care about "which analog pin ids to send changes for" and their respective "atRestMin"/"atRestMax" values, not necessarily which fingers those analog pin IDs correspond to (this might change in the future, eg eeprom impl, but for now is true)
+        while(it != atRestPositionsJsonObject.end())
+        {
+            const String &analogPinIdAsString = it->key;
+            int analogPinId = parseAndSanitizeAnalogPinIdFromForeignString(analogPinIdAsString);
+            const JsonObject &atRestRange = it->value;
+            int atRestMin = atRestRange["atRestMin"];
+            int atRestMax = atRestRange["atRestMax"];
+            if(i >= NUM_FINGERS)
+            {
+                fatalErrorBlinkPin13(8);
+                return;
+            }
+            hands.initializeFinger(i, analogPinId, atRestMin, atRestMax);
+            ++it, ++i;
+        }
+        if(i < NUM_FINGERS)
+        {
+            fatalErrorBlinkPin13(6);
+            return;
+        }
     }
-#endif
     else
     {
         //TODOreq: blink pin 13 rapidly to indicate an error. longer term should request the command is re-sent. note: even if the checksum succeeds we still might get an invalid command (checksums aren't perfect), we we'd STILL want to request the command is re-sent. if however 50 invalid commands are received IN A ROW, then we would want to go into blink-13-error-mode as that indicates a bug
@@ -448,4 +457,5 @@ void loop()
 {
     sendOutputIfAny();
     receiveInputIfAny();
+    delay(1);
 }
