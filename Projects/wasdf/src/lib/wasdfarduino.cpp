@@ -127,6 +127,8 @@ void WasdfArduino::startInCalibrationMode()
 }
 void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
 {
+    m_CalibrationConfig = calibrationConfig;
+
     //this is where the 10 fingers get mapped to the 10 analog pins
 
     disconnect(m_ChecksummedMessageReader, &QtIoDeviceChecksummedMessageReader::checksummedMessageRead, this, &WasdfArduino::handleCalibrationModeMessageReceived);
@@ -170,16 +172,19 @@ void WasdfArduino::handleCalibrationModeMessageReceived(const QByteArray &messag
         return; //TODOreq: handle errors better
     }
     const QJsonObject &rootObject = message.object();
-    QJsonObject::const_iterator it = rootObject.constBegin();
-    while(it != rootObject.constEnd())
+    for(QJsonObject::const_iterator it = rootObject.constBegin(); it != rootObject.constEnd(); ++it)
     {
         //TODOreq: sanitize better
         QString analogPinIdString = it.key();
         QByteArray analogPinIdBA = analogPinIdString.toLatin1();
         int analogPinId = analogPinIdBA.toInt();
         int sensorValue = it.value().toInt();
+        if(sensorValue < 0 || sensorValue > 1023)
+        {
+            qDebug() << "a sensor value was out of bounds:" << messageJson;
+            continue;
+        }
         emit analogPinReadingChangedDuringCalibration(analogPinId, sensorValue);
-        ++it;
     }
 #if 0 //TODOreq: merge below with above (nameley the sanitization)
     while(m_SerialPort->canReadLine())
@@ -207,11 +212,6 @@ void WasdfArduino::handleCalibrationModeMessageReceived(const QByteArray &messag
             qDebug() << "rhs of colon didn't convert to int:" << line;
             continue;
         }
-        if(sensorValue < 0 || sensorValue > 1023)
-        {
-            qDebug() << "sensor value on rhs of colon was out of bounds:" << line;
-            continue;
-        }
 
         //should I map the raw sensor values to the calibrated range here? should wasdf do it when it receives the signal emitted below? I think it kind of makes sense to do it right here, because Wasdf called m_Arduino.start(m_Calibration) ... so it makes sense that m_Arduino (this class) reports mapped/calibrated values
         //TODOreq: map the sensor value to 0-1023. wait no map it to their min/max range, wait no it's a 2 step process, map it to their min/max range and then map that to 0-1023? ehh need to think a little harder on this xD. there's also "constrain" to consider. also the above error checking needs to be modified accordingly
@@ -224,4 +224,36 @@ void WasdfArduino::handleRegularModeMessageReceived(const QByteArray &messageJso
 {
     //TODOreq: similar to handleCalibrationModeMessageReceived (could probably share json parsing code paths), but we map the analog pin to Finger before emitting
     qDebug() << messageJson;
+
+    //at this point, we know m_CalibrationConfig is populated
+
+    //this is modified copypasta from the similar calibration-related method above, handleCalibrationModeMessageReceived
+    QJsonParseError jsonParseError;
+    QJsonDocument message = QJsonDocument::fromJson(messageJson, &jsonParseError);
+    if(jsonParseError.error != QJsonParseError::NoError)
+    {
+        emit e("Error parsing json: " + jsonParseError.errorString());
+        return; //TODOreq: handle errors better
+    }
+    const QJsonObject &rootObject = message.object();
+    for(QJsonObject::const_iterator it = rootObject.constBegin(); it != rootObject.constEnd(); ++it)
+    {
+        //TODOreq: sanitize better
+        QString analogPinIdString = it.key();
+        QByteArray analogPinIdBA = analogPinIdString.toLatin1();
+        int analogPinId = analogPinIdBA.toInt();
+        if(!m_CalibrationConfig.hasFingerWithAnalogPinId(analogPinId))
+        {
+            qWarning() << "no finger in m_CalibrationConfig with this analog pin id: " << analogPinId;
+            continue;
+        }
+        int sensorValue = it.value().toInt();
+        Finger fing = m_CalibrationConfig.getFingerByAnalogPinId(analogPinId);
+        if(sensorValue < 0 || sensorValue > 1023)
+        {
+            qDebug() << "a sensor value was out of bounds for your " << fingerEnumToHumanReadableString(fing) << "finger. the sensor value is " << sensorValue << ". here is the json too:" << messageJson;
+            continue;
+        }
+        emit fingerMoved(fing, sensorValue);
+    }
 }

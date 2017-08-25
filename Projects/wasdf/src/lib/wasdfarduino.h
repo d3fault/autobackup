@@ -21,6 +21,7 @@ private:
     static QString jsonObjectToQString(const QJsonObject &jsonObject);
     void sendRawCommandToArduino(const QString &command);
 
+    WasdfCalibrationConfiguration m_CalibrationConfig;
     QSerialPort *m_SerialPort;
     QtIoDeviceChecksummedMessageReader *m_ChecksummedMessageReader;
     QTextStream m_SerialPortTextStream;
