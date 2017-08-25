@@ -9,6 +9,8 @@
 #include <QJsonArray>
 #include <QDebug>
 
+#include "qtiodevicechecksummedmessagereader.h"
+
 #include "wasdf.h"
 
 //so now for the protocol. at least [so far (and I intend to keep it that way!)] the protocol is relatively simple. I need to also keep in mind that when the Arduino is in mouse/keyboard mode that it doesn't use the Serial.write shit (it could, but then I'd need a priveledged keyboard-press/mouse-movement-n-click daemon-thing on the PC side, and those daemon-things are OS specific!)
@@ -29,6 +31,7 @@
 WasdfArduino::WasdfArduino(QObject *parent)
     : QObject(parent)
     , m_SerialPort(new QSerialPort("/dev/ttyACM0", this)) //TODOreq: be able to choose different serial ports at runtime, MusicFingers has some of this implemented (using ugly defines kek) and some decent ideas such as "use the _one_ containing the string 'arduino'" etc
+    , m_ChecksummedMessageReader(new QtIoDeviceChecksummedMessageReader(m_SerialPort, this))
     , m_SerialPortTextStream(m_SerialPort)
 {
     m_SerialPort->setBaudRate(QSerialPort::Baud38400);
@@ -43,10 +46,6 @@ void WasdfArduino::openSerialPortIfNotOpen()
             //TODOreq: error out, return false or emit finished(false) etc
         }
     }
-}
-QByteArray WasdfArduino::checksum(const QByteArray &input)
-{
-    return QCryptographicHash::hash(input, QCryptographicHash::Md5).toHex(); //MD5 is overkill for checksum, but underkill for crypto. I had trouble getting numerous other checksums and cryptographic hashes working on my arduino (or they had insufficient (or no) licensing)
 }
 QString WasdfArduino::jsonObjectToQString(const QJsonObject &jsonObject)
 {
@@ -68,7 +67,7 @@ void WasdfArduino::sendRawCommandToArduino(const QString &commandToSendToArduino
     //send checksumOfSizeOfData
     QString sizeofDataAsString = QString::number(commandToSendToArduino.size());
     QByteArray sizeOfCommandAsByteArray(sizeofDataAsString.toLatin1());
-    QByteArray checksumOfSizeOfCommand = checksum(sizeOfCommandAsByteArray);
+    QByteArray checksumOfSizeOfCommand = QtIoDeviceChecksummedMessageReader::checksum(sizeOfCommandAsByteArray);
     QString checksumOfSizeOfCommandAsString = QString(checksumOfSizeOfCommand);
     m_SerialPortTextStream << checksumOfSizeOfCommandAsString; //TODOreq: s/Command/Data/Message (idc which, but keep it uniform mother fucker (eh "command" makes sense from wasdf business logic, but "message" and "data" make sense from "message header reader" perspective))
     m_SerialPortTextStream << delim;
@@ -79,7 +78,7 @@ void WasdfArduino::sendRawCommandToArduino(const QString &commandToSendToArduino
 
     //send checksumOfData
     QByteArray commandToSendToArduinoAsLatin1(commandToSendToArduino.toLatin1());
-    QByteArray checksumOfCommand = checksum(commandToSendToArduinoAsLatin1);
+    QByteArray checksumOfCommand = QtIoDeviceChecksummedMessageReader::checksum(commandToSendToArduinoAsLatin1);
     QString checksumOfCommandAsString = QString(checksumOfCommand);
     m_SerialPortTextStream << checksumOfCommandAsString;
     m_SerialPortTextStream << delim;
@@ -97,9 +96,9 @@ void WasdfArduino::sendRawCommandToArduino(const QString &commandToSendToArduino
     QByteArray commandToSendToArduinoAsLatin1(commandToSendToArduino.toLatin1());
     qint32 sizeOfCommand = commandToSendToArduino.size();
     QByteArray sizeOfCommandAsByteArray = QByteArray::fromRawData((const char*)(&sizeOfCommand), sizeof(sizeOfCommand));
-    QByteArray checksumOfSizeOfCommand = checksum(sizeOfCommandAsByteArray);
+    QByteArray checksumOfSizeOfCommand = QtIoDeviceChecksummedMessageReader::checksum(sizeOfCommandAsByteArray);
     qDebug() << checksumOfSizeOfCommand.size(); //TODOreq: this is for testing only. I think it should be 32 hex digits times 4 bytes per digit = 128-bits, or 16 bytes
-    QByteArray checksumOfCommand = checksum(commandToSendToArduinoAsLatin1);
+    QByteArray checksumOfCommand = QtIoDeviceChecksummedMessageReader::checksum(commandToSendToArduinoAsLatin1);
 
     m_SerialPort->write(sync); //fixed size
     m_SerialPort->write(checksumOfSizeOfCommand); //fixed size
@@ -112,8 +111,10 @@ void WasdfArduino::startInCalibrationMode()
 {
     //in calibration mode, arduino sends _ALL_ (not just 10) analog pin readings over serial (TODOmb: user can pass an --exclude-analog-pins flag in case they're using the other analog pins for something else (but then they'd need to modify the sketch anyways, so maybe this isn't necessary?)
 
-    disconnect(m_SerialPort, SIGNAL(readyRead())); //TODOreq: for some reason this fails with qt5-style pmf syntax. maybe a newer version of Qt doesn't (otherwise file a bugreport)
-    connect(m_SerialPort, &QSerialPort::readyRead, this, &WasdfArduino::handleSerialPortReadyReadCalibrationMode);
+    disconnect(m_ChecksummedMessageReader, SIGNAL(checksummedMessageRead(QByteArray))); //TODOreq: for some reason this fails with qt5-style pmf syntax. maybe a newer version of Qt doesn't (otherwise file a bugreport)
+    connect(m_ChecksummedMessageReader, &QtIoDeviceChecksummedMessageReader::checksummedMessageRead, this, &WasdfArduino::handleCalibrationModeMessageReceived);
+    //disconnect(m_SerialPort, SIGNAL(readyRead()));
+    //connect(m_SerialPort, &QSerialPort::readyRead, this, &WasdfArduino::handleSerialPortReadyReadCalibrationMode);
 
     openSerialPortIfNotOpen();
 
@@ -128,77 +129,11 @@ void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
 {
     //this is where the 10 fingers get mapped to the 10 analog pins
 
-    disconnect(m_SerialPort, &QSerialPort::readyRead, this, &WasdfArduino::handleSerialPortReadyReadCalibrationMode);
-    connect(m_SerialPort, &QSerialPort::readyRead, this, &WasdfArduino::handleSerialPortReadyReadNormalFingerMovementMode);
+    disconnect(m_ChecksummedMessageReader, &QtIoDeviceChecksummedMessageReader::checksummedMessageRead, this, &WasdfArduino::handleCalibrationModeMessageReceived);
+    connect(m_ChecksummedMessageReader, &QtIoDeviceChecksummedMessageReader::checksummedMessageRead, this, &WasdfArduino::handleRegularModeMessageReceived);
+    //connect(m_SerialPort, &QSerialPort::readyRead, this, &WasdfArduino::handleSerialPortReadyReadNormalFingerMovementMode);
 
     openSerialPortIfNotOpen();
-
-#if 0
-    QHashIterator<Finger, WasdfCalibrationFingerConfiguration> it(calibrationConfig);
-    QString startCommand("startReportingThesePinsExcludingTheirAtRestRanges:");
-    bool first = true;
-    while(it.hasNext())
-    {
-        it.next();
-        if(!first)
-            startCommand.append(";"); //TODOreq: semi-colon delim in shared header
-        first = false;
-        //startCommand.append(static_cast<int>(it.key())); //the arduino doesn't give a fuck (at this point in my design. might change in the future) which analog pins correspond to which fingers, we (the PC) simply tell it which 10 pins to report (and which ranges of values to ignore for each of those 10 pins)
-        //startCommand.append(",");
-        startCommand.append(it.value().AnalogPinIdOnArduino);
-        startCommand.append(","); //TODOreq: comma delim in shared header
-
-        int atRestMin, atRestMax;
-        WasdfCalibrationConfiguration::calculateAtRestRange(it.value(), &atRestMin, &atRestMax);
-
-        startCommand.append(atRestMin);
-        startCommand.append(",");
-        startCommand.append(atRestMax);
-    }
-
-    //example start command:
-    //startWithPinAtRestRanges:18,0,1023;19,1,1022;28,50,950;...
-    //18 = analog pin id
-    //0 = min at rest value
-    //1023 = max at rest value
-    //repeat for each finger, separated by semicolon
-    //note: the analog pins can be sent in any order. the semicolons separate each finger and are in order of finger id (0-9)
-
-#endif
-#if 0 //There's really only ONE reason to send the finger map to the arduino: to store it in it's eeprom. that should be implemented at a later date, on a rainy day. What we SHOULD send to the arduino during the 'start' command, however, is the "at rest range". Sure I could send the finger map over and have the arduino do the map/constrain calls, but the PC has assloads more processing power (and spare lines of code) than the arduino so it should be the one to do it. Sending over the "at rest range" is a good idea though because it will keep the Serial line much quieter (and dead silent if there's finger no movement on any of the 10 fingers). TODOreq: "at rest range", if calculated using a hardcoded percentage (~10%), might cover the entire range of their normal min/max usage! so NO movements would ever be detected. that 10% needs to be "10% of their calibrated range", not "10% of the total range (0-1023)". ----The _FOLLOWING_ ifdef'd out code sends over the finger map (but is missing the "at rest range" stuff), but the _ABOVE_ code sends over the "at rest range" stuff only---- (the amount of values sent over is the same so they appear almost identical (and indeed were copy/paste), but the values sent are completely different)
-
-    QHashIterator<Finger, WasdfCalibrationFingerConfiguration> it(calibrationConfig);
-    QString startCommand("startWithPinToFingerMap:");
-    bool first = true;
-    while(it.hasNext())
-    {
-        it.next();
-        if(!first)
-            startCommand.append(";"); //TODOreq: semi-colon delim in shared header
-        first = false;
-        //startCommand.append(static_cast<int>(it.key())); //we know that the fingers are sent 'in order' from 0-9, so we don't need to send them
-        //startCommand.append(",");
-        startCommand.append(it.value().AnalogPinIdOnArduino);
-        startCommand.append(","); //TODOreq: comma delim in shared header
-        startCommand.append(it.value().MinValue);
-        startCommand.append(",");
-        startCommand.append(it.value().MaxValue);
-    }
-
-    //example start command:
-    //startWithPinToFingerMap:18,0,1023;19,1,1022;28,50,950;...
-    //18 = analog pin id
-    //0 = min value
-    //1023 = max value
-    //repeat for each finger, separated by semicolon
-    //note: the analog pins can be sent in any order. the semicolons separate each finger and are in order of finger id (0-9)
-#endif
-
-    //TODOreq: on arduino side we do splitByColon then splitBySemiColon then splitByComma
-
-
-
-    //TODOreq: merge below with above
 
     QJsonObject startCommandJsonObject;
 
@@ -224,13 +159,29 @@ void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
 
     QString startCommandJson = jsonObjectToQString(startCommandJsonObject);
     sendRawCommandToArduino(startCommandJson);
-
-    //sendRawCommandToArduino(startCommand); //TODOreq: because serial is a piece of shit it sometimes gives us corrupt data. the arduino should be able to request a re-send of a command (and should maybe use a "SYNC" magic header thing just before that command, because who the fuck knows where we are) if a received command (not just start command) is mal-formed. however on the arduino->pc side of things it's ok if we just silently drop malformed messages (we receive finger movement messages at such a high rate that a few malformed ones is no biggy). still, parity and/or checksums for sending BOTH ways would be nice. TODOoptimization: if I send "checksumm'd messages" from arduino to pc, I should probably combine all 10 finger sensor readings into a single message, otherwise the overhead of messages might take up a large proportion of the bandwidth
-    //TODOmb: for arduino->pc (or maybe both ways). moving to a very simple (not checksum'd) BEGINSYNC/ENDSYNC (with the colon separated message in between those 2 SYNCs) would probably be a good enough error detection (and more importantly, error ignoring) strategy
-    //TODOprobably ------ JSON JSON JSON ------ checksum'd JSON (the checksum is not IN the json, but the checksum 'surrounds'/validates the JSON). if this protocol gets complex AT ALL (and the above comments indicate it might), JSON JSON JSON JSON
 }
-void WasdfArduino::handleSerialPortReadyReadCalibrationMode()
+void WasdfArduino::handleCalibrationModeMessageReceived(const QByteArray &messageJson)
 {
+    QJsonParseError jsonParseError;
+    QJsonDocument message = QJsonDocument::fromJson(messageJson, &jsonParseError);
+    if(jsonParseError.error != QJsonParseError::NoError)
+    {
+        emit e("Error parsing json: " + jsonParseError.errorString());
+        return; //TODOreq: handle errors better
+    }
+    const QJsonObject &rootObject = message.object();
+    QJsonObject::const_iterator it = rootObject.constBegin();
+    while(it != rootObject.constEnd())
+    {
+        //TODOreq: sanitize better
+        QString analogPinIdString = it.key();
+        QByteArray analogPinIdBA = analogPinIdString.toLatin1();
+        int analogPinId = analogPinIdBA.toInt();
+        int sensorValue = it.value().toInt();
+        emit analogPinReadingChangedDuringCalibration(analogPinId, sensorValue);
+        ++it;
+    }
+#if 0 //TODOreq: merge below with above (nameley the sanitization)
     while(m_SerialPort->canReadLine())
     {
         QString line = m_SerialPortTextStream.readLine();
@@ -267,8 +218,10 @@ void WasdfArduino::handleSerialPortReadyReadCalibrationMode()
 
         emit analogPinReadingChangedDuringCalibration(analogPinId, sensorValue);
     }
+#endif
 }
-void WasdfArduino::handleSerialPortReadyReadNormalFingerMovementMode()
+void WasdfArduino::handleRegularModeMessageReceived(const QByteArray &messageJson)
 {
-    //TODOreq:
+    //TODOreq: similar to handleCalibrationModeMessageReceived (could probably share json parsing code paths), but we map the analog pin to Finger before emitting
+    qDebug() << messageJson;
 }

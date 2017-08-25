@@ -287,6 +287,7 @@ public:
             }
             break;
         }
+        return false; //should (will) never get here
     }
     const String &parsedMessageChecksum() const
     {

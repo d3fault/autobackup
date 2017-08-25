@@ -16,6 +16,7 @@ TEMPLATE = app
 SOURCES += cli/main.cpp \
     cli/wasdfcli.cpp
 
+include(../../../GloballySharedClasses/qtiodevicechecksummedmessagereader.pri)
 include(wasdf.pri)
 
 HEADERS += cli/wasdfcli.h

@@ -9,6 +9,8 @@
 
 class QSerialPort;
 
+class QtIoDeviceChecksummedMessageReader;
+
 class WasdfArduino : public QObject
 {
     Q_OBJECT
@@ -16,11 +18,11 @@ public:
     explicit WasdfArduino(QObject *parent = 0);
 private:
     void openSerialPortIfNotOpen();
-    static QByteArray checksum(const QByteArray &input);
     static QString jsonObjectToQString(const QJsonObject &jsonObject);
     void sendRawCommandToArduino(const QString &command);
 
     QSerialPort *m_SerialPort;
+    QtIoDeviceChecksummedMessageReader *m_ChecksummedMessageReader;
     QTextStream m_SerialPortTextStream;
 signals:
     void e(const QString &msg);
@@ -30,8 +32,8 @@ public slots:
     void startInCalibrationMode();
     void start(const WasdfCalibrationConfiguration &calibrationConfig);
 private slots:
-    void handleSerialPortReadyReadCalibrationMode();
-    void handleSerialPortReadyReadNormalFingerMovementMode();
+    void handleCalibrationModeMessageReceived(const QByteArray &messageJson);
+    void handleRegularModeMessageReceived(const QByteArray &messageJson);
 };
 
 #endif // WASDFARDUINO_H
