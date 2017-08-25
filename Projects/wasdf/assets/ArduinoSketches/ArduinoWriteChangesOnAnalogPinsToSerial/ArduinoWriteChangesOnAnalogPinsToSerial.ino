@@ -59,7 +59,7 @@ class Finger_aka_AnalogPin //TODOmb: shared declaration between PC and Arduino?
 {
 public:
     explicit Finger_aka_AnalogPin()
-        : NewSensorValue(0)
+        : CurrentSensorValue(0)
         , OldSensorValue(0)
     { }
     void initialize(int analogPinId, int atRestMin, int atRestMax)
@@ -70,24 +70,29 @@ public:
         AtRestMax = atRestMax;
         //TODOmb: sanitize at rest min/max here, fatal13 otherwise? idk I mean we've already verified the checksum of the data.. so.... yea idk tbh because it's still "foreign" data...? I guess this applies to pinId as well so fk idk lol what to assume... but FOR NOW at least I'll assume checksum valid == data valid (sane, within range, etc)
     }
-    void reportMovementOverSerialPort()
+    bool fingerMoved()
     {
-        NewSensorValue = analogRead(IntPinId);
-        if(NewSensorValue <= AtRestMax && NewSensorValue >= AtRestMin)
-            return; //finger is within "at rest" range, so just return
-        if(newSensorValueHasChangedEnoughThatWeWantToReportIt(OldSensorValue, NewSensorValue))
+        CurrentSensorValue = analogRead(IntPinId);
+        if(CurrentSensorValue <= AtRestMax && CurrentSensorValue >= AtRestMin)
+            return false; //finger is within "at rest" range, so return false
+        if(newSensorValueHasChangedEnoughThatWeWantToReportIt(OldSensorValue, CurrentSensorValue))
         {
+            /*
             Serial.print(StringPinId);
             Serial.print(":");
             Serial.println(NewSensorValue);
-            OldSensorValue = NewSensorValue;
+            */
+            //*out_NewFingerPosition = NewSensorValue;
+            OldSensorValue = CurrentSensorValue;
+            return true;
         }
+        return false;
     }
     ~Finger_aka_AnalogPin() { }
 
     String StringPinId;
     int IntPinId;
-    int NewSensorValue;
+    int CurrentSensorValue;
     int OldSensorValue;
     int AtRestMin;
     int AtRestMax;
@@ -95,14 +100,58 @@ private:
     explicit Finger_aka_AnalogPin(const Finger_aka_AnalogPin &other) { } //delete
 };
 
+void sendMessageToPc(const String &jsonString)
+{
+    //send over Serial: SYNC,checksumOfSize,Size,checksumOfData,Data
+    //where jsonString is Data
+
+    Serial.print("SYNC,");
+    String jsonSizeString = String(jsonString.length());
+    String checksumOfSize;
+    checksum(jsonSizeString, &checksumOfSize);
+    Serial.print(checksumOfSize);
+    Serial.print(",");
+    Serial.print(jsonSizeString);
+    String checksumOfData;
+    checksum(jsonString, &checksumOfData);
+    Serial.print(checksumOfData);
+    Serial.print(",");
+    Serial.print(jsonString);
+}
+
 class Hands
 {
 public:
     void reportFingerMovementOverSerialPort()
     {
+        int fingerIndexesThatMoved[NUM_FINGERS];
+        int currentIndexFingerIndexes = 0;
+
+        bool atLeastOneFingerMoved = false;
         for(int i = 0; i < NUM_FINGERS; ++i)
         {
-            Fingers[i].reportMovementOverSerialPort();
+            if(Fingers[i].fingerMoved())
+            {
+                atLeastOneFingerMoved = true;
+                fingerIndexesThatMoved[currentIndexFingerIndexes] = i;
+                ++currentIndexFingerIndexes;
+            }
+        }
+        if(atLeastOneFingerMoved)
+        {
+            //TODOreq: send checksumm'd bulk'd json object of finger movements
+            //TODOreq: even though the arduino2pc protocol is extremely simple atm and never changes from "analogPinId:newValue", I still want to convert it to json so I can 'bundle' all 10 finger movements into a single json object and (this is the key part) I send that jsonString over using the "SYNC,checksumOfSize,Size,checksumOfData,Data" protocol -- the same protocol used for pc2arduino comm (would be nice if they could share code). Yes I don't need to convert to json, BUT checksumming each "pinId:newValue" _line_ is inefficient as fuck, and "batching" them into 10 is a million times easier using json. thus, json is warranted
+
+            StaticJsonBuffer<200> jsonBuffer; //TODOreq: pick a good size
+            JsonObject &myObject = jsonBuffer.createObject();;
+            for(int i = 0; i < currentIndexFingerIndexes; ++i)
+            {
+                const Finger_aka_AnalogPin &theFinger = Fingers[fingerIndexesThatMoved[i]];
+                myObject[theFinger.StringPinId] = theFinger.CurrentSensorValue;
+            }
+            String jsonString; //TODOoptimization: re-use. maybe need to clear() in between each printTo call?
+            myObject.printTo(jsonString);
+            sendMessageToPc(jsonString); //TODOreq: calibration mode should also call this sendMessageToPc function and send json over
         }
     }
     void initializeFinger(int fingerArrayIndex, int analogPinId, int atRestMin, int atRestMax)
