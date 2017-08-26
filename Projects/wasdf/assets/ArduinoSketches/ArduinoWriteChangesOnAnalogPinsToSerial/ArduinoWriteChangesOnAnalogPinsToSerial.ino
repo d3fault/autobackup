@@ -4,8 +4,11 @@
 #include <MD5.h> //for checksum
 #include <ArduinoJson.h> //for sanity
 
-static const String Sync("SYNC"); //TODOreq: use definition in header shared between PC and Arduino
+static const char *SYNC = "SYNC";
 static const int SizeOfaChecksum = 32; //MD5 uses 32x 4-bit hex digits (128-bits total). since we're passing the hex md5 as a "string", we need 32 bytes to hold it
+//typedef StaticJsonBuffer<200> MyJsonBuffer;
+typedef DynamicJsonBuffer MyJsonBuffer;
+static const int MAX_MESSAGE_SIZE = 1024;
 
 static const int NUM_FINGERS = 10;
 
@@ -21,19 +24,32 @@ static const int MaxAnalogPinId = (A0 + (NUM_ANALOG_INPUTS-1));
 
 static const int HALF_THRESHOLD_FOR_NOTIFYING_OF_CHANGE = 2; //TODOoptional: this could be determined during 'calibration' (so it'd be received from PC over serial). example instructions to uesr for determining it: "move your right index finger as little as possible until you see on screen that it's registered" or some such (haven't thought this through very much, maybe it's dumb idea)
 
-static const int MAX_MESSAGE_SIZE = 1024;
-
 //TODOmb: when in calibrating mode maybe I should blink pin 13 rapidly, and when normal mode starts I should do 3 long pulses and then disable it (because leaving it on is dumb)
 //TODOreq: during testing I noticed that the analog pin values with no sensor connected were "floating". not floating point or whatever, but their values were not zero and they also weren't consistent. they seemed to change WITH the analog pin that had a sensor connected, as it moved (I only tested with 1, but it probably applies with more than 1), but their values didn't match. I need to verify that my "pin detection" stuff is ok/safe to use (it seems to be fine despite that random floating/changing, but maybe I'm only getting lucky). If it isn't, I need to "require" 10 pins always connected, and only do FINGER DETECTION only by using the same code that I do right now for "pin detection to finger mapping", but altered slightly to only do it on  10 pins.  The default analog pins should be 0-9, but there should be a way for the user to pass in pins ("range" parsing is perhaps (but perhaps not after more thinking about it) a GUI thing, the business object wants those pin numbers in a QList<int>). What I need to verify is that the "total accrued distance moved" will always be greater on anlog pins with sensors connected; greater than pins with no sensors connected. but for now I'll just say fuck it (but maybe once 10 are connected it won't work ofc)
 //TODOreq: any time a message header doesn't check out (checksum failure) or the data doesn't check out (checksum failure or just unknown command (same thing as message), we should just blink pin 13 to indicate error. this would at the very least tell us we need to reset the arduino. since input commands are so rare (FOR NOW. for my 0.1 target), so too will be the errors where I need to restart the arduino. ultimately though it would be nice to be fault tolerant, and there are TODOreq comments littered in this code indicating places where faults are detected
+String checksumResult;
+void checksum(const String &dataToChecksum)
+{
+    int dataLength = dataToChecksum.length();
+    int dataLengthIncludingNullTerminator = dataLength + 1;
+    char dataAsCharArray[dataLengthIncludingNullTerminator]; //I thought this was illegal to use a non-const array size, but uhhhh it's compiling/working just fine... maybe arduino doesn't use real C++ after all?? or maybe I'm just retarded? seriously wtf I thought non-const array sizes needed to use new/delete (heap vs stack)
+    dataToChecksum.toCharArray(dataAsCharArray, dataLengthIncludingNullTerminator);
+    unsigned char *rawChecksum = MD5::make_hash(dataAsCharArray, dataLength);
+    char *hexChecksum_or_HexcumWoopsFreudianSlip = MD5::make_digest(rawChecksum, 16); //I have no idea why this 2nd arg is 16 instead of 32. //TODOoptimization: in theory no need to conver to hex because it's not going to be read by a human (could also remove make_digest from the md5lib in order to save space)
+    checksumResult = hexChecksum_or_HexcumWoopsFreudianSlip;
+
+    //TODOoptimization: both ptrs that are free'd here could probably be setup once in setup() and then re-used every time checksum() is called (and never freed because there's no shutdown() function xD)
+    free(hexChecksum_or_HexcumWoopsFreudianSlip);
+    free(rawChecksum);
+}
 void sendDebugMessage(const String &debugMessage)
 {
-    StaticJsonBuffer<200> jsonBuffer; //TODOreq: pick a good size
+    MyJsonBuffer jsonBuffer;
     JsonObject &myObject = jsonBuffer.createObject();
     myObject["debugMessage"] = debugMessage;
-    String jsonString; //TODOoptimization: re-use. maybe need to clear() in between each printTo call?
-    myObject.printTo(jsonString);
-    sendMessageToPc(jsonString);
+    String debugMessageJson;
+    myObject.printTo(debugMessageJson);
+    sendMessageToPc(debugMessageJson);
 }
 void fatalErrorBlinkPin13(int blinkIntervalSec)
 {
@@ -74,7 +90,6 @@ public:
     { }
     void initialize(int analogPinId, int atRestMin, int atRestMax)
     {
-        StringPinId = String(analogPinId);
         IntPinId = analogPinId;
         AtRestMin = atRestMin;
         AtRestMax = atRestMax;
@@ -100,7 +115,6 @@ public:
     }
     ~Finger_aka_AnalogPin() { }
 
-    String StringPinId;
     int IntPinId;
     int CurrentSensorValue;
     int OldSensorValue;
@@ -115,17 +129,15 @@ void sendMessageToPc(const String &jsonString)
     //send over Serial: SYNC,checksumOfSize,Size,checksumOfData,Data
     //where jsonString is Data
 
-    Serial.print(Sync);
+    Serial.print(SYNC);
     Serial.print(",");
     String jsonSizeString = String(jsonString.length());
-    String checksumOfSize;
-    checksum(jsonSizeString, &checksumOfSize);
-    Serial.print(checksumOfSize);
+    checksum(jsonSizeString);
+    Serial.print(checksumResult /*checksumOfSize*/);
     Serial.print(",");
     Serial.print(jsonSizeString);
-    String checksumOfData;
-    checksum(jsonString, &checksumOfData);
-    Serial.print(checksumOfData);
+    checksum(jsonString);
+    Serial.print(checksumResult /*checksumOfData*/);
     Serial.print(",");
     Serial.print(jsonString);
 }
@@ -152,12 +164,13 @@ public:
         {
             //even though the arduino2pc protocol is extremely simple atm and never changes from "analogPinId:newValue", I still want to convert it to json so I can 'bundle' all 10 finger movements into a single json object and (this is the key part) I send that jsonString over using the "SYNC,checksumOfSize,Size,checksumOfData,Data" protocol -- the same protocol used for pc2arduino comm (would be nice if they could share code). Yes I don't need to convert to json, BUT checksumming each "pinId:newValue" _line_ is inefficient as fuck, and "batching" them into 10 is a million times easier using json. thus, json is warranted
 
-            StaticJsonBuffer<200> jsonBuffer; //TODOreq: pick a good size
+            MyJsonBuffer jsonBuffer;
             JsonObject &myObject = jsonBuffer.createObject();
             for(int i = 0; i < currentIndexFingerIndexes; ++i)
             {
                 const Finger_aka_AnalogPin &theFinger = Fingers[fingerIndexesThatMoved[i]];
-                myObject[theFinger.StringPinId] = theFinger.CurrentSensorValue;
+                String key_aka_PinId(theFinger.IntPinId);
+                myObject[key_aka_PinId] = theFinger.CurrentSensorValue;
             }
             String jsonString; //TODOoptimization: re-use. maybe need to clear() in between each printTo call?
             myObject.printTo(jsonString);
@@ -182,20 +195,6 @@ struct Mode
         , KeyboardAndMouseMode = 0x100
     };
 };
-void checksum(const String &dataToChecksum, String *out_HexChecksum)
-{
-    int dataLength = dataToChecksum.length();
-    int dataLengthIncludingNullTerminator = dataLength + 1;
-    char dataAsCharArray[dataLengthIncludingNullTerminator]; //I thought this was illegal to use a non-const array size, but uhhhh it's compiling/working just fine... maybe arduino doesn't use real C++ after all?? or maybe I'm just retarded? seriously wtf I thought non-const array sizes needed to use new/delete (heap vs stack)
-    dataToChecksum.toCharArray(dataAsCharArray, dataLengthIncludingNullTerminator);
-    unsigned char *rawChecksum = MD5::make_hash(dataAsCharArray, dataLength);
-    char *hexChecksum_or_HexcumWoopsFreudianSlip = MD5::make_digest(rawChecksum, 16); //I have no idea why this 2nd arg is 16 instead of 32. //TODOoptimization: in theory no need to conver to hex because it's not going to be read by a human (could also remove make_digest from the md5lib in order to save space)
-    *out_HexChecksum = hexChecksum_or_HexcumWoopsFreudianSlip;
-
-    //TODOoptimization: both ptrs that are free'd here could probably be setup once in setup() and then re-used every time checksum() is called (and never freed because there's no shutdown() function xD)
-    free(hexChecksum_or_HexcumWoopsFreudianSlip);
-    free(rawChecksum);
-}
 class MessageHeaderReader
 {
 private:
@@ -242,7 +241,7 @@ public:
                     return false;
                     break;
                 }
-                if(m_MessageHeaderBuffer.endsWith(Sync))
+                if(m_MessageHeaderBuffer.endsWith(SYNC))
                 {
                     m_State = ReadingChecksumOfSizeOfData;
                 }
@@ -271,8 +270,8 @@ public:
                 m_ParsedSizeOfData = m_MessageHeaderBuffer.toInt();
                 m_ParsedSizeOfDataAsString = m_MessageHeaderBuffer;
                 m_MessageHeaderBuffer = "";
-                checksum(m_ParsedSizeOfDataAsString, &m_CalculatedChecksumOfSizeOfData);
-                if(m_CalculatedChecksumOfSizeOfData != m_ParsedChecksumOfSizeOfData)
+                checksum(m_ParsedSizeOfDataAsString);
+                if(checksumResult != m_ParsedChecksumOfSizeOfData)
                 {
                     fatalErrorBlinkPin13(2); //TODOreq: remove this call to fatal when "requesting message is re-sent" is implemented
                     m_State = LookingForSync;
@@ -311,7 +310,6 @@ private:
     String m_ParsedChecksumOfSizeOfData;
     int m_ParsedSizeOfData;
     String m_ParsedSizeOfDataAsString;
-    String m_CalculatedChecksumOfSizeOfData;
 
     String m_ParsedMessageChecksum;
 };
@@ -320,8 +318,8 @@ class MessageReader
 private:
     bool messageChecksumIsValid()
     {
-        checksum(m_MessageBuffer, &m_CalculatedMessageChecksum);
-        if(m_CalculatedMessageChecksum == m_MessageHeaderReader.parsedMessageChecksum())
+        checksum(m_MessageBuffer);
+        if(checksumResult == m_MessageHeaderReader.parsedMessageChecksum())
         {
             return true;
         }
@@ -389,24 +387,23 @@ private:
     int m_MessageSize;
     bool m_HaveReadMessageHeader;
     int m_NumBytesOfMessageLeft;
-    String m_CalculatedMessageChecksum;
 };
-
 
 //Globals
 int CalibrationDataOldSensorValues[NUM_ANALOG_INPUTS];
 Mode::ModeEnum CurrentMode;
 Hands hands;
 String inputCommandBuffer;
-MessageReader messageReader;
+MessageReader *messageReader;
 
 void setup()
 {
+    messageReader = 0;
     Serial.begin(38400 /*, SERIAL_8O2 TODOreq: I want to try out "Odd" (that's an oh not a zero in between 8 and 2) parity and 2 stop bits to see if it improves reliability, but I keep getting an error that begin() only takes one argument wtf? maybe I need to upgrade? but it doesn't even look like debian stretch bumped the version at all (except a small patch). the define SERIAL_8O2 does in fact exist, so wtf?*/);
     for(int i = 0; i < NUM_ANALOG_INPUTS; ++i)
         CalibrationDataOldSensorValues[i] = 0;
     CurrentMode = Mode::DoNothingMode;
-    inputCommandBuffer.reserve(MAX_MESSAGE_SIZE); //TODOreq: calculate the max string length and reserve that much (or maybe a little more to be on the safe side). it can be determined because the values only take up so many characters. only thing is maybe the arduino mega 2560x1000 might have 999999999999 analog pins xDDDD, ya know what I mean??
+    //commented this out because it's more memory conservative to allocate as needed: inputCommandBuffer.reserve(MAX_MESSAGE_SIZE); //TODOreq: calculate the max string length and reserve that much (or maybe a little more to be on the safe side). it can be determined because the values only take up so many characters. only thing is maybe the arduino mega 2560x1000 might have 999999999999 analog pins xDDDD, ya know what I mean??
     //inputCommandBuffer = new char(MAX_MESSAGE_SIZE); //TODOoptimization: never call new after takeoff. the md5 lib I'm gonna be using looks suspect af
     while(!Serial) ; //wait for serial port to connect. Needed for Leonardo/Micro only. I intentionally put the String::reserve command (and other cmds) in between this and Serial.begin() in case the connect happens asynchronously (idfk tbh, but it might), in which case I may have saved an entire millisecond!!!
 }
@@ -443,7 +440,7 @@ void calibrationLoop()
     }
     if(atLeastOneAnalogPinSensorValueChanged)
     {
-        StaticJsonBuffer<200> jsonBuffer; //TODOreq: pick a good size
+        MyJsonBuffer jsonBuffer;
         JsonObject &myObject = jsonBuffer.createObject();
         for(int i = 0; i < currentIndex_CalibrationDataOldSensorValues_IndexesThatMoved; ++i)
         {
@@ -469,7 +466,7 @@ int parseAndSanitizeAnalogPinIdFromForeignString(const String &foreignString)
 }
 void processInputCommandString(const String &inputCommandString)
 {
-    StaticJsonBuffer<200> jsonBuffer; //TODOreq: pick a good size
+    MyJsonBuffer jsonBuffer;
     const JsonObject &rootJsonObject = jsonBuffer.parseObject(inputCommandString);
     if(!rootJsonObject.success())
     {
@@ -478,6 +475,13 @@ void processInputCommandString(const String &inputCommandString)
     }
 
     const char* command = rootJsonObject["command"];
+
+    String debugMessage("received command from pc: \"");
+    debugMessage += command;
+    debugMessage += "\". here is the corresponding json: ";
+    debugMessage += inputCommandString;
+    sendDebugMessage(debugMessage);
+
     if(command == "calibrate")
     {
         CurrentMode = Mode::Calibrating;
@@ -513,7 +517,7 @@ void processInputCommandString(const String &inputCommandString)
     }
     else
     {
-        String debugMessage("unknown command: \"");
+        debugMessage = "unknown command: \"";
         debugMessage += command;
         debugMessage += "\". here is the corresponding json: ";
         debugMessage += inputCommandString;
@@ -542,8 +546,19 @@ void sendOutputIfAny()
 }
 void receiveInputIfAny()
 {
-    if(messageReader.tryReadMessage(&inputCommandBuffer))
+    if(messageReader == 0)
+    {
+        if(Serial.available())
+            messageReader = new MessageReader();
+        else
+            return;
+    }
+    if(messageReader->tryReadMessage(&inputCommandBuffer))
+    {
+        delete messageReader; //OOM optimization
+        messageReader = 0;
         processInputCommandString(inputCommandBuffer);
+    }
 }
 void loop()
 {
