@@ -18,8 +18,11 @@ QtIoDeviceChecksummedMessageReader::QtIoDeviceChecksummedMessageReader(QIODevice
 void QtIoDeviceChecksummedMessageReader::handleReadyRead()
 {
     QByteArray inputCommandBuffer;
-    if(tryReadMessage(&inputCommandBuffer))
-        emit checksummedMessageRead(inputCommandBuffer);
+    while(m_IoDeviceToReadChecksummedMessagesFrom->bytesAvailable())
+    {
+        if(tryReadMessage(&inputCommandBuffer))
+            emit checksummedMessageRead(inputCommandBuffer);
+    }
 }
 bool QtIoDeviceChecksummedMessageReader::messageChecksumIsValid()
 {

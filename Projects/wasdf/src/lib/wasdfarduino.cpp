@@ -31,10 +31,12 @@
 WasdfArduino::WasdfArduino(QObject *parent)
     : QObject(parent)
     , m_SerialPort(new QSerialPort("/dev/ttyACM0", this)) //TODOreq: be able to choose different serial ports at runtime, MusicFingers has some of this implemented (using ugly defines kek) and some decent ideas such as "use the _one_ containing the string 'arduino'" etc
-    , m_ChecksummedMessageReader(new QtIoDeviceChecksummedMessageReader(m_SerialPort, this))
     , m_SerialPortTextStream(m_SerialPort)
 {
     m_SerialPort->setBaudRate(QSerialPort::Baud38400);
+
+    connect(m_SerialPort, &QSerialPort::readyRead, this, &WasdfArduino::dumpRawSerialStreamByPeeking);
+    m_ChecksummedMessageReader = new QtIoDeviceChecksummedMessageReader(m_SerialPort, this); //this line has to go after the above connect() because otherwise the QtIoDeviceChecksummedMessageReader::handleReadyRead will be called before dumpRawSerialStreamByPeeking, and in that case the peeking won't work!
 }
 void WasdfArduino::openSerialPortIfNotOpen()
 {
@@ -278,4 +280,10 @@ void WasdfArduino::handleRegularModeMessageReceived(const QByteArray &messageJso
         }
         emit fingerMoved(fing, sensorValue);
     }
+}
+void WasdfArduino::dumpRawSerialStreamByPeeking()
+{
+    QByteArray peekedBytes = m_SerialPort->peek(m_SerialPort->bytesAvailable());
+    QString peekedBytesAsString(peekedBytes);
+    qDebug() << endl << "[BEGIN PEEKED BYTES]" << endl << peekedBytesAsString << endl << "[END PEEKED BYTES]" << endl << endl;
 }

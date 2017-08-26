@@ -36,6 +36,7 @@ public slots:
 private slots:
     void handleCalibrationModeMessageReceived(const QByteArray &messageJson);
     void handleRegularModeMessageReceived(const QByteArray &messageJson);
+    void dumpRawSerialStreamByPeeking();
 };
 
 #endif // WASDFARDUINO_H
