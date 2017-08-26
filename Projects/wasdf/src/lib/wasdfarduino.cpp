@@ -107,6 +107,23 @@ void WasdfArduino::sendRawCommandToArduino(const QString &commandToSendToArduino
     m_SerialPort->write(commandToSendToArduinoAsLatin1); //variable size
 #endif
 }
+bool WasdfArduino::detectAndHandleDebugMessage(const QByteArray &messageJson)
+{
+    QJsonParseError jsonParseError;
+    QJsonDocument message = QJsonDocument::fromJson(messageJson, &jsonParseError);
+    if(jsonParseError.error != QJsonParseError::NoError)
+    {
+        emit e("Error parsing json: " + jsonParseError.errorString());
+        return false;
+    }
+    const QJsonObject &rootObject = message.object();
+    QJsonObject::const_iterator it = rootObject.constFind("debugMessage");
+    if(it == rootObject.constEnd())
+        return false;
+    QString debugMessage = it.value().toString();
+    emit e("debug message received from arduino: " + QString(debugMessage)); //TODOmb: emit debugMessageReceivedFromArduino(debugMessage) and let the business logic (class "Wasdf") handle it however it wants
+    return true;
+}
 void WasdfArduino::startInCalibrationMode()
 {
     //in calibration mode, arduino sends _ALL_ (not just 10) analog pin readings over serial (TODOmb: user can pass an --exclude-analog-pins flag in case they're using the other analog pins for something else (but then they'd need to modify the sketch anyways, so maybe this isn't necessary?)
@@ -164,6 +181,9 @@ void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
 }
 void WasdfArduino::handleCalibrationModeMessageReceived(const QByteArray &messageJson)
 {
+    qDebug() << messageJson;
+    if(detectAndHandleDebugMessage(messageJson))
+        return;
     QJsonParseError jsonParseError;
     QJsonDocument message = QJsonDocument::fromJson(messageJson, &jsonParseError);
     if(jsonParseError.error != QJsonParseError::NoError)
@@ -224,6 +244,8 @@ void WasdfArduino::handleRegularModeMessageReceived(const QByteArray &messageJso
 {
     //TODOreq: similar to handleCalibrationModeMessageReceived (could probably share json parsing code paths), but we map the analog pin to Finger before emitting
     qDebug() << messageJson;
+    if(detectAndHandleDebugMessage(messageJson))
+        return;
 
     //at this point, we know m_CalibrationConfig is populated
 

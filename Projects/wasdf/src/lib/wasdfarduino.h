@@ -20,6 +20,7 @@ private:
     void openSerialPortIfNotOpen();
     static QString jsonObjectToQString(const QJsonObject &jsonObject);
     void sendRawCommandToArduino(const QString &command);
+    bool detectAndHandleDebugMessage(const QByteArray &messageJson);
 
     WasdfCalibrationConfiguration m_CalibrationConfig;
     QSerialPort *m_SerialPort;

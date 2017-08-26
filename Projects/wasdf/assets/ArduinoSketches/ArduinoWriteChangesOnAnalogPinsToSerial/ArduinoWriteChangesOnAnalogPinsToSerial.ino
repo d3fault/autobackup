@@ -41,6 +41,15 @@ void fatalErrorBlinkPin13(int blinkIntervalSec)
         delay(blinkIntervalMSec);
     }
 }
+void sendDebugMessage(const String &debugMessage)
+{
+    StaticJsonBuffer<200> jsonBuffer; //TODOreq: pick a good size
+    JsonObject &myObject = jsonBuffer.createObject();
+    myObject["debugMessage"] = debugMessage;
+    String jsonString; //TODOoptimization: re-use. maybe need to clear() in between each printTo call?
+    myObject.printTo(jsonString);
+    sendMessageToPc(jsonString);
+}
 bool newSensorValueHasChangedEnoughThatWeWantToReportIt(int oldSensorValue, int newSensorValue)
 {
     /*if(NewSensorValue == OldSensorValue)
@@ -143,7 +152,7 @@ public:
             //even though the arduino2pc protocol is extremely simple atm and never changes from "analogPinId:newValue", I still want to convert it to json so I can 'bundle' all 10 finger movements into a single json object and (this is the key part) I send that jsonString over using the "SYNC,checksumOfSize,Size,checksumOfData,Data" protocol -- the same protocol used for pc2arduino comm (would be nice if they could share code). Yes I don't need to convert to json, BUT checksumming each "pinId:newValue" _line_ is inefficient as fuck, and "batching" them into 10 is a million times easier using json. thus, json is warranted
 
             StaticJsonBuffer<200> jsonBuffer; //TODOreq: pick a good size
-            JsonObject &myObject = jsonBuffer.createObject();;
+            JsonObject &myObject = jsonBuffer.createObject();
             for(int i = 0; i < currentIndexFingerIndexes; ++i)
             {
                 const Finger_aka_AnalogPin &theFinger = Fingers[fingerIndexesThatMoved[i]];
@@ -434,7 +443,7 @@ void calibrationLoop()
     if(atLeastOneAnalogPinSensorValueChanged)
     {
         StaticJsonBuffer<200> jsonBuffer; //TODOreq: pick a good size
-        JsonObject &myObject = jsonBuffer.createObject();;
+        JsonObject &myObject = jsonBuffer.createObject();
         for(int i = 0; i < currentIndex_CalibrationDataOldSensorValues_IndexesThatMoved; ++i)
         {
             int indexIntoCalibrationDataOfAnalogPinThatMoved = CalibrationDataOldSensorValues_IndexesThatMoved[i];
