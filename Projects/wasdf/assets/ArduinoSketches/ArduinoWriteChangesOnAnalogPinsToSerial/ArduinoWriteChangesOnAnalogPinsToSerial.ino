@@ -136,6 +136,7 @@ void sendMessageToPc(const String &jsonString)
     Serial.print(checksumResult /*checksumOfSize*/);
     Serial.print(",");
     Serial.print(jsonSizeString);
+    Serial.print(",");
     checksum(jsonString);
     Serial.print(checksumResult /*checksumOfData*/);
     Serial.print(",");
@@ -148,7 +149,7 @@ public:
     void reportFingerMovementOverSerialPort()
     {
         int fingerIndexesThatMoved[NUM_FINGERS];
-        int currentIndexFingerIndexes = 0;
+        int currentIndexIntoFingerIndexesThatMoved = 0;
 
         bool atLeastOneFingerMoved = false;
         for(int i = 0; i < NUM_FINGERS; ++i)
@@ -156,8 +157,8 @@ public:
             if(Fingers[i].fingerMoved())
             {
                 atLeastOneFingerMoved = true;
-                fingerIndexesThatMoved[currentIndexFingerIndexes] = i;
-                ++currentIndexFingerIndexes;
+                fingerIndexesThatMoved[currentIndexIntoFingerIndexesThatMoved] = i;
+                ++currentIndexIntoFingerIndexesThatMoved;
             }
         }
         if(atLeastOneFingerMoved)
@@ -166,7 +167,7 @@ public:
 
             MyJsonBuffer jsonBuffer;
             JsonObject &myObject = jsonBuffer.createObject();
-            for(int i = 0; i < currentIndexFingerIndexes; ++i)
+            for(int i = 0; i < currentIndexIntoFingerIndexesThatMoved; ++i)
             {
                 const Finger_aka_AnalogPin &theFinger = Fingers[fingerIndexesThatMoved[i]];
                 String key_aka_PinId(theFinger.IntPinId);
@@ -474,7 +475,7 @@ void processInputCommandString(const String &inputCommandString)
         return;
     }
 
-    const char* command = rootJsonObject["command"];
+    String command = rootJsonObject["command"];
 
     String debugMessage("received command from pc: \"");
     debugMessage += command;
@@ -514,6 +515,8 @@ void processInputCommandString(const String &inputCommandString)
             fatalErrorBlinkPin13(6);
             return;
         }
+        debugMessage = "started";
+        sendDebugMessage(debugMessage);
     }
     else
     {
