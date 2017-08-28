@@ -81,7 +81,7 @@ bool QtIoDeviceChecksummedMessageHeaderReader::tryReadMessageHeader(int *out_Mes
             m_CalculatedChecksumOfSizeOfData = QtIoDeviceChecksummedMessageReader::checksum(m_ParsedSizeOfDataAsString);
             if(m_CalculatedChecksumOfSizeOfData != m_ParsedChecksumOfSizeOfData)
             {
-                qFatal("m_CalculatedChecksumOfSizeOfData != m_ParsedChecksumOfSizeOfData"); //TODOreq: remove this call to fatal when "requesting message is re-sent" is implemented
+                //qFatal("m_CalculatedChecksumOfSizeOfData != m_ParsedChecksumOfSizeOfData"); //TODOreq: "request message is re-sent"
                 m_State = LookingForSync;
                 return false;
                 break;

@@ -33,7 +33,9 @@ bool QtIoDeviceChecksummedMessageReader::messageChecksumIsValid()
     }
     else
     {
-        qFatal("m_CalculatedMessageChecksum != m_MessageHeaderReader->parsedMessageChecksum()"); //TODOreq: remove this call to fatal when "requesting message is re-sent" is implemented
+        //qFatal("m_CalculatedMessageChecksum != m_MessageHeaderReader->parsedMessageChecksum()"); //TODOreq: "request message is re-sent"
+        m_HaveReadMessageHeader = false;
+        return false;
     }
     return false;
 }

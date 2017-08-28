@@ -274,7 +274,7 @@ public:
                 checksum(m_ParsedSizeOfDataAsString);
                 if(checksumResult != m_ParsedChecksumOfSizeOfData)
                 {
-                    fatalErrorBlinkPin13(2); //TODOreq: remove this call to fatal when "requesting message is re-sent" is implemented
+                    //fatalErrorBlinkPin13(2); //TODOreq: "request message is re-sent"
                     m_State = LookingForSync;
                     return false;
                     break;
@@ -326,7 +326,9 @@ private:
         }
         else
         {
-            fatalErrorBlinkPin13(3); //TODOreq: remove this call to fatal when "requesting message is re-sent" is implemented
+            //fatalErrorBlinkPin13(3); //TODOreq: "request message is re-sent"
+            m_HaveReadMessageHeader = false;
+            return false;
         }
         return false;
     }
