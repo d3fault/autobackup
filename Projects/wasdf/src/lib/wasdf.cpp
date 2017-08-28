@@ -47,7 +47,7 @@ bool Wasdf::fingerIsLeftHand(Finger finger)
 void Wasdf::startWasdfActualSinceCalibrated()
 {
     connect(m_Arduino, &WasdfArduino::fingerMoved, this, &Wasdf::handleFingerMoved);
-    //TODOreq: this is only commented out for testing: m_Arduino->start(m_Calibration); //TODOoptimization: once the AtRestPosition or AtRestMinValue/AtRestMinValue stuff is implemented, it would be best if the arduino was told of those values and DIDN'T WRITE TO SERIAL whenever a finger was considered "at rest"... as opposed to us filtering that out on the PC side. the quieter we keep the serial line, the less chance of corruption/errors
+    m_Arduino->start(m_Calibration); //TODOoptimization: once the AtRestPosition or AtRestMinValue/AtRestMinValue stuff is implemented, it would be best if the arduino was told of those values and DIDN'T WRITE TO SERIAL whenever a finger was considered "at rest"... as opposed to us filtering that out on the PC side. the quieter we keep the serial line, the less chance of corruption/errors
 }
 void Wasdf::startWasdf()
 {

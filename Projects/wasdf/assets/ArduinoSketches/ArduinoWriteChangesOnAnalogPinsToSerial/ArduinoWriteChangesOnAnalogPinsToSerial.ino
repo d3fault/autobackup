@@ -81,6 +81,14 @@ bool newSensorValueHasChangedEnoughThatWeWantToReportIt(int oldSensorValue, int 
 
     return false;
 }
+bool sanitizingAnalogRead(int analogPinId, bool *out_analogSensorValue)
+{
+    int rawSensorValue = analogRead(analogPinId);
+    if(rawSensorValue < 0 || rawSensorValue > 1023)
+        return false;
+    *out_analogSensorValue = rawSensorValue;
+    return true;
+}
 class Finger_aka_AnalogPin //TODOmb: shared declaration between PC and Arduino?
 {
 public:
@@ -97,7 +105,8 @@ public:
     }
     bool fingerMoved()
     {
-        CurrentSensorValue = analogRead(IntPinId);
+         if(!sanitizingAnalogRead(IntPinId, &CurrentSensorValue))
+             return false;
         if(CurrentSensorValue <= AtRestMax && CurrentSensorValue >= AtRestMin)
             return false; //finger is within "at rest" range, so return false
         if(newSensorValueHasChangedEnoughThatWeWantToReportIt(OldSensorValue, CurrentSensorValue))
@@ -413,7 +422,9 @@ void setup()
 bool analogPinSensorValueChangedDuringCalibration(int pinId, int indexIntoCalibrationDataOldSensorValues)
 {
     int oldSensorValue = CalibrationDataOldSensorValues[indexIntoCalibrationDataOldSensorValues];
-    int newSensorValue = analogRead(pinId);
+    int newSensorValue;
+    if(!sanitizingAnalogRead(pinId, &newSensorValue))
+        return false;
     if(newSensorValueHasChangedEnoughThatWeWantToReportIt(oldSensorValue, newSensorValue))
     {
         /*
