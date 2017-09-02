@@ -60,7 +60,7 @@ void WasdfArduino::sendRawCommandToArduino(const QString &commandToSendToArduino
     qDebug() << "commandToSendToArduino:" << commandToSendToArduino; //TODOreq: this is only here for testing
 
     //send SYNC, then checksumOfSizeOfData, then sizeOfData, then checksumOfData, then commandToSendToArduino, which is a json document in string form
-    static const QString delim(","); //TODOreq: in shared headers
+    static const QString delim(WASDF_CHECKSUMMED_MESSAGE_HEADER_COMMADELIM); //TODOreq: in shared headers
 
     //send SYNC
     m_SerialPortTextStream << "SYNC";
@@ -119,7 +119,7 @@ bool WasdfArduino::detectAndHandleDebugMessage(const QByteArray &messageJson)
         return false;
     }
     const QJsonObject &rootObject = message.object();
-    QJsonObject::const_iterator it = rootObject.constFind("debugMessage");
+    QJsonObject::const_iterator it = rootObject.constFind(WASDF_JSON_KEY_DEBUGMESSAGE);
     if(it == rootObject.constEnd())
         return false;
     QString debugMessage = it.value().toString();
@@ -138,8 +138,8 @@ void WasdfArduino::startInCalibrationMode()
     openSerialPortIfNotOpen();
 
     QJsonObject calibrateCommandJsonObject;
-    QJsonValue calibrateCommandJsonValue(QString("calibrate"));
-    calibrateCommandJsonObject.insert("command", calibrateCommandJsonValue);
+    QJsonValue calibrateCommandJsonValue(QString(WASDF_JSON_KEY_CALIBRATECOMMAND));
+    calibrateCommandJsonObject.insert(WASDF_JSON_KEY_COMMAND, calibrateCommandJsonValue);
 
     QString calibrateCommandJson = jsonObjectToQString(calibrateCommandJsonObject);
     sendRawCommandToArduino(calibrateCommandJson); //TODOreq: these strings should be in a shared header, shared between the arduino sketch and this sauce
@@ -147,8 +147,6 @@ void WasdfArduino::startInCalibrationMode()
 void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
 {
     m_CalibrationConfig = calibrationConfig;
-
-    //this is where the 10 fingers get mapped to the 10 analog pins
 
     disconnect(m_ChecksummedMessageReader, &QtIoDeviceChecksummedMessageReader::checksummedMessageRead, this, &WasdfArduino::handleCalibrationModeMessageReceived);
     connect(m_ChecksummedMessageReader, &QtIoDeviceChecksummedMessageReader::checksummedMessageRead, this, &WasdfArduino::handleRegularModeMessageReceived);
@@ -158,8 +156,8 @@ void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
 
     QJsonObject startCommandJsonObject;
 
-    QJsonValue startCommandJsonValue(QString("start"));
-    startCommandJsonObject.insert("command", startCommandJsonValue);
+    QJsonValue startCommandJsonValue(QString(WASDF_JSON_KEY_STARTCOMMAND));
+    startCommandJsonObject.insert(WASDF_JSON_KEY_COMMAND, startCommandJsonValue);
 
     //insert "at rest ranges" as args to the "start" command
     QJsonObject fingersAtRestRanges;
@@ -172,11 +170,11 @@ void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
         int atRestMin, atRestMax;
         fingConf.calculateAtRestRange(&atRestMin, &atRestMax);
         QJsonObject fingerJsonObject;
-        fingerJsonObject.insert("atRestMin", atRestMin);
-        fingerJsonObject.insert("atRestMax", atRestMax);
+        fingerJsonObject.insert(WASDF_JSON_KEY_ATRESTMIN, atRestMin);
+        fingerJsonObject.insert(WASDF_JSON_KEY_ATRESTMAX, atRestMax);
         fingersAtRestRanges.insert(QString::number(fingConf.AnalogPinIdOnArduino), fingerJsonObject); //TODOreq: what happens when same key is inserted twice? during testing especially this is going to happen, but even until I solve the "floating values" problem I still might see "same key" occurances. Ideally I'd never use the same key twice, because my calibrator would know not to emit that
     }
-    startCommandJsonObject.insert("fingersAtRestRanges", fingersAtRestRanges);
+    startCommandJsonObject.insert(WASDF_JSON_KEY_ATRESTRANGES, fingersAtRestRanges);
 
     QString startCommandJson = jsonObjectToQString(startCommandJsonObject);
     sendRawCommandToArduino(startCommandJson);
@@ -201,7 +199,7 @@ void WasdfArduino::handleCalibrationModeMessageReceived(const QByteArray &messag
         QByteArray analogPinIdBA = analogPinIdString.toLatin1();
         int analogPinId = analogPinIdBA.toInt();
         int sensorValue = it.value().toInt();
-        if(sensorValue < 0 || sensorValue > 1023)
+        if(sensorValue < MinAnalogPinValue || sensorValue > MaxAnalogPinValue)
         {
             qDebug() << "a sensor value was out of bounds:" << messageJson;
             continue;
@@ -273,7 +271,7 @@ void WasdfArduino::handleRegularModeMessageReceived(const QByteArray &messageJso
         }
         int sensorValue = it.value().toInt();
         Finger fing = m_CalibrationConfig.getFingerByAnalogPinId(analogPinId);
-        if(sensorValue < 0 || sensorValue > 1023)
+        if(sensorValue < MinAnalogPinValue || sensorValue > MaxAnalogPinValue)
         {
             qDebug() << "a sensor value was out of bounds for your " << fingerEnumToHumanReadableString(fing) << "finger. the sensor value is " << sensorValue << ". here is the json too:" << messageJson;
             continue;

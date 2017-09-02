@@ -4,6 +4,8 @@
 
 #include "qtiodevicechecksummedmessagereader.h"
 
+#define ChecksummedMessageHeaderReader_SYNC "SYNC"
+
 QtIoDeviceChecksummedMessageHeaderReader::QtIoDeviceChecksummedMessageHeaderReader(QIODevice *ioDevice)
     : m_IoDevice(ioDevice)
     , m_State(LookingForSync)
@@ -43,7 +45,7 @@ bool QtIoDeviceChecksummedMessageHeaderReader::tryReadMessageHeader(int *out_Mes
                 return false;
                 break;
             }
-            if(m_MessageHeaderBuffer.endsWith("SYNC"))
+            if(m_MessageHeaderBuffer.endsWith(ChecksummedMessageHeaderReader_SYNC))
             {
                 m_State = ReadingChecksumOfSizeOfData;
             }

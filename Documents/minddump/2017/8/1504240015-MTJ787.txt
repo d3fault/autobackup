@@ -1,1 +1,12 @@
 You can't be dead, but you can die. This logical contradiction is true nonetheless.
+
+
+It make it easier to understand the above when you consider "first" and "third" person perspectives.
+
+From the first person perspective, it's impossible to be able to say "I am dead right now". You can say "I'm about to die" or "I'm dying", but never "I am dead".
+
+However from a third person perspective, when you die someone ELSE is certainly able to say "he is dead" (although maybe that's logically incorrect despite being used frequently. maybe logically correct is "he was alive... he's nothing now" ?).
+
+Death is kinda like a special function. You can call the function, but the function never returns back to the caller. There's a linux system call "exec" that mirrors this: "The  exec()  family  of  functions replaces the current process image with a new process image". When you're "alive", your "life" process is running. But when you call the die() function, the life process image gets replaced with a new process image: death.
+Only the "life" process is able to check that the PID of life.exe is still running, the death process has no such ability to check (and the life.exe process was ended anyways!) (ok let's ignore the PID inheritance here xD).
+^re: "exec" -- usually when you "call" a program in linux, a NEW process is spawned, that program is run, and then control is returned to the caller at the line of code after the program call. but with "exec", the next line of code in the caller is never run.

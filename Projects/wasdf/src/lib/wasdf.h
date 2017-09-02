@@ -6,6 +6,8 @@
 #include <QHash>
 #include <QPointer>
 
+#include "ArduinoWriteChangesOnAnalogPinsToSerial.ino" //for common defines only
+
 class WasdfArduino;
 class WasdfCalibrator;
 
@@ -51,8 +53,10 @@ struct WasdfCalibrationFingerConfiguration
     void calculateAtRestRange(int *out_AtRestMin, int *out_AtRestMax) const;
 
     int AnalogPinIdOnArduino = -1;
-    int MinValue = 1023; //TODOreq: ctrl+shift+f all non-comment instances of '1023' (and 0) and replace them all with a common constant declared at the top of this file
-    int MaxValue = 0;
+
+    //min is initialized to max, and max initialized to min, so we can check as we go for values "lower than" or "greater than" etc...
+    int MinValue = MaxAnalogPinValue;
+    int MaxValue = MinAnalogPinValue;
 
     int AtRestPosition; //TODOreq: we'd hardcode ~10% range around this AtRestPosition (until the AtRestMaxValue/AtRestMinValue is implemented, at which point percentages (or this mid-point) are no longer used). also worth noting that the range min/max calulcated using percentages must be constrained to 0-1023
 

@@ -1,28 +1,43 @@
 //rewriting the first version of this instead of just removing calibration because I also want to try to not to use pp defines/macros. pure C++ is cleaner and easier to read/modify. aside from that it's just a functionally equivalent rewrite (with the calibration stripped out since that's going to be done on the PC side)
 
-#include <Arduino.h> //for NUM_ANALOG_INPUTS
-#include <MD5.h> //for checksum
-#include <ArduinoJson.h> //for sanity
+#ifndef WASDF_PC
+    #include <Arduino.h> //for NUM_ANALOG_INPUTS
+    #include <MD5.h> //for checksum
+    #include <ArduinoJson.h> //for sanity
+#endif // ndef WASDF_PC
 
+//-------BEGIN PC-ARDUINO SHARED DEFINES
+static const int NUM_FINGERS = 10;
 static const char *SYNC = "SYNC";
 static const int SizeOfaChecksum = 32; //MD5 uses 32x 4-bit hex digits (128-bits total). since we're passing the hex md5 as a "string", we need 32 bytes to hold it
+
+static const int MinAnalogPinValue = 0;
+static const int MaxAnalogPinValue = 1023;
+
+static const int HALF_THRESHOLD_FOR_NOTIFYING_OF_CHANGE = 2; //TODOoptional: this could be determined during 'calibration' (so it'd be received from PC over serial). example instructions to uesr for determining it: "move your right index finger as little as possible until you see on screen that it's registered" or some such (haven't thought this through very much, maybe it's dumb idea)
+
+#define WASDF_CHECKSUMMED_MESSAGE_HEADER_COMMADELIM ","
+#define WASDF_JSON_KEY_DEBUGMESSAGE "debugMessage"
+#define WASDF_JSON_KEY_COMMAND "command"
+#define WASDF_JSON_KEY_CALIBRATECOMMAND "calibrate"
+#define WASDF_JSON_KEY_STARTCOMMAND "start"
+#define WASDF_JSON_KEY_ATRESTMIN "atRestMin"
+#define WASDF_JSON_KEY_ATRESTMAX "atRestMax"
+#define WASDF_JSON_KEY_ATRESTRANGES "fingersAtRestRanges"
+//-------END PC-ARDUINO SHARED DEFINES
+
+#ifndef WASDF_PC
+static const int MinAnalogPinId = A0;
+static const int MaxAnalogPinId = (A0 + (NUM_ANALOG_INPUTS-1));
 //typedef StaticJsonBuffer<200> MyJsonBuffer;
 typedef DynamicJsonBuffer MyJsonBuffer;
 static const int MAX_MESSAGE_SIZE = 1024;
-
-static const int NUM_FINGERS = 10;
-
 #if (NUM_ANALOG_INPUTS < NUM_FINGERS)
 #error "Your board does not support at least 10 analog inputs" //TODOmb: fail gracefully. but don't simply uncomment this, otherwise we will probably have a memory access violation in this code. namely when we try to pull out the "old" sensor value of finger9, but we only allocated (on the stack) an array of size NUM_ANALOG_INPUTS to hold our old sensor values
 #endif
 #if (MESSAGE_HEADER_SIZE > 64)
 #error "Message header size (which is fixed) is bigger than 64 bytes (Serial port's internal buffer size)!"
 #endif
-
-static const int MinAnalogPinId = A0;
-static const int MaxAnalogPinId = (A0 + (NUM_ANALOG_INPUTS-1));
-
-static const int HALF_THRESHOLD_FOR_NOTIFYING_OF_CHANGE = 2; //TODOoptional: this could be determined during 'calibration' (so it'd be received from PC over serial). example instructions to uesr for determining it: "move your right index finger as little as possible until you see on screen that it's registered" or some such (haven't thought this through very much, maybe it's dumb idea)
 
 //TODOmb: when in calibrating mode maybe I should blink pin 13 rapidly, and when normal mode starts I should do 3 long pulses and then disable it (because leaving it on is dumb)
 //TODOreq: during testing I noticed that the analog pin values with no sensor connected were "floating". not floating point or whatever, but their values were not zero and they also weren't consistent. they seemed to change WITH the analog pin that had a sensor connected, as it moved (I only tested with 1, but it probably applies with more than 1), but their values didn't match. I need to verify that my "pin detection" stuff is ok/safe to use (it seems to be fine despite that random floating/changing, but maybe I'm only getting lucky). If it isn't, I need to "require" 10 pins always connected, and only do FINGER DETECTION only by using the same code that I do right now for "pin detection to finger mapping", but altered slightly to only do it on  10 pins.  The default analog pins should be 0-9, but there should be a way for the user to pass in pins ("range" parsing is perhaps (but perhaps not after more thinking about it) a GUI thing, the business object wants those pin numbers in a QList<int>). What I need to verify is that the "total accrued distance moved" will always be greater on anlog pins with sensors connected; greater than pins with no sensors connected. but for now I'll just say fuck it (but maybe once 10 are connected it won't work ofc)
@@ -46,7 +61,7 @@ void sendDebugMessage(const String &debugMessage)
 {
     MyJsonBuffer jsonBuffer;
     JsonObject &myObject = jsonBuffer.createObject();
-    myObject["debugMessage"] = debugMessage;
+    myObject[WASDF_JSON_KEY_DEBUGMESSAGE] = debugMessage;
     String debugMessageJson;
     myObject.printTo(debugMessageJson);
     sendMessageToPc(debugMessageJson);
@@ -81,12 +96,12 @@ bool newSensorValueHasChangedEnoughThatWeWantToReportIt(int oldSensorValue, int 
 
     return false;
 }
-bool sanitizingAnalogRead(int analogPinId, bool *out_analogSensorValue)
+bool sanitizingAnalogRead(int analogPinId, int *out_analogSensorValue)
 {
     if(analogPinId == -1)
         return false;
     int rawSensorValue = analogRead(analogPinId);
-    if(rawSensorValue < 0 || rawSensorValue > 1023)
+    if(rawSensorValue < MinAnalogPinValue || rawSensorValue > MaxAnalogPinValue)
         return false;
     *out_analogSensorValue = rawSensorValue;
     return true;
@@ -141,16 +156,16 @@ void sendMessageToPc(const String &jsonString)
     //where jsonString is Data
 
     Serial.print(SYNC);
-    Serial.print(",");
+    Serial.print(WASDF_CHECKSUMMED_MESSAGE_HEADER_COMMADELIM);
     String jsonSizeString = String(jsonString.length());
     checksum(jsonSizeString);
     Serial.print(checksumResult /*checksumOfSize*/);
-    Serial.print(",");
+    Serial.print(WASDF_CHECKSUMMED_MESSAGE_HEADER_COMMADELIM);
     Serial.print(jsonSizeString);
-    Serial.print(",");
+    Serial.print(WASDF_CHECKSUMMED_MESSAGE_HEADER_COMMADELIM);
     checksum(jsonString);
     Serial.print(checksumResult /*checksumOfData*/);
-    Serial.print(",");
+    Serial.print(WASDF_CHECKSUMMED_MESSAGE_HEADER_COMMADELIM);
     Serial.print(jsonString);
 }
 
@@ -490,7 +505,7 @@ void processInputCommandString(const String &inputCommandString)
         return;
     }
 
-    String command = rootJsonObject["command"];
+    String command = rootJsonObject[WASDF_JSON_KEY_COMMAND];
 
     String debugMessage("received command from pc: \"");
     debugMessage += command;
@@ -498,16 +513,16 @@ void processInputCommandString(const String &inputCommandString)
     debugMessage += inputCommandString;
     sendDebugMessage(debugMessage);
 
-    if(command == "calibrate")
+    if(command == WASDF_JSON_KEY_CALIBRATECOMMAND)
     {
         CurrentMode = Mode::Calibrating;
     }
-    else if(command == "start")
+    else if(command == WASDF_JSON_KEY_STARTCOMMAND)
     {
         CurrentMode = Mode::Sending10FingerMovementsMode;
         //the "used analog pin IDs" (connected to the 10 fingers) is sent as args (TODOreq: make sure PC isn't sending "0-9" but is instead sending the analog pin IDs corresponding to fingers 0-9
         //retrive atRestMin/Max from json, corresponding to the analog pin IDs being used
-        const JsonObject &atRestPositionsJsonObject = rootJsonObject["fingersAtRestRanges"];
+        const JsonObject &atRestPositionsJsonObject = rootJsonObject[WASDF_JSON_KEY_ATRESTRANGES];
         JsonObject::const_iterator it = atRestPositionsJsonObject.begin();
         int i = 0; //we don't care whether or not this finger2analogPinId mapping is correct or not, it's merely used as array index. we only care about "which analog pin ids to send changes for" and their respective "atRestMin"/"atRestMax" values, not necessarily which fingers those analog pin IDs correspond to (this might change in the future, eg eeprom impl, but for now is true)
         while(it != atRestPositionsJsonObject.end())
@@ -515,8 +530,8 @@ void processInputCommandString(const String &inputCommandString)
             const String &analogPinIdAsString = it->key;
             int analogPinId = parseAndSanitizeAnalogPinIdFromForeignString(analogPinIdAsString);
             const JsonObject &atRestRange = it->value;
-            int atRestMin = atRestRange["atRestMin"];
-            int atRestMax = atRestRange["atRestMax"];
+            int atRestMin = atRestRange[WASDF_JSON_KEY_ATRESTMIN];
+            int atRestMax = atRestRange[WASDF_JSON_KEY_ATRESTMAX];
             if(i >= NUM_FINGERS)
             {
                 fatalErrorBlinkPin13(8);
@@ -584,3 +599,4 @@ void loop()
     receiveInputIfAny();
     delay(1);
 }
+#endif // ndef WASDF_PC

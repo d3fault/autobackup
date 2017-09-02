@@ -13,10 +13,15 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
+DEFINES += WASDF_PC
+
+HEADERS += cli/wasdfcli.h
+
+INCLUDEPATH *= ../assets/ArduinoSketches/ArduinoWriteChangesOnAnalogPinsToSerial/
+
 SOURCES += cli/main.cpp \
-    cli/wasdfcli.cpp
+    cli/wasdfcli.cpp \
+    ../assets/ArduinoSketches/ArduinoWriteChangesOnAnalogPinsToSerial/ArduinoWriteChangesOnAnalogPinsToSerial.ino
 
 include(../../../GloballySharedClasses/qtiodevicechecksummedmessagereader.pri)
 include(wasdf.pri)
-
-HEADERS += cli/wasdfcli.h
