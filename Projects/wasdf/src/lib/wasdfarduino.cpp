@@ -35,19 +35,20 @@ WasdfArduino::WasdfArduino(QObject *parent)
 {
     m_SerialPort->setBaudRate(QSerialPort::Baud38400);
 
-    connect(m_SerialPort, &QSerialPort::readyRead, this, &WasdfArduino::dumpRawSerialStreamByPeeking);
+    connect(m_SerialPort, &QSerialPort::readyRead, this, &WasdfArduino::dumpRawSerialStreamByPeeking); //TODOreq: verbosity > 0, emit v, etc
     m_ChecksummedMessageReader = new QtIoDeviceChecksummedMessageReader(m_SerialPort, this); //this line has to go after the above connect() because otherwise the QtIoDeviceChecksummedMessageReader::handleReadyRead will be called before dumpRawSerialStreamByPeeking, and in that case the peeking won't work!
+    connect(m_ChecksummedMessageReader, &QtIoDeviceChecksummedMessageReader::checksummedMessageRead, this, &WasdfArduino::handleChecksummedMessageReceived);
 }
-void WasdfArduino::openSerialPortIfNotOpen()
+void WasdfArduino::openSerialPort()
 {
-    if(!m_SerialPort->isOpen())
-    {
+    //if(!m_SerialPort->isOpen())
+    //{
         if(!m_SerialPort->open(QIODevice::ReadWrite /*QIODevice::Text <-- apparently not supported, but I guess it's text by default? <- nope it's binary but eh ascii isn't so hard to work with anyways. my protocol will be pure ascii*/))
         {
             emit e("failed to open serial port \"" + m_SerialPort->portName() + "\" for reading/writing");
             //TODOreq: error out, return false or emit finished(false) etc
         }
-    }
+    //}
 }
 QString WasdfArduino::jsonObjectToQString(const QJsonObject &jsonObject)
 {
@@ -111,6 +112,8 @@ void WasdfArduino::sendRawCommandToArduino(const QString &commandToSendToArduino
 }
 bool WasdfArduino::detectAndHandleDebugMessage(const QByteArray &messageJson)
 {
+    //TODOoptimization: parse once, query the parsed json document/object multiple times -- right now I'm parsing multiple times kek
+
     QJsonParseError jsonParseError;
     QJsonDocument message = QJsonDocument::fromJson(messageJson, &jsonParseError);
     if(jsonParseError.error != QJsonParseError::NoError)
@@ -126,40 +129,23 @@ bool WasdfArduino::detectAndHandleDebugMessage(const QByteArray &messageJson)
     emit e("debug message received from arduino: " + QString(debugMessage)); //TODOmb: emit debugMessageReceivedFromArduino(debugMessage) and let the business logic (class "Wasdf") handle it however it wants
     return true;
 }
-void WasdfArduino::startInCalibrationMode()
+void WasdfArduino::start()
 {
-    //in calibration mode, arduino sends _ALL_ (not just 10) analog pin readings over serial (TODOmb: user can pass an --exclude-analog-pins flag in case they're using the other analog pins for something else (but then they'd need to modify the sketch anyways, so maybe this isn't necessary?)
-
-    disconnect(m_ChecksummedMessageReader, SIGNAL(checksummedMessageRead(QByteArray))); //TODOreq: for some reason this fails with qt5-style pmf syntax. maybe a newer version of Qt doesn't (otherwise file a bugreport)
-    connect(m_ChecksummedMessageReader, &QtIoDeviceChecksummedMessageReader::checksummedMessageRead, this, &WasdfArduino::handleCalibrationModeMessageReceived);
-    //disconnect(m_SerialPort, SIGNAL(readyRead()));
-    //connect(m_SerialPort, &QSerialPort::readyRead, this, &WasdfArduino::handleSerialPortReadyReadCalibrationMode);
-
-    openSerialPortIfNotOpen();
-
-    QJsonObject calibrateCommandJsonObject;
-    QJsonValue calibrateCommandJsonValue(QString(WASDF_JSON_KEY_CALIBRATECOMMAND));
-    calibrateCommandJsonObject.insert(WASDF_JSON_KEY_COMMAND, calibrateCommandJsonValue);
-
-    QString calibrateCommandJson = jsonObjectToQString(calibrateCommandJsonObject);
-    sendRawCommandToArduino(calibrateCommandJson); //TODOreq: these strings should be in a shared header, shared between the arduino sketch and this sauce
-}
-void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
-{
-    m_CalibrationConfig = calibrationConfig;
-
-    disconnect(m_ChecksummedMessageReader, &QtIoDeviceChecksummedMessageReader::checksummedMessageRead, this, &WasdfArduino::handleCalibrationModeMessageReceived);
-    connect(m_ChecksummedMessageReader, &QtIoDeviceChecksummedMessageReader::checksummedMessageRead, this, &WasdfArduino::handleRegularModeMessageReceived);
-    //connect(m_SerialPort, &QSerialPort::readyRead, this, &WasdfArduino::handleSerialPortReadyReadNormalFingerMovementMode);
-
-    openSerialPortIfNotOpen();
-
+    openSerialPort();
     QJsonObject startCommandJsonObject;
-
     QJsonValue startCommandJsonValue(QString(WASDF_JSON_KEY_STARTCOMMAND));
     startCommandJsonObject.insert(WASDF_JSON_KEY_COMMAND, startCommandJsonValue);
+    QString startCommandJson = jsonObjectToQString(startCommandJsonObject);
+    sendRawCommandToArduino(startCommandJson);
+}
+void WasdfArduino::configure(const WasdfCalibrationConfiguration &calibrationConfig)
+{
+    QJsonObject configureCommandJsonObject;
 
-    //insert "at rest ranges" as args to the "start" command
+    QJsonValue configureCommandJsonValue(QString(WASDF_JSON_KEY_STARTCOMMAND));
+    configureCommandJsonObject.insert(WASDF_JSON_KEY_COMMAND, configureCommandJsonValue);
+
+    //insert "at rest ranges" as args to the "configure" command
     QJsonObject fingersAtRestRanges;
     QHashIterator<Finger, WasdfCalibrationFingerConfiguration> it(calibrationConfig);
     while(it.hasNext())
@@ -174,12 +160,12 @@ void WasdfArduino::start(const WasdfCalibrationConfiguration &calibrationConfig)
         fingerJsonObject.insert(WASDF_JSON_KEY_ATRESTMAX, atRestMax);
         fingersAtRestRanges.insert(QString::number(fingConf.AnalogPinIdOnArduino), fingerJsonObject); //TODOreq: what happens when same key is inserted twice? during testing especially this is going to happen, but even until I solve the "floating values" problem I still might see "same key" occurances. Ideally I'd never use the same key twice, because my calibrator would know not to emit that
     }
-    startCommandJsonObject.insert(WASDF_JSON_KEY_ATRESTRANGES, fingersAtRestRanges);
+    configureCommandJsonObject.insert(WASDF_JSON_KEY_ATRESTRANGES, fingersAtRestRanges);
 
-    QString startCommandJson = jsonObjectToQString(startCommandJsonObject);
-    sendRawCommandToArduino(startCommandJson);
+    QString configureCommandJson = jsonObjectToQString(configureCommandJsonObject);
+    sendRawCommandToArduino(configureCommandJson);
 }
-void WasdfArduino::handleCalibrationModeMessageReceived(const QByteArray &messageJson)
+void WasdfArduino::handleChecksummedMessageReceived(const QByteArray &messageJson)
 {
     qDebug() << messageJson;
     if(detectAndHandleDebugMessage(messageJson))
@@ -204,7 +190,7 @@ void WasdfArduino::handleCalibrationModeMessageReceived(const QByteArray &messag
             qDebug() << "a sensor value was out of bounds:" << messageJson;
             continue;
         }
-        emit analogPinReadingChangedDuringCalibration(analogPinId, sensorValue);
+        emit analogPinReadingChanged(analogPinId, sensorValue);
     }
 #if 0 //TODOreq: merge below with above (nameley the sanitization)
     while(m_SerialPort->canReadLine())
@@ -236,10 +222,11 @@ void WasdfArduino::handleCalibrationModeMessageReceived(const QByteArray &messag
         //should I map the raw sensor values to the calibrated range here? should wasdf do it when it receives the signal emitted below? I think it kind of makes sense to do it right here, because Wasdf called m_Arduino.start(m_Calibration) ... so it makes sense that m_Arduino (this class) reports mapped/calibrated values
         //TODOreq: map the sensor value to 0-1023. wait no map it to their min/max range, wait no it's a 2 step process, map it to their min/max range and then map that to 0-1023? ehh need to think a little harder on this xD. there's also "constrain" to consider. also the above error checking needs to be modified accordingly
 
-        emit analogPinReadingChangedDuringCalibration(analogPinId, sensorValue);
+        emit analogPinReadingChanged(analogPinId, sensorValue);
     }
 #endif
 }
+#if 0 //TODOreq: move finger mapping to Wasdf class
 void WasdfArduino::handleRegularModeMessageReceived(const QByteArray &messageJson)
 {
     //TODOreq: similar to handleCalibrationModeMessageReceived (could probably share json parsing code paths), but we map the analog pin to Finger before emitting
@@ -279,6 +266,7 @@ void WasdfArduino::handleRegularModeMessageReceived(const QByteArray &messageJso
         emit fingerMoved(fing, sensorValue);
     }
 }
+#endif
 void WasdfArduino::dumpRawSerialStreamByPeeking()
 {
     QByteArray peekedBytes = m_SerialPort->peek(m_SerialPort->bytesAvailable());

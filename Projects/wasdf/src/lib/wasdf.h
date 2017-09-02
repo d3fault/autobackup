@@ -79,7 +79,7 @@ public:
     explicit Wasdf(QObject *parent = 0);
     static bool fingerIsLeftHand(Finger finger);
 private:
-    void startWasdfActualSinceCalibrated();
+    void configureArduino();
 
     WasdfArduino *m_Arduino;
     QPointer<WasdfCalibrator> m_Calibrator;
@@ -87,12 +87,13 @@ private:
 signals:
     void e(const QString &msg);
     void o(const QString &msg);
+    void fingerMoved(Finger finger, int newPosition);
     void wasdfFinished(bool success);
 public slots:
     void startWasdf();
 private slots:
     void handleCalibrationComplete(const WasdfCalibrationConfiguration &calibrationConfiguration);
-    void handleFingerMoved(Finger finger, int newPosition);
+    void handleAnalogPinReadingChanged(int analogPinId, int newPosition);
 };
 
 #endif // WASDF_H

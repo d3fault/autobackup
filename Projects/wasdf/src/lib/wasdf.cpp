@@ -2,6 +2,7 @@
 
 #include <QCoreApplication>
 #include <QSettings>
+#include <QDebug>
 
 #include "wasdfarduino.h"
 #include "wasdfcalibrator.h"
@@ -45,25 +46,25 @@ bool Wasdf::fingerIsLeftHand(Finger finger)
     }
     return true; //shouldn't (won't) get here
 }
-void Wasdf::startWasdfActualSinceCalibrated()
+void Wasdf::configureArduino()
 {
-    connect(m_Arduino, &WasdfArduino::fingerMoved, this, &Wasdf::handleFingerMoved);
-    m_Arduino->start(m_Calibration); //TODOoptimization: once the AtRestPosition or AtRestMinValue/AtRestMinValue stuff is implemented, it would be best if the arduino was told of those values and DIDN'T WRITE TO SERIAL whenever a finger was considered "at rest"... as opposed to us filtering that out on the PC side. the quieter we keep the serial line, the less chance of corruption/errors
+    m_Arduino->configure(m_Calibration); //TO DOneoptimization: once the AtRestPosition or AtRestMinValue/AtRestMinValue stuff is implemented, it would be best if the arduino was told of those values and DIDN'T WRITE TO SERIAL whenever a finger was considered "at rest"... as opposed to us filtering that out on the PC side. the quieter we keep the serial line, the less chance of corruption/errors
+    connect(m_Arduino, &WasdfArduino::analogPinReadingChanged, this, &Wasdf::handleAnalogPinReadingChanged); //TODOmb: since we JUST send the configure command to the arduino, it's possibly and likely that handleAnalogPinReadingChanged will be called with analog pin IDs that we aren't interested in, at least for the first couple seconds (ms?). this is because it takes some time for the configuration to go into effect. to mitigate this, send the configure command, wait a couple secs (QTimer), THEN do this connect statement. or you could do a "configurationSuccessful" response... at which point we do the connect. pros n cons of each. for now I'll just safely handle wrong analog pin IDs, duh
 }
 void Wasdf::startWasdf()
 {
+    m_Arduino->start();
     QSettings settings;
     bool isCalibrated = settings.value(SETTINGS_KEY_IS_CALIBRATED, false).toBool();
     if(!isCalibrated)
     {
-        m_Arduino->startInCalibrationMode();
         m_Calibrator = new WasdfCalibrator(this);
 
         //TODOreq: wtf for some reason this doesn't work with qt5-style syntax, which is weird because the WasdfArduino::e signal connects just fine to Wasdf::e signal. I also confirmed that the QPointer isn't the problem
         //connect(m_Calibrator.data(), &WasdfCalibrator::o, this &Wasdf::o);
         connect(m_Calibrator.data(), SIGNAL(o(QString)), this, SIGNAL(o(QString))); //qt4-style connect for now
 
-        connect(m_Arduino, &WasdfArduino::analogPinReadingChangedDuringCalibration, m_Calibrator.data(), &WasdfCalibrator::handleAnalogPinReadingChanged);
+        connect(m_Arduino, &WasdfArduino::analogPinReadingChanged, m_Calibrator.data(), &WasdfCalibrator::handleAnalogPinReadingChanged);
         connect(m_Calibrator.data(), &WasdfCalibrator::calibrationComplete, this, &Wasdf::handleCalibrationComplete);
         m_Calibrator->startCalibrating();
     }
@@ -71,7 +72,7 @@ void Wasdf::startWasdf()
     {
         WasdfCalibrationConfigurationSettingsReaderWriter::readFromSettings(settings, &m_Calibration);
         emit o("Calibration read from settings");
-        startWasdfActualSinceCalibrated();
+        configureArduino();
     }
 }
 void Wasdf::handleCalibrationComplete(const WasdfCalibrationConfiguration &calibrationConfiguration)
@@ -81,21 +82,29 @@ void Wasdf::handleCalibrationComplete(const WasdfCalibrationConfiguration &calib
     WasdfCalibrationConfigurationSettingsReaderWriter::writeToSettings(settings, calibrationConfiguration);
     if(!m_Calibrator.isNull())
     {
-        disconnect(m_Arduino, &WasdfArduino::analogPinReadingChangedDuringCalibration, m_Calibrator.data(), &WasdfCalibrator::handleAnalogPinReadingChanged);
+        disconnect(m_Arduino, &WasdfArduino::analogPinReadingChanged, m_Calibrator.data(), &WasdfCalibrator::handleAnalogPinReadingChanged);
         m_Calibrator->deleteLater();
     }
-    startWasdfActualSinceCalibrated();
+    configureArduino();
 }
-void Wasdf::handleFingerMoved(Finger finger, int newPosition)
+void Wasdf::handleAnalogPinReadingChanged(int analogPinId, int newPosition)
 {
+    if(!m_Calibration.hasFingerWithAnalogPinId(analogPinId))
+    {
+        qDebug() << "saw analog pin id changed, but we are not interested in it. this might be a known race condition that happens RIGHT AFTER the config is sent to arduino, so ignore this if that's the case. analog pin id:" << analogPinId << ". new pos:" << newPosition;
+        return;
+    }
+    Finger finger = m_Calibration.getFingerByAnalogPinId(analogPinId);
+
     //TODOreq: [BEGIN] this is only here for testing
     if(finger != Finger::RightIndex_Finger6)
         return;
     //TODOreq: [END] this is only here for testing
 
-
     emit o("Finger '" + fingerEnumToHumanReadableString(finger) + "' moved to position: " + QString::number(newPosition));
-    //TODOreq: emit signalForModulesToListenTo(finger, newPosition); //example modules are: MusicCreation, CustomGesturesThatTriggerArbitraryActions /*and by Actions I mean Code*/, and possibly even a KeyboardAndMouse mode if I want to support more Arduino boards. Oh I think there is (at the very least, because long term I definitely want to persist the stream of input (and ideally the "states" of the modules if they can't be fully reproduced using that persisted input stream)) "Keyboard/Mouse" dupe channel mode[le] since idfk how to read the USB keyboard/mouse channel that the Leonardo/micro use. The sketch that calls Mouse.move(to) should be the same sketch that calls Serial.prinln(serializedMouseMoveEvent). They should be only 1 line of code apart and their structures identical (formed one from the other, or at the same time intelligently). This signal should be in the "signals: */private:*/" visibility (non-existent visibility xD (actually you know what there's no bad reason why someone else might want to instantiate Wasdf and then connect to that signal (publicly), so nvm it should NOT be foe-declared-private like this /*private:*/). still I want Wasdf instance to own (be parent of) the modules that the signal I emit are connected to, so yea in that usage of the signal it does make sense that it's "private") of Wasdf
+
+    emit fingerMoved(finger, newPosition);
+    //TO DOnereq: emit signalForModulesToListenTo(finger, newPosition); //example modules are: MusicCreation, CustomGesturesThatTriggerArbitraryActions /*and by Actions I mean Code*/, and possibly even a KeyboardAndMouse mode if I want to support more Arduino boards. Oh I think there is (at the very least, because long term I definitely want to persist the stream of input (and ideally the "states" of the modules if they can't be fully reproduced using that persisted input stream)) "Keyboard/Mouse" dupe channel mode[le] since idfk how to read the USB keyboard/mouse channel that the Leonardo/micro use. The sketch that calls Mouse.move(to) should be the same sketch that calls Serial.prinln(serializedMouseMoveEvent). They should be only 1 line of code apart and their structures identical (formed one from the other, or at the same time intelligently). This signal should be in the "signals: */private:*/" visibility (non-existent visibility xD (actually you know what there's no bad reason why someone else might want to instantiate Wasdf and then connect to that signal (publicly), so nvm it should NOT be foe-declared-private like this /*private:*/). still I want Wasdf instance to own (be parent of) the modules that the signal I emit are connected to, so yea in that usage of the signal it does make sense that it's "private") of Wasdf
 
 
     //TODOreq: [BEGIN] this is only here for testing
