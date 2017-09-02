@@ -83,6 +83,8 @@ bool newSensorValueHasChangedEnoughThatWeWantToReportIt(int oldSensorValue, int 
 }
 bool sanitizingAnalogRead(int analogPinId, bool *out_analogSensorValue)
 {
+    if(analogPinId == -1)
+        return false;
     int rawSensorValue = analogRead(analogPinId);
     if(rawSensorValue < 0 || rawSensorValue > 1023)
         return false;

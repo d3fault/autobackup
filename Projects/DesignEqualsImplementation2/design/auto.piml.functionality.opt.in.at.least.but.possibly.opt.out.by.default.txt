@@ -1,0 +1,5 @@
+Ehh basically just like mimicking Qt, every class should be PIMPL (private implementation) by default. So ClassA auto-gens a corresponding ClassA_private and so on. It could be a per-class checkbox, and I'm actually kinda thinking it should be checked by default.
+
+PIMPL makes binary compatibility easier and "encapsulates" and stuff. You can swap out the interface(s) that the PIMPL inherits without breaking binary compat.
+
+Speaking of which, where's my clang-tidy 'mode' that strictly guarantees binary compatibility between two "versions" (such as git commits) of one lib... using that lengthy as fuck KDE wiki doc on binary compatibility for the "list of clang tidy checks?
