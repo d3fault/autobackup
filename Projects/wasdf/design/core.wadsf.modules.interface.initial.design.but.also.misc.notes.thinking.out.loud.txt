@@ -1,0 +1,20 @@
+class IWasdfModule
+{
+protected:
+	virtual void onFingerMoved(Finger fingerThatMoved, int newPos) = 0;
+};
+
+I mean that's honestly fucking it. EZ.
+
+That's it for the backend, at least.
+
+Do I want to use an "interface" for the front-end stuff though? Do I want to do cli anymore, or am I going to do gui ONLY? If I want to do cli, then I SHOULD use an "interface" for the UI. Some abstract base class IWasdfModuleUI , I guess. And there are QObject::connect'ions between IWasdfModuleUI's and IWasdfModule's. But idfk maybe I'm over-designing this shit? It's just a fucking decision m8.
+
+Hmm ok I have decided GUI only. Rationale: if you want "cli"-type interactivity, use the fucking lib directly. Oh you aren't able to #include a C++ lib because you're coding in a different language? Eat shit. Hahaha have fun trying to get those wrappers to work (not saying they won't work, just that they're a bitch to get working and that time could have been spent doing something more productive). Maybe someday I'll provide bindings for various languages (esp down to "publish" them if OTHERS are the ones maintaining them, ofc).
+So yea I'm not going to use an interface for the UI, I guess.
+
+
+OT'ish: An "App Store" (Wasdf Module Store) built into the app would be nice, esp if it was source-code based and I shipped/depend-on libclang so they download+compile the plugins (completely automatic/transparent to the user) rather than try to ship assloads of precompiled binaries etc. This idea actually should be abstracted so I can use it in ANY app: "Module Store", "Plugin Store", or called whatever really -- since it's the abstract base class the user would never see the name.
+
+
+Should I make calibrator a wasdf module? I mean it's actually very common for these style apps to push EVERYTHING into a "module", so there's for example a "main" module that gets loaded and executed on startup. I just don't fucking know. These crucial early decisions have astounding long term effects. On one hand I want to KISS, on the other I want to design it right the first time. THINK INCREMENTAL. KISS + right + _minimal/singular increment in right direction_ = win. So that means fuck refactoring calibrator into a module.... for now. Build your first definite module using the IWasdfModule interface (first module is going to be called something along the lines of LeftHandIsVanillaPiano_RightIndexFingerIsPitchRocker /*and the rest of fingers on right hand are unused. If I later decide to use them, I should INHERIT LeftHandIsVanillaPiano_RightIndexFingerIsPitchRocker and then add the functionality for the 4 remaining fingers on the right hand */), _then_ maybe later refactor calibrator to be a module, if you then think it's a good idea).

@@ -43,7 +43,7 @@ Documents/minddump/2016/4/1459728372-TJ1875.txt:1459728515
 Documents/minddump/2016/4/1459968855-LhX846.txt:1459969203
 Documents/minddump/2016/4/1459969303-nnS846.txt:1459969688
 Documents/minddump/2016/4/1459984685-TJ2423.txt:1459985236
-Documents/minddump/2017/:1503350381
+Documents/minddump/2017/:1505519997
 Documents/minddump/2017/5/:1496186514
 Documents/minddump/2017/5/1495171253-Kauai.0a-MTJ783.txt:1495179507
 Documents/minddump/2017/5/1495214940-MTJ843.txt:1495215210
@@ -85,6 +85,8 @@ Documents/minddump/2017/8/1503350762-LhX847.txt:1503350993
 Documents/minddump/2017/8/1503351072-nnS847.txt:1503351236
 Documents/minddump/2017/8/1503358084-MTJ785.txt:1503358999
 Documents/minddump/2017/8/1504240015-MTJ787.txt:1504375877
+Documents/minddump/2017/9/:1505519997
+Documents/minddump/2017/9/1505518639-MTJ782.txt:1505519975
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -3629,7 +3631,7 @@ Projects/EasyTreeTotalSizeCalculator/src/easytreetotalsizecalculatorgui.h:137909
 Projects/EasyTreeTotalSizeCalculator/src/easytreetotalsizecalculatorwidget.cpp:1385305755
 Projects/EasyTreeTotalSizeCalculator/src/easytreetotalsizecalculatorwidget.h:1385062427
 Projects/EasyTreeTotalSizeCalculator/src/main.cpp:1379096657
-Projects/ForFun/:1457993527
+Projects/ForFun/:1505522219
 Projects/ForFun/CleanThreadingExample/:1351309213
 Projects/ForFun/CleanThreadingExample/src/:1367400384
 Projects/ForFun/CleanThreadingExample/src/CleanThreadingExample.pro:1351241028
@@ -3643,6 +3645,9 @@ Projects/ForFun/CleanThreadingExample/src/cleanthreadingfrontendwidget.cpp:13513
 Projects/ForFun/CleanThreadingExample/src/cleanthreadingfrontendwidget.h:1351309490
 Projects/ForFun/CleanThreadingExample/src/main.cpp:1351259020
 Projects/ForFun/CleanThreadingExample/src/objectonthreadhelper.h:1351309239
+Projects/ForFun/Life0/:1505522219
+Projects/ForFun/Life0/design/:1505522251
+Projects/ForFun/Life0/design/life0.initial.idea.txt:1505524119
 Projects/ForFun/QFileSystemWatcher2TestForFun/:1343131983
 Projects/ForFun/QFileSystemWatcher2TestForFun/design/:1343131976
 Projects/ForFun/QFileSystemWatcher2TestForFun/design/fuck.this.too.lazy.lmfao.aldkfjasldfjoiurel.what.a.waste.i.guess.it.was.a.little.fun.txt:1343131976
@@ -3740,7 +3745,7 @@ Projects/IcePick/src/lib/:1431941696
 Projects/IcePick/src/lib/icepick.cpp:1454913367
 Projects/IcePick/src/lib/icepick.h:1431941502
 Projects/IcePick/src/IcePickGui.pro:1431928734
-Projects/Ideas/:1496100104
+Projects/Ideas/:1505522097
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -4051,6 +4056,7 @@ Projects/Ideas/user.input.accepted.light.and.that.accepted.has.nothing.to.do.wit
 Projects/Ideas/user.remembered.passwords.are.dying.its.just.a.matter.of.time.before.we.cant.use.them.txt:1343109540
 Projects/Ideas/using.tor.and.bitcoin.to.taunt.hollywood.and.uhh.i.gues...THEM.txt:1341036845
 Projects/Ideas/vibrations.are.confirmations.that.your.input.has.been.recognized.txt:1328317236
+Projects/Ideas/visualize.and.record.your.dreams.MAYBE.solved.idfk.tbh.alsfjldksjflksjflkj.txt:1505522161
 Projects/Ideas/wasdf.domain.use.could.do.finger.shits.for.it.txt:1329121244
 Projects/Ideas/wasdf.express.your.movements.could.be.content.provider.thingo.txt:1359951251
 Projects/Ideas/web.access.is.ad.based.but.the.binaries.for.desktop.and.mobile.of.same.functionality.do.not.have.ads.txt:1346881655
@@ -5957,9 +5963,10 @@ Projects/wasdf/assets/ArduinoSketches/:1463107625
 Projects/wasdf/assets/ArduinoSketches/ArduinoWriteChangesOnAnalogPinsToSerial/:1504384566
 Projects/wasdf/assets/ArduinoSketches/ArduinoWriteChangesOnAnalogPinsToSerial/ArduinoWriteChangesOnAnalogPinsToSerial.ino:1504384566
 Projects/wasdf/assets/ArduinoSketches/ArduinoWriteChangesOnAnalogPinsToSerial/Makefile:1495394559
-Projects/wasdf/design/:1503612276
+Projects/wasdf/design/:1505521622
 Projects/wasdf/design/checksummed.message.protocol.notes.on.when.to.read.the.message.header.txt:1496025871
 Projects/wasdf/design/checksummed.message.protocol.txt:1496025143
+Projects/wasdf/design/core.wadsf.modules.interface.initial.design.but.also.misc.notes.thinking.out.loud.txt:1505521626
 Projects/wasdf/design/listen.to.commands.txt:1503612276
 Projects/wasdf/design/mouse.action.serialization.stream.is.likely.to.become.desynced.and.cause.total.system.failure.here.is.a.solution.to.it.but.also.the.keyboard.could.desync.too.etc.txt:1495912877
 Projects/wasdf/design/pin.detection.and.finger.mapping.are.same.step.as.calibration.txt:1495315077
