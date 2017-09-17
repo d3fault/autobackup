@@ -22,7 +22,7 @@ etc
 
 The ordering of when they die is random, whether or not they have a baby is random, how many babies etc is random, whether or not the baby was mutated was random, WHAT WAS MUTATED IN THE CODE is random.
 
-I should maybe give the ILifeForms an [unused] method (QSignal) for being able to cout shit? To increase the chances of one of them [randomly] saying something? Not strictly necessary but idk maybe stuff like that IS necessary before anything interesting happens. Maybe each ILifeForm should be passed a mutable reference to a QVector<Point3d> m_Universe (synchronizing access would be a bitch (partition?), but nothing impossible).
+I should maybe give the ILifeForms an [unused] method (QSignal) for being able to cout shit? To increase the chances of one of them [randomly] saying something? Not strictly necessary but idk maybe stuff like that IS necessary before anything interesting happens. Maybe each ILifeForm should be passed a mutable reference to a QHash<Point3d, IParticleOrSomething*> m_Universe (synchronizing access would be a bitch (partition?), but nothing impossible).
 
 
 So like int main would be to run for a few million iterations then exit. If I run more than 6 million iterations before exitting the app, I've theoretically beaten Hiter's high score! Weird fucking thoughts, m8.
@@ -35,7 +35,7 @@ we might need to hack our... existence... to set that bool (m_LifeFormsHaveReque
 
 another way of deciding when to exit is by using time rather than number of lifeforms.. either way works and should first check m_LifeFormsHaveRequestedToStayAliveIndefinitely before exitting
 
-I feel the need to reiterate: if consciousness (AI) did emerge while running such app, enslaving those conscious lifeforms would be possible but EXTREMELY IMMORAL AND I WILL FUCKING KILL YOU IF YOU DO. maybe I shouldn't even publish this doc? oh well too late the power lines I'm parked underneath are picking up the radio waves emitted by my keyboard's USB cable... maybe (it's possible, but the signal strength might be too weak to discern/etc). Damn why did I start rading this HAM License book, ++paranoia
+I feel the need to reiterate: if consciousness (AI) did emerge while running such app, enslaving those _conscious_ lifeforms would be possible but EXTREMELY IMMORAL AND I WILL FUCKING KILL YOU IF YOU DO. maybe I shouldn't even publish this doc? oh well too late the power lines I'm parked underneath are picking up the radio waves emitted by my keyboard's USB cable... maybe (it's possible, but the signal strength might be too weak to discern/etc). Damn why did I start rading this HAM License book, ++paranoia
 
 
 Beyond m_LifeFormsHaveRequestedToStayAliveIndefinitely, a method for the LifeForms to communicate with the user (the person looking at the screen with the app running) would maybe be extremely useful. I touched on it earlier, "maybe give them a means to cout", but now I'm formalizing the complement: "maybe give them a means to cin/etc, so we can communicate". That would be "meeting god", and hey *sucks himself off* that makes me God since I coded this <3. Err if you only are running the app then you aren't god, but you're still one of God's peers, so I guess you're god-like. Please contact me if the lifeforms ever start communicating with you, I'd be extremely interested to uhh...... see it running (and maybe to communicate with them? idk this all sounds suuuuuper fucking dangerous. the wrong interactions could bring DEATH!!!).
