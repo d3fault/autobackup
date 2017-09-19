@@ -5,7 +5,7 @@
 
 #include <QScopedPointer>
 
-#include "stk/FileWvIn.h"
+#include "stk/FileLoop.h"
 #include "stk/RtAudio.h"
 
 #define LIBSTKTICK_METHOD_SIGNATURE (void *outputBuffer, void *unusedInputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void *userData)
@@ -22,7 +22,7 @@ private:
     void showStdStringError(const std::string &stkError);
 
     QScopedPointer<RtAudio> dac;
-    QScopedPointer<stk::FileWvIn> input;
+    QScopedPointer<stk::FileLoop> input;
     stk::StkFrames frames;
     RtAudio::StreamParameters parameters;
 private slots:

@@ -13,7 +13,7 @@ LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::LibStk_LoopAudioFileAnd
 
     // Initialize our WvIn and RtAudio pointers.
     dac.reset(new RtAudio); //delayed initialization in case Stk::setSampleRate needs to happen first
-    input.reset(new stk::FileWvIn);
+    input.reset(new stk::FileLoop);
 
     // Try to load the soundfile.
     try
@@ -33,7 +33,7 @@ LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::LibStk_LoopAudioFileAnd
     //rate *= 2.0; //uncomment to play back audio at twice the speed
     input->setRate(rate);
 
-    input->ignoreSampleRateChange();
+    //input->ignoreSampleRateChange();
 
     // Find out how many channels we have.
     int channels = input->channelsOut();
@@ -93,6 +93,9 @@ int LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::stkTick LIBSTKTICK_
     for(unsigned int i=0; i<frames.size(); ++i)
         *outputBufferAsFloat++ = frames[i]; //copy from input buffer to output buffer
 
+#if 1
+    return 0; //continue normal stream operation
+#else
     if(input->isFinished())
     {
         //TODOreq: loop. actually fuck looping, I'll just use a long song file. the FileWvIn shit isn't even used in my Wasdf context
@@ -103,6 +106,7 @@ int LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::stkTick LIBSTKTICK_
     }
     else
         return 0; //continue normal stream operation
+#endif
 }
 LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::~LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget()
 {
@@ -126,5 +130,6 @@ void LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::showStdStringError
 }
 void LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::handleValueChanged(int newValue)
 {
-    //wtf do I call pitchbend/pitchchange/whatever on?? I need an Stk object (like Voicer in demo.cpp), wtf play.cpp doesn't use one O_o
+    //wtf do I call pitchbend/pitchchange/whatever on?? I need a Voicer I think, like demo.cpp uses. I _think_ (unsure tbh) I need to make an Instrmnt inheritting class that hasA FileWvIn, and I have to manually implement setFrequency (I think Voicer gives me pitchBend free if I provide setFrequency?). I need to inherit from Instrmnt so I can add the instrument to the voicer! I think I can look at other Instrmnt inheritting classes to study how they use setFrequency... in fact the sine wave instrmnt might even have that code perfectly copy/pastable! NVM finally found the class I was looking for (inherits from Instrmnt already :-D): Sampler. I woulda thought there was already this functionality in a fucking synthesis toolkit, but thought maybe I was hitting a corner case [not yet implemented]. Blah now I can't figure out how to USE Sampler class xD, where the fuck do I specify the file path?? oh it's abstract. wtf is a Moog? meh back to orig idea of inheritting Instrmnt (or mb Sampler now, but that actually looks bloated!! mb it isn't idfk)
+    input->setFrequency(69); //eh I don't think this does what it looks like it does. it's not pitch bend :(, it's "loop frequency" xD. I think I gotta go the inherit Instrmnt route... but still unsure wtf
 }
