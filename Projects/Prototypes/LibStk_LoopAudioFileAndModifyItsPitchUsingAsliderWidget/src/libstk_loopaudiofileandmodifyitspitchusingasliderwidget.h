@@ -5,8 +5,10 @@
 
 #include <QScopedPointer>
 
-#include "stk/FileLoop.h"
+#include "stk/Voicer.h"
 #include "stk/RtAudio.h"
+
+class SimpleSingleFileLoopSamplerInstrument;
 
 #define LIBSTKTICK_METHOD_SIGNATURE (void *outputBuffer, void *unusedInputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void *userData)
 
@@ -21,8 +23,9 @@ public:
 private:
     void showStdStringError(const std::string &stkError);
 
+    QScopedPointer<stk::Voicer> voicer;
     QScopedPointer<RtAudio> dac;
-    QScopedPointer<stk::FileLoop> input;
+    QScopedPointer<SimpleSingleFileLoopSamplerInstrument> samplerInstrument;
     stk::StkFrames frames;
     RtAudio::StreamParameters parameters;
 private slots:

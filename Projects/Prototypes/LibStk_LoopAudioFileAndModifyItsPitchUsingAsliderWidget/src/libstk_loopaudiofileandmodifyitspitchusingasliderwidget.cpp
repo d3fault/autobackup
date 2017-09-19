@@ -4,21 +4,25 @@ using namespace stk;
 
 #include <QMessageBox>
 
-//this class is a line-by-line copy-paste of libstk's "play.cpp" (By Gary P. Scavone, 2000 - 2004) example file, omitting as much as I can for readbility, and hopefully ultimately integrating with Qt's QSlider::positionChanged (or w/e the sig's called) to control a pitch rocker effect in libstk
+#include "simplesinglefileloopsamplerinstrument.h"
+
+//this class was a line-by-line copy-paste of libstk's "play.cpp" (By Gary P. Scavone, 2000 - 2004) example file (and later took some code from threebees.cpp), omitting as much as I can for readbility, and hopefully ultimately integrating with Qt's QSlider::positionChanged (or w/e the sig's called) to control a pitch rocker effect in libstk
+//TODOreq: debug what thread is calling this::stkTick .. because if stk isn't using it's own backend thread then I really don't have ANY clue how it's even functioning O_o. once I know it's using it's own thread, I should maybe use QAtomicInt to safely comm between the GUI and Stk -- the int I'm talking about of course is the one passed to pitchBend/whatever
 LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget(QWidget *parent)
     : QSlider(parent)
 {
     // Set the global sample rate before creating class instances.
     Stk::setSampleRate((StkFloat)44100);
 
-    // Initialize our WvIn and RtAudio pointers.
+    voicer.reset(new Voicer);
     dac.reset(new RtAudio); //delayed initialization in case Stk::setSampleRate needs to happen first
-    input.reset(new stk::FileLoop);
+
+    samplerInstrument.reset(new SimpleSingleFileLoopSamplerInstrument);
 
     // Try to load the soundfile.
     try
     {
-        input->openFile("/run/shm/audio.wav");
+        samplerInstrument->openFile("/run/shm/audio.wav");
     }
     catch(StkError &stkError)
     {
@@ -29,14 +33,14 @@ LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::LibStk_LoopAudioFileAnd
 
     // Set input read rate based on the default STK sample rate.
     double rate = 1.0;
-    rate = input->getFileRate() / Stk::sampleRate();
+    rate = samplerInstrument->input.getFileRate() / Stk::sampleRate();
     //rate *= 2.0; //uncomment to play back audio at twice the speed
-    input->setRate(rate);
+    samplerInstrument->input.setRate(rate);
 
     //input->ignoreSampleRateChange();
 
     // Find out how many channels we have.
-    int channels = input->channelsOut();
+    int channels = samplerInstrument->input.channelsOut();
 
     // Figure out how many bytes in an StkFloat and setup the RtAudio stream.
     parameters.deviceId = dac->getDefaultOutputDevice();
@@ -56,6 +60,9 @@ LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::LibStk_LoopAudioFileAnd
 
     // Resize the StkFrames object appropriately.
     frames.resize(bufferFrames, channels);
+
+    voicer->addInstrument(samplerInstrument.data()); //TODOduringIntegration: use second [optional] arg of addInstrument, the group-id, to differentiate between the 10 fingers
+    //samplerInstrument->noteOn(samplerInstrument->input., 1);
 
     try
     {
@@ -88,10 +95,11 @@ int LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::staticStkTick LIBST
 int LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::stkTick LIBSTKTICK_METHOD_SIGNATURE
 {
     register StkFloat *outputBufferAsFloat = (StkFloat*)outputBuffer; //does register even do anything anymore xD? fuggit
-    input->tick(frames);
-
-    for(unsigned int i=0; i<frames.size(); ++i)
-        *outputBufferAsFloat++ = frames[i]; //copy from input buffer to output buffer
+    int numTicks = static_cast<int>(nBufferFrames);
+    for(int i = 0; i < numTicks; ++i)
+    {
+          *outputBufferAsFloat++ = voicer->tick(); //copy from Voicer's output buffer thingo to our audio device's output buffer thingo
+    }
 
 #if 1
     return 0; //continue normal stream operation
@@ -131,5 +139,6 @@ void LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::showStdStringError
 void LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::handleValueChanged(int newValue)
 {
     //wtf do I call pitchbend/pitchchange/whatever on?? I need a Voicer I think, like demo.cpp uses. I _think_ (unsure tbh) I need to make an Instrmnt inheritting class that hasA FileWvIn, and I have to manually implement setFrequency (I think Voicer gives me pitchBend free if I provide setFrequency?). I need to inherit from Instrmnt so I can add the instrument to the voicer! I think I can look at other Instrmnt inheritting classes to study how they use setFrequency... in fact the sine wave instrmnt might even have that code perfectly copy/pastable! NVM finally found the class I was looking for (inherits from Instrmnt already :-D): Sampler. I woulda thought there was already this functionality in a fucking synthesis toolkit, but thought maybe I was hitting a corner case [not yet implemented]. Blah now I can't figure out how to USE Sampler class xD, where the fuck do I specify the file path?? oh it's abstract. wtf is a Moog? meh back to orig idea of inheritting Instrmnt (or mb Sampler now, but that actually looks bloated!! mb it isn't idfk)
-    input->setFrequency(69); //eh I don't think this does what it looks like it does. it's not pitch bend :(, it's "loop frequency" xD. I think I gotta go the inherit Instrmnt route... but still unsure wtf
+    //input->setFrequency(69); //eh I don't think this does what it looks like it does. it's not pitch bend :(, it's "loop frequency" xD. I think I gotta go the inherit Instrmnt route... but still unsure wtf <--- thinking about it HARDER, reading the file "faster" (and playing back at same speed) would increase the SOUND frequency exactly like I want! xD maths > me. so I think just need to create an Instrmnt (based loosely on Sampler) and then my Instrmnt's setFrequency just calls FileLoop::setFrequency and bam I'm maybe done if hopefully Voicer can GIVE me pitchBend/whatever for FREE >_> *crosses fingers*. the threebees.cpp example that comes with libstk uses the Voicer class :D (so does demo.cpp, but that shit is massive). OT'ish: I don't understand why [nearly] EVERYTHING inherits from stk::Stk. wtf does that base class provide that's so useful to EVERY class? I bet if I understood the lib better it'd make sense, but my instincts tell me that their class heirarchy isn't laid (sex) out correctly: maybe a FEW classes should inherit Stk, but [nearly] ALL of them? wtf? "an stk object asks an stk object for synth'd audio bytes" -- uh, what?. FUGGIT [/endrant]. WOOT just read Voicer::pitchBend and my guess was [hopefully] correct: it DOES rely on setFrequency :-D
+    voicer->pitchBend(69); //TODOreq: map 0-1023 of slider range to... uhh... whatever pitchBend's range is? mb 0.0 <--> 1.0 , idfk?
 }
