@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 
     //TODOreq: proper UserInterfaceSkeletonGeneratorCli use
     UserInterfaceSkeletonGenerator generator;
-    generator.generateUserInterfaceSkeletonFromClassDeclarationString();
+    generator.generateUserInterfaceSkeletonFromClassDeclarationString("TODOreq", QList<QString>() << "cli");
 
     return 0;
 }

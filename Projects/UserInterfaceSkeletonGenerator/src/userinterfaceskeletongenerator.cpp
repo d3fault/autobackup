@@ -1,17 +1,25 @@
 #include "userinterfaceskeletongenerator.h"
 
 #include <QTextStream>
-#include <QTemporaryFile>
+#include <QFile>
+#include <QTemporaryDir>
 #include <QMetaObject>
+#include <QSet>
 #include <QDebug>
+
+#include "cliimplstubgenerator.h"
 
 QString UserInterfaceSkeletonGenerator::TAB = "    ";
 
 UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGenerator(QObject *parent)
     : QObject(parent)
 {
-    connect(this, &UserInterfaceSkeletonGenerator::e, this, &UserInterfaceSkeletonGenerator::handleDbg);
-    connect(this, &UserInterfaceSkeletonGenerator::o, this, &UserInterfaceSkeletonGenerator::handleDbg);
+    connect(this, SIGNAL(e(QString)), this, SLOT(handleDbg(QString)));
+    connect(this, SIGNAL(o(QString)), this, SLOT(handleDbg(QString)));
+}
+UserInterfaceSkeletonGenerator::~UserInterfaceSkeletonGenerator()
+{
+    qDeleteAll(ImplStubGenerators);
 }
 void UserInterfaceSkeletonGenerator::displayFrontendBackendConnectStatements(const UserInterfaceSkeletonGeneratorData &data)
 {
@@ -36,128 +44,78 @@ void UserInterfaceSkeletonGenerator::displayFrontendBackendConnectStatements(con
 
     emit o(temp);
 }
-void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromClassDeclarationString()
+void UserInterfaceSkeletonGenerator::generatePureVirtualUserInterfaceHeaderFile(const UserInterfaceSkeletonGeneratorData &data)
 {
-    UserInterfaceSkeletonGeneratorData data; //TODOreq: data gets populated, with the help of libclang, from this class method's [not yet existing] QString classDeclaration
+    QFile file(m_OutputDirWithTrailingSlash + data.targetUserInterfaceClassName().toLower() + ".h");
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        emit e("failed to open file: " + file.fileName());
+        emit finishedGeneratingUserInterfaceSkeleton(false); //oh right, "finished" comes before corresponding slot name, not after ;-P
+        return; //TODOmb: return _false_ and don't continue?
+    }
+    QTextStream textStream(&file);
+    data.generatePureVirtualUserInterfaceHeaderFile(textStream);
+}
+void UserInterfaceSkeletonGenerator::generateUserInterfaceImplStubsMaybe(const UserInterfaceSkeletonGeneratorData &data, QList<QString> implStubShortNames)
+{
+    QSet<QString> deDuped = QSet<QString>::fromList(implStubShortNames);
+    Q_FOREACH(QString currentImplStubShortName, deDuped)
+    {
+        QString stubType = currentImplStubShortName.toLower();
+        if(stubType == "cli")
+        {
+            ImplStubGenerators.append(new CliImplStubGenerator());
+        }
+        else if(stubType == "gui")
+        {
+            //TODOreq: //ImplStubGenerators.append(new GuiImplStubGenerator());
+        }
+        //etc for web and shiz
+    }
+    generateAnyAndAllUserInterfaceImplStubs(data);
+}
+void UserInterfaceSkeletonGenerator::generateAnyAndAllUserInterfaceImplStubs(const UserInterfaceSkeletonGeneratorData &data)
+{
+    Q_FOREACH(IUserInterfaceImplStubGenerator *currentImplStubGenerator, ImplStubGenerators)
+    {
+        currentImplStubGenerator->generateImplHeaderAndSourceStubFiles(data, m_OutputDirWithTrailingSlash);
+
+        //tell, don't ask? go fuck yourself!
+        //data.generateImplHeaderAndSourceStubFiles(currentImplStubGenerator);
+        //^do I "tell" the generator, or do I "tell" the data? fuck you and your short fancy sounding sentences "tell, don't ask". shit don't fuckin apply cunt. mb I should actually read an article explaining it [better] (again) before I talk shit
+    }
+}
+void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromClassDeclarationString(const QString &classDeclarationCpp_ForParsing, QList<QString> implStubShortNames)
+{
+    UserInterfaceSkeletonGeneratorData data; //TODOreq: data gets populated, with the help of libclang, from classDeclarationCpp_ForParsing
     data.BusinessLogiClassName = "LibFfmpeg";
 
     data.createAndAddSlot("bool", "encodeVideo", UserInterfaceSkeletonGeneratorData::ArgsList() << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","input"} << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","output"} << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","fourCC"} ); //TODOoptimization: don't require those huge prefixes. since I'm going to be MODIFYING this code in order to USE the app [initially], it's a huge optimization xD. use a namespace or something (and do using namespace blah; at top of this file)
 
     data.createAndAddSlot("void", "fuck");
 
-    generateUserInterfaceSkeletonFromData(data);
+    generateUserInterfaceSkeletonFromData(data, implStubShortNames);
 }
-void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromData(const UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData &data)
+void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromData(const UserInterfaceSkeletonGeneratorData &data, QList<QString> implStubShortNames)
 {
-    displayFrontendBackendConnectStatements(data);
-
-    QTemporaryFile file(data.targetUserInterfaceClassName().toLower() + "-XXXXXX.h");
-    if(!file.open())
+    QTemporaryDir outputDir;
+    if(!outputDir.isValid())
     {
-        emit e("failed to open file: " + file.fileName());
-        emit finishedGeneratingUserInterfaceSkeleton(false); //oh right, "finished" comes before corresponding slot name, not after ;-P
+        emit e("failed to create output dir:" + outputDir.path());
+        emit finishedGeneratingUserInterfaceSkeleton(false);
         return;
     }
-    file.setAutoRemove(false);
-    emit o("the output you desire is here: " + file.fileName());
-    QTextStream textStream(&file);
-    data.generateCpp(textStream);
+    outputDir.setAutoRemove(false);
+    m_OutputDirWithTrailingSlash = appendSlashIfNeeded(outputDir.path());
+
+    displayFrontendBackendConnectStatements(data);
+    generatePureVirtualUserInterfaceHeaderFile(data);
+    generateUserInterfaceImplStubsMaybe(data, implStubShortNames); //OT'ish: doesn't the "tell, don't ask" principle violate "keep logic and data separate"? maybe I'm doin it wrong xD. wait yes I think it does! wtf. I "tell" my "data" to "do" something, rather than asking (querying) the data repeatedly. ehh fuck it who cares for now <3
+
+    emit o("the output you desire is here: " + m_OutputDirWithTrailingSlash);
     emit finishedGeneratingUserInterfaceSkeleton(true);
 }
 void UserInterfaceSkeletonGenerator::handleDbg(QString msg)
 {
     qDebug() << msg; //TODOreq: proper
-}
-void UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::createAndAddSlot(QString slotReturnTypeThatGetsConvertedToTheFinishedSignalsSingleArgType, QString slotName, ArgsList slotArgs)
-{
-    SlotData slotData;
-    slotData.SlotReturnType = slotReturnTypeThatGetsConvertedToTheFinishedSignalsSingleArgType;
-    slotData.SlotName = slotName;
-    slotData.SlotArgs = slotArgs;
-    Slots.append(slotData);
-}
-void UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::generateCpp(QTextStream &textStream) const
-{
-    textStream << "#include <QString>" << endl << endl; //TODOreq: auto-include based on arg types and slot return types... ffffff....
-
-    textStream << "class QObject;" << endl << endl;
-
-    textStream << "class " << targetUserInterfaceClassName() << endl << "{" << endl;
-
-    textStream << "public:" << endl;
-    textStream << TAB << targetUserInterfaceClassName() << "()=default;" << endl;
-    textStream << TAB << targetUserInterfaceClassName() << "(const " << targetUserInterfaceClassName() << " &other)=delete;" << endl;
-    textStream << TAB << "virtual ~" << targetUserInterfaceClassName() << "()=default;" << endl << endl;
-
-    textStream << TAB << "virtual QObject *asQObject()=0;" << endl;
-
-    if(!Slots.isEmpty())
-        textStream << "protected: //signals:" << endl;
-    Q_FOREACH(SlotData slotData, Slots)
-    {
-        textStream << TAB << "virtual void " /*always void because is signal! not to be confused with SlotReturnType, which comes back as an ARG of this signal*/ << slotData.correspondingRequestSignalName() + slotData.argsWithParenthesis() << "=0;" << endl;
-        //TODOreq: gen a slot called "handleSlotNameFinished", and if slotData.SlotReturnType is non-void, an arg of that type (called something generic) should be it's only arg. maybe actually I should use bool always as first param (bool success), and the return type specified is an OPTIONAL 2nd arg following bool success? actually yea I like this idea better!!! TODOreq
-    }
-
-    textStream << "};" << endl;
-
-    //TODOreq: header guards
-}
-QString UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::targetUserInterfaceClassName() const
-{
-    return QString("I" + BusinessLogiClassName + "UI"); //"UserInterface" suffix too verbose, esp since "I" is at beginning as well xDDDDD. even though I know the 'I' at beginning stands for interface, I tend to read it as "I am a Business Logic Class Name UI", the 'I' taking on a different meaning than "Interface" there (and it helps with udnerstandability imo)
-}
-QString UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::SlotData::argsWithoutParenthesis() const
-{
-    QString ret;
-    bool first = true;
-    Q_FOREACH(SingleArg currentArg, SlotArgs)
-    {
-        if(!first)
-            ret.append(", ");
-        first = false;
-
-        ret.append(currentArg.ArgType + " " + currentArg.ArgName); //TODOmb: if argType ends with "reference amp" or ptr asterisk, don't use a space. steal this code from d=i pls
-    }
-    return ret;
-}
-
-QString UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::SlotData::argsWithParenthesis() const
-{
-    QString ret("(");
-    ret.append(argsWithoutParenthesis());
-    ret.append(")");
-    return ret;
-}
-QString myNormalizedType(QString input)
-{
-    const QByteArray &inputAsUtf8 = input.toUtf8();
-    QByteArray retBA = QMetaObject::normalizedType(inputAsUtf8.constData());
-    QString ret(retBA);
-    return ret;
-}
-QString UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::SlotData::argTypesNormalizedWithoutParenthesis() const
-{
-    QString ret;
-    bool first = true;
-    Q_FOREACH(SingleArg currentArg, SlotArgs)
-    {
-        if(!first)
-            ret.append(",");
-        first = false;
-
-        ret.append(myNormalizedType(currentArg.ArgType));
-    }
-    return ret;
-}
-QString UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::SlotData::argTypesNormalizedAndWithParenthesis() const
-{
-    QString ret("(");
-    ret.append(argTypesNormalizedWithoutParenthesis());
-    ret.append(")");
-    return ret;
-}
-QString UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::SlotData::correspondingRequestSignalName() const
-{
-    return SlotName + "Requested";
 }

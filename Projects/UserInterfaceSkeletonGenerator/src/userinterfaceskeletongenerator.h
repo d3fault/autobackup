@@ -3,56 +3,43 @@
 
 #include <QObject>
 
+#include "userinterfaceskeletongeneratordata.h"
+
 class QTextStream;
+
+class IUserInterfaceImplStubGenerator;
 
 class UserInterfaceSkeletonGenerator : public QObject
 {
     Q_OBJECT
 public:
     static QString TAB;
-    struct UserInterfaceSkeletonGeneratorData
-    {
-        struct SingleArg
-        {
-            QString ArgType;
-            QString ArgName;
-        };
-        typedef QList<SingleArg> ArgsList;
-
-        struct SlotData
-        {
-            QString SlotReturnType;
-            QString SlotName;
-            ArgsList SlotArgs;
-
-            QString argsWithoutParenthesis() const;
-            QString argsWithParenthesis() const;
-            QString argTypesNormalizedWithoutParenthesis() const;
-            QString argTypesNormalizedAndWithParenthesis() const;
-
-            QString correspondingRequestSignalName() const;
-        };
-
-        void createAndAddSlot(QString slotReturnTypeThatGetsConvertedToTheFinishedSignalsSingleArgType/*TODOreq*/ /*ex: "void"*/, QString slotName /*ex: "encodeVideo*/, ArgsList slotArgs = ArgsList());
-
-        void generateCpp(QTextStream &textStream) const;
-
-        QString targetUserInterfaceClassName() const;
-
-        QString BusinessLogiClassName;
-        QList<SlotData> Slots;
-    };
 
     explicit UserInterfaceSkeletonGenerator(QObject *parent = 0);
+    ~UserInterfaceSkeletonGenerator();
 private:
     void displayFrontendBackendConnectStatements(const UserInterfaceSkeletonGeneratorData &data);
+    void generatePureVirtualUserInterfaceHeaderFile(const UserInterfaceSkeletonGeneratorData &data);
+    void generateUserInterfaceImplStubsMaybe(const UserInterfaceSkeletonGeneratorData &data, QList<QString> implStubShortNames);
+    void generateAnyAndAllUserInterfaceImplStubs(const UserInterfaceSkeletonGeneratorData &data);
+
+    QString m_OutputDirWithTrailingSlash;
+    QList<IUserInterfaceImplStubGenerator*> ImplStubGenerators;
+    static QString appendSlashIfNeeded(const QString &inputString)
+    {
+        if(inputString.endsWith("/"))
+            return inputString;
+        QString ret(inputString);
+        ret.append("/");
+        return ret;
+    }
 signals:
     void e(QString msg);
     void o(QString msg);
     void finishedGeneratingUserInterfaceSkeleton(bool success);
 public slots:
-    void generateUserInterfaceSkeletonFromClassDeclarationString(/*TODOreq: QString &classDeclarationCpp_ForParsing*/);
-    void generateUserInterfaceSkeletonFromData(const UserInterfaceSkeletonGeneratorData &data);
+    void generateUserInterfaceSkeletonFromClassDeclarationString(const QString &classDeclarationCpp_ForParsing, QList<QString> implStubShortNames = QList<QString>());
+    void generateUserInterfaceSkeletonFromData(const UserInterfaceSkeletonGeneratorData &data, QList<QString> implStubShortNames = QList<QString>());
 private slots:
     void handleDbg(QString msg);
 };

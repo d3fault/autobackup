@@ -8,17 +8,20 @@ QT       += core
 QT       -= gui
 
 TARGET = UserInterfaceSkeletonGeneratorCli
-CONFIG   += console
+CONFIG   += console c++11
 CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-CONFIG += C++11
-
 HEADERS += \
     userinterfaceskeletongeneratorcli.h \
-    userinterfaceskeletongenerator.h
+    userinterfaceskeletongenerator.h \
+    iuserinterfaceimplstubgenerator.h \
+    cliimplstubgenerator.h \
+    userinterfaceskeletongeneratordata.h
 
 SOURCES += main.cpp \
     userinterfaceskeletongeneratorcli.cpp \
-    userinterfaceskeletongenerator.cpp
+    userinterfaceskeletongenerator.cpp \
+    cliimplstubgenerator.cpp \
+    userinterfaceskeletongeneratordata.cpp
