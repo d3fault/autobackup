@@ -27,6 +27,8 @@ public:
 
             QString argsWithoutParenthesis() const;
             QString argsWithParenthesis() const;
+            QString argTypesNormalizedWithoutParenthesis() const;
+            QString argTypesNormalizedAndWithParenthesis() const;
 
             QString correspondingRequestSignalName() const;
         };

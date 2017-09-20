@@ -2,6 +2,7 @@
 
 #include <QTextStream>
 #include <QTemporaryFile>
+#include <QMetaObject>
 #include <QDebug>
 
 QString UserInterfaceSkeletonGenerator::TAB = "    ";
@@ -23,11 +24,11 @@ void UserInterfaceSkeletonGenerator::displayFrontendBackendConnectStatements(con
     temp.append(TAB);
     temp.append("inline void connectToUi(");
     temp.append(data.targetUserInterfaceClassName() + "*ui)\n");
-    temp.append(TAB);
-    temp.append(+ "{\n");
+    temp.append(TAB + "{\n");
     Q_FOREACH(UserInterfaceSkeletonGeneratorData::SlotData slotData, data.Slots)
     {
-        temp.append(TAB + TAB + "connect(ui, &" + data.targetUserInterfaceClassName() + "::" + slotData.correspondingRequestSignalName() + ", this, &" + data.BusinessLogiClassName + "::" + slotData.SlotName + ");\n"); //fuck yea Qt5 connect syntax <3 saves me some typing here
+        //Qt5 fail: temp.append(TAB + TAB + "connect(ui->asQObject(), &" + data.targetUserInterfaceClassName() + "::" + slotData.correspondingRequestSignalName() + ", this, &" + data.BusinessLogiClassName + "::" + slotData.SlotName + ");\n"); //TODOreq: use Qt4 string-based syntax, Qt5 style doesn't work here!
+        temp.append(TAB + TAB + "connect(ui->asQObject(), SIGNAL(" + slotData.correspondingRequestSignalName() + slotData.argTypesNormalizedAndWithParenthesis() + "), this, SLOT(" + slotData.SlotName + slotData.argTypesNormalizedAndWithParenthesis() + "));\n");
     }
     temp.append(TAB + "}\n");
 
@@ -40,8 +41,8 @@ void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromClassDecla
     UserInterfaceSkeletonGeneratorData data; //TODOreq: data gets populated, with the help of libclang, from this class method's [not yet existing] QString classDeclaration
     data.BusinessLogiClassName = "LibFfmpeg";
 
-    //QQString input, QString output, QString fourCC
     data.createAndAddSlot("bool", "encodeVideo", UserInterfaceSkeletonGeneratorData::ArgsList() << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","input"} << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","output"} << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","fourCC"} ); //TODOoptimization: don't require those huge prefixes. since I'm going to be MODIFYING this code in order to USE the app [initially], it's a huge optimization xD. use a namespace or something (and do using namespace blah; at top of this file)
+
     data.createAndAddSlot("void", "fuck");
 
     generateUserInterfaceSkeletonFromData(data);
@@ -79,10 +80,19 @@ void UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::generat
 {
     textStream << "#include <QString>" << endl << endl; //TODOreq: auto-include based on arg types and slot return types... ffffff....
 
+    textStream << "class QObject;" << endl << endl;
+
     textStream << "class " << targetUserInterfaceClassName() << endl << "{" << endl;
 
+    textStream << "public:" << endl;
+    textStream << TAB << targetUserInterfaceClassName() << "()=default;" << endl;
+    textStream << TAB << targetUserInterfaceClassName() << "(const " << targetUserInterfaceClassName() << " &other)=delete;" << endl;
+    textStream << TAB << "virtual ~" << targetUserInterfaceClassName() << "()=default;" << endl << endl;
+
+    textStream << TAB << "virtual QObject *asQObject()=0;" << endl;
+
     if(!Slots.isEmpty())
-    textStream << "protected: //signals:" << endl;
+        textStream << "protected: //signals:" << endl;
     Q_FOREACH(SlotData slotData, Slots)
     {
         textStream << TAB << "virtual void " /*always void because is signal! not to be confused with SlotReturnType, which comes back as an ARG of this signal*/ << slotData.correspondingRequestSignalName() + slotData.argsWithParenthesis() << "=0;" << endl;
@@ -116,6 +126,34 @@ QString UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::Slot
 {
     QString ret("(");
     ret.append(argsWithoutParenthesis());
+    ret.append(")");
+    return ret;
+}
+QString myNormalizedType(QString input)
+{
+    const QByteArray &inputAsUtf8 = input.toUtf8();
+    QByteArray retBA = QMetaObject::normalizedType(inputAsUtf8.constData());
+    QString ret(retBA);
+    return ret;
+}
+QString UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::SlotData::argTypesNormalizedWithoutParenthesis() const
+{
+    QString ret;
+    bool first = true;
+    Q_FOREACH(SingleArg currentArg, SlotArgs)
+    {
+        if(!first)
+            ret.append(",");
+        first = false;
+
+        ret.append(myNormalizedType(currentArg.ArgType));
+    }
+    return ret;
+}
+QString UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::SlotData::argTypesNormalizedAndWithParenthesis() const
+{
+    QString ret("(");
+    ret.append(argTypesNormalizedWithoutParenthesis());
     ret.append(")");
     return ret;
 }
