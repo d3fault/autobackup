@@ -38,7 +38,7 @@ Finally I've figured out what the fuck I was trying to say xD.
 
 So, uhh, now onto solving it :):
 
-All the UI impls inherit a signals/slots interface, and a static public method on the backend performs the necessary connections.
+All the UI impls inherit a signals/slots interface, and a public method on the backend performs the necessary connections.
 
 Done.
 

@@ -9,6 +9,7 @@ class UserInterfaceSkeletonGenerator : public QObject
 {
     Q_OBJECT
 public:
+    static QString TAB;
     struct UserInterfaceSkeletonGeneratorData
     {
         struct SingleArg
@@ -26,9 +27,11 @@ public:
 
             QString argsWithoutParenthesis() const;
             QString argsWithParenthesis() const;
+
+            QString correspondingRequestSignalName() const;
         };
 
-        void createAndAddSlot(QString slotReturnTypeThatGetsConvertedToTheFinishedSignalsSingleArgType/*TODOreq*/ /*ex: "void"*/, QString slotName /*ex: "encodeVideo*/, ArgsList slotArgs);
+        void createAndAddSlot(QString slotReturnTypeThatGetsConvertedToTheFinishedSignalsSingleArgType/*TODOreq*/ /*ex: "void"*/, QString slotName /*ex: "encodeVideo*/, ArgsList slotArgs = ArgsList());
 
         void generateCpp(QTextStream &textStream) const;
 
@@ -39,6 +42,8 @@ public:
     };
 
     explicit UserInterfaceSkeletonGenerator(QObject *parent = 0);
+private:
+    void displayFrontendBackendConnectStatements(const UserInterfaceSkeletonGeneratorData &data);
 signals:
     void e(QString msg);
     void o(QString msg);

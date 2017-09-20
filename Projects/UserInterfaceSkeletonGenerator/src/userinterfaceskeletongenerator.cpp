@@ -4,11 +4,36 @@
 #include <QTemporaryFile>
 #include <QDebug>
 
+QString UserInterfaceSkeletonGenerator::TAB = "    ";
+
 UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGenerator(QObject *parent)
     : QObject(parent)
 {
     connect(this, &UserInterfaceSkeletonGenerator::e, this, &UserInterfaceSkeletonGenerator::handleDbg);
     connect(this, &UserInterfaceSkeletonGenerator::o, this, &UserInterfaceSkeletonGenerator::handleDbg);
+}
+void UserInterfaceSkeletonGenerator::displayFrontendBackendConnectStatements(const UserInterfaceSkeletonGeneratorData &data)
+{
+    //TODOmb: we could inject this shit directly into the class declaration (input to generateUserInterfaceSkeletonFromClassDeclarationString), but for now it's good enough to just print to screen and tell the user to copy/paste it :). much easier than using libclang xD
+    if(data.Slots.isEmpty() /*&& data.Signals.isEmpty()*/)
+        return; //TODOreq: we will have signals at some point too, so we need at least one of one or the other
+
+    QString temp("copy/paste this method into the public area of your business logic class:\n\n");
+
+    temp.append(TAB);
+    temp.append("inline void connectToUi(");
+    temp.append(data.targetUserInterfaceClassName() + "*ui)\n");
+    temp.append(TAB);
+    temp.append(+ "{\n");
+    Q_FOREACH(UserInterfaceSkeletonGeneratorData::SlotData slotData, data.Slots)
+    {
+        temp.append(TAB + TAB + "connect(ui, &" + data.targetUserInterfaceClassName() + "::" + slotData.correspondingRequestSignalName() + ", this, &" + data.BusinessLogiClassName + "::" + slotData.SlotName + ");\n"); //fuck yea Qt5 connect syntax <3 saves me some typing here
+    }
+    temp.append(TAB + "}\n");
+
+    temp.append("\n\n");
+
+    emit o(temp);
 }
 void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromClassDeclarationString()
 {
@@ -17,11 +42,14 @@ void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromClassDecla
 
     //QQString input, QString output, QString fourCC
     data.createAndAddSlot("bool", "encodeVideo", UserInterfaceSkeletonGeneratorData::ArgsList() << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","input"} << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","output"} << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","fourCC"} ); //TODOoptimization: don't require those huge prefixes. since I'm going to be MODIFYING this code in order to USE the app [initially], it's a huge optimization xD. use a namespace or something (and do using namespace blah; at top of this file)
+    data.createAndAddSlot("void", "fuck");
 
     generateUserInterfaceSkeletonFromData(data);
 }
 void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromData(const UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData &data)
 {
+    displayFrontendBackendConnectStatements(data);
+
     QTemporaryFile file(data.targetUserInterfaceClassName().toLower() + "-XXXXXX.h");
     if(!file.open())
     {
@@ -49,7 +77,6 @@ void UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::createA
 }
 void UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::generateCpp(QTextStream &textStream) const
 {
-#define TAB "    " //Qt wins
     textStream << "#include <QString>" << endl << endl; //TODOreq: auto-include based on arg types and slot return types... ffffff....
 
     textStream << "class " << targetUserInterfaceClassName() << endl << "{" << endl;
@@ -58,7 +85,7 @@ void UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::generat
     textStream << "protected: //signals:" << endl;
     Q_FOREACH(SlotData slotData, Slots)
     {
-        textStream << TAB << "virtual void " /*always void because is signal! not to be confused with SlotReturnType, which comes back as an ARG of this signal*/ << slotData.SlotName + "Requested" + slotData.argsWithParenthesis() << "=0;" << endl;
+        textStream << TAB << "virtual void " /*always void because is signal! not to be confused with SlotReturnType, which comes back as an ARG of this signal*/ << slotData.correspondingRequestSignalName() + slotData.argsWithParenthesis() << "=0;" << endl;
         //TODOreq: gen a slot called "handleSlotNameFinished", and if slotData.SlotReturnType is non-void, an arg of that type (called something generic) should be it's only arg. maybe actually I should use bool always as first param (bool success), and the return type specified is an OPTIONAL 2nd arg following bool success? actually yea I like this idea better!!! TODOreq
     }
 
@@ -91,4 +118,8 @@ QString UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::Slot
     ret.append(argsWithoutParenthesis());
     ret.append(")");
     return ret;
+}
+QString UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGeneratorData::SlotData::correspondingRequestSignalName() const
+{
+    return SlotName + "Requested";
 }
