@@ -1,0 +1,5 @@
+[title] ... because I sanitize when parsing a previously gen'd (and potentially/probably user modified) ui impl stub. by doing "string equality comparison" on what I parsed vs. what I previously gen'd, I am getting a form of type checking. I think it's more or less the same amount of safety as templates with concepts, but actually I'm not too sure about that xD.
+
+parse -> filter out noise (user data. to be re-inserted later) -> sanitize against expected results -> allow modification of api, aka don't yell at the user for breaking it
+
+concepts might be safer, but I think this strat provides much more safety than duck typing

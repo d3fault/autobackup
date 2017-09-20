@@ -1,0 +1,42 @@
+I almost hit Ctrl+V right now lmfao (I just booted).
+
+
+Ok so the interface is not generated when compiling in Release mode. You use it in Debug mode as training wheels (override kicks ass), then in Release mode the IBusinessClassUI file/interface is not even created. The UI Impls in that case do not [HAVE TO] inherit the interface. The UI impls are also now charged with performing the connections; but since those are being code gen'd, that's trivial.
+
+Basically I realized: the reason I don't want the frontend to perform the connections is because I don't want the frontend to depend on the backend. But by inheritting an interface (that corresponds with the backend), I am depending on that backend.
+
+However if when compiling in release mode I do not use the interface at all, that dependency is re- wait no we just transferred it back to the implicit dependency that the "connect" statements have. still, better to hasA (sorta?) connect statements in some method... than to _inherit_ a dependency.
+
+
+still the training wheels that 'override' can buy you when you compile in debug mode is TREMENDOUS value. saves you from having to do a lot of braindead work... err what I mean to say is "work that you CAN do braindead if presented to you, but you CANNOT do if it is not presented to you and you are alo tasked with figuring it out". The key to it all is the "override" flag. If the UI is ever at any point not overriding one of the interface members, COMPILATION FAILS. so it guarantees that the UI is keeping up with the backend.
+
+however, synchronizing the gen'd "impl stub" with the users' changes to that impl stub... is a bitch but doable... I did that shit in d=i already and kinda feel like there is huge overlap between the two (already know I can integrate this app FULLY _into_ d=i, and probably should/will-eventually). gen [BEGIN]and [END] shit everywhere and ignore the in between because that's user code! it's ugly but it works
+
+
+
+mfw templates + Qt5-style connect syntax would give me the compilation safety I desire. don't even need Concepts
+
+template<Class T>
+void doConnections(T t)
+{
+	//wat. fkn templates hurt my brain I don't get it, what's the instance? what's the context? where's my this-> ?
+}
+
+
+see I fucking suck at templates. are they even allowed outside of headers yet?
+fuck this shit I'm out
+(ed note: I saved/closed this doc and zoned out for a good 30 seconds before coming up with the next paragraph(s))
+
+
+ok figured it out: the BackendClass::connectToFrontEnd method is a template accepting any type (_NOT_ a pointer to IBackendClassUI)  that contains the _NAMED_ methods (using Qt5 style syntax for the connections only. this template strat hinges on Qt5 style connect syntax for compile time safety). the [collection of] names themselves are the interface. as it should be. as I was aiming for. however this template-using solution is faster because it does not [needlessly] use a virtual function call. It is more compile time safe. I was going to say equally, but realized it's more because I don't have to use asQObject hackery (which deps Qt4-style connect syntax!!!!).
+
+oh it's MORE compile time safe? fuck me hell yea. only small changes need to be made to this app in order to use what I've just learned. small changes and a bunch of deleting xDDDDDDDDDDDDDDDDDDDDDDD. [virtual/inheritted] interfaces are just easier for me to understand, man! I do understand now, finally, that templates are interfaces. Errr, nah idk if I'd say that. Templates were used to solve the core interface problem/desire-for-use that this entire doc/app is trying to solve. That's a NearWeep ((tm) Coffee Genie nkuf cikc) from "templates _are_ interfaces" (although I do still think that in a SORT OF way, they are (if you use..... Concepts! they are yes very much so!!!)). this way, using Qt5-style connect syntax is over 9000% better than Concepts. fuck Concepts, tl;dw.
+
+
+because I don't trust myself, I should maybe make the generating-and-use of the interface a runtime switch. I might find some use for it, it seems a waste to throw it all away, and I might be completely wrong about being able to accomplish the same (and more) with a templated "connectToFrontend" method that uses Qt5-style connect statements. I just might.
+
+a ui impl stub generator is still a time saver (code writing wise), even if it _doesn't_ inherit from some interface. Honestly this app has lost nothing in it's awesomeness, it has only gotten much better.
+
+
+OT-as-fuck: instead of using [BEGIN] and [END] type tagging to be able to interact with user gen'd code, how about just fucking use libclang to parse that shit and ignore everything that isn't exactly what you're looking for. ex: BusinessClass::doX() is created, cli impl stub created and connected via doXRequested() yada yada. the user (a coder) customizes that cli impl stub but does not rename it. since we know what file(s) we generated, that makes it easy to ignore other files (and this also means we need to know how to compile the project! wait idk about that mb not). shit what was I saying? oh yea we can fucking parse+SANITIZE the class DECL! normalize the spacing/indentation, sha512 that bitch, done. err no... by class decl I mean slot-method decl! Yeeeeaaa!!! normalizedSignature already exists :-D. now here's key: all of the slot-methods we gen'd have to be proven to exist before we are allowed to modify any of the slot-methods (name or type etc), HOWEVER there can be _more_ data/slot-methods/whatever in the class that we simply IGNORE while parsing with libclang. since we gen'd initially (or rather more properly worded: "last time"), we know EXACTLY what to look for and can perform pretty rigorous sanitization. You are not allowed to modify the BusinessClass core api file (OR the corresponding Request signals in the UI, since we gen'd those too!), unless only adding ADDITIONAL data/slot-methods/etc, and the same sanitization techniques are used as that on the ui impl stub parsing just described in this massive paragraph. The correct way to change your api is by re-running this application! wait no I forgot how this app worked for a sec. you DO change the core business logic file directly, but you DO NOT [directly] change the corresponding "Request" signals that are placed in the ui impl stubs: those need to be changed automatically when the core business logic api changes... otherwise this app is of little use. but yea this sanitization technique is pretty failsafe I think/hope *crosses fingers*. It's certainly a lot less ugly than [BEGIN] and [END] shit littered everywhere. I did mention parse, but did I mention that it's via libclang? that was implied but I should still say...
+^this is good but should come later
