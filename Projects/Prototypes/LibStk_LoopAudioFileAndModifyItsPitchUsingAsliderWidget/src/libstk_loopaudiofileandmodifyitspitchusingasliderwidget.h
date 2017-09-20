@@ -23,6 +23,7 @@ public:
 private:
     void showStdStringError(const std::string &stkError);
 
+    unsigned int m_NumBufferFrames;
     QScopedPointer<stk::Voicer> voicer;
     QScopedPointer<RtAudio> dac;
     QScopedPointer<SimpleSingleFileLoopSamplerInstrument> samplerInstrument;

@@ -1,0 +1,119 @@
+Every IUserInputAction (or maybe without the 'I' at beginning?) has a corresponding and equally functioning IAction (ditto about the 'I') in the backend/business-logic, otherwise the lib is useless [without the [cli|gui] (ui)]. I mean the business logic (class/lib) should still publicize it's lower level utilities, because those are useful by themselves often too, but the ability to do exactly what is doable in the cli/gui/web/WHATEVER-UI-YOU-USE _with ease_ and not by RECREATING CODE/LOGIC IN THE UIs (one definition rule should always be abided by), is crucial.
+
+Example:
+class LibFfmpeg; //this doesn't exist, but could. ffmpeg's libav.h api is a nightmare and makes you do shit "manually" exactly like I'm describing how not to
+
+LibFfmpeg.addDecodeInput("/run/shm/run.shemales.run.avi"); //equiv to "ffmpeg -i"
+
+^BUT, LibFfmpeg _inherits/is_ the libav.h api that I just said is a nightmare... because "encodeOneFrame(void *inputBuffer, void *outputBuffer)" is actually still a very extremely useful method to export.
+
+Perhaps, though, these two "UIActions" and "Class Methods Of A Util Class" should be separate (as in, live in different classes)?
+
+I... don' t know tbh. maybe it doesn't even matter.
+
+I guess why I can't "decide"/figure-out is because I'm taking into consideration other codebases! I'm factoring in whether or not I could pursuade, say, the ffmpeg peeps to change their design (probably can't, too much code already written). Don't do that. Fuck everybody else, this "design" is for myself.
+
+I do actually in fact want them to be separate (maybe that overcomplicates things?); BUT, a UI impl (so cli/gui) should _never_ be coded without also coding/using a UI interface (IUserInputAction).
+
+This is additional coding. (but it saves coding in the... future!)
+
+
+Unless I use a code generator. Maybe I can take whatever I learn from this doc and apply it to DesignEqualsImplementation, or maybe it's better off standing alone (or maybe both).
+
+
+Hmm you know what I already do this. I name my QObject "slots" directly after user input actions. What I'm lacking, though, is some kind of formal declaration of what the UI needs to _gather_. Wait no I'm not, that's specified via the args.
+
+I don't expose very much low level functionality through those classes though (but I probably would if I saw the opportunity to).
+
+idk this doc might just be me reaizing that I already do the orig idea (first sentence), but for some reason it doesn't feel like I do. Somewhere in between here and the first sentence I lost sight of it.
+
+Yea I do already do this, wtf? Still I guess I never said I didn't? I only said that it should be done.
+
+Hmm, I'm not inheritting an interface but am instead manually connecting the UI's signals/slots with the backend's signals/slots.
+
+So what I'm maybe saying (or that a code generator could solve) is that those signal/slot connection _statements_ are violating the single definition rule! They are [BASICALLY/ESSENTIALLY/WITH-SOME-INTENT-THEY-CAN-BE-EXACTLY] the same in both the cli and gui (and web (and shit-nobody-thought-up-yet)). Hell I guess even 'mobile' sometimes needs it's own port of the gui (but if you're pro and/or using a pro toolkit/framework, it doesn't <3 Qt).
+
+Finally I've figured out what the fuck I was trying to say xD.
+
+
+So, uhh, now onto solving it :):
+
+All the UI impls inherit a signals/slots interface, and a static public method on the backend performs the necessary connections.
+
+Done.
+
+
+So I need to code generator to give me that ^.
+
+
+Ok so you take a line of code declaring a UI action:
+void encodeVideo(QString input, QString output, QString fourCC);
+..."decompose" the method signature using libclang (ez, already have code to do this), then...
+
+hmm I need to figure this out wtf. maybe I don't need code generator.
+
+//NOTE (this note was located at the end of void encodeVideo decl, but I moved it because it's too huge): unless you're ok with the front-end DEPENDING-ON the back-end (thus breaking modularity), you should only use "primitive" types (built-in or from some other common lib) for your args, because those primitive types are the only thing you can pretty much guarantee that each of the UI impls (gui/cli) can provide [without depending on your backend].
+
+class LibFfmpeg
+{
+public:
+	void encodeVideo(QQString input, QString output, QString fourCC);
+};
+
+
+hmm solvable using templates.
+is it solvable using C++ Concepts? is that even relevant (I'm just now learning them, seem neat)?
+
+fuck templates though, I honestly prefer the design of Interfaces, just easier to understand or something (idk but my impulse tells me this and is right because of it. it is preference). inb4 "templates are interfaces"... yes I know.
+
+
+ok fuck I'll attack the problem from a different angle muahahaha....
+
+class LibFFmpeg //wait what? they're both called the same thing? this can't be right, so I made a mistake in the code above
+{
+public:
+	void connectToUI(ILibFfMpegUI *ui)
+	{
+		connect(ui, encodeVideoRequested --- AHAH! so after parsing the "encodeVideo" signature above [CONT'D BELOW]
+	}
+};
+
+...so after parsing the "encodeVideo" function signature, I append "Requested" onto the signal that goes into the ILibFfMpegUI class [that cli/gui inherit and override (well it's pure virtual = 0;'d, so they have to, but I still love that keyword <3 C++11).
+
+append Requested and done. well I mean and spit out what is basically a replica class (with slots now signals and signals now slots xD (chew on that for a while, your brain will explode)).... and gen the corresponding connect statements *snooooore*.
+
+such easy work now that I have it designed. I was going to put this into a [NEW] root folder in my monolithic repo called "Design" (I figured it was generic enough), but now that it's become a Project I'll file it correspondingly. bbbbut I already mkdir'd Design xD. oh well at least I mentioned that RIP'd dir here
+
+
+wow fuck me now for NAMING this fucker..... heh, uh....
+UserInterfaceSkeletonGenerator
+
+but actually if my "input" is a QString<List> of "FUNCTION" signatures [instead of a class declaration [WAIT NO I NEED TO RE-RUN THE GENERATOR AS MORE METHODS ARE COME UP WITH... SO ACTUALLY I _DO_ want to parse a class declaration!!!!!!! (what I was going to say was that I could gen the class based on just a list of function declarations. hell it's still not that bad of an idea, but the MORE IMPORTANT VERSION takes my "pre-coded" business class and then looks ONLY for signals/slots method signatures (hmm I hope libclang has Qt options to make that easier xDDDDD) -- fuck lost my train of thought, but yea while both are useful, class parser should/MUST come first for deep reasons hard to explain apparently. fuggit onwards!!!)
+
+so input is a class declaration. which means UserInterfaceSkeletonGenerator is aptly named. That second app I am now formalizing but which should not come before this one, just parses a list of functions and generates a class using those functions as slots (and any "return values" are actually Qt SIGNALS with the word "Finished" appended to the slot name <3). man 2nd app sounds EZ but just because it's ez to design doesn't mean it'll be ez to implement with libclang hahahaha *flashbacks*. I'm getting much faster at using it, comfort and copy and paste <3, but it's still just a confusing ass time even when I _DO_ know what the fuck I'm doing. I'm BARELY smart enough to use it (can't imagine how batshit insane the fuckers who made it are).
+
+
+I could cheat and not parse anything at all for the first version (requiring recompiles to utilize different "user inputs"); in fact I probably should. It'd still save tons of time even with me having to modify some C++ and recompile just to be able to use a (and this is why) code generator :-D.
+
+
+myCodeGenerator.add
+
+
+....hmm or should I just modify designEquals? Ima think this through further and then decide.
+
+UserInterfaceSkeletonGenerator myCodeGenerator("LibFfmpeg");
+myCodeGenerator.addSlot("void", "encodeVideo", QList<QPair<QString /*argType*/,QString /*argName*/>> args);
+
+^so that happened [probably numerous times] after parsing a class header file I gave to UserInterfaceSkeletonGenerator (this app). that is also the code I will be modifying in order to recompiile+USE this app [until class header file parsing gets implemented (until it is, I need to "write" dupe declarations fml)].
+
+Then,
+UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFile()
+{
+	m_TextStream << "class ILibFfmpegUserInterface" << endl << "{" << endl << TAB << _ETC_MOTHERFUCKER_;
+
+	m_TextStream << "signals:" << endl;
+	//Q_FOREACH(m_Slots)
+	m_TextStream << m_Slots.first().slotName() + "Requested" + m_Slots.first().argsWithParenthesis() << "=0;" << endl; //BAM, the most important line in this doc. note we gen'd a "signal" based on the slot name, with "Requested" at end of slot name
+}
+
+I should also generate STUBS for the cli/gui impls (inheritting the interface), but that should not be the VERY FIRST target/commit/whatever... should be the 2nd ;-). You'd specify --gui or --cli (or both) when running the app. specifying neither gens _only_ the interface.
