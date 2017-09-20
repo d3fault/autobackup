@@ -101,19 +101,24 @@ myCodeGenerator.add
 
 ....hmm or should I just modify designEquals? Ima think this through further and then decide.
 
-UserInterfaceSkeletonGenerator myCodeGenerator("LibFfmpeg");
-myCodeGenerator.addSlot("void", "encodeVideo", QList<QPair<QString /*argType*/,QString /*argName*/>> args);
+UserInterfaceSkeletonGeneratorData myCodeGeneratorData("LibFfmpeg");
+myCodeGeneratorData.addSlot("void", "encodeVideo", QList<QPair<QString /*argType*/,QString /*argName*/>> args);
+UserInterfaceSkeletonGenerator myCodeGenerator;
+myCodeGenerator.generateUserInterfaceSkeletonFile(myCodeGeneratorData);
 
-^so that happened [probably numerous times] after parsing a class header file I gave to UserInterfaceSkeletonGenerator (this app). that is also the code I will be modifying in order to recompiile+USE this app [until class header file parsing gets implemented (until it is, I need to "write" dupe declarations fml)].
+^so that addSlot happened [probably numerous times] after parsing a class header file I gave to UserInterfaceSkeletonGenerator (this app). that is also the code I will be modifying in order to recompiile+USE this app [until class header file parsing gets implemented (until it is, I need to "write" dupe declarations fml)].
 
 Then,
-UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFile()
+UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFile(UserInterfaceSkeletonGeneratorData data)
 {
 	m_TextStream << "class ILibFfmpegUserInterface" << endl << "{" << endl << TAB << _ETC_MOTHERFUCKER_;
 
 	m_TextStream << "signals:" << endl;
-	//Q_FOREACH(m_Slots)
-	m_TextStream << m_Slots.first().slotName() + "Requested" + m_Slots.first().argsWithParenthesis() << "=0;" << endl; //BAM, the most important line in this doc. note we gen'd a "signal" based on the slot name, with "Requested" at end of slot name
+	//Q_FOREACH(data.m_Slots)
+	m_TextStream << data.m_Slots.first().slotName() + "Requested" + data.m_Slots.first().argsWithParenthesis() << "=0;" << endl; //BAM, the most important line in this doc. note we gen'd a "signal" based on the slot name, with "Requested" at end of slot name
 }
 
 I should also generate STUBS for the cli/gui impls (inheritting the interface), but that should not be the VERY FIRST target/commit/whatever... should be the 2nd ;-). You'd specify --gui or --cli (or both) when running the app. specifying neither gens _only_ the interface.
+
+
+fuck, it's impossible (or rather, really difficult ;-P) to [safely] regenerate the UI impls _STUBS_. regenerating the interface is doable though, and from there you just right click -> add definiition in impl in Qt Creator... and at the very least the compiler will tell you you didn't override a pure virtual <3.
