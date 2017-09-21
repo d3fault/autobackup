@@ -10,7 +10,7 @@ public:
     IUserInterfaceImplStubGenerator(const IUserInterfaceImplStubGenerator &other)=delete;
     virtual ~IUserInterfaceImplStubGenerator()=default;
 
-    virtual void generateImplHeaderAndSourceStubFiles(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)=0;
+    virtual void generateImplStubFiles(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)=0;
 protected:
     virtual QString implStubClassSuffix()=0;
     QString targetImplStubClassName(const QString &businessLogicClassName)

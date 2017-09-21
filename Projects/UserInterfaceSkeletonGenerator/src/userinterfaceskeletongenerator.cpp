@@ -90,10 +90,10 @@ void UserInterfaceSkeletonGenerator::generateAnyAndAllUserInterfaceImplStubs(con
 {
     Q_FOREACH(IUserInterfaceImplStubGenerator *currentImplStubGenerator, ImplStubGenerators)
     {
-        currentImplStubGenerator->generateImplHeaderAndSourceStubFiles(data, m_OutputDirWithTrailingSlash);
+        currentImplStubGenerator->generateImplStubFiles(data, m_OutputDirWithTrailingSlash);
 
         //tell, don't ask? go fuck yourself!
-        //data.generateImplHeaderAndSourceStubFiles(currentImplStubGenerator);
+        //data.generateImplStubFiles(currentImplStubGenerator);
         //^do I "tell" the generator, or do I "tell" the data? fuck you and your short fancy sounding sentences "tell, don't ask". shit don't fuckin apply cunt. mb I should actually read an article explaining it [better] (again) before I talk shit
     }
 }

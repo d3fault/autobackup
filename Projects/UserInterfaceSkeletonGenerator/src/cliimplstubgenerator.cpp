@@ -5,7 +5,13 @@
 
 #include "userinterfaceskeletongenerator.h"
 
-void CliImplStubGenerator::generateImplHeaderAndSourceStubFiles(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)
+void CliImplStubGenerator::generateImplStubFiles(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)
+{
+    generateHeaderFile(data, outputDirWithTrailingSlash);
+    generateSourceFile(data, outputDirWithTrailingSlash);
+    //TODOmb: generate main.cpp? it's small so why not <3?
+}
+void CliImplStubGenerator::generateHeaderFile(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)
 {
     QFile file(outputDirWithTrailingSlash + targetImplStubClassName(data.BusinessLogiClassName).toLower() + ".h");
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -50,6 +56,35 @@ void CliImplStubGenerator::generateImplHeaderAndSourceStubFiles(const UserInterf
     }
 
     textStream << "};" << endl;
+}
+void CliImplStubGenerator::generateSourceFile(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)
+{
+    QFile file(outputDirWithTrailingSlash + targetImplStubClassName(data.BusinessLogiClassName).toLower() + ".cpp");
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qDebug("failed to open file in CliImplStubGenerator");
+
+        //emit finishedGeneratingUserInterfaceSkeleton(false);
+        return; //TODOmb: return _false_ and don't continue?
+    }
+    QTextStream textStream(&file);
+
+    QString tab = UserInterfaceSkeletonGenerator::TAB;
+    textStream << "#include \"" << targetImplStubClassName(data.BusinessLogiClassName).toLower() << ".h\"" << endl << endl;
+
+    textStream << targetImplStubClassName(data.BusinessLogiClassName) << "::" << targetImplStubClassName(data.BusinessLogiClassName) << "(QObject *parent)" << endl;
+    textStream << tab << ": QObject(parent)" << endl;
+    textStream << "{ }" << endl;
+
+    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SignalData &currentSignal, data.Signals)
+    {
+        QString qualifiedSlotNameAndArgs(targetImplStubClassName(data.BusinessLogiClassName) + "::" + currentSignal.correspondingSignalHandlerSlotName() + currentSignal.argsWithParenthesis());
+        textStream << "void " << qualifiedSlotNameAndArgs << endl;
+        textStream << "{" << endl;
+        textStream << tab << "//TODOstub" << endl;
+        textStream << tab << "qWarning(\"stub not implemented: " << qualifiedSlotNameAndArgs << "\");" << endl;
+        textStream << "}" << endl;
+    }
 }
 QString CliImplStubGenerator::implStubClassSuffix()
 {
