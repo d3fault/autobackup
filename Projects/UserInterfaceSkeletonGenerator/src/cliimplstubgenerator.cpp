@@ -32,13 +32,22 @@ void CliImplStubGenerator::generateImplHeaderAndSourceStubFiles(const UserInterf
     //textStream << tab << "virtual ~" << targetImplStubClassName(data.BusinessLogiClassName) << "()=default;" << endl;
 
     //OT'ish: hmm sometimes it's desireable to connect a backend to a deeply nested front-end gui component (doesn't really apply to cli I don't think, but mb it does). is that now not possible? or would that deeply nested component use it's own interface that the top-level gui does not? hmm, wtf. I still think for common cases this could save some typing...
+
+    //gen 'requested' signals to go with business slots
     if(!data.Slots.isEmpty())
         textStream << "signals:" << endl;
     Q_FOREACH(UserInterfaceSkeletonGeneratorData::SlotData currentSlot, data.Slots)
     {
-        textStream << tab << "void " << currentSlot.correspondingRequestSignalName() << currentSlot.argsWithParenthesis() << ";" << endl;
+        textStream << tab << "void " << currentSlot.correspondingSlotInvokeRequestSignalName() << currentSlot.argsWithParenthesis() << ";" << endl;
     }
-    //TODOreq: gen slots to go with business signals
+
+    //gen 'handle' slots to go with business signals
+    if(!data.Signals.isEmpty())
+        textStream << "public slots:" << endl;
+    Q_FOREACH(UserInterfaceSkeletonGeneratorData::SignalData currentSignal, data.Signals)
+    {
+        textStream << tab << "void " << currentSignal.correspondingSignalHandlerSlotName() << currentSignal.argsWithParenthesis() << ";" << endl;
+    }
 
     textStream << "};" << endl;
 }

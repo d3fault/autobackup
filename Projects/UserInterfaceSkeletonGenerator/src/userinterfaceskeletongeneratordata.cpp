@@ -2,13 +2,28 @@
 
 #include "userinterfaceskeletongenerator.h"
 
+void UserInterfaceSkeletonGeneratorData::createAndAddSignal(QString signalName, ArgsList signalArgs)
+{
+    SignalData signalData;
+    signalData.setSignalName(signalName);
+    signalData.setSignalArgs(signalArgs);
+    Signals.append(signalData);
+}
 void UserInterfaceSkeletonGeneratorData::createAndAddSlot(QString slotReturnTypeThatGetsConvertedToTheFinishedSignalsSingleArgType, QString slotName, ArgsList slotArgs)
 {
     SlotData slotData;
     slotData.SlotReturnType = slotReturnTypeThatGetsConvertedToTheFinishedSignalsSingleArgType;
-    slotData.SlotName = slotName;
-    slotData.SlotArgs = slotArgs;
+    slotData.setSlotName(slotName);
+    slotData.setSlotArgs(slotArgs);
     Slots.append(slotData);
+}
+QString UserInterfaceSkeletonGeneratorData::firstLetterToUpper(const QString &inputString)
+{
+    if(inputString.isEmpty())
+        return inputString;
+    QString ret(inputString);
+    ret.replace(0, 1, ret.at(0).toUpper());
+    return ret;
 }
 #if 0 //fuck virtual inheritance interfaces in this case
 void UserInterfaceSkeletonGeneratorData::generatePureVirtualUserInterfaceHeaderFile(QTextStream &textStream) const
@@ -43,11 +58,11 @@ QString UserInterfaceSkeletonGeneratorData::targetUserInterfaceClassName() const
     return QString("I" + BusinessLogiClassName + "UI"); //"UserInterface" suffix too verbose, esp since "I" is at beginning as well xDDDDD. even though I know the 'I' at beginning stands for interface, I tend to read it as "I am a Business Logic Class Name UI", the 'I' taking on a different meaning than "Interface" there (and it helps with udnerstandability imo)
 }
 #endif
-QString UserInterfaceSkeletonGeneratorData::SlotData::argsWithoutParenthesis() const
+QString UserInterfaceSkeletonGeneratorData::IClassMethodWithoutReturnType::argsWithoutParenthesis() const
 {
     QString ret;
     bool first = true;
-    Q_FOREACH(SingleArg currentArg, SlotArgs)
+    Q_FOREACH(SingleArg currentArg, MethodArgs)
     {
         if(!first)
             ret.append(", ");
@@ -58,7 +73,7 @@ QString UserInterfaceSkeletonGeneratorData::SlotData::argsWithoutParenthesis() c
     return ret;
 }
 
-QString UserInterfaceSkeletonGeneratorData::SlotData::argsWithParenthesis() const
+QString UserInterfaceSkeletonGeneratorData::IClassMethodWithoutReturnType::argsWithParenthesis() const
 {
     QString ret("(");
     ret.append(argsWithoutParenthesis());
@@ -72,11 +87,11 @@ QString myNormalizedType(QString input)
     QString ret(retBA);
     return ret;
 }
-QString UserInterfaceSkeletonGeneratorData::SlotData::argTypesNormalizedWithoutParenthesis() const
+QString UserInterfaceSkeletonGeneratorData::IClassMethodWithoutReturnType::argTypesNormalizedWithoutParenthesis() const
 {
     QString ret;
     bool first = true;
-    Q_FOREACH(SingleArg currentArg, SlotArgs)
+    Q_FOREACH(SingleArg currentArg, MethodArgs)
     {
         if(!first)
             ret.append(",");
@@ -86,14 +101,18 @@ QString UserInterfaceSkeletonGeneratorData::SlotData::argTypesNormalizedWithoutP
     }
     return ret;
 }
-QString UserInterfaceSkeletonGeneratorData::SlotData::argTypesNormalizedAndWithParenthesis() const
+QString UserInterfaceSkeletonGeneratorData::IClassMethodWithoutReturnType::argTypesNormalizedAndWithParenthesis() const
 {
     QString ret("(");
     ret.append(argTypesNormalizedWithoutParenthesis());
     ret.append(")");
     return ret;
 }
-QString UserInterfaceSkeletonGeneratorData::SlotData::correspondingRequestSignalName() const
+QString UserInterfaceSkeletonGeneratorData::SlotData::correspondingSlotInvokeRequestSignalName() const
 {
-    return SlotName + "Requested";
+    return slotName() + "Requested";
+}
+QString UserInterfaceSkeletonGeneratorData::SignalData::correspondingSignalHandlerSlotName() const
+{
+    return "handle" + firstLetterToUpper(signalName());
 }

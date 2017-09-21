@@ -33,6 +33,8 @@ private:
         ret.append("/");
         return ret;
     }
+private:
+    void populateDataUsingHardCodedCppXD(UserInterfaceSkeletonGeneratorData &data);
 signals:
     void e(QString msg);
     void o(QString msg);

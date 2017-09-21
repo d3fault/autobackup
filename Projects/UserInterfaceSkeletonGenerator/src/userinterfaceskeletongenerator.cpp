@@ -24,7 +24,7 @@ UserInterfaceSkeletonGenerator::~UserInterfaceSkeletonGenerator()
 void UserInterfaceSkeletonGenerator::displayFrontendBackendConnectStatements(const UserInterfaceSkeletonGeneratorData &data)
 {
     //TODOmb: we could inject this shit directly into the class declaration (input to generateUserInterfaceSkeletonFromClassDeclarationString), but for now it's good enough to just print to screen and tell the user to copy/paste it :). much easier than using libclang xD
-    if(data.Slots.isEmpty() /*&& data.Signals.isEmpty()*/)
+    if(data.Slots.isEmpty() && data.Signals.isEmpty())
         return; //TODOreq: we will have signals at some point too, so we need at least one of one or the other. I should probably perform this sanitization much earlier and yea just yell at the user or silently do nothing but at the very least I shouldn't get this far in the code
 
     QString temp("copy/paste this method into the public area of your business logic class:\n\n");
@@ -41,8 +41,12 @@ void UserInterfaceSkeletonGenerator::displayFrontendBackendConnectStatements(con
     temp.append(TAB + "{\n");
     Q_FOREACH(UserInterfaceSkeletonGeneratorData::SlotData slotData, data.Slots)
     {
-        temp.append(TAB + TAB + "connect(" + frontendVarName + ", &T::" + slotData.correspondingRequestSignalName() + ", " + backendVarName + ", &" + data.BusinessLogiClassName + "::" + slotData.SlotName + ");\n");
+        temp.append(TAB + TAB + "connect(" + frontendVarName + ", &T::" + slotData.correspondingSlotInvokeRequestSignalName() + ", " + backendVarName + ", &" + data.BusinessLogiClassName + "::" + slotData.slotName() + ");\n");
         //temp.append(TAB + TAB + "connect(ui->asQObject(), SIGNAL(" + slotData.correspondingRequestSignalName() + slotData.argTypesNormalizedAndWithParenthesis() + "), this, SLOT(" + slotData.SlotName + slotData.argTypesNormalizedAndWithParenthesis() + "));\n");
+    }
+    Q_FOREACH(UserInterfaceSkeletonGeneratorData::SignalData signalData, data.Signals)
+    {
+        temp.append(TAB + TAB + "connect(" + backendVarName + ", &" + data.BusinessLogiClassName + "::" + signalData.signalName() + ", " + frontendVarName + ", &T::" + signalData.correspondingSignalHandlerSlotName() + ");\n");
     }
     temp.append(TAB + "}\n");
 
@@ -93,14 +97,21 @@ void UserInterfaceSkeletonGenerator::generateAnyAndAllUserInterfaceImplStubs(con
         //^do I "tell" the generator, or do I "tell" the data? fuck you and your short fancy sounding sentences "tell, don't ask". shit don't fuckin apply cunt. mb I should actually read an article explaining it [better] (again) before I talk shit
     }
 }
-void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromClassDeclarationString(const QString &classDeclarationCpp_ForParsing, QList<QString> implStubShortNames)
+//OT'ish (actually kinda on topic): I tend to code ALL of my backend before coding _any_ of my frontend (well that's true for the 'initial target' 0.1 release at least), so that means I won't have to run this ui impl skeleton generator until my api is already stabilized. also, to manually keep this hardcoded method below me in sync with the business class API is ezpz COMPARED TO changing all the ui impls and connect statements every fucking time. but yea shit once I have business class parsing (and ui impl parsing, in order to RE-gen later (tricky tricky but doable <3)), THEN this app will be fuckin sechz
+void UserInterfaceSkeletonGenerator::populateDataUsingHardCodedCppXD(UserInterfaceSkeletonGeneratorData &data)
 {
-    UserInterfaceSkeletonGeneratorData data; //TODOreq: data gets populated, with the help of libclang, from classDeclarationCpp_ForParsing
     data.BusinessLogiClassName = "LibFfmpeg";
 
-    data.createAndAddSlot("bool", "encodeVideo", UserInterfaceSkeletonGeneratorData::ArgsList() << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","input"} << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","output"} << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","fourCC"} ); //TODOoptimization: don't require those huge prefixes. since I'm going to be MODIFYING this code in order to USE the app [initially], it's a huge optimization xD. use a namespace or something (and do using namespace blah; at top of this file)
+    data.createAndAddSlot("void", "encodeVideo", UserInterfaceSkeletonGeneratorData::ArgsList() << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","input"} << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","output"} << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","fourCC"} ); //TODOoptimization: don't require those huge prefixes. since I'm going to be MODIFYING this code in order to USE the app [initially], it's a huge optimization xD. use a namespace or something (and do using namespace blah; at top of this file)
 
-    data.createAndAddSlot("void", "fuck");
+    data.createAndAddSignal("error", UserInterfaceSkeletonGeneratorData::ArgsList() << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","errorMessage"}); //TO DOnvm: there will be an encodeVideoFinished(bool success) signal generated on business? wait not we PARSE the business, not generate it! so nvm actually, if you want an encodeVideoFinished signal, you have to specify it (you have to "check" it to choose it when we are parsing the class decl string [for the first time]
+}
+void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromClassDeclarationString(const QString &classDeclarationCpp_ForParsing, QList<QString> implStubShortNames)
+{
+    UserInterfaceSkeletonGeneratorData data;
+
+    //TODOreq: populateDataUsingLibClang(data, classDeclarationCpp_ForParsing);
+    populateDataUsingHardCodedCppXD(data);
 
     generateUserInterfaceSkeletonFromData(data, implStubShortNames);
 }
