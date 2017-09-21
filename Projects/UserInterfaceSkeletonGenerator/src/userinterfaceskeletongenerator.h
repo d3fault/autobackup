@@ -13,6 +13,14 @@ class UserInterfaceSkeletonGenerator : public QObject
 {
     Q_OBJECT
 public:
+    template<class T>
+    static void establishConnectionsToAndFromBackendAndUi(UserInterfaceSkeletonGenerator *backend, T *ui)
+    {
+        connect(ui, &T::generateUserInterfaceSkeletonFromClassDeclarationStringRequested, backend, &UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromClassDeclarationString);
+        connect(backend, &UserInterfaceSkeletonGenerator::e, ui, &T::handleE);
+        connect(backend, &UserInterfaceSkeletonGenerator::o, ui, &T::handleO);
+        connect(backend, &UserInterfaceSkeletonGenerator::finishedGeneratingUserInterfaceSkeleton, ui, &T::handleFinishedGeneratingUserInterfaceSkeleton);
+    }
     static QString TAB;
 
     explicit UserInterfaceSkeletonGenerator(QObject *parent = 0);
@@ -42,8 +50,6 @@ signals:
 public slots:
     void generateUserInterfaceSkeletonFromClassDeclarationString(const QString &classDeclarationCpp_ForParsing, QList<QString> implStubShortNames = QList<QString>());
     void generateUserInterfaceSkeletonFromData(const UserInterfaceSkeletonGeneratorData &data, QList<QString> implStubShortNames = QList<QString>());
-private slots:
-    void handleDbg(QString msg);
 };
 
 #endif // USERINTERFACESKELETONGENERATOR_H

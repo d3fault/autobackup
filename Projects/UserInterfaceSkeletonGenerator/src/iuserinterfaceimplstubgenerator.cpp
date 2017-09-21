@@ -1,5 +1,11 @@
 #include "iuserinterfaceimplstubgenerator.h"
 
+QString IUserInterfaceImplStubGenerator::headerGuardDefine(const QString &businessLogiClassName) const
+{
+    QString ret(targetImplStubClassName(businessLogiClassName).toUpper());
+    ret.append("_H");
+    return ret;
+}
 void IUserInterfaceImplStubGenerator::generateSignalsAndSlotsHeaderDeclarations(const UserInterfaceSkeletonGeneratorData &data, QTextStream &textStream)
 {
     //gen 'requested' signals to go with business slots
@@ -20,6 +26,11 @@ void IUserInterfaceImplStubGenerator::generateSignalsAndSlotsHeaderDeclarations(
 }
 void IUserInterfaceImplStubGenerator::generate_Q_OBJECT_inherittingClassHeader(const UserInterfaceSkeletonGeneratorData &data, QTextStream &textStream, QString directlyInherittedBaseClass)
 {
+    textStream << "#ifndef " << headerGuardDefine(data.BusinessLogiClassName) << endl;
+    textStream << "#define " << headerGuardDefine(data.BusinessLogiClassName) << endl;
+
+    textStream << endl;
+
     textStream << "#include <" << directlyInherittedBaseClass << ">" << endl;
     //textStream << "#include \"" << data.targetUserInterfaceClassName().toLower() << ".h" << endl;
     textStream << endl;
@@ -37,6 +48,10 @@ void IUserInterfaceImplStubGenerator::generate_Q_OBJECT_inherittingClassHeader(c
     generateSignalsAndSlotsHeaderDeclarations(data, textStream);
 
     textStream << "};" << endl;
+
+    textStream << endl;
+
+    textStream << "#endif // " << headerGuardDefine(data.BusinessLogiClassName) << endl;
 }
 void IUserInterfaceImplStubGenerator::generate_Q_OBJECT_inherittingStandardEmptyConstructorSourceCode(const UserInterfaceSkeletonGeneratorData &data, QTextStream &textStream, const QString &directlyInherittedBaseClass)
 {

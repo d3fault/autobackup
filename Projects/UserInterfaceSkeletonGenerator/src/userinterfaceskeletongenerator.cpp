@@ -5,7 +5,6 @@
 #include <QTemporaryDir>
 #include <QMetaObject>
 #include <QSet>
-#include <QDebug>
 
 #include "cliimplstubgenerator.h"
 #include "widgetimplstubgenerator.h"
@@ -14,10 +13,7 @@ QString UserInterfaceSkeletonGenerator::TAB = "    ";
 
 UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGenerator(QObject *parent)
     : QObject(parent)
-{
-    connect(this, SIGNAL(e(QString)), this, SLOT(handleDbg(QString)));
-    connect(this, SIGNAL(o(QString)), this, SLOT(handleDbg(QString)));
-}
+{ }
 UserInterfaceSkeletonGenerator::~UserInterfaceSkeletonGenerator()
 {
     qDeleteAll(ImplStubGenerators);
@@ -137,8 +133,4 @@ void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromData(const
 
     emit o("the output you desire is here: " + m_OutputDirWithTrailingSlash);
     emit finishedGeneratingUserInterfaceSkeleton(true);
-}
-void UserInterfaceSkeletonGenerator::handleDbg(QString msg)
-{
-    qDebug() << msg; //TODOreq: proper
 }

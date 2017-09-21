@@ -59,7 +59,7 @@ void CliImplStubGenerator::generateMainCppFile(const UserInterfaceSkeletonGenera
     textStream << "#include <QCoreApplication>"
 }
 #endif
-QString CliImplStubGenerator::implStubClassSuffix()
+QString CliImplStubGenerator::implStubClassSuffix() const
 {
     return "Cli";
 }

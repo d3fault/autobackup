@@ -15,11 +15,12 @@ public:
 
     virtual void generateImplStubFiles(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)=0;
 protected:
-    virtual QString implStubClassSuffix()=0;
-    QString targetImplStubClassName(const QString &businessLogicClassName)
+    virtual QString implStubClassSuffix() const =0;
+    QString targetImplStubClassName(const QString &businessLogicClassName) const
     {
         return businessLogicClassName + implStubClassSuffix();
     }
+    QString headerGuardDefine(const QString &businessLogiClassName) const;
     void generateSignalsAndSlotsHeaderDeclarations(const UserInterfaceSkeletonGeneratorData &data, QTextStream &textStream);
     void generate_Q_OBJECT_inherittingClassHeader(const UserInterfaceSkeletonGeneratorData &data, QTextStream &textStream, QString directlyInherittedBaseClass = "QObject");
 

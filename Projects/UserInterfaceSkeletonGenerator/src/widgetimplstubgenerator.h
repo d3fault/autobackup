@@ -11,7 +11,7 @@ private:
     void generateHeaderFile(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash);
     void generateSourceFile(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash);
 protected:
-    QString implStubClassSuffix() override;
+    QString implStubClassSuffix() const override;
 };
 
 #endif // WIDGETIMPLSTUBGENERATOR_H

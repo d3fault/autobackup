@@ -12,7 +12,7 @@ private:
     void generateSourceFile(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash);
     //void generateMainCppFile(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash);
 protected:
-    QString implStubClassSuffix() override;
+    QString implStubClassSuffix() const override;
 };
 
 #endif // CLIIMPLSTUBGENERATOR_H

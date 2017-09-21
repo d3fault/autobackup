@@ -40,7 +40,7 @@ void WidgetImplStubGenerator::generateSourceFile(const UserInterfaceSkeletonGene
 
     generateSignalHandlerSlotsSourceCode(data, textStream);
 }
-QString WidgetImplStubGenerator::implStubClassSuffix()
+QString WidgetImplStubGenerator::implStubClassSuffix() const
 {
     return "Widget";
 }
