@@ -19,7 +19,7 @@ public:
     ~UserInterfaceSkeletonGenerator();
 private:
     void displayFrontendBackendConnectStatements(const UserInterfaceSkeletonGeneratorData &data);
-    void generatePureVirtualUserInterfaceHeaderFile(const UserInterfaceSkeletonGeneratorData &data);
+    //void generatePureVirtualUserInterfaceHeaderFile(const UserInterfaceSkeletonGeneratorData &data);
     void generateUserInterfaceImplStubsMaybe(const UserInterfaceSkeletonGeneratorData &data, QList<QString> implStubShortNames);
     void generateAnyAndAllUserInterfaceImplStubs(const UserInterfaceSkeletonGeneratorData &data);
 

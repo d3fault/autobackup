@@ -10,6 +10,7 @@ void UserInterfaceSkeletonGeneratorData::createAndAddSlot(QString slotReturnType
     slotData.SlotArgs = slotArgs;
     Slots.append(slotData);
 }
+#if 0 //fuck virtual inheritance interfaces in this case
 void UserInterfaceSkeletonGeneratorData::generatePureVirtualUserInterfaceHeaderFile(QTextStream &textStream) const
 {
     textStream << "#include <QString>" << endl << endl; //TODOreq: auto-include based on arg types and slot return types... ffffff....
@@ -41,6 +42,7 @@ QString UserInterfaceSkeletonGeneratorData::targetUserInterfaceClassName() const
 {
     return QString("I" + BusinessLogiClassName + "UI"); //"UserInterface" suffix too verbose, esp since "I" is at beginning as well xDDDDD. even though I know the 'I' at beginning stands for interface, I tend to read it as "I am a Business Logic Class Name UI", the 'I' taking on a different meaning than "Interface" there (and it helps with udnerstandability imo)
 }
+#endif
 QString UserInterfaceSkeletonGeneratorData::SlotData::argsWithoutParenthesis() const
 {
     QString ret;

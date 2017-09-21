@@ -28,9 +28,9 @@ struct UserInterfaceSkeletonGeneratorData
 
     void createAndAddSlot(QString slotReturnTypeThatGetsConvertedToTheFinishedSignalsSingleArgType/*TODOreq*/ /*ex: "void"*/, QString slotName /*ex: "encodeVideo*/, ArgsList slotArgs = ArgsList());
 
-    void generatePureVirtualUserInterfaceHeaderFile(QTextStream &textStream) const;
+    //void generatePureVirtualUserInterfaceHeaderFile(QTextStream &textStream) const;
 
-    QString targetUserInterfaceClassName() const;
+    //QString targetUserInterfaceClassName() const;
 
     QString BusinessLogiClassName;
     QList<SlotData> Slots;
