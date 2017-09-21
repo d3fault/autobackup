@@ -18,10 +18,13 @@ HEADERS += \
     userinterfaceskeletongenerator.h \
     iuserinterfaceimplstubgenerator.h \
     cliimplstubgenerator.h \
-    userinterfaceskeletongeneratordata.h
+    userinterfaceskeletongeneratordata.h \
+    widgetimplstubgenerator.h
 
 SOURCES += main.cpp \
     userinterfaceskeletongeneratorcli.cpp \
     userinterfaceskeletongenerator.cpp \
     cliimplstubgenerator.cpp \
-    userinterfaceskeletongeneratordata.cpp
+    userinterfaceskeletongeneratordata.cpp \
+    iuserinterfaceimplstubgenerator.cpp \
+    widgetimplstubgenerator.cpp

@@ -8,6 +8,7 @@
 #include <QDebug>
 
 #include "cliimplstubgenerator.h"
+#include "widgetimplstubgenerator.h"
 
 QString UserInterfaceSkeletonGenerator::TAB = "    ";
 
@@ -78,9 +79,9 @@ void UserInterfaceSkeletonGenerator::generateUserInterfaceImplStubsMaybe(const U
         {
             ImplStubGenerators.append(new CliImplStubGenerator());
         }
-        else if(stubType == "gui")
+        else if(stubType == "widget")
         {
-            //TODOreq: //ImplStubGenerators.append(new GuiImplStubGenerator());
+            ImplStubGenerators.append(new WidgetImplStubGenerator());
         }
         //etc for web and shiz
     }
