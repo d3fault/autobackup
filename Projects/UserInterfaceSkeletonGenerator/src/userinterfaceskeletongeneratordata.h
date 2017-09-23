@@ -9,6 +9,8 @@ struct UserInterfaceSkeletonGeneratorData
     {
         QString ArgType;
         QString ArgName;
+
+        //nvm: I was thinking about adding this, but since it would spill over to BusinessClass's slots, I won't. I only want it for "requested signals" emitting, but Qt5 style connects HATE slot overloading, so it's best avoided: QString OptionalDefaultValueAkaInit;
     };
     typedef QList<SingleArg> ArgsList;
 

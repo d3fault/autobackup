@@ -15,7 +15,7 @@ private:
     QTextStream m_StdErr;
     QTextStream m_StdOut;
 signals:
-    void generateUserInterfaceSkeletonFromClassDeclarationStringRequested(const QString & classDeclarationCpp_ForParsing, QList<QString> implStubShortNames);
+    void generateUserInterfaceSkeletonFromClassDeclarationStringRequested(const QString &classDeclarationCpp_ForParsing, QList<QString> implStubShortNames/* = QList<QString>()*/);
 
     void exitRequested(int posixExitCode);
 public slots:

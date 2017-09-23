@@ -1,0 +1,19 @@
+title.
+
+I can inherit MouseOrMotionOrMySexyFace code, I think at the lib level it was called a "frame emitter" ? if not, that's a good lib level name! or "video frame emitter" even, w/e.
+
+
+oh I guess the title doesn't describe the HOW very well.
+for the "beautiful world" view, the camera is on my forehead and facing forwards (hat or other mounting strategy).
+
+we toggle to that camera view on demand.
+I was thinking initially motion detection, or even "weight on seat" detection, or whatever because honestly it's not that hard to hvae it fully automtated.
+
+BUT I love the fucking idea of a "stand up" button, *ESPECIALLY* since I'll be in the "mouse" (or I guess potentially keyboard (screen-motion) if there's a cli/whatev) video "frame emitting" mode right as I click it and it will give me sexual pleasure when I click it to know that you see what I see (well I see more aspect ratio (?) xD, but, that's only until I mount _more_ than this 1 camera and the aspect ratios (?) add together and eventually surpass my peripheral(lolsp?) vision's "aspect ratio". I guess "width" is a better word. s/aspect-ratio/width).
+
+
+I know I actually came up with this idea a good while ago (the idea to switch over to head cam when leaving a terminal), but I never realized how EASY it would be if I just bolted it onto MouseOrMotionOrMySexyFaceViewMaker (lol view maker. I remember why I did that, but it would have been trivial (BUT TIME CONSUMING SO I DID IT _RIGHT_!) to have called it a VideoMaker like this one will be, but to then display that video in a view in realtime.
+
+FACT OF PROGRAMMING: presenting a video stream to a "view" is EASY AS FUCK when you're "reading" the video stream in "realtime" and so you don't have to code ANY timing mechanism whatsoever (which is not the case for your typical video player) because you just fucking show the frames as fast as possible; as fast as you receive them; which is, or is pretty damn close to but otherwise more or less in sync with, realtime. you're "offloading" the timing responsibility to the camera's chip, and since you aren't saving the video, only presenting it to view, you never need to determine (and then save to file or whatever) any times (timestamps is what they call em) whatsoever.
+
+^then again just fuckin dumping the video frames into ffmpeg and having it write to file works too and ffmpeg takes care of the timing shit <3.

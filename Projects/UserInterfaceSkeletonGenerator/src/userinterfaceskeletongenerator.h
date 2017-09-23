@@ -48,8 +48,8 @@ signals:
     void o(QString msg);
     void finishedGeneratingUserInterfaceSkeleton(bool success);
 public slots:
-    void generateUserInterfaceSkeletonFromClassDeclarationString(const QString &classDeclarationCpp_ForParsing, QList<QString> implStubShortNames = QList<QString>());
-    void generateUserInterfaceSkeletonFromData(const UserInterfaceSkeletonGeneratorData &data, QList<QString> implStubShortNames = QList<QString>());
+    void generateUserInterfaceSkeletonFromClassDeclarationString(const QString &classDeclarationCpp_ForParsing, QList<QString> implStubShortNames);
+    void generateUserInterfaceSkeletonFromData(const UserInterfaceSkeletonGeneratorData &data, QList<QString> implStubShortNames);
 };
 
 #endif // USERINTERFACESKELETONGENERATOR_H

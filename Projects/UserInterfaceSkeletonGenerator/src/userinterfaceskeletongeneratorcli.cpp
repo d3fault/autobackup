@@ -8,7 +8,7 @@ UserInterfaceSkeletonGeneratorCli::UserInterfaceSkeletonGeneratorCli(QObject *pa
     , m_StdErr(stderr)
     , m_StdOut(stdout)
 {
-    connect(this, &UserInterfaceSkeletonGeneratorCli::exitRequested, qApp, &QCoreApplication::exit, Qt::QueuedConnection); //TODOmb: generate this exitRequested shiz into our stubs that THIS APP generates
+    connect(this, &UserInterfaceSkeletonGeneratorCli::exitRequested, qApp, &QCoreApplication::exit, Qt::QueuedConnection); //TODOmb: generate this exitRequested shiz into our stubs that THIS APP generates. I think it would only be for th Cli stub impl, since Widgets uses "close() -> a.exec() returns -> done", but Cli has no such facilities
 }
 void UserInterfaceSkeletonGeneratorCli::main()
 {
