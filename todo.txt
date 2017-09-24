@@ -1,9 +1,10 @@
-at your leisure (semi-ordered (do what you feel, electric eel)):
-
 re-launch (this is ordered by dependency!):
-0) StupidKeyValueContentTracker should be coded, and then WHEN-NEEDED by that app (when I hit compile and my pseudo code fails), TimeAndData_Timeline should be put into place, since it's trivial as FUCK
+0) StupidKeyValueContentTracker should be coded, and then WHEN NEEDED by that app (when I hit compile and my pseudo code fails), TimeAndData_Timeline should be put into place, since it's trivial as FUCK
 1) SocialNetworkTimeline (A lib/QLocalServer! no ui YET!) should be coded, using StupidKeyValueContentTracker. see StupidKeyValueContentTracker/design/sdflksdjfklsdjflkdjsfkljsdfoiuewrlkjsdofusldkfjdsifukl.txt
-2) D3faultNetLiveVideoFeed, which uses SocialNetworkTimeline as an "output" and [transparent] backup solution.
+2) D3faultNetLiveVideoFeed, which uses SocialNetworkTimeline as an "output" and [transparent] backup solution
+
+UNORDERED DEP OF ABOVE RE-LAUNCH: wasdf. I'd be happy if it was NOT integrated with any of the above timeline shiz and we only "recorded" the raw video/audio and didn't [YET] properly serialize the wasdf shit to timeline. I only need the "VanillaLeftHand_RightIndexFingerIsPitchRocker" WasdfModule to be functional, and I think I'm actually pretty close to that because I did some research when I had the nets and I think I found solution to pitch rocker problem: use effects not Voicer).
+
 
 
 minddumper: last modified timestamp in filename; remove HARD dep on `touch`, but still use it on *nix

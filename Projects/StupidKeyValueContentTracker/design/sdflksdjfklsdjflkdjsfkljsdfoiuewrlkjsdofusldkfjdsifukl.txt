@@ -7,4 +7,7 @@ One might also call it a SocialNetworkTimeline[Viewer? nah not Viewer because we
 SocialNetworkTimeline is the internal/class name, but I think just "d3fault" should be it's actual name.
 
 
-I briefly considered a web ui just now, but decided FUCK THAT. that can come later, code it PROPER first.
+I briefly considered a web ui just now, but decided FUCK THAT. that can come later, code it PROPER first (lib first, widgets ui later, web way later since fucky).
+
+
+If SocialNetworkTimeline used BitTorrent (libtorrent-rasterbar) to synchronize all of it's nodes on the same network, that would be neat/efficient. Maybe spend an evening prototyping it, but certainly don't fixate on it!!!! Use whatever WORKS, regardless of efficiency [for now]. Maybe try to design in a way so that torrent can be switched to seemlessly LATER.
