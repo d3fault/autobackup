@@ -1,0 +1,10 @@
+2x UserPresentedTimeline apps (not to be confused with the lower level "TimeAndData_Timeline") on 2 different machines, but on the same network, should detect each other and synchronize. Care should be taken to not flood the "internet" with OVER 9000 copies, but when used with care (such as on LAN) it is an excellent backup solution. ZeroConf type shit. ez.
+
+The "UserPresentedTimeline" app would be like a TimelineViewer but also have ui to add content to the timeline. Additionally, you can MODIFY timeline items, and this is why the UserPresentedTimeline communicates with StupidKeyValueContentTracker and not TimeAndData_Timeline directly (it does talk to TimeAndData_Timeline "indirectly", through StupidKeyValueContentTracker).
+
+One might also call it a SocialNetworkTimeline[Viewer? nah not Viewer because we can add/etc!] (coded proper.. and shit managed proper too you fucking sociopath mark fuckerburger you), but I think that's an incomplete description of what it will be. Ultimately, a fuckin dev env on crack. An operating system independent operating system. The "server" app for when D3faultNetLiveVideoFeed transforms into a "plugin", Etc)
+
+SocialNetworkTimeline is the internal/class name, but I think just "d3fault" should be it's actual name.
+
+
+I briefly considered a web ui just now, but decided FUCK THAT. that can come later, code it PROPER first.

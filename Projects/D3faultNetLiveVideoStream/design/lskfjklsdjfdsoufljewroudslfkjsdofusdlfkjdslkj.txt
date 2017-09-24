@@ -1,0 +1,7 @@
+how the fuck does TheBeautifulWorldOrMouseOrMotionOrMySexyFace_VideoMaker communicate with D3faultNetLiveVideoStream? or is D3faultNetLiveVideoStream just an umbrella term for a collection of interacting projects? I can code it either way. Decide. I should do both. decoupled designs, but D3faultNetLiveVideoStream pulling them all in together (integrating). So actually D3faultNetLiveVideoStream should be the "first main app that I create/use to re-launch" (as described in initial idea design doc), not TheBeautifulWorldOrMouseOrMotionOrMySexyFace_VideoMaker. TheBeautifulWorldOrMouseOrMotionOrMySexyFace_VideoMaker is just a lib. could put a ui on it, but no need atm so fuck it :). I will at least not be stupid enough to make it a ViewMaker this time xDDD.
+
+D3faultNetLiveVideoStream definitely sounds more succinct and I would feel comfortable double clicking it every day (unless I am live 24/7, which idk tbh. dreams aren't exactly coming out of my mouth yet :-/).
+
+
+
+fuck man fuck, backup solution integration. fuck. my head hurts all the sudden and I feel depressed.
