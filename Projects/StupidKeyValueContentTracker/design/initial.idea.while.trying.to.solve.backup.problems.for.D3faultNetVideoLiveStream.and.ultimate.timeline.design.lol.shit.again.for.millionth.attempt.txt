@@ -2,15 +2,15 @@ I keep trying to think up some master/perfect timeline json doc "design" while S
 
 {
 	time : 000000000000 /*unixtime (preferably atomic time tho) in ms. space is relatively cheap and compression exists, we can afford 64-bit timestamps*/
-	data : b64encodedData
+	data : Data
 }
 
 
 that's IT. or MAYBE mime type? is that asking too much?
 NO DO NOT MAKE MIME TYPE _NECESSARY_. it can be there, but optionally. it is a waste of space when the mime type is application/octet-stream (which means "undetermined"). code using a hypothetical "mimeType" key could trivially use "application/octet-stream" when the "mimeType" key/value json pair does not exist.
 
-time and data are trivial and, like NAND/NOR gates, practically ANY other "gate" (class? lib? what the fuck ever word you want to call it it's all the same) can be _later_ made using just time/date.
+time and data are trivial and, like NAND/NOR gates, practically ANY other "gate" (class? lib? what the fuck ever word you want to call it it's all the same) can be _later_ made using just time/data.
 
-an abstraction of a "single key/value dataset and mutations applied to that dataset" should be made EARLY, so that NO software functions at the time/data _only_  level of abstraction. All have a history, but they might be the oldest revision in that list of revisions (or maybe just an empty parent list? depends how implemented).
+an abstraction of a "single key/value dataset and mutations applied to that dataset" should be made EARLY, so that NO software functions at the time/data _only_ level of abstraction. All keys have knowledge of their "history", but they might be the oldest revision in that list of revisions (or maybe just an empty parent list? depends how implemented).
 
-TimeAndData_Timeline <--> StupidKeyValueContentTracker (just like git is the "stupid content tracker") <--> Layer 7 Apps. StupidKeyValueContentTracker could have a ui, but doesn't need to [yet]. Most interaction with StupidKeyValueContentTracker will be THROUGH "Layer 7 Apps", but some "admin" tool along the lines of phpmyadmin or whatever it's called, to be able to "edit" (revise!) a raw key/value would definitely be of value [eventually].
+TimeAndData_Timeline <--> StupidKeyValueContentTracker (just like git is the "stupid content tracker") <--> Layer 7 Apps
