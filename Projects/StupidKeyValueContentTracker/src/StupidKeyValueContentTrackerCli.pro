@@ -13,7 +13,10 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-HEADERS += stupidkeyvaluecontenttracker.h
+HEADERS += stupidkeyvaluecontenttracker.h \
+    ikeyvaluestoremutation.h \
+    keyvaluestoremutation_add.h
 
 SOURCES += main.cpp \
-    stupidkeyvaluecontenttracker.cpp
+    stupidkeyvaluecontenttracker.cpp \
+    keyvaluestoremutation_add.cpp
