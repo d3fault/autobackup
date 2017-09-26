@@ -1,8 +1,9 @@
 #include "timeanddata_timeline.h"
 
+#include <QDateTime>
+#include <QJsonDocument>
 #include <QCoreApplication> //for QSettings global config
 #include <QSettings> //TODOmb: migrate away from the simplicity of a QSettings-based application database?
-#include <QDateTime>
 #include <QCryptographicHash>
 
 //TODOreq: there is no delete, only append
@@ -28,11 +29,15 @@ void TimeAndData_Timeline::appendJsonObjectToTimeline(const QJsonObject &data)
     //I've thought more on this and decided not to do year/month/day/msecElapsedSinceStartOfDay.json, yet
     //nor will I use a cryptographic hash, yet
     //I'm going to do something quick and simple and PREDICT that I will refactor it when I implement readKey and/or readTimeline(what to use as input for timeline? (this will "come to me" when I'm coding readKey probably))
-    QSettings settings;
 
-    QJsonDocument jsonDoc(data);
+    QJsonObject timeAndDataJsonObject;
+    timeAndDataJsonObject.insert(TimeAndData_Timeline_JSONKEY_TIME, currentDateTimeUtc.toMSecsSinceEpoch()); //fuck human readable time formats, because without a timezone (as is often the case), they are ambiguious (yes I know Qt provides one with timezone, but if we parse human readable then we INVITE people to change the date format as input and it will "work on their machine" without the timezone -_-
+    timeAndDataJsonObject.insert(TimeAndData_Timeline_JSONKEY_DATA, data);
+    QJsonDocument jsonDoc(timeAndDataJsonObject);
     QByteArray jsonByteArray = jsonDoc.toJson(QJsonDocument::Compact/*TODOreq: Indented if ever moved out of QSettings*/);
     QByteArray hash = QCryptographicHash::hash(jsonByteArray, QCryptographicHash::Sha3_256);
     QString hashOfTimeAndData(hash.toHex());
-    settings.setValue(hashOfTimeAndData, data); //fukken ayy, <3 QVariant + QJsonObject integration <3 <3 Qt
+    QSettings settings;
+    settings.setValue(hashOfTimeAndData, data); //fukken ayy, <3 QVariant + QJsonObject integration <3 <3 Qt. we wouldn't have had to call toJson ever if we didn't have to gen that cryptographic hash for use as key (which might change in the future)
+    emit finishedAppendingJsonObjectToTimeline(true);
 }

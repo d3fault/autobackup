@@ -7,9 +7,14 @@
 #include <QSharedPointer>
 #include <QJsonObject>
 
+#define StupidKeyValueContentTracker_JSONKEY_COMMITMESSAGE "commitMessage"
+#define StupidKeyValueContentTracker_JSONKEY_BULKMUTATIONS "mutations"
+
 class IKeyValueStoreMutation;
 
 typedef QSharedPointer<IKeyValueStoreMutation> StupidKeyValueContentTracker_StagedMutationsValueType;
+
+class TimeAndData_Timeline;
 
 class StupidKeyValueContentTracker : public QObject
 {
@@ -17,10 +22,11 @@ class StupidKeyValueContentTracker : public QObject
 public:
     explicit StupidKeyValueContentTracker(QObject *parent = 0);
 private:
-    bool commitStagedKeyValueStoreMutations(const QString &commitMessage);
+    void commitStagedKeyValueStoreMutations_ThenEmitCommitFinished(const QString &commitMessage);
     void populateCommitDataUsingStagedKeyValueStoreMutations(QJsonObject &bulkMutations);
-    bool commitActual(const QJsonObject &commitData, const QString &commitMessage);
+    void commitActual_ThenEmitCommitFinished(const QJsonObject &commitData, const QString &commitMessage);
 
+    TimeAndData_Timeline *m_Timeline;
     QHash<QString /*key*/, StupidKeyValueContentTracker_StagedMutationsValueType /*value*/> m_StagedKeyValueStoreMutation; //TODOreq: Implicit Sharing instead of QSharedPointer? implicit sharing is similar but safer/better (takes longer to set up tho)!!
 signals:
     void e(const QString &msg);
@@ -28,11 +34,16 @@ signals:
 
     void addFinished(bool success);
     void commitFinished(bool success);
-    void readKeyFinished(bool success, const QString &QString, const QString &revision, const QString &data);
+    void readKeyFinished(bool success, const QString &key, const QString &revision, const QString &data);
+
+    //PRIVATE SIGNALS:
+    void appendJsonObjectToTimelineRequested(const QJsonObject &commitData);
 public slots:
     void add(const QString &key, const QString &data);
     void commit(const QString &commitMessage);
     void readKey(const QString &key, const QString &revision);
+private slots:
+    void handleFinishedAppendingJsonObjectToTimeline_aka_emitCommitFinished(bool success);
 };
 
 #endif // STUPIDKEYVALUECONTENTTRACKER_H

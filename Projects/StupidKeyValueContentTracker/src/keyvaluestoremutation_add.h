@@ -6,8 +6,6 @@
 class KeyValueStoreMutation_Add : public IKeyValueStoreMutation
 {
 public:
-    static const QString mutationType;
-
     KeyValueStoreMutation_Add(const QString &dataToAdd);
     void appendYourselfToBulkMutationsJsonObject(const QString &key, QJsonObject &bulkMutations) override;
 protected:

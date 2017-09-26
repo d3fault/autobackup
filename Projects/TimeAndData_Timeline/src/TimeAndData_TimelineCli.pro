@@ -13,8 +13,6 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-SOURCES += main.cpp \
-    timeanddata_timeline.cpp
+SOURCES += main.cpp
 
-HEADERS += \
-    timeanddata_timeline.h
+include(timeanddata_timeline.pri)

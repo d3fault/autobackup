@@ -20,3 +20,5 @@ HEADERS += stupidkeyvaluecontenttracker.h \
 SOURCES += main.cpp \
     stupidkeyvaluecontenttracker.cpp \
     keyvaluestoremutation_add.cpp
+
+include(../../TimeAndData_Timeline/src/timeanddata_timeline.pri)
