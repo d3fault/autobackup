@@ -1,0 +1,1 @@
+the easiest way to [de]serialize a cpp object is to save (to file) the cpp source code "populating" that object. your saving it to file "serializes" it, and your later copy/pasting it back into place "deserializes" it. an example is in Projects/StupidKeyValueContentTracker/design/UserInterfaceSkeletonGenerator::populateDataUsingHardCodedCppXD.cpp

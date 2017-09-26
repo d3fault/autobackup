@@ -20,6 +20,19 @@ class StupidKeyValueContentTracker : public QObject
 {
     Q_OBJECT
 public:
+    template<class T>
+    static void establishConnectionsToAndFromBackendAndUi(StupidKeyValueContentTracker *backend, T *ui)
+    {
+        connect(ui, &T::addRequested, backend, &StupidKeyValueContentTracker::add);
+        connect(ui, &T::commitRequested, backend, &StupidKeyValueContentTracker::commit);
+        connect(ui, &T::readKeyRequested, backend, &StupidKeyValueContentTracker::readKey);
+        connect(backend, &StupidKeyValueContentTracker::e, ui, &T::handleE);
+        connect(backend, &StupidKeyValueContentTracker::o, ui, &T::handleO);
+        connect(backend, &StupidKeyValueContentTracker::addFinished, ui, &T::handleAddFinished);
+        connect(backend, &StupidKeyValueContentTracker::commitFinished, ui, &T::handleCommitFinished);
+        connect(backend, &StupidKeyValueContentTracker::readKeyFinished, ui, &T::handleReadKeyFinished);
+    }
+
     explicit StupidKeyValueContentTracker(QObject *parent = 0);
 private:
     void commitStagedKeyValueStoreMutations_ThenEmitCommitFinished(const QString &commitMessage);

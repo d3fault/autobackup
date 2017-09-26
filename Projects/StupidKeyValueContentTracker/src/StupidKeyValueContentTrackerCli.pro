@@ -15,10 +15,12 @@ TEMPLATE = app
 
 HEADERS += stupidkeyvaluecontenttracker.h \
     ikeyvaluestoremutation.h \
-    keyvaluestoremutation_add.h
+    keyvaluestoremutation_add.h \
+    stupidkeyvaluecontenttrackercli.h
 
 SOURCES += main.cpp \
     stupidkeyvaluecontenttracker.cpp \
-    keyvaluestoremutation_add.cpp
+    keyvaluestoremutation_add.cpp \
+    stupidkeyvaluecontenttrackercli.cpp
 
 include(../../TimeAndData_Timeline/src/timeanddata_timeline.pri)
