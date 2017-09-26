@@ -11,7 +11,6 @@ int main(int argc, char *argv[])
     StupidKeyValueContentTrackerCli cli;
     StupidKeyValueContentTracker stupidKeyValueContentTracker;
     StupidKeyValueContentTracker::establishConnectionsToAndFromBackendAndUi<StupidKeyValueContentTrackerCli>(&stupidKeyValueContentTracker, &cli);
-
     cli.main();
 
     return a.exec();

@@ -38,6 +38,6 @@ void TimeAndData_Timeline::appendJsonObjectToTimeline(const QJsonObject &data)
     QByteArray hash = QCryptographicHash::hash(jsonByteArray, QCryptographicHash::Sha3_256);
     QString hashOfTimeAndData(hash.toHex());
     QSettings settings;
-    settings.setValue(hashOfTimeAndData, data); //fukken ayy, <3 QVariant + QJsonObject integration <3 <3 Qt. we wouldn't have had to call toJson ever if we didn't have to gen that cryptographic hash for use as key (which might change in the future)
+    settings.setValue(hashOfTimeAndData, QString(jsonByteArray) /*nope (works but FUGLY/binary): data.toVariantMap()*/);
     emit finishedAppendingJsonObjectToTimeline(true);
 }

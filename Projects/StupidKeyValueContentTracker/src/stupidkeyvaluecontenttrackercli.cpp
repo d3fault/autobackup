@@ -4,8 +4,10 @@
 
 StupidKeyValueContentTrackerCli::StupidKeyValueContentTrackerCli(QObject *parent)
     : QObject(parent)
+    , m_StdErr(stderr)
+    , m_StdOut(stdout)
 {
-    connect(this, &StupidKeyValueContentTrackerCli::exitRequested, qApp, &QCoreApplication::exit);
+    connect(this, &StupidKeyValueContentTrackerCli::exitRequested, qApp, &QCoreApplication::exit, Qt::QueuedConnection);
 }
 void StupidKeyValueContentTrackerCli::main()
 {
@@ -25,18 +27,25 @@ void StupidKeyValueContentTrackerCli::handleAddFinished(bool success)
     if(success)
     {
         handleO("add finished");
+        emit commitRequested("testCommitMessage0");
     }
     else
     {
         handleE("add failed");
     }
-
-    emit exitRequested(success ? 0 : 1);
 }
 void StupidKeyValueContentTrackerCli::handleCommitFinished(bool success)
 {
-    //TODOstub
-    qWarning("stub not implemented: StupidKeyValueContentTrackerCli::handleCommitFinished(bool success)");
+    if(success)
+    {
+        handleO("commit finished");
+    }
+    else
+    {
+        handleE("commit failed");
+    }
+
+    emit exitRequested(success ? 0 : 1);
 }
 void StupidKeyValueContentTrackerCli::handleReadKeyFinished(bool success, QString key, QString revision, QString data)
 {
