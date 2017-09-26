@@ -16,7 +16,8 @@ TEMPLATE = app
 HEADERS += stupidkeyvaluecontenttracker.h \
     ikeyvaluestoremutation.h \
     keyvaluestoremutation_add.h \
-    stupidkeyvaluecontenttrackercli.h
+    stupidkeyvaluecontenttrackercli.h \
+    stupidkeyvaluecontenttrackertypes.h
 
 SOURCES += main.cpp \
     stupidkeyvaluecontenttracker.cpp \

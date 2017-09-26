@@ -3,16 +3,12 @@
 
 #include <QObject>
 
-#include <QHash>
-#include <QSharedPointer>
 #include <QJsonObject>
+
+#include "stupidkeyvaluecontenttrackertypes.h"
 
 #define StupidKeyValueContentTracker_JSONKEY_COMMITMESSAGE "commitMessage"
 #define StupidKeyValueContentTracker_JSONKEY_BULKMUTATIONS "mutations"
-
-class IKeyValueStoreMutation;
-
-typedef QSharedPointer<IKeyValueStoreMutation> StupidKeyValueContentTracker_StagedMutationsValueType;
 
 class TimeAndData_Timeline;
 
@@ -38,9 +34,11 @@ private:
     void commitStagedKeyValueStoreMutations_ThenEmitCommitFinished(const QString &commitMessage);
     void populateCommitDataUsingStagedKeyValueStoreMutations(QJsonObject &bulkMutations);
     void commitActual_ThenEmitCommitFinished(const QJsonObject &commitData, const QString &commitMessage);
+    void applyStagedMutationsToCurrentData();
 
     TimeAndData_Timeline *m_Timeline;
-    QHash<QString /*key*/, StupidKeyValueContentTracker_StagedMutationsValueType /*value*/> m_StagedKeyValueStoreMutation; //TODOreq: Implicit Sharing instead of QSharedPointer? implicit sharing is similar but safer/better (takes longer to set up tho)!!
+    StagedMutationsType m_StagedKeyValueStoreMutation; //TODOreq: Implicit Sharing instead of QSharedPointer? implicit sharing is similar but safer/better (takes longer to set up tho)!!
+    CurrentDataType m_CurrentData;
 signals:
     void e(const QString &msg);
     void o(const QString &msg);

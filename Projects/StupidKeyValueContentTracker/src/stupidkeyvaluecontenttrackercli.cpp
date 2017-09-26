@@ -26,7 +26,7 @@ void StupidKeyValueContentTrackerCli::handleAddFinished(bool success)
 {
     if(success)
     {
-        handleO("add finished");
+        handleO("add finished successfully");
         emit commitRequested("testCommitMessage0");
     }
     else
@@ -38,17 +38,26 @@ void StupidKeyValueContentTrackerCli::handleCommitFinished(bool success)
 {
     if(success)
     {
-        handleO("commit finished");
+        handleO("commit finished successfully");
+        QString revision;
+        emit readKeyRequested("testKey0", revision);
     }
     else
     {
         handleE("commit failed");
     }
-
-    emit exitRequested(success ? 0 : 1);
 }
 void StupidKeyValueContentTrackerCli::handleReadKeyFinished(bool success, QString key, QString revision, QString data)
 {
-    //TODOstub
-    qWarning("stub not implemented: StupidKeyValueContentTrackerCli::handleReadKeyFinished(bool success, QString key, QString revision, QString data)");
+    if(success)
+    {
+        handleO("readKeyFinished finished successfully");
+        handleO(data);
+    }
+    else
+    {
+        handleE("readKeyFinished failed");
+    }
+
+    emit exitRequested(success ? 0 : 1);
 }

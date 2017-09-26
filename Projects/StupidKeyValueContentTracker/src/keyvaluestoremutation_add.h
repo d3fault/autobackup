@@ -7,7 +7,8 @@ class KeyValueStoreMutation_Add : public IKeyValueStoreMutation
 {
 public:
     KeyValueStoreMutation_Add(const QString &dataToAdd);
-    void appendYourselfToBulkMutationsJsonObject(const QString &key, QJsonObject &bulkMutations) override;
+    void appendYourselfToBulkMutationsJsonObject(const QString &key, QJsonObject &bulkMutations) const override;
+    void mutateCurrentStupidKeyValueContent(const QString &key, CurrentDataType *currentStupidKeyValueContent) const override;
 protected:
     QString mutationType() const override;
 private:

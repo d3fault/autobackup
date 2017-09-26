@@ -1,7 +1,6 @@
 #include "stupidkeyvaluecontenttracker.h"
 
 #include <QDateTime>
-#include <QHashIterator>
 
 #include "keyvaluestoremutation_add.h"
 #include "timeanddata_timeline.h"
@@ -25,10 +24,8 @@ void StupidKeyValueContentTracker::commitStagedKeyValueStoreMutations_ThenEmitCo
 }
 void StupidKeyValueContentTracker::populateCommitDataUsingStagedKeyValueStoreMutations(QJsonObject &bulkMutations)
 {
-    QHashIterator<QString, StupidKeyValueContentTracker_StagedMutationsValueType> it(m_StagedKeyValueStoreMutation);
-    while(it.hasNext())
+    for(StagedMutationsType::const_iterator it = m_StagedKeyValueStoreMutation.constBegin(); it != m_StagedKeyValueStoreMutation.constEnd(); ++it)
     {
-        it.next();
         IKeyValueStoreMutation *mutation = it.value().data();
         mutation->appendYourselfToBulkMutationsJsonObject(it.key(), bulkMutations);
     }
@@ -45,6 +42,14 @@ void StupidKeyValueContentTracker::commitActual_ThenEmitCommitFinished(const QJs
     //^maybe a signal appendToTimelineRequested? sameshit but yea. but the way we got here though was a synchronous/error-checking private call, so maybe NOT using a signal is best? BUT tbh async is almost always better, so even though it'd be a small refactor async is def doable. ima actually CODE m_Timeline before I decide...
 
     emit appendJsonObjectToTimelineRequested(commitDataActual);
+}
+void StupidKeyValueContentTracker::applyStagedMutationsToCurrentData()
+{
+    for(StagedMutationsType::const_iterator it = m_StagedKeyValueStoreMutation.constBegin(); it != m_StagedKeyValueStoreMutation.constEnd(); ++it)
+    {
+        IKeyValueStoreMutation *mutation = it.value().data();
+        mutation->mutateCurrentStupidKeyValueContent(it.key(), &m_CurrentData);
+    }
 }
 void StupidKeyValueContentTracker::add(const QString &key, const QString &data)
 {
@@ -64,19 +69,18 @@ void StupidKeyValueContentTracker::commit(const QString &commitMessage)
 }
 void StupidKeyValueContentTracker::readKey(const QString &key, const QString &revision)
 {
-    if(revision.isEmpty())
+    if(!revision.isEmpty())
     {
-        //TODOreq: "HEAD" in git lingo
+        //TODOreq:
+        return;
     }
-    QString dataMaybe;
-
-    bool found;
-    //TODOreq: uncomment this. commenting out only because I am trying to compile+test add/commit:
-    //found = myReadKey(key, revision, &dataMaybe);
-
+    //else: "HEAD" in git lingo
+    CurrentDataType::const_iterator it = m_CurrentData.constFind(key);
+    bool found = (it != m_CurrentData.constEnd());
     if(!found)
         emit e("key not found: '" + key + "'");
-    emit readKeyFinished(found, key, revision, dataMaybe);
+    QString data = found ? (*it) : QString();
+    emit readKeyFinished(found, key, revision, data);
 }
 void StupidKeyValueContentTracker::handleFinishedAppendingJsonObjectToTimeline_aka_emitCommitFinished(bool success)
 {
@@ -87,6 +91,7 @@ void StupidKeyValueContentTracker::handleFinishedAppendingJsonObjectToTimeline_a
         return;
     }
     emit o("successfully committed 'staged' key value store mutations");
+    applyStagedMutationsToCurrentData();
     m_StagedKeyValueStoreMutation.clear();
     emit commitFinished(success); //xD "success" daisy chaining <3
 }

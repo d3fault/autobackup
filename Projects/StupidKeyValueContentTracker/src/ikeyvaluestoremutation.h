@@ -4,10 +4,13 @@
 #include <QJsonObject>
 #include <QJsonValue>
 
+#include "stupidkeyvaluecontenttrackertypes.h"
+
 class IKeyValueStoreMutation
 {
 public:
-    virtual void appendYourselfToBulkMutationsJsonObject(const QString &key, QJsonObject &bulkMutations)=0;
+    virtual void appendYourselfToBulkMutationsJsonObject(const QString &key, QJsonObject &bulkMutations) const=0;
+    virtual void mutateCurrentStupidKeyValueContent(const QString &key, CurrentDataType *currentStupidKeyValueContent) const=0;
 protected:
     virtual QString mutationType() const=0;
 };
