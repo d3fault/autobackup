@@ -5,9 +5,11 @@ re-launch (this is ordered by dependency!):
 
 UNORDERED DEP OF ABOVE RE-LAUNCH: wasdf. I'd be happy if it was NOT integrated with any of the above timeline shiz and we only "recorded" the raw video/audio and didn't [YET] properly serialize the wasdf shit to timeline. I only need the "VanillaLeftHand_RightIndexFingerIsPitchRocker" WasdfModule to be functional, and I think I'm actually pretty close to that because I did some research when I had the nets and I think I found solution to pitch rocker problem: use effects not Voicer).
 
+I should TEST "re-launch" 10 fucking times: be playing ddrace, exit after 3 mins, click stand up, STAND UP AND GO FOR A MULTI DAY HIKE. but obv don't need to go on 10 multi day hikes lol xD...
 
 
-minddumper: last modified timestamp in filename; remove HARD dep on `touch`, but still use it on *nix
+
+minddumper: last modified timestamp in filename; remove HARD dep on `touch`, but still use it on *nix. if I put the last modified timestamp in filename, it'd either get stale after a change or need to change the filename(fuck that)!!
 minddumper -> "Projects" link on page
 wasdf
 d=i -> make osios using d=i -> make d=i using d=i as a tab in osios (and everything that implies, such as timelinized actions)
