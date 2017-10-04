@@ -3,6 +3,8 @@
 
 #include "ikeyvaluestoremutation.h"
 
+#define KeyValueStoreMutation_Add_MUTATIONTYPE "add"
+
 class KeyValueStoreMutation_Add : public IKeyValueStoreMutation
 {
 public:

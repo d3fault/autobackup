@@ -1,9 +1,11 @@
 #include "stupidkeyvaluecontenttracker.h"
 
+#include <QCoreApplication>
 #include <QDateTime>
+#include <QSettings>
 
 #include "keyvaluestoremutation_add.h"
-#include "timeanddata_timeline.h"
+#include "keyvaluestoremutationfactory.h"
 
 //TODOreq: this class uses (wraps/abstracts/hides) "mutations" of a KeyValue store. all underlying data must fit into a TimeAndData_Timeline json doc. Data is b64 encoded in that title, we do NOT add keys "next to" 'time' and 'data'. data will be, in MOST OF MY USES, a json sub-obj! I had written "a b64 json obj", but actually that's not necessary since json has the same "escape keys" as json (duh). fuck yea +1 json. but still worth noting that time and data are the ONLY 2 top level keys
 //TODOoptional: libfuse could present it as a fs... key = filepath, value = file contents. hahaha and these fs dev noobs are STILL making "fs attribute extension" shit left and right hahahaha (doing it wrong)
@@ -11,8 +13,16 @@ StupidKeyValueContentTracker::StupidKeyValueContentTracker(QObject *parent)
     : QObject(parent)
     , m_Timeline(new TimeAndData_Timeline(this))
 {
+    connect(this, &StupidKeyValueContentTracker::retrieveAllTimelineEntriesRequested, m_Timeline, &TimeAndData_Timeline::readAndEmitAllTimelineEntries);
+    connect(m_Timeline, &TimeAndData_Timeline::finishedReadingAllTimelineEntries, this, &StupidKeyValueContentTracker::handleAllTimelineEntriesRead);
+
     connect(this, &StupidKeyValueContentTracker::appendJsonObjectToTimelineRequested, m_Timeline, &TimeAndData_Timeline::appendJsonObjectToTimeline);
     connect(m_Timeline, &TimeAndData_Timeline::finishedAppendingJsonObjectToTimeline, this, &StupidKeyValueContentTracker::handleFinishedAppendingJsonObjectToTimeline_aka_emitCommitFinished);
+
+    QCoreApplication::setOrganizationName("StupidKeyValueContentTrackerOrganization");
+    QCoreApplication::setOrganizationDomain("StupidKeyValueContentTrackerDomain");
+    QCoreApplication::setApplicationName("StupidKeyValueContentTracker");
+    QSettings::setDefaultFormat(QSettings::IniFormat);
 }
 void StupidKeyValueContentTracker::commitStagedKeyValueStoreMutations_ThenEmitCommitFinished(const QString &commitMessage)
 {
@@ -51,6 +61,21 @@ void StupidKeyValueContentTracker::applyStagedMutationsToCurrentData()
         mutation->mutateCurrentStupidKeyValueContent(it.key(), &m_CurrentData);
     }
 }
+void StupidKeyValueContentTracker::initialize()
+{
+    QSettings settings;
+    bool haveCache = settings.value(StupidKeyValueContentTracker_SETTINGSKEY_HAVECACHE, false).toBool();
+    if(haveCache)
+    {
+        //TODOreq: populate m_CurrentData with the cache
+    }
+    else
+    {
+        //TODOreq: iterate over all m_Timeline entries and populate m_CurrentData accordingly
+        emit retrieveAllTimelineEntriesRequested();
+        //TODOreq: don't allow add/commit/etc UNTIL handleCurrentDataRetrieved is called. not sure if this should be enforced in code or just in comments :-/
+    }
+}
 void StupidKeyValueContentTracker::add(const QString &key, const QString &data)
 {
     if(m_StagedKeyValueStoreMutation.contains(key))
@@ -71,7 +96,7 @@ void StupidKeyValueContentTracker::readKey(const QString &key, const QString &re
 {
     if(!revision.isEmpty())
     {
-        //TODOreq:
+        //TODOreq: get the value of the key at that specific revision
         return;
     }
     //else: "HEAD" in git lingo
@@ -81,6 +106,28 @@ void StupidKeyValueContentTracker::readKey(const QString &key, const QString &re
         emit e("key not found: '" + key + "'");
     QString data = found ? (*it) : QString();
     emit readKeyFinished(found, key, revision, data);
+}
+void StupidKeyValueContentTracker::handleAllTimelineEntriesRead(const AllTimelineEntriesType &allTimelineEntries)
+{
+    //parse allTimelineEntries and populate m_CurrentData accordingly
+    for(AllTimelineEntriesType::const_iterator it = allTimelineEntries.constBegin(); it != allTimelineEntries.constEnd(); ++it)
+    {
+        //TODOreq: what to do with the timestamp here? does StupidKeyValueContentTracker even want/need it? maybe that's what I'll query by? "what was the value of this key at this point in time?" (and you don't have to specify the EXACT time of the commit ofc). idk yet tbh
+        //TODOreq: we could also access the commitMessage here, but just like the timestamp I'm not sure we care about it... yet?
+        const QJsonObject &data = it.value();
+        const QJsonObject &mutations = data.value(StupidKeyValueContentTracker_JSONKEY_BULKMUTATIONS).toObject(); //TODOreq: should we care about errors? such as the mutations key not existing? blah mind = exploded
+        for(QJsonObject::const_iterator it2 = mutations.constBegin(); it2 != mutations.constEnd(); ++it2)
+        {
+            QString key = it2.key();
+            const QJsonObject &mutationTypeAndMutationValue = it2.value().toObject();
+            QJsonObject::const_iterator it3 = mutationTypeAndMutationValue.constBegin(); //TODOreq: error checking of it3 maybe? and also would we allow multiple different types of mutations to a single key here, or will there always be just 1? I think just 1
+            QString mutationType = it3.key();
+            QString mutationValue = it3.value().toString(); //TODOreq: error checkin mb
+            StupidKeyValueContentTracker_StagedMutationsValueType stagedMutationForImmediateApplication = KeyValueStoreMutationFactory::createKeyValueStoreMutation(mutationType, mutationValue);
+            stagedMutationForImmediateApplication->mutateCurrentStupidKeyValueContent(key, &m_CurrentData);
+        }
+    }
+    emit initializationFinished(true);
 }
 void StupidKeyValueContentTracker::handleFinishedAppendingJsonObjectToTimeline_aka_emitCommitFinished(bool success)
 {

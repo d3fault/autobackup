@@ -15,5 +15,5 @@ void KeyValueStoreMutation_Add::mutateCurrentStupidKeyValueContent(const QString
 }
 QString KeyValueStoreMutation_Add::mutationType() const
 {
-    return "add";
+    return KeyValueStoreMutation_Add_MUTATIONTYPE;
 }

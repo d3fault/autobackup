@@ -5,8 +5,10 @@
 #include <QCoreApplication> //for QSettings global config
 #include <QSettings> //TODOmb: migrate away from the simplicity of a QSettings-based application database?
 #include <QCryptographicHash>
+#include <QStringList>
 
-//TODOreq: there is no delete, only append
+//note: there is no delete, only append
+//I was originally going to make "data" be a QString, but I think I'm changing that now to be a QJsonObject. anything that can be a string can be a json object, so it's not a huge requirement. it is just easier to work with and requires less serialization/deserialization when working with the "users of" this lib. serialize ONCE, parse ONCE. if data was QString then we'd need to serialize [at least] twice and parse [at least] twice. I hope this decision doesn't come back to bite me in the ass...
 TimeAndData_Timeline::TimeAndData_Timeline(QObject *parent)
     : QObject(parent)
 {
@@ -14,6 +16,38 @@ TimeAndData_Timeline::TimeAndData_Timeline(QObject *parent)
     QCoreApplication::setOrganizationDomain("TimeAndData_TimelineDomain");
     QCoreApplication::setApplicationName("TimeAndData_Timeline");
     QSettings::setDefaultFormat(QSettings::IniFormat); //TODOreq: search EVERY project I've coded for the use of the above 3 configs (setOrgName, setDomainName, setAppName) and make sure that this setDefaultFormat is always called there too (unless the app doesn't warrant it, but I think most do. Ini files are just much more portable than "registrty edits" on that one gross operating system. Hell I think it should default to Ini format on all platforms and the Native formats should be opted INTO (since they [can] _SUCK_) TODOmb: file bugreport to default to Ini (or pull request)
+}
+void TimeAndData_Timeline::readAndEmitAllTimelineEntries()
+{
+    //TODOoptimization: it's more memory efficient to read one entry at a time (so one entry/emit per slot invoke -- and yea the slot takes some arg specifying which), but that requires breaking up the code and stuff... so it should come later. KISS for now, even if over-simplified and inefficient
+    QSettings settings;
+    QStringList allKeys = settings.allKeys();
+    AllTimelineEntriesType allTimelineEntries;
+    for(QStringList::const_iterator it = allKeys.constBegin(); it != allKeys.constEnd(); ++it)
+    {
+        QString timeAndDataJsonString = *it;
+        QByteArray timeAndDataJsonBA = timeAndDataJsonString.toUtf8();
+        QJsonParseError jsonParseError;
+        QJsonDocument timeAndDataJsonDoc = QJsonDocument::fromJson(timeAndDataJsonBA, &jsonParseError);
+        if(jsonParseError.error != QJsonParseError::NoError)
+        {
+            //TODOreq: handle parse errors good. we should never see this unless the user manually modified the json
+            qFatal("json parse error");
+            return;
+        }
+        QJsonObject timeAndDataJson = timeAndDataJsonDoc.object();
+        bool convertOk = false;
+        qint64 time = timeAndDataJson.value(TimeAndData_Timeline_JSONKEY_TIME).toString().toLongLong(&convertOk);
+        if(!convertOk)
+        {
+            //TODOreq: handle parse errors good. we should never see this unless the user manually modified the json
+            qFatal("timestamp parse error");
+            return;
+        }
+        const QJsonObject &data = timeAndDataJson.value(TimeAndData_Timeline_JSONKEY_DATA).toObject();
+        allTimelineEntries.insert(time, data);
+    }
+    emit finishedReadingAllTimelineEntries(allTimelineEntries);
 }
 void TimeAndData_Timeline::appendJsonObjectToTimeline(const QJsonObject &data)
 {
@@ -31,7 +65,7 @@ void TimeAndData_Timeline::appendJsonObjectToTimeline(const QJsonObject &data)
     //I'm going to do something quick and simple and PREDICT that I will refactor it when I implement readKey and/or readTimeline(what to use as input for timeline? (this will "come to me" when I'm coding readKey probably))
 
     QJsonObject timeAndDataJsonObject;
-    timeAndDataJsonObject.insert(TimeAndData_Timeline_JSONKEY_TIME, currentDateTimeUtc.toMSecsSinceEpoch()); //fuck human readable time formats, because without a timezone (as is often the case), they are ambiguious (yes I know Qt provides one with timezone, but if we parse human readable then we INVITE people to change the date format as input and it will "work on their machine" without the timezone -_-
+    timeAndDataJsonObject.insert(TimeAndData_Timeline_JSONKEY_TIME, QString::number(currentDateTimeUtc.toMSecsSinceEpoch())); //fuck human readable time formats, because without a timezone (as is often the case), they are ambiguious (yes I know Qt provides a format with timezone, but if we parse human readable then we INVITE people to change the date format as input and it will "work on their machine" without the timezone -_-. note: we store the number as a string because json can only handle int (not [necessarily] int64) and double
     timeAndDataJsonObject.insert(TimeAndData_Timeline_JSONKEY_DATA, data);
     QJsonDocument jsonDoc(timeAndDataJsonObject);
     QByteArray jsonByteArray = jsonDoc.toJson(QJsonDocument::Compact/*TODOreq: Indented if ever moved out of QSettings*/);

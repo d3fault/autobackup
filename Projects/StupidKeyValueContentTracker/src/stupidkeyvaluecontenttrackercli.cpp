@@ -11,8 +11,7 @@ StupidKeyValueContentTrackerCli::StupidKeyValueContentTrackerCli(QObject *parent
 }
 void StupidKeyValueContentTrackerCli::main()
 {
-    //TODOreq: parse app args. ex: ./thisApp add key data
-    emit addRequested("testKey0", "testData1");
+    emit initializeRequested();
 }
 void StupidKeyValueContentTrackerCli::handleE(QString msg)
 {
@@ -21,6 +20,11 @@ void StupidKeyValueContentTrackerCli::handleE(QString msg)
 void StupidKeyValueContentTrackerCli::handleO(QString msg)
 {
     m_StdOut << msg << endl;
+}
+void StupidKeyValueContentTrackerCli::handleInitializationFinished(bool success)
+{
+    //TODOreq: parse app args. ex: ./thisApp add key data
+    emit addRequested("testKey0", "testData1");
 }
 void StupidKeyValueContentTrackerCli::handleAddFinished(bool success)
 {

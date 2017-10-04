@@ -14,6 +14,7 @@ private:
     QTextStream m_StdErr;
     QTextStream m_StdOut;
 signals:
+    void initializeRequested();
     void addRequested(const QString & key, const QString & data);
     void commitRequested(const QString & commitMessage);
     void readKeyRequested(const QString & key, const QString & revision);
@@ -21,6 +22,7 @@ signals:
 public slots:
     void handleE(QString msg);
     void handleO(QString msg);
+    void handleInitializationFinished(bool success);
     void handleAddFinished(bool success);
     void handleCommitFinished(bool success);
     void handleReadKeyFinished(bool success, QString key, QString revision, QString data);

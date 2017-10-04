@@ -6,11 +6,12 @@
 #include <QJsonObject>
 
 #include "stupidkeyvaluecontenttrackertypes.h"
+#include "timeanddata_timeline.h"
+
+#define StupidKeyValueContentTracker_SETTINGSKEY_HAVECACHE "haveCache"
 
 #define StupidKeyValueContentTracker_JSONKEY_COMMITMESSAGE "commitMessage"
 #define StupidKeyValueContentTracker_JSONKEY_BULKMUTATIONS "mutations"
-
-class TimeAndData_Timeline;
 
 class StupidKeyValueContentTracker : public QObject
 {
@@ -19,11 +20,13 @@ public:
     template<class T>
     static void establishConnectionsToAndFromBackendAndUi(StupidKeyValueContentTracker *backend, T *ui)
     {
+        connect(ui, &T::initializeRequested, backend, &StupidKeyValueContentTracker::initialize);
         connect(ui, &T::addRequested, backend, &StupidKeyValueContentTracker::add);
         connect(ui, &T::commitRequested, backend, &StupidKeyValueContentTracker::commit);
         connect(ui, &T::readKeyRequested, backend, &StupidKeyValueContentTracker::readKey);
         connect(backend, &StupidKeyValueContentTracker::e, ui, &T::handleE);
         connect(backend, &StupidKeyValueContentTracker::o, ui, &T::handleO);
+        connect(backend, &StupidKeyValueContentTracker::initializationFinished, ui, &T::handleInitializationFinished);
         connect(backend, &StupidKeyValueContentTracker::addFinished, ui, &T::handleAddFinished);
         connect(backend, &StupidKeyValueContentTracker::commitFinished, ui, &T::handleCommitFinished);
         connect(backend, &StupidKeyValueContentTracker::readKeyFinished, ui, &T::handleReadKeyFinished);
@@ -43,17 +46,21 @@ signals:
     void e(const QString &msg);
     void o(const QString &msg);
 
+    void initializationFinished(bool success);
     void addFinished(bool success);
     void commitFinished(bool success);
     void readKeyFinished(bool success, const QString &key, const QString &revision, const QString &data);
 
     //PRIVATE SIGNALS:
+    void retrieveAllTimelineEntriesRequested();
     void appendJsonObjectToTimelineRequested(const QJsonObject &commitData);
 public slots:
+    void initialize();
     void add(const QString &key, const QString &data);
     void commit(const QString &commitMessage);
     void readKey(const QString &key, const QString &revision);
 private slots:
+    void handleAllTimelineEntriesRead(const AllTimelineEntriesType &allTimelineEntries);
     void handleFinishedAppendingJsonObjectToTimeline_aka_emitCommitFinished(bool success);
 };
 
