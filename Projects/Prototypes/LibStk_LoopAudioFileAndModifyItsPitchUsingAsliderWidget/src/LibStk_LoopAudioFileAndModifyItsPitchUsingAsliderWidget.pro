@@ -13,11 +13,9 @@ TEMPLATE = app
 
 CONFIG += C++11
 
-HEADERS  += libstk_loopaudiofileandmodifyitspitchusingasliderwidget.h \
-    simplesinglefileloopsamplerinstrument.h
+HEADERS  += libstk_loopaudiofileandmodifyitspitchusingasliderwidget.h
 
-SOURCES += main.cpp\
-        libstk_loopaudiofileandmodifyitspitchusingasliderwidget.cpp \
-    simplesinglefileloopsamplerinstrument.cpp
+SOURCES += main.cpp \
+        libstk_loopaudiofileandmodifyitspitchusingasliderwidget.cpp
 
 LIBS += -lstk -lrtaudio

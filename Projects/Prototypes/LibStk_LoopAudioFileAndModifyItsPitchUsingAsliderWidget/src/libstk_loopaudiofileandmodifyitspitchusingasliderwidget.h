@@ -5,28 +5,25 @@
 
 #include <QScopedPointer>
 
-#include "stk/Voicer.h"
 #include "stk/RtAudio.h"
+#include "stk/FileLoop.h"
 
-class SimpleSingleFileLoopSamplerInstrument;
-
-#define LIBSTKTICK_METHOD_SIGNATURE (void *outputBuffer, void *unusedInputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void *userData)
+#define LIBSTK_TICK_METHOD_SIGNATURE (void *outputBuffer, void *unusedInputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void *userData)
 
 class LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget : public QSlider
 {
     Q_OBJECT
 public:
     LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget(QWidget *parent = 0);
-    static int staticStkTick LIBSTKTICK_METHOD_SIGNATURE;
-    int stkTick LIBSTKTICK_METHOD_SIGNATURE;
+    static int staticStkTick LIBSTK_TICK_METHOD_SIGNATURE;
+    int stkTick LIBSTK_TICK_METHOD_SIGNATURE;
     ~LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget();
 private:
     void showStdStringError(const std::string &stkError);
 
     unsigned int m_NumBufferFrames;
-    QScopedPointer<stk::Voicer> voicer;
     QScopedPointer<RtAudio> dac;
-    QScopedPointer<SimpleSingleFileLoopSamplerInstrument> samplerInstrument;
+    QScopedPointer<stk::FileLoop> input;
     stk::StkFrames frames;
     RtAudio::StreamParameters parameters;
 private slots:
