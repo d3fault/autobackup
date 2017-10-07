@@ -44,8 +44,9 @@ Documents/minddump/2016/4/1459968855-LhX846.txt:1459969203
 Documents/minddump/2016/4/1459969303-nnS846.txt:1459969688
 Documents/minddump/2016/4/1459984685-TJ2423.txt:1459985236
 Documents/minddump/2017/:1507329611
-Documents/minddump/2017/10/:1507329611
-Documents/minddump/2017/10/1507327644-MTJ793.txt:1507329596
+Documents/minddump/2017/10/:1507349216
+Documents/minddump/2017/10/1507327644-MTJ793.txt:1507330028
+Documents/minddump/2017/10/1507349085-MTJ799.txt:1507349207
 Documents/minddump/2017/5/:1496186514
 Documents/minddump/2017/5/1495171253-Kauai.0a-MTJ783.txt:1495179507
 Documents/minddump/2017/5/1495214940-MTJ843.txt:1495215210
@@ -6624,4 +6625,4 @@ scripts/zoom.backup.and.shred.sh:1351237228
 copyright.txt:1388203681
 license.dpl.txt:1388242176
 pseudo.git.submodules.temphack.txt:1442777728
-todo.txt:1506221081
+todo.txt:1507330443
