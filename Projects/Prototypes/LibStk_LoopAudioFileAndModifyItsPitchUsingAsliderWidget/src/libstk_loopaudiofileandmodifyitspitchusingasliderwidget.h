@@ -8,6 +8,7 @@
 #include "stk/RtAudio.h"
 #include "stk/FileLoop.h"
 #include "stk/PitShift.h"
+#include "stk/Envelope.h"
 
 #define LIBSTK_TICK_METHOD_SIGNATURE (void *outputBuffer, void *unusedInputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void *userData)
 
@@ -32,6 +33,7 @@ private:
     QScopedPointer<RtAudio> dac;
     QScopedPointer<stk::FileLoop> input;
     QScopedPointer<stk::PitShift> shifter;
+    QScopedPointer<stk::Envelope> envelope;
     stk::StkFrames frames;
     RtAudio::StreamParameters parameters;
 private slots:

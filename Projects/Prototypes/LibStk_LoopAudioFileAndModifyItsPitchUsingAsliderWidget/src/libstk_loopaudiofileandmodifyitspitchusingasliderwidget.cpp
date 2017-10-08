@@ -6,15 +6,16 @@ using namespace stk;
 #include <QHBoxLayout>
 #include <QMessageBox>
 
+#include <QThread>
 #include <QDebug>
 
 //TODOreq: debug what thread is calling this::stkTick .. because if stk isn't using it's own backend thread then I really don't have ANY clue how it's even functioning O_o. once I know it's using it's own thread, I should maybe use QAtomicInt to safely comm between the GUI and Stk -- the int I'm talking about of course is the one passed to pitchBend/whatever
-//TODOreq: a slider for PitShift::setEffectMix
 //TODOmb: a slider for volume and other shiz stk provides
 LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget(QWidget *parent)
     : QWidget(parent)
     , m_NumBufferFrames(RT_BUFFER_SIZE)
 {
+    qDebug() << "GUI Thread:" << QThread::currentThreadId();
     setupGui();
 
     // Set the global sample rate before creating class instances.
@@ -24,7 +25,11 @@ LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::LibStk_LoopAudioFileAnd
     dac.reset(new RtAudio); //delayed initialization in case Stk::setSampleRate needs to happen first
     input.reset(new stk::FileLoop);
     shifter.reset(new stk::PitShift);
+    envelope.reset(new stk::Envelope);
+
     shifter->setEffectMix(0.5); //0.5 gives us 50% input, 50% effect
+    envelope->setRate(0.001);
+    envelope->setTarget(1.0); //aka NoteOn
 
     // Try to load the soundfile.
     try
@@ -85,6 +90,13 @@ LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::LibStk_LoopAudioFileAnd
 }
 int LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::staticStkTick LIBSTK_TICK_METHOD_SIGNATURE
 {
+    static bool first = true;
+    if(first)
+    {
+        first = false;
+        qDebug() << "Stk Tick Thread:" << QThread::currentThreadId();
+    }
+
     LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget *instance = static_cast<LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget*>(userData);
     return instance->stkTick(outputBuffer, unusedInputBuffer, nBufferFrames, streamTime, status, userData); //no neeed to pass userData to the non-static version, but I want to keep using this tick method signature define out of laziness :)
 }
@@ -93,13 +105,16 @@ int LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::staticStkTick LIBST
 // samples.
 int LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::stkTick LIBSTK_TICK_METHOD_SIGNATURE
 {
+    //TODOreq: stk is calling this from it's own thread, so I need a different userData strategy, shouldn't pass in 'this' (QObject). it WORKS but it's still not thread-safe; I'm probably just getting lucky. I also don't know if calling shifter::setShift in response to QSlider signals is thread safe (probably NOT. but again, is working in my testing xD). boost::lockfreequeue might be a solution (ick), maybe QAtomicInt shit, maybe stk's own Messager, idk but need to do research before I try to integrate what I've learned here into wasdf
+
     //qDebug() << "stkTick";
     register StkFloat *outputBufferAsFloat = (StkFloat*)outputBuffer; //does register even do anything anymore xD? fuggit
     input->tick(frames);
     for(unsigned int i=0; i<frames.size(); ++i)
     {
-        //*outputBufferAsFloat++ = frames[i]; //copy from input buffer to output buffer (with no PitShift effect)
-        *outputBufferAsFloat++ = shifter->tick(frames[i]); //copy from input buffer to output buffer (with PitShift effect)
+        //*outputBufferAsFloat++ = frames[i]; //copy from input buffer to output buffer
+        //*outputBufferAsFloat++ = shifter->tick(frames[i]); //copy from input buffer to output buffer (with PitShift effect)
+        *outputBufferAsFloat++ = envelope->tick() * shifter->tick(frames[i]); //copy from input buffer to output buffer (with PitShift effect), using an envelope to (I thinK?) smooth things out
     }
 
 #if 1
