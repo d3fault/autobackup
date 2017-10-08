@@ -1,7 +1,7 @@
 #ifndef LIBSTK_LOOPAUDIOFILEANDMODIFYITSPITCHUSINGASLIDERWIDGET_H
 #define LIBSTK_LOOPAUDIOFILEANDMODIFYITSPITCHUSINGASLIDERWIDGET_H
 
-#include <QSlider>
+#include <QWidget>
 
 #include <QScopedPointer>
 
@@ -11,7 +11,9 @@
 
 #define LIBSTK_TICK_METHOD_SIGNATURE (void *outputBuffer, void *unusedInputBuffer, unsigned int nBufferFrames, double streamTime, RtAudioStreamStatus status, void *userData)
 
-class LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget : public QSlider
+class QSlider;
+
+class LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget : public QWidget
 {
     Q_OBJECT
 public:
@@ -20,8 +22,12 @@ public:
     int stkTick LIBSTK_TICK_METHOD_SIGNATURE;
     ~LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget();
 private:
+    static qreal map(qreal valueToMap, qreal sourceRangeMin, qreal sourceRangeMax, qreal destRangeMin, qreal destRangeMax);
     void showStdStringError(const std::string &stkError);
+    void setupGui();
 
+    QSlider *m_PitchShiftSlider;
+    QSlider *m_PitchShiftMixAmountSlider;
     unsigned int m_NumBufferFrames;
     QScopedPointer<RtAudio> dac;
     QScopedPointer<stk::FileLoop> input;
@@ -29,7 +35,8 @@ private:
     stk::StkFrames frames;
     RtAudio::StreamParameters parameters;
 private slots:
-    void handleValueChanged(int newValue);
+    void handlePitchShiftSliderValueChanged(int newValue);
+    void handlePitchShiftMixAmountSliderValueChanged(int newValue);
 };
 
 #endif // LIBSTK_LOOPAUDIOFILEANDMODIFYITSPITCHUSINGASLIDERWIDGET_H

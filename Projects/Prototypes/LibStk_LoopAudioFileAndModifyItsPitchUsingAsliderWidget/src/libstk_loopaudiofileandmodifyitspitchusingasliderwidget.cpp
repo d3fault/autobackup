@@ -2,6 +2,8 @@
 
 using namespace stk;
 
+#include <QSlider>
+#include <QHBoxLayout>
 #include <QMessageBox>
 
 #include <QDebug>
@@ -10,9 +12,11 @@ using namespace stk;
 //TODOreq: a slider for PitShift::setEffectMix
 //TODOmb: a slider for volume and other shiz stk provides
 LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget(QWidget *parent)
-    : QSlider(parent)
+    : QWidget(parent)
     , m_NumBufferFrames(RT_BUFFER_SIZE)
 {
+    setupGui();
+
     // Set the global sample rate before creating class instances.
     Stk::setSampleRate((StkFloat)44100);
 
@@ -78,11 +82,6 @@ LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::LibStk_LoopAudioFileAnd
     // Block waiting until callback signals done.
     //nope? will libstk play nicely with Qt's event loop? actually I kind of doubt it. THIS IS WHY WE PROTOTYPE, so I didn't fubar the Wasdf codebase. hmm mb I need LibStk stuff to be on a separate/backend thread and then I _DO_ sleep? fuck it let's just try with Qt's event loop first and see
     //while ( !done ) Stk::sleep( 100 );
-
-
-    setRange(0, 1023);
-    setValue((minimum() + maximum()) / 2);
-    connect(this, &LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::valueChanged, this, &LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::handleValueChanged);
 }
 int LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::staticStkTick LIBSTK_TICK_METHOD_SIGNATURE
 {
@@ -133,24 +132,51 @@ LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::~LibStk_LoopAudioFileAn
         }
     }
 }
+qreal LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::map(qreal valueToMap, qreal sourceRangeMin, qreal sourceRangeMax, qreal destRangeMin, qreal destRangeMax)
+{
+    //map 'valueToMap' from [sourceRangeMin-sourceRangeMax] to [destRangeMin-destRangeMax]
+    qreal mappedValue = (valueToMap - sourceRangeMin) * (destRangeMax - destRangeMin) / (sourceRangeMax - sourceRangeMin) + destRangeMin; //jacked from Arduino/WMath.cpp , which in turn was jacked from Wiring. it's just math anyways (not copyrightable)
+    return mappedValue;
+}
 void LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::showStdStringError(const std::string &stkError)
 {
     QString stkErrorQString = QString::fromStdString(stkError);
     QMessageBox::critical(this, "StkError:", stkErrorQString);
 }
-void LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::handleValueChanged(int newValue)
+void LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::setupGui()
+{
+    QHBoxLayout *myLayout = new QHBoxLayout(this);
+
+    myLayout->addWidget(m_PitchShiftSlider = new QSlider());
+    m_PitchShiftSlider->setRange(0, 1023);
+    m_PitchShiftSlider->setValue((m_PitchShiftSlider->minimum() + m_PitchShiftSlider->maximum()) / 2);
+    connect(m_PitchShiftSlider, &QSlider::valueChanged, this, &LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::handlePitchShiftSliderValueChanged);
+
+    myLayout->addWidget(m_PitchShiftMixAmountSlider = new QSlider());
+    m_PitchShiftMixAmountSlider->setRange(0, 100);
+    m_PitchShiftMixAmountSlider->setValue((m_PitchShiftMixAmountSlider->minimum() + m_PitchShiftMixAmountSlider->maximum()) / 2);
+    connect(m_PitchShiftMixAmountSlider, &QSlider::valueChanged, this, &LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::handlePitchShiftMixAmountSliderValueChanged);
+}
+void LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::handlePitchShiftSliderValueChanged(int newValue)
 {
     //bleh all the PitShift docs say is that "1.0" has no pitch shift effect, doesn't tell me which direction to go or what range min/max I should map my 0-1023 values to. bah I guess trial and error (but if I don't change it ENOUGH, I won't hear shit!)
     qreal newValueAsFloat = static_cast<qreal>(newValue);
 
     //map 0-1023 -> 0.1-2
-    static const qreal minEffectShift = 0.1;
-    static const qreal maxEffectShift = 2;
-    qreal newValueMapped = (newValueAsFloat - 0) * (maxEffectShift - minEffectShift) / (1023 - 0) + minEffectShift; //jacked from Arduino/WMath.cpp , which in turn was jacked from Wiring. it's just math anyways (not copyrightable)
+    qreal newValueMapped = map(newValueAsFloat, 0, 1023, 0.1, 2);
 
     shifter->setShift(static_cast<StkFloat>(newValueMapped)); //TODOreq: this might not be thread-safe, idfk. maybe I need to "post a message to stk thread"? they do have a Messenger thing goin on fuck idk
 
     //wtf do I call pitchbend/pitchchange/whatever on?? I need a Voicer I think, like demo.cpp uses. I _think_ (unsure tbh) I need to make an Instrmnt inheritting class that hasA FileWvIn, and I have to manually implement setFrequency (I think Voicer gives me pitchBend free if I provide setFrequency?). I need to inherit from Instrmnt so I can add the instrument to the voicer! I think I can look at other Instrmnt inheritting classes to study how they use setFrequency... in fact the sine wave instrmnt might even have that code perfectly copy/pastable! NVM finally found the class I was looking for (inherits from Instrmnt already :-D): Sampler. I woulda thought there was already this functionality in a fucking synthesis toolkit, but thought maybe I was hitting a corner case [not yet implemented]. Blah now I can't figure out how to USE Sampler class xD, where the fuck do I specify the file path?? oh it's abstract. wtf is a Moog? meh back to orig idea of inheritting Instrmnt (or mb Sampler now, but that actually looks bloated!! mb it isn't idfk)
     //input->setFrequency(69); //eh I don't think this does what it looks like it does. it's not pitch bend :(, it's "loop frequency" xD. I think I gotta go the inherit Instrmnt route... but still unsure wtf <--- thinking about it HARDER, reading the file "faster" (and playing back at same speed) would increase the SOUND frequency exactly like I want! xD maths > me. so I think just need to create an Instrmnt (based loosely on Sampler) and then my Instrmnt's setFrequency just calls FileLoop::setFrequency and bam I'm maybe done if hopefully Voicer can GIVE me pitchBend/whatever for FREE >_> *crosses fingers*. the threebees.cpp example that comes with libstk uses the Voicer class :D (so does demo.cpp, but that shit is massive). OT'ish: I don't understand why [nearly] EVERYTHING inherits from stk::Stk. wtf does that base class provide that's so useful to EVERY class? I bet if I understood the lib better it'd make sense, but my instincts tell me that their class heirarchy isn't laid (sex) out correctly: maybe a FEW classes should inherit Stk, but [nearly] ALL of them? wtf? "an stk object asks an stk object for synth'd audio bytes" -- uh, what?. FUGGIT [/endrant]. WOOT just read Voicer::pitchBend and my guess was [hopefully] correct: it DOES rely on setFrequency :-D
     //voicer->pitchBend(69); //TODOreq: map 0-1023 of slider range to... uhh... whatever pitchBend's range is? mb 0.0 <--> 1.0 , idfk?
+}
+void LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::handlePitchShiftMixAmountSliderValueChanged(int newValue)
+{
+    qreal newValueAsFloat = static_cast<qreal>(newValue);
+
+    //map 0-100 -> 0-1
+    qreal newValueMapped = map(newValueAsFloat, 0, 100, 0, 1);
+
+    shifter->setEffectMix(static_cast<StkFloat>(newValueMapped));
 }
