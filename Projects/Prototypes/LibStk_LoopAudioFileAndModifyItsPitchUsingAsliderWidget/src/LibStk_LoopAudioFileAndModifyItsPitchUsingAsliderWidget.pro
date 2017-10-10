@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,9 +13,11 @@ TEMPLATE = app
 
 CONFIG += C++11
 
-HEADERS  += libstk_loopaudiofileandmodifyitspitchusingasliderwidget.h
+HEADERS  += libstk_loopaudiofileandmodifyitspitchusingasliderwidget.h \
+    stkfileloopiodevice.h
 
 SOURCES += main.cpp \
-        libstk_loopaudiofileandmodifyitspitchusingasliderwidget.cpp
+        libstk_loopaudiofileandmodifyitspitchusingasliderwidget.cpp \
+    stkfileloopiodevice.cpp
 
-LIBS += -lstk -lrtaudio
+LIBS += -lstk
