@@ -9,6 +9,8 @@
 
 #include <QDebug>
 
+#define TimeAndData_Timeline_GROUP "TimeAndData_TimelineGroup"
+
 //note: there is no delete, only append
 //I was originally going to make "data" be a QString, but I think I'm changing that now to be a QJsonObject. anything that can be a string can be a json object, so it's not a huge requirement. it is just easier to work with and requires less serialization/deserialization when working with the "users of" this lib. serialize ONCE, parse ONCE. if data was QString then we'd need to serialize [at least] twice and parse [at least] twice. I hope this decision doesn't come back to bite me in the ass...
 TimeAndData_Timeline::TimeAndData_Timeline(QObject *parent)
@@ -23,9 +25,10 @@ void TimeAndData_Timeline::readAndEmitAllTimelineEntries()
 {
     //TODOoptimization: it's more memory efficient to read one entry at a time (so one entry/emit per slot invoke -- and yea the slot takes some arg specifying which), but that requires breaking up the code and stuff... so it should come later. KISS for now, even if over-simplified and inefficient
     QSettings settings;
-    QStringList allKeys = settings.allKeys();
+    settings.beginGroup(TimeAndData_Timeline_GROUP);
+    QStringList childKeys = settings.childKeys();
     AllTimelineEntriesType allTimelineEntries;
-    for(QStringList::const_iterator it = allKeys.constBegin(); it != allKeys.constEnd(); ++it)
+    for(QStringList::const_iterator it = childKeys.constBegin(); it != childKeys.constEnd(); ++it)
     {
         QString timeAndDataJsonString = settings.value(*it).toString();
         QByteArray timeAndDataJsonBA = timeAndDataJsonString.toUtf8();
@@ -53,6 +56,7 @@ void TimeAndData_Timeline::readAndEmitAllTimelineEntries()
         const QJsonObject &data = timeAndDataJson.value(TimeAndData_Timeline_JSONKEY_DATA).toObject();
         allTimelineEntries.insert(time, data);
     }
+    settings.endGroup();
     emit finishedReadingAllTimelineEntries(allTimelineEntries);
 }
 void TimeAndData_Timeline::appendJsonObjectToTimeline(const QJsonObject &data)
@@ -78,6 +82,8 @@ void TimeAndData_Timeline::appendJsonObjectToTimeline(const QJsonObject &data)
     QByteArray hash = QCryptographicHash::hash(jsonByteArray, QCryptographicHash::Sha3_256);
     QString hashOfTimeAndData(hash.toHex());
     QSettings settings;
+    settings.beginGroup(TimeAndData_Timeline_GROUP);
     settings.setValue(hashOfTimeAndData, QString(jsonByteArray) /*nope (works but FUGLY/binary): data.toVariantMap()*/);
+    settings.endGroup();
     emit finishedAppendingJsonObjectToTimeline(true);
 }

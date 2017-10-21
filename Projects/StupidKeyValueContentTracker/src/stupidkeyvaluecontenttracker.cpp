@@ -2,7 +2,6 @@
 
 #include <QCoreApplication>
 #include <QDateTime>
-#include <QSettings>
 
 #include "keyvaluestoremutation_add.h"
 #include "keyvaluestoremutationfactory.h"
@@ -24,6 +23,32 @@ StupidKeyValueContentTracker::StupidKeyValueContentTracker(QObject *parent)
     QCoreApplication::setOrganizationDomain("StupidKeyValueContentTrackerDomain");
     QCoreApplication::setApplicationName("StupidKeyValueContentTracker");
     QSettings::setDefaultFormat(QSettings::IniFormat);
+}
+StupidKeyValueContentTracker::~StupidKeyValueContentTracker()
+{
+    //persist m_CurrentData to disk, and set haveCache to true if we actually wrote anything. this allows us to restart the app without re-reading the ENTIRE timeline
+    if(!m_CurrentData.isEmpty())
+    {
+        QSettings settings;
+        settings.setValue(StupidKeyValueContentTracker_SETTINGSKEY_HAVECACHE, true);
+        settings.beginGroup(StupidKeyValueContentTracker_SETTINGSKEY_CACHEGROUP);
+        for(CurrentDataType::const_iterator it = m_CurrentData.constBegin(); it != m_CurrentData.constEnd(); ++it)
+        {
+            settings.setValue(it.key(), it.value());
+        }
+        settings.endGroup();
+    }
+}
+void StupidKeyValueContentTracker::populateCurrentDataWithCache(QSettings &settings)
+{
+    //note: haveCache was already shown to be true
+    settings.beginGroup(StupidKeyValueContentTracker_SETTINGSKEY_CACHEGROUP);
+    QStringList allCurrentDataKeys = settings.childKeys();
+    Q_FOREACH(const QString &key, allCurrentDataKeys)
+    {
+        m_CurrentData.insert(key, settings.value(key).toString());
+    }
+    settings.endGroup();
 }
 void StupidKeyValueContentTracker::commitStagedKeyValueStoreMutations_ThenEmitCommitFinished(const QString &commitMessage)
 {
@@ -68,13 +93,16 @@ void StupidKeyValueContentTracker::initialize()
     bool haveCache = settings.value(StupidKeyValueContentTracker_SETTINGSKEY_HAVECACHE, false).toBool();
     if(haveCache)
     {
-        //TODOreq: populate m_CurrentData with the cache
+        //populate m_CurrentData with the QSettings-based cache
+        populateCurrentDataWithCache(settings);
+        emit o("populated KeyValue store from cache");
     }
     else
     {
-        //TODOreq: iterate over all m_Timeline entries and populate m_CurrentData accordingly
+        //iterate over all m_Timeline entries and populate m_CurrentData accordingly
         emit retrieveAllTimelineEntriesRequested();
         //TODOreq: don't allow add/commit/etc UNTIL handleCurrentDataRetrieved is called. not sure if this should be enforced in code or just in comments :-/
+        emit o("populated KeyValue store by re-reading entire timeline");
     }
 }
 void StupidKeyValueContentTracker::add(const QString &key, const QString &data)

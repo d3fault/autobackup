@@ -2,6 +2,10 @@
 
 #include <QCoreApplication>
 
+//TODOreq: non-interactive 'add' does nothing, because the staged mutations are not persisted when app exits
+//^I'm thinking of maybe doing just add and bulkAdd, dropping the whole "commit" concept. but idk yet tbh it's hard to think about "users of" this lib, which may be written years from now, and whether or not they'll NEED add/commit capabilities
+//^^if I keep 'commit', then it makes sense to have a 'status' command to show the staged mutations
+//TODOreq: when I read in 2 TimeAndData_Timeline entries with the same datetime (but different data) from QSettings and stuffing them into a MultiMap, am I guaranteed to read them in using the same order? are they sorted by key _AND_ value, or I think yea just key is the only sort, so this needs addressing. it needs to be defined
 StupidKeyValueContentTrackerCli::StupidKeyValueContentTrackerCli(QObject *parent)
     : QObject(parent)
     , m_StandardInputNotifier(nullptr)

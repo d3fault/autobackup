@@ -3,12 +3,14 @@
 
 #include <QObject>
 
+#include <QSettings>
 #include <QJsonObject>
 
 #include "stupidkeyvaluecontenttrackertypes.h"
 #include "timeanddata_timeline.h"
 
 #define StupidKeyValueContentTracker_SETTINGSKEY_HAVECACHE "haveCache"
+#define StupidKeyValueContentTracker_SETTINGSKEY_CACHEGROUP "cache"
 
 #define StupidKeyValueContentTracker_JSONKEY_COMMITMESSAGE "commitMessage"
 #define StupidKeyValueContentTracker_JSONKEY_BULKMUTATIONS "mutations"
@@ -33,7 +35,9 @@ public:
     }
 
     explicit StupidKeyValueContentTracker(QObject *parent = 0);
+    ~StupidKeyValueContentTracker();
 private:
+    void populateCurrentDataWithCache(QSettings &settings);
     void commitStagedKeyValueStoreMutations_ThenEmitCommitFinished(const QString &commitMessage);
     void populateCommitDataUsingStagedKeyValueStoreMutations(QJsonObject &bulkMutations);
     void commitActual_ThenEmitCommitFinished(const QJsonObject &commitData, const QString &commitMessage);
