@@ -27,6 +27,7 @@ StupidKeyValueContentTracker::StupidKeyValueContentTracker(QObject *parent)
 StupidKeyValueContentTracker::~StupidKeyValueContentTracker()
 {
     //persist m_CurrentData to disk, and set haveCache to true if we actually wrote anything. this allows us to restart the app without re-reading the ENTIRE timeline
+    //TODOmb: QtSystemSignalHandler so we can still persist to cache on CTRL+C (SIGTERM) etc? honestly if the cache isn't being written to AS THE APP IS RUNNING (which is NOT currently the case), then writing to cache at last-minute like that might not be a good idea. I think CTRL+C has to "not block" or some such? eh maybe it's fine since we're intercepting the signals, I forget...
     if(!m_CurrentData.isEmpty())
     {
         QSettings settings;
@@ -96,6 +97,7 @@ void StupidKeyValueContentTracker::initialize()
         //populate m_CurrentData with the QSettings-based cache
         populateCurrentDataWithCache(settings);
         emit o("populated KeyValue store from cache");
+        emit initializationFinished(true);
     }
     else
     {
