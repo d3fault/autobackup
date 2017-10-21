@@ -9,6 +9,7 @@
 
 //TODOreq: this class uses (wraps/abstracts/hides) "mutations" of a KeyValue store. all underlying data must fit into a TimeAndData_Timeline json doc. Data is b64 encoded in that title, we do NOT add keys "next to" 'time' and 'data'. data will be, in MOST OF MY USES, a json sub-obj! I had written "a b64 json obj", but actually that's not necessary since json has the same "escape keys" as json (duh). fuck yea +1 json. but still worth noting that time and data are the ONLY 2 top level keys
 //TODOoptional: libfuse could present it as a fs... key = filepath, value = file contents. hahaha and these fs dev noobs are STILL making "fs attribute extension" shit left and right hahahaha (doing it wrong)
+//TODOoptimization: maybe use couchbase as a backend, since IIRC if your design uses an "append-only" strat, then couchbase is actually pro af. With AnonymousBitcoinComputing I wasn't using an append-only strat, and it eventually bit me in the ass (my designs sucked and were hacky). in any case, I'm not touching the QSettings-based quick-n-dirty database backend until the app has become more mature and stable. year/month/day folderization (timeline-entries (files in the dirs) are named using QCryptographicsHash of TimeAndData and QTemporaryFile for good no-overwrite safety) is a good 1-machine optimization. LevelDB also comes to mind, but I recall looking at it and feeling like the design was simple (ezily stealable) but the reference implementation was missing the crucial part (writing to disk) and reading other people's code is a pita sometimes
 StupidKeyValueContentTracker::StupidKeyValueContentTracker(QObject *parent)
     : QObject(parent)
     , m_Timeline(new TimeAndData_Timeline(this))
@@ -133,7 +134,7 @@ void StupidKeyValueContentTracker::handleFinishedAppendingJsonObjectToTimeline_a
 {
     if(!success)
     {
-        emit e("error: failed to commitStagedKeyValueStoreMutation()! your key/values are still 'staged'");
+        emit e("error: failed to commitStagedKeyValueStoreMutation()! your key/values are still 'staged'. your db is probably fucked tho, psbly half of staged values were written, half not");
         emit commitFinished(false);
         return;
     }

@@ -2,7 +2,12 @@
 #define STUPIDKEYVALUECONTENTTRACKERCLI_H
 
 #include <QObject>
+
 #include <QTextStream>
+#include <QStringList>
+#include <QScopedPointer>
+
+#include "standardinputnotifier.h"
 
 class StupidKeyValueContentTrackerCli : public QObject
 {
@@ -11,8 +16,17 @@ public:
     explicit StupidKeyValueContentTrackerCli(QObject *parent = nullptr);
     void main();
 private:
+    StandardInputNotifier *m_StandardInputNotifier;
     QTextStream m_StdErr;
     QTextStream m_StdOut;
+    QStringList m_AppArgs;
+    bool m_Interactive;
+
+    void showUsage();
+    void myE(const QString &msg);
+    void processArgs();
+    void processCommandAndCommandArgs(QStringList commandAndCommandArgs);
+    void quitIfNotInteractive(bool success);
 signals:
     void initializeRequested();
     void addRequested(const QString & key, const QString & data);
@@ -26,6 +40,8 @@ public slots:
     void handleAddFinished(bool success);
     void handleCommitFinished(bool success);
     void handleReadKeyFinished(bool success, QString key, QString revision, QString data);
+private slots:
+    void handleStandardInputReceivedLine(const QString &line);
 };
 
 #endif // STUPIDKEYVALUECONTENTTRACKERCLI_H
