@@ -7,6 +7,8 @@
 #include <QCryptographicHash>
 #include <QStringList>
 
+#include <QDebug>
+
 //note: there is no delete, only append
 //I was originally going to make "data" be a QString, but I think I'm changing that now to be a QJsonObject. anything that can be a string can be a json object, so it's not a huge requirement. it is just easier to work with and requires less serialization/deserialization when working with the "users of" this lib. serialize ONCE, parse ONCE. if data was QString then we'd need to serialize [at least] twice and parse [at least] twice. I hope this decision doesn't come back to bite me in the ass...
 TimeAndData_Timeline::TimeAndData_Timeline(QObject *parent)
@@ -25,13 +27,17 @@ void TimeAndData_Timeline::readAndEmitAllTimelineEntries()
     AllTimelineEntriesType allTimelineEntries;
     for(QStringList::const_iterator it = allKeys.constBegin(); it != allKeys.constEnd(); ++it)
     {
-        QString timeAndDataJsonString = *it;
+        QString timeAndDataJsonString = settings.value(*it).toString();
         QByteArray timeAndDataJsonBA = timeAndDataJsonString.toUtf8();
         QJsonParseError jsonParseError;
         QJsonDocument timeAndDataJsonDoc = QJsonDocument::fromJson(timeAndDataJsonBA, &jsonParseError);
         if(jsonParseError.error != QJsonParseError::NoError)
         {
             //TODOreq: handle parse errors good. we should never see this unless the user manually modified the json
+            qDebug() << "";
+            qDebug() << timeAndDataJsonString;
+            qDebug() << "";
+            qDebug() << "json parse error: " << jsonParseError.errorString();
             qFatal("json parse error");
             return;
         }

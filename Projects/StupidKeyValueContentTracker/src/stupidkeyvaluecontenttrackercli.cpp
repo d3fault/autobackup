@@ -56,6 +56,7 @@ void StupidKeyValueContentTrackerCli::processArgs()
             myE("error: --interactive must be the only arg (for now)"); //TODOreq
             return;
         }
+        handleO("type \"quit\" to exit");
         m_Interactive = true;
         m_StandardInputNotifier = new StandardInputNotifier(this);
         connect(m_StandardInputNotifier, &StandardInputNotifier::standardInputReceivedLine, this, &StupidKeyValueContentTrackerCli::handleStandardInputReceivedLine);
@@ -196,6 +197,12 @@ void StupidKeyValueContentTrackerCli::handleReadKeyFinished(bool success, QStrin
 
 void StupidKeyValueContentTrackerCli::handleStandardInputReceivedLine(const QString &line)
 {
+    QString interactiveCommandMb = line.trimmed().toLower();
+    if(interactiveCommandMb == "quit" || interactiveCommandMb == "exit") //TODOmb: "help"
+    {
+        emit exitRequested(0);
+        return;
+    }
     QStringList lineSplitAtSpaces = line.split(" ", QString::SkipEmptyParts);
     processCommandAndCommandArgs(lineSplitAtSpaces);
 }
