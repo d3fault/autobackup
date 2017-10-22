@@ -4,12 +4,14 @@
 #include <QDateTime>
 
 #include "keyvaluestoremutation_add.h"
+#include "keyvaluestoremutation_modify.h"
 #include "keyvaluestoremutation_remove.h"
 #include "keyvaluestoremutationfactory.h"
 
 //TODOreq: this class uses (wraps/abstracts/hides) "mutations" of a KeyValue store. all underlying data must fit into a TimeAndData_Timeline json doc. Data is b64 encoded in that title, we do NOT add keys "next to" 'time' and 'data'. data will be, in MOST OF MY USES, a json sub-obj! I had written "a b64 json obj", but actually that's not necessary since json has the same "escape keys" as json (duh). fuck yea +1 json. but still worth noting that time and data are the ONLY 2 top level keys
 //TODOoptional: libfuse could present it as a fs... key = filepath, value = file contents. hahaha and these fs dev noobs are STILL making "fs attribute extension" shit left and right hahahaha (doing it wrong)
 //TODOoptimization: maybe use couchbase as a backend, since IIRC if your design uses an "append-only" strat, then couchbase is actually pro af. With AnonymousBitcoinComputing I wasn't using an append-only strat, and it eventually bit me in the ass (my designs sucked and were hacky). in any case, I'm not touching the QSettings-based quick-n-dirty database backend until the app has become more mature and stable. year/month/day folderization (timeline-entries (files in the dirs) are named using QCryptographicsHash of TimeAndData and QTemporaryFile for good no-overwrite safety) is a good 1-machine optimization. LevelDB also comes to mind, but I recall looking at it and feeling like the design was simple (ezily stealable) but the reference implementation was missing the crucial part (writing to disk) and reading other people's code is a pita sometimes
+//TODOprobably: commitMessage is optional. just like filenames, I can't be arsed to type them 99% of the time (but I certainly like having the option to)
 StupidKeyValueContentTracker::StupidKeyValueContentTracker(QObject *parent)
     : QObject(parent)
     , m_Timeline(new TimeAndData_Timeline(this))
@@ -110,6 +112,8 @@ void StupidKeyValueContentTracker::initialize()
 }
 void StupidKeyValueContentTracker::add(const QString &key, const QString &data)
 {
+    //add staged mutation for adding the key
+
     if(m_CurrentData.contains(key))
     {
         emit e("key already exists: " + key);
@@ -126,9 +130,32 @@ void StupidKeyValueContentTracker::add(const QString &key, const QString &data)
     m_StagedKeyValueStoreMutation.insert(key, addMutation);
     emit addFinished(true);
 }
+void StupidKeyValueContentTracker::modify(const QString &key, const QString &newValue)
+{
+    //add staged mutation for modifying the key
+
+    //TODOreq: should we 'point to' a 'parent value' to ensure we modify what we intended on modifying and not some raced-in new value? "rolling" hashes are needed, which means I need to refactor some. this could also apply to 'remove', but not to 'add' (since no KNOWN parent is necessary, only a necessetated lack of a parent)
+
+    if(!m_CurrentData.contains(key))
+    {
+        emit e("key doesn't exist: " + key);
+        emit modifyFinished(false);
+        return;
+    }
+    if(m_StagedKeyValueStoreMutation.contains(key))
+    {
+        //TODOmb: allow a staged mutation to be modified before ever being comitted? kinda makes sense, but maybe a separate "unstage" command is better? obv modify is SUPPOSED to work on COMMITTED values, not 'staged' ones (but it could work either way, I need to decide TODOreq)
+        emit e("you are already mutating key '" + QString(key) + "', so commit first or unstage it");
+        emit modifyFinished(false);
+        return;
+    }
+    QSharedPointer<KeyValueStoreMutation_Modify> modifyMutation(new KeyValueStoreMutation_Modify(newValue));
+    m_StagedKeyValueStoreMutation.insert(key, modifyMutation);
+    emit modifyFinished(true);
+}
 void StupidKeyValueContentTracker::removeKey(const QString &key)
 {
-    //TODOreq: add staged mutation for removing the key
+    //add staged mutation for removing the key
 
     if(!m_CurrentData.contains(key))
     {

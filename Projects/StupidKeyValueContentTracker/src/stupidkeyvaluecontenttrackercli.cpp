@@ -27,10 +27,11 @@ void StupidKeyValueContentTrackerCli::showUsage()
 
     handleE("ex0: ./thisApp add key data");
     handleE("ex1: ./thisApp rm key");
-    handleE("ex2: ./thisApp commit commitMessage");
+    handleE("ex2: ./thisApp modify key newValue");
+    handleE("ex3: ./thisApp commit commitMessage");
 
-    handleE("ex3: ./thisApp get key");
-    handleE("ex4: ./thisApp --interactive");
+    handleE("ex4: ./thisApp get key");
+    handleE("ex5: ./thisApp --interactive");
 }
 void StupidKeyValueContentTrackerCli::myE(const QString &msg)
 {
@@ -40,12 +41,7 @@ void StupidKeyValueContentTrackerCli::myE(const QString &msg)
 }
 void StupidKeyValueContentTrackerCli::processArgs()
 {
-    // ex0: ./thisApp add key data
-    // ex1: ./thisApp rm key
-    // ex3: ./thisApp commit commitMessage
-
-    // ex1: ./thisApp get key
-    // ex2: ./thisApp --interactive
+    //see showUsage() for list of args that need a processin'
 
     //TODOreq: should a non-interactive "add" command _default_ to committing implicitly? ex: ./app add --no-commit key data; ./app add --no-commit key2 data2; ./app commit boobs
     //OR, should it behave like git and not commit after each add? I could ofc allow many adds in a single line, hell even many commands xD. KISS for now, but the first question of the comment 1 line above is still relevant
@@ -109,11 +105,21 @@ void StupidKeyValueContentTrackerCli::processCommandAndCommandArgs(QStringList c
         emit addRequested(commandArgs.at(0), commandArgs.at(1));
         return;
     }
-    else if(command_orEmptyIfNoneSpecified == "rm")
+    else if(command_orEmptyIfNoneSpecified == "mod" || command_orEmptyIfNoneSpecified == "modify")
+    {
+        if(commandArgs.size() != 2)
+        {
+            myE("error: modify command takes exactly 2 arguments");
+            return;
+        }
+        emit modifyRequested(commandArgs.at(0), commandArgs.at(1));
+        return;
+    }
+    else if(command_orEmptyIfNoneSpecified == "rm" || command_orEmptyIfNoneSpecified == "remove")
     {
         if(commandArgs.size() != 1)
         {
-            myE("error: rm command takes exactly 1 argument");
+            myE("error: remove command takes exactly 1 argument");
             return;
         }
         emit removeKeyRequested(commandArgs.at(0));
@@ -183,6 +189,18 @@ void StupidKeyValueContentTrackerCli::handleAddFinished(bool success)
     else
     {
         handleE("add failed");
+    }
+    quitIfNotInteractive(success);
+}
+void StupidKeyValueContentTrackerCli::handleModifyFinished(bool success)
+{
+    if(success)
+    {
+        handleO("modify finished successfully");
+    }
+    else
+    {
+        handleE("modify failed");
     }
     quitIfNotInteractive(success);
 }

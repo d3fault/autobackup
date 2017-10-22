@@ -29,7 +29,8 @@ private:
     void quitIfNotInteractive(bool success);
 signals:
     void initializeRequested();
-    void addRequested(const QString &key, const QString & data);
+    void addRequested(const QString &key, const QString &data);
+    void modifyRequested(const QString &key, const QString &newValue);
     void removeKeyRequested(const QString &key);
     void commitRequested(const QString & commitMessage);
     void readKeyRequested(const QString & key, const QString & revision);
@@ -39,6 +40,7 @@ public slots:
     void handleO(QString msg);
     void handleInitializationFinished(bool success);
     void handleAddFinished(bool success);
+    void handleModifyFinished(bool success);
     void handleRemoveKeyFinished(bool success);
     void handleCommitFinished(bool success);
     void handleReadKeyFinished(bool success, QString key, QString revision, QString data);

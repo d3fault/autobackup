@@ -19,14 +19,16 @@ HEADERS += stupidkeyvaluecontenttracker.h \
     stupidkeyvaluecontenttrackercli.h \
     stupidkeyvaluecontenttrackertypes.h \
     keyvaluestoremutationfactory.h \
-    keyvaluestoremutation_remove.h
+    keyvaluestoremutation_remove.h \
+    keyvaluestoremutation_modify.h
 
 SOURCES += main.cpp \
     stupidkeyvaluecontenttracker.cpp \
     keyvaluestoremutation_add.cpp \
     stupidkeyvaluecontenttrackercli.cpp \
     keyvaluestoremutationfactory.cpp \
-    keyvaluestoremutation_remove.cpp
+    keyvaluestoremutation_remove.cpp \
+    keyvaluestoremutation_modify.cpp
 
 include(../../TimeAndData_Timeline/src/timeanddata_timeline.pri)
 include(../../../GloballySharedClasses/standardinputnotifier.pri)

@@ -1,6 +1,5 @@
 #include "keyvaluestoremutation_remove.h"
 
-
 void KeyValueStoreMutation_Remove::appendYourselfToBulkMutationsJsonObject(const QString &key, QJsonObject &bulkMutations) const
 {
     QJsonObject removeMutation;

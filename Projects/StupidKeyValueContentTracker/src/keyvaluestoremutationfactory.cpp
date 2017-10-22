@@ -1,6 +1,7 @@
 #include "keyvaluestoremutationfactory.h"
 
 #include "keyvaluestoremutation_add.h"
+#include "keyvaluestoremutation_modify.h"
 #include "keyvaluestoremutation_remove.h"
 
 StupidKeyValueContentTracker_StagedMutationsValueType KeyValueStoreMutationFactory::createKeyValueStoreMutation(const QString &mutationType, const QString &mutationValue)
@@ -9,12 +10,15 @@ StupidKeyValueContentTracker_StagedMutationsValueType KeyValueStoreMutationFacto
     {
         return StupidKeyValueContentTracker_StagedMutationsValueType(new KeyValueStoreMutation_Add(mutationValue));
     }
+    else if(mutationType == KeyValueStoreMutation_Modify_MUTATIONTYPE)
+    {
+        return StupidKeyValueContentTracker_StagedMutationsValueType(new KeyValueStoreMutation_Modify(mutationValue));
+    }
     else if(mutationType == KeyValueStoreMutation_Remove_MUTATIONTYPE)
     {
-        Q_UNUSED(mutationValue)
+        Q_UNUSED(mutationValue);
         return StupidKeyValueContentTracker_StagedMutationsValueType(new KeyValueStoreMutation_Remove());
     }
-    //TODOreq: else if modify
     else
     {
         qFatal("unknown mutation type");
