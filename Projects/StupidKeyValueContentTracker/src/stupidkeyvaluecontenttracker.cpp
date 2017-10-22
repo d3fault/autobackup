@@ -31,17 +31,18 @@ StupidKeyValueContentTracker::~StupidKeyValueContentTracker()
 {
     //persist m_CurrentData to disk, and set haveCache to true if we actually wrote anything. this allows us to restart the app without re-reading the ENTIRE timeline
     //TODOmb: QtSystemSignalHandler so we can still persist to cache on CTRL+C (SIGTERM) etc? honestly if the cache isn't being written to AS THE APP IS RUNNING (which is NOT currently the case), then writing to cache at last-minute like that might not be a good idea. I think CTRL+C has to "not block" or some such? eh maybe it's fine since we're intercepting the signals, I forget...
+    QSettings settings;
+    settings.setValue(StupidKeyValueContentTracker_SETTINGSKEY_HAVECACHE, true); //even if our m_CurrentData is empty, it still might have previously had an extremely long timeline "history", so setting haveCache to true, even with the cache empty, could very well still save us a ton of time from having to needlessless re-read the entire timeline... only to determine that m_CurrentData is empty xD
+    settings.beginGroup(StupidKeyValueContentTracker_SETTINGSKEY_CACHEGROUP);
+    settings.remove(""); //this is a hacky/ez way to purge stale key/values in the cache that have since been 'removed' from the StupidKeyValueContentTracker. it pretty much clears our entire cache (but I don't use clear() because that clears EVERYTHING, not just the current group's children). TODOoptimization: call settings.remove() on anything removed during this app run, rather than removing everything and re-adding every time
     if(!m_CurrentData.isEmpty())
     {
-        QSettings settings;
-        settings.setValue(StupidKeyValueContentTracker_SETTINGSKEY_HAVECACHE, true);
-        settings.beginGroup(StupidKeyValueContentTracker_SETTINGSKEY_CACHEGROUP);
         for(CurrentDataType::const_iterator it = m_CurrentData.constBegin(); it != m_CurrentData.constEnd(); ++it)
         {
             settings.setValue(it.key(), it.value());
         }
-        settings.endGroup();
     }
+    settings.endGroup();
 }
 void StupidKeyValueContentTracker::populateCurrentDataWithCache(QSettings &settings)
 {
