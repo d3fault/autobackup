@@ -24,10 +24,13 @@ void StupidKeyValueContentTrackerCli::main()
 void StupidKeyValueContentTrackerCli::showUsage()
 {
     handleE("usage:");
+
     handleE("ex0: ./thisApp add key data");
-    handleE("ex1: ./thisApp get key");
-    handleE("ex3: ./thisApp commit commitMessage");
-    handleE("ex2: ./thisApp --interactive");
+    handleE("ex1: ./thisApp rm key");
+    handleE("ex2: ./thisApp commit commitMessage");
+
+    handleE("ex3: ./thisApp get key");
+    handleE("ex4: ./thisApp --interactive");
 }
 void StupidKeyValueContentTrackerCli::myE(const QString &msg)
 {
@@ -37,10 +40,11 @@ void StupidKeyValueContentTrackerCli::myE(const QString &msg)
 }
 void StupidKeyValueContentTrackerCli::processArgs()
 {
-     //TODOreq:
     // ex0: ./thisApp add key data
-    // ex1: ./thisApp get key
+    // ex1: ./thisApp rm key
     // ex3: ./thisApp commit commitMessage
+
+    // ex1: ./thisApp get key
     // ex2: ./thisApp --interactive
 
     //TODOreq: should a non-interactive "add" command _default_ to committing implicitly? ex: ./app add --no-commit key data; ./app add --no-commit key2 data2; ./app commit boobs
@@ -103,6 +107,16 @@ void StupidKeyValueContentTrackerCli::processCommandAndCommandArgs(QStringList c
             return;
         }
         emit addRequested(commandArgs.at(0), commandArgs.at(1));
+        return;
+    }
+    else if(command_orEmptyIfNoneSpecified == "rm")
+    {
+        if(commandArgs.size() != 1)
+        {
+            myE("error: rm command takes exactly 1 argument");
+            return;
+        }
+        emit removeKeyRequested(commandArgs.at(0));
         return;
     }
     else if(command_orEmptyIfNoneSpecified == "get")
@@ -169,6 +183,18 @@ void StupidKeyValueContentTrackerCli::handleAddFinished(bool success)
     else
     {
         handleE("add failed");
+    }
+    quitIfNotInteractive(success);
+}
+void StupidKeyValueContentTrackerCli::handleRemoveKeyFinished(bool success)
+{
+    if(success)
+    {
+        handleO("remove key finished successfully");
+    }
+    else
+    {
+        handleE("remove key failed");
     }
     quitIfNotInteractive(success);
 }

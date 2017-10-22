@@ -24,12 +24,14 @@ public:
     {
         connect(ui, &T::initializeRequested, backend, &StupidKeyValueContentTracker::initialize);
         connect(ui, &T::addRequested, backend, &StupidKeyValueContentTracker::add);
+        connect(ui, &T::removeKeyRequested, backend, &StupidKeyValueContentTracker::removeKey);
         connect(ui, &T::commitRequested, backend, &StupidKeyValueContentTracker::commit);
         connect(ui, &T::readKeyRequested, backend, &StupidKeyValueContentTracker::readKey);
         connect(backend, &StupidKeyValueContentTracker::e, ui, &T::handleE);
         connect(backend, &StupidKeyValueContentTracker::o, ui, &T::handleO);
         connect(backend, &StupidKeyValueContentTracker::initializationFinished, ui, &T::handleInitializationFinished);
         connect(backend, &StupidKeyValueContentTracker::addFinished, ui, &T::handleAddFinished);
+        connect(backend, &StupidKeyValueContentTracker::removeKeyFinished, ui, &T::handleRemoveKeyFinished);
         connect(backend, &StupidKeyValueContentTracker::commitFinished, ui, &T::handleCommitFinished);
         connect(backend, &StupidKeyValueContentTracker::readKeyFinished, ui, &T::handleReadKeyFinished);
     }
@@ -52,6 +54,7 @@ signals:
 
     void initializationFinished(bool success);
     void addFinished(bool success);
+    void removeKeyFinished(bool success);
     void commitFinished(bool success);
     void readKeyFinished(bool success, const QString &key, const QString &revision, const QString &data);
 
@@ -61,6 +64,7 @@ signals:
 public slots:
     void initialize();
     void add(const QString &key, const QString &data);
+    void removeKey(const QString &key);
     void commit(const QString &commitMessage);
     void readKey(const QString &key, const QString &revision);
 private slots:

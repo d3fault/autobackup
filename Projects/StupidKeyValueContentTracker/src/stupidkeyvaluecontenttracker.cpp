@@ -4,6 +4,7 @@
 #include <QDateTime>
 
 #include "keyvaluestoremutation_add.h"
+#include "keyvaluestoremutation_remove.h"
 #include "keyvaluestoremutationfactory.h"
 
 //TODOreq: this class uses (wraps/abstracts/hides) "mutations" of a KeyValue store. all underlying data must fit into a TimeAndData_Timeline json doc. Data is b64 encoded in that title, we do NOT add keys "next to" 'time' and 'data'. data will be, in MOST OF MY USES, a json sub-obj! I had written "a b64 json obj", but actually that's not necessary since json has the same "escape keys" as json (duh). fuck yea +1 json. but still worth noting that time and data are the ONLY 2 top level keys
@@ -109,6 +110,12 @@ void StupidKeyValueContentTracker::initialize()
 }
 void StupidKeyValueContentTracker::add(const QString &key, const QString &data)
 {
+    if(m_CurrentData.contains(key))
+    {
+        emit e("key already exists: " + key);
+        emit addFinished(false);
+        return;
+    }
     if(m_StagedKeyValueStoreMutation.contains(key))
     {
         emit e("you are already mutating key '" + QString(key) + "', so commit first or unstage it");
@@ -118,6 +125,27 @@ void StupidKeyValueContentTracker::add(const QString &key, const QString &data)
     QSharedPointer<KeyValueStoreMutation_Add> addMutation(new KeyValueStoreMutation_Add(data)); //TODOreq: KeyValueStoreMutation_Delete, KeyValueStoreMutation_Modify
     m_StagedKeyValueStoreMutation.insert(key, addMutation);
     emit addFinished(true);
+}
+void StupidKeyValueContentTracker::removeKey(const QString &key)
+{
+    //TODOreq: add staged mutation for removing the key
+
+    if(!m_CurrentData.contains(key))
+    {
+        emit e("key doesn't exist: " + key);
+        emit removeKeyFinished(false);
+        return;
+    }
+    if(m_StagedKeyValueStoreMutation.contains(key))
+    {
+        //TODOmb: allow a staged mutation to be removed before ever being comitted? kinda makes sense, but maybe a separate "unstage" command is better? obv rm is SUPPOSED to work on COMMITTED values, not 'staged' ones (but it could work either way, I need to decide TODOreq)
+        emit e("you are already mutating key '" + QString(key) + "', so commit first or unstage it");
+        emit removeKeyFinished(false);
+        return;
+    }
+    QSharedPointer<KeyValueStoreMutation_Remove> removeMutation(new KeyValueStoreMutation_Remove());
+    m_StagedKeyValueStoreMutation.insert(key, removeMutation);
+    emit removeKeyFinished(true);
 }
 void StupidKeyValueContentTracker::commit(const QString &commitMessage)
 {
