@@ -30,6 +30,7 @@ private:
     //void generatePureVirtualUserInterfaceHeaderFile(const UserInterfaceSkeletonGeneratorData &data);
     void generateUserInterfaceImplStubsMaybe(const UserInterfaceSkeletonGeneratorData &data, QList<QString> implStubShortNames);
     void generateAnyAndAllUserInterfaceImplStubs(const UserInterfaceSkeletonGeneratorData &data);
+    void generateRequestResponseContractGlueMaybe(const UserInterfaceSkeletonGeneratorData &data) const;
 
     QString m_OutputDirWithTrailingSlash;
     QList<IUserInterfaceImplStubGenerator*> ImplStubGenerators;

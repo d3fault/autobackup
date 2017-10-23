@@ -14,6 +14,8 @@ public:
     SomeSlotRequestResponse(BusinessObject *businessObject);
     SomeSlotScopedResponder assumeResponsibilityToRespond();
 private:
+    BusinessObject *m_BusinessObject;
+
     SomeSlotScopedResponder m_SomeSlotScopedResponder;
     friend class SomeSlotScopedResponder;
 };
