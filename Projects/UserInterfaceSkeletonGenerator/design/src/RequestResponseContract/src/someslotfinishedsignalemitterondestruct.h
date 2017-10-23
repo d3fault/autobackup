@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include <QSharedPointer>
+#include <memory>
 
 class SomeSlotRequestResponse;
 
@@ -20,7 +20,7 @@ signals:
     void signalToBeEmittedInDestructor(bool success);
 };
 
-class SomeSlotScopedResponder : public QSharedPointer<SomeSlotFinishedSignalEmitterOnDestruct>
+class SomeSlotScopedResponder : public std::unique_ptr<SomeSlotFinishedSignalEmitterOnDestruct>
 {
 public:
     SomeSlotScopedResponder(SomeSlotFinishedSignalEmitterOnDestruct *data, SomeSlotRequestResponse *parent);

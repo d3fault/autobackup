@@ -16,11 +16,10 @@ SomeSlotFinishedSignalEmitterOnDestruct::~SomeSlotFinishedSignalEmitterOnDestruc
 }
 
 SomeSlotScopedResponder::SomeSlotScopedResponder(SomeSlotFinishedSignalEmitterOnDestruct *data, SomeSlotRequestResponse *parent)
-    : QSharedPointer<SomeSlotFinishedSignalEmitterOnDestruct>(data)
+    : std::unique_ptr<SomeSlotFinishedSignalEmitterOnDestruct>(data)
     , m_Parent(parent)
 { }
 void SomeSlotScopedResponder::deferResponding()
 {
-    //ref += 1
-    m_Parent->m_SomeSlotScopedResponder = *this; //brain = exploded
+    m_Parent->m_SomeSlotScopedResponder = std::move(*this); //brain = exploded
 }
