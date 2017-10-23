@@ -4,18 +4,28 @@
 
 void UserInterfaceSkeletonGeneratorData::createAndAddSignal(QString signalName, ArgsList signalArgs)
 {
-    SignalData signalData;
-    signalData.setSignalName(signalName);
-    signalData.setSignalArgs(signalArgs);
-    Signals.append(signalData);
+    Signals.append(createSignal(signalName, signalArgs));
 }
-void UserInterfaceSkeletonGeneratorData::createAndAddSlot(QString slotReturnTypeThatGetsConvertedToTheFinishedSignalsSingleArgType, QString slotName, ArgsList slotArgs)
+//TODOreq: remove slotReturnType. people who want a slot return type really want RequestResponse. then again I should maintain flexibility and keep it!! hmm but maybe make it the last optional argument and default to of course void. because: QBlockingQueuedConnection fukken worx man and I have no GOOD reason to stop it from working
+void UserInterfaceSkeletonGeneratorData::createAndAddSlot(QString slotReturnType, QString slotName, ArgsList slotArgs)
 {
-    SlotData slotData;
-    slotData.SlotReturnType = slotReturnTypeThatGetsConvertedToTheFinishedSignalsSingleArgType;
-    slotData.setSlotName(slotName);
-    slotData.setSlotArgs(slotArgs);
-    Slots.append(slotData);
+    Slots.append(createSlot(slotReturnType, slotName, slotArgs));
+}
+void UserInterfaceSkeletonGeneratorData::createAndAddRequestResponse_aka_SlotWithFinishedSignal(QString slotName, UserInterfaceSkeletonGeneratorData::ArgsList slotArgs, UserInterfaceSkeletonGeneratorData::ArgsList signalArgs_inAdditionToSuccessBooleanThatWillBeAutoAdded, QString signalName_orLeaveEmptyToAutoGenerateFinishedSignalNameUsingSlotName)
+{
+    RequestResponse_aka_SlotWithFinishedSignal_Data requestResponseData;
+
+    //Slot
+    slotArgs.prepend(createArg("RequestResponse", "requestResponse"));
+    requestResponseData.Slot = createSlot("void", slotName, slotArgs);
+
+    //Finished Signal
+    QString signalName = signalName_orLeaveEmptyToAutoGenerateFinishedSignalNameUsingSlotName; //TODOreq
+    SignalData signalData = createSignal(signalName, signalArgs_inAdditionToSuccessBooleanThatWillBeAutoAdded);
+    ArgsList signalArgs = signalData.signalArgs();
+    signalArgs.prepend(createArg("bool", "success"));
+    signalData.setSignalArgs(signalArgs);
+    requestResponseData.FinishedSignal = signalData;
 }
 QString UserInterfaceSkeletonGeneratorData::firstLetterToUpper(const QString &inputString)
 {
@@ -24,6 +34,21 @@ QString UserInterfaceSkeletonGeneratorData::firstLetterToUpper(const QString &in
     QString ret(inputString);
     ret.replace(0, 1, ret.at(0).toUpper());
     return ret;
+}
+UserInterfaceSkeletonGeneratorData::SignalData UserInterfaceSkeletonGeneratorData::createSignal(QString signalName, UserInterfaceSkeletonGeneratorData::ArgsList signalArgs)
+{
+    SignalData signalData;
+    signalData.setSignalName(signalName);
+    signalData.setSignalArgs(signalArgs);
+    return signalData;
+}
+UserInterfaceSkeletonGeneratorData::SlotData UserInterfaceSkeletonGeneratorData::createSlot(QString slotReturnType, QString slotName, UserInterfaceSkeletonGeneratorData::ArgsList slotArgs)
+{
+    SlotData slotData;
+    slotData.SlotReturnType = slotReturnType;
+    slotData.setSlotName(slotName);
+    slotData.setSlotArgs(slotArgs);
+    return slotData;
 }
 #if 0 //fuck virtual inheritance interfaces in this case
 void UserInterfaceSkeletonGeneratorData::generatePureVirtualUserInterfaceHeaderFile(QTextStream &textStream) const

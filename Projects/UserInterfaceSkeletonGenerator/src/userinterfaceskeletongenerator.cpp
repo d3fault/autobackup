@@ -11,6 +11,7 @@
 
 QString UserInterfaceSkeletonGenerator::TAB = "    ";
 
+//TODOreq: to complement my list<signals> and list<slots>, I want a list<RequestResponse_aka_SlotWithFinishedSignal>; "slot with slotFinished(bool success) signal emission contract". I want to use auto-generated scoped-destruction response-signal-emitters, which can request deferrals to wait for async operations to complete. at the end of all async operations, the coder calls requestResponse.setSuccess(true) and then simply lets the requestResponse go out of scope. deferall would naturally look like requestResponse.deferResponding() and probably a corresponding requestResponse.resumeResponsibilityForResponding() whenever the next async callback is called (right at the beginning of it, before any failures are handled of any kind (because error handling could throw!))
 UserInterfaceSkeletonGenerator::UserInterfaceSkeletonGenerator(QObject *parent)
     : QObject(parent)
 { }

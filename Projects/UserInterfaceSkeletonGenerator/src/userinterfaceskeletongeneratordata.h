@@ -48,18 +48,34 @@ struct UserInterfaceSkeletonGeneratorData
         QString correspondingSlotInvokeRequestSignalName() const;
     };
 
+    struct RequestResponse_aka_SlotWithFinishedSignal_Data
+    {
+        SlotData Slot;
+        SignalData FinishedSignal;
+    };
+
     void createAndAddSignal(QString signalName, ArgsList signalArgs = ArgsList());
-    void createAndAddSlot(QString slotReturnTypeThatGetsConvertedToTheFinishedSignalsSingleArgType/*TODOreq*/ /*ex: "void"*/, QString slotName /*ex: "encodeVideo*/, ArgsList slotArgs = ArgsList());
+    void createAndAddSlot(QString slotReturnType /*ex: "void"*/, QString slotName /*ex: "encodeVideo*/, ArgsList slotArgs = ArgsList());
+
+    void createAndAddRequestResponse_aka_SlotWithFinishedSignal(QString slotName, ArgsList slotArgs = ArgsList(), ArgsList signalArgs_inAdditionToSuccessBooleanThatWillBeAutoAdded = ArgsList(), QString signalName_orLeaveEmptyToAutoGenerateFinishedSignalNameUsingSlotName = QString());
 
     //void generatePureVirtualUserInterfaceHeaderFile(QTextStream &textStream) const;
 
     //QString targetUserInterfaceClassName() const;
 
     QString BusinessLogiClassName;
+
+    //Basic Qt MetaMethods
     QList<SignalData> Signals;
     QList<SlotData> Slots;
+
+    //Exotic SlotWithFinishedSignal Contract Thingo
+    QList<RequestResponse_aka_SlotWithFinishedSignal_Data> RequestResponses_aka_SlotsWithFinishedSignals;
 private:
     static QString firstLetterToUpper(const QString &inputString);
+
+    static SignalData createSignal(QString signalName, ArgsList signalArgs);
+    static SlotData createSlot(QString slotReturnType, QString slotName, ArgsList slotArgs);
 };
 
 #endif // USERINTERFACESKELETONGENERATORDATA_H
