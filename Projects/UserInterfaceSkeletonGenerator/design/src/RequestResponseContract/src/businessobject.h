@@ -3,8 +3,7 @@
 
 #include <QObject>
 
-#include "someslotrequestresponse.h"
-#include "someslotfinishedsignalemitterondestruct.h"
+#include "businessobjectrequestresponsecontracts.h"
 
 class BusinessObject : public QObject
 {
@@ -12,11 +11,15 @@ class BusinessObject : public QObject
 public:
     explicit BusinessObject(QObject *parent = 0);
 private:
-    SomeSlotRequestResponse m_SomeSlotRequestResponse;
+    int m_X;
+
+    BusinessObjectRequestResponseContract::BusinessObjectRequestResponseContracts m_RequestResponseContracts;
 signals:
-    void someSlotFinished(bool success);
+    void someSlotFinished(bool success, bool xIsEven);
+    void anotherSlotFinished(bool success);
 public slots:
-    void someSlot();
+    void someSlot(int x);
+    void anotherSlot();
 private slots:
     void someSlotContinuation();
 };

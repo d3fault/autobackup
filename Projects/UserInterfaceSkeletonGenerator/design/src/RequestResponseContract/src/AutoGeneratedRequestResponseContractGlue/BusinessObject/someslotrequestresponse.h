@@ -5,6 +5,9 @@
 
 class BusinessObject;
 
+namespace BusinessObjectRequestResponseContract
+{
+
 class SomeSlotRequestResponse
 {
 public:
@@ -14,5 +17,7 @@ private:
     SomeSlotScopedResponder m_SomeSlotScopedResponder;
     friend class SomeSlotScopedResponder;
 };
+
+}
 
 #endif // SOMESLOTREQUESTRESPONSE_H

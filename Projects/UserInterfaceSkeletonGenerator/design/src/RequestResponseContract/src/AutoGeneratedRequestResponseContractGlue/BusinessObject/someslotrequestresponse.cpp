@@ -2,6 +2,8 @@
 
 #include "businessobject.h"
 
+using namespace BusinessObjectRequestResponseContract;
+
 SomeSlotRequestResponse::SomeSlotRequestResponse(BusinessObject *businessObject)
     : m_SomeSlotScopedResponder(new SomeSlotFinishedSignalEmitterOnDestruct(), this)
 {
