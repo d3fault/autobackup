@@ -11,14 +11,14 @@ class SomeSlotRequestResponse : public QObject
 public:
     explicit SomeSlotRequestResponse(BusinessObject *businessClass, QObject *parent = 0);
     void setSuccess(bool success);
-    bool setXIsEven(bool xIsEven);
+    void setXIsEven(bool xIsEven);
 private:
     void respond_aka_emitFinishedSignal();
     friend class SomeSlotScopedResponder;
 
     bool m_Success;
     bool m_XIsEven;
-/*private:*/ signals:
+signals: /*private:*/
     void someSlotFinished(bool success, bool xIsEven);
 };
 

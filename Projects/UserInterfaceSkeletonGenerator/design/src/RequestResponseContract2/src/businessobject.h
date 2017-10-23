@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-class BusinessObjectRequestResponseContracts;
+#include "businessobjectrequestresponsecontracts.h"
 
 class BusinessObject : public QObject
 {
@@ -11,7 +11,7 @@ class BusinessObject : public QObject
 public:
     explicit BusinessObject(QObject *parent = 0);
 private:
-    BusinessObjectRequestResponseContracts *m_RequestResponseContracts;
+    BusinessObjectRequestResponseContracts m_RequestResponseContracts;
 
     int m_X;
 signals:

@@ -2,14 +2,13 @@
 
 #include <QTimer>
 
-#include "businessobjectrequestresponsecontracts.h"
-
 BusinessObject::BusinessObject(QObject *parent)
     : QObject(parent)
+    , m_RequestResponseContracts(this)
 { }
 void BusinessObject::someSlot(int x)
 {
-    SomeSlotScopedResponder scopedResponder(m_RequestResponseContracts->someSlot());
+    SomeSlotScopedResponder scopedResponder(m_RequestResponseContracts.someSlot());
 
     m_X = x;
     QTimer::singleShot(0, this, SLOT(someSlotContinuation()));
@@ -23,7 +22,7 @@ void BusinessObject::anotherSlot()
 void BusinessObject::someSlotContinuation()
 {
     qDebug("someSlotContinuation called");
-    SomeSlotScopedResponder scopedResponder(m_RequestResponseContracts->someSlot());
+    SomeSlotScopedResponder scopedResponder(m_RequestResponseContracts.someSlot());
     scopedResponder.response()->setXIsEven(m_X % 2 == 0 ? true : false);
     scopedResponder.response()->setSuccess(true);
 }

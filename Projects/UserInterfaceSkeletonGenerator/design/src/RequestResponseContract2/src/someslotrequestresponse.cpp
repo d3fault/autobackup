@@ -6,13 +6,13 @@ SomeSlotRequestResponse::SomeSlotRequestResponse(BusinessObject *businessClass, 
     : QObject(parent)
     , m_Success(false)
 {
-    connect(this, &SomeSlotRequestResponse::someSlotFinished, businessClass, &BusinessObject::someSlotFinished);
+    connect(this, &SomeSlotRequestResponse::someSlotFinished, businessClass, &BusinessObject::someSlotFinished, Qt::QueuedConnection);
 }
 void SomeSlotRequestResponse::setSuccess(bool success)
 {
     m_Success = success;
 }
-bool SomeSlotRequestResponse::setXIsEven(bool xIsEven)
+void SomeSlotRequestResponse::setXIsEven(bool xIsEven)
 {
     m_XIsEven = xIsEven;
 }
