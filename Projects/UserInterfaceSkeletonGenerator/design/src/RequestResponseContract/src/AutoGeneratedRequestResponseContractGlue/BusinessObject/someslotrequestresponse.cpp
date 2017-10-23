@@ -1,6 +1,6 @@
 #include "someslotrequestresponse.h"
 
-#include "businessobject.h"
+#include "../../businessobject.h"
 
 using namespace BusinessObjectRequestResponseContract;
 

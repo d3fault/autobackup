@@ -1,0 +1,13 @@
+being a programmer is thinking about information at arbitrary levels of detail
+
+I decide the level of detail using will alone. I am aiming for "best unless that takes too long, otherwise good enough". I am determined to make a fuckking usable OS for myself first; the fact that it's open source and available to _you_ is slightly irrelevant until I factor in the inevitable contributors (sup from the past. thank you for your contributions).
+
+sometimes code takes me to extremely detailed levels of view of information that I simply don't give a shit about. and I get stuck there for hours/weeks/months/years/indefinitely.
+
+in that spirit, I have ADHD when it comes to projects and I like to start a new one every once in a while, regardless of whether or not previous projects are finished or have even progressed.
+
+or I guess even when they are simultaneously (in the macro-micro sense) progressing... (wasdf and StupidKeyValueContentTracker)
+
+that's kinda what UserInterfaceSkeletonGenerator::RequestResponseContract_aka_slotWithFinishedSignal was, just a relatively easy sounding project that is bringing me to boring levels of detail during the implementation. I am specifically talking about the "default values" refactor, which I think I'm going to delete (after comitting ofc) and implement later after RequestResponseContract is at least in place [using uninitialized values! KISS for alpha 0.0 version].
+
+I am living the art life.
