@@ -100,11 +100,11 @@ void UserInterfaceSkeletonGenerator::populateDataUsingHardCodedCppXD(UserInterfa
 {
     data.BusinessLogiClassName = "LibFfmpeg";
 
-    data.createAndAddSlot("void", "encodeVideo", UserInterfaceSkeletonGeneratorData::ArgsWithoutDefaultValues_List() << UserInterfaceSkeletonGeneratorData::SingleArgWithoutDefaultValue{"QString","input"} << UserInterfaceSkeletonGeneratorData::SingleArgWithoutDefaultValue{"QString","output"} << UserInterfaceSkeletonGeneratorData::SingleArgWithoutDefaultValue{"QString","fourCC"} ); //TODOoptimization: don't require those huge prefixes. since I'm going to be MODIFYING this code in order to USE the app [initially], it's a huge optimization xD. use a namespace or something (and do using namespace blah; at top of this file)
+    data.createAndAddSlot("void", "encodeVideo", UserInterfaceSkeletonGeneratorData::ArgsList() << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","input"} << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","output"} << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","fourCC"} ); //TODOoptimization: don't require those huge prefixes. since I'm going to be MODIFYING this code in order to USE the app [initially], it's a huge optimization xD. use a namespace or something (and do using namespace blah; at top of this file)
 
-    data.createAndAddSignal("error", UserInterfaceSkeletonGeneratorData::ArgsWithoutDefaultValues_List() << UserInterfaceSkeletonGeneratorData::SingleArgWithoutDefaultValue{"QString","errorMessage"}); //TO DOnvm: there will be an encodeVideoFinished(bool success) signal generated on business? wait not we PARSE the business, not generate it! so nvm actually, if you want an encodeVideoFinished signal, you have to specify it (you have to "check" it to choose it when we are parsing the class decl string [for the first time]
+    data.createAndAddSignal("error", UserInterfaceSkeletonGeneratorData::ArgsList() << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","errorMessage"}); //TO DOnvm: there will be an encodeVideoFinished(bool success) signal generated on business? wait not we PARSE the business, not generate it! so nvm actually, if you want an encodeVideoFinished signal, you have to specify it (you have to "check" it to choose it when we are parsing the class decl string [for the first time]
 
-    data.createAndAddRequestResponse_aka_SlotWithFinishedSignal("queryInstalledCodecs", UserInterfaceSkeletonGeneratorData::ArgsWithoutDefaultValues_List() << UserInterfaceSkeletonGeneratorData::SingleArgWithoutDefaultValue{"QString","codecNameFilter"}, UserInterfaceSkeletonGeneratorData::ArgsWithMandatoryDefaultValues_List() << UserInterfaceSkeletonGeneratorData::SingleArgWithMandatoryDefaultValue{"QList<QString>","installedCodecs","QList<QString>()"});
+    data.createAndAddRequestResponse_aka_SlotWithFinishedSignal("queryInstalledCodecs", UserInterfaceSkeletonGeneratorData::ArgsList() << UserInterfaceSkeletonGeneratorData::SingleArg{"QString","codecNameFilter"}, UserInterfaceSkeletonGeneratorData::ArgsList() << UserInterfaceSkeletonGeneratorData::SingleArg{"QList<QString>","installedCodecs"/*TODOreq: defaultValue: ,"QList<QString>()"*/});
 }
 void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromClassDeclarationString(const QString &classDeclarationCpp_ForParsing, QList<QString> implStubShortNames)
 {
@@ -129,11 +129,13 @@ void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromData(const
 
     displayFrontendBackendConnectStatements(data);
 
-    //nope: virtual inheritance interfaces suck, templated connectBackendToUi methods using a bunch of Qt5-style connect statements is way better:
+    //nope: virtual inheritance interfaces suck, templated connectBackendToUi methods using a bunch of Qt5-style connect statements is way better
     //generatePureVirtualUserInterfaceHeaderFile(data);
 
     generateUserInterfaceImplStubsMaybe(data, implStubShortNames); //OT'ish: doesn't the "tell, don't ask" principle violate "keep logic and data separate"? maybe I'm doin it wrong xD. wait yes I think it does! wtf. I "tell" my "data" to "do" something, rather than asking (querying) the data repeatedly. ehh fuck it who cares for now <3
 
-    emit o("the output you desire is here: " + m_OutputDirWithTrailingSlash);
+    //TODOreq: generateRequestResponseContractGlueMaybe();
+
+    emit o("the UserInterfaceSkeletonGenerator output you desire is here: " + m_OutputDirWithTrailingSlash);
     emit finishedGeneratingUserInterfaceSkeleton(true);
 }

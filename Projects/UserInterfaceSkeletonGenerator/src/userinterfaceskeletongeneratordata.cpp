@@ -2,16 +2,16 @@
 
 #include "userinterfaceskeletongenerator.h"
 
-void UserInterfaceSkeletonGeneratorData::createAndAddSignal(QString signalName, ArgsWithOptionalDefaultValues_List signalArgs)
+void UserInterfaceSkeletonGeneratorData::createAndAddSignal(QString signalName, ArgsList signalArgs)
 {
     Signals.append(createSignal(signalName, signalArgs));
 }
 //TODOreq: remove slotReturnType. people who want a slot return type really want RequestResponse. then again I should maintain flexibility and keep it!! hmm but maybe make it the last optional argument and default to of course void. because: QBlockingQueuedConnection fukken worx man and I have no GOOD reason to stop it from working
-void UserInterfaceSkeletonGeneratorData::createAndAddSlot(QString slotReturnType, QString slotName, ArgsWithoutDefaultValues_List slotArgs)
+void UserInterfaceSkeletonGeneratorData::createAndAddSlot(QString slotReturnType, QString slotName, ArgsList slotArgs)
 {
     Slots.append(createSlot(slotReturnType, slotName, slotArgs));
 }
-void UserInterfaceSkeletonGeneratorData::createAndAddRequestResponse_aka_SlotWithFinishedSignal(QString slotName, UserInterfaceSkeletonGeneratorData::ArgsWithoutDefaultValues_List slotArgs, ArgsWithMandatoryDefaultValues_List signalArgsAllHavingDefaultValues_inAdditionToSuccessBooleanThatWillBeAutoAdded, QString signalName_orLeaveEmptyToAutoGenerateFinishedSignalNameUsingSlotName)
+void UserInterfaceSkeletonGeneratorData::createAndAddRequestResponse_aka_SlotWithFinishedSignal(QString slotName, UserInterfaceSkeletonGeneratorData::ArgsList slotArgs, ArgsList signalArgsAllHavingDefaultValues_inAdditionToSuccessBooleanThatWillBeAutoAdded, QString signalName_orLeaveEmptyToAutoGenerateFinishedSignalNameUsingSlotName)
 {    
     RequestResponse_aka_SlotWithFinishedSignal_Data requestResponseData;
 
@@ -19,12 +19,14 @@ void UserInterfaceSkeletonGeneratorData::createAndAddRequestResponse_aka_SlotWit
     requestResponseData.Slot = createSlot("void", slotName, slotArgs);
 
     //Finished Signal
-    QString signalName = signalName_orLeaveEmptyToAutoGenerateFinishedSignalNameUsingSlotName; //TODOreq
+    QString signalName = signalName_orLeaveEmptyToAutoGenerateFinishedSignalNameUsingSlotName.isEmpty() ? finishedSignalNameFromSlotName(slotName) : signalName_orLeaveEmptyToAutoGenerateFinishedSignalNameUsingSlotName;
     SignalData signalData = createSignal(signalName, signalArgsAllHavingDefaultValues_inAdditionToSuccessBooleanThatWillBeAutoAdded);
-    ArgsWithoutDefaultValues_List signalArgs = signalData.signalArgs();
-    signalArgs.prepend(createArg("bool", "success"));
+    ArgsList signalArgs = signalData.signalArgs();
+    signalArgs.prepend(SingleArg("bool", "success"));
     signalData.setSignalArgs(signalArgs);
     requestResponseData.FinishedSignal = signalData;
+
+    RequestResponses_aka_SlotsWithFinishedSignals.append(requestResponseData);
 }
 QString UserInterfaceSkeletonGeneratorData::firstLetterToUpper(const QString &inputString)
 {
@@ -34,14 +36,18 @@ QString UserInterfaceSkeletonGeneratorData::firstLetterToUpper(const QString &in
     ret.replace(0, 1, ret.at(0).toUpper());
     return ret;
 }
-UserInterfaceSkeletonGeneratorData::SignalData UserInterfaceSkeletonGeneratorData::createSignal(QString signalName, UserInterfaceSkeletonGeneratorData::ArgsWithOptionalDefaultValues_List signalArgs)
+QString UserInterfaceSkeletonGeneratorData::finishedSignalNameFromSlotName(QString slotName)
+{
+    return slotName + "Finished";
+}
+UserInterfaceSkeletonGeneratorData::SignalData UserInterfaceSkeletonGeneratorData::createSignal(QString signalName, UserInterfaceSkeletonGeneratorData::ArgsList signalArgs)
 {
     SignalData signalData;
     signalData.setSignalName(signalName);
     signalData.setSignalArgs(signalArgs);
     return signalData;
 }
-UserInterfaceSkeletonGeneratorData::SlotData UserInterfaceSkeletonGeneratorData::createSlot(QString slotReturnType, QString slotName, UserInterfaceSkeletonGeneratorData::ArgsWithoutDefaultValues_List slotArgs)
+UserInterfaceSkeletonGeneratorData::SlotData UserInterfaceSkeletonGeneratorData::createSlot(QString slotReturnType, QString slotName, UserInterfaceSkeletonGeneratorData::ArgsList slotArgs)
 {
     SlotData slotData;
     slotData.SlotReturnType = slotReturnType;
@@ -86,16 +92,16 @@ QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType:
 {
     QString ret;
     bool first = true;
-    Q_FOREACH(const SingleArgWithOptionalDefaultValue &currentArg, FunctionArgs)
+    Q_FOREACH(const SingleArg &currentArg, FunctionArgs)
     {
         if(!first)
             ret.append(", ");
         first = false;
 
         ret.append(currentArg.ArgType + " " + currentArg.ArgName); //TODOmb: if argType ends with "reference amp" or ptr asterisk, don't use a space. steal this code from d=i pls
-        if(showDefaultValueInit && (!currentArg.ArgDefaultValue.isNull()))
+        if(showDefaultValueInit && (!currentArg.ArgOptionalDefaultValue.isNull()))
         {
-            ret.append(" = " + currentArg.ArgDefaultValue.data());
+            ret.append(" = " + (*currentArg.ArgOptionalDefaultValue.data()));
         }
     }
     return ret;
