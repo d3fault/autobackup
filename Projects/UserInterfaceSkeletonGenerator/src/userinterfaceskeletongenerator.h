@@ -30,9 +30,9 @@ private:
     //void generatePureVirtualUserInterfaceHeaderFile(const UserInterfaceSkeletonGeneratorData &data);
     void generateUserInterfaceImplStubsMaybe(const UserInterfaceSkeletonGeneratorData &data, QList<QString> implStubShortNames);
     void generateAnyAndAllUserInterfaceImplStubs(const UserInterfaceSkeletonGeneratorData &data);
-    void generateRequestResponseContractGlueMaybe(const UserInterfaceSkeletonGeneratorData &data) const;
+    bool generateRequestResponseContractGlueMaybe(const UserInterfaceSkeletonGeneratorData &data);
 
-    QString m_OutputDirWithTrailingSlash;
+    QString m_OutputDir_WithTrailingSlash;
     QList<IUserInterfaceImplStubGenerator*> ImplStubGenerators;
     static QString appendSlashIfNeeded(const QString &inputString)
     {
@@ -44,6 +44,15 @@ private:
     }
 private:
     void populateDataUsingHardCodedCppXD(UserInterfaceSkeletonGeneratorData &data);
+    bool generateBusinessObjectRequestResponseContractsHeaderFile(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
+    static QString firstLetterToLower(const QString &inputString)
+    {
+        if(inputString.isEmpty())
+            return inputString;
+        QString ret(inputString);
+        ret.replace(0, 1, ret.at(0).toLower());
+        return ret;
+    }
 signals:
     void e(QString msg);
     void o(QString msg);

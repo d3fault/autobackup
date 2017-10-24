@@ -59,6 +59,10 @@ struct UserInterfaceSkeletonGeneratorData
     {
         SlotData Slot;
         SignalData FinishedSignal;
+
+        //helpers
+        QString slotScopedResponderTypeName() const;
+        QString slotRequestResponseTypeName() const;
     };
 
     void createAndAddSignal(QString signalName, ArgsList signalArgs = ArgsList());

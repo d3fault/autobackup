@@ -152,3 +152,17 @@ QString UserInterfaceSkeletonGeneratorData::SignalData::correspondingSignalHandl
 {
     return "handle" + firstLetterToUpper(signalName());
 }
+QString UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data::slotScopedResponderTypeName() const
+{
+    //ex: SomeSlotScopedResponder
+    QString ret(firstLetterToUpper(Slot.slotName()));
+    ret.append("ScopedResponder");
+    return ret;
+}
+QString UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data::slotRequestResponseTypeName() const
+{
+    //ex: SomeSlotRequestResponse
+    QString ret(firstLetterToUpper(Slot.slotName()));
+    ret.append("RequestResponse");
+    return ret;
+}
