@@ -18,6 +18,8 @@ bool RequstsResponseContractsGlueGenerator::generateRequstsResponseContractsGlue
         return false;
     if(!generateBusinessObjectRequestResponseContractsPriFile(data, targetDir_WithTrailingSlash))
         return false;
+    if(!generateBusinessObjectSomeSlotRequestResponseHeaderFiles(data, targetDir_WithTrailingSlash))
+        return false;
 
     return true;
 }
@@ -162,6 +164,74 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
     {
         t << TAB << "$$system(pwd)/" << currentContract.Slot.slotName().toLower() << "requestresponse.cpp \\" << endl;
         t << TAB << "$$system(pwd)/" << currentContract.Slot.slotName().toLower() << "scopedresponder.cpp" << endl;
+    }
+    return true;
+}
+bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotRequestResponseHeaderFiles(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash)
+{
+    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    {
+        QString someSlotRequestResponseTypeName = firstLetterToUpper(currentContract.Slot.slotName()) + "RequestResponse";
+        QFile businessObjectSlotRequestResponseHeaderFile(targetDir_WithTrailingSlash + data.BusinessLogicClassName.toLower() + someSlotRequestResponseTypeName.toLower() + ".h");
+        if(!businessObjectSlotRequestResponseHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
+        {
+            emit e("failed to open file for writing: " + businessObjectSlotRequestResponseHeaderFile.fileName());
+            emit error(false);
+            return false;
+        }
+        QTextStream t(&businessObjectSlotRequestResponseHeaderFile);
+
+        QString headerGuard = someSlotRequestResponseTypeName.toUpper() + "_H";
+        t << "#ifndef " << headerGuard << endl;
+        t << "#define " << headerGuard << endl;
+        t << endl;
+        t << "#include <QObject>" << endl;
+        t << endl;
+        t << "class " << data.BusinessLogicClassName << ";" << endl;
+        t << endl;
+        t << "namespace " << data.BusinessLogicClassName << "RequestResponseContracts" << endl;
+        t << "{" << endl;
+        t << endl;
+        t << "class " << someSlotRequestResponseTypeName << " : public QObject" << endl;
+        t << "{" << endl;
+        t << TAB << "Q_OBJECT" << endl;
+        t << "public:" << endl;
+        t << TAB << "explicit " << someSlotRequestResponseTypeName << "(" << data.BusinessLogicClassName << " *" << firstLetterToLower(data.BusinessLogicClassName) << ", QObject *parent = 0);" << endl;
+        Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SingleArg &currentArgInFinishedSignal, currentContract.FinishedSignal.signalArgs())
+        {
+            //ex: void setXIsEven(bool xIsEven);
+            t << TAB << "void set" << firstLetterToUpper(currentArgInFinishedSignal.ArgName) << "(" << currentArgInFinishedSignal.ArgType << " " << currentArgInFinishedSignal.ArgName << ");" << endl;
+        }
+        t << "private:" << endl;
+        t << TAB << "void respond_aka_emitFinishedSignal();" << endl;
+        t << TAB << "friend class " << firstLetterToUpper(currentContract.Slot.slotName()) + "ScopedResponder;" << endl;
+        t << endl;
+        Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SingleArg &currentArgInFinishedSignal, currentContract.FinishedSignal.signalArgs())
+        {
+            //ex: bool m_XIsEven;
+            t << TAB << currentArgInFinishedSignal.ArgType << " " << "m_" << firstLetterToUpper(currentArgInFinishedSignal.ArgName) << ";" << endl;
+        }
+        t << "signals: /*private:*/" << endl;
+
+        //ex: void someSlotFinished(bool success, bool xIsEven);
+        t << TAB << "void " << currentContract.FinishedSignal.signalName() << "(";
+        bool first = true;
+        Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SingleArg &currentArgInFinishedSignal, currentContract.FinishedSignal.signalArgs())
+        {
+            if(!first)
+            {
+                t << ", ";
+            }
+            first = false;
+            t << currentArgInFinishedSignal.ArgType << " " << currentArgInFinishedSignal.ArgName;
+        }
+        t << ");" << endl;
+
+        t << "};" << endl;
+        t << endl;
+        t << "}" << endl;
+        t << endl;
+        t << "#endif // " << headerGuard << endl;
     }
     return true;
 }

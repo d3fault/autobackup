@@ -1,0 +1,47 @@
+The actual implementation of a "code generator", as in the part where you actually generate FILES, is trivial as fuck and basically just copy/pasta of some compiling reference.
+
+It's so trivial, in fact, that I think I could write a bot to help speed it up.
+That bot's output should [probably] be raw C++, so it's a code generator to help with the writing of code generators! wowow mind = blown.
+
+Basically given a set of files in a directory, code-generate a class method to generate each of those files' source code.
+
+Q_FOREACH(file, files)
+{
+	file.open("someclass.h"); //not sure about the name here xD, confused af
+	QTextStream t(&file);
+	QString out;
+	Q_FOREACH(someClass.Slots) //etc for signals and contracts
+	{
+		t << "t << \"void \"lksdfjdoasfuoisjlrjo7s0someClassSlot()\";" << endl;
+	}
+	t << out;
+}
+
+
+actually it's easier to DESCRIBE than to demonstrate in pseudo-code (that shit hurt my head).
+
+the bot would basically go down each file line by line, GUESSING at what to auto-replace with what ... and becoming smarter at guessing every time you tell them to start looking for a specific pattern (pattern MATCHING is case-insensitive, but during the 'replace' phase we use smart-analysis to preserve case, such as camelCase and m_CamelCase and CamelCase).
+
+a) if a line is to be code-gen'd verbatim, you simply press enter
+b) if a line has > 0 _new_ non-guessed symbols that you need to string.replace for during the code-gen phase, press (1) and continue pressing (1) until the line has 0 symbols left to inform the bot about
+c) there is no c?
+d) <see below>
+
+learned symbols are remembered in between files (this is KINDA unsafe, but it's way easier than actually parsing the C++ headers using libclang to determine which symbols are available at a given context etc)
+
+hmm but how to base a symbol off the name of another symbol? I don't want to implement "+" parsing (but I could):
+ex:
+Type in symbol name: symbol0
+Type in symbol name: symbol0 + symbol1
+//the bot parses that as "symbol0symbol1", blah sounds dumb maybe tab separation is better. I like the way shell parses arguments! double quotes are treated as 1 arg.
+
+
+tl;dr: I've written a few code generators in my day, and I see a common enough theme in each of them that I could write a "code-generator helper-generator" using the "target compiling design" as input.
+
+
+As an example:
+In your "target compiling design" you refer to stuff as LemonClass and LemonClass::squeezeLemon(). The bot learns the symbols LemonClass and squeezeLemon, then whenever it sees them it GUESSES and fills them in. maybe (c) up above is to handle incorrect guesses? Anyways when they show up in the lines presented to the user [as guesses], they have been translated (preserving case if possible) into OrangeClass and OrangeClass::eatOrange -- JUST to let you know that the shit has been taken care of.
+
+use random fucking words in the dictionary, or maybe a large-but-still-somewhat-small-so-as-to-be-recognizeable set of dictionary words, say a thousand or so (bbbut I surely don't want to limit any software to a thousand symbol definitions!!!). maybe if you use more than a thousand symbols, numbers are appended to those thousand words. in that case, I should have the dictionary size be way less than a thousand, maybe a couple hundred or so. maybe also the order that they are taken out of the dictionary is the same every time you run the app, so you recognize the symbols. idk mb random is better
+
+re: that parsing "+" stuff described above: I think if you always replace "shortest" (lengthwise) symbols FIRST in your while(true) loop of pressing (1) over and over (use case (b) up above), you'd never NEED to use a "+" because the Lemon would already say Orange! Lemon and Lemon::LemonParty becomes Orange and OrangeParty and then after pressing (1) again you can change OrangeParty into OrangeButtsex. meh actually this app sounds error prone because the word "party" is so small (or there will be small words like it) that a string-replace of it from then on, on the rest of the lines, would yield lots of false positives. fucking symbol-chaining of somesort needs to be introduced into this app to solve it properly... which honestly isn't that hard (maybe this is use case (d) above!). press (d) and then select using numpad the symbol you want to append (or prepend even, but append-only initially KISS) to, then blam type in your symbol suffix and we go back to the prompt where you can press enter or whatever

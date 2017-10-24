@@ -1,0 +1,1 @@
+A programmers commandsPerMinute includes GENERATED (code generation) commands, so long as he was the one to write the generator! commandsPerMinute [can] increase exponentially with the use of code generators. sanity or perhaps understanding of the system as a whole being used/modified/added-to decreases proportionally -- but maybe I'm wrong about this part?

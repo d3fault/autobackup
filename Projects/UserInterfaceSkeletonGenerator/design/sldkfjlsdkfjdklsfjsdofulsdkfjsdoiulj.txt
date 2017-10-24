@@ -1,0 +1,1 @@
+Maybe the "default values of finished signals" should be bound to Q_PROPERTY's? every finishedSignal arg becomes a property of the BusinessClass. or is it better to keep the responses on a separate object like I'm doing?
