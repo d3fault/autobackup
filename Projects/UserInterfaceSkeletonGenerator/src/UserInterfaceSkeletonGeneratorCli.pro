@@ -19,7 +19,8 @@ HEADERS += \
     iuserinterfaceimplstubgenerator.h \
     cliimplstubgenerator.h \
     userinterfaceskeletongeneratordata.h \
-    widgetimplstubgenerator.h
+    widgetimplstubgenerator.h \
+    requstsresponsecontractsgluegenerator.h
 
 SOURCES += main.cpp \
     userinterfaceskeletongeneratorcli.cpp \
@@ -27,4 +28,5 @@ SOURCES += main.cpp \
     cliimplstubgenerator.cpp \
     userinterfaceskeletongeneratordata.cpp \
     iuserinterfaceimplstubgenerator.cpp \
-    widgetimplstubgenerator.cpp
+    widgetimplstubgenerator.cpp \
+    requstsresponsecontractsgluegenerator.cpp
