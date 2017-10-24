@@ -45,6 +45,14 @@ private:
 private:
     void populateDataUsingHardCodedCppXD(UserInterfaceSkeletonGeneratorData &data);
     bool generateBusinessObjectRequestResponseContractsHeaderFile(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
+    static QString firstLetterToUpper(const QString &inputString)
+    {
+        if(inputString.isEmpty())
+            return inputString;
+        QString ret(inputString);
+        ret.replace(0, 1, ret.at(0).toUpper());
+        return ret;
+    }
     static QString firstLetterToLower(const QString &inputString)
     {
         if(inputString.isEmpty())

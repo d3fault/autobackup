@@ -146,17 +146,17 @@ bool UserInterfaceSkeletonGenerator::generateBusinessObjectRequestResponseContra
     Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         //even though these includes aren't needed by this header, these includes are here to save the BusinessClass from having to #include them all manually
-        t << "#include " << currentContract.slotScopedResponderTypeName().toLower() << ".h" << endl; //ex: #include "someslotscopedresponder.h"
+        t << "#include \"" << currentContract.slotScopedResponderTypeName().toLower() << ".h\"" << endl; //ex: #include "someslotscopedresponder.h"
     }
     t << endl;
-    t << "class " << data.BusinessLogiClassName << endl;
+    t << "class " << data.BusinessLogiClassName << ";" << endl;
     t << endl;
     t << "namespace " << businessObjectRequestResponseContracts << endl;
     t << "{" << endl;
     t << endl;
     Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
-        t << "class " << currentContract.slotRequestResponseTypeName() << endl; //ex: SomeSlotRequestResponse;
+        t << "class " << currentContract.slotRequestResponseTypeName() << ";" << endl; //ex: SomeSlotRequestResponse;
     }
     t << endl;
     t << "class Contracts" << endl;
@@ -172,7 +172,7 @@ bool UserInterfaceSkeletonGenerator::generateBusinessObjectRequestResponseContra
     Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         //ex: SomeSlotRequestResponse *m_SomeSlot;
-        t << TAB << currentContract.slotRequestResponseTypeName() << " *m_" << currentContract.Slot.slotName() << ";" << endl;
+        t << TAB << currentContract.slotRequestResponseTypeName() << " *m_" << firstLetterToUpper(currentContract.Slot.slotName()) << ";" << endl;
     }
     t << "};" << endl;
     t << endl;
