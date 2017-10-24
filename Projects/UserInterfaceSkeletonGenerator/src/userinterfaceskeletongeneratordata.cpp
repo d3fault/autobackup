@@ -85,7 +85,7 @@ void UserInterfaceSkeletonGeneratorData::generatePureVirtualUserInterfaceHeaderF
 }
 QString UserInterfaceSkeletonGeneratorData::targetUserInterfaceClassName() const
 {
-    return QString("I" + BusinessLogiClassName + "UI"); //"UserInterface" suffix too verbose, esp since "I" is at beginning as well xDDDDD. even though I know the 'I' at beginning stands for interface, I tend to read it as "I am a Business Logic Class Name UI", the 'I' taking on a different meaning than "Interface" there (and it helps with udnerstandability imo)
+    return QString("I" + BusinessLogicClassName + "UI"); //"UserInterface" suffix too verbose, esp since "I" is at beginning as well xDDDDD. even though I know the 'I' at beginning stands for interface, I tend to read it as "I am a Business Logic Class Name UI", the 'I' taking on a different meaning than "Interface" there (and it helps with udnerstandability imo)
 }
 #endif
 QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType::argsWithoutParenthesis(bool showDefaultValueInit) const

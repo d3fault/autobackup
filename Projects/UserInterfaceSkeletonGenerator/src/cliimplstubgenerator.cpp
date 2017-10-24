@@ -13,7 +13,7 @@ void CliImplStubGenerator::generateImplStubFiles(const UserInterfaceSkeletonGene
 }
 void CliImplStubGenerator::generateHeaderFile(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)
 {
-    QFile file(outputDirWithTrailingSlash + targetImplStubClassName(data.BusinessLogiClassName).toLower() + ".h");
+    QFile file(outputDirWithTrailingSlash + targetImplStubClassName(data.BusinessLogicClassName).toLower() + ".h");
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         qDebug("failed to open file in CliImplStubGenerator::generateHeaderFile");
@@ -29,7 +29,7 @@ void CliImplStubGenerator::generateHeaderFile(const UserInterfaceSkeletonGenerat
 }
 void CliImplStubGenerator::generateSourceFile(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)
 {
-    QFile file(outputDirWithTrailingSlash + targetImplStubClassName(data.BusinessLogiClassName).toLower() + ".cpp");
+    QFile file(outputDirWithTrailingSlash + targetImplStubClassName(data.BusinessLogicClassName).toLower() + ".cpp");
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         qDebug("failed to open file in CliImplStubGenerator::generateSourceFile");

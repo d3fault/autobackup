@@ -74,7 +74,7 @@ struct UserInterfaceSkeletonGeneratorData
 
     //QString targetUserInterfaceClassName() const;
 
-    QString BusinessLogiClassName;
+    QString BusinessLogicClassName;
 
     //Basic Qt MetaMethods
     QList<SignalData> Signals;
