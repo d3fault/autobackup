@@ -1,0 +1,11 @@
+The only way exceptions would seem useful to me is if you put every single line of code in a try/catch statement, and FUCK that. error handling is part of coding, get over it; DON'T go making alternate code return paths (aside from ones within the capabilities of your RETURN-TYPE).
+
+High level code shouldn't have to deal with low level errors. an uncaught exception propogates to become high level's responsibility.
+
+Exceptions do organize code better though, it's nice to have the "primary use case" right there in the try block and to keep the error conditions down below in separate code blocks (separate from the primary use case, and separate from each other).
+If only there was a way to have my cake and eat it too. I don't want alternate code return paths, but I want to have my primary use case code (sans any error handling. KISS is good) in a block of code above all the error conditions.
+
+I think I could re-create exceptions with Qt's signals/slots system, which would give them thread-awareness. It's hard to explain what I even mean though.
+A block of code that is the primary use case, then when it ends maybe we tick a sort of event loop (that usually only runs twice before continuing: once for primary use case and again to see if any error cases somehow down below need to be triggered. Sounds like a simple if/else-if/else-if situation... or no we need a while or fuck shit no this design makes no sense anymore.
+
+In _ANY_ case, a codeParser->codeGen could definitely uhh... help somehow ;-)...

@@ -1,0 +1,7 @@
+I said this a while ago but not sure if I wrote it:
+A programmer's operating system MUST be open source (and in the libre sense too) because eventually the programmer gets to the point where they have the ability to modify operating systems. A closed source (or "open source but not libre") operating system would then be a cage for the programmer. Open source + libre's greatest asset is it's ability to bind together to other open source + libre works, a thing not possible with an "open source but non-libre" distribution.
+
+Debian Linux ("Stretch" atm) is fucking amazing. If I wanted an ultra-secure server I'd deploy on OpenBSD though; just a recompile away when coding with Qt/C++.
+
+
+Now that I'm writing this out instead of saying it out loud, I'm getting it in much more thorough detail (but maybe it was more concise when I said it)
