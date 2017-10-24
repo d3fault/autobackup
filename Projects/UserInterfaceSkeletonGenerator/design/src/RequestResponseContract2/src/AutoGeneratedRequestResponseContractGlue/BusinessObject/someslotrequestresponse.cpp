@@ -8,7 +8,7 @@ SomeSlotRequestResponse::SomeSlotRequestResponse(BusinessObject *businessClass, 
     : QObject(parent)
     , m_Success(false)
 {
-    connect(this, &SomeSlotRequestResponse::someSlotFinished, businessClass, &BusinessObject::someSlotFinished, Qt::QueuedConnection);
+    connect(this, &SomeSlotRequestResponse::someSlotFinished, businessClass, &BusinessObject::someSlotFinished);
 }
 void SomeSlotRequestResponse::setSuccess(bool success)
 {
