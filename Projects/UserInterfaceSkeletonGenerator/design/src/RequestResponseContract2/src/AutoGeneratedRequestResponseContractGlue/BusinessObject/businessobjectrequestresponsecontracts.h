@@ -5,17 +5,22 @@
 
 class BusinessObject;
 
+namespace BusinessObjectRequestResponseContracts
+{
+
 class SomeSlotRequestResponse;
 
-class BusinessObjectRequestResponseContracts
+class Contracts
 {
 public:
-    explicit BusinessObjectRequestResponseContracts(BusinessObject *businessClass);
+    explicit Contracts(BusinessObject *businessObject);
     SomeSlotRequestResponse *someSlot() const;
+    //TODOreq: AnotherSlotRequestResponse *anotherSlot() const;
 private:
-    BusinessObject *m_BusinessObject;
-
     SomeSlotRequestResponse *m_SomeSlot;
+    //TODOreq: AnotherSlotRequestResponse *m_AnotherSlot;
 };
+
+}
 
 #endif // BUSINESSOBJECTREQUESTRESPONSECONTRACTS_H

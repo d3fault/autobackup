@@ -3,6 +3,9 @@
 
 #include "someslotrequestresponse.h"
 
+namespace BusinessObjectRequestResponseContracts
+{
+
 class SomeSlotScopedResponder
 {
 public:
@@ -15,5 +18,7 @@ private:
     SomeSlotRequestResponse *m_SomeSlotRequestResponse;
     bool m_DeferResponding;
 };
+
+}
 
 #endif // SOMESLOTSCOPEDRESPONDER_H

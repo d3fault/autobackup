@@ -11,7 +11,7 @@ class BusinessObject : public QObject
 public:
     explicit BusinessObject(QObject *parent = 0);
 private:
-    BusinessObjectRequestResponseContracts m_RequestResponseContracts;
+    BusinessObjectRequestResponseContracts::Contracts m_Contracts;
 
     int m_X;
 signals:

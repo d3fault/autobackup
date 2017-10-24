@@ -5,6 +5,9 @@
 
 class BusinessObject;
 
+namespace BusinessObjectRequestResponseContracts
+{
+
 class SomeSlotRequestResponse : public QObject
 {
     Q_OBJECT
@@ -21,5 +24,7 @@ private:
 signals: /*private:*/
     void someSlotFinished(bool success, bool xIsEven);
 };
+
+}
 
 #endif // SOMESLOTREQUESTRESPONSE_H
