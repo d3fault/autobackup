@@ -20,6 +20,8 @@ bool RequstsResponseContractsGlueGenerator::generateRequstsResponseContractsGlue
         return false;
     if(!generateBusinessObjectSomeSlotRequestResponseHeaderFiles(data, targetDir_WithTrailingSlash))
         return false;
+    if(!generateBusinessObjectSomeSlotRequestResponseSourceFiles(data, targetDir_WithTrailingSlash))
+        return false;
 
     return true;
 }
@@ -232,6 +234,65 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
         t << "}" << endl;
         t << endl;
         t << "#endif // " << headerGuard << endl;
+    }
+    return true;
+}
+bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotRequestResponseSourceFiles(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash)
+{
+    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    {
+        QString someSlotRequestResponseTypeName = firstLetterToUpper(currentContract.Slot.slotName()) + "RequestResponse";
+        QFile businessObjectSlotRequestResponseHeaderFile(targetDir_WithTrailingSlash + data.BusinessLogicClassName.toLower() + someSlotRequestResponseTypeName.toLower() + ".cpp");
+        if(!businessObjectSlotRequestResponseHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
+        {
+            emit e("failed to open file for writing: " + businessObjectSlotRequestResponseHeaderFile.fileName());
+            emit error(false);
+            return false;
+        }
+        QTextStream t(&businessObjectSlotRequestResponseHeaderFile);
+
+        t << "#include \"" << someSlotRequestResponseTypeName.toLower() << ".h\"" << endl;
+        t << endl;
+        t << "#include \"" << data.BusinessLogicClassName.toLower() << ".h\"" << endl;
+        t << endl;
+        t << "using namespace " << data.BusinessLogicClassName << "RequestResponseContracts;" << endl;
+        t << endl;
+        t << someSlotRequestResponseTypeName << "::" << someSlotRequestResponseTypeName << "(" << data.BusinessLogicClassName << " *" << firstLetterToLower(data.BusinessLogicClassName) << ", QObject *parent)" << endl;
+        t << TAB << ": QObject(parent)" << endl;
+        t << TAB << ", m_Success(false)" << endl; //maybe I'll init default values here someday, but until then I definitely at least want to init success to false
+        t << "{" << endl;
+        t << TAB << "connect(this, &" << someSlotRequestResponseTypeName << "::" << currentContract.FinishedSignal.signalName() << ", " << firstLetterToLower(data.BusinessLogicClassName) << ", &" << data.BusinessLogicClassName << "::" << currentContract.FinishedSignal.signalName() << ");" << endl;
+        t << "}" << endl;
+        Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SingleArg &currentArg, currentContract.FinishedSignal.signalArgs())
+        {
+            //ex:   void SomeSlotRequestResponse::setSuccess(bool success)
+            //      {
+            //          m_Success = success;
+            //      }
+
+            t << "void " << someSlotRequestResponseTypeName << "::set" << firstLetterToUpper(currentArg.ArgName) << "(" << currentArg.ArgType << " " << currentArg.ArgName << ")" << endl;
+            t << "{" << endl;
+            t << TAB << "m_" << firstLetterToUpper(currentArg.ArgName) << " = " << currentArg.ArgName << ";" << endl;
+            t << "}" << endl;
+        }
+        t << "void " << someSlotRequestResponseTypeName << "::respond_aka_emitFinishedSignal()" << endl;
+        t << "{" << endl;
+        t << TAB << "emit " << currentContract.FinishedSignal.signalName() << "(";
+        bool first = true;
+        Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SingleArg &currentArg, currentContract.FinishedSignal.signalArgs())
+        {
+            //ex: m_Success, m_XIsEven
+
+            if(!first)
+            {
+                t << ", ";
+            }
+            first = false;
+            t << "m_" << firstLetterToUpper(currentArg.ArgName);
+        }
+        t << ");" << endl;
+        t << TAB << "m_Success = false; //after emit we set back to false for the NEXT slot  invocation" << endl; //reset response arg back to default values maybe, but idk tbh and definitely not in this version
+        t << "}" << endl;
     }
     return true;
 }

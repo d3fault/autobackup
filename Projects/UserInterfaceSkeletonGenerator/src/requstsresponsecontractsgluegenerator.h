@@ -16,6 +16,7 @@ private:
     bool generateBusinessObjectRequestResponseContractsSourceFile(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
     bool generateBusinessObjectRequestResponseContractsPriFile(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
     bool generateBusinessObjectSomeSlotRequestResponseHeaderFiles(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
+    bool generateBusinessObjectSomeSlotRequestResponseSourceFiles(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
 
     static QString firstLetterToUpper(const QString &inputString)
     {
