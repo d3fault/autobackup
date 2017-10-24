@@ -15,7 +15,7 @@ void SomeSlotScopedResponder::deferResponding()
 {
     m_DeferResponding = true;
 }
-void SomeSlotScopedResponder::resumeResponding()
+void SomeSlotScopedResponder::resumeAutoRespondingDuringScopedDestruction()
 {
     m_DeferResponding = false;
 }

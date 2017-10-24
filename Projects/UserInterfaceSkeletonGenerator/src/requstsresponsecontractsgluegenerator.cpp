@@ -22,6 +22,10 @@ bool RequstsResponseContractsGlueGenerator::generateRequstsResponseContractsGlue
         return false;
     if(!generateBusinessObjectSomeSlotRequestResponseSourceFiles(data, targetDir_WithTrailingSlash))
         return false;
+    if(!generateBusinessObjectSomeSlotScopedResponderHeaderFiles(data, targetDir_WithTrailingSlash))
+        return false;
+    if(!generateBusinessObjectSomeSlotScopedResponderSourceFiles(data, targetDir_WithTrailingSlash))
+        return false;
 
     return true;
 }
@@ -292,6 +296,92 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
         }
         t << ");" << endl;
         t << TAB << "m_Success = false; //after emit we set back to false for the NEXT slot  invocation" << endl; //reset response arg back to default values maybe, but idk tbh and definitely not in this version
+        t << "}" << endl;
+    }
+    return true;
+}
+bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotScopedResponderHeaderFiles(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash)
+{
+    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    {
+        QString someSlotScopedResponderTypeName = firstLetterToUpper(currentContract.Slot.slotName()) + "ScopedResponder";
+        QFile businessObjectSlotRequestResponseHeaderFile(targetDir_WithTrailingSlash + data.BusinessLogicClassName.toLower() + someSlotScopedResponderTypeName.toLower() + ".h");
+        if(!businessObjectSlotRequestResponseHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
+        {
+            emit e("failed to open file for writing: " + businessObjectSlotRequestResponseHeaderFile.fileName());
+            emit error(false);
+            return false;
+        }
+        QTextStream t(&businessObjectSlotRequestResponseHeaderFile);
+
+        QString headerGuard = someSlotScopedResponderTypeName.toUpper() + "_H";
+        t << "#ifndef " << headerGuard << endl;
+        t << "#define " << headerGuard << endl;
+        t << endl;
+        t << "#include \"" << someSlotScopedResponderTypeName.toLower() << ".h" << endl;
+        t << endl;
+        t << "namespace " << data.BusinessLogicClassName << data.BusinessLogicClassName << "RequestResponseContracts" << endl;
+        t << "{" << endl;
+        t << endl;
+        t << "class " << someSlotScopedResponderTypeName << endl;
+        t << "{" << endl;
+        t << "public:" << endl;
+        t << TAB << someSlotScopedResponderTypeName << "(" << firstLetterToUpper(currentContract.Slot.slotName()) << "RequestResponse *response);" << endl;
+        t << TAB << firstLetterToUpper(currentContract.Slot.slotName()) << "RequestResponse *response();" << endl;
+        t << TAB << "void deferResponding();" << endl;
+        t << TAB << "void resumeAutoRespondingDuringScopedDestruction();" << endl;
+        t << TAB << "~" << someSlotScopedResponderTypeName << "();" << endl;
+        t << "private:" << endl;
+        t << TAB <<  firstLetterToUpper(currentContract.Slot.slotName()) << "RequestResponse *m_" << firstLetterToUpper(currentContract.Slot.slotName()) << "RequestResponse;" << endl;
+        t << TAB << "bool m_DeferResponding;" << endl;
+        t << "};" << endl;
+        t << endl;
+        t << "}" << endl;
+        t << endl;
+        t << "#endif // " << headerGuard << endl;
+    }
+    return true;
+}
+bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotScopedResponderSourceFiles(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash)
+{
+    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    {
+        QString someSlotScopedResponderTypeName = firstLetterToUpper(currentContract.Slot.slotName()) + "ScopedResponder";
+        QFile businessObjectSlotRequestResponseHeaderFile(targetDir_WithTrailingSlash + data.BusinessLogicClassName.toLower() + someSlotScopedResponderTypeName.toLower() + ".cpp");
+        if(!businessObjectSlotRequestResponseHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
+        {
+            emit e("failed to open file for writing: " + businessObjectSlotRequestResponseHeaderFile.fileName());
+            emit error(false);
+            return false;
+        }
+        QTextStream t(&businessObjectSlotRequestResponseHeaderFile);
+
+        t << "#include \"" << someSlotScopedResponderTypeName.toLower() << ".h" << endl;
+        t << endl;
+        t << "using namespace " << data.BusinessLogicClassName << "RequestResponseContracts;" << endl;
+        t << endl;
+        QString someSlotRequestResponseTypeName = firstLetterToUpper(currentContract.Slot.slotName());
+        someSlotRequestResponseTypeName.append("RequestResponse");
+        t << someSlotScopedResponderTypeName << "::" << someSlotScopedResponderTypeName << "(" << someSlotRequestResponseTypeName << " *" << firstLetterToLower(someSlotRequestResponseTypeName) << ")" << endl;
+        t << TAB << ": m_" << someSlotRequestResponseTypeName << "(" << firstLetterToLower(someSlotRequestResponseTypeName) << ")" << endl;
+        t << TAB << ", m_DeferResponding(false)" << endl;
+        t << "{ }" << endl;
+        t << someSlotRequestResponseTypeName << " *" << someSlotScopedResponderTypeName << "::response()" << endl;
+        t << "{" << endl;
+        t << TAB << "return m_" << someSlotRequestResponseTypeName << ";" << endl;
+        t << "}" << endl;
+        t << "void " << someSlotScopedResponderTypeName << "::deferResponding()" << endl;
+        t << "{" << endl;
+        t << TAB << "m_DeferResponding = true;" << endl;
+        t << "}" << endl;
+        t << "void " << someSlotScopedResponderTypeName << "::resumeAutoRespondingDuringScopedDestruction()" << endl;
+        t << "{" << endl;
+        t << TAB << "m_DeferResponding = false;" << endl;
+        t << "}" << endl;
+        t << someSlotScopedResponderTypeName << "::~" << someSlotScopedResponderTypeName << "()" << endl;
+        t << "{" << endl;
+        t << TAB << "if(!m_DeferResponding)" << endl;
+        t << TAB << TAB << "m_" << someSlotRequestResponseTypeName << "->respond_aka_emitFinishedSignal();" << endl;
         t << "}" << endl;
     }
     return true;

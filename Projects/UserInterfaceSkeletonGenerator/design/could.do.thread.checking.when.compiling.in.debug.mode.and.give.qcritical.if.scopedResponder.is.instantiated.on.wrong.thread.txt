@@ -1,0 +1,1 @@
+maybe when compiling in debug mode ONLY, I could check to make sure the scopedResponder is being instantiated on the wrong thread (or possibly I could verify further that 'this' object is the one the qt event loop says is currently executing something. idk mb just the thread checking is enough, that other stuff sounds so confusing I don't even want to read it again

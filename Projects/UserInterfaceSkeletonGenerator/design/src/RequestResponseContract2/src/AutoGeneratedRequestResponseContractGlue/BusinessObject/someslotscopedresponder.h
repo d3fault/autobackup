@@ -12,7 +12,7 @@ public:
     SomeSlotScopedResponder(SomeSlotRequestResponse *response);
     SomeSlotRequestResponse *response();
     void deferResponding();
-    void resumeResponding();
+    void resumeAutoRespondingDuringScopedDestruction();
     ~SomeSlotScopedResponder();
 private:
     SomeSlotRequestResponse *m_SomeSlotRequestResponse;
