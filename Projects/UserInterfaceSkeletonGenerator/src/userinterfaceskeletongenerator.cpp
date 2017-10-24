@@ -111,10 +111,14 @@ bool UserInterfaceSkeletonGenerator::generateRequestResponseContractGlueMaybe(co
         return false;
     }
 
+#if 1 //UserInterfaceSkeletonGenerator RequestResponseContracts_aka_slotsWithFinishedSignals
     if(!generateBusinessObjectRequestResponseContractsHeaderFile(data, targetDir_WithTrailingSlash))
         return false;
     if(!generateBusinessObjectRequestResponseContractsSourceFile(data, targetDir_WithTrailingSlash))
         return false;
+    if(!generateBusinessObjectRequestResponseContractsPriFile(data, targetDir_WithTrailingSlash))
+        return false;
+#endif
 
     return true;
 }
@@ -244,6 +248,38 @@ bool UserInterfaceSkeletonGenerator::generateBusinessObjectRequestResponseContra
     }
     return true;
 }
+bool UserInterfaceSkeletonGenerator::generateBusinessObjectRequestResponseContractsPriFile(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash)
+{
+    QFile businessObjectRequestResponseContractsPriFile(targetDir_WithTrailingSlash + data.BusinessLogicClassName.toLower() + "requestresponsecontracts.pri");
+    if(!businessObjectRequestResponseContractsPriFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
+    {
+        emit e("failed to open file for writing: " + businessObjectRequestResponseContractsPriFile.fileName());
+        emit finishedGeneratingUserInterfaceSkeleton(false);
+        return false;
+    }
+    QTextStream t(&businessObjectRequestResponseContractsPriFile);
+
+    //TODOoptimization: find out how to use fkn .pri variables and save the result of $$system(pwd) .. I think it's a system call, but it could be looking up the pwd property on some system object (could be BOTH!)
+    t << "INCLUDEPATH *= $$system(pwd)" << endl;
+    t << endl;
+    t << "HEADERS *=      $$system(pwd)/" << data.BusinessLogicClassName.toLower() << "requestresponsecontracts.h \\" << endl;
+    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    {
+        //ex: t << TAB << "$$system(pwd)/someslotrequestresponse.h \\" << endl;
+        //    t << TAB << "$$system(pwd)/someslotscopedresponder.h" << endl;
+
+        t << TAB << "$$system(pwd)/" << currentContract.Slot.slotName().toLower() << "requestresponse.h \\" << endl;
+        t << TAB << "$$system(pwd)/" << currentContract.Slot.slotName().toLower() << "scopedresponder.h" << endl;
+    }
+    t << endl;
+    t << "SOURCES *=      $$system(pwd)/" << data.BusinessLogicClassName.toLower() << "requestresponsecontracts.cpp \\" << endl;
+    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    {
+        t << TAB << "$$system(pwd)/" << currentContract.Slot.slotName().toLower() << "requestresponse.cpp \\" << endl;
+        t << TAB << "$$system(pwd)/" << currentContract.Slot.slotName().toLower() << "scopedresponder.cpp" << endl;
+    }
+    return true;
+}
 void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromClassDeclarationString(const QString &classDeclarationCpp_ForParsing, QList<QString> implStubShortNames)
 {
     UserInterfaceSkeletonGeneratorData data;
@@ -272,6 +308,7 @@ void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromData(const
 
     generateUserInterfaceImplStubsMaybe(data, implStubShortNames); //OT'ish: doesn't the "tell, don't ask" principle violate "keep logic and data separate"? maybe I'm doin it wrong xD. wait yes I think it does! wtf. I "tell" my "data" to "do" something, rather than asking (querying) the data repeatedly. ehh fuck it who cares for now <3
 
+    //funny, I find myself wanting to _USE_ RequestResponseContracts right around here
     if(!generateRequestResponseContractGlueMaybe(data))
         return;
 

@@ -1,0 +1,7 @@
+coding is rated in units of commandsPerMinute
+
+
+human earthling usa 2017 coding is rated in units of commandsPerMinute, because it's a good number to fit into our brains.
+
+
+I feel like UserInterfaceSkeletonGenerator increases my commandsPerMinute
