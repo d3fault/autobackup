@@ -41,7 +41,7 @@ private:
     static QString TAB;
 signals:
     void e(QString);
-    void error(bool success = false); //emit on error only (it used to be my finished signal), and only false
+    void finishedGeneratingRequestResponseContractGlue(bool success = false); //emit on error only (it used to be my finished signal), and only false
 };
 
 #endif // REQUSTSRESPONSECONTRACTSGLUEGENERATOR_H

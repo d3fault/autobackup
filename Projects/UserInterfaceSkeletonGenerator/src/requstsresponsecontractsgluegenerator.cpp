@@ -10,8 +10,6 @@ RequstsResponseContractsGlueGenerator::RequstsResponseContractsGlueGenerator(QOb
 { }
 bool RequstsResponseContractsGlueGenerator::generateRequstsResponseContractsGlue_AndAddContractSignalsAndSlotsToData(UserInterfaceSkeletonGeneratorData *data, QString targetDir_WithTrailingSlash)
 {
-    //emit on error only (it used to be my finished signal), and only false
-
     addSignalsAndSlotsToData(data);
 
     const UserInterfaceSkeletonGeneratorData &constData = *data;
@@ -30,6 +28,7 @@ bool RequstsResponseContractsGlueGenerator::generateRequstsResponseContractsGlue
     if(!generateBusinessObjectSomeSlotScopedResponderSourceFiles(constData, targetDir_WithTrailingSlash))
         return false;
 
+    emit finishedGeneratingRequestResponseContractGlue(true);
     return true;
 }
 void RequstsResponseContractsGlueGenerator::addSignalsAndSlotsToData(UserInterfaceSkeletonGeneratorData *data)
@@ -46,7 +45,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
     if(!businessObjectRequestResponseContractsHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
     {
         emit e("failed to open file for writing: " + businessObjectRequestResponseContractsHeaderFile.fileName());
-        emit error(false);
+        emit finishedGeneratingRequestResponseContractGlue(false);
         return false;
     }
     QTextStream t(&businessObjectRequestResponseContractsHeaderFile);
@@ -102,7 +101,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
     if(!businessObjectRequestResponseContractsSourceFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
     {
         emit e("failed to open file for writing: " + businessObjectRequestResponseContractsSourceFile.fileName());
-        emit error(false);
+        emit finishedGeneratingRequestResponseContractGlue(false);
         return false;
     }
     QTextStream t(&businessObjectRequestResponseContractsSourceFile);
@@ -158,7 +157,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
     if(!businessObjectRequestResponseContractsPriFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
     {
         emit e("failed to open file for writing: " + businessObjectRequestResponseContractsPriFile.fileName());
-        emit error(false);
+        emit finishedGeneratingRequestResponseContractGlue(false);
         return false;
     }
     QTextStream t(&businessObjectRequestResponseContractsPriFile);
@@ -193,7 +192,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
         if(!businessObjectSlotRequestResponseHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
         {
             emit e("failed to open file for writing: " + businessObjectSlotRequestResponseHeaderFile.fileName());
-            emit error(false);
+            emit finishedGeneratingRequestResponseContractGlue(false);
             return false;
         }
         QTextStream t(&businessObjectSlotRequestResponseHeaderFile);
@@ -264,7 +263,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
         if(!businessObjectSlotRequestResponseHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
         {
             emit e("failed to open file for writing: " + businessObjectSlotRequestResponseHeaderFile.fileName());
-            emit error(false);
+            emit finishedGeneratingRequestResponseContractGlue(false);
             return false;
         }
         QTextStream t(&businessObjectSlotRequestResponseHeaderFile);
@@ -334,7 +333,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotScoped
         if(!businessObjectSlotRequestResponseHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
         {
             emit e("failed to open file for writing: " + businessObjectSlotRequestResponseHeaderFile.fileName());
-            emit error(false);
+            emit finishedGeneratingRequestResponseContractGlue(false);
             return false;
         }
         QTextStream t(&businessObjectSlotRequestResponseHeaderFile);
@@ -376,7 +375,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotScoped
         if(!businessObjectSlotRequestResponseHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
         {
             emit e("failed to open file for writing: " + businessObjectSlotRequestResponseHeaderFile.fileName());
-            emit error(false);
+            emit finishedGeneratingRequestResponseContractGlue(false);
             return false;
         }
         QTextStream t(&businessObjectSlotRequestResponseHeaderFile);

@@ -26,5 +26,5 @@ void SomeSlotRequestResponse::reset()
 void SomeSlotRequestResponse::respond_aka_emitFinishedSignal()
 {
     emit someSlotFinished(m_Success, m_XIsEven);
-    m_Success = false; //after emit we set back to false for the NEXT slot invocation
+    reset(); //after emit we reset back to default values for the NEXT slot invocation
 }

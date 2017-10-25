@@ -68,6 +68,8 @@ signals:
 public slots:
     void generateUserInterfaceSkeletonFromClassDeclarationString(const QString &classDeclarationCpp_ForParsing, QList<QString> implStubShortNames);
     void generateUserInterfaceSkeletonFromData(const UserInterfaceSkeletonGeneratorData &data, QList<QString> implStubShortNames);
+private slots:
+    void handleFinishedGeneratingRequestResponseContractGlue(bool success);
 };
 
 #endif // USERINTERFACESKELETONGENERATOR_H

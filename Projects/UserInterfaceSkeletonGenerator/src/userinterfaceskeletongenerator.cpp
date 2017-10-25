@@ -113,7 +113,7 @@ bool UserInterfaceSkeletonGenerator::generateRequestResponseContractGlueMaybe_An
     }
 
     RequstsResponseContractsGlueGenerator requstsResponseContractsGlueGenerator;
-    connect(&requstsResponseContractsGlueGenerator, &RequstsResponseContractsGlueGenerator::error, this, &UserInterfaceSkeletonGenerator::finishedGeneratingUserInterfaceSkeleton);
+    connect(&requstsResponseContractsGlueGenerator, &RequstsResponseContractsGlueGenerator::finishedGeneratingRequestResponseContractGlue, this, &UserInterfaceSkeletonGenerator::handleFinishedGeneratingRequestResponseContractGlue);
     connect(&requstsResponseContractsGlueGenerator, &RequstsResponseContractsGlueGenerator::e, this, &UserInterfaceSkeletonGenerator::e);
     if(!requstsResponseContractsGlueGenerator.generateRequstsResponseContractsGlue_AndAddContractSignalsAndSlotsToData(data, targetDir_WithTrailingSlash))
         return false;
@@ -168,4 +168,10 @@ void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromData(const
 
     emit o("the UserInterfaceSkeletonGenerator output you desire is here: " + m_OutputDir_WithTrailingSlash);
     emit finishedGeneratingUserInterfaceSkeleton(true);
+}
+void UserInterfaceSkeletonGenerator::handleFinishedGeneratingRequestResponseContractGlue(bool success)
+{
+    if(!success)
+        emit finishedGeneratingUserInterfaceSkeleton(false);
+    //else: we already handled the success case synchronously
 }
