@@ -214,11 +214,14 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
         t << TAB << "Q_OBJECT" << endl;
         t << "public:" << endl;
         t << TAB << "explicit " << someSlotRequestResponseTypeName << "(" << data.BusinessLogicClassName << " *" << firstLetterToLower(data.BusinessLogicClassName) << ", QObject *parent = 0);" << endl;
+        t << endl;
         Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SingleArg &currentArgInFinishedSignal, currentContract.FinishedSignal.signalArgs())
         {
             //ex: void setXIsEven(bool xIsEven);
-            t << TAB << "void set" << firstLetterToUpper(currentArgInFinishedSignal.ArgName) << "(" << currentArgInFinishedSignal.ArgType << " " << currentArgInFinishedSignal.ArgName << ");" << endl;
+            t << TAB << "void set" << firstLetterToUpper(currentArgInFinishedSignal.argName()) << "(" << currentArgInFinishedSignal.ArgType << " " << currentArgInFinishedSignal.argName() << ");" << endl;
         }
+        t << endl;
+        t << TAB << "void reset();" << endl;
         t << "private:" << endl;
         t << TAB << "void respond_aka_emitFinishedSignal();" << endl;
         t << TAB << "friend class " << firstLetterToUpper(currentContract.Slot.slotName()) + "ScopedResponder;" << endl;
@@ -226,7 +229,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
         Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SingleArg &currentArgInFinishedSignal, currentContract.FinishedSignal.signalArgs())
         {
             //ex: bool m_XIsEven;
-            t << TAB << currentArgInFinishedSignal.ArgType << " " << "m_" << firstLetterToUpper(currentArgInFinishedSignal.ArgName) << ";" << endl;
+            t << TAB << currentArgInFinishedSignal.ArgType << " " << "m_" << firstLetterToUpper(currentArgInFinishedSignal.argName()) << ";" << endl;
         }
         t << "signals: /*private:*/" << endl;
 
@@ -240,7 +243,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
                 t << ", ";
             }
             first = false;
-            t << currentArgInFinishedSignal.ArgType << " " << currentArgInFinishedSignal.ArgName;
+            t << currentArgInFinishedSignal.ArgType << " " << currentArgInFinishedSignal.argName();
         }
         t << ");" << endl;
 
@@ -274,8 +277,9 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
         t << endl;
         t << someSlotRequestResponseTypeName << "::" << someSlotRequestResponseTypeName << "(" << data.BusinessLogicClassName << " *" << firstLetterToLower(data.BusinessLogicClassName) << ", QObject *parent)" << endl;
         t << TAB << ": QObject(parent)" << endl;
-        t << TAB << ", m_Success(false)" << endl; //maybe I'll init default values here someday, but until then I definitely at least want to init success to false
+        //t << TAB << ", m_Success(false)" << endl; //maybe I'll init default values here someday, but until then I definitely at least want to init success to false
         t << "{" << endl;
+        t << TAB << "reset();" << endl;
         t << TAB << "connect(this, &" << someSlotRequestResponseTypeName << "::" << currentContract.FinishedSignal.signalName() << ", " << firstLetterToLower(data.BusinessLogicClassName) << ", &" << data.BusinessLogicClassName << "::" << currentContract.FinishedSignal.signalName() << ");" << endl;
         t << "}" << endl;
         Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SingleArg &currentArg, currentContract.FinishedSignal.signalArgs())
@@ -285,11 +289,20 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
             //          m_Success = success;
             //      }
 
-            t << "void " << someSlotRequestResponseTypeName << "::set" << firstLetterToUpper(currentArg.ArgName) << "(" << currentArg.ArgType << " " << currentArg.ArgName << ")" << endl;
+            t << "void " << someSlotRequestResponseTypeName << "::set" << firstLetterToUpper(currentArg.argName()) << "(" << currentArg.ArgType << " " << currentArg.argName() << ")" << endl;
             t << "{" << endl;
-            t << TAB << "m_" << firstLetterToUpper(currentArg.ArgName) << " = " << currentArg.ArgName << ";" << endl;
+            t << TAB << "m_" << firstLetterToUpper(currentArg.argName()) << " = " << currentArg.argName() << ";" << endl;
             t << "}" << endl;
         }
+        t << "void " << someSlotRequestResponseTypeName << "::reset()" << endl;
+        t << "{" << endl;
+        Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SingleArgWithOptionalDefaultValue &currentArg, currentContract.FinishedSignal.signalArgs())
+        {
+            if(currentArg.ArgOptionalDefaultValue.isNull())
+                continue;
+            t << TAB << "m_" << firstLetterToUpper(currentArg.argName(UserInterfaceSkeletonGeneratorData::SingleArg::DisplaySimpleAssignmentStyleInitialization)) << ";" << endl;
+        }
+        t << "}" << endl;
         t << "void " << someSlotRequestResponseTypeName << "::respond_aka_emitFinishedSignal()" << endl;
         t << "{" << endl;
         t << TAB << "emit " << currentContract.FinishedSignal.signalName() << "(";
@@ -303,10 +316,11 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
                 t << ", ";
             }
             first = false;
-            t << "m_" << firstLetterToUpper(currentArg.ArgName);
+            t << "m_" << firstLetterToUpper(currentArg.argName());
         }
         t << ");" << endl;
-        t << TAB << "m_Success = false; //after emit we set back to false for the NEXT slot  invocation" << endl; //reset response arg back to default values maybe, but idk tbh and definitely not in this version
+        //t << TAB << "m_Success = false; //after emit we set back to false for the NEXT slot  invocation" << endl; //reset response arg back to default values maybe, but idk tbh and definitely not in this version
+        t << TAB << "reset();" << endl;
         t << "}" << endl;
     }
     return true;

@@ -13,7 +13,7 @@ void IUserInterfaceImplStubGenerator::generateSignalsAndSlotsHeaderDeclarations(
         textStream << "signals:" << endl;
     Q_FOREACH(UserInterfaceSkeletonGeneratorData::SlotData currentSlot, data.Slots)
     {
-        textStream << tab << "void " << currentSlot.correspondingSlotInvokeRequestSignalName() << currentSlot.argsWithParenthesis() << ";" << endl;
+        textStream << tab << "void " << currentSlot.correspondingSlotInvokeRequestSignalName() << currentSlot.argsWithParenthesis(currentSlot.slotArgs()) << ";" << endl;
     }
 
     //gen 'handle' slots to go with business signals
@@ -21,7 +21,7 @@ void IUserInterfaceImplStubGenerator::generateSignalsAndSlotsHeaderDeclarations(
         textStream << "public slots:" << endl;
     Q_FOREACH(UserInterfaceSkeletonGeneratorData::SignalData currentSignal, data.Signals)
     {
-        textStream << tab << "void " << currentSignal.correspondingSignalHandlerSlotName() << currentSignal.argsWithParenthesis() << ";" << endl;
+        textStream << tab << "void " << currentSignal.correspondingSignalHandlerSlotName() << currentSignal.argsWithParenthesis(currentSignal.signalArgs()) << ";" << endl;
     }
 }
 void IUserInterfaceImplStubGenerator::generate_Q_OBJECT_inherittingClassHeader(const UserInterfaceSkeletonGeneratorData &data, QTextStream &textStream, QString directlyInherittedBaseClass)
@@ -65,7 +65,7 @@ void IUserInterfaceImplStubGenerator::generateSignalHandlerSlotsSourceCode(const
 {
     Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SignalData &currentSignal, data.Signals)
     {
-        QString qualifiedSlotNameAndArgs(targetImplStubClassName(data.BusinessLogicClassName) + "::" + currentSignal.correspondingSignalHandlerSlotName() + currentSignal.argsWithParenthesis());
+        QString qualifiedSlotNameAndArgs(targetImplStubClassName(data.BusinessLogicClassName) + "::" + currentSignal.correspondingSignalHandlerSlotName() + currentSignal.argsWithParenthesis(currentSignal.signalArgs()));
         textStream << "void " << qualifiedSlotNameAndArgs << endl;
         textStream << "{" << endl;
         textStream << tab << "//TODOstub" << endl;

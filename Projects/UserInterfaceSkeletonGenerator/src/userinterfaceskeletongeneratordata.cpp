@@ -2,7 +2,17 @@
 
 #include "userinterfaceskeletongenerator.h"
 
-void UserInterfaceSkeletonGeneratorData::createAndAddSignal(QString signalName, ArgsList signalArgs)
+UserInterfaceSkeletonGeneratorData::ArgsWithOptionalDefaultValues_List UserInterfaceSkeletonGeneratorData::mandatoryArgsListToOptionalArgsList(const UserInterfaceSkeletonGeneratorData::ArgsWithMandatoryDefaultValues_List &mandatoryArgsList)
+{
+    ArgsWithOptionalDefaultValues_List ret;
+    for(ArgsWithMandatoryDefaultValues_List::const_iterator it = mandatoryArgsList.constBegin(); it != mandatoryArgsList.constEnd(); ++it)
+    {
+        const SingleArgWithMandatoryDefaultValue &currentArg = *it;
+        ret.append(SingleArgWithOptionalDefaultValue(currentArg.ArgType, currentArg.argName(), *currentArg.ArgOptionalDefaultValue.data()));
+    }
+    return ret;
+}
+void UserInterfaceSkeletonGeneratorData::createAndAddSignal(QString signalName, ArgsWithOptionalDefaultValues_List signalArgs)
 {
     Signals.append(createSignal(signalName, signalArgs));
 }
@@ -11,7 +21,7 @@ void UserInterfaceSkeletonGeneratorData::createAndAddSlot(QString slotReturnType
 {
     Slots.append(createSlot(slotReturnType, slotName, slotArgs));
 }
-void UserInterfaceSkeletonGeneratorData::createAndAddRequestResponse_aka_SlotWithFinishedSignal(QString slotName, UserInterfaceSkeletonGeneratorData::ArgsList slotArgs, ArgsList signalArgsAllHavingDefaultValues_inAdditionToSuccessBooleanThatWillBeAutoAdded, QString signalName_orLeaveEmptyToAutoGenerateFinishedSignalNameUsingSlotName)
+void UserInterfaceSkeletonGeneratorData::createAndAddRequestResponse_aka_SlotWithFinishedSignal(QString slotName, UserInterfaceSkeletonGeneratorData::ArgsList slotArgs, ArgsWithMandatoryDefaultValues_List signalArgsAllHavingDefaultValues_inAdditionToSuccessBooleanThatWillBeAutoAdded, QString signalName_orLeaveEmptyToAutoGenerateFinishedSignalNameUsingSlotName)
 {    
     RequestResponse_aka_SlotWithFinishedSignal_Data requestResponseData;
 
@@ -20,10 +30,9 @@ void UserInterfaceSkeletonGeneratorData::createAndAddRequestResponse_aka_SlotWit
 
     //Finished Signal
     QString signalName = signalName_orLeaveEmptyToAutoGenerateFinishedSignalNameUsingSlotName.isEmpty() ? finishedSignalNameFromSlotName(slotName) : signalName_orLeaveEmptyToAutoGenerateFinishedSignalNameUsingSlotName;
-    SignalData signalData = createSignal(signalName, signalArgsAllHavingDefaultValues_inAdditionToSuccessBooleanThatWillBeAutoAdded);
-    ArgsList signalArgs = signalData.signalArgs();
-    signalArgs.prepend(SingleArg("bool", "success"));
-    signalData.setSignalArgs(signalArgs);
+    ArgsWithOptionalDefaultValues_List argsWithOptionalDefaultValues = UserInterfaceSkeletonGeneratorData::mandatoryArgsListToOptionalArgsList(signalArgsAllHavingDefaultValues_inAdditionToSuccessBooleanThatWillBeAutoAdded);
+    argsWithOptionalDefaultValues.prepend(SingleArgWithOptionalDefaultValue("bool", "success", "false"));
+    SignalData signalData = createSignal(signalName, argsWithOptionalDefaultValues);
     requestResponseData.FinishedSignal = signalData;
 
     RequestResponses_aka_SlotsWithFinishedSignals.append(requestResponseData);
@@ -40,7 +49,7 @@ QString UserInterfaceSkeletonGeneratorData::finishedSignalNameFromSlotName(QStri
 {
     return slotName + "Finished";
 }
-UserInterfaceSkeletonGeneratorData::SignalData UserInterfaceSkeletonGeneratorData::createSignal(QString signalName, UserInterfaceSkeletonGeneratorData::ArgsList signalArgs)
+UserInterfaceSkeletonGeneratorData::SignalData UserInterfaceSkeletonGeneratorData::createSignal(QString signalName, ArgsWithOptionalDefaultValues_List signalArgs)
 {
     SignalData signalData;
     signalData.setSignalName(signalName);
@@ -75,7 +84,7 @@ void UserInterfaceSkeletonGeneratorData::generatePureVirtualUserInterfaceHeaderF
         textStream << "protected: //signals:" << endl;
     Q_FOREACH(SlotData slotData, Slots)
     {
-        textStream << UserInterfaceSkeletonGenerator::TAB << "virtual void " /*always void because is signal! not to be confused with SlotReturnType, which comes back as an ARG of this signal*/ << slotData.correspondingRequestSignalName() + slotData.argsWithParenthesis() << "=0;" << endl;
+        textStream << UserInterfaceSkeletonGenerator::TAB << "virtual void " /*always void because is signal! not to be confused with SlotReturnType, which comes back as an ARG of this signal*/ << slotData.correspondingRequestSignalName() + slotData.argsWithParenthesis(slotData.slotArgs()) << "=0;" << endl;
         //TODOreq: gen a slot called "handleSlotNameFinished", and if slotData.SlotReturnType is non-void, an arg of that type (called something generic) should be it's only arg. maybe actually I should use bool always as first param (bool success), and the return type specified is an OPTIONAL 2nd arg following bool success? actually yea I like this idea better!!! TODOreq
     }
 
@@ -88,32 +97,56 @@ QString UserInterfaceSkeletonGeneratorData::targetUserInterfaceClassName() const
     return QString("I" + BusinessLogicClassName + "UI"); //"UserInterface" suffix too verbose, esp since "I" is at beginning as well xDDDDD. even though I know the 'I' at beginning stands for interface, I tend to read it as "I am a Business Logic Class Name UI", the 'I' taking on a different meaning than "Interface" there (and it helps with udnerstandability imo)
 }
 #endif
-QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType::argsWithoutParenthesis(bool showDefaultValueInit) const
+QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType::argsWithoutParenthesis(ArgPtrsList functionArgs, SingleArg::DisplayArgInitializationEnum displayArgInitialization) const
 {
     QString ret;
     bool first = true;
-    Q_FOREACH(const SingleArg &currentArg, FunctionArgs)
+    Q_FOREACH(const SingleArg *currentArg, functionArgs)
     {
         if(!first)
             ret.append(", ");
         first = false;
 
-        ret.append(currentArg.ArgType + " " + currentArg.ArgName); //TODOmb: if argType ends with "reference amp" or ptr asterisk, don't use a space. steal this code from d=i pls
-        if(showDefaultValueInit && (!currentArg.ArgOptionalDefaultValue.isNull()))
-        {
-            ret.append(" = " + (*currentArg.ArgOptionalDefaultValue.data()));
-        }
+        ret.append(currentArg->ArgType + " " + currentArg->argName(displayArgInitialization)); //TODOmb: if argType ends with "reference amp" or ptr asterisk, don't use a space. steal this code from d=i pls
     }
     return ret;
 }
 
-QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType::argsWithParenthesis() const
+QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType::argsWithParenthesis(ArgPtrsList functionArgs, SingleArg::DisplayArgInitializationEnum displayArgInitialization) const
 {
     QString ret("(");
-    ret.append(argsWithoutParenthesis());
+    ret.append(argsWithoutParenthesis(functionArgs, displayArgInitialization));
     ret.append(")");
     return ret;
 }
+QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType::argsWithParenthesis(const UserInterfaceSkeletonGeneratorData::ArgsList &functionArgs, SingleArg::DisplayArgInitializationEnum displayArgInitialization) const
+{
+    ArgPtrsList argPtrsList;
+    Q_FOREACH(const SingleArg &singleArg, functionArgs)
+    {
+        argPtrsList.append(&singleArg);
+    }
+    return argsWithParenthesis(argPtrsList, displayArgInitialization);
+}
+QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType::argsWithParenthesis(const UserInterfaceSkeletonGeneratorData::ArgsWithOptionalDefaultValues_List &functionArgs, SingleArg::DisplayArgInitializationEnum displayArgInitialization) const
+{
+    ArgPtrsList argPtrsList;
+    Q_FOREACH(const SingleArgWithOptionalDefaultValue &singleArg, functionArgs)
+    {
+        argPtrsList.append(&singleArg);
+    }
+    return argsWithParenthesis(argPtrsList, displayArgInitialization);
+}
+QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType::argsWithParenthesis(const UserInterfaceSkeletonGeneratorData::ArgsWithMandatoryDefaultValues_List &functionArgs, SingleArg::DisplayArgInitializationEnum displayArgInitialization) const
+{
+    ArgPtrsList argPtrsList;
+    Q_FOREACH(const SingleArgWithMandatoryDefaultValue &singleArg, functionArgs)
+    {
+        argPtrsList.append(&singleArg);
+    }
+    return argsWithParenthesis(argPtrsList, displayArgInitialization);
+}
+#if 0 //Qt4-style connect
 QString myNormalizedType(QString input)
 {
     const QByteArray &inputAsUtf8 = input.toUtf8();
@@ -121,7 +154,6 @@ QString myNormalizedType(QString input)
     QString ret(retBA);
     return ret;
 }
-#if 0 //Qt4-style connect
 QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType::argTypesNormalizedWithoutParenthesis() const
 {
     QString ret;
@@ -164,5 +196,37 @@ QString UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinished
     //ex: SomeSlotRequestResponse
     QString ret(firstLetterToUpper(Slot.slotName()));
     ret.append("RequestResponse");
+    return ret;
+}
+QString UserInterfaceSkeletonGeneratorData::SingleArg::argName(UserInterfaceSkeletonGeneratorData::SingleArg::DisplayArgInitializationEnum displayArgInitializationEnum) const
+{
+    Q_UNUSED(displayArgInitializationEnum);
+    return m_ArgName;
+}
+QString UserInterfaceSkeletonGeneratorData::SingleArgWithOptionalDefaultValue::argName(UserInterfaceSkeletonGeneratorData::SingleArgWithOptionalDefaultValue::DisplayArgInitializationEnum displayArgInitializationEnum) const
+{
+    QString ret = SingleArg::argName();
+    switch(displayArgInitializationEnum)
+    {
+        case DoNotDisplayArgInitialization:
+            //do nothing
+        break;
+        case DisplayConstructorStyleInitialization:
+        {
+            if(!ArgOptionalDefaultValue.isNull())
+            {
+                ret += "(" + (*ArgOptionalDefaultValue.data()) + ")";
+            }
+        }
+        break;
+        case DisplaySimpleAssignmentStyleInitialization:
+        {
+            if(!ArgOptionalDefaultValue.isNull())
+            {
+                ret.append(" = " + (*ArgOptionalDefaultValue.data()));
+            }
+        }
+        break;
+    }
     return ret;
 }

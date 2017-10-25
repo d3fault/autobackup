@@ -13,8 +13,11 @@ class SomeSlotRequestResponse : public QObject
     Q_OBJECT
 public:
     explicit SomeSlotRequestResponse(BusinessObject *businessClass, QObject *parent = 0);
+
     void setSuccess(bool success);
     void setXIsEven(bool xIsEven);
+
+    void reset();
 private:
     void respond_aka_emitFinishedSignal();
     friend class SomeSlotScopedResponder;
