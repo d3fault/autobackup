@@ -8,26 +8,37 @@ QString RequstsResponseContractsGlueGenerator::TAB = "    ";
 RequstsResponseContractsGlueGenerator::RequstsResponseContractsGlueGenerator(QObject *parent)
     : QObject(parent)
 { }
-bool RequstsResponseContractsGlueGenerator::generateRequstsResponseContractsGlue(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash)
+bool RequstsResponseContractsGlueGenerator::generateRequstsResponseContractsGlue_AndAddContractSignalsAndSlotsToData(UserInterfaceSkeletonGeneratorData *data, QString targetDir_WithTrailingSlash)
 {
     //emit on error only (it used to be my finished signal), and only false
 
-    if(!generateBusinessObjectRequestResponseContractsHeaderFile(data, targetDir_WithTrailingSlash))
+    addSignalsAndSlotsToData(data);
+
+    const UserInterfaceSkeletonGeneratorData &constData = *data;
+    if(!generateBusinessObjectRequestResponseContractsHeaderFile(constData, targetDir_WithTrailingSlash))
         return false;
-    if(!generateBusinessObjectRequestResponseContractsSourceFile(data, targetDir_WithTrailingSlash))
+    if(!generateBusinessObjectRequestResponseContractsSourceFile(constData, targetDir_WithTrailingSlash))
         return false;
-    if(!generateBusinessObjectRequestResponseContractsPriFile(data, targetDir_WithTrailingSlash))
+    if(!generateBusinessObjectRequestResponseContractsPriFile(constData, targetDir_WithTrailingSlash))
         return false;
-    if(!generateBusinessObjectSomeSlotRequestResponseHeaderFiles(data, targetDir_WithTrailingSlash))
+    if(!generateBusinessObjectSomeSlotRequestResponseHeaderFiles(constData, targetDir_WithTrailingSlash))
         return false;
-    if(!generateBusinessObjectSomeSlotRequestResponseSourceFiles(data, targetDir_WithTrailingSlash))
+    if(!generateBusinessObjectSomeSlotRequestResponseSourceFiles(constData, targetDir_WithTrailingSlash))
         return false;
-    if(!generateBusinessObjectSomeSlotScopedResponderHeaderFiles(data, targetDir_WithTrailingSlash))
+    if(!generateBusinessObjectSomeSlotScopedResponderHeaderFiles(constData, targetDir_WithTrailingSlash))
         return false;
-    if(!generateBusinessObjectSomeSlotScopedResponderSourceFiles(data, targetDir_WithTrailingSlash))
+    if(!generateBusinessObjectSomeSlotScopedResponderSourceFiles(constData, targetDir_WithTrailingSlash))
         return false;
 
     return true;
+}
+void RequstsResponseContractsGlueGenerator::addSignalsAndSlotsToData(UserInterfaceSkeletonGeneratorData *data)
+{
+    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentRequestResponse, data->RequestResponses_aka_SlotsWithFinishedSignals)
+    {
+        data->Signals.append(currentRequestResponse.FinishedSignal);
+        data->Slots.append(currentRequestResponse.Slot);
+    }
 }
 bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestResponseContractsHeaderFile(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash)
 {

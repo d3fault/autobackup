@@ -10,8 +10,10 @@ class RequstsResponseContractsGlueGenerator : public QObject
     Q_OBJECT
 public:
     explicit RequstsResponseContractsGlueGenerator(QObject *parent = 0);
-    bool generateRequstsResponseContractsGlue(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
+    bool generateRequstsResponseContractsGlue_AndAddContractSignalsAndSlotsToData(UserInterfaceSkeletonGeneratorData *data, QString targetDir_WithTrailingSlash);
 private:
+    void addSignalsAndSlotsToData(UserInterfaceSkeletonGeneratorData *data);
+
     bool generateBusinessObjectRequestResponseContractsHeaderFile(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
     bool generateBusinessObjectRequestResponseContractsSourceFile(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
     bool generateBusinessObjectRequestResponseContractsPriFile(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
