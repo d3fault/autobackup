@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QTextStream>
+#include <QDateTime>
 
 #include "unmodifiedfilesafeoverwriter_viacryptographichashheaderverification.h"
 
@@ -19,10 +20,11 @@ int main(int argc, char *argv[])
 
     {
         QTextStream t(&f);
+        qsrand(QDateTime::currentMSecsSinceEpoch());
         t << "here is a randomly genererated number: " << qrand();
     }
 
-    if(!f.confirmAndDoOverwrite())
+    if(!f.commit())
     {
         qDebug() << "failed to commit file";
         return 1;

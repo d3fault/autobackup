@@ -1,37 +1,36 @@
 #ifndef UNMODIFIEDFILESAFEOVERWRITER_VIACRYPTOGRAPHICHASHHEADERVERIFICATION_H
 #define UNMODIFIEDFILESAFEOVERWRITER_VIACRYPTOGRAPHICHASHHEADERVERIFICATION_H
 
-#include <QSaveFile>
+#include <QBuffer>
 
 #include <memory>
 
 #include <QCryptographicHash>
 #include <QTextStream>
 
-class UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification : public QSaveFile
+class UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification : public QBuffer
 {
     Q_OBJECT
 public:
-    explicit UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification(const QString &name, QObject *parent = nullptr);
+    explicit UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification(QObject *parent = 0)=delete;
+    explicit UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification(const QString &fileName, QObject *parent = nullptr);
+    explicit UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification(QByteArray *byteArray, QObject * parent = nullptr)=delete;
 
     static const QCryptographicHash::Algorithm CryptographicHashAlgorithm;
     static const QString ModificationGuardHeaderPrefix;
 
     bool openFileForOverwritingAfterVerifyingItHasntBeenModified();
-    bool confirmAndDoOverwrite();
-protected:
-    qint64 writeData(const char *data, qint64 len) override;
+    bool commit();
 private:
-    explicit UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification(QObject *parent = nullptr);
+    virtual bool open(OpenMode flags) override;
+    virtual void close() override;
 
     static QByteArray quickHexHash(const QByteArray &input);
     static bool fileContentsMatchCryptographicHash(QTextStream &t, const QByteArray &cryptographicHexHashToCheckAgainst);
 
-    bool commit();
     void myE(QString msg);
-    bool openFileForOverwriting();
 
-    //bool m_FirstCallToWriteData;
+    QString m_FileName;
 signals:
     void e(QString);
 };
