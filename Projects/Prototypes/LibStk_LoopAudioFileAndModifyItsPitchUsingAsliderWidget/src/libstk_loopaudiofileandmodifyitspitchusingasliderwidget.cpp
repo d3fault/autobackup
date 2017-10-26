@@ -11,7 +11,7 @@ using namespace stk;
 
 #include "stkfileloopiodevice.h"
 
-//TODOreq: debug what thread is calling this::stkTick .. because if stk isn't using it's own backend thread then I really don't have ANY clue how it's even functioning O_o. once I know it's using it's own thread, I should maybe use QAtomicInt to safely comm between the GUI and Stk -- the int I'm talking about of course is the one passed to pitchBend/whatever
+//TODOreq: valgrind this app, because it segfaults on close. I tried valgrinding it on my $35 linux box but after 30+ mins of doing NOTHING (widget not showing, valgrind simply saying "analyzing memory...", I gave up. I think my box might be too slow :-/. Successfully valgrind'd a vanilla C++ cout << "Hello world" app, but failed to valgrind a HelloWidget app (sameshit, widget wouldn't show)
 //TODOmb: a slider for volume and other shiz stk provides
 LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget(QWidget *parent)
     : QWidget(parent)
