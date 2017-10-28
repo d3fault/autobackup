@@ -1,0 +1,22 @@
+CodeGeneratorGenerator
+
+As input, I take a directory of source code files (RequestResponseContracts2 will suffice).
+Output is a code generator which queries the user for the "list of symbolNames to do str.replace for".
+
+
+Some prefix.
+
+SomeBusinessClass
+someSlot (instruct user(s!!!) to use uppercase first letter for classes and lowercase first letter for methods)
+
+Another prefix.
+
+AnotherBusinessClass
+anotherSlot
+
+
+If any of the "another" prefixes are now found in the CodeGeneratorGenerator input,
+
+SCRATCH THAT there is no "Another prefix".
+
+wait fuk this project is fuk'd my brain jus exploded idk if this is doable anymore.
