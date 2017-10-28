@@ -9,6 +9,7 @@ const QString UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerificatio
 
 //NOTE: this class is not meant to be used multiple times in a row. use 1 instance per file. the buffer is not cleared after commit()
 //TODOreq: this isn't as safe as I want it to be. QIODevice::CreateOnly should be used when the file doesn't exist, and some hypothetical WriteOnly + Truncate + __Exclusive-Access__ guarantee (from OS, just like the one that QTemporaryFile gives) would be best. I'm not sure the exclusive-access thing is possible for opening an existing file, but I can fantacize :-S. and no I'm not interested in flock (but maybe I should be?)
+//TODOreq: set output to ReadOnly to help the end-users not overwrite. OS will give warnings etc. this means I have to JIT set it to Writable before overwriting, then set back to ReadOnly again, but no biggy this ez af. That one "NightMux" script/project has some setReadOnly code I can copy/paste
 UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification::UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification(const QString &fileName, QObject *parent)
     : QBuffer(parent)
     , m_FileName(fileName)
@@ -26,7 +27,7 @@ bool UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification::openFi
         }
 
         //verify file hasn't been modified before opening for overwrite
-        if(!file.open(QIODevice::ReadOnly/* | QIODevice::Text -- NOTE: we can't use QIODevice::Text because VARIATIONS of \n and \r\n would mess with our cryptographic hash calculation/verification. I could code around this TODOmb, but nahh at least not right now*/))
+        if(!file.open(QIODevice::ReadOnly/* | QIODevice::Text -- NOTE: we can't use QIODevice::Text because VARIATIONS of \n and \r\n would mess with our cryptographic hash calculation/verification. I could code around this TODOmb, but nahh at least not right now. actually thinking more on this it might be just fine and dandy, since the in-memory copy always only has "\n" and never "\r\n". however there are binary files to consider I guess at least hypothetically (I almost renamed this project to UnmodifiedTextFileSafeOverwriter, implying binary is not allowed)*/))
         {
             myE("failed to open file for reading/unmodified-verification: " + file.fileName());
             return false;
