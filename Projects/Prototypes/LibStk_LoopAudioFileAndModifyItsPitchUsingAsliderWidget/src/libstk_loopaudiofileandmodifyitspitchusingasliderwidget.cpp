@@ -1,85 +1,16 @@
 #include "libstk_loopaudiofileandmodifyitspitchusingasliderwidget.h"
 
-using namespace stk;
-
-#include <QtMultimedia/QAudioOutput>
 #include <QSlider>
 #include <QHBoxLayout>
 #include <QMessageBox>
 
 #include <QDebug>
 
-#include "stkfileloopiodevice.h"
-
-//TODOreq: valgrind this app, because it segfaults on close. I tried valgrinding it on my $35 linux box but after 30+ mins of doing NOTHING (widget not showing, valgrind simply saying "analyzing memory...", I gave up. I think my box might be too slow :-/. Successfully valgrind'd a vanilla C++ cout << "Hello world" app, but failed to valgrind a HelloWidget app (sameshit, widget wouldn't show)
 //TODOmb: a slider for volume and other shiz stk provides
 LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget(QWidget *parent)
     : QWidget(parent)
-    , m_NumBufferFrames(RT_BUFFER_SIZE)
 {
     setupGui();
-
-    // Set the global sample rate before creating class instances.
-    Stk::setSampleRate((StkFloat)44100);
-
-    input.reset(new stk::FileLoop);
-    // Try to load the soundfile.
-    try
-    {
-        input->openFile("/run/shm/audio.wav");
-    }
-    catch(StkError &stkError)
-    {
-        showStdStringError(stkError.getMessage());
-        close();
-        return;
-    }
-
-    // Set input read rate based on the default STK sample rate.
-    double rate = 1.0;
-    rate = input->getFileRate() / Stk::sampleRate();
-    //rate *= 2.0; //uncomment to play back audio at twice the speed
-    input->setRate(rate);
-    qDebug() << "setting input file loop rate to:" << rate;
-
-    //input->ignoreSampleRateChange();
-
-    // Find out how many channels we have.
-    int channels = input->channelsOut();
-
-#if 0
-    QList<QAudioDeviceInfo> allDevices = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
-    //qDebug() << "all devices:" << allDevices;
-    for(int i = 0; i < allDevices.size(); ++i)
-    {
-        const QAudioDeviceInfo &currentInfo = allDevices.at(i);
-        qDebug() << "device #" << i << ":" << currentInfo.deviceName();
-        qDebug() << "supported sample sizes:" << currentInfo.supportedSampleSizes();
-        qDebug() << "supported endiannesses:" << currentInfo.supportedByteOrders();
-        qDebug() << "";
-    }
-#endif
-
-    QAudioDeviceInfo audioDeviceInfo = QAudioDeviceInfo::defaultOutputDevice();
-    QAudioFormat audioFormat;
-    audioFormat.setSampleRate(Stk::sampleRate());
-    audioFormat.setChannelCount(channels);
-    audioFormat.setSampleSize(32);
-    audioFormat.setCodec("audio/pcm");
-    audioFormat.setByteOrder(QAudioFormat::LittleEndian);
-    audioFormat.setSampleType(QAudioFormat::Float);
-
-    if(!audioDeviceInfo.isFormatSupported(audioFormat))
-    {
-        qWarning() << "Default format not supported - trying to use nearest";
-        audioFormat = audioDeviceInfo.nearestFormat(audioFormat);
-    }
-    QAudioOutput *audioOutput = new QAudioOutput(audioDeviceInfo, audioFormat, this);
-    m_FileLoopIoDevice = new StkFileLoopIoDevice(input.take(), channels, audioOutput);
-
-    m_FileLoopIoDevice->reserveFrames(m_NumBufferFrames, channels);
-    m_FileLoopIoDevice->start();
-    audioOutput->start(m_FileLoopIoDevice);
 }
 qreal LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::map(qreal valueToMap, qreal sourceRangeMin, qreal sourceRangeMax, qreal destRangeMin, qreal destRangeMax)
 {
@@ -115,7 +46,7 @@ void LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::handlePitchShiftSl
     //map 0-1023 -> 0.1-2
     qreal newValueMapped = map(newValueAsFloat, 0, 1023, 0.1, 2);
 
-    m_FileLoopIoDevice->setPitchShift(static_cast<StkFloat>(newValueMapped)); //TODOreq: this might not be thread-safe, idfk. maybe I need to "post a message to stk thread"? they do have a Messenger thing goin on fuck idk
+    emit changePitchShiftRequested(static_cast<stk::StkFloat>(newValueMapped));
 }
 void LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::handlePitchShiftMixAmountSliderValueChanged(int newValue)
 {
@@ -124,5 +55,5 @@ void LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget::handlePitchShiftMi
     //map 0-100 -> 0-1
     qreal newValueMapped = map(newValueAsFloat, 0, 100, 0, 1);
 
-    m_FileLoopIoDevice->setPitchShiftMixAmount(static_cast<StkFloat>(newValueMapped));
+    emit changePitchShiftMixAmountRequested(static_cast<stk::StkFloat>(newValueMapped));
 }

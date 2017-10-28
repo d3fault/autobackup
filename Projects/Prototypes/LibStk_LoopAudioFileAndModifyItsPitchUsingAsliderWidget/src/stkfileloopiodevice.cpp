@@ -22,6 +22,10 @@ void StkFileLoopIoDevice::start()
 {
     open(ReadOnly);
 }
+void StkFileLoopIoDevice::stop()
+{
+    close();
+}
 qint64 StkFileLoopIoDevice::bytesAvailable() const
 {
     return m_FileLoop->getSize() + QIODevice::bytesAvailable(); //our file loop NEVER runs out of bytes xD
@@ -40,7 +44,7 @@ qint64 StkFileLoopIoDevice::readData(char *data, qint64 maxlen)
 
     //fill maxlen bytes from frames, refilling frames from m_FileLoop when needed
     qint64 total = 0;
-    qint64 stopReadingAtThisManyBytes = maxlen - sizeof(float);
+    qint64 stopReadingAtThisManyBytes = (maxlen - sizeof(float));
     while(total < stopReadingAtThisManyBytes)
     {
         if(m_CurrentIndexIntoFrames == frames.size())

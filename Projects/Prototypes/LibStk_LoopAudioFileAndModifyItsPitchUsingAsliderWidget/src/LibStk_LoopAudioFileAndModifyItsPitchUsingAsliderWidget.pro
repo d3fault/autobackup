@@ -14,10 +14,16 @@ TEMPLATE = app
 CONFIG += C++11
 
 HEADERS  += libstk_loopaudiofileandmodifyitspitchusingasliderwidget.h \
-    stkfileloopiodevice.h
+    stkfileloopiodevice.h \
+    audiooutput.h \
+    libstk_loopaudiofileandmodifyitspitchusingaslider.h
 
 SOURCES += main.cpp \
         libstk_loopaudiofileandmodifyitspitchusingasliderwidget.cpp \
-    stkfileloopiodevice.cpp
+    stkfileloopiodevice.cpp \
+    audiooutput.cpp \
+    libstk_loopaudiofileandmodifyitspitchusingaslider.cpp
 
 LIBS += -lstk
+
+include(../../../../GloballySharedClasses/objectonthreadgroup.pri)

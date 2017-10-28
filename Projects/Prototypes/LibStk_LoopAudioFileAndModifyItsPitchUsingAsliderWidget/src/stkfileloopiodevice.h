@@ -15,6 +15,7 @@ public:
     StkFileLoopIoDevice(stk::FileLoop *fileLoop, int channels, QObject *parent = nullptr);
     void reserveFrames(int numBufferFrames, int channels);
     void start();
+    void stop();
 protected:
     qint64 bytesAvailable() const;
     qint64 readData(char *data, qint64 maxlen) override;

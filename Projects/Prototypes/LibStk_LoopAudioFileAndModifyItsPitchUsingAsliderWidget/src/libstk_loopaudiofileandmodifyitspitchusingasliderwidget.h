@@ -3,13 +3,9 @@
 
 #include <QWidget>
 
-#include <QScopedPointer>
-
-#include "stk/FileLoop.h"
+#include "stk/Stk.h"
 
 class QSlider;
-
-class StkFileLoopIoDevice;
 
 class LibStk_LoopAudioFileAndModifyItsPitchUsingAsliderWidget : public QWidget
 {
@@ -23,9 +19,9 @@ private:
 
     QSlider *m_PitchShiftSlider;
     QSlider *m_PitchShiftMixAmountSlider;
-    QScopedPointer<stk::FileLoop> input;
-    unsigned int m_NumBufferFrames;
-    StkFileLoopIoDevice *m_FileLoopIoDevice;
+signals:
+    void changePitchShiftRequested(stk::StkFloat newPitchShiftValue);
+    void changePitchShiftMixAmountRequested(stk::StkFloat newPitchShiftMixAmount);
 private slots:
     void handlePitchShiftSliderValueChanged(int newValue);
     void handlePitchShiftMixAmountSliderValueChanged(int newValue);
