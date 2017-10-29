@@ -60,17 +60,13 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
     {
         //even though these includes aren't needed by this header, these includes are here to save the BusinessClass from having to #include them all manually
         t << "#include \"" << currentContract.slotScopedResponderTypeName().toLower() << ".h\"" << endl; //ex: #include "someslotscopedresponder.h"
+        t << "#include \"" << currentContract.slotRequestResponseTypeName().toLower() << ".h\"" << endl;
     }
     t << endl;
     t << "class " << data.BusinessLogicClassName << ";" << endl;
     t << endl;
     t << "namespace " << businessObjectRequestResponseContracts << endl;
     t << "{" << endl;
-    t << endl;
-    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
-    {
-        t << "class " << currentContract.slotRequestResponseTypeName() << ";" << endl; //ex: SomeSlotRequestResponse;
-    }
     t << endl;
     t << "class Contracts" << endl;
     t << "{" << endl;
@@ -109,13 +105,13 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
     QString businessObjectRequestResponseContracts = data.BusinessLogicClassName + "RequestResponseContracts";
     t << "#include \"" << businessObjectRequestResponseContracts.toLower() << ".h\"" << endl;
     t << endl;
-    t << "#include \"" << data.BusinessLogicClassName.toLower() << ".h\"" << endl;
-    t << endl;
     Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         //ex: #include "someslotrequestresponse.h"
         t << "#include \"" << currentContract.slotRequestResponseTypeName().toLower() << ".h\"" << endl;
     }
+    t << endl;
+    t << "#include \"../../" << data.BusinessLogicClassName.toLower() << ".h\"" << endl;
     t << endl;
     t << "using namespace " << businessObjectRequestResponseContracts << ";" << endl;
     t << endl;
@@ -188,14 +184,14 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
     Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         QString someSlotRequestResponseTypeName = firstLetterToUpper(currentContract.Slot.slotName()) + "RequestResponse";
-        QFile businessObjectSlotRequestResponseHeaderFile(targetDir_WithTrailingSlash + data.BusinessLogicClassName.toLower() + someSlotRequestResponseTypeName.toLower() + ".h");
-        if(!businessObjectSlotRequestResponseHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
+        QFile slotRequestResponseHeaderFile(targetDir_WithTrailingSlash + someSlotRequestResponseTypeName.toLower() + ".h");
+        if(!slotRequestResponseHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
         {
-            emit e("failed to open file for writing: " + businessObjectSlotRequestResponseHeaderFile.fileName());
+            emit e("failed to open file for writing: " + slotRequestResponseHeaderFile.fileName());
             emit finishedGeneratingRequestResponseContractGlue(false);
             return false;
         }
-        QTextStream t(&businessObjectSlotRequestResponseHeaderFile);
+        QTextStream t(&slotRequestResponseHeaderFile);
 
         QString headerGuard = someSlotRequestResponseTypeName.toUpper() + "_H";
         t << "#ifndef " << headerGuard << endl;
@@ -259,18 +255,18 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
     Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         QString someSlotRequestResponseTypeName = firstLetterToUpper(currentContract.Slot.slotName()) + "RequestResponse";
-        QFile businessObjectSlotRequestResponseHeaderFile(targetDir_WithTrailingSlash + data.BusinessLogicClassName.toLower() + someSlotRequestResponseTypeName.toLower() + ".cpp");
-        if(!businessObjectSlotRequestResponseHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
+        QFile slotRequestResponseHeaderFile(targetDir_WithTrailingSlash + someSlotRequestResponseTypeName.toLower() + ".cpp");
+        if(!slotRequestResponseHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
         {
-            emit e("failed to open file for writing: " + businessObjectSlotRequestResponseHeaderFile.fileName());
+            emit e("failed to open file for writing: " + slotRequestResponseHeaderFile.fileName());
             emit finishedGeneratingRequestResponseContractGlue(false);
             return false;
         }
-        QTextStream t(&businessObjectSlotRequestResponseHeaderFile);
+        QTextStream t(&slotRequestResponseHeaderFile);
 
         t << "#include \"" << someSlotRequestResponseTypeName.toLower() << ".h\"" << endl;
         t << endl;
-        t << "#include \"" << data.BusinessLogicClassName.toLower() << ".h\"" << endl;
+        t << "#include \"../../" << data.BusinessLogicClassName.toLower() << ".h\"" << endl;
         t << endl;
         t << "using namespace " << data.BusinessLogicClassName << "RequestResponseContracts;" << endl;
         t << endl;
@@ -329,23 +325,23 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotScoped
     Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         QString someSlotScopedResponderTypeName = firstLetterToUpper(currentContract.Slot.slotName()) + "ScopedResponder";
-        QFile businessObjectSlotRequestResponseHeaderFile(targetDir_WithTrailingSlash + data.BusinessLogicClassName.toLower() + someSlotScopedResponderTypeName.toLower() + ".h");
-        if(!businessObjectSlotRequestResponseHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
+        QFile slotRequestResponseHeaderFile(targetDir_WithTrailingSlash + someSlotScopedResponderTypeName.toLower() + ".h");
+        if(!slotRequestResponseHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
         {
-            emit e("failed to open file for writing: " + businessObjectSlotRequestResponseHeaderFile.fileName());
+            emit e("failed to open file for writing: " + slotRequestResponseHeaderFile.fileName());
             emit finishedGeneratingRequestResponseContractGlue(false);
             return false;
         }
-        QTextStream t(&businessObjectSlotRequestResponseHeaderFile);
+        QTextStream t(&slotRequestResponseHeaderFile);
 
         QString headerGuard = someSlotScopedResponderTypeName.toUpper() + "_H";
         t << "#ifndef " << headerGuard << endl;
         t << "#define " << headerGuard << endl;
         t << endl;
-        t << "#include \"" << someSlotScopedResponderTypeName.toLower() << ".h" << endl;
-        t << endl;
-        t << "namespace " << data.BusinessLogicClassName << data.BusinessLogicClassName << "RequestResponseContracts" << endl;
+        t << "namespace " << data.BusinessLogicClassName << "RequestResponseContracts" << endl;
         t << "{" << endl;
+        t << endl;
+        t << "class " << currentContract.slotRequestResponseTypeName() << ";" << endl;
         t << endl;
         t << "class " << someSlotScopedResponderTypeName << endl;
         t << "{" << endl;
@@ -371,16 +367,18 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotScoped
     Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         QString someSlotScopedResponderTypeName = firstLetterToUpper(currentContract.Slot.slotName()) + "ScopedResponder";
-        QFile businessObjectSlotRequestResponseHeaderFile(targetDir_WithTrailingSlash + data.BusinessLogicClassName.toLower() + someSlotScopedResponderTypeName.toLower() + ".cpp");
-        if(!businessObjectSlotRequestResponseHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
+        QFile slotRequestResponseHeaderFile(targetDir_WithTrailingSlash + someSlotScopedResponderTypeName.toLower() + ".cpp");
+        if(!slotRequestResponseHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
         {
-            emit e("failed to open file for writing: " + businessObjectSlotRequestResponseHeaderFile.fileName());
+            emit e("failed to open file for writing: " + slotRequestResponseHeaderFile.fileName());
             emit finishedGeneratingRequestResponseContractGlue(false);
             return false;
         }
-        QTextStream t(&businessObjectSlotRequestResponseHeaderFile);
+        QTextStream t(&slotRequestResponseHeaderFile);
 
-        t << "#include \"" << someSlotScopedResponderTypeName.toLower() << ".h" << endl;
+        t << "#include \"" << someSlotScopedResponderTypeName.toLower() << ".h\"" << endl;
+        t << endl;
+        t << "#include \"" << currentContract.slotRequestResponseTypeName().toLower() << ".h\"" << endl;
         t << endl;
         t << "using namespace " << data.BusinessLogicClassName << "RequestResponseContracts;" << endl;
         t << endl;

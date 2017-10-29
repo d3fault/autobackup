@@ -4,8 +4,11 @@
 #include <QTemporaryDir>
 #include <QDir>
 
+using namespace CodeGeneratorGeneratorRequestResponseContracts;
+
 CodeGeneratorGenerator::CodeGeneratorGenerator(QObject *parent)
     : QObject(parent)
+    , m_Contracts(this)
 { }
 QString CodeGeneratorGenerator::relativePathFromInputDir(const QString &inputDir, QString /*life is to short for const correctness, unless benchmarks show it makes a significant difference in a given use case*/ absoluteFilePath)
 {
@@ -14,7 +17,7 @@ QString CodeGeneratorGenerator::relativePathFromInputDir(const QString &inputDir
 }
 QString CodeGeneratorGenerator::targetPath(QString outputDir, QString directoryToCompilingExampleTemplateToGenerateCodeGeneratorFor, const QFileInfo *fileInfo)
 {
-    return outputDir + relativePathFromInputDir(directoryToCompilingExampleTemplateToGenerateCodeGeneratorFor, fileInfo->canonicalFilePath());
+    return appendSlashIfNeeded(outputDir) + relativePathFromInputDir(directoryToCompilingExampleTemplateToGenerateCodeGeneratorFor, fileInfo->canonicalFilePath());
 }
 QString CodeGeneratorGenerator::appendSlashIfNeeded(QString x)
 {
@@ -72,7 +75,8 @@ void CodeGeneratorGenerator::generateCodeGenerator(const QString &directoryToCom
         }
     }
 
-    emit o("your output dir is here: " + outputDir.path());
-    scopedResponder.setSuccess(true);
+    emit v("your output dir is here: " + outputDir.path());
+    scopedResponder.response()->setOutputDir(outputDir.path());
+    scopedResponder.response()->setSuccess(true);
     return /*emit*/;
 }
