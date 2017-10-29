@@ -5,13 +5,15 @@
 
 #include "userinterfaceskeletongenerator.h"
 
-void WidgetImplStubGenerator::generateImplStubFiles(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)
+using namespace UserInterfaceSkeletonGeneratorData;
+
+void WidgetImplStubGenerator::generateImplStubFiles(const Data &data, const QString &outputDirWithTrailingSlash)
 {
     generateHeaderFile(data, outputDirWithTrailingSlash);
     generateSourceFile(data, outputDirWithTrailingSlash);
     //TODOprobably: generate the "BusinessNameGui" class that is charged with performing the connections? I know I don't need to gen a main.cpp file here (unless I overwrite), but this is something else
 }
-void WidgetImplStubGenerator::generateHeaderFile(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)
+void WidgetImplStubGenerator::generateHeaderFile(const Data &data, const QString &outputDirWithTrailingSlash)
 {
     QFile file(outputDirWithTrailingSlash + targetImplStubClassName(data.BusinessLogicClassName).toLower() + ".h");
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -24,7 +26,7 @@ void WidgetImplStubGenerator::generateHeaderFile(const UserInterfaceSkeletonGene
     QTextStream textStream(&file);
     generate_Q_OBJECT_inherittingClassHeader(data, textStream, "QWidget");
 }
-void WidgetImplStubGenerator::generateSourceFile(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)
+void WidgetImplStubGenerator::generateSourceFile(const Data &data, const QString &outputDirWithTrailingSlash)
 {
     QFile file(outputDirWithTrailingSlash + targetImplStubClassName(data.BusinessLogicClassName).toLower() + ".cpp");
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text))

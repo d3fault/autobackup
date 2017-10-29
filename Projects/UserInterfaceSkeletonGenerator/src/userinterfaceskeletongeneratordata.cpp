@@ -2,7 +2,9 @@
 
 #include "userinterfaceskeletongenerator.h"
 
-UserInterfaceSkeletonGeneratorData::ArgsWithOptionalDefaultValues_List UserInterfaceSkeletonGeneratorData::mandatoryArgsListToOptionalArgsList(const UserInterfaceSkeletonGeneratorData::ArgsWithMandatoryDefaultValues_List &mandatoryArgsList)
+using namespace UserInterfaceSkeletonGeneratorData;
+
+ArgsWithOptionalDefaultValues_List Data::mandatoryArgsListToOptionalArgsList(const ArgsWithMandatoryDefaultValues_List &mandatoryArgsList)
 {
     ArgsWithOptionalDefaultValues_List ret;
     for(ArgsWithMandatoryDefaultValues_List::const_iterator it = mandatoryArgsList.constBegin(); it != mandatoryArgsList.constEnd(); ++it)
@@ -12,16 +14,16 @@ UserInterfaceSkeletonGeneratorData::ArgsWithOptionalDefaultValues_List UserInter
     }
     return ret;
 }
-void UserInterfaceSkeletonGeneratorData::createAndAddSignal(QString signalName, ArgsWithOptionalDefaultValues_List signalArgs)
+void Data::createAndAddSignal(QString signalName, ArgsWithOptionalDefaultValues_List signalArgs)
 {
     Signals.append(createSignal(signalName, signalArgs));
 }
 //TODOreq: remove slotReturnType. people who want a slot return type really want RequestResponse. then again I should maintain flexibility and keep it!! hmm but maybe make it the last optional argument and default to of course void. because: QBlockingQueuedConnection fukken worx man and I have no GOOD reason to stop it from working
-void UserInterfaceSkeletonGeneratorData::createAndAddSlot(QString slotReturnType, QString slotName, ArgsList slotArgs)
+void Data::createAndAddSlot(QString slotReturnType, QString slotName, ArgsList slotArgs)
 {
     Slots.append(createSlot(slotReturnType, slotName, slotArgs));
 }
-void UserInterfaceSkeletonGeneratorData::createAndAddRequestResponse_aka_SlotWithFinishedSignal(QString slotName, UserInterfaceSkeletonGeneratorData::ArgsList slotArgs, ArgsWithMandatoryDefaultValues_List signalArgsAllHavingDefaultValues_inAdditionToSuccessBooleanThatWillBeAutoAdded, QString signalName_orLeaveEmptyToAutoGenerateFinishedSignalNameUsingSlotName)
+void Data::createAndAddRequestResponse_aka_SlotWithFinishedSignal(QString slotName, ArgsList slotArgs, ArgsWithMandatoryDefaultValues_List signalArgsAllHavingDefaultValues_inAdditionToSuccessBooleanThatWillBeAutoAdded, QString signalName_orLeaveEmptyToAutoGenerateFinishedSignalNameUsingSlotName)
 {    
     RequestResponse_aka_SlotWithFinishedSignal_Data requestResponseData;
 
@@ -30,14 +32,14 @@ void UserInterfaceSkeletonGeneratorData::createAndAddRequestResponse_aka_SlotWit
 
     //Finished Signal
     QString signalName = signalName_orLeaveEmptyToAutoGenerateFinishedSignalNameUsingSlotName.isEmpty() ? finishedSignalNameFromSlotName(slotName) : signalName_orLeaveEmptyToAutoGenerateFinishedSignalNameUsingSlotName;
-    ArgsWithOptionalDefaultValues_List argsWithOptionalDefaultValues = UserInterfaceSkeletonGeneratorData::mandatoryArgsListToOptionalArgsList(signalArgsAllHavingDefaultValues_inAdditionToSuccessBooleanThatWillBeAutoAdded);
+    ArgsWithOptionalDefaultValues_List argsWithOptionalDefaultValues = Data::mandatoryArgsListToOptionalArgsList(signalArgsAllHavingDefaultValues_inAdditionToSuccessBooleanThatWillBeAutoAdded);
     argsWithOptionalDefaultValues.prepend(SingleArgWithOptionalDefaultValue("bool", "success", "false"));
     SignalData signalData = createSignal(signalName, argsWithOptionalDefaultValues);
     requestResponseData.FinishedSignal = signalData;
 
     RequestResponses_aka_SlotsWithFinishedSignals.append(requestResponseData);
 }
-QString UserInterfaceSkeletonGeneratorData::firstLetterToUpper(const QString &inputString)
+QString Data::firstLetterToUpper(const QString &inputString)
 {
     if(inputString.isEmpty())
         return inputString;
@@ -45,18 +47,18 @@ QString UserInterfaceSkeletonGeneratorData::firstLetterToUpper(const QString &in
     ret.replace(0, 1, ret.at(0).toUpper());
     return ret;
 }
-QString UserInterfaceSkeletonGeneratorData::finishedSignalNameFromSlotName(QString slotName)
+QString Data::finishedSignalNameFromSlotName(QString slotName)
 {
     return slotName + "Finished";
 }
-UserInterfaceSkeletonGeneratorData::SignalData UserInterfaceSkeletonGeneratorData::createSignal(QString signalName, ArgsWithOptionalDefaultValues_List signalArgs)
+SignalData Data::createSignal(QString signalName, ArgsWithOptionalDefaultValues_List signalArgs)
 {
     SignalData signalData;
     signalData.setSignalName(signalName);
     signalData.setSignalArgs(signalArgs);
     return signalData;
 }
-UserInterfaceSkeletonGeneratorData::SlotData UserInterfaceSkeletonGeneratorData::createSlot(QString slotReturnType, QString slotName, UserInterfaceSkeletonGeneratorData::ArgsList slotArgs)
+SlotData Data::createSlot(QString slotReturnType, QString slotName, ArgsList slotArgs)
 {
     SlotData slotData;
     slotData.SlotReturnType = slotReturnType;
@@ -97,7 +99,7 @@ QString UserInterfaceSkeletonGeneratorData::targetUserInterfaceClassName() const
     return QString("I" + BusinessLogicClassName + "UI"); //"UserInterface" suffix too verbose, esp since "I" is at beginning as well xDDDDD. even though I know the 'I' at beginning stands for interface, I tend to read it as "I am a Business Logic Class Name UI", the 'I' taking on a different meaning than "Interface" there (and it helps with udnerstandability imo)
 }
 #endif
-QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType::argsWithoutParenthesis(ArgPtrsList functionArgs, SingleArg::DisplayArgInitializationEnum displayArgInitialization) const
+QString IFunctionSignatureWithoutReturnType::argsWithoutParenthesis(ArgPtrsList functionArgs, SingleArg::DisplayArgInitializationEnum displayArgInitialization) const
 {
     QString ret;
     bool first = true;
@@ -112,14 +114,14 @@ QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType:
     return ret;
 }
 
-QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType::argsWithParenthesis(ArgPtrsList functionArgs, SingleArg::DisplayArgInitializationEnum displayArgInitialization) const
+QString IFunctionSignatureWithoutReturnType::argsWithParenthesis(ArgPtrsList functionArgs, SingleArg::DisplayArgInitializationEnum displayArgInitialization) const
 {
     QString ret("(");
     ret.append(argsWithoutParenthesis(functionArgs, displayArgInitialization));
     ret.append(")");
     return ret;
 }
-QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType::argsWithParenthesis(const UserInterfaceSkeletonGeneratorData::ArgsList &functionArgs, SingleArg::DisplayArgInitializationEnum displayArgInitialization) const
+QString IFunctionSignatureWithoutReturnType::argsWithParenthesis(const ArgsList &functionArgs, SingleArg::DisplayArgInitializationEnum displayArgInitialization) const
 {
     ArgPtrsList argPtrsList;
     Q_FOREACH(const SingleArg &singleArg, functionArgs)
@@ -128,7 +130,7 @@ QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType:
     }
     return argsWithParenthesis(argPtrsList, displayArgInitialization);
 }
-QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType::argsWithParenthesis(const UserInterfaceSkeletonGeneratorData::ArgsWithOptionalDefaultValues_List &functionArgs, SingleArg::DisplayArgInitializationEnum displayArgInitialization) const
+QString IFunctionSignatureWithoutReturnType::argsWithParenthesis(const ArgsWithOptionalDefaultValues_List &functionArgs, SingleArg::DisplayArgInitializationEnum displayArgInitialization) const
 {
     ArgPtrsList argPtrsList;
     Q_FOREACH(const SingleArgWithOptionalDefaultValue &singleArg, functionArgs)
@@ -137,7 +139,7 @@ QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType:
     }
     return argsWithParenthesis(argPtrsList, displayArgInitialization);
 }
-QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType::argsWithParenthesis(const UserInterfaceSkeletonGeneratorData::ArgsWithMandatoryDefaultValues_List &functionArgs, SingleArg::DisplayArgInitializationEnum displayArgInitialization) const
+QString IFunctionSignatureWithoutReturnType::argsWithParenthesis(const ArgsWithMandatoryDefaultValues_List &functionArgs, SingleArg::DisplayArgInitializationEnum displayArgInitialization) const
 {
     ArgPtrsList argPtrsList;
     Q_FOREACH(const SingleArgWithMandatoryDefaultValue &singleArg, functionArgs)
@@ -154,7 +156,7 @@ QString myNormalizedType(QString input)
     QString ret(retBA);
     return ret;
 }
-QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType::argTypesNormalizedWithoutParenthesis() const
+QString UserInterfaceSkeletonGeneratorIFunctionSignatureWithoutReturnType::argTypesNormalizedWithoutParenthesis() const
 {
     QString ret;
     bool first = true;
@@ -168,7 +170,7 @@ QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType:
     }
     return ret;
 }
-QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType::argTypesNormalizedAndWithParenthesis() const
+QString UserInterfaceSkeletonGeneratorIFunctionSignatureWithoutReturnType::argTypesNormalizedAndWithParenthesis() const
 {
     QString ret("(");
     ret.append(argTypesNormalizedWithoutParenthesis());
@@ -176,34 +178,34 @@ QString UserInterfaceSkeletonGeneratorData::IFunctionSignatureWithoutReturnType:
     return ret;
 }
 #endif
-QString UserInterfaceSkeletonGeneratorData::SlotData::correspondingSlotInvokeRequestSignalName() const
+QString SlotData::correspondingSlotInvokeRequestSignalName() const
 {
     return slotName() + "Requested";
 }
-QString UserInterfaceSkeletonGeneratorData::SignalData::correspondingSignalHandlerSlotName() const
+QString SignalData::correspondingSignalHandlerSlotName() const
 {
-    return "handle" + firstLetterToUpper(signalName());
+    return "handle" + Data::firstLetterToUpper(signalName());
 }
-QString UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data::slotScopedResponderTypeName() const
+QString RequestResponse_aka_SlotWithFinishedSignal_Data::slotScopedResponderTypeName() const
 {
     //ex: SomeSlotScopedResponder
-    QString ret(firstLetterToUpper(Slot.slotName()));
+    QString ret(Data::firstLetterToUpper(Slot.slotName()));
     ret.append("ScopedResponder");
     return ret;
 }
-QString UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data::slotRequestResponseTypeName() const
+QString RequestResponse_aka_SlotWithFinishedSignal_Data::slotRequestResponseTypeName() const
 {
     //ex: SomeSlotRequestResponse
-    QString ret(firstLetterToUpper(Slot.slotName()));
+    QString ret(Data::firstLetterToUpper(Slot.slotName()));
     ret.append("RequestResponse");
     return ret;
 }
-QString UserInterfaceSkeletonGeneratorData::SingleArg::argName(UserInterfaceSkeletonGeneratorData::SingleArg::DisplayArgInitializationEnum displayArgInitializationEnum) const
+QString SingleArg::argName(SingleArg::DisplayArgInitializationEnum displayArgInitializationEnum) const
 {
     Q_UNUSED(displayArgInitializationEnum);
     return m_ArgName;
 }
-QString UserInterfaceSkeletonGeneratorData::SingleArgWithOptionalDefaultValue::argName(UserInterfaceSkeletonGeneratorData::SingleArgWithOptionalDefaultValue::DisplayArgInitializationEnum displayArgInitializationEnum) const
+QString SingleArgWithOptionalDefaultValue::argName(SingleArgWithOptionalDefaultValue::DisplayArgInitializationEnum displayArgInitializationEnum) const
 {
     QString ret = SingleArg::argName();
     switch(displayArgInitializationEnum)

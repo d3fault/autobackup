@@ -26,11 +26,11 @@ public:
     explicit UserInterfaceSkeletonGenerator(QObject *parent = 0);
     ~UserInterfaceSkeletonGenerator();
 private:
-    void displayFrontendBackendConnectStatements(const UserInterfaceSkeletonGeneratorData &data);
-    //void generatePureVirtualUserInterfaceHeaderFile(const UserInterfaceSkeletonGeneratorData &data);
-    void generateUserInterfaceImplStubsMaybe(const UserInterfaceSkeletonGeneratorData &data, QList<QString> implStubShortNames);
-    void generateAnyAndAllUserInterfaceImplStubs(const UserInterfaceSkeletonGeneratorData &data);
-    bool generateRequestResponseContractGlueMaybe_AndAddContractSignalsAndSlotsToData(UserInterfaceSkeletonGeneratorData *data);
+    void displayFrontendBackendConnectStatements(const UserInterfaceSkeletonGeneratorData::Data &data);
+    //void generatePureVirtualUserInterfaceHeaderFile(const UserInterfaceSkeletonGeneratorData::Data &data);
+    void generateUserInterfaceImplStubsMaybe(const UserInterfaceSkeletonGeneratorData::Data &data, QList<QString> implStubShortNames);
+    void generateAnyAndAllUserInterfaceImplStubs(const UserInterfaceSkeletonGeneratorData::Data &data);
+    bool generateRequestResponseContractGlueMaybe_AndAddContractSignalsAndSlotsToData(UserInterfaceSkeletonGeneratorData::Data *data);
 
     QString m_OutputDir_WithTrailingSlash;
     QList<IUserInterfaceImplStubGenerator*> ImplStubGenerators;
@@ -43,7 +43,7 @@ private:
         return ret;
     }
 private:
-    void populateDataUsingHardCodedCppXD(UserInterfaceSkeletonGeneratorData &data);
+    void populateDataUsingHardCodedCppXD(UserInterfaceSkeletonGeneratorData::Data &data);
 
     static QString firstLetterToUpper(const QString &inputString)
     {
@@ -67,7 +67,7 @@ signals:
     void finishedGeneratingUserInterfaceSkeleton(bool success);
 public slots:
     void generateUserInterfaceSkeletonFromClassDeclarationString(const QString &classDeclarationCpp_ForParsing, QList<QString> implStubShortNames);
-    void generateUserInterfaceSkeletonFromData(const UserInterfaceSkeletonGeneratorData &data, QList<QString> implStubShortNames);
+    void generateUserInterfaceSkeletonFromData(const UserInterfaceSkeletonGeneratorData::Data &data, QList<QString> implStubShortNames);
 private slots:
     void handleFinishedGeneratingRequestResponseContractGlue(bool success);
 };

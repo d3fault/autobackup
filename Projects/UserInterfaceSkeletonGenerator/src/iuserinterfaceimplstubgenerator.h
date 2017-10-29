@@ -13,7 +13,7 @@ public:
     IUserInterfaceImplStubGenerator(const IUserInterfaceImplStubGenerator &other)=delete;
     virtual ~IUserInterfaceImplStubGenerator()=default;
 
-    virtual void generateImplStubFiles(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)=0;
+    virtual void generateImplStubFiles(const UserInterfaceSkeletonGeneratorData::Data &data, const QString &outputDirWithTrailingSlash)=0;
 protected:
     virtual QString implStubClassSuffix() const =0;
     QString targetImplStubClassName(const QString &businessLogicClassName) const
@@ -21,11 +21,11 @@ protected:
         return businessLogicClassName + implStubClassSuffix();
     }
     QString headerGuardDefine(const QString &businessLogiClassName) const;
-    void generateSignalsAndSlotsHeaderDeclarations(const UserInterfaceSkeletonGeneratorData &data, QTextStream &textStream);
-    void generate_Q_OBJECT_inherittingClassHeader(const UserInterfaceSkeletonGeneratorData &data, QTextStream &textStream, QString directlyInherittedBaseClass = "QObject");
+    void generateSignalsAndSlotsHeaderDeclarations(const UserInterfaceSkeletonGeneratorData::Data &data, QTextStream &textStream);
+    void generate_Q_OBJECT_inherittingClassHeader(const UserInterfaceSkeletonGeneratorData::Data &data, QTextStream &textStream, QString directlyInherittedBaseClass = "QObject");
 
-    void generate_Q_OBJECT_inherittingStandardEmptyConstructorSourceCode(const UserInterfaceSkeletonGeneratorData &data, QTextStream &textStream, const QString &directlyInherittedBaseClass = "QObject");
-    void generateSignalHandlerSlotsSourceCode(const UserInterfaceSkeletonGeneratorData &data, QTextStream &textStream);
+    void generate_Q_OBJECT_inherittingStandardEmptyConstructorSourceCode(const UserInterfaceSkeletonGeneratorData::Data &data, QTextStream &textStream, const QString &directlyInherittedBaseClass = "QObject");
+    void generateSignalHandlerSlotsSourceCode(const UserInterfaceSkeletonGeneratorData::Data &data, QTextStream &textStream);
 
     QString tab = UserInterfaceSkeletonGenerator::TAB;
 };

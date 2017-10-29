@@ -10,17 +10,17 @@ class RequstsResponseContractsGlueGenerator : public QObject
     Q_OBJECT
 public:
     explicit RequstsResponseContractsGlueGenerator(QObject *parent = 0);
-    bool generateRequstsResponseContractsGlue_AndAddContractSignalsAndSlotsToData(UserInterfaceSkeletonGeneratorData *data, QString targetDir_WithTrailingSlash);
+    bool generateRequstsResponseContractsGlue_AndAddContractSignalsAndSlotsToData(UserInterfaceSkeletonGeneratorData::Data *data, QString targetDir_WithTrailingSlash);
 private:
-    void addSignalsAndSlotsToData(UserInterfaceSkeletonGeneratorData *data);
+    void addSignalsAndSlotsToData(UserInterfaceSkeletonGeneratorData::Data *data);
 
-    bool generateBusinessObjectRequestResponseContractsHeaderFile(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
-    bool generateBusinessObjectRequestResponseContractsSourceFile(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
-    bool generateBusinessObjectRequestResponseContractsPriFile(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
-    bool generateBusinessObjectSomeSlotRequestResponseHeaderFiles(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
-    bool generateBusinessObjectSomeSlotRequestResponseSourceFiles(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
-    bool generateBusinessObjectSomeSlotScopedResponderHeaderFiles(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
-    bool generateBusinessObjectSomeSlotScopedResponderSourceFiles(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash);
+    bool generateBusinessObjectRequestResponseContractsHeaderFile(const UserInterfaceSkeletonGeneratorData::Data &data, QString targetDir_WithTrailingSlash);
+    bool generateBusinessObjectRequestResponseContractsSourceFile(const UserInterfaceSkeletonGeneratorData::Data &data, QString targetDir_WithTrailingSlash);
+    bool generateBusinessObjectRequestResponseContractsPriFile(const UserInterfaceSkeletonGeneratorData::Data &data, QString targetDir_WithTrailingSlash);
+    bool generateBusinessObjectSomeSlotRequestResponseHeaderFiles(const UserInterfaceSkeletonGeneratorData::Data &data, QString targetDir_WithTrailingSlash);
+    bool generateBusinessObjectSomeSlotRequestResponseSourceFiles(const UserInterfaceSkeletonGeneratorData::Data &data, QString targetDir_WithTrailingSlash);
+    bool generateBusinessObjectSomeSlotScopedResponderHeaderFiles(const UserInterfaceSkeletonGeneratorData::Data &data, QString targetDir_WithTrailingSlash);
+    bool generateBusinessObjectSomeSlotScopedResponderSourceFiles(const UserInterfaceSkeletonGeneratorData::Data &data, QString targetDir_WithTrailingSlash);
 
     static QString firstLetterToUpper(const QString &inputString)
     {

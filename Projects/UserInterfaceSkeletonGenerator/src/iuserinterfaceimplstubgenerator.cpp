@@ -1,17 +1,19 @@
 #include "iuserinterfaceimplstubgenerator.h"
 
+using namespace UserInterfaceSkeletonGeneratorData;
+
 QString IUserInterfaceImplStubGenerator::headerGuardDefine(const QString &businessLogiClassName) const
 {
     QString ret(targetImplStubClassName(businessLogiClassName).toUpper());
     ret.append("_H");
     return ret;
 }
-void IUserInterfaceImplStubGenerator::generateSignalsAndSlotsHeaderDeclarations(const UserInterfaceSkeletonGeneratorData &data, QTextStream &textStream)
+void IUserInterfaceImplStubGenerator::generateSignalsAndSlotsHeaderDeclarations(const Data &data, QTextStream &textStream)
 {
     //gen 'requested' signals to go with business slots
     if(!data.Slots.isEmpty())
         textStream << "signals:" << endl;
-    Q_FOREACH(UserInterfaceSkeletonGeneratorData::SlotData currentSlot, data.Slots)
+    Q_FOREACH(SlotData currentSlot, data.Slots)
     {
         textStream << tab << "void " << currentSlot.correspondingSlotInvokeRequestSignalName() << currentSlot.argsWithParenthesis(currentSlot.slotArgs()) << ";" << endl;
     }
@@ -19,12 +21,12 @@ void IUserInterfaceImplStubGenerator::generateSignalsAndSlotsHeaderDeclarations(
     //gen 'handle' slots to go with business signals
     if(!data.Signals.isEmpty())
         textStream << "public slots:" << endl;
-    Q_FOREACH(UserInterfaceSkeletonGeneratorData::SignalData currentSignal, data.Signals)
+    Q_FOREACH(SignalData currentSignal, data.Signals)
     {
         textStream << tab << "void " << currentSignal.correspondingSignalHandlerSlotName() << currentSignal.argsWithParenthesis(currentSignal.signalArgs()) << ";" << endl;
     }
 }
-void IUserInterfaceImplStubGenerator::generate_Q_OBJECT_inherittingClassHeader(const UserInterfaceSkeletonGeneratorData &data, QTextStream &textStream, QString directlyInherittedBaseClass)
+void IUserInterfaceImplStubGenerator::generate_Q_OBJECT_inherittingClassHeader(const Data &data, QTextStream &textStream, QString directlyInherittedBaseClass)
 {
     textStream << "#ifndef " << headerGuardDefine(data.BusinessLogicClassName) << endl;
     textStream << "#define " << headerGuardDefine(data.BusinessLogicClassName) << endl;
@@ -53,7 +55,7 @@ void IUserInterfaceImplStubGenerator::generate_Q_OBJECT_inherittingClassHeader(c
 
     textStream << "#endif // " << headerGuardDefine(data.BusinessLogicClassName) << endl;
 }
-void IUserInterfaceImplStubGenerator::generate_Q_OBJECT_inherittingStandardEmptyConstructorSourceCode(const UserInterfaceSkeletonGeneratorData &data, QTextStream &textStream, const QString &directlyInherittedBaseClass)
+void IUserInterfaceImplStubGenerator::generate_Q_OBJECT_inherittingStandardEmptyConstructorSourceCode(const Data &data, QTextStream &textStream, const QString &directlyInherittedBaseClass)
 {
     textStream << "#include \"" << targetImplStubClassName(data.BusinessLogicClassName).toLower() << ".h\"" << endl << endl;
 
@@ -61,9 +63,9 @@ void IUserInterfaceImplStubGenerator::generate_Q_OBJECT_inherittingStandardEmpty
     textStream << tab << ": " << directlyInherittedBaseClass << "(parent)" << endl;
     textStream << "{ }" << endl;
 }
-void IUserInterfaceImplStubGenerator::generateSignalHandlerSlotsSourceCode(const UserInterfaceSkeletonGeneratorData &data, QTextStream &textStream)
+void IUserInterfaceImplStubGenerator::generateSignalHandlerSlotsSourceCode(const Data &data, QTextStream &textStream)
 {
-    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SignalData &currentSignal, data.Signals)
+    Q_FOREACH(const SignalData &currentSignal, data.Signals)
     {
         QString qualifiedSlotNameAndArgs(targetImplStubClassName(data.BusinessLogicClassName) + "::" + currentSignal.correspondingSignalHandlerSlotName() + currentSignal.argsWithParenthesis(currentSignal.signalArgs()));
         textStream << "void " << qualifiedSlotNameAndArgs << endl;

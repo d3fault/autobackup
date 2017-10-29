@@ -5,14 +5,16 @@
 
 QString RequstsResponseContractsGlueGenerator::TAB = "    ";
 
+using namespace UserInterfaceSkeletonGeneratorData;
+
 RequstsResponseContractsGlueGenerator::RequstsResponseContractsGlueGenerator(QObject *parent)
     : QObject(parent)
 { }
-bool RequstsResponseContractsGlueGenerator::generateRequstsResponseContractsGlue_AndAddContractSignalsAndSlotsToData(UserInterfaceSkeletonGeneratorData *data, QString targetDir_WithTrailingSlash)
+bool RequstsResponseContractsGlueGenerator::generateRequstsResponseContractsGlue_AndAddContractSignalsAndSlotsToData(Data *data, QString targetDir_WithTrailingSlash)
 {
     addSignalsAndSlotsToData(data);
 
-    const UserInterfaceSkeletonGeneratorData &constData = *data;
+    const Data &constData = *data;
     if(!generateBusinessObjectRequestResponseContractsHeaderFile(constData, targetDir_WithTrailingSlash))
         return false;
     if(!generateBusinessObjectRequestResponseContractsSourceFile(constData, targetDir_WithTrailingSlash))
@@ -31,15 +33,15 @@ bool RequstsResponseContractsGlueGenerator::generateRequstsResponseContractsGlue
     emit finishedGeneratingRequestResponseContractGlue(true);
     return true;
 }
-void RequstsResponseContractsGlueGenerator::addSignalsAndSlotsToData(UserInterfaceSkeletonGeneratorData *data)
+void RequstsResponseContractsGlueGenerator::addSignalsAndSlotsToData(Data *data)
 {
-    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentRequestResponse, data->RequestResponses_aka_SlotsWithFinishedSignals)
+    Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentRequestResponse, data->RequestResponses_aka_SlotsWithFinishedSignals)
     {
         data->Signals.append(currentRequestResponse.FinishedSignal);
         data->Slots.append(currentRequestResponse.Slot);
     }
 }
-bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestResponseContractsHeaderFile(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash)
+bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestResponseContractsHeaderFile(const Data &data, QString targetDir_WithTrailingSlash)
 {
     QFile businessObjectRequestResponseContractsHeaderFile(targetDir_WithTrailingSlash + data.BusinessLogicClassName.toLower() + "requestresponsecontracts.h");
     if(!businessObjectRequestResponseContractsHeaderFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
@@ -56,7 +58,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
     t << "#ifndef " << headerGuard << endl;
     t << "#define " << headerGuard << endl;
     t << endl;
-    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         //even though these includes aren't needed by this header, these includes are here to save the BusinessClass from having to #include them all manually
         t << "#include \"" << currentContract.slotScopedResponderTypeName().toLower() << ".h\"" << endl; //ex: #include "someslotscopedresponder.h"
@@ -72,13 +74,13 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
     t << "{" << endl;
     t << "public:" << endl;
     t << TAB << "explicit Contracts(" << data.BusinessLogicClassName << " *" << firstLetterToLower(data.BusinessLogicClassName) << ");" << endl;
-    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         //ex: SomeSlotRequestResponse *someSlot() const;
         t << TAB << currentContract.slotRequestResponseTypeName() << " *" << currentContract.Slot.slotName() << "() const;" << endl;
     }
     t << "private:" << endl;
-    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         //ex: SomeSlotRequestResponse *m_SomeSlot;
         t << TAB << currentContract.slotRequestResponseTypeName() << " *m_" << firstLetterToUpper(currentContract.Slot.slotName()) << ";" << endl;
@@ -91,7 +93,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
 
     return true;
 }
-bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestResponseContractsSourceFile(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash)
+bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestResponseContractsSourceFile(const Data &data, QString targetDir_WithTrailingSlash)
 {
     QFile businessObjectRequestResponseContractsSourceFile(targetDir_WithTrailingSlash + data.BusinessLogicClassName.toLower() + "requestresponsecontracts.cpp");
     if(!businessObjectRequestResponseContractsSourceFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
@@ -105,7 +107,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
     QString businessObjectRequestResponseContracts = data.BusinessLogicClassName + "RequestResponseContracts";
     t << "#include \"" << businessObjectRequestResponseContracts.toLower() << ".h\"" << endl;
     t << endl;
-    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         //ex: #include "someslotrequestresponse.h"
         t << "#include \"" << currentContract.slotRequestResponseTypeName().toLower() << ".h\"" << endl;
@@ -117,7 +119,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
     t << endl;
     t << "Contracts::Contracts(" << data.BusinessLogicClassName << " *" << firstLetterToLower(data.BusinessLogicClassName) << ")" << endl;
     bool first = true;
-    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         //ex: : m_SomeSlot(new SomeSlotRequestResponse(businessObject, businessObject))
         //ex: , m_AnotherSlot(new AnotherSlotRequestResponse(businessObject, businessObject))
@@ -132,7 +134,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
         t << "m_" << firstLetterToUpper(currentContract.Slot.slotName()) << "(new " << currentContract.slotRequestResponseTypeName() << "(" << firstLetterToLower(data.BusinessLogicClassName) << ", " << firstLetterToLower(data.BusinessLogicClassName) << "))" << endl;
     }
     t << "{ }" << endl;
-    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         /*ex:   SomeSlotRequestResponse *Contracts::someSlot() const
                 {
@@ -147,7 +149,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
     }
     return true;
 }
-bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestResponseContractsPriFile(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash)
+bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestResponseContractsPriFile(const Data &data, QString targetDir_WithTrailingSlash)
 {
     QFile businessObjectRequestResponseContractsPriFile(targetDir_WithTrailingSlash + data.BusinessLogicClassName.toLower() + "requestresponsecontracts.pri");
     if(!businessObjectRequestResponseContractsPriFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
@@ -162,7 +164,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
     t << "INCLUDEPATH *= $$system(pwd)" << endl;
     t << endl;
     t << "HEADERS *=      $$system(pwd)/" << data.BusinessLogicClassName.toLower() << "requestresponsecontracts.h \\" << endl;
-    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         //ex: t << TAB << "$$system(pwd)/someslotrequestresponse.h \\" << endl;
         //    t << TAB << "$$system(pwd)/someslotscopedresponder.h" << endl;
@@ -172,16 +174,16 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
     }
     t << endl;
     t << "SOURCES *=      $$system(pwd)/" << data.BusinessLogicClassName.toLower() << "requestresponsecontracts.cpp \\" << endl;
-    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         t << TAB << "$$system(pwd)/" << currentContract.Slot.slotName().toLower() << "requestresponse.cpp \\" << endl;
         t << TAB << "$$system(pwd)/" << currentContract.Slot.slotName().toLower() << "scopedresponder.cpp" << endl;
     }
     return true;
 }
-bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotRequestResponseHeaderFiles(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash)
+bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotRequestResponseHeaderFiles(const Data &data, QString targetDir_WithTrailingSlash)
 {
-    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         QString someSlotRequestResponseTypeName = firstLetterToUpper(currentContract.Slot.slotName()) + "RequestResponse";
         QFile slotRequestResponseHeaderFile(targetDir_WithTrailingSlash + someSlotRequestResponseTypeName.toLower() + ".h");
@@ -210,7 +212,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
         t << "public:" << endl;
         t << TAB << "explicit " << someSlotRequestResponseTypeName << "(" << data.BusinessLogicClassName << " *" << firstLetterToLower(data.BusinessLogicClassName) << ", QObject *parent = 0);" << endl;
         t << endl;
-        Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SingleArg &currentArgInFinishedSignal, currentContract.FinishedSignal.signalArgs())
+        Q_FOREACH(const SingleArg &currentArgInFinishedSignal, currentContract.FinishedSignal.signalArgs())
         {
             //ex: void setXIsEven(bool xIsEven);
             t << TAB << "void set" << firstLetterToUpper(currentArgInFinishedSignal.argName()) << "(" << currentArgInFinishedSignal.ArgType << " " << currentArgInFinishedSignal.argName() << ");" << endl;
@@ -221,7 +223,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
         t << TAB << "void respond_aka_emitFinishedSignal();" << endl;
         t << TAB << "friend class " << firstLetterToUpper(currentContract.Slot.slotName()) + "ScopedResponder;" << endl;
         t << endl;
-        Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SingleArg &currentArgInFinishedSignal, currentContract.FinishedSignal.signalArgs())
+        Q_FOREACH(const SingleArg &currentArgInFinishedSignal, currentContract.FinishedSignal.signalArgs())
         {
             //ex: bool m_XIsEven;
             t << TAB << currentArgInFinishedSignal.ArgType << " " << "m_" << firstLetterToUpper(currentArgInFinishedSignal.argName()) << ";" << endl;
@@ -231,7 +233,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
         //ex: void someSlotFinished(bool success, bool xIsEven);
         t << TAB << "void " << currentContract.FinishedSignal.signalName() << "(";
         bool first = true;
-        Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SingleArg &currentArgInFinishedSignal, currentContract.FinishedSignal.signalArgs())
+        Q_FOREACH(const SingleArg &currentArgInFinishedSignal, currentContract.FinishedSignal.signalArgs())
         {
             if(!first)
             {
@@ -250,9 +252,9 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
     }
     return true;
 }
-bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotRequestResponseSourceFiles(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash)
+bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotRequestResponseSourceFiles(const Data &data, QString targetDir_WithTrailingSlash)
 {
-    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         QString someSlotRequestResponseTypeName = firstLetterToUpper(currentContract.Slot.slotName()) + "RequestResponse";
         QFile slotRequestResponseHeaderFile(targetDir_WithTrailingSlash + someSlotRequestResponseTypeName.toLower() + ".cpp");
@@ -277,7 +279,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
         t << TAB << "reset();" << endl;
         t << TAB << "connect(this, &" << someSlotRequestResponseTypeName << "::" << currentContract.FinishedSignal.signalName() << ", " << firstLetterToLower(data.BusinessLogicClassName) << ", &" << data.BusinessLogicClassName << "::" << currentContract.FinishedSignal.signalName() << ");" << endl;
         t << "}" << endl;
-        Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SingleArg &currentArg, currentContract.FinishedSignal.signalArgs())
+        Q_FOREACH(const SingleArg &currentArg, currentContract.FinishedSignal.signalArgs())
         {
             //ex:   void SomeSlotRequestResponse::setSuccess(bool success)
             //      {
@@ -291,18 +293,18 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
         }
         t << "void " << someSlotRequestResponseTypeName << "::reset()" << endl;
         t << "{" << endl;
-        Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SingleArgWithOptionalDefaultValue &currentArg, currentContract.FinishedSignal.signalArgs())
+        Q_FOREACH(const SingleArgWithOptionalDefaultValue &currentArg, currentContract.FinishedSignal.signalArgs())
         {
             if(currentArg.ArgOptionalDefaultValue.isNull())
                 continue;
-            t << TAB << "m_" << firstLetterToUpper(currentArg.argName(UserInterfaceSkeletonGeneratorData::SingleArg::DisplaySimpleAssignmentStyleInitialization)) << ";" << endl;
+            t << TAB << "m_" << firstLetterToUpper(currentArg.argName(SingleArg::DisplaySimpleAssignmentStyleInitialization)) << ";" << endl;
         }
         t << "}" << endl;
         t << "void " << someSlotRequestResponseTypeName << "::respond_aka_emitFinishedSignal()" << endl;
         t << "{" << endl;
         t << TAB << "emit " << currentContract.FinishedSignal.signalName() << "(";
         bool first = true;
-        Q_FOREACH(const UserInterfaceSkeletonGeneratorData::SingleArg &currentArg, currentContract.FinishedSignal.signalArgs())
+        Q_FOREACH(const SingleArg &currentArg, currentContract.FinishedSignal.signalArgs())
         {
             //ex: m_Success, m_XIsEven
 
@@ -320,9 +322,9 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
     }
     return true;
 }
-bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotScopedResponderHeaderFiles(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash)
+bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotScopedResponderHeaderFiles(const Data &data, QString targetDir_WithTrailingSlash)
 {
-    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         QString someSlotScopedResponderTypeName = firstLetterToUpper(currentContract.Slot.slotName()) + "ScopedResponder";
         QFile slotRequestResponseHeaderFile(targetDir_WithTrailingSlash + someSlotScopedResponderTypeName.toLower() + ".h");
@@ -362,9 +364,9 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotScoped
     }
     return true;
 }
-bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotScopedResponderSourceFiles(const UserInterfaceSkeletonGeneratorData &data, QString targetDir_WithTrailingSlash)
+bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotScopedResponderSourceFiles(const Data &data, QString targetDir_WithTrailingSlash)
 {
-    Q_FOREACH(const UserInterfaceSkeletonGeneratorData::RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+    Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
     {
         QString someSlotScopedResponderTypeName = firstLetterToUpper(currentContract.Slot.slotName()) + "ScopedResponder";
         QFile slotRequestResponseHeaderFile(targetDir_WithTrailingSlash + someSlotScopedResponderTypeName.toLower() + ".cpp");

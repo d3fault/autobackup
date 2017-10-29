@@ -5,13 +5,15 @@
 
 #include "userinterfaceskeletongenerator.h"
 
-void CliImplStubGenerator::generateImplStubFiles(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)
+using namespace UserInterfaceSkeletonGeneratorData;
+
+void CliImplStubGenerator::generateImplStubFiles(const Data &data, const QString &outputDirWithTrailingSlash)
 {
     generateHeaderFile(data, outputDirWithTrailingSlash);
     generateSourceFile(data, outputDirWithTrailingSlash);
     //TODOmb: generate main.cpp? it's small so why not <3?
 }
-void CliImplStubGenerator::generateHeaderFile(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)
+void CliImplStubGenerator::generateHeaderFile(const Data &data, const QString &outputDirWithTrailingSlash)
 {
     QFile file(outputDirWithTrailingSlash + targetImplStubClassName(data.BusinessLogicClassName).toLower() + ".h");
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -27,7 +29,7 @@ void CliImplStubGenerator::generateHeaderFile(const UserInterfaceSkeletonGenerat
 
     generate_Q_OBJECT_inherittingClassHeader(data, textStream);
 }
-void CliImplStubGenerator::generateSourceFile(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)
+void CliImplStubGenerator::generateSourceFile(const Data &data, const QString &outputDirWithTrailingSlash)
 {
     QFile file(outputDirWithTrailingSlash + targetImplStubClassName(data.BusinessLogicClassName).toLower() + ".cpp");
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -44,7 +46,7 @@ void CliImplStubGenerator::generateSourceFile(const UserInterfaceSkeletonGenerat
     generateSignalHandlerSlotsSourceCode(data, textStream);
 }
 #if 0 //actually generating this doesn't make any sense or help at all. My workflow looks like this. launch Qt Creator -> create new cli project -> code backend -> run this app, parisng backend -> etc ..... note that during "create new cli project", main.cpp is already created for me! I guess if I wanted to gen a prepopulated one (calling connecToUi somewhere), that's a different story). idk about that yet tho
-void CliImplStubGenerator::generateMainCppFile(const UserInterfaceSkeletonGeneratorData &data, const QString &outputDirWithTrailingSlash)
+void CliImplStubGenerator::generateMainCppFile(const Data &data, const QString &outputDirWithTrailingSlash)
 {
     QFile file(outputDirWithTrailingSlash + "main.cpp");
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text))

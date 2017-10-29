@@ -31,6 +31,13 @@ void CodeGeneratorGenerator::generateCodeGenerator(const QString &directoryToCom
 {
     GenerateCodeGeneratorScopedResponder scopedResponder(m_Contracts.generateCodeGenerator());
 
+    QDir sourceDir(directoryToCompilingExampleTemplateToGenerateCodeGeneratorFor);
+    if(!sourceDir.exists())
+    {
+        emit e("dir does not exist: " + sourceDir.path());
+        return /*emit*/;
+    }
+
     QTemporaryDir outputDir;
     outputDir.setAutoRemove(false);
     QDirIterator dirIterator(directoryToCompilingExampleTemplateToGenerateCodeGeneratorFor, QDirIterator::Subdirectories);
