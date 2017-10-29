@@ -1,0 +1,5 @@
+I honestly don't even know where my life is leading me right now, but I'm extremely excited. I feel like so many aspects and prototypes and ideas are all coming together and I finally have the capacity/capability to implement it. Now/soon is when I "Break on through to the other side" (Jim Morrison), I hope.
+
+It's kinda logical deduction at this point, I'm just deducing where my life is going!
+
+It's not 100% logical deduction though: I have goals (todo.txt) and the deduction is really just "implementing those goals" and stuff. I feel like I'm coding the core of my entire life. Rather, the core of the entire REST OF my life. This applies both to CodeGeneratorGenerator and SocialNetworkTimeline (both of which I'm pretty much ready to start implementing, but have practically zero code written for).
