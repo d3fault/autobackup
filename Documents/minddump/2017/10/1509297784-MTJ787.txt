@@ -1,0 +1,48 @@
+To create is to sculpt nothing into something.
+
+To "create" (symbol for 'add') is to change (symbol for 'mutate') nothing (symbol for (non-existing key OR empty string)) into something (symbol for non-empty string).
+
+I should rename (had:rewrite) the variables of StupidKeyValueContentTracker accordingly, for readability!
+
+QString value = get(key);
+if(!value.isNothing())
+{
+}
+
+hmmm...
+
+Energy *e = new Nothing();
+//there also exists class Something, which also inherits from Energy
+
+Human::convertNothingIntoSomething(&e);
+
+void Human::convertNothingIntoSomething(Energy **e);
+{
+	Energy *ret = new Something();
+	convert(*e, ret); //never fails! all art attempts are still art
+	delete (*e);
+	(*e) = ret;
+}
+
+
+hmm can you have a unique_ptr<unique_ptr<Energy>> ? probably!
+
+if I'm going for "readability" as I say, then the above convertNothingIntoSomething method is wrong because Energy cannot be added or removed from the universe! Ziiing!
+
+//QSet<Matter> Universe;
+class Universe : public QSet<Energy>
+{
+	//what are we doing when we create? we are shifting around existing matter so that it is sculpted into reality. "it" is kinda undefined in previous sentence, so let's try again: we are shifting around existing matter so that information is sculpted into reality. should I s/information/art ? is all information art? arguably, yes. also arguably no. my kneejerk instinct is to say that yes all information is art (that doesn't mean some "artistic business methods" aren't able to harm humanity as a whole!). but does that mean that Nothingness, which comprises of Energy and therefore Information, is art? fuck no. it is a logical contradiction. the Nothingness in this case could be expanded to the more verbose NotArt or possibly even NotEnergy(idk about this, didn't the design just get fucked?). Ok so ya Nothingness's not NotEnergy, but it is NotArt. Nothingness is still energy though... just in an uninteresting shape waiting for you to sculpt it. A can of paint not yet opened. An empty directory. An empty shell prompt. An empty Cli or Widgets Qt/C++ project. The electronic matter that will persist your mothingfucking thoughts and code!!!
+	//The word "potential" comes to mind, but I'm not sure how it applies. Nothingness is Energy which has the potential of _becoming_ Something. I don't think in C++ we can "mutate" (or "change") types like that [without a new/copyConvert/deleteOld/return-new (like in above code)]. Ehhh the delete/new shit is an implementation detail which COULD BE HIDDEN if you wanted readafuckinbility. delete does not "remove matter from existence", it simply tells my computer that I'm no longer interested in a particular segment of memory (but it tells my computer this AFTER running the destructor of that object). We will, however, be invalidating pointers, *gasp*... so unique_ptrs by default (using shared_ptrs where warranted) becomes necessary... yet those aren't the most readable things in the world so maybe we should inherit them? wait what my head hurts. Is there a way to do it without invalidating pointers? Doubt it, think of thread safety! Change+Notify pretty much has the best tradeoffs of all the candidates of the "thread safety" approaches. but Matter should change atomically! Eh not necessarily, chemical reactions take time. But [probably] deep in chemical reactions is some kind of matter that never changes, just gets rearranged in 3d space relative to some other stuff. Oh yea it's called Energy! So am I saying that since it takes time to create Art that we should not have an atomic conversion of the Nothing into Something, or at least let end-uesrs have stale copies of the "matter" which still point to nothing, until a changed signal reaches them and the Energy now points to a Something)
+	void change(Nothing *in_Nothing, Something *out_Something); //was called "convert", then I re-read the first line of this doc. also the precise arg types would likely change to incorporate unique_ptrs and shared_ptrs etc
+private:
+	QSet<const Energy *> m_Whitespace; //uninteresting/yet-to-be-used Energy
+	QSet <const Energy*> m_Art;
+
+	//so change() merely takes some pointers out of m_Whitespace and puts them into m_Art
+	//in case you haven't figured it out, the Energy objects that the pointers "live" in is 'this' object (a "class Universe : public QSet<Energy>" at the time of writing)
+	//arguably, the "list of what is art vs what is whitespace" exists in an object called HumanBrain and not in class Universe. also arguably that list exists in a class called CollectiveConscience. arguably though, and how this is coded atm, that list exists in class Universe because art is SCULPTED into the motherfucking Universe!!! should I s/change/sculpt ? Actually sculpt is way more poetically enthusiastic, and I hereby s/change/sculpt the first sentence of this doc!!! Yes that's right the orig line said "change". I also s/change()/sculpt() in the code, but am going to leave it as is so you can see where I used the words "sculpt" normally (before the edit of first sentence)
+}
+
+
+Inheritting unique_ptrs is probably a bad idea because then you're too tightly coupled to the unique_ptr. it provides SOME benefit but would mostly get in the way
