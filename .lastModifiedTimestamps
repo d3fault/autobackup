@@ -3333,9 +3333,14 @@ Projects/BulkFileTextPrepender/src/gui/main.cpp:1388234289
 Projects/BulkFileTextPrepender/src/lib/:1400841585
 Projects/BulkFileTextPrepender/src/lib/bulkfiletextprepender.cpp:1400841584
 Projects/BulkFileTextPrepender/src/lib/bulkfiletextprepender.h:1388239361
-Projects/CodeGeneratorGenerator/:1509226375
+Projects/CodeGeneratorGenerator/:1509236274
 Projects/CodeGeneratorGenerator/design/:1509226812
-Projects/CodeGeneratorGenerator/design/initial.idea.psbly.fukd.codegeneratorgenerator.txt:1509226812
+Projects/CodeGeneratorGenerator/design/initial.idea.psbly.fukd.codegeneratorgenerator.txt:1509233147
+Projects/CodeGeneratorGenerator/src/:1509237068
+Projects/CodeGeneratorGenerator/src/CodeGeneratorGenerator.pro:1509233351
+Projects/CodeGeneratorGenerator/src/codegeneratorgenerator.cpp:1509236887
+Projects/CodeGeneratorGenerator/src/codegeneratorgenerator.h:1509236765
+Projects/CodeGeneratorGenerator/src/main.cpp:1509233294
 Projects/ConcurrentLossyDirectoryCopier/:1426577904
 Projects/ConcurrentLossyDirectoryCopier/src/:1427380548
 Projects/ConcurrentLossyDirectoryCopier/src/ConcurrentLossyDirectoryCopier.pro:1387197904

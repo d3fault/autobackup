@@ -4,19 +4,12 @@ As input, I take a directory of source code files (RequestResponseContracts2 wil
 Output is a code generator which queries the user for the "list of symbolNames to do str.replace for".
 
 
-Some prefix.
+as a 2nd input arg (or perhaps just a named file in the root dir of the 1st input arg (YES)), a list of symbols _IN_ the directory described in the 1st input arg, as in _IN_ the files themselves.
 
-SomeBusinessClass
-someSlot (instruct user(s!!!) to use uppercase first letter for classes and lowercase first letter for methods)
-
-Another prefix.
-
-AnotherBusinessClass
-anotherSlot
+So the generated code generator then takes as input yet-again that list of symbols, now this time used for the end-users' specific code. So it looks like this: "watch for businessClass,businessClass::someSlot -> make code generator that can now substitute businessClass and businessClass::someSlot for whatever the user provides in json format -> end user generates a LibFfmpeg and LibFfmpeg::encodeVideo filled template provided in the input to codeGeneratorGenerator(that directory of files (it's copy/pasted and strReplace'd))".
 
 
-If any of the "another" prefixes are now found in the CodeGeneratorGenerator input,
+step 1) make app that copy/pastes an entire directory to a QTemporaryDirectory that is set to NOT AutoDelete it's created directory upon destruction.
+step 2) come back here and figure out what the fuck step 2 is. KISS af.
 
-SCRATCH THAT there is no "Another prefix".
-
-wait fuk this project is fuk'd my brain jus exploded idk if this is doable anymore.
+best part is, step 1 is ez as shit
