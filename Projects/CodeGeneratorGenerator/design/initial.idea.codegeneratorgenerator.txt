@@ -1,0 +1,14 @@
+CodeGeneratorGenerator
+
+As input, I take a directory of source code files (RequestResponseContracts2 will suffice).
+Output is a code generator which queries the user for the "list of symbolNames to do str.replace for".
+
+
+as a 2nd input arg (or perhaps just a named file in the root dir of the 1st input arg (YES)), a list of symbols _IN_ the directory described in the 1st input arg, as in _IN_ the files themselves.
+
+So the generated code generator then takes as input yet-again that list of symbols, now this time used for the end-users' specific code. So it looks like this: "watch for businessClass,businessClass::someSlot -> make code generator that can now substitute businessClass and businessClass::someSlot for whatever the user provides in json format -> end user generates a LibFfmpeg and LibFfmpeg::encodeVideo filled template provided in the input to codeGeneratorGenerator(that directory of files (it's copy/pasted and strReplace'd))".
+
+Don't worry about AnotherSlot or AnotherBusinessClass yet, even though I suspect they will factor in later! KISS and incremental!
+
+step 1) make app that copy/pastes an entire directory to a QTemporaryDirectory that is set to NOT AutoDelete it's created directory upon destruction.
+step 2) in that source directory from step 1 is a file named 'symbology.cggd' (sup willem. also cggd stands for CodeGeneratorGeneratorData. [for now] it's a line-delimited list of symbols to fucking parse both out of that file and in EVERY file in the dir (recursively). each time an occurance of those symbols is found in a file, generate some sha256-unique hash thing surrounded by percent signs and all that jazz %-UNIQUE-SYMBOL-sha256sumGoesHere%-, so that we can easily do strReplace in the code that lives in the code generator that is TO BE GENERATED. btw after parsing the symbology.cggd, we should sort by length and then iterate in REVERSE (longest first). actually fuck this sha256 shit, since we have to auto-parse symbols ANYWAYS, there is no use to do the sha256 strat unless we have some "training" shit going on or something during CodeGeneratorGenerator execution phase... perhaps to resolve false positives in the parsing of the symbols? Hmm I'd say TO KEEP IT KISS [for now], do NOT use the sha256 strat... the generated code generator will then have those symbols parsed from symbology.cggd hard coded in it's C++, and will strReplace them (again, longest symbol FIRST) using input gathered from user

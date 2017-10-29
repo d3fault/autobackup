@@ -1,1 +1,11 @@
-Yo dawg I heard you like to generate code while you generate code so we put a code generator in your code generator so you can generate code while you generate code!
+Yo dawg I heard you like to generate code so we put a code generator in your code generator so you can generate code while you generate code!
+
+
+Or alternatively if you want to expand upon the previous version (which was written for just a single level code generator): Yo dawg I heard you like to code while you code so we put code in your code in your code so you can code while you code while you code.
+
+^The orig in the single level code generator, for completeness' sake, was: Yo dawg I heard you like to code so we put code in your code so you can code while you code!
+
+And obligatory original meme reference I saw on teh internets: Yo dawg I heard you like to drive so we put a car in your car so you can drive while you drive.
+
+
+Best part is I am actually generating code generators :-D (well in my head I am, right now the app does jack shit). SMOKE WEED EVERY DAY! Hi Mom! Or mb I should say Hi Nick since he's the only person I know (IRL) that will understand CodeGeneratorGenerator/src and this doc.
