@@ -20,6 +20,7 @@
 #define FIRST_LAUNCH_SETTINGS_KEY "firstLaunch"
 
 //TODOreq: asterisk in tab title when unsaved, asterisk in window title when any tab unsaved
+//TODOoptional: show chosen "first keystroke" timestamp somewhere in the ui, I guess to the right of "Dreams checkbox" since there's empty space there xD. And also show the lastModifiedTimestamp when IT is chosen... do it as [yet another] confirmation that the write has succeeded. Having the dreams checkbox only go gray is not a very good indicator xD
 MindDumperMainWindow::MindDumperMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_TabTitleAutoNumber(-1)

@@ -1,0 +1,11 @@
+I used to think I'm a psychonaut, but I don't anymore. Psychonauts, in my newly formed definition of them, are people who become chemists and synthesize their own never-tried-before drugs and then are the very first ones to do the drugs. That is deserving of a combination of the word "psyche" and "astronaut", surely! They're floating in mindspace, unchartered territory. Ballsy As Fuck. I do not deserve that title, I have not earned it.
+
+The orig idea was that they would be generating random numbers from a random seed that is chosen at random and then using that random number to synth a chem which they then drop (as in eat or ingest or smoke or inject or SOMETHING) because they fukken psychonauts man! Yea.... you'd probably die on the very first roll/synth of the synthesizeChem(randomNumberGenerator.Generate()) process....... UNLESS infinite multiverse theory is occuring lolol.
+
+
+I like it actually like this:
+Psychonaut p = synthesizeChem(randomNumberGenerator.Generate());
+wait that makes no sense xD. or maybe it does make sense (I haven't looked hard enough. I just know it isn't what I meant to write).
+yea we aren't erecting an instance p, we're just saying what a psychonaut _does_
+
+Psychonaut::do() { while(true) { drop(synthesizeChem(randomNumberGenerator.generate())); } } //this is what Psychonauts do

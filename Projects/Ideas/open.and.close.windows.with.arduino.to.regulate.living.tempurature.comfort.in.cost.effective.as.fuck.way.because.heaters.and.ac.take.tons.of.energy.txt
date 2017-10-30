@@ -1,0 +1,5 @@
+California has the perfect weather for this.
+
+Instead of using energy to cool or heat air, simply use energy to auto-regulate the airflow through a confined area (such as a cabover camper :-P) by gradually opening and/or gradually closing the windows until the desired temperature is met. would be easy to do this with Arduino.
+
+I find myself opening and closing windows all throughout the day to maintain tempurature. That would be a bad thing (waste of time) if I didn't know how to automate it. But it's nice that I noticed myself doing it, because that's evidence that California has the perfect weather for this. Cool how the first line of this doc fit so perfectly at the end of the last sentence, I really didn't plan that xD.

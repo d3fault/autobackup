@@ -44,7 +44,7 @@ Documents/minddump/2016/4/1459968855-LhX846.txt:1459969203
 Documents/minddump/2016/4/1459969303-nnS846.txt:1459969688
 Documents/minddump/2016/4/1459984685-TJ2423.txt:1459985236
 Documents/minddump/2017/:1507329611
-Documents/minddump/2017/10/:1509312641
+Documents/minddump/2017/10/:1509335761
 Documents/minddump/2017/10/1507327644-MTJ793.txt:1507495672
 Documents/minddump/2017/10/1507349085-MTJ799.txt:1507349207
 Documents/minddump/2017/10/1507416281-MTJ833.txt:1507417095
@@ -72,6 +72,13 @@ Documents/minddump/2017/10/1509310227-MTJ841.txt:1509310955
 Documents/minddump/2017/10/1509311167-MTJ867.txt:1509311439
 Documents/minddump/2017/10/1509312023-MTJ901.txt:1509312304
 Documents/minddump/2017/10/1509312480-MTJ921.txt:1509312630
+Documents/minddump/2017/10/1509331548-MTJ798.txt:1509331600
+Documents/minddump/2017/10/1509331931-LhX798.txt:1509332086
+Documents/minddump/2017/10/1509333162-TJ1021.txt:1509334388
+Documents/minddump/2017/10/1509334545-XM1021.txt:1509334712
+Documents/minddump/2017/10/1509334776-TJ1045.txt:1509334929
+Documents/minddump/2017/10/1509334960-XM1045.txt:1509335494
+Documents/minddump/2017/10/1509335617-Lh1045.txt:1509335755
 Documents/minddump/2017/5/:1496186514
 Documents/minddump/2017/5/1495171253-Kauai.0a-MTJ783.txt:1495179507
 Documents/minddump/2017/5/1495214940-MTJ843.txt:1495215210
@@ -3797,7 +3804,7 @@ Projects/IcePick/src/lib/:1431941696
 Projects/IcePick/src/lib/icepick.cpp:1454913367
 Projects/IcePick/src/lib/icepick.h:1431941502
 Projects/IcePick/src/IcePickGui.pro:1431928734
-Projects/Ideas/:1508873497
+Projects/Ideas/:1509333077
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -4029,6 +4036,7 @@ Projects/Ideas/oh.the.joys.of.atomicity.and.oh.the.hacks.that.you.can.pull.using
 Projects/Ideas/one.click.in.the.market.to.download.compile.and.install.should.be.able.to.stop.and.reverse.what.is.done.so.far.and.the.recording.of.you.doing.that.is.private.but.it.shouldnt.be.because.it.inherently.isnt.or.something.txt:1323683733
 Projects/Ideas/one.gui.to.rule.them.all.txt:1342605404
 Projects/Ideas/online.surrogate.handling.packages.initiated.by.offline.private.messages.asdlfjsaldfjsadlk.txt:1338908149
+Projects/Ideas/open.and.close.windows.with.arduino.to.regulate.living.tempurature.comfort.in.cost.effective.as.fuck.way.because.heaters.and.ac.take.tons.of.energy.txt:1509333077
 Projects/Ideas/open.news.consortium.abc.ad.revenue.based.txt:1354034979
 Projects/Ideas/p2p.taxiab.service.idk.what.i.mean.by.unlicensed.in.this.txt:1339059048
 Projects/Ideas/paxos.agreement.used.to.instantiate.and.deflateSlashTeardown.caches.among.couchbase.or.whatever.dht.clients.which.are.webservers.in.my.case.txt:1340459725
@@ -4196,7 +4204,7 @@ Projects/MindDumper/src/minddumpdocument.cpp:1456174998
 Projects/MindDumper/src/minddumpdocument.h:1456171263
 Projects/MindDumper/src/minddumperfirstlaunchdirselector.cpp:1496099740
 Projects/MindDumper/src/minddumperfirstlaunchdirselector.h:1496042377
-Projects/MindDumper/src/minddumpermainwindow.cpp:1496042109
+Projects/MindDumper/src/minddumpermainwindow.cpp:1509331897
 Projects/MindDumper/src/minddumpermainwindow.h:1496040818
 Projects/MouseAndOrMotionViewMaker/:1427380548
 Projects/MouseAndOrMotionViewMaker/design/:1396053309
@@ -5796,10 +5804,10 @@ Projects/TimeAndData_Timeline/src/TimeAndData_TimelineCli.pro:1506384784
 Projects/TimeAndData_Timeline/src/main.cpp:1506218808
 Projects/TimeAndData_Timeline/src/timeanddata_timeline.pri:1506384665
 Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/:1509050863
-Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/:1509059256
+Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/:1509332712
 Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerificationCli.pro:1509050954
 Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/main.cpp:1509056090
-Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/unmodifiedfilesafeoverwriter_viacryptographichashheaderverification.cpp:1509222063
+Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/unmodifiedfilesafeoverwriter_viacryptographichashheaderverification.cpp:1509332695
 Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/unmodifiedfilesafeoverwriter_viacryptographichashheaderverification.h:1509057955
 Projects/UserInterfaceSkeletonGenerator/:1505970871
 Projects/UserInterfaceSkeletonGenerator/design/:1508888247

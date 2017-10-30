@@ -1,0 +1,10 @@
+Psychonaut::do()
+{
+	//this is what Psychonauts do
+	while(true)
+	{
+		LargeNumber randomNumber = randomNumberGenerator.generate();
+		Chemical chem = synthesizeChem(randomNumber);
+		drop(chem);
+	}
+}
