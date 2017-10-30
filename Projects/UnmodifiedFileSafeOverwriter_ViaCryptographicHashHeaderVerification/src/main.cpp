@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification f("/run/shm/test.txt");
-    if(!f.openFileForOverwritingAfterVerifyingItHasntBeenModified())
+    if(!f.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
         qDebug("failed to open file for overwriting");
         qDebug() << f.errorString();

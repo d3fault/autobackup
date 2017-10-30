@@ -1,0 +1,22 @@
+With non-exception-using error code, your error management is "towards the top of the function body". With exception-using error code, your error management is "towards the bottom of the function body". Despite "bottom" being _slightly_ better than "top", one HUGE benefit that non-exception-using error code has over exceptioin-using error code is that it does NOT create "alternate return paths".
+
+class Example
+{
+public:
+	bool f()
+	{
+		if(the stars are aligned)
+		{
+			//error handling code
+			qWarning("shit is fucked");
+			return false;
+		}
+		fUnsafe();
+		return true;
+	}
+private:
+	void fUnsafe()
+	{
+		//non-error handling code
+	}
+};

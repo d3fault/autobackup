@@ -44,7 +44,7 @@ Documents/minddump/2016/4/1459968855-LhX846.txt:1459969203
 Documents/minddump/2016/4/1459969303-nnS846.txt:1459969688
 Documents/minddump/2016/4/1459984685-TJ2423.txt:1459985236
 Documents/minddump/2017/:1507329611
-Documents/minddump/2017/10/:1509395601
+Documents/minddump/2017/10/:1509404621
 Documents/minddump/2017/10/1507327644-MTJ793.txt:1507495672
 Documents/minddump/2017/10/1507349085-MTJ799.txt:1507349207
 Documents/minddump/2017/10/1507416281-MTJ833.txt:1507417095
@@ -80,6 +80,8 @@ Documents/minddump/2017/10/1509334776-TJ1045.txt:1509334929
 Documents/minddump/2017/10/1509334960-XM1045.txt:1509335494
 Documents/minddump/2017/10/1509335617-Lh1045.txt:1509335755
 Documents/minddump/2017/10/1509395568-TJ4017.txt:1509395592
+Documents/minddump/2017/10/1509401126-MTJ886.txt:1509401133
+Documents/minddump/2017/10/1509404203-TJ1278.txt:1509404614
 Documents/minddump/2017/5/:1496186514
 Documents/minddump/2017/5/1495171253-Kauai.0a-MTJ783.txt:1495179507
 Documents/minddump/2017/5/1495214940-MTJ843.txt:1495215210
@@ -5705,11 +5707,11 @@ Projects/SimpleNotepadAutosaveWithoutOverwriting/src/simplenotepadautosavewithou
 Projects/SimpleNotepadAutosaveWithoutOverwriting/src/simplenotepadautosavewithoutoverwritinggui.h:1402138612
 Projects/SimpleNotepadAutosaveWithoutOverwriting/src/simplenotepadautosavewithoutoverwritingwidget.cpp:1402144583
 Projects/SimpleNotepadAutosaveWithoutOverwriting/src/simplenotepadautosavewithoutoverwritingwidget.h:1402144099
-Projects/SocialNetworkTimeline/:1509395434
+Projects/SocialNetworkTimeline/:1509396236
 Projects/SocialNetworkTimeline/design/:1509310131
 Projects/SocialNetworkTimeline/design/initial.idea.socialnetworktimeline.txt:1509310163
 Projects/SocialNetworkTimeline/design/plugins.could.be.coded.so.they.function.as.standalone.apps.just.saiyan.socialnetworktimeline.txt:1509310108
-Projects/SocialNetworkTimeline/src/:1509396008
+Projects/SocialNetworkTimeline/src/:1509396430
 Projects/SocialNetworkTimeline/src/SocialNetworkTimeline.pro:1509387202
 Projects/SocialNetworkTimeline/src/main.cpp:1509384794
 Projects/SocialNetworkTimeline/src/socialnetworktimeline.cpp:1509388095
@@ -5805,7 +5807,7 @@ Projects/SymbolicLinksDetector/src/symboliclinksdetectorgui.h:1367835560
 Projects/TheBeautifulWorldOrMouseOrMotionOrMySexyFace_VideoMaker/:1506046020
 Projects/TheBeautifulWorldOrMouseOrMotionOrMySexyFace_VideoMaker/design/:1506046046
 Projects/TheBeautifulWorldOrMouseOrMotionOrMySexyFace_VideoMaker/design/initial.idea.mouseormotionormysexyfaceorthebeautifulworldvideomaker.txt:1506046939
-Projects/TimeAndData_Timeline/:1509394784
+Projects/TimeAndData_Timeline/:1509396172
 Projects/TimeAndData_Timeline/design/:1509389833
 Projects/TimeAndData_Timeline/design/UserInterfaceSkeletonGenerator\:\:populateDataUsingHardCodedCppXD.cpp:1509394293
 Projects/TimeAndData_Timeline/src/:1509394636
@@ -5816,11 +5818,11 @@ Projects/TimeAndData_Timeline/src/TimeAndData_TimelineCli.pro:1506384784
 Projects/TimeAndData_Timeline/src/main.cpp:1506218808
 Projects/TimeAndData_Timeline/src/timeanddata_timeline.pri:1509394841
 Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/:1509050863
-Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/:1509332712
+Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/:1509407611
 Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerificationCli.pro:1509050954
-Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/main.cpp:1509056090
-Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/unmodifiedfilesafeoverwriter_viacryptographichashheaderverification.cpp:1509332695
-Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/unmodifiedfilesafeoverwriter_viacryptographichashheaderverification.h:1509057955
+Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/main.cpp:1509407304
+Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/unmodifiedfilesafeoverwriter_viacryptographichashheaderverification.cpp:1509407549
+Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/unmodifiedfilesafeoverwriter_viacryptographichashheaderverification.h:1509407549
 Projects/UserInterfaceSkeletonGenerator/:1505970871
 Projects/UserInterfaceSkeletonGenerator/design/:1508888247
 Projects/UserInterfaceSkeletonGenerator/design/src/:1508803316
