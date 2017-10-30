@@ -19,5 +19,4 @@ SOURCES +=	main.cpp \
 		stupidkeyvaluecontenttrackercli.cpp
 
 include(stupidkeyvaluecontenttracker.pri)
-include(../../TimeAndData_Timeline/src/timeanddata_timeline.pri)
 include(../../../GloballySharedClasses/standardinputnotifier.pri)

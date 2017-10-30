@@ -113,7 +113,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
         t << "#include \"" << currentContract.slotRequestResponseTypeName().toLower() << ".h\"" << endl;
     }
     t << endl;
-    t << "#include \"../../" << data.BusinessLogicClassName.toLower() << ".h\"" << endl;
+    t << "#include \"" << data.BusinessLogicClassName.toLower() << ".h\"" << endl;
     t << endl;
     t << "using namespace " << businessObjectRequestResponseContracts << ";" << endl;
     t << endl;
@@ -164,21 +164,72 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectRequestRespons
     t << "INCLUDEPATH *= $$system(pwd)" << endl;
     t << endl;
     t << "HEADERS *=      $$system(pwd)/" << data.BusinessLogicClassName.toLower() << "requestresponsecontracts.h \\" << endl;
-    Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
-    {
-        //ex: t << TAB << "$$system(pwd)/someslotrequestresponse.h \\" << endl;
-        //    t << TAB << "$$system(pwd)/someslotscopedresponder.h" << endl;
 
-        t << TAB << "$$system(pwd)/" << currentContract.Slot.slotName().toLower() << "requestresponse.h \\" << endl;
-        t << TAB << "$$system(pwd)/" << currentContract.Slot.slotName().toLower() << "scopedresponder.h" << endl;
+    //this block is pretty much copy/pasted verbatim to just below where the SOURCES are added
+    {
+        QStringList headersWithoutNewlineBackslashEscapeOrEndl;
+        Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+        {
+            //ex: t << TAB << "$$system(pwd)/someslotrequestresponse.h \\" << endl;
+            //    t << TAB << "$$system(pwd)/someslotscopedresponder.h" << endl;
+
+            QString prefix;
+            prefix.append(TAB);
+            prefix.append("$$system(pwd)/");
+            prefix.append(currentContract.Slot.slotName().toLower());
+            QString requestResponseHeader = prefix + "requestresponse.h";
+
+            headersWithoutNewlineBackslashEscapeOrEndl << requestResponseHeader;
+
+            QString scopedResponderHeader = prefix + "scopedresponder.h";
+            headersWithoutNewlineBackslashEscapeOrEndl << scopedResponderHeader;
+        }
+        int headerIndexTo_NOT_putNewlineBackslashEscapeAfter = headersWithoutNewlineBackslashEscapeOrEndl.size() - 1; //last
+        int currentHeaderIndex = 0;
+        Q_FOREACH(QString current, headersWithoutNewlineBackslashEscapeOrEndl)
+        {
+            t << current;
+            if(currentHeaderIndex < headerIndexTo_NOT_putNewlineBackslashEscapeAfter)
+                t << " \\";
+            t << endl;
+            ++currentHeaderIndex;
+        }
     }
+
     t << endl;
     t << "SOURCES *=      $$system(pwd)/" << data.BusinessLogicClassName.toLower() << "requestresponsecontracts.cpp \\" << endl;
-    Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+
+    //this block is pretty much copy/pasted verbatim from just above where the HEADERS are added
     {
-        t << TAB << "$$system(pwd)/" << currentContract.Slot.slotName().toLower() << "requestresponse.cpp \\" << endl;
-        t << TAB << "$$system(pwd)/" << currentContract.Slot.slotName().toLower() << "scopedresponder.cpp" << endl;
+        QStringList sourcesWithoutNewlineBackslashEscapeOrEndl;
+        Q_FOREACH(const RequestResponse_aka_SlotWithFinishedSignal_Data &currentContract, data.RequestResponses_aka_SlotsWithFinishedSignals)
+        {
+            //t << TAB << "$$system(pwd)/" << currentContract.Slot.slotName().toLower() << "requestresponse.cpp \\" << endl;
+            //t << TAB << "$$system(pwd)/" << currentContract.Slot.slotName().toLower() << "scopedresponder.cpp" << endl;
+
+            QString prefix;
+            prefix.append(TAB);
+            prefix.append("$$system(pwd)/");
+            prefix.append(currentContract.Slot.slotName().toLower());
+            QString requestResponseSource = prefix + "requestresponse.cpp";
+
+            sourcesWithoutNewlineBackslashEscapeOrEndl << requestResponseSource;
+
+            QString scopedResponderSource = prefix + "scopedresponder.cpp";
+            sourcesWithoutNewlineBackslashEscapeOrEndl << scopedResponderSource;
+        }
+        int sourcesIndexTo_NOT_putNewlineBackslashEscapeAfter = sourcesWithoutNewlineBackslashEscapeOrEndl.size() - 1; //last
+        int currentSourcesIndex = 0;
+        Q_FOREACH(QString current, sourcesWithoutNewlineBackslashEscapeOrEndl)
+        {
+            t << current;
+            if(currentSourcesIndex < sourcesIndexTo_NOT_putNewlineBackslashEscapeAfter)
+                t << " \\";
+            t << endl;
+            ++currentSourcesIndex;
+        }
     }
+
     return true;
 }
 bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotRequestResponseHeaderFiles(const Data &data, QString targetDir_WithTrailingSlash)
@@ -201,6 +252,7 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
         t << endl;
         t << "#include <QObject>" << endl;
         t << endl;
+        t << "#include \"../../" << data.BusinessLogicClassName.toLower() << ".h\"" << endl;
         t << "class " << data.BusinessLogicClassName << ";" << endl;
         t << endl;
         t << "namespace " << data.BusinessLogicClassName << "RequestResponseContracts" << endl;
@@ -267,8 +319,8 @@ bool RequstsResponseContractsGlueGenerator::generateBusinessObjectSomeSlotReques
         QTextStream t(&slotRequestResponseHeaderFile);
 
         t << "#include \"" << someSlotRequestResponseTypeName.toLower() << ".h\"" << endl;
-        t << endl;
-        t << "#include \"../../" << data.BusinessLogicClassName.toLower() << ".h\"" << endl;
+        //t << endl;
+        //t << "#include \"" << data.BusinessLogicClassName.toLower() << ".h\"" << endl;
         t << endl;
         t << "using namespace " << data.BusinessLogicClassName << "RequestResponseContracts;" << endl;
         t << endl;

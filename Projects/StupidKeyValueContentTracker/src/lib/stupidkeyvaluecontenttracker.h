@@ -62,7 +62,7 @@ signals:
     void readKeyFinished(bool success, const QString &key, const QString &revision, const QString &data);
 
     //PRIVATE SIGNALS:
-    void retrieveAllTimelineEntriesRequested();
+    void readAndEmitAllTimelineEntriesRequested();
     void appendJsonObjectToTimelineRequested(const QJsonObject &commitData);
 public slots:
     void initialize();
@@ -72,8 +72,8 @@ public slots:
     void commit(const QString &commitMessage);
     void readKey(const QString &key, const QString &revision);
 private slots:
-    void handleAllTimelineEntriesRead(const AllTimelineEntriesType &allTimelineEntries);
-    void handleFinishedAppendingJsonObjectToTimeline_aka_emitCommitFinished(bool success);
+    void handleReadAndEmitAllTimelineEntriesFinished(bool success, const AllTimelineEntriesType &allTimelineEntries);
+    void handleAppendJsonObjectToTimelineFinished(bool success);
 };
 
 #endif // STUPIDKEYVALUECONTENTTRACKER_H

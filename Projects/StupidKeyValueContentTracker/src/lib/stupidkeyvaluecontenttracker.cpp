@@ -13,16 +13,18 @@
 //TODOoptimization: maybe use couchbase as a backend, since IIRC if your design uses an "append-only" strat, then couchbase is actually pro af. With AnonymousBitcoinComputing I wasn't using an append-only strat, and it eventually bit me in the ass (my designs sucked and were hacky). in any case, I'm not touching the QSettings-based quick-n-dirty database backend until the app has become more mature and stable. year/month/day folderization (timeline-entries (files in the dirs) are named using QCryptographicsHash of TimeAndData and QTemporaryFile for good no-overwrite safety) is a good 1-machine optimization. LevelDB also comes to mind, but I recall looking at it and feeling like the design was simple (ezily stealable) but the reference implementation was missing the crucial part (writing to disk) and reading other people's code is a pita sometimes
 //TODOprobably: commitMessage is optional. just like filenames, I can't be arsed to type them 99% of the time (but I certainly like having the option to)
 //TODOreq: motherfuckin timestamps! right now I'm only persisting the "commit time", and I'm not even sure I am explicitly committing it, I think it just comes "for free" with my TimeAndData_Timeline usage (it's impossible to NOT have time there xD). But I think I want to persist the individual ADDS, not just the one final COMMIT. More confusingly, I want the lastModifiedTimestamps of files to go somewhere. Yes this is a key/value content tracker, so what the fuck am I even saying? I'm not sure, but deciper THIS: I am going to be writing a SocialNetworkTimeline _IMPORTER_, importing assloads of files AND THEIR LAST MODIFIED TIMESTAMPS, and the timestamps I want to be importing are going to be pointing to times that are YEARS AGO. TimeAndData_Timeline currently doesn't even allow you to specify the timestamp used, it asks the OS itself what the current time is and then uses that. So I guess maybe what I'm saying is that there needs to be 2 times: "imported into TimeAndData_Timeline"-time and "claimed last modified"-time. But maybe there shouldn't be 2x times and I should instead allow "import"-ing of files/data to specify arbitrary timestamps. Atm though TimeAndData_Timeline is written to be LINEAR only, and that will be even more true if/when I implement "revisions" (probably using "rolling cryptographic hashes" like git). So I'd either need to NEVER use/append SocialNetworkTimeline until I am finished importing all my previous files going back years (ehhh), or I have to allow both timestamps ('imported into TimeAndData' timestamp _AND_ 'supplied/claimed timestamp'). It would make sense that if there is no "supplied/claimed timestamp" that we could default back to the TimeAndData_Timeline timestamp TODOmb. Idk tbh, maybe SocialNetworkTimeline will ALWAYS store timestamps for all of it's entries, and then we don't really use the TimeAndData_Timeline timestamps at all? Hmm idk I kinda like that "if you don't supply a timestamp, one will be generated for you (the TimeAndData_Timeline one!!), but that might be premature optimization and unnecessary complexity
-//^I'm half tempted to just say I should go and prototype/design/code/implement SocialNetworkTimeline and "the rest will come to me" as I'm coding... hmmm. In any case, I'm glad I kept StupidKeyValueContentTracker and TimeAndData_Timeline very "light"/quick (but still PROPER <3), because I'm still suspecting I'm going to have to refactor the fuck out of BOTH of them. Considering I whipped up TimeAndData_Timeline "on demand" while coding StupidKeyValueContentTracker, it too makes sense that the "missing pieces" might fall into place "on demand" while I code SocialNetworkTimeline. I just need to NOT FORGET that the "last modified timestamps of _IMPORTED_ files" needs to live somewhere TODOreq!!
+//^I'm half tempted to just say I should go and prototype/design/code/implement SocialNetworkTimeline and "the rest will come to me" as I'm coding... hmmm. In any case, I'm glad I kept StupidKeyValueContentTracker and TimeAndData_Timeline very "light"/quick (but still PROPER <3), because I'm still suspecting I'm going to have to refactor the fuck out of BOTH of them. Considering I whipped up TimeAndData_Timeline "on demand" while coding StupidKeyValueContentTracker, it too makes sense that the "missing pieces" might fall into place "on demand" while I code SocialNetworkTimeline. I just need to NOT FORGET that the "last modified timestamps of _IMPORTED_ files" needs to live somewhere TODOreq!! To make matters EVEN MORE COMPLICATED, I probably also want to have a "published" timestamp... but maybe that will just bum off the TimeAndData_Timeline timestamp? ie "last modified timestamp" shows when the file was created, but "published" shows when it was added to SocialNetworkTimeline ???
 StupidKeyValueContentTracker::StupidKeyValueContentTracker(QObject *parent)
     : QObject(parent)
     , m_Timeline(new TimeAndData_Timeline(this))
 {
-    connect(this, &StupidKeyValueContentTracker::retrieveAllTimelineEntriesRequested, m_Timeline, &TimeAndData_Timeline::readAndEmitAllTimelineEntries);
-    connect(m_Timeline, &TimeAndData_Timeline::finishedReadingAllTimelineEntries, this, &StupidKeyValueContentTracker::handleAllTimelineEntriesRead);
+    connect(m_Timeline, &TimeAndData_Timeline::e, this, &StupidKeyValueContentTracker::e); //I would use that template to establishConnections, but that expects a this::handleE TODOmb think about how to properly solve that in UserInterfaceSkeletonGenerator (GLHF)
+
+    connect(this, &StupidKeyValueContentTracker::readAndEmitAllTimelineEntriesRequested, m_Timeline, &TimeAndData_Timeline::readAndEmitAllTimelineEntries);
+    connect(m_Timeline, &TimeAndData_Timeline::readAndEmitAllTimelineEntriesFinished, this, &StupidKeyValueContentTracker::handleReadAndEmitAllTimelineEntriesFinished);
 
     connect(this, &StupidKeyValueContentTracker::appendJsonObjectToTimelineRequested, m_Timeline, &TimeAndData_Timeline::appendJsonObjectToTimeline);
-    connect(m_Timeline, &TimeAndData_Timeline::finishedAppendingJsonObjectToTimeline, this, &StupidKeyValueContentTracker::handleFinishedAppendingJsonObjectToTimeline_aka_emitCommitFinished);
+    connect(m_Timeline, &TimeAndData_Timeline::appendJsonObjectToTimelineFinished, this, &StupidKeyValueContentTracker::handleAppendJsonObjectToTimelineFinished);
 
     QCoreApplication::setOrganizationName("StupidKeyValueContentTrackerOrganization");
     QCoreApplication::setOrganizationDomain("StupidKeyValueContentTrackerDomain");
@@ -108,7 +110,7 @@ void StupidKeyValueContentTracker::initialize()
     else
     {
         //iterate over all m_Timeline entries and populate m_CurrentData accordingly
-        emit retrieveAllTimelineEntriesRequested();
+        emit readAndEmitAllTimelineEntriesRequested();
         //TODOreq: don't allow add/commit/etc UNTIL handleCurrentDataRetrieved is called. not sure if this should be enforced in code or just in comments :-/
         emit o("populated KeyValue store by re-reading entire timeline");
     }
@@ -196,7 +198,7 @@ void StupidKeyValueContentTracker::readKey(const QString &key, const QString &re
     QString data = found ? (*it) : QString();
     emit readKeyFinished(found, key, revision, data);
 }
-void StupidKeyValueContentTracker::handleAllTimelineEntriesRead(const AllTimelineEntriesType &allTimelineEntries)
+void StupidKeyValueContentTracker::handleReadAndEmitAllTimelineEntriesFinished(bool success, const AllTimelineEntriesType &allTimelineEntries)
 {
     //parse allTimelineEntries and populate m_CurrentData accordingly
     for(AllTimelineEntriesType::const_iterator it = allTimelineEntries.constBegin(); it != allTimelineEntries.constEnd(); ++it)
@@ -218,7 +220,7 @@ void StupidKeyValueContentTracker::handleAllTimelineEntriesRead(const AllTimelin
     }
     emit initializationFinished(true);
 }
-void StupidKeyValueContentTracker::handleFinishedAppendingJsonObjectToTimeline_aka_emitCommitFinished(bool success)
+void StupidKeyValueContentTracker::handleAppendJsonObjectToTimelineFinished(bool success)
 {
     if(!success)
     {

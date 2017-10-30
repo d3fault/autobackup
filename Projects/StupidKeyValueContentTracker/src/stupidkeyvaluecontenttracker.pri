@@ -13,3 +13,5 @@ SOURCES *=	$$system(pwd)/lib/stupidkeyvaluecontenttracker.cpp \
 		$$system(pwd)/lib/keyvaluestoremutationfactory.cpp \
 		$$system(pwd)/lib/keyvaluestoremutation_remove.cpp \
 		$$system(pwd)/lib/keyvaluestoremutation_modify.cpp
+
+include(../../TimeAndData_Timeline/src/timeanddata_timeline.pri)
