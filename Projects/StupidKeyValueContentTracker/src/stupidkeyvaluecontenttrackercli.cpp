@@ -6,6 +6,8 @@
 //^I'm thinking of maybe doing just add and bulkAdd, dropping the whole "commit" concept. but idk yet tbh it's hard to think about "users of" this lib, which may be written years from now, and whether or not they'll NEED add/commit capabilities
 //^^if I keep 'commit', then it makes sense to have a 'status' command to show the staged mutations
 //TODOreq: when I read in 2 TimeAndData_Timeline entries with the same datetime (but different data) from QSettings and stuffing them into a MultiMap, am I guaranteed to read them in using the same order? are they sorted by key _AND_ value, or I think yea just key is the only sort, so this needs addressing. it needs to be defined
+//TODOprobably: rename this app to StupidKeyValueContentTrackerCliTest, and make 'interactive' the ONLY mode. StupidKeyValueContentTracker is designed to be a LIB first and foremost, so the "cli" interactivity is wasted effort atm tbh: eg. I don't want to write the code to "[de]serialize uncommitted adds" between app sessions, fuck it
+#error "This is an app to test the lib, not intended to be used standalone. Uncomment this and run in --interactive mode only. see the comment directly above this error"
 StupidKeyValueContentTrackerCli::StupidKeyValueContentTrackerCli(QObject *parent)
     : QObject(parent)
     , m_StandardInputNotifier(nullptr)
