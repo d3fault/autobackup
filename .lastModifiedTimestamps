@@ -44,7 +44,7 @@ Documents/minddump/2016/4/1459968855-LhX846.txt:1459969203
 Documents/minddump/2016/4/1459969303-nnS846.txt:1459969688
 Documents/minddump/2016/4/1459984685-TJ2423.txt:1459985236
 Documents/minddump/2017/:1507329611
-Documents/minddump/2017/10/:1509404621
+Documents/minddump/2017/10/:1509410796
 Documents/minddump/2017/10/1507327644-MTJ793.txt:1507495672
 Documents/minddump/2017/10/1507349085-MTJ799.txt:1507349207
 Documents/minddump/2017/10/1507416281-MTJ833.txt:1507417095
@@ -82,6 +82,7 @@ Documents/minddump/2017/10/1509335617-Lh1045.txt:1509335755
 Documents/minddump/2017/10/1509395568-TJ4017.txt:1509395592
 Documents/minddump/2017/10/1509401126-MTJ886.txt:1509401133
 Documents/minddump/2017/10/1509404203-TJ1278.txt:1509404614
+Documents/minddump/2017/10/1509410278-MTJ788.txt:1509410791
 Documents/minddump/2017/5/:1496186514
 Documents/minddump/2017/5/1495171253-Kauai.0a-MTJ783.txt:1495179507
 Documents/minddump/2017/5/1495214940-MTJ843.txt:1495215210
@@ -5711,10 +5712,10 @@ Projects/SocialNetworkTimeline/:1509396236
 Projects/SocialNetworkTimeline/design/:1509310131
 Projects/SocialNetworkTimeline/design/initial.idea.socialnetworktimeline.txt:1509310163
 Projects/SocialNetworkTimeline/design/plugins.could.be.coded.so.they.function.as.standalone.apps.just.saiyan.socialnetworktimeline.txt:1509310108
-Projects/SocialNetworkTimeline/src/:1509396430
+Projects/SocialNetworkTimeline/src/:1509411798
 Projects/SocialNetworkTimeline/src/SocialNetworkTimeline.pro:1509387202
 Projects/SocialNetworkTimeline/src/main.cpp:1509384794
-Projects/SocialNetworkTimeline/src/socialnetworktimeline.cpp:1509388095
+Projects/SocialNetworkTimeline/src/socialnetworktimeline.cpp:1509411798
 Projects/SocialNetworkTimeline/src/socialnetworktimeline.h:1509387970
 Projects/SocialNetworkTimeline/src/socialnetworktimelinewidget.cpp:1509384755
 Projects/SocialNetworkTimeline/src/socialnetworktimelinewidget.h:1509384755
@@ -5818,7 +5819,7 @@ Projects/TimeAndData_Timeline/src/TimeAndData_TimelineCli.pro:1506384784
 Projects/TimeAndData_Timeline/src/main.cpp:1506218808
 Projects/TimeAndData_Timeline/src/timeanddata_timeline.pri:1509394841
 Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/:1509409400
-Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/:1509409571
+Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/:1509409799
 Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerificationCli.pro:1509408303
 Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/debutoutput.cpp:1509408494
 Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/debutoutput.h:1509408494
@@ -5826,7 +5827,7 @@ Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src
 Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/unmodifiedfilesafeoverwriter_viacryptographichashheaderverification.cpp:1509409296
 Projects/UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification/src/unmodifiedfilesafeoverwriter_viacryptographichashheaderverification.h:1509407549
 Projects/UserInterfaceSkeletonGenerator/:1505970871
-Projects/UserInterfaceSkeletonGenerator/design/:1508888247
+Projects/UserInterfaceSkeletonGenerator/design/:1509412607
 Projects/UserInterfaceSkeletonGenerator/design/src/:1508803316
 Projects/UserInterfaceSkeletonGenerator/design/src/RequestResponseContract2/:1508795781
 Projects/UserInterfaceSkeletonGenerator/design/src/RequestResponseContract2/src/:1509239057
@@ -5852,6 +5853,7 @@ Projects/UserInterfaceSkeletonGenerator/design/initial.idea.and.train.of.thought
 Projects/UserInterfaceSkeletonGenerator/design/json.input.file.format.would.be.trivial.to.implement.compared.to.proper.libclang.header.parsing.txt:1508790237
 Projects/UserInterfaceSkeletonGenerator/design/my.use.of.templates.without.concepts.is.not.duck.typing.because.txt:1505893033
 Projects/UserInterfaceSkeletonGenerator/design/precompiler.chain.integration.and.even.ide.integration.txt:1505869669
+Projects/UserInterfaceSkeletonGenerator/design/requestresponsecontracts.dont.create.a.contract.they.just.provide.a.tool.to.help.carry.out.an.implied.contract.txt:1509412607
 Projects/UserInterfaceSkeletonGenerator/design/sldkfjlsdkfjdklsfjsdofulsdkfjsdoiulj.txt:1508872277
 Projects/UserInterfaceSkeletonGenerator/src/:1509395132
 Projects/UserInterfaceSkeletonGenerator/src/UserInterfaceSkeletonGeneratorCli.pro:1508896814

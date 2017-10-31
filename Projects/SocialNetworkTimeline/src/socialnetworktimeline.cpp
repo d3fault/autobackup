@@ -7,6 +7,8 @@ SocialNetworkTimeline::SocialNetworkTimeline(QObject *parent)
     : QObject(parent)
 {
     StupidKeyValueContentTracker *keyValueStore_WithHistory = new StupidKeyValueContentTracker(this);
+    StupidKeyValueContentTracker::establishConnectionsToAndFromBackendAndUi<SocialNetworkTimeline>(keyValueStore_WithHistory, this);
+    keyValueStore_WithHistory->initialize();
 }
 void SocialNetworkTimeline::appendJsonObjectToTimeline(const QJsonObject &data)
 {

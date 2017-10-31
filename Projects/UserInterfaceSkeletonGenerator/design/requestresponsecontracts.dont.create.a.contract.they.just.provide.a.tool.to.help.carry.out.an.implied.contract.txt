@@ -1,0 +1,3 @@
+re: RequestResponse "Contracts"
+
+It's not that by using the functionality in UserInterfaceSkeletonGenerator _creates_ a contract. No, having a "someSlot"(slot) and "someSlotFinished"(signal) is already IMPLYING a contract. No, the code generator does not create a contract nor does it even TOO strictly enforce it (if you forget to erect your scopedResponder). The code generator just saves me a boatload of time by generating code I WANT to use (and hopefully won't forget to use!).
