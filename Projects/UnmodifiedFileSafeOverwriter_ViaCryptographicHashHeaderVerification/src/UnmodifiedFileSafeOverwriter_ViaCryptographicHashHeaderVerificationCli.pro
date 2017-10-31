@@ -13,7 +13,9 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-HEADERS += unmodifiedfilesafeoverwriter_viacryptographichashheaderverification.h
+HEADERS += unmodifiedfilesafeoverwriter_viacryptographichashheaderverification.h \
+    debutoutput.h
 
 SOURCES += main.cpp \
-    unmodifiedfilesafeoverwriter_viacryptographichashheaderverification.cpp
+    unmodifiedfilesafeoverwriter_viacryptographichashheaderverification.cpp \
+    debutoutput.cpp

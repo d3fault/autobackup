@@ -29,7 +29,7 @@ bool UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification::commit
 
     m_SaveFile->seek(myPos); //restore pos
 
-    if(numWritten != myHeaderSize_InclNewline())
+    if(numWritten != DummyCryptographicHashForSizingPurposes.size())
     {
         if(numWritten == -1)
             qCritical("QSaveFile gave write error");
@@ -151,8 +151,10 @@ bool UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification::fileCo
     m_Hasher.reset();
     while(!t.atEnd())
     {
-        QString currentLine = t.readLine();
-        m_Hasher.addData(currentLine.toUtf8());
+        //QString currentLine = t.readLine() + "\n"; //readLine takes the \n out, but we want to keep it in our hash calculation!
+        static const int bufferSize = 4096;
+        QString currentBuffer = t.read(bufferSize);
+        m_Hasher.addData(currentBuffer.toUtf8());
     }
     QByteArray calculatedHash = getHasherResultEncoded();
     m_Hasher.reset();
@@ -160,7 +162,7 @@ bool UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification::fileCo
 }
 void UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification::myE(QString msg)
 {
-    //emit e("internal error maybe: " + errorString());
-    //setErrorString(msg);
+    emit e("QSaveFile error maybe: " + m_SaveFile->errorString());
+    setErrorString(msg);
     emit e(msg);
 }
