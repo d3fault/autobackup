@@ -1,15 +1,19 @@
-void UserInterfaceSkeletonGenerator::populateDataUsingHardCodedCppXD(UserInterfaceSkeletonGeneratorData &data)
+void UserInterfaceSkeletonGenerator::populateDataUsingHardCodedCppXD(Data &data)
 {
-    data.BusinessLogiClassName = "StupidKeyValueContentTracker";
+    data.BusinessLogicClassName = "StupidKeyValueContentTracker";
 
+    data.createAndAddSignal("e", ArgsWithOptionalDefaultValues_List() << SingleArgWithOptionalDefaultValue("QString","msg"));
+    data.createAndAddSignal("o", ArgsWithOptionalDefaultValues_List() << SingleArgWithOptionalDefaultValue("QString","msg"));
 
-    data.createAndAddSlot("void", "add", ArgsList() << SingleArg{"const QString &","key"} << SingleArg{"const QString &","data"} );
-    data.createAndAddSlot("void", "commit", ArgsList() << SingleArg{"const QString &","commitMessage"});
-    data.createAndAddSlot("void", "readKey", ArgsList() << SingleArg{"const QString &","key"} << SingleArg{"const QString &","revision"} );
+    data.createAndAddRequestResponse_aka_SlotWithFinishedSignal("initialize");
 
-    data.createAndAddSignal("e", ArgsList() << SingleArg{"QString","msg"});
-    data.createAndAddSignal("o", ArgsList() << SingleArg{"QString","msg"});
-    data.createAndAddSignal("addFinished", ArgsList() << SingleArg{"bool","success"});
-    data.createAndAddSignal("commitFinished", ArgsList() << SingleArg{"bool","success"});
-    data.createAndAddSignal("readKeyFinished", ArgsList() << SingleArg{"bool","success"} << SingleArg{"QString","key"} << SingleArg{"QString","revision"} << SingleArg{"QString","data"});
+    data.createAndAddRequestResponse_aka_SlotWithFinishedSignal("add", ArgsList() << SingleArg("const QString &", "key") << SingleArg("const QString &", "data"));
+
+    data.createAndAddRequestResponse_aka_SlotWithFinishedSignal("modify", ArgsList() << SingleArg("const QString &", "key") << SingleArg("const QString &", "newValue"));
+
+    data.createAndAddRequestResponse_aka_SlotWithFinishedSignal("removeKey", ArgsList() << SingleArg("const QString &", "key"));
+
+    data.createAndAddRequestResponse_aka_SlotWithFinishedSignal("commit", ArgsList() << SingleArg("const QString &", "commitMessage"));
+
+    data.createAndAddRequestResponse_aka_SlotWithFinishedSignal("readKey", ArgsList() << SingleArg("const QString &", "key") << SingleArg("const QString &", "revision"), ArgsWithMandatoryDefaultValues_List() << SingleArgWithMandatoryDefaultValue("QString", "key", "QString()") << SingleArgWithMandatoryDefaultValue("QString", "revision", "QString()") << SingleArgWithMandatoryDefaultValue("QString", "data", "QString()"));
 }

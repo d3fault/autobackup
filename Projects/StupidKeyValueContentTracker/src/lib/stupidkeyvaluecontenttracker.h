@@ -15,6 +15,11 @@
 #define StupidKeyValueContentTracker_JSONKEY_COMMITMESSAGE "commitMessage"
 #define StupidKeyValueContentTracker_JSONKEY_BULKMUTATIONS "mutations"
 
+namespace StupidKeyValueContentTrackerRequestResponseContracts
+{
+    class Contracts;
+}
+
 class StupidKeyValueContentTracker : public QObject
 {
     Q_OBJECT
@@ -30,7 +35,7 @@ public:
         connect(ui, &T::readKeyRequested, backend, &StupidKeyValueContentTracker::readKey);
         connect(backend, &StupidKeyValueContentTracker::e, ui, &T::handleE);
         connect(backend, &StupidKeyValueContentTracker::o, ui, &T::handleO);
-        connect(backend, &StupidKeyValueContentTracker::initializationFinished, ui, &T::handleInitializationFinished);
+        connect(backend, &StupidKeyValueContentTracker::initializeFinished, ui, &T::handleInitializeFinished);
         connect(backend, &StupidKeyValueContentTracker::addFinished, ui, &T::handleAddFinished);
         connect(backend, &StupidKeyValueContentTracker::modifyFinished, ui, &T::handleModifyFinished);
         connect(backend, &StupidKeyValueContentTracker::removeKeyFinished, ui, &T::handleRemoveKeyFinished);
@@ -50,16 +55,17 @@ private:
     TimeAndData_Timeline *m_Timeline;
     StagedMutationsType m_StagedKeyValueStoreMutation; //TODOreq: Implicit Sharing instead of QSharedPointer? implicit sharing is similar but safer/better (takes longer to set up tho)!!
     CurrentDataType m_CurrentData;
+    QScopedPointer<StupidKeyValueContentTrackerRequestResponseContracts::Contracts> m_Contracts;
 signals:
     void e(const QString &msg);
     void o(const QString &msg);
 
-    void initializationFinished(bool success);
+    void initializeFinished(bool success);
     void addFinished(bool success);
     void modifyFinished(bool success);
     void removeKeyFinished(bool success);
     void commitFinished(bool success);
-    void readKeyFinished(bool success, const QString &key, const QString &revision, const QString &data);
+    void readKeyFinished(bool success, QString key, QString revision, QString data);
 
     //PRIVATE SIGNALS:
     void readAndEmitAllTimelineEntriesRequested();

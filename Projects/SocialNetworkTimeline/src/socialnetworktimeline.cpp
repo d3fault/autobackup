@@ -14,3 +14,43 @@ void SocialNetworkTimeline::appendJsonObjectToTimeline(const QJsonObject &data)
 {
     //should this be 'insert' instead of 'append'? Can we add things with timestamps that happened years ago? should the desired timestamp be an arg TODOreq?
 }
+void SocialNetworkTimeline::handleE(QString msg)
+{
+    //TODOstub
+    qWarning("stub not implemented: SocialNetworkTimeline::handleE(QString msg)");
+}
+void SocialNetworkTimeline::handleO(QString msg)
+{
+    //TODOstub
+    qWarning("stub not implemented: SocialNetworkTimeline::handleO(QString msg)");
+}
+void SocialNetworkTimeline::handleInitializeFinished(bool success)
+{
+    //TODOstub
+    qWarning("stub not implemented: SocialNetworkTimeline::handleInitializeFinished(bool success)");
+}
+void SocialNetworkTimeline::handleAddFinished(bool success)
+{
+    //TODOstub
+    qWarning("stub not implemented: SocialNetworkTimeline::handleAddFinished(bool success)");
+}
+void SocialNetworkTimeline::handleModifyFinished(bool success)
+{
+    //TODOstub
+    qWarning("stub not implemented: SocialNetworkTimeline::handleModifyFinished(bool success)");
+}
+void SocialNetworkTimeline::handleRemoveKeyFinished(bool success)
+{
+    //TODOstub
+    qWarning("stub not implemented: SocialNetworkTimeline::handleRemoveKeyFinished(bool success)");
+}
+void SocialNetworkTimeline::handleCommitFinished(bool success)
+{
+    //TODOstub
+    qWarning("stub not implemented: SocialNetworkTimeline::handleCommitFinished(bool success)");
+}
+void SocialNetworkTimeline::handleReadKeyFinished(bool success, QString key, QString revision, QString data)
+{
+    //TODOstub
+    qWarning("stub not implemented: SocialNetworkTimeline::handleReadKeyFinished(bool success, QString key, QString revision, QString data)");
+}
