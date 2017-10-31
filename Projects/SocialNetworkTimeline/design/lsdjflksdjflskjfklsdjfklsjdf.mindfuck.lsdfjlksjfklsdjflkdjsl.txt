@@ -1,0 +1,30 @@
+The problem is itself!
+mind=blown
+
+At the TimeAndData_Timeline level I'm trying to ponder a good design to store the Timeline Entries. They are GOING TO HAVE TO use a "key/value" store (atm, QSettings) to accomplish a timeline.
+
+At the SocialNetworkTimeline level I'm trying to ponder a good design to store the Timeline Entries. They are GOING TO HAVE TO use a "key/value" store (atm, StupidKeyValueContentTracker, which is backed by TimeAndData_Timeline, which is backed by QSettings (a key/value store)) to accomplish a timeline.
+
+
+So what I'm saying is that if I'm pro af 1337 h4x0r d00d, I can use the same code path for both.
+
+A TimelineFromKeyValueStore
+A TimelineBackedByAkeyValueStore
+ITimelineBackedByAkeyValueStore ?
+
+
+So... should there be 2x rolling hashes? 1x at TimeAndData_Timeline level and 1x at SocialNetworkTimeline level? I mean I guess there could be, but idk if there SHOULD be. I don't see any reason why not, but I also don't atm see any reason why yes.
+
+*cough* QSettings is synchronous and StupidKeyValueContentTracker is asynchronous.... probably gonna have to implement the same algorithm twice :(, once sync once async.
+
+I could make a thin as fuck wrapper to make QSettings "async" and mimic StupidKeyValueContentTracker's api if I _REALLY_ want to use the same code path for both.
+
+
+tl;dr: SocialNetworkTimeline is SUPPOSED to _be_ TimeAndData_Timeline 1:1, _BUT_ with the ability to "modify" previous entries (and the history of modifications kept track of. Nothing ever "deleted" or "overwritten" or "lost").
+I kept getting distracted by the social aspect of it and trying to visualize the Widget UI etc and decide which timeline entry type I want to allow first. Probably text xD.
+
+"Modifying" a previous entry on SocialNetworkTimeline merely appends a new entry to the SocialNetworkTimeline, linking to or otherwise showing the modified version. A link back to parent is obvious as well. This implies passing a parentSocialNetworkTimelineEntryId to the modify() slot. That implies that both add() and modify() should return us a SocialNetworkTimelineEntryId. or maybe just commit() returns one/them?
+
+bleh this probably of key/value based timeline shiz is probably ez and the solution will be SIMPLE AF, but I need to think on it for a bit, probably sleep on it too :-D. I need to be sure that what I go with is the right thing. This is crucial design point so it's definitely deserving of attention.
+
+MAYBE instead of focusing/meditating on it hard I should make a simple as fuck goal, such as "a QLineEdit and a button that when pressed, adds an entry to the timeline"... code that, THEN make the next goal to be able to modify previous entries, and fucking BRUTE FORCE REFACTOR the fuck out of it, WHATEVER NEEDS TO BE DONE BECAUSE IT WILL BECOME OBVIOUS... and well yea then the design might fall into place perfectly (or good enough) that way. This meditation shit might yield no results, and if it doesn't then I guess I'll try that idea :-D TODOreq!

@@ -8,7 +8,12 @@ SocialNetworkTimeline::SocialNetworkTimeline(QObject *parent)
 {
     StupidKeyValueContentTracker *keyValueStore_WithHistory = new StupidKeyValueContentTracker(this);
     StupidKeyValueContentTracker::establishConnectionsToAndFromBackendAndUi<SocialNetworkTimeline>(keyValueStore_WithHistory, this);
-    keyValueStore_WithHistory->initialize();
+
+    connect(keyValueStore_WithHistory, &StupidKeyValueContentTracker::initializeFinished, this, &SocialNetworkTimeline::initializeFinished);
+}
+void SocialNetworkTimeline::initialize()
+{
+    emit initializeRequested();
 }
 void SocialNetworkTimeline::appendJsonObjectToTimeline(const QJsonObject &data)
 {
@@ -16,13 +21,11 @@ void SocialNetworkTimeline::appendJsonObjectToTimeline(const QJsonObject &data)
 }
 void SocialNetworkTimeline::handleE(QString msg)
 {
-    //TODOstub
-    qWarning("stub not implemented: SocialNetworkTimeline::handleE(QString msg)");
+    emit e(msg);
 }
 void SocialNetworkTimeline::handleO(QString msg)
 {
-    //TODOstub
-    qWarning("stub not implemented: SocialNetworkTimeline::handleO(QString msg)");
+    emit o(msg);
 }
 void SocialNetworkTimeline::handleInitializeFinished(bool success)
 {
