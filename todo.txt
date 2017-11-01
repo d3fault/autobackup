@@ -1,3 +1,5 @@
+async_if (or Q_ASYNC_IF). even though the below sounds more fun, this sounds more likely to change my coding style forver. It _IS_ the idea from d=i solidified into pure C++ code (no gui needed)
+
 MAYBE THE FOLLOWING RE-LAUNCH PLAN IS TOO MUCH? MAYBE I SHOULD JUST ANALOG/QUICKDIRTY(had:LAZY)-MODE IT AND THEN IMPROVE ON IT LIVE?!?
 re-launch (this is ordered by dependency!):
 0) StupidKeyValueContentTracker should be coded, and then WHEN NEEDED by that app (when I hit compile and my pseudo code fails), TimeAndData_Timeline should be put into place, since it's trivial as FUCK

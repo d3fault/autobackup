@@ -1,0 +1,105 @@
+Q_CONTRACT(S) and Q_ASYNC_IF
+
+RequestResponseContracts that were born in UserInterfaceSkeletonGenerator are amazing and pretty much deserving of their own folder in my Projects folder, but I can also see beyond that and they can be leveraged to provide an async_if interface.
+
+I just watched a bunch of Qt World Summit 2017 videos last night, and by far my fav 2 were the QObject deep dive and the Herb Sutter one.
+
+The QObject deep dive showed me that lambda (which I think I've used before but didn't fully understand the implications of, like I do now). The Herb Sutter one kinda leik helped explain to me that "code generation" is a perfectly valid way to add features to C++ _itself_. So I'm long term actually targeting std::async_if, but the initial WORKING prototype will be Q_ASYNC_IF. maybe it already is possible with std-only classes, but I'm more familiar with Qt so... (and besides, Qt has a "no exceptions" motto that I very much agree with, std class makers obviously love exceptions because they ADDED exceptions to the std).
+
+While I'm on the subject, I should note that RequestResponseContracts, emitting on "return emit;", are not meant to "emit when thrown". They might hav that unintended consequence of emitting on exception, and it boggles my mind to think of those implications (and this is why fuck exceptions!). However the whole "return emit;" thing is to help you keep your Contract! To help you respond!! Because, maybe (keep reading), a "return;" in a nested DEEP-AS-FUCK lambda (lamda within lamda within lamda ...) would cause the scopedResponder to go out of scope... and that's neat. If it's 100% impossible to NOT emit the finished signal (compile time guarantee), that's neat.
+
+early this morning I wrote on my whiteboard (but my mind has been racing since): deferReporting(&SomeBusinessClass::someSlotContinuation);
+Since then I have modified that API (will write later), but I should note that inside deferRendering() I initially planned to do a Q_UNUSED(functorSignatureWhateverSomeSlotIs)... but after thinking about it way more, a #error (compile time error) is warranted, telling you that you haven't run the "pre-moc" code transformation stage, where this app will live until it's accepted into the C++ standard (C++21 mb?). During that pre-moc code transformation stage is when we remove the #error (and generate the RequestResponseContract glue code).
+
+Man, my mind is racing. This is awesome. AsyncFuture was close but no cigar ;-). It has same stuff going on as AsyncFuture, but a better API. Might even be best to just leverage AsyncFuture (TO DOnemb). Nah actually the "contracts" shit is completely missing from AsyncFuture, disregard that.
+
+Anyways uhh the original train of thought for the deferRendering(&SomeBusinessClass::someSlotContinuation) was that you would check (using libclang) to verify that SomeBusinessClass::someSlotContinuation did in fact instantiate the ScopedResponder! I was early on pondering thinking about passing in the scopedResponder as an arg, but it's BETTER to not change the API at all. LibClang is powerful as fuck and can do that check ez. If the scoped responder is never instantiated, the contract is invalid, and the [pre]compilation stage fails! This idea has evolved a bit (better compile time contract guarantee), so keep reading.
+
+
+Ok so onto the fucking meat (note this is pseudo-code as I wrote it, I think my use of QFuture might be wrong but it expresses what I mean to say, I think). Also this needs a thorough understanding of RequestResponseContracts to understand (it DEPENDS on it):
+
+Oh first I want to copy/paste the lambda from the QObject deep dive, since it is EXTREMELY related (it (probably a modified version of it) is the target for the pre-moc code gen!). Err I'm also modifying the lambda in realtime, sorry!:
+
+void doStuff(bool success, QString outputFilename)
+{
+	if(success)
+	{
+		//success code
+	}
+	else
+	{
+		//unsuccessful code
+	}
+}
+connect(libFfmpeg, &LibFfmpeg::encodeVideoFinished, this, [this, success, outputFilename]()
+{
+	doStuff(success, outputFilename);
+});
+
+Ok now onto the "meat" (what you write before the code translator translates it into the above):
+
+QFuture<bool> success =
+async_if(libFfmpeg, &LibFfmpeg::encodeVideo)
+{
+	//success code
+}
+else
+{
+	//success code
+};
+
+success.wait(); //most async code will NOT want to call wait(), so they don't even need to capture the return value of async_if. I should also note that there could trivially also be a blocking_async_if (Q_BLOCKING_ASYNC_IF), which does not return a QFuture but instead just blocks. It would be pretty much like QBlockingQueuedConnection, EXCEPT that the "target" class being called doesn't have to "declare a slot with a return value" to use it! Still, regular async_if is what you're supposed to use. the blocking_async_if would just wrap a call to success.wait() on the async_if, ofc.
+
+Hmm I guess the end of that async_if/else needs a semi-colon, since it's a statement? I think I'm breaking the C++ rules here, but that's fine let's rewrite them sum bitches (or rather, allow specific exceptions that are beneficial). So whether or not to have a semi-colon after the else is a aside, since we're DECIDING. Actually I decide no. No not mandatory, but putting one there to show you're A LAMBDA WRAPPER _and_ "a statement returning a QFuture<bool>" might be beneficial. Then again putting on there also helps people understand that "these are lambda declarations" for async_if operations, not synchronous procedural code!!! Yes actually semi-colon!!!
+
+Q_ASYNC_IF is not a macro (expands to #error also maybe to indicate toolchain not run properly), is a "pre-moc" code transformation stage. I'll probably implement it using libclang. I originally was thinking that this should go into libclang-tidy (and in fact there's no reason it can't since this is PROTOTYPE-AS-FUCK. putting it in clang-tidy might save me a bunch of boilerplate code), still I just call it a "pre-moc" code generator that would hopefully someday be built right into the standard C++ compiler, just like QClass shown in Herb Sutter's world summit video. To complement QClass slot/signal/property, I am proposing "contract".
+
+QClass BusinessClass
+{
+	signal: xFinished;
+	slot: x;
+
+	//and now:
+	contract: someSlot; //implies "slot:someSlot" and "signal:someSlotFinished(bool success)"
+};
+
+Contracts have the scoped responders though! SomeSlot definition is scanned during the tool's execution and we make sure SomeSlotScopedResponder is instantiated in there! Additionally, any call to Q_ASYNC_DEFER(timer, &QTimer::timeout, this, &BusinessClass::someSlotContinuation) will have both of those signals/slots mentioned in that call checked+verified (fail compilation!!!) that they too fulfill the requirements of RequestResponseContracts (ScopedResponders must be instantiated in the slot bodies, whether original-slot body or a continuation slot!!). For the QTimer::timeout, we verify that it's a RESPONSE in _ANY_ [valid] RequestResponseContract, and for the &BusinessClass::someSlotContinuation we ensure that SomeSlotScopedResponder was erected. We also look [recursively] into any Q_ASYNC_DEFER calls that occur in someSlotContinuation -- because hey you can defer responding bunches of times.
+
+The QTimer::timeout example is actually WRONG then, we cannot use it because QTimer::timeout is not a "response" in the RequestResponse sense (there is no scoped destruction guarantee going on). So I might be proposing rewriting Qt or updating all Qt to use Contracts? (remember that contracts are just signals/slots and USING THEM DIRECTLY (not wrapped via async_if) _works_, so [source-code] backwards compatibility would be maintained. In any case Contracts are still extremely useful for my own classes/code.
+
+
+I am not familiar with the specific rules of lambda closures. I remember trying to learn them for javascript once and getting a headache and thinking they were stupid for "holding onto variables" like that, but after seeing the lambda example in the QObject Deep Dive video I gotta admit they are pretty fucking badass (especially if all of the stuff described in this doc will depend on one (but it probably doesn't have to, a code generator can do what a lambda does)). I also don't have internet service to look up how C++ closures work specifically. Uhh anyways back to the point I'm curious as fuck what would happen if you "captured" the scopedResponder in the closure!! would that mean a [deeply] nested lambda, STILL in someSlot() body, could simply call "return;" and that would emit someSlotFinished()? I think MAYBE, but I genuinely don't know. That would be a BADASS strategy, because then you'd never have to call deferRendering(). deferRendering() should MAYBE still exist in case you don't want to use lambdas... but then again the fact that using lambdas saves you from having to do all that complicated checking going on in the someSlotContinuation is probably helpful: less code to write. but we still need to check the connect statement's "signal" (QTimer::timeout used wrongly above) to verify it's a Contract Response Signal (not just any old signal).
+
+If _EVERY_ slot implementation captured the "scoped responder" in a lambda closure and call as many async operations as they want (capturing the scoped responder in each), that would mean defer responding wouldn't need to exist.
+
+Wait did I just eat myself. Are the very async calls I'm referring to, themselves async_if? Uh oh might have hit a recursion wall here.
+
+hmm so async_if is when I want to 
+but then deferResponding is when I want to
+
+ehh they seem similar-ish. deferResponding does NOTHING though, expands to an #error at first (to be parsed out) but then ultimately just a Q_UNUSED(arg). deferRendering is a compile time check. wait no I forgot, deferResponding BELOW the "#error" and Q_UNUSED, just sets m_DeferResponding to true ofc xD. I spoke wrong in this doc I think, I meant what happens to the arg(s) passed into deferRendering.
+
+
+So yea the async_if DEPENDS on RequestResponseContracts (with that libclang enabled static analyzer/verifier pre-moc tool that also generates glue) because there MUST be a response _guarantee_ (enforced RECURSIVELY, if deferResponse() is used) that the slot will fucking emit a response. Otherwise, NEITHER of the async_if blocks will EVER be run! RequestResponseContracts in their CURRENT form do not "make" a contract, they merely "help you not forget to emit that signal". This doc is proposing to "make" contracts a language feature of C++, enforced at compile time!!!
+
+
+here's a simplified way of saying something I was trying to describe above:
+you can ONLY deferResponding to a[nother] Contract. that's how you keep YOUR Contract guarantee.
+
+Contracts, Contracts Everywhere...
+
+
+I want to, and I think I'm going to, hack this shit until it compiles+works (leveraging the FUCK out of Qt ofc), then send to bjarne/herb and cc: qt-development list. I mean I'm like 99.999% sure it will compile. Pre-compiler code-generators (which tend to get integrated into compilers themselves <3, if they're useful) can do ANYTHING. It just might be buggy and have false positives etc if I _DONT_ leverage libclang to do the parsing (I don't have to, but I should).
+
+I _kinda_ want to tackle the QClass shit directly tbh, liek... that could be the INPUT to UserInterfaceSkeletonGenerator xDDDDDDD. I know it's possible, but whipping libclang in the right places sounds difficult as fuck. A from-scratch parser is certainly doable (and I could use libclang for the _parsed-around_ signatures. Ex: signal: x(bool y); -- I can extract "x(bool y);" by looking for that "signal:" prefix, TRIVIALLY, then take that "extracted" signature and tell libclang to PARSE it, fuck yea! Hmm I need to polish my "contract:" API some, namely the response args.
+
+QClass BusinessClass
+{
+	contract: someSlot(int x) -> (bool xIsEven);
+};
+
+hmm that arrow there looks ugly as fuck. would an arrow ever show up in a signal declaration (as in, does "->" make a good delimeter?)? I actually think no arrows are not allowed in signal/slot method declarations. man this parser is looking easier and easier every couple minutes. I may not need libclang for the QClass decl parsing, but I sure as shit need (WANT) it for the "was the ScopedResponder instantiated within a given slot body?" checks. But _THOSE_ slot bodies are valid C++, so "whipping" libclang in the right places isn't necessary at all :-D. OT'ish: I might have to run MOC before running my analyzer, in order to not have to code around Qt stuff. So I would maybe "wrap" MOC then. Do some code-gen (and #error removal), then run moc, then analyze+verify (ensure Contracts are fullfilled, recursively muahaha) the moc results.
+btw in the above QClass pseudo you COULD specify a "response" signal _name_, but don't have to.
+
+
+I think that while a QClass parser is definitely possible and should be looked into LATER, Q_ASYNC_IF and Strict Contracts is a big enough piece to chew on for now. Even if I have to copy/paste code-gen'd files all over the place to use it at first!
