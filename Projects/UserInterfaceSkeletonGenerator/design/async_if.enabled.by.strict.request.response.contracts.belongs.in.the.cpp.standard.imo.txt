@@ -35,6 +35,8 @@ connect(libFfmpeg, &LibFfmpeg::encodeVideoFinished, this, [this, success, output
 {
 	doStuff(success, outputFilename);
 });
+libFfmpeg->encodeVideo(); //or emit encodeVideoRequested()
+
 
 Ok now onto the "meat" (what you write before the code translator translates it into the above):
 
@@ -103,3 +105,36 @@ btw in the above QClass pseudo you COULD specify a "response" signal _name_, but
 
 
 I think that while a QClass parser is definitely possible and should be looked into LATER, Q_ASYNC_IF and Strict Contracts is a big enough piece to chew on for now. Even if I have to copy/paste code-gen'd files all over the place to use it at first!
+
+
+For the man "deeply nested lambdas" (with some inner one saying "return;") strategy to work, ie in order for the "Strict Contract Guarantee", it TOO needs "analysis+verification", just like deferResponding. In deferResponding we need to check that ScopedResponder is instantiated in the slotContinuation (and some other check described up above), but in the "deeply nested lambdas" strategy we need to ENSURE (fail compile if not) that the scopedResponder is captured at every deeper-level lambda (that is, assuming lambda capture/closure works how I think it might). NOT capturing the scopedResponder in EVEN ONE lambda used in a connect() statement would be a violation of the Strict Contract. This is [probably] enforcable using libclang, ofc.
+
+I think both the deferRendering() strat and the deeply-nested-lambdas strat both deserve existence. the deferRendering() strat will be used when you have already performed the connection (to a named slot method) earlier, such as in the constructor, and you don't want to do the connection over and over every time the slot is invoked! The "nested lambdas" strat DEPENDS ON you performing a connect() call! So for QNetworkReply *reply = QNam::get(), it makes sense to use lambdas, because you have to connect to every new reply's finished() signal, and it's during the connect() statement that you specify the lambda (which must have captured the scopedResponder). I could easily see BOTH strategies co-existing and inter-mixing freely and that's fine, all Strict Contracts would be satisfied. What really blows my fucking mind, though, and I cannot yet wrap my head around, is what the fuck should happen if you're in the someSlot() definition, that was called via async_if, and you nest another call to async_if. Does that mean my async_if shit needs to "capture" (as in closures) the scopedResponder? Maybe I should use some IScopedResponder interface so we can refer to "parents" etc O_o see I don't even understand what I'm trying to think here (yet).
+
+async_if(businessClass, &BusinessClass::someSlot)
+{
+	//success
+}
+
+BusinessClass::someSlot()
+{
+	SomeSlotScopedResponder scopedResponder;
+	async_if(anotherClass, &AnotherClass::anotherSlot)
+	{
+		//success
+	}
+	//unless we pass scopedResponder to OUR OWN async_if to have it captured, scopedResponder would go out of scope and [prematurely] respond
+}
+
+hmm... I guess yea for nested async_ifs, which obviously would be wanted, we need to capture the scoped responder. maybe that can be done with MAGIC (pre-moc tool runnin). we are ALREADY verifying the existence of the SomeSlotScopedResponder instantiation, since someSlot is a Contract, so it would be trivial to magically/silently use it in the code generated lambda capture thingo. However "silently" might be a bad choice here, perhaps it should be explicit so the programmer knows wtf is going on. Yea I think explicit.
+
+If async_if is called from WITHIN a contract (request slot), then async_if MUST be passed the scopedResponder relevant to it's current scope. NOT doing that is compilation failure (the Strict Contracts guarantee failed. well it didn't "fail" per se, but it probably responded prematurely and with success == false. We don't want to do that, hence this rule).
+
+it could literally be as simple as this (an overload):
+async_if(anotherClass, &AnotherClass::anotherSlot, scopedResponder)
+
+So that's 3 kinds of checks now haha. 1 for nested async_if, 1 for POL (plain ole lambdas), and 1 (broken up into multiple sub-checks) for Q_ASYNC_DEFER.
+
+One thing though: passing scopedResponder as (what is seemingly) an ARG like that doesn't self-document to the coder that it's a closure/capture :(. That self-documentation stuff is probably possible, but I'd say ignore that shit for now. If you're using async_if in this early phase, you need to understand async_if.
+
+Bonus points if I _DONT_ have to use an "IScopedResponder" as the arg type, because that's an unecessary use of virtual interfaces. I don't think I'll have to, since ima be parsing+code-generating there...

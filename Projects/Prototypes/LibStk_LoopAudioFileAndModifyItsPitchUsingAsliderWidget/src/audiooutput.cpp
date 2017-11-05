@@ -9,7 +9,6 @@ using namespace stk;
 
 AudioOutput::AudioOutput(QObject *parent)
     : QObject(parent)
-    , m_NumBufferFrames(RT_BUFFER_SIZE)
 {
     // Set the global sample rate before creating class instances.
     Stk::setSampleRate((StkFloat)44100);
@@ -68,18 +67,44 @@ AudioOutput::AudioOutput(QObject *parent)
         audioFormat = audioDeviceInfo.nearestFormat(audioFormat);
     }
     m_AudioOutput = new QAudioOutput(audioDeviceInfo, audioFormat, this);
-    m_FileLoopIoDevice = new StkFileLoopIoDevice(input.take(), channels, m_AudioOutput);
-    m_FileLoopIoDevice->reserveFrames(m_NumBufferFrames, channels);
+    unsigned int numBufferFrames;
+    tuneAudioOutputBufferSizeForLowLatency(audioFormat, &numBufferFrames);
+    m_FileLoopIoDevice = new StkFileLoopIoDevice(input.take(), channels, numBufferFrames, m_AudioOutput->bufferSize(), m_AudioOutput);
+}
+AudioOutput::~AudioOutput()
+{
+    stopAudioOutput();
+}
+void AudioOutput::tuneAudioOutputBufferSizeForLowLatency(const QAudioFormat &audioFormat, unsigned int *out_numBufferFrames)
+{
+    //dynamic tuning would be neat, pushing the limits of modern hardware... but hard-coded tuning is good enough for now
+    //~5ms is a good TESTING start point; I think I'll want to lower it after getting it at least working at 5ms
+    qint32 numFramesFor5msDuration = audioFormat.framesForDuration(5 * 1000 /*5ms * 1000 = 5000 microseconds*/); //we don't care about rounding errors in this call, but from here on we want to use numFramesFor5msDuration as the authorative bufferSize indicator (so no more rounding errors allowed)
+    qint32 bufferSizeInBytes = audioFormat.bytesForFrames(numFramesFor5msDuration);
+    m_AudioOutput->setBufferSize(bufferSizeInBytes);
+    *out_numBufferFrames = static_cast<unsigned int>(numFramesFor5msDuration);
 }
 void AudioOutput::startAudioOutput()
 {
     m_FileLoopIoDevice->start();
+
+    int desiredBufferSize = m_AudioOutput->bufferSize();
     m_AudioOutput->start(m_FileLoopIoDevice);
+    int actualBufferSize = m_AudioOutput->bufferSize();
+    if(desiredBufferSize != actualBufferSize)
+    {
+        qWarning() << "m_AudioOutput desiredBufferSize != actualBufferSize";
+        qWarning() << "desiredBufferSize:" << desiredBufferSize;
+        qWarning() << "actualBufferSize:" << actualBufferSize;
+        qWarning() << "this means that the buffer size in m_FileLoopIoDevice (desired) is not the same as the buffer size in m_AudioOutput (actual). this may or may not affect performance";
+    }
 }
 void AudioOutput::stopAudioOutput()
 {
-    m_AudioOutput->stop();
-    m_FileLoopIoDevice->stop();
+    if(m_AudioOutput->state() != QAudio::StoppedState)
+        m_AudioOutput->stop();
+    if(m_FileLoopIoDevice->isStarted())
+        m_FileLoopIoDevice->stop();
 }
 void AudioOutput::changePitchShift(stk::StkFloat newPitchShiftValue)
 {

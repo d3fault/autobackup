@@ -5,22 +5,24 @@
 
 using namespace stk;
 
-StkFileLoopIoDevice::StkFileLoopIoDevice(stk::FileLoop *fileLoop, int channels, QObject *parent)
+StkFileLoopIoDevice::StkFileLoopIoDevice(stk::FileLoop *fileLoop, int channels, int numBufferFrames, int bufferSizeBytes, QObject *parent)
     : QIODevice(parent)
     , m_First(true)
     , m_FileLoop(fileLoop)
     , m_Channels(channels)
     , m_CurrentIndexIntoFrames(0)
+    , m_BufferSizeBytes(bufferSizeBytes)
 {
+    frames.resize(numBufferFrames, m_Channels);
     shifter.setEffectMix(0.5); //0.5 gives us mixture of 50% input, 50% effect
-}
-void StkFileLoopIoDevice::reserveFrames(int numBufferFrames, int channels)
-{
-    frames.resize(numBufferFrames, channels);
 }
 void StkFileLoopIoDevice::start()
 {
     open(ReadOnly);
+}
+bool StkFileLoopIoDevice::isStarted() const
+{
+    return isOpen();
 }
 void StkFileLoopIoDevice::stop()
 {
@@ -28,7 +30,7 @@ void StkFileLoopIoDevice::stop()
 }
 qint64 StkFileLoopIoDevice::bytesAvailable() const
 {
-    return m_FileLoop->getSize() + QIODevice::bytesAvailable(); //our file loop NEVER runs out of bytes xD
+    return m_BufferSizeBytes + QIODevice::bytesAvailable(); //our file loop NEVER runs out of bytes xD
 }
 qint64 StkFileLoopIoDevice::readData(char *data, qint64 maxlen)
 {
@@ -44,7 +46,9 @@ qint64 StkFileLoopIoDevice::readData(char *data, qint64 maxlen)
 
     //fill maxlen bytes from frames, refilling frames from m_FileLoop when needed
     qint64 total = 0;
-    qint64 stopReadingAtThisManyBytes = (maxlen - sizeof(float));
+    //qint64 stopReadingAtThisManyBytes = qMax(0, (maxlen - (sizeof(float) * m_Channels)));
+    qint64 maxLenRoundedDownToFrameEdge = maxlen - (sizeof(float) * m_Channels); //TODOreq: math here is wrong, but kinda shows what I want xD. I don't think it's that big of a deal tho tbh, as in I don't think it matters at all
+    qint64 stopReadingAtThisManyBytes = qBound(0, maxLenRoundedDownToFrameEdge, m_BufferSizeBytes);
     while(total < stopReadingAtThisManyBytes)
     {
         if(m_CurrentIndexIntoFrames == frames.size())

@@ -16,11 +16,13 @@ class AudioOutput : public QObject
     Q_OBJECT
 public:
     explicit AudioOutput(QObject *parent = nullptr);
+    ~AudioOutput();
 private:
     QAudioOutput *m_AudioOutput;
     QScopedPointer<stk::FileLoop> input;
-    unsigned int m_NumBufferFrames;
     StkFileLoopIoDevice *m_FileLoopIoDevice;
+
+    void tuneAudioOutputBufferSizeForLowLatency(const QAudioFormat &audioFormat, unsigned int *out_numBufferFrames);
 public slots:
     void startAudioOutput();
     void stopAudioOutput();

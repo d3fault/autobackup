@@ -12,9 +12,9 @@ class StkFileLoopIoDevice : public QIODevice
 {
     Q_OBJECT
 public:
-    StkFileLoopIoDevice(stk::FileLoop *fileLoop, int channels, QObject *parent = nullptr);
-    void reserveFrames(int numBufferFrames, int channels);
+    StkFileLoopIoDevice(stk::FileLoop *fileLoop, int channels, int numBufferFrames, int bufferSizeBytes, QObject *parent = nullptr);
     void start();
+    bool isStarted() const;
     void stop();
 protected:
     qint64 bytesAvailable() const;
@@ -29,6 +29,7 @@ private:
     stk::StkFrames frames;
     size_t m_CurrentIndexIntoFrames;
     stk::PitShift shifter;
+    int m_BufferSizeBytes;
 public slots:
     void setPitchShift(stk::StkFloat newPitchShift);
     void setPitchShiftMixAmount(stk::StkFloat newPitchShiftMixAmount);
