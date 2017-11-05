@@ -144,7 +144,8 @@ void UserInterfaceSkeletonGenerator::generateUserInterfaceSkeletonFromClassDecla
 {
     Data data;
 
-    //TODOreq: populateDataUsingLibClang(data, classDeclarationCpp_ForParsing);
+    //TO DOnereq(changed design, see comment directly below): populateDataUsingLibClang(data, classDeclarationCpp_ForParsing);
+    //TODOreq: instead of hard-coding the header parsing to this app, let's put it in it's own app that spits out json. then THIS app can read that json (and LATER, we could simply wrap the BLAH BLAH). I am betting I'll use that header2json app/lib more than a few times in my apps!!! In fact Header2Json is a good name. Maybe more verbose CppHeader2Json, or QtHeader2Json. Hmm maybe CppHeader2Json but with Qt detection. So I guess just CppHeader2Json but with Qt mode enabled. QLazy or was it clazy? idk but I've seen it on github. It's just that libclang is a fuckin bitch to work with ALL THE TIME. It's tolerable in small doses, but interfacing with libclang while creating new layer 7 apps is fucking TEDIOUS (compared to parsing a json object  that came out of a json object generator that I wrote the libclang stuff for months/years ago (hypothetically, at least! at the moment it's NOT written!)).
     populateDataUsingHardCodedCppXD(data);
 
     generateUserInterfaceSkeletonFromData(data, implStubShortNames);

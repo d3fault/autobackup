@@ -43,7 +43,7 @@ Documents/minddump/2016/4/1459728372-TJ1875.txt:1459728515
 Documents/minddump/2016/4/1459968855-LhX846.txt:1459969203
 Documents/minddump/2016/4/1459969303-nnS846.txt:1459969688
 Documents/minddump/2016/4/1459984685-TJ2423.txt:1459985236
-Documents/minddump/2017/:1507329611
+Documents/minddump/2017/:1509915029
 Documents/minddump/2017/10/:1509414738
 Documents/minddump/2017/10/1507327644-MTJ793.txt:1507495672
 Documents/minddump/2017/10/1507349085-MTJ799.txt:1507349207
@@ -84,6 +84,10 @@ Documents/minddump/2017/10/1509401126-MTJ886.txt:1509401133
 Documents/minddump/2017/10/1509404203-TJ1278.txt:1509404614
 Documents/minddump/2017/10/1509410278-MTJ788.txt:1509410791
 Documents/minddump/2017/10/1509414730-TJ1327.txt:1509414733
+Documents/minddump/2017/11/:1509916132
+Documents/minddump/2017/11/1509914986-MTJ798.txt:1509915026
+Documents/minddump/2017/11/1509915421-Tik798.txt:1509915425
+Documents/minddump/2017/11/1509915941-TwZ798.txt:1509916120
 Documents/minddump/2017/5/:1496186514
 Documents/minddump/2017/5/1495171253-Kauai.0a-MTJ783.txt:1495179507
 Documents/minddump/2017/5/1495214940-MTJ843.txt:1495215210
@@ -154,10 +158,13 @@ Documents/minddump/dreams/2016/3/1458581397-MTJ862.txt:1458581476
 Documents/minddump/dreams/2016/4/:1459968807
 Documents/minddump/dreams/2016/4/1459723353-TJ1235.txt:1459723873
 Documents/minddump/dreams/2016/4/1459968228-MTJ846.txt:1459968776
-Documents/minddump/dreams/2017/:1507416233
+Documents/minddump/dreams/2017/:1509915267
 Documents/minddump/dreams/2017/10/:1507665815
 Documents/minddump/dreams/2017/10/1507415922-MTJ799.txt:1507416228
 Documents/minddump/dreams/2017/10/1507665468-fkn.halo.lol-MTJ900.txt:1507665812
+Documents/minddump/dreams/2017/11/:1509915414
+Documents/minddump/dreams/2017/11/1509915037-LhX798.txt:1509915257
+Documents/minddump/dreams/2017/11/1509915309-nnS798.txt:1509915373
 Documents/minddump/dreams/2017/5/:1495733483
 Documents/minddump/dreams/2017/5/1495474237-MTJ800.txt:1495562367
 Documents/minddump/dreams/2017/5/1495559788-MTJ788.txt:1495560509
@@ -3355,7 +3362,7 @@ Projects/BulkFileTextPrepender/src/lib/bulkfiletextprepender.cpp:1400841584
 Projects/BulkFileTextPrepender/src/lib/bulkfiletextprepender.h:1388239361
 Projects/CodeGeneratorGenerator/:1509245615
 Projects/CodeGeneratorGenerator/design/:1509304251
-Projects/CodeGeneratorGenerator/design/initial.idea.codegeneratorgenerator.txt:1509384578
+Projects/CodeGeneratorGenerator/design/initial.idea.codegeneratorgenerator.txt:1509914776
 Projects/CodeGeneratorGenerator/design/yo.dawg.codegeneratorgenerator.txt:1509304219
 Projects/CodeGeneratorGenerator/src/:1509249109
 Projects/CodeGeneratorGenerator/src/CodeGeneratorGenerator.pro:1509239197
@@ -3809,7 +3816,7 @@ Projects/IcePick/src/lib/:1431941696
 Projects/IcePick/src/lib/icepick.cpp:1454913367
 Projects/IcePick/src/lib/icepick.h:1431941502
 Projects/IcePick/src/IcePickGui.pro:1431928734
-Projects/Ideas/:1509333077
+Projects/Ideas/:1509916500
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -4095,6 +4102,7 @@ Projects/Ideas/social.networking.is.nothing.special.just.a.small.part.of.a.large
 Projects/Ideas/soudclong.txt:1322063311
 Projects/Ideas/soundproof.head.thing.as.solution.to.short.term.problem.of.copyright.infringement.preventing.home.launch.txt:1412431402
 Projects/Ideas/spend.rate.must.be.less.than.or.equal.to.receive.rate.hurr.ima.durr.txt:1392178497
+Projects/Ideas/stealth.ab.or.beer.belly.bag.to.store.computer.in.when.fucking.shopping.for.food.etc.txt:1509916500
 Projects/Ideas/subdomain.brainwash.with.periodic.ajax.loading.in.videos.or.anything.really.txt:1354836672
 Projects/Ideas/survival.peace.and.friendship.school.txt:1325873857
 Projects/Ideas/symbol.renaming.on.crack.for.large.devel.environments.txt:1400836268
@@ -5858,7 +5866,7 @@ Projects/UserInterfaceSkeletonGenerator/design/my.use.of.templates.without.conce
 Projects/UserInterfaceSkeletonGenerator/design/precompiler.chain.integration.and.even.ide.integration.txt:1505869669
 Projects/UserInterfaceSkeletonGenerator/design/requestresponsecontracts.dont.create.a.contract.they.just.provide.a.tool.to.help.carry.out.an.implied.contract.txt:1509412607
 Projects/UserInterfaceSkeletonGenerator/design/sldkfjlsdkfjdklsfjsdofulsdkfjsdoiulj.txt:1508872277
-Projects/UserInterfaceSkeletonGenerator/src/:1509395132
+Projects/UserInterfaceSkeletonGenerator/src/:1509916803
 Projects/UserInterfaceSkeletonGenerator/src/UserInterfaceSkeletonGeneratorCli.pro:1508896814
 Projects/UserInterfaceSkeletonGenerator/src/cliimplstubgenerator.cpp:1509250030
 Projects/UserInterfaceSkeletonGenerator/src/cliimplstubgenerator.h:1509249745
@@ -5867,7 +5875,7 @@ Projects/UserInterfaceSkeletonGenerator/src/iuserinterfaceimplstubgenerator.h:15
 Projects/UserInterfaceSkeletonGenerator/src/main.cpp:1509249708
 Projects/UserInterfaceSkeletonGenerator/src/requstsresponsecontractsgluegenerator.cpp:1509395096
 Projects/UserInterfaceSkeletonGenerator/src/requstsresponsecontractsgluegenerator.h:1509249745
-Projects/UserInterfaceSkeletonGenerator/src/userinterfaceskeletongenerator.cpp:1509394248
+Projects/UserInterfaceSkeletonGenerator/src/userinterfaceskeletongenerator.cpp:1509915886
 Projects/UserInterfaceSkeletonGenerator/src/userinterfaceskeletongenerator.h:1509249746
 Projects/UserInterfaceSkeletonGenerator/src/userinterfaceskeletongeneratorcli.cpp:1505973198
 Projects/UserInterfaceSkeletonGenerator/src/userinterfaceskeletongeneratorcli.h:1505973123
