@@ -1,0 +1,6 @@
+ImplicitlySharedFile file0("/run/shm/test0.txt");
+ImplicitlySharedFile file1 = file0.copy("/run/shm/test1.txt"); //btrfs cow copy. file1 now an implicitly shared object with file0, AND underlying data implicitly shared giving us the "file was copied to another filePath look-n-feel" with only 2 atomic reference counts being incremented (the one in ImplicitlySharedFile and the one in the btrfs filesystem) and no ACTUAL copying whatsoever.
+
+It makes you wonder what would happen if you simply did file1 = file0; Ideally that would be disabled, however I'm not sure if you can disable it and still have it compile. I guess it depends.
+
+Maybe it should be called ExplicitlySharedFile? because the call to "copy" is explicit! and in that case it would make a lot more sense to disable the copy constructor. We could do some btrfs magic with the copy constructor of "implicitly shared", but I don't want to think about that right now.
