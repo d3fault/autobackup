@@ -38,7 +38,7 @@ signals:
 public slots:
     void handleE(QString msg);
     void handleO(QString msg);
-    void handleInitializationFinished(bool success);
+    void handleInitializeFinished(bool success);
     void handleAddFinished(bool success);
     void handleModifyFinished(bool success);
     void handleRemoveKeyFinished(bool success);

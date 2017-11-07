@@ -1,5 +1,7 @@
 #include "socialnetworktimeline.h"
 
+#include <QCoreApplication>
+
 #include "socialnetworktimelinerequestresponsecontracts.h"
 #include "stupidkeyvaluecontenttracker.h"
 
@@ -12,6 +14,11 @@ SocialNetworkTimeline::SocialNetworkTimeline(QObject *parent)
 {
     StupidKeyValueContentTracker *keyValueStore_WithHistory = new StupidKeyValueContentTracker(this);
     StupidKeyValueContentTracker::establishConnectionsToAndFromBackendAndUi<SocialNetworkTimeline>(keyValueStore_WithHistory, this);
+
+    QCoreApplication::setOrganizationName("SocialNetworkTimelineOrganization");
+    QCoreApplication::setOrganizationDomain("SocialNetworkTimelineDomain");
+    QCoreApplication::setApplicationName("SocialNetworkTimeline");
+    QSettings::setDefaultFormat(QSettings::IniFormat);
 }
 SocialNetworkTimeline::~SocialNetworkTimeline()
 {
@@ -19,13 +26,13 @@ SocialNetworkTimeline::~SocialNetworkTimeline()
 }
 void SocialNetworkTimeline::initializeSocialNetworkTimeline()
 {
-    InitializeSocialNetworkTimelineScopedResponder scopedResponder;
+    InitializeSocialNetworkTimelineScopedResponder scopedResponder(m_Contracts->initializeSocialNetworkTimeline());
     emit initializeRequested(); //initialize StupidKeyValueContentTracker requested
     scopedResponder.deferResponding();
 }
 void SocialNetworkTimeline::appendJsonObjectToSocialNetworkTimeline(const QJsonObject &data)
 {
-    AppendJsonObjectToSocialNetworkTimelineScopedResponder scopedResponder;
+    AppendJsonObjectToSocialNetworkTimelineScopedResponder scopedResponder(m_Contracts->appendJsonObjectToSocialNetworkTimeline());
     //should this be 'insert' instead of 'append'? Can we add things with timestamps that happened years ago? should the desired timestamp be an arg TODOreq?
     emit addRequested(keyForJsonData(data), data);
     scopedResponder.deferResponding();
@@ -41,7 +48,7 @@ void SocialNetworkTimeline::handleO(QString msg)
 void SocialNetworkTimeline::handleInitializeFinished(bool success)
 {
     //handle StupidKeyValueContentTracker initialization finished
-    InitializeSocialNetworkTimelineScopedResponder scopedResponder;
+    InitializeSocialNetworkTimelineScopedResponder scopedResponder(m_Contracts->initializeSocialNetworkTimeline());
     if(success)
         handleO("StupidKeyValueContentTracker initialization finished successfully");
     else
@@ -52,7 +59,7 @@ void SocialNetworkTimeline::handleInitializeFinished(bool success)
 }
 void SocialNetworkTimeline::handleAddFinished(bool success)
 {
-    AppendJsonObjectToSocialNetworkTimelineScopedResponder scopedResponder;
+    AppendJsonObjectToSocialNetworkTimelineScopedResponder scopedResponder(m_Contracts->appendJsonObjectToSocialNetworkTimeline());
     if(!success)
     {
         emit e("StupidKeyValueContentTracker failed to add data." /*TODOwhatever: show data here, handleAddFinished would return our reference to it back to us, ideally*/);
@@ -73,7 +80,7 @@ void SocialNetworkTimeline::handleRemoveKeyFinished(bool success)
 }
 void SocialNetworkTimeline::handleCommitFinished(bool success)
 {
-    AppendJsonObjectToSocialNetworkTimelineScopedResponder scopedResponder;
+    AppendJsonObjectToSocialNetworkTimelineScopedResponder scopedResponder(m_Contracts->appendJsonObjectToSocialNetworkTimeline());
     if(success)
         emit o("StupidKeyValueContentTracker committed successfully");
     else

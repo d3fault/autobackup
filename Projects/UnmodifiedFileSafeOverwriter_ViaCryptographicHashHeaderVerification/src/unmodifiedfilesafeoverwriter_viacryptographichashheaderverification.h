@@ -23,6 +23,7 @@ public:
     bool commit();
 private:
     virtual void close() override;
+    virtual bool isSequential() const override;
     virtual bool seek(qint64 pos) override;
 
     virtual qint64 readData(char *data, qint64 maxSize) override;

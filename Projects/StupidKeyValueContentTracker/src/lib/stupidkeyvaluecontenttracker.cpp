@@ -25,8 +25,9 @@ StupidKeyValueContentTracker::StupidKeyValueContentTracker(QObject *parent)
 {
     connect(m_Timeline, &TimeAndData_Timeline::e, this, &StupidKeyValueContentTracker::e); //I would use that template to establishConnections, but that expects a this::handleE TODOmb think about how to properly solve that in UserInterfaceSkeletonGenerator (GLHF)
 
-    connect(this, &StupidKeyValueContentTracker::readAndEmitAllTimelineEntriesRequested, m_Timeline, &TimeAndData_Timeline::readAndEmitAllTimelineEntries);
-    connect(m_Timeline, &TimeAndData_Timeline::readAndEmitAllTimelineEntriesFinished, this, &StupidKeyValueContentTracker::handleReadAndEmitAllTimelineEntriesFinished);
+    connect(this, &StupidKeyValueContentTracker::readAndEmitAllTimelineEntriesInInLessEfficientForwardsChronologicalOrderRequested, m_Timeline, &TimeAndData_Timeline::readAndEmitAllTimelineEntriesInInLessEfficientForwardsChronologicalOrder);
+    connect(m_Timeline, &TimeAndData_Timeline::timelineEntryRead, this, &StupidKeyValueContentTracker::handleTimelineEntryRead);
+    connect(m_Timeline, &TimeAndData_Timeline::readAndEmitAllTimelineEntriesInInLessEfficientForwardsChronologicalOrderFinished, this, &StupidKeyValueContentTracker::handleReadAndEmitAllTimelineEntriesInInLessEfficientForwardsChronologicalOrderFinished);
 
     connect(this, &StupidKeyValueContentTracker::appendJsonObjectToTimelineRequested, m_Timeline, &TimeAndData_Timeline::appendJsonObjectToTimeline);
     connect(m_Timeline, &TimeAndData_Timeline::appendJsonObjectToTimelineFinished, this, &StupidKeyValueContentTracker::handleAppendJsonObjectToTimelineFinished);
@@ -119,7 +120,7 @@ void StupidKeyValueContentTracker::initialize()
     {
         scopedResponder.deferResponding();
         //iterate over all m_Timeline entries and populate m_CurrentData accordingly
-        emit readAndEmitAllTimelineEntriesRequested();
+        emit readAndEmitAllTimelineEntriesInInLessEfficientForwardsChronologicalOrderRequested();
         //TODOreq: don't allow add/commit/etc UNTIL handleCurrentDataRetrieved is called. not sure if this should be enforced in code or just in comments :-/
         emit o("populated KeyValue store by re-reading entire timeline");
     }
@@ -216,16 +217,27 @@ void StupidKeyValueContentTracker::readKey(const QString &key, const QString &re
     scopedResponder.response()->setData(data);
     return /*emit*/;
 }
-void StupidKeyValueContentTracker::handleReadAndEmitAllTimelineEntriesFinished(bool success, const AllTimelineEntriesType &allTimelineEntries)
+void StupidKeyValueContentTracker::handleTimelineEntryRead(const TimeAndDataAndParentId_TimelineEntry &timelineEntry)
+{
+    //TODOreq
+}
+void StupidKeyValueContentTracker::handleReadAndEmitAllTimelineEntriesInInLessEfficientForwardsChronologicalOrderFinished(bool success, TimelineEntryIdType latestTimelineEntryId)
 {
     InitializeScopedResponder scopedResponder(m_Contracts->initialize());
+    if(!success)
+        return /*emit*/;
 
+    //TODOreq
+#if 0
     //parse allTimelineEntries and populate m_CurrentData accordingly
-    for(AllTimelineEntriesType::const_iterator it = allTimelineEntries.constBegin(); it != allTimelineEntries.constEnd(); ++it)
+    //TimeAndData_TimelineDataBackwardsIterator it(timelineData);
+    TimeAndData_TimelineDataSlowForwardsIterator it(latestTimelineEntryId);
+    while(it.hasNext())
     {
+        it.next();
         //TODOreq: what to do with the timestamp here? does StupidKeyValueContentTracker even want/need it? maybe that's what I'll query by? "what was the value of this key at this point in time?" (and you don't have to specify the EXACT time of the commit ofc). idk yet tbh
         //TODOreq: we could also access the commitMessage here, but just like the timestamp I'm not sure we care about it... yet?
-        const QJsonObject &data = it.value();
+        const QJsonObject &data = it.data();
         const QJsonObject &mutations = data.value(StupidKeyValueContentTracker_JSONKEY_BULKMUTATIONS).toObject(); //TODOreq: should we care about errors? such as the mutations key not existing? blah mind = exploded
         for(QJsonObject::const_iterator it2 = mutations.constBegin(); it2 != mutations.constEnd(); ++it2)
         {
@@ -240,8 +252,9 @@ void StupidKeyValueContentTracker::handleReadAndEmitAllTimelineEntriesFinished(b
     }
     scopedResponder.response()->setSuccess(true);
     return /*emit*/;
+#endif
 }
-void StupidKeyValueContentTracker::handleAppendJsonObjectToTimelineFinished(bool success)
+void StupidKeyValueContentTracker::handleAppendJsonObjectToTimelineFinished(bool success, TimeAndDataAndParentId_TimelineEntry timelineEntry)
 {
     CommitScopedResponder scopedResponder(m_Contracts->commit());
 

@@ -98,6 +98,10 @@ void UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification::close(
 {
     QIODevice::close();
 }
+bool UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification::isSequential() const
+{
+    return true; //we don't want users of this lib to try to seek
+}
 bool UnmodifiedFileSafeOverwriter_ViaCryptographicHashHeaderVerification::seek(qint64 pos)
 {
     Q_UNUSED(pos)

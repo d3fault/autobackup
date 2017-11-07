@@ -7,7 +7,6 @@
 //^^if I keep 'commit', then it makes sense to have a 'status' command to show the staged mutations
 //TODOreq: when I read in 2 TimeAndData_Timeline entries with the same datetime (but different data) from QSettings and stuffing them into a MultiMap, am I guaranteed to read them in using the same order? are they sorted by key _AND_ value, or I think yea just key is the only sort, so this needs addressing. it needs to be defined
 //TODOprobably: rename this app to StupidKeyValueContentTrackerCliTest, and make 'interactive' the ONLY mode. StupidKeyValueContentTracker is designed to be a LIB first and foremost, so the "cli" interactivity is wasted effort atm tbh: eg. I don't want to write the code to "[de]serialize uncommitted adds" between app sessions, fuck it
-#error "This is an app to test the lib, not intended to be used standalone. Uncomment this and run in --interactive mode only. see the comment directly above this error"
 StupidKeyValueContentTrackerCli::StupidKeyValueContentTrackerCli(QObject *parent)
     : QObject(parent)
     , m_StandardInputNotifier(nullptr)
@@ -55,7 +54,14 @@ void StupidKeyValueContentTrackerCli::processArgs()
         return;
     }
 
-    if(m_AppArgs.contains("--interactive"))
+    //FORCE INTERACTIVE MODE FOR NOW
+    handleE("This is an app to test the lib, not intended to be used standalone. This app ONLY runs in interactive mode. A non-interactive mode might be made some day");
+    QString interactiveFlag("--interactive");
+    if(!m_AppArgs.contains(interactiveFlag))
+        m_AppArgs.append(interactiveFlag);
+
+
+    if(m_AppArgs.contains(interactiveFlag))
     {
         if(m_AppArgs.size() > 1)
         {
@@ -169,7 +175,7 @@ void StupidKeyValueContentTrackerCli::handleO(QString msg)
 {
     m_StdOut << msg << endl;
 }
-void StupidKeyValueContentTrackerCli::handleInitializationFinished(bool success)
+void StupidKeyValueContentTrackerCli::handleInitializeFinished(bool success)
 {
     if(success)
     {

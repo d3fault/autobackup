@@ -10,7 +10,7 @@ BusinessObject::BusinessObject(QObject *parent)
 { }
 void BusinessObject::someSlot(int x)
 {
-    SomeSlotScopedResponder scopedResponder(m_Contracts.someSlot());
+    SomeSlotScopedResponder scopedResponder(m_Contracts.someSlot()); //TODOreq: could just pass in m_Contracts, since SomeSlotScopedResponder is smart enough to know to call m_Contracts.someSlot() -- less typing = win
 
     m_X = x;
     QTimer::singleShot(0, this, SLOT(someSlotContinuation()));
