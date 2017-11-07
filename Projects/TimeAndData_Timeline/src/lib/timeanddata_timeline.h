@@ -6,7 +6,6 @@
 #include <memory>
 
 #include <QJsonObject>
-#include <QHash>
 #include <QScopedPointer>
 
 //per timeline-entry
@@ -57,17 +56,6 @@ private:
     TimelineEntryIdType m_CachedTimelineEntryId;
     bool m_CachedTimelineEntryId_IsStale = true;
 };
-
-#if 0
-//typedef QMultiMap<qint64 /*time*/, QJsonObject /*data*/> AllTimelineEntriesType;
-typedef QHash<TimelineEntryIdType /*TimelineEntryId_aka_sha3_256_hex*/, TimeAndDataAndParentId_TimelineEntry /*timeAndDataAndParentId*/> AllTimelineEntriesType;
-
-struct TimeAndData_TimelineData
-{
-    AllTimelineEntriesType AllTimelineEntries;
-    TimelineEntryIdType LatestTimelineEntryId_aka_HEADinGitLingo;
-};
-#endif
 
 namespace TimeAndData_TimelineRequestResponseContracts
 {

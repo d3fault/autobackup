@@ -219,40 +219,29 @@ void StupidKeyValueContentTracker::readKey(const QString &key, const QString &re
 }
 void StupidKeyValueContentTracker::handleTimelineEntryRead(const TimeAndDataAndParentId_TimelineEntry &timelineEntry)
 {
-    //TODOreq
+    //TODOreq: what to do with the timestamp here? does StupidKeyValueContentTracker even want/need it? maybe that's what I'll query by? "what was the value of this key at this point in time?" (and you don't have to specify the EXACT time of the commit ofc). idk yet tbh
+    //TODOreq: we could also access the commitMessage here, but just like the timestamp I'm not sure we care about it... yet?
+    const QJsonObject &data = timelineEntry.data();
+    const QJsonObject &mutations = data.value(StupidKeyValueContentTracker_JSONKEY_BULKMUTATIONS).toObject(); //TODOreq: should we care about errors? such as the mutations key not existing? blah mind = exploded
+    for(QJsonObject::const_iterator it = mutations.constBegin(); it != mutations.constEnd(); ++it)
+    {
+        QString key = it.key();
+        const QJsonObject &mutationTypeAndMutationValue = it.value().toObject();
+        QJsonObject::const_iterator it2 = mutationTypeAndMutationValue.constBegin(); //TODOreq: error checking of it2 maybe? and also would we allow multiple different types of mutations to a single key here, or will there always be just 1? I think just 1
+        QString mutationType = it2.key();
+        QString mutationValue = it2.value().toString(); //TODOreq: error checkin mb
+        StupidKeyValueContentTracker_StagedMutationsValueType stagedMutationForImmediateApplication = KeyValueStoreMutationFactory::createKeyValueStoreMutation(mutationType, mutationValue);
+        stagedMutationForImmediateApplication->mutateCurrentStupidKeyValueContent(key, &m_CurrentData);
+    }
 }
 void StupidKeyValueContentTracker::handleReadAndEmitAllTimelineEntriesInInLessEfficientForwardsChronologicalOrderFinished(bool success, TimelineEntryIdType latestTimelineEntryId)
 {
     InitializeScopedResponder scopedResponder(m_Contracts->initialize());
     if(!success)
-        return /*emit*/;
-
-    //TODOreq
-#if 0
-    //parse allTimelineEntries and populate m_CurrentData accordingly
-    //TimeAndData_TimelineDataBackwardsIterator it(timelineData);
-    TimeAndData_TimelineDataSlowForwardsIterator it(latestTimelineEntryId);
-    while(it.hasNext())
-    {
-        it.next();
-        //TODOreq: what to do with the timestamp here? does StupidKeyValueContentTracker even want/need it? maybe that's what I'll query by? "what was the value of this key at this point in time?" (and you don't have to specify the EXACT time of the commit ofc). idk yet tbh
-        //TODOreq: we could also access the commitMessage here, but just like the timestamp I'm not sure we care about it... yet?
-        const QJsonObject &data = it.data();
-        const QJsonObject &mutations = data.value(StupidKeyValueContentTracker_JSONKEY_BULKMUTATIONS).toObject(); //TODOreq: should we care about errors? such as the mutations key not existing? blah mind = exploded
-        for(QJsonObject::const_iterator it2 = mutations.constBegin(); it2 != mutations.constEnd(); ++it2)
-        {
-            QString key = it2.key();
-            const QJsonObject &mutationTypeAndMutationValue = it2.value().toObject();
-            QJsonObject::const_iterator it3 = mutationTypeAndMutationValue.constBegin(); //TODOreq: error checking of it3 maybe? and also would we allow multiple different types of mutations to a single key here, or will there always be just 1? I think just 1
-            QString mutationType = it3.key();
-            QString mutationValue = it3.value().toString(); //TODOreq: error checkin mb
-            StupidKeyValueContentTracker_StagedMutationsValueType stagedMutationForImmediateApplication = KeyValueStoreMutationFactory::createKeyValueStoreMutation(mutationType, mutationValue);
-            stagedMutationForImmediateApplication->mutateCurrentStupidKeyValueContent(key, &m_CurrentData);
-        }
-    }
-    scopedResponder.response()->setSuccess(true);
+        emit e("TimeAndData_Timeline::readAndEmitAllTimelineEntriesInInLessEfficientForwardsChronologicalOrderFinished unsuccessfully");
+    //TODOmb: stuff latestTimelineEntryId into scopedResponder, or maybe just save it as a member, who knows I'll prolly do somethin with it later
+    scopedResponder.response()->setSuccess(success); //sexex chaisy-dainin' <3
     return /*emit*/;
-#endif
 }
 void StupidKeyValueContentTracker::handleAppendJsonObjectToTimelineFinished(bool success, TimeAndDataAndParentId_TimelineEntry timelineEntry)
 {
@@ -260,12 +249,13 @@ void StupidKeyValueContentTracker::handleAppendJsonObjectToTimelineFinished(bool
 
     if(!success)
     {
-        emit e("error: failed to commitStagedKeyValueStoreMutation()! your key/values are still 'staged'. your db is probably fucked tho, psbly half of staged values were written, half not");
+        emit e("failed to commitStagedKeyValueStoreMutation()! your key/values are still 'staged'. your db is probably fucked tho, psbly half of staged values were written, half not");
         return /*emit*/;
     }
     emit o("successfully committed 'staged' key value store mutations");
     applyStagedMutationsToCurrentData();
     m_StagedKeyValueStoreMutation.clear();
+    //TODOmb: stuff the timelineEntryId into scopedResponder?
     scopedResponder.response()->setSuccess(success); //xD "success" daisy chaining <3
     return /*emit*/;
 }

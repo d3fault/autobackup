@@ -96,70 +96,6 @@ void TimeAndData_Timeline::readAndEmitAllTimelineEntriesInInLessEfficientForward
 
     scopedResponder.response()->setSuccess(true);
     return /*emit*/;
-
-#if 0
-    //TODOoptimization: it's more memory efficient to read one entry at a time (so one entry/emit per slot invoke -- and yea the slot takes some arg specifying which), but that requires breaking up the code and stuff... so it should come later. KISS for now, even if over-simplified and inefficient
-    QSettings settings;
-
-    TimeAndData_TimelineData timeAndData_TimelineData;
-    settings.beginGroup(TimeAndData_Timeline_GROUP);
-    {
-        TimelineEntryIdType latestTimelineEntryId_OrNullAkaEmptyAkaRootTimelineEntryId = settings.value(TimeAndData_Timeline_SETTINGSKEY_LATEST_TIMELINE_ENTRY_ID_AKA_HEAD_IN_GIT_LINGO, nullAkaEmptyAkaRootTimelineEntryId()).toString();
-        if(latestTimelineEntryId_OrNullAkaEmptyAkaRootTimelineEntryId == nullAkaEmptyAkaRootTimelineEntryId())
-        {
-            //there are no timeline entries (first run etc)
-            scopedResponder.response()->setSuccess(true);
-            return /*emit*/;
-        }
-
-        settings.beginGroup(TimeAndData_Timeline_SETTINGSGROUP_TIMELINE_ENTRIES);
-        {
-            TimelineEntryIdType currentTimelineEntryId = latestTimelineEntryId_OrNullAkaEmptyAkaRootTimelineEntryId;
-            while(currentTimelineEntryId != nullAkaEmptyAkaRootTimelineEntryId())
-            {
-                QString timeAndDataAndParentIdJsonString = settings.value(currentTimelineEntryId);
-                QByteArray timeAndDataAndParentIdJsonBA = timeAndDataAndParentIdJsonString.toUtf8();
-                QJsonParseError jsonParseError;
-                QJsonDocument timeAndDataAndParentIdJsonDoc = QJsonDocument::fromJson(timeAndDataAndParentIdJsonBA, &jsonParseError);
-                if(jsonParseError.error != QJsonParseError::NoError)
-                {
-                    //TODOreq: handle parse errors good. we should never see this unless the user manually modified the json
-                    QString eMsg = "\n";
-                    eMsg.append(timeAndDataAndParentIdJsonString);
-                    eMsg.append("\n");
-                    eMsg.append("json parse error: " + jsonParseError.errorString());
-                    emit e(eMsg);
-                    //qFatal("json parse error");
-                    return /*emit*/;
-                }
-                QJsonObject timeAndDataAndParentIdJson = timeAndDataAndParentIdJsonDoc.object();
-                TimeAndDataAndParentId_TimelineEntry timelineEntry;
-                bool convertOk = false;
-                QString timeString = timeAndDataAndParentIdJson.value(TimeAndData_Timeline_JSONKEY_TIME).toString();
-                timelineEntry.setTime(timeString.toLongLong(&convertOk));
-                if(!convertOk)
-                {
-                    //TODOreq: handle parse errors good. we should never see this unless the user manually modified the json
-                    emit e("timestamp parse error: " + timeString);
-                    //qFatal("timestamp parse error");
-                    return /*emit*/;
-                }
-                timelineEntry.setData(timeAndDataAndParentIdJson.value(TimeAndData_Timeline_JSONKEY_DATA).toObject());
-                timelineEntry.setParentTimelineEntryId(timeAndDataAndParentIdJson.value(TimeAndData_Timeline_JSONKEY_PARENT_TIMELINE_ENTRY_ID, nullAkaEmptyAkaRootTimelineEntryId()).toString());
-                //TODOmb: we could do [read-time] VERIFICATION here, sha3 the value against it's key
-                timeAndData_TimelineData.AllTimelineEntries.insert(currentTimelineEntryId, timelineEntry);
-
-                currentTimelineEntryId = parsedParentTimelineEntryId;
-            }
-        }
-        settings.endGroup();
-    }
-    settings.endGroup();
-
-    scopedResponder.response()->setTimelineData(timeAndData_TimelineData);
-    scopedResponder.response()->setSuccess(true);
-    return /*emit*/;
-#endif
 }
 void TimeAndData_Timeline::appendJsonObjectToTimeline(const QJsonObject &data)
 {
@@ -311,7 +247,7 @@ TimelineEntryIdType TimeAndDataAndParentId_TimelineEntry::privateGenerateTimelin
 {
     QJsonObject jsonObject = toJsonObject();
     QJsonDocument jsonDoc(jsonObject);
-    QByteArray jsonByteArray = jsonDoc.toJson(QJsonDocument::Compact/*TODOreq: Indented if ever moved out of QSettings*/);
+    QByteArray jsonByteArray = jsonDoc.toJson(QJsonDocument::Compact/*TODOreq: Indented if ever moved out of QSettings. HOWEVER, for "sha3" purposes we should maybe ALWAYS use Compact. so that "whitespace outside of keys/values" isn't factored in (but if Qt is ALWAYS the one doing the indenting, we could probably be sane about that)*/);
     QByteArray hash = QCryptographicHash::hash(jsonByteArray, QCryptographicHash::Sha3_256).toHex(); //TODOoptimization: base58 check encoding. b64 is stupid in that it has "/" in it, making it unsuitable for filenames
     TimelineEntryIdType ret(hash);
     return ret;
