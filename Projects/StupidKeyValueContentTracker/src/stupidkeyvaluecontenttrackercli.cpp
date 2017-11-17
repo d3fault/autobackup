@@ -47,19 +47,19 @@ void StupidKeyValueContentTrackerCli::processArgs()
     //TODOreq: should a non-interactive "add" command _default_ to committing implicitly? ex: ./app add --no-commit key data; ./app add --no-commit key2 data2; ./app commit boobs
     //OR, should it behave like git and not commit after each add? I could ofc allow many adds in a single line, hell even many commands xD. KISS for now, but the first question of the comment 1 line above is still relevant
 
+    //FORCE INTERACTIVE MODE
+    handleE("This is an app to test the lib, not intended to be used standalone. This app ONLY runs in interactive mode. A non-interactive mode might be made some day");
+    QString interactiveFlag("--interactive");
+    if(!m_AppArgs.contains(interactiveFlag))
+        m_AppArgs.append(interactiveFlag);
+    //END FORCE INTERACTIVE MODE
+
     if(m_AppArgs.isEmpty())
     {
 
         myE(""); //usage() implied
         return;
     }
-
-    //FORCE INTERACTIVE MODE FOR NOW
-    handleE("This is an app to test the lib, not intended to be used standalone. This app ONLY runs in interactive mode. A non-interactive mode might be made some day");
-    QString interactiveFlag("--interactive");
-    if(!m_AppArgs.contains(interactiveFlag))
-        m_AppArgs.append(interactiveFlag);
-
 
     if(m_AppArgs.contains(interactiveFlag))
     {

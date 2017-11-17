@@ -84,12 +84,16 @@ Documents/minddump/2017/10/1509401126-MTJ886.txt:1509401133
 Documents/minddump/2017/10/1509404203-TJ1278.txt:1509404614
 Documents/minddump/2017/10/1509410278-MTJ788.txt:1509410791
 Documents/minddump/2017/10/1509414730-TJ1327.txt:1509414733
-Documents/minddump/2017/11/:1510085195
+Documents/minddump/2017/11/:1510940516
 Documents/minddump/2017/11/1509914986-MTJ798.txt:1509915026
 Documents/minddump/2017/11/1509915421-Tik798.txt:1509915425
 Documents/minddump/2017/11/1509915941-TwZ798.txt:1509916120
 Documents/minddump/2017/11/1509931566-MTJ818.txt:1509931566
 Documents/minddump/2017/11/1510085177-TJ2935.txt:1510085185
+Documents/minddump/2017/11/1510939147-MTJ784.txt:1510940002
+Documents/minddump/2017/11/1510940110-LhX784.txt:1510940328
+Documents/minddump/2017/11/1510940372-nnS784.txt:1510940387
+Documents/minddump/2017/11/1510940438-Tik784.txt:1510940494
 Documents/minddump/2017/5/:1496186514
 Documents/minddump/2017/5/1495171253-Kauai.0a-MTJ783.txt:1495179507
 Documents/minddump/2017/5/1495214940-MTJ843.txt:1495215210
@@ -5774,7 +5778,7 @@ Projects/StupidKeyValueContentTracker/design/:1508714633
 Projects/StupidKeyValueContentTracker/design/UserInterfaceSkeletonGenerator\:\:populateDataUsingHardCodedCppXD.cpp:1509415870
 Projects/StupidKeyValueContentTracker/design/initial.idea.while.trying.to.solve.backup.problems.for.D3faultNetVideoLiveStream.and.ultimate.timeline.design.lol.shit.again.for.millionth.attempt.txt:1506219492
 Projects/StupidKeyValueContentTracker/design/sdflksdjfklsdjflkdjsfkljsdfoiuewrlkjsdofusldkfjdsifukl.txt:1506211668
-Projects/StupidKeyValueContentTracker/src/:1510089803
+Projects/StupidKeyValueContentTracker/src/:1510090593
 Projects/StupidKeyValueContentTracker/src/lib/:1510088872
 Projects/StupidKeyValueContentTracker/src/lib/ikeyvaluestoremutation.h:1506393016
 Projects/StupidKeyValueContentTracker/src/lib/keyvaluestoremutation_add.cpp:1507157495
@@ -5791,7 +5795,7 @@ Projects/StupidKeyValueContentTracker/src/lib/stupidkeyvaluecontenttrackertypes.
 Projects/StupidKeyValueContentTracker/src/StupidKeyValueContentTrackerCli.pro:1509387897
 Projects/StupidKeyValueContentTracker/src/main.cpp:1508558460
 Projects/StupidKeyValueContentTracker/src/stupidkeyvaluecontenttracker.pri:1509416123
-Projects/StupidKeyValueContentTracker/src/stupidkeyvaluecontenttrackercli.cpp:1510011496
+Projects/StupidKeyValueContentTracker/src/stupidkeyvaluecontenttrackercli.cpp:1510090178
 Projects/StupidKeyValueContentTracker/src/stupidkeyvaluecontenttrackercli.h:1510011187
 Projects/SubjectMatterMasteryHelper/:1403582609
 Projects/SubjectMatterMasteryHelper/design/:1403585985
