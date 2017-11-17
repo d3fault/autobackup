@@ -23,11 +23,7 @@ class TimeAndDataAndParentId_TimelineEntry// : public QJsonObject
 public:
     TimeAndDataAndParentId_TimelineEntry()=default;
     //TimeAndDataAndParentId_TimelineEntry(const QJsonDataObject &other)=delete;
-    TimeAndDataAndParentId_TimelineEntry(const TimeAndDataAndParentId_TimelineEntry &other)
-        : m_Time(other.time())
-        , m_Data(other.data())
-        , m_ParentTimelineEntryId(other.parentTimelineEntryId())
-    { }
+    TimeAndDataAndParentId_TimelineEntry(const TimeAndDataAndParentId_TimelineEntry &other)=default;
     TimeAndDataAndParentId_TimelineEntry(qint64 time, const QJsonObject &data, TimelineEntryIdType parentTimelineEntryId)
         : m_Time(time)
         , m_Data(data)
