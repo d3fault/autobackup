@@ -1,0 +1,7 @@
+"warning, this application needs _you_ to function correctly. ~7"
+[yes(default)] | [no]
+
+
+maybe "your help" instead of "you"
+
+maybe if there's >= 7 then it merely says "do you want to donate computer resources?", but if < 7 then it says that above "warning" on new connect. this warning is applicable to both a private DHT (backup solution etc) and even a public one (1337 p2p DHTz).

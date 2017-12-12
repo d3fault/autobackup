@@ -1,0 +1,20 @@
+I'm contribootin' my first [significant] patch to Qt right now, as in over the past few weeks I've been workin on it. It's fun and a bit much at times (bikeshedding over insignificant things, but Qt warrants POLISH so I kinda understand).
+
+Add QFile::NewOnly and QFile::ExistingOnly OpenMode flags
+
+It's kinda like
+idk
+contribootin' to Qt is like this: YOU (me) put up the up front work. the initial work. I'm pretty sure I'm putting the most effort into it. but it's an AMAZING trade. you know what I get in exchange? free maintenance for life.
+oh and there's also ego ofc: I want "cd qt5/qtbase && git log | grep -q d3fault && echo poop" to echo poop!
+
+still tbh it's going to be "neat" when it gets pulled in and then I don't even have to worry about bugs being filed against it: not MY problem ;-P. maybe I'll help with them for fun, but that's a different story.
+
+I guess what I'm saying is that certain open source projects are totally worth contribootin' to because OTHERS will keep _YOUR_ work alive FOR YOU.
+
+the point is this: don't feel bad or insulted or annoyed etc when the other Qt devs are extremely fucking critical of your work, seemingly nit picking over the most minor details ever. the reason they DESERVE to nit pick like that is because they're going to be the ones maintaining it.
+
+tbh the amount of man hours I'm putting into the patch will probably be an insignificant fraction of the amount of time that others will analyze and maintain it. it's certainly going to be an insignificant amount of time compared to how much time ALL PEOPLE EVER will spend using it (not maintaining it), but that's obvious.
+
+QIODevice is such a core class to Qt. I'd say that after QObject it's the 2nd most core/centric class in Qt. I'm honored to be adding such a cool piece of functionality to such a core part of a toolkit/framework that I use and love so much.
+
+I hope to contribute to Qt more. It's going to be my way of pushing forward C++/Programming as a whole. Fuck ISO C++ (sry bjarne/herb), shit is laggin decades behind Qt (but tbh "Modern C++" is schmexy in it's own right, and has made huge gains over "legacy C++" in which Qt is unfortunately written in xD).
