@@ -1,0 +1,75 @@
+I want one bare git repo to "keep track of by doing git push to various external medium" which has a master branch that is a super project (which means it's composed of ONLY 'git submodules' and no 'files or folders' proper), and I want each of those submodules (RECURSIVELY) to be branches directly next to that said "master superproject" branch. perhaps this is already possible, I don't know.
+
+cd /my/repo
+git push --all /path/to/ext
+
+
+that's how I want to perform my "backup". everything else is just hooks.
+so since it will probably be used with online boxen also, I could call it the more generic "sync". Maybe it's best to just call it what it is: push.
+
+
+ok stop right here;
+the thing is, this kind of thing, a FUCKING PUSH SCRIPT, is possible with git submodules as they exist right now. just gotta get gud and write it. I've put a lot of thought into this already. I guess I'm hoping someone else has already written it for me and I can just do "git push --all" without having to code anything :( /lazy/scared/dumb.
+
+what do I do with aww shit I need to re-read the git submodules tutorial for the fucking millionth time. but the orig question was: what do I do with the local submodule (local to a project that is depending on a submodule as a lib)? changes to it would become desync'd obviously, and I know git merge def would help, but errr ehh uhmm what do I do witth them? obviously merge to latest branch if possible (or start from it whenever you can *cough* not-the-strat-debian-uses *cough*). continuously merging desync'd states of libs (submodules) is true hell.
+
+I could actually write a tool to "try compiling with newer versions of lib until compile fails" that iterates the submodule's commits from 'current' -> HEAD, which should help me stay up to sync EASIER (less "work"/typing/git-submodule-maintenance/compilation/etc) but not necessarily safer (against regressions/etc) or anything like that. That tool would have to give a creative summary of the results, since EACH submodule would get the priviledge of "seeing how far it gets with all of the OTHER submodules at 'current' (or possibly EVERY state between 'current' and HEAD lolol would take forever but would be thorough). I mean yes in the common cases all of the submodules will come to HEAD (or should I refer to it as originHead? originHead is definitely less ambiguous in my own mind) and compilation will continue to succeed, but in the cases that one fails we need to do some testing of various versions of libs to pinpoint a commit that broke a compilation. for most breaks in compilation, it will be the commit of the broken submodule itself, not any of the sibling submodules' version changes triggering it. but there WILL be inter-dependency breaking commits. "submodule0 gets to point HEAD when submodule1 is left at current" (breaks when submodule goes somewhere beyond current). "submodule1 gets to point HEAD when submodule0 is left at current" (breaks when submodule goes somewhere beyond current). somehow those 2 points intersect or are related to each other and might be of importance TODOreq.
+
+see the thing is even thinking about "the local submodule checkouts (which aren't kept up with HEAD [unless I change their commitId or run the tool described above lol])" is a fucking show stopper for me to write even the very basics of the "git submodules autobackuphalper". design or code (and in some cases, --rip d=i).
+
+Even the basics of an auto git submodules backup halper hurt my brain to think about, since I want a recursive directory tree to be "backed up", whereas in the git submodules tutorial you'll see that the super project and the submodules it consists of are all in a single directory. blah who the fuck am I kidding, let's just use hex hash (b58 is tempting) for the filePATH (had:filename) so they all fit in the same directory with no collisions. and in fact they should probably go in subdirs for the first 2 chars of that hex hash, just like git does. I guess I'll use sha1hex since the man (Linus) does. see already this paragraph is mildly confusing. doh you idiot break up your requirements into functional (not necessarily useful) sub-tasks. don't put the hexhash filename into a subfolder(s) optimization YET. not for the first commit. def want to, def going to, NOT IN FIRST (HAD:THIS) COMMIT.
+
+ok now that the basics are SLIGHTLY tackled, what the fuck is even the common use case? like I mean I know it exists, I just can't, or haven't yet, written it down simply. like err submodules have weird and (sometimes) bi-directional workflows xD: mind = exploded. but ok so what's the simple/common workflow noob?
+
+I want my Projects subfolders in my autobackup (sometimes called text) folder to be portable/independent/git-motherfucking-submodules. To start, every folder in my autobackup folder will be a submodule (in the future I need to make an exception for "local git submodule checkouts needed for hacking/compiling").
+
+So I use a recursive QDirIterator and then sha1hex the filepath relative to my root autobackup dir. then I create QTemporaryDir and git clone the autobackup branch for that sha1hex--- err do I want these ideas to merge or should I just keep all the superproject's submodule origin folders in a SEPARATE folder (and not stuff them in branches like the first part of this doc describes).
+well anyways yea I locate the sha1hex-name'd git submodule origin dir wherever it is, then fokken "cp -avi" the files over or run me git cmds with GIT_DIR/etc set up hackily so that me changes git pushed. actually I very much like it that I am still able to do MONOLITHIC git at the same time at least early on, so GIT_DIR hacks coudl give me best of both worlds (MONOLITHIC best = data safety. hard to fuck up).
+so I mean once the GIT_DIR/etc is set up, it's honestly as simple as "git add .; git commit". don't even need to push since GIT_DIR/etc is set up.
+
+then if I DON'T use the 1-git-repo-with-tons-of-sha1hex-submodule-branches, I will have a bunch of sha1hex directories next to each other (later to be optimized a tad), which I need to have a script to "backup" or "push recursively". it's basically just a non-recursive iterator, pushing the submodule origin dirs to some destination dir where those submodule (had:origin) dirs are being backed up to. sync'd to. pushed to.
+//pseudo:
+Q_FOREACH(dir, gitSubmoduleOriginDirs)
+{
+	//dir.name is already sha1hex
+	cd dir.name;
+	git push QString("/some/dest/provided/as/arg/" + dir.name);
+	cd ..
+}
+//probably need to push the superproject at some point too
+
+so there are 2 tools, unlike my quickdirtyautobackuphalper (whose git push functionality I don't even use/trust anymore). I guess yea they could be combined, but why would I want to do that? maybe later.
+
+2 tools:
+auto-git-submodules-recursive-committer #creates and updates the sha1hex git submodule origin dirs, as well as the superproject itself
+auto-git-submodules-origindirs-pusher #pushes the gitSubmoduleOriginDirs (and superproject), as in the pseudo-code above
+
+it boggles my mind the things I could do with libgit2.
+
+btw I'm highly considering rewriting TimeAndData_Timeline impl (but not interface) so that it uses git in the backend. fuck it why reinvent the wheel? I just want git abstracted away!!! perhaps later I'll thank myself for using git when one of it's GAJILLIONS of tools saves my ass. it also sometimes saves your data from data loss for you.
+
+I wish I had confidence in libgit2, but it's hard 2 when the main tool, git, doesn't even use it.
+
+All things that can be done with libgit2 can be done with "a QTemporaryDir created/destroyed on the fly and by using the git executables (instead of libgit2)", but only libgit2 can do a bunch of those things elegantly (readable/clean C++) and efficiently (not pointlessly copying tons of files around).
+
+there's something ez I keep neglecting to think about: the superproject! namely, when does it get updated? surely it can't get updated BEFORE we start, and it sounds quite stupid to update while we are running (but maybe it's more efficient, what do I know?), so clearly we must update the superproject after we are done recursively committing each sub-directory.
+
+I need a good/simple/effective/EARLY naming scheme (obviously 'autobackup' would be replaceable):
+autobackup_superproject
+autobackup_sha1hexOf1gitsubmodule
+
+hmm but there's no indication that the superproject and submodules are related/linked/interdependent-in-lots-but-not-all-cases
+
+text_agsmbh_super
+text_agsmbh_sub-sha1hex
+
+agsmbh = auto git submodule backup halper. maybe that agsmbh should come as a prefix so that they can all be easily identified aside from non-agsmbh repos.
+
+inside the superproject (and maybe submodules) I should have a readme directing the user to the agsmbh tools (both of them) and a short explaination of what they are. if I randomly git push a thousand git submodules all of the sudden, a web admin might rightly be curious wtf the reason for it is.
+
+agsmbh does not have a good ring to it, but it's unique as fuck lololol!
+
+agsmbh_d3fault_0superproject
+agsmbh_d3fault_1subproject-sha1hexOfRelativePathOfSubmoduleInMyAutobackupFolder
+
+the 0 and 1 are there so that the superproject is sorted above the subprojects
