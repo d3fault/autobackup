@@ -1,0 +1,1 @@
+Reinventing Git is like reinventing C++: sure you can, but wtf is the point!?!?!?

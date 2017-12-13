@@ -1,0 +1,1 @@
+Making hacky exceptions for binaries, running both AutoGitSubmoduleBackupHalper (modular) and QuickDirtyAutoBackupGitHalper (monolithic) side by side shouldn't be TOOOO time consuming for the forseable future. If it brings me piece of mind (and it sure as shit does), it's worth it the "time wasted" (spent).

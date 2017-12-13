@@ -1,0 +1,1 @@
+For "locall checked out submodules" needed for hacking/compiling, I should "default to HEAD" if no specific commit is... err... specified, but use whatever commitId is provided when one is provided.
