@@ -17,7 +17,7 @@ Documents/Qt/qt.quick.cpp.frontend.to.qt.quick.backend.needs.still.a.clean.front
 Documents/Qt/quadruple.is.an.understatement.txt:1344528935
 Documents/Qt/trolololol.dont.actually.have.anything.but.i.did.ponder.some.up.while.looking.at.QSG.classes.txt:1340559703
 Documents/Qt/why.am.i.in.here.i.feel.hacked.txt:1344456043
-Documents/minddump/:1513135563
+Documents/minddump/:1516435619
 Documents/minddump/2016/:1459724150
 Documents/minddump/2016/3/:1459367409
 Documents/minddump/2016/3/1457041314-MTJ867.txt:1457227057
@@ -95,7 +95,7 @@ Documents/minddump/2017/11/1510940110-LhX784.txt:1510941370
 Documents/minddump/2017/11/1510940372-nnS784.txt:1510940387
 Documents/minddump/2017/11/1510940438-Tik784.txt:1510940494
 Documents/minddump/2017/11/1510941570-MTJ843.txt:1510941574
-Documents/minddump/2017/12/:1513190140
+Documents/minddump/2017/12/:1513203522
 Documents/minddump/2017/12/1512852082-MTJ788.txt:1512852099
 Documents/minddump/2017/12/1512868408-MTJ839.txt:1512868498
 Documents/minddump/2017/12/1512868578-LhX839.txt:1512869483
@@ -114,6 +114,8 @@ Documents/minddump/2017/12/1513185272-MTJ824.txt:1513185948
 Documents/minddump/2017/12/1513189261-MTJ787.txt:1513189661
 Documents/minddump/2017/12/1513189691-LhX787.txt:1513189693
 Documents/minddump/2017/12/1513189807-nnS787.txt:1513190125
+Documents/minddump/2017/12/1513203018-MTJ786.txt:1513203132
+Documents/minddump/2017/12/1513203144-LhX786.txt:1513203460
 Documents/minddump/2017/5/:1496186514
 Documents/minddump/2017/5/1495171253-Kauai.0a-MTJ783.txt:1495179507
 Documents/minddump/2017/5/1495214940-MTJ843.txt:1495215210
@@ -160,6 +162,14 @@ Documents/minddump/2017/9/1505518639-MTJ782.txt:1505519975
 Documents/minddump/2017/9/1505607752-TJ1990.txt:1505607956
 Documents/minddump/2017/9/1506220721-TJ2590.txt:1506220791
 Documents/minddump/2017/9/1506388734-TJ2426.txt:1506388880
+Documents/minddump/2018/:1516435619
+Documents/minddump/2018/1/:1516437049
+Documents/minddump/2018/1/1516435001-MTJ796.txt:1516435562
+Documents/minddump/2018/1/1516435634-a.5.year.old.could.stump.trump-LhX796.txt:1516435855
+Documents/minddump/2018/1/1516436070-nnS796.txt:1516436464
+Documents/minddump/2018/1/1516436558-Tik796.txt:1516436568
+Documents/minddump/2018/1/1516436591-TwZ796.txt:1516436636
+Documents/minddump/2018/1/1516436809-jdT796.txt:1516437035
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -3859,7 +3869,7 @@ Projects/IcePick/src/lib/:1431941696
 Projects/IcePick/src/lib/icepick.cpp:1454913367
 Projects/IcePick/src/lib/icepick.h:1431941502
 Projects/IcePick/src/IcePickGui.pro:1431928734
-Projects/Ideas/:1510089796
+Projects/Ideas/:1516438105
 Projects/Ideas/QtSslRpc/:1341833104
 Projects/Ideas/QtSslRpc/IRecycle.and.IDeliver.thought.up.lots.of.essential.designs.in.here.txt:1341081194
 Projects/Ideas/QtSslRpc/Messages.Flow.And.Abc.createBankAccount.Example.dia:1340194996
@@ -3917,6 +3927,7 @@ Projects/Ideas/And.Pipe.Qt.Scripting.Shell.Replacement.notQtScriptTho.asldfjsldf
 Projects/Ideas/Anonymous.Bitcoin.Computing.i.hope.the.domain.is.still.available.txt:1326858278
 Projects/Ideas/Auto.Transcrption.auto.selling.of.segments.and.even.have.coders.implementors.easily.triggerable.txt:1337986818
 Projects/Ideas/Byzanntine.Rpc.Framework.woot.figured.out.Rpc.Generator.doesnt.need.stream.logging.etc.KISS.txt:1360773677
+Projects/Ideas/CompileDowner.txt:1516438105
 Projects/Ideas/First.AdCaptcha.Usage.LoL.Basically.Full.Fledged.Warez.Site.But.Legal.ish.txt:1328753016
 Projects/Ideas/GUIs.should.have.enough.help.built.in.to.never.need.a.help.manual.txt:1340178253
 Projects/Ideas/Google.FS.Solved.sadlfjksadfjwoeruasdfjk.i.think.txt:1339238990
@@ -4086,6 +4097,7 @@ Projects/Ideas/my.idea.of.userland.is.deleteproof.computing.environment.and.ofc.
 Projects/Ideas/network.grid.of.computers.that.each.0.or.1.represents.a.single.computer.or.group.of.computers.if.REALLY.important.OR.bandwidth.intensive.txt:1322071181
 Projects/Ideas/neural.network.of.pitch.corrected.randomly.generated.music.sdlfjlsdfjlskdfjds.txt:1434204215
 Projects/Ideas/next.vid.suggestion.ad.injection.aljsdfkjsd.txt:1354838411
+Projects/Ideas/no.hwclock.gui.to.help.set.the.fkn.datetime.faster.kthx.txt:1513209225
 Projects/Ideas/notifier.of.a.notifier.figured.out.for.custom.dht.caching.gfs.like.shizzle.if.i.choose.to.code.it.txt:1339820383
 Projects/Ideas/offline.online.split.figured.out.this.applies.to.both.keyboard.mouse.and.fingers.txt:1337911524
 Projects/Ideas/oh.the.joys.of.atomicity.and.oh.the.hacks.that.you.can.pull.using.move.aka.rename.txt:1400224693

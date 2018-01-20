@@ -1,0 +1,9 @@
+CompileDowner
+
+given a Qt app (that is, an end-user app written using the Qt toolkit/framework)
+aka, given a project
+Compile with lower and lower Qt _Versions_ until you determine the Qt version that is earliest(lowest) to compile. this is PROBABLY the most portable.
+
+actually fuck this idea sucks because security implications have to be taken into consideration. and besides distribution packagers will [attempt to] compile the project in whatever Qt version they DESIRE (aka "stable" in Debian terminology).
+
+however CompileDowner still has use in the "compile and distribute _binary_ to 'app marketplace' as [sometimes paid] package for [sometimes mobile] OS". in that case, finding the most portable is more desireable than finding the most secure. fuck security on app marketplaces, because fuck proprietary-allowed marketplaces! if I can't have the source code and an adequate copyleft license alongside it, I don't want the binary. fuck off. as a computer user, needing the source code is a manner of sanity. don't even get me started on it's implications to computer fucking programming.

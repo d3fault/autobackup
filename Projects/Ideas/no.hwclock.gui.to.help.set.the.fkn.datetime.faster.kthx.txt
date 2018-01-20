@@ -1,0 +1,3 @@
+For a given "system", we should have a system-local (ie, not transferred via "git push") configuration boolean setting that specifies whether or not there's a hardware clock. If/when there isn't, we should launch a GUI on OS boot to ask the user to set the date/time. The preset/default time should be the "last shutdown date/time", and the specifics (year/month/day/hour/min/sec) should be modifiable via up/down arrow keys (and switching between the unit (year/month/etc) is done with TAB). I set my date/time on every boot, so I might as well have a decent GUI to speed the process up.
+
+I mean arguably every "application" is just a "UI" to some "algorithm" that helps you speed SOME process up.
