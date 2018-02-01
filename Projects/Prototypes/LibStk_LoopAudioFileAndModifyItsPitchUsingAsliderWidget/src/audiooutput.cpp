@@ -79,7 +79,7 @@ void AudioOutput::tuneAudioOutputBufferSizeForLowLatency(const QAudioFormat &aud
 {
     //dynamic tuning would be neat, pushing the limits of modern hardware... but hard-coded tuning is good enough for now
     //~5ms is a good TESTING start point; I think I'll want to lower it after getting it at least working at 5ms
-    qint32 numFramesFor5msDuration = audioFormat.framesForDuration(5 * 1000 /*5ms * 1000 = 5000 microseconds*/); //we don't care about rounding errors in this call, but from here on we want to use numFramesFor5msDuration as the authorative bufferSize indicator (so no more rounding errors allowed)
+    qint32 numFramesFor5msDuration = audioFormat.framesForDuration(50 * 1000 /*5ms * 1000 = 5000 microseconds*/); //we don't care about rounding errors in this call, but from here on we want to use numFramesFor5msDuration as the authorative bufferSize indicator (so no more rounding errors allowed)
     qint32 bufferSizeInBytes = audioFormat.bytesForFrames(numFramesFor5msDuration);
     m_AudioOutput->setBufferSize(bufferSizeInBytes);
     *out_numBufferFrames = static_cast<unsigned int>(numFramesFor5msDuration);
@@ -97,6 +97,10 @@ void AudioOutput::startAudioOutput()
         qWarning() << "desiredBufferSize:" << desiredBufferSize;
         qWarning() << "actualBufferSize:" << actualBufferSize;
         qWarning() << "this means that the buffer size in m_FileLoopIoDevice (desired) is not the same as the buffer size in m_AudioOutput (actual). this may or may not affect performance";
+    }
+    else
+    {
+        qDebug() << "buffer size (bytes):" << actualBufferSize;
     }
 }
 void AudioOutput::stopAudioOutput()

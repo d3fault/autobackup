@@ -5,6 +5,8 @@
 
 using namespace stk;
 
+//TODOreq: take period n' bufferSize n' notify into consideration. I don't think shrinking the bufferSize worked like I thought it would, perhaps I need to use the "push" QAudioOutput mode rather than "pull" as I'm currently doing... and just push tiny amounts of audio so that I have low latency?
+//TODOreq: if the file dne, currently we segfault
 StkFileLoopIoDevice::StkFileLoopIoDevice(stk::FileLoop *fileLoop, int channels, int numBufferFrames, int bufferSizeBytes, QObject *parent)
     : QIODevice(parent)
     , m_First(true)
@@ -48,7 +50,8 @@ qint64 StkFileLoopIoDevice::readData(char *data, qint64 maxlen)
     qint64 total = 0;
     //qint64 stopReadingAtThisManyBytes = qMax(0, (maxlen - (sizeof(float) * m_Channels)));
     qint64 maxLenRoundedDownToFrameEdge = maxlen - (sizeof(float) * m_Channels); //TODOreq: math here is wrong, but kinda shows what I want xD. I don't think it's that big of a deal tho tbh, as in I don't think it matters at all
-    qint64 stopReadingAtThisManyBytes = qBound(0, maxLenRoundedDownToFrameEdge, m_BufferSizeBytes);
+    int stopReadingAtThisManyBytes2 = qBound(0, static_cast<int>(maxLenRoundedDownToFrameEdge), m_BufferSizeBytes);
+    qint64 stopReadingAtThisManyBytes = stopReadingAtThisManyBytes2;
     while(total < stopReadingAtThisManyBytes)
     {
         if(m_CurrentIndexIntoFrames == frames.size())

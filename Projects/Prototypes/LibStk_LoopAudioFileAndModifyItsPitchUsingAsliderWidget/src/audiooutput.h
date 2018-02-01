@@ -4,6 +4,7 @@
 #include <QObject>
 
 #include <QScopedPointer>
+#include <QtMultimedia/QAudioFormat>
 
 #include "stk/FileLoop.h"
 
