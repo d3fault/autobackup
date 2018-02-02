@@ -1,0 +1,18 @@
+ODR!
+
+ONE DEFINITION RULE
+
+I hate having to code 1x CLI ui and 1x WIDGETS ui. that's 2 fucking UIs!
+
+Qt doesn't seem to give a shit about CLI, but I do.
+Qt's QML is a disaster, but I am pretty sure I can/should still target it as an OUTPUT of this app. Qt's Widgets are outdated as fuck (but still better in some ways than QML imo).
+
+ODR! QML could have be that "one definition", but it's inherent use of JavaScript is a show stopper for me. I don't feel like my UIs are ever very complex... just tedious to write.
+Almost always a fuckin grid of widgets. a layout of layouts. horizontal vertical -> done. the end. simple as fuck. I can define that using json easily, I don't want to get way the fuck ahead of myself and bundle in some monolithic javascript interpreter, I just want a simple grid-like widget definition... which I then translate to CLI, Widget, QML, HTML (probably custom) etc. ncurses comes to mind.
+
+there is a drawing on my whiteboard that sums up the EXACT train of thought perfectly, but basically the end result will look like this:
+
+format2ui --qtwidgets /path/to/format.json /some/output/dir
+then blamo format.json is converted 2 the ui of type qtwidgets, and those files go in /some/output/dir
+
+the naming of this probably sucks, but whatever fuck it for now
