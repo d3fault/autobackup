@@ -1,0 +1,4 @@
+format2ui is about generating the code to set up the UI itself! what you see and [potentially] where you see it!
+user interface skeleton generator simply was a code generator to SPEED UP the connecting between a UI (BUT IT WAS NOT GENERATED WITH ANY UI ELEMENTS IN PLACE, ONLY CONNECTIONS).
+
+uisg and format2ui might merge someday, at least in some ways. maybe they'll just go hand in hand instead, idk
