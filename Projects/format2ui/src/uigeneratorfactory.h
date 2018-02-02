@@ -6,6 +6,7 @@
 class IUIGenerator;
 
 class QtWidgetsUiGenerator;
+class QtCliUiGenerator;
 
 class UIGeneratorFactory
 {
@@ -15,6 +16,7 @@ public:
     ~UIGeneratorFactory();
 private:
     QScopedPointer<QtWidgetsUiGenerator> m_QtWidgetsUiGenerator;
+    QScopedPointer<QtCliUiGenerator> m_QtCliUiGenerator;
 };
 
 #endif // UIGENERATORFACTORY_H

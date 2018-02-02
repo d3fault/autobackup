@@ -16,3 +16,13 @@ format2ui --qtwidgets /path/to/format.json /some/output/dir
 then blamo format.json is converted 2 the ui of type qtwidgets, and those files go in /some/output/dir
 
 the naming of this probably sucks, but whatever fuck it for now
+
+oh and I want to have 2x CLI "modes" that are compatible with one another TODOreq
+cli [arg0] [arg1]
+cli --interactive #queries for arg0 and arg1
+cli --interactive [arg1] #queries for arg0 only
+cli --interactive [arg0] #queries for arg1 only
+etc
+
+
+A _STATIC_ html ui (like Wt does) would be better than a fancy schmancy html/js one (like Wt does). js is shyte, so I should implement a ui generator that uses plain ole html _FIRST AND FOREMOST_, then maybe an ajax enhanced version of it later. I like Wt's strategy here (progressive enhancement, graceful fallback), but after using Wt for quite a while it was too buggy or a pain in the ass to use. it was also GPL so there's that :-/. I know I can code a replacement for it using Qt (instead of Boost, which is what Wt uses)... but that's a pretty big task lol (but ima do it incrementally (one UIVariableType at a time), so it's alllllll guuuud man!)

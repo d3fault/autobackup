@@ -9,7 +9,7 @@
 format2ui::format2ui(QObject *parent)
     : QObject(parent)
 { }
-void format2ui::beginFormat2ui(const QString &filePathOfJsonUiFormatInput)
+void format2ui::beginFormat2ui(const QString &filePathOfJsonUiFormatInput, const QString &cliArgUiTypeString)
 {
     QFile inputFile(filePathOfJsonUiFormatInput);
     if(!inputFile.open(QIODevice::ReadOnly))
@@ -24,7 +24,7 @@ void format2ui::beginFormat2ui(const QString &filePathOfJsonUiFormatInput)
     //TODOreq: handle jsonParseError
     const QJsonObject &jsonUiFormatInput = jsonDocUiFormatInput.object();
 
-    IUIGenerator *uiGenerator = m_UIGeneratorFactory.uiGenerator("--qtwidgets");
+    IUIGenerator *uiGenerator = m_UIGeneratorFactory.uiGenerator(cliArgUiTypeString);
     if(!uiGenerator->generateUi(jsonUiFormatInput)) //kek
     {
         emit e("failed to generate ui: " + filePathOfJsonUiFormatInput);

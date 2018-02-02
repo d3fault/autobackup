@@ -11,7 +11,7 @@ class format2ui : public QObject
 public:
     explicit format2ui(QObject *parent = 0);
 public slots:
-    void beginFormat2ui(const QString &filePathOfJsonUiFormatInput);
+    void beginFormat2ui(const QString &filePathOfJsonUiFormatInput, const QString &cliArgUiTypeString);
 private:
     UIGeneratorFactory m_UIGeneratorFactory;
 #if 0
