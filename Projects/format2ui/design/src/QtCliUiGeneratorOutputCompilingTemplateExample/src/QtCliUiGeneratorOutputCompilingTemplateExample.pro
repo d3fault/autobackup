@@ -9,7 +9,7 @@ QT       += core
 QT       -= gui
 
 TARGET = QtCliUiGeneratorOutputCompilingTemplateExample
-CONFIG   += console
+CONFIG   += console c++11
 CONFIG   -= app_bundle
 
 TEMPLATE = app
@@ -17,8 +17,8 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     qtcliuigeneratoroutputcompilingtemplateexample.cpp \
-    debugoutput.cpp
+    ../../shared/firstnamelastnameqobject.cpp
 
 HEADERS += \
     qtcliuigeneratoroutputcompilingtemplateexample.h \
-    debugoutput.h
+    ../../shared/firstnamelastnameqobject.h

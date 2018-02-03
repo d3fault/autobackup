@@ -7,17 +7,9 @@ QtCliUiGeneratorOutputCompilingTemplateExample::QtCliUiGeneratorOutputCompilingT
 { }
 void QtCliUiGeneratorOutputCompilingTemplateExample::collectUiVariables()
 {
-    m_FirstName = query("First Name");
-    m_LastName = query("Last Name");
-    emit finishedCollectingUiVariables(true);
-}
-QString QtCliUiGeneratorOutputCompilingTemplateExample::firstName() const
-{
-    return m_FirstName;
-}
-QString QtCliUiGeneratorOutputCompilingTemplateExample::lastName() const
-{
-    return m_LastName;
+    QString firstName = query("First Name");
+    QString lastName = query("Last Name");
+    emit finishedCollectingUiVariables(firstName, lastName);
 }
 QString QtCliUiGeneratorOutputCompilingTemplateExample::query(const QString &queryString)
 {

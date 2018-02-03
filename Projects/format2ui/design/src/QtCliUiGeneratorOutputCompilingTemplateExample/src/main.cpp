@@ -1,14 +1,15 @@
 #include <QCoreApplication>
 
 #include "qtcliuigeneratoroutputcompilingtemplateexample.h"
-#include "debugoutput.h"
+#include "../../shared/firstnamelastnameqobject.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
+    FirstNameLastNameQObject business;
     QtCliUiGeneratorOutputCompilingTemplateExample cli;
-    DebugOutput debugOutput(&cli);
+    QObject::connect(&cli, &QtCliUiGeneratorOutputCompilingTemplateExample::finishedCollectingUiVariables, &business, &FirstNameLastNameQObject::someSlot);
     cli.collectUiVariables();
 
     return a.exec();

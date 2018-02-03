@@ -11,18 +11,13 @@ class QtCliUiGeneratorOutputCompilingTemplateExample : public QObject
 public:
     explicit QtCliUiGeneratorOutputCompilingTemplateExample(QObject *parent = 0);
     void collectUiVariables();
-    QString firstName() const;
-    QString lastName() const;
 private:
     QString query(const QString &queryString);
 
     QTextStream m_StdIn;
     QTextStream m_StdOut;
-
-    QString m_FirstName;
-    QString m_LastName;
 signals:
-    void finishedCollectingUiVariables(bool success);
+    void finishedCollectingUiVariables(const QString &firstName, const QString &lastName);
 };
 
 #endif // QTCLIUIGENERATOROUTPUTCOMPILINGTEMPLATEEXAMPLE_H
