@@ -11,14 +11,11 @@ class QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget : public QWidget
 
 public:
     QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget(QWidget *parent = 0);
-    QString firstName() const;
-    QString lastName() const;
-    ~QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget();
 private:
     QLineEdit *m_FirstNameLineEdit;
     QLineEdit *m_LastNameLineEdit;
 signals:
-    void finishedCollectingUiVariables(bool success);
+    void finishedCollectingUiVariables(const QString &firstName, const QString &lastName);
 private slots:
     void handleOkButtonClicked_aka_SanitizeAllAreNotEmptyBeforeEmittingSuccess();
     void handleCancelButtonClicked();

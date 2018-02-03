@@ -33,29 +33,21 @@ QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::QtWidgetsUiGeneratorOu
     connect(okButton, &QPushButton::clicked, this, &QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleOkButtonClicked_aka_SanitizeAllAreNotEmptyBeforeEmittingSuccess);
     connect(cancelButton, &QPushButton::clicked, this, &QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleCancelButtonClicked);
 }
-QString QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::firstName() const
-{
-    return m_FirstNameLineEdit->text();
-}
-QString QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::lastName() const
-{
-    return m_LastNameLineEdit->text();
-}
-QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::~QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget()
-{ }
 void QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleOkButtonClicked_aka_SanitizeAllAreNotEmptyBeforeEmittingSuccess()
 {
-    if(firstName().isEmpty() || lastName().isEmpty())
+    QString firstName = m_FirstNameLineEdit->text();
+    QString lastName = m_LastNameLineEdit->text();
+    if(firstName.isEmpty() || lastName.isEmpty())
     {
         QMessageBox::critical(this, "error", "no line edits can be empty");
         return;
     }
 
-    emit finishedCollectingUiVariables(true);
+    emit finishedCollectingUiVariables(firstName, lastName);
     close(); //done. close so that the user can't change the line edits anymore
 }
 void QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleCancelButtonClicked()
 {
-    emit finishedCollectingUiVariables(false);
+    //emit finishedCollectingUiVariables(false);
     close();
 }

@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+CONFIG += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,6 +14,8 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.cpp
+        qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.cpp \
+    ../../shared/firstnamelastnameqobject.cpp
 
-HEADERS  += qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.h
+HEADERS  += qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.h \
+    ../../shared/firstnamelastnameqobject.h
