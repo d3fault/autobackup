@@ -17,8 +17,10 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     qtcliuigeneratoroutputcompilingtemplateexample.cpp \
-    ../../shared/firstnamelastnameqobject.cpp
+    ../../shared/firstnamelastnameqobject.cpp \
+    ../../uishared/firstnamelastnameqobjectcommandlineoptionparser.cpp
 
 HEADERS += \
     qtcliuigeneratoroutputcompilingtemplateexample.h \
-    ../../shared/firstnamelastnameqobject.h
+    ../../shared/firstnamelastnameqobject.h \
+    ../../uishared/firstnamelastnameqobjectcommandlineoptionparser.h

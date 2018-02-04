@@ -1,0 +1,1 @@
+Imagine watching an int64 slowly decrease to zero over the course of ~80 years. That's what it feels like when I look at the DateTime. Fuck man what a depressing way to live..... I should do it [for artistic purposes].

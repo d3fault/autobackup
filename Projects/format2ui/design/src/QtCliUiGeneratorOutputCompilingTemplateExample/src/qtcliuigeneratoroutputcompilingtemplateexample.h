@@ -5,6 +5,8 @@
 
 #include <QTextStream>
 
+#include "../../uishared/firstnamelastnameqobjectcommandlineoptionparser.h"
+
 class QtCliUiGeneratorOutputCompilingTemplateExample : public QObject
 {
     Q_OBJECT
@@ -13,17 +15,12 @@ public:
     bool parseArgs();
     void collectUiVariables();
 private:
-    int parseOptionalArg(QStringList *argz, const QString &optionalArg, QString *out_String);
-    bool parseOptionalArgAndHandleErrors(QStringList *argz, const QString &optionalArg, QString *out_String);
     QString query(const QString &queryString, const QString &defaultValueParsedFromProcessArg);
 
     QTextStream m_StdIn;
     QTextStream m_StdOut;
-    QTextStream m_StdErr;
-    void showUsage();
+    FirstNameLastNameQObjectCommandLineOptionParser m_ArgParser;
 
-    QString m_FirstNameDefaultValueParsedFromProcessArg;
-    QString m_LastNameDefaultValueParsedFromProcessArg;
 signals:
     void collectUiVariablesFinished(const QString &firstName, const QString &lastName);
 signals: //private

@@ -1,3 +1,5 @@
+//THIS FILE IS NOT _GENERATED_, BUT IS USED ONLY FOR TESTING COMPILATION
+
 #include <QObject>
 
 class FirstNameLastNameQObject : public QObject
