@@ -30,8 +30,21 @@ QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::QtWidgetsUiGeneratorOu
     okCancelRow->addWidget(cancelButton);
     myLayout->addLayout(okCancelRow);
 
+    okButton->setDefault(true);
     connect(okButton, &QPushButton::clicked, this, &QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleOkButtonClicked_aka_SanitizeAllAreNotEmptyBeforeEmittingSuccess);
     connect(cancelButton, &QPushButton::clicked, this, &QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleCancelButtonClicked);
+}
+bool QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::parseArgs()
+{
+    bool ret = m_ArgParser.parseArgs();
+    if(ret)
+    {
+        if(!m_ArgParser.firstNameDefaultValueParsedFromProcessArg().isEmpty())
+            m_FirstNameLineEdit->setText(m_ArgParser.firstNameDefaultValueParsedFromProcessArg());
+        if(!m_ArgParser.lastNameDefaultValueParsedFromProcessArg().isEmpty())
+            m_LastNameLineEdit->setText(m_ArgParser.lastNameDefaultValueParsedFromProcessArg());
+    }
+    return ret;
 }
 void QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleOkButtonClicked_aka_SanitizeAllAreNotEmptyBeforeEmittingSuccess()
 {

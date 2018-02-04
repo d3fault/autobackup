@@ -7,8 +7,10 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    FirstNameLastNameQObject business;
     QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget gui;
+    if(!gui.parseArgs())
+        return 1;
+    FirstNameLastNameQObject business;
     QObject::connect(&gui, &QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::finishedCollectingUiVariables, &business, &FirstNameLastNameQObject::someSlot);
     gui.show();
 

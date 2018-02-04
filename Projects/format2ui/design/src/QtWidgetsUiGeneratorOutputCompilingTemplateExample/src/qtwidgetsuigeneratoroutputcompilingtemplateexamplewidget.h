@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include "../../uishared/firstnamelastnameqobjectcommandlineoptionparser.h"
+
 class QLineEdit;
 
 class QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget : public QWidget
@@ -11,7 +13,10 @@ class QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget : public QWidget
 
 public:
     QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget(QWidget *parent = 0);
+    bool parseArgs();
 private:
+    FirstNameLastNameQObjectCommandLineOptionParser m_ArgParser;
+
     QLineEdit *m_FirstNameLineEdit;
     QLineEdit *m_LastNameLineEdit;
 signals:
