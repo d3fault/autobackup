@@ -10,12 +10,12 @@ QStringList QtWidgetsUiGenerator::filesToGenerate() const
 {
     return QStringList { QtWidgetsUiGenerator_SOURCE_FILEPATH, QtWidgetsUiGenerator_HEADER_FILEPATH };
 }
-bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables)
+bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UIGeneratorFormat &format)
 {
     if(theRelativeFilePathInWhichToGenerate == QtWidgetsUiGenerator_SOURCE_FILEPATH)
-        generateSource(currentFileTextStream, uiVariables);
+        generateSource(currentFileTextStream, format);
     else if(theRelativeFilePathInWhichToGenerate == QtWidgetsUiGenerator_SOURCE_FILEPATH)
-        generateHeader(currentFileTextStream, uiVariables);
+        generateHeader(currentFileTextStream, format);
     //etc
 
     return true;
@@ -29,9 +29,9 @@ bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathI
     return true;
 #endif
 }
-void QtWidgetsUiGenerator::generateSource(QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables)
+void QtWidgetsUiGenerator::generateSource(QTextStream &currentFileTextStream, const UIGeneratorFormat &format)
 {
-    for(QList<UIVariable>::const_iterator it = uiVariables.constBegin(); it != uiVariables.constEnd(); ++it)
+    for(QList<UIVariable>::const_iterator it = format.UIVariables.constBegin(); it != format.UIVariables.constEnd(); ++it)
     {
         const UIVariable &uiVariable = *it;
         if(uiVariable.Type == UIVariableType::LineEdit_String)
@@ -47,7 +47,7 @@ void QtWidgetsUiGenerator::generateSource(QTextStream &currentFileTextStream, co
         //TODOreq: handle other types. could organize this much better ofc. would be great if we could use use pure virtuals to break compilation whenever any 1 ui generator doesn't implement any 1 UiVariableType. sounds ez tbh
     }
 }
-void QtWidgetsUiGenerator::generateHeader(QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables)
+void QtWidgetsUiGenerator::generateHeader(QTextStream &currentFileTextStream, const UIGeneratorFormat &format)
 {
 
 }

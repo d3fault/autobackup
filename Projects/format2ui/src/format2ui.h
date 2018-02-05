@@ -4,7 +4,8 @@
 #include <QObject>
 
 #include "uigeneratorfactory.h"
-#include "uivariable.h"
+
+class UIGeneratorFormat;
 
 class format2ui : public QObject
 {
@@ -14,7 +15,7 @@ public:
 public slots:
     void beginFormat2ui(const QString &filePathOfJsonUiFormatInput, const QString &cliArgUiTypeString);
 private:
-    void populateUiVariables(const QJsonObject &inputJsonObject, QList<UIVariable> *out_uiVariables);
+    void parseJsonUiFormatInput(const QJsonObject &inputJsonObject, UIGeneratorFormat *out_Format);
 
     UIGeneratorFactory m_UIGeneratorFactory;
 #if 0

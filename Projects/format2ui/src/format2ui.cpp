@@ -7,6 +7,7 @@
 #include <QDebug>
 
 #include "iuigenerator.h"
+#include "uigeneratorformat.h"
 
 format2ui::format2ui(QObject *parent)
     : QObject(parent)
@@ -34,10 +35,10 @@ void format2ui::beginFormat2ui(const QString &filePathOfJsonUiFormatInput, const
         return;
     }
 
-    QList<UIVariable> uiVariables;
-    populateUiVariables(jsonUiFormatInput, &uiVariables);
+    UIGeneratorFormat format;
+    parseJsonUiFormatInput(jsonUiFormatInput, &format);
     //so now uiVariables is populated, time to iterate it and output shit (I guess this could be done during input _reading_, but eh stfu I can't think that pro. can probably refactor to that later ezily anyways -- hmm actually I think the above 'input reading' might be generic enough to even put in our interface/abstract-base-class for re-use in other sibling ui generator implementations (such as cli,qml,etc))
-    if(!uiGenerator->generateUi(uiVariables))
+    if(!uiGenerator->generateUi(format))
     {
         qDebug() << "failed to generate ui";
         emit finishedFormat2ui(false);
@@ -52,8 +53,10 @@ void format2ui::beginFormat2ui(const QString &filePathOfJsonUiFormatInput, const
         uiGenerator->generateUi(); //kek
 #endif
 }
-void format2ui::populateUiVariables(const QJsonObject &inputJsonObject, QList<UIVariable> *out_uiVariables)
+void format2ui::parseJsonUiFormatInput(const QJsonObject &inputJsonObject, UIGeneratorFormat *out_Format)
 {
+    out_Format->Name = inputJsonObject.value("name").toString();
+
     //a ui format input is a series of layouts (containing "widgets" therein)
     //so as not to digress too fucking much, I'll start with a QVBoxLayout as my "root" layout. I use QVBoxLayout the most
     const QJsonObject &rootLayout = inputJsonObject.value("rootLayout").toObject();
@@ -68,7 +71,7 @@ void format2ui::populateUiVariables(const QJsonObject &inputJsonObject, QList<UI
         QString variableName = currentUiVariableJsonObject.value("variableName").toString();
         QString variableValue = currentUiVariableJsonObject.value("variableValue").toString();
 
-        out_uiVariables->append(UIVariable(typeString, humanReadableNameForShowingFinalEndUser, variableName, variableValue));
+        out_Format->UIVariables.append(UIVariable(typeString, humanReadableNameForShowingFinalEndUser, variableName, variableValue));
     }
 }
 #if 0

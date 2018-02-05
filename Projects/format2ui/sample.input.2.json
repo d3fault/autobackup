@@ -1,10 +1,11 @@
 {
+    "name" : "BothAddresses",
     "rootLayout" :
     {
         "verticalUiVariables" :
         [
-            { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Mailing Address", "variableName" : "mailingAddress", "variableValue" : "" }
-            , { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Residential Address", "variableName" : "residentialAddress", "variableValue" : "" }
+            { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Mailing Address", "variableName" : "mailingAddress", "variableValue" : "" },
+            { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Residential Address", "variableName" : "residentialAddress", "variableValue" : "" }
         ]
     }
 }

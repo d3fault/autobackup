@@ -3,7 +3,7 @@
 #include <QTemporaryDir>
 #include <QDebug>
 
-bool IUIGenerator::generateUi(const QList<UIVariable> &uiVariables)
+bool IUIGenerator::generateUi(const UIGeneratorFormat &format)
 {
     QTemporaryDir outputDir;
     outputDir.setAutoRemove(false);
@@ -19,7 +19,7 @@ bool IUIGenerator::generateUi(const QList<UIVariable> &uiVariables)
             return false;
         }
         QTextStream currentFileTextStream(&currentFileToGenerate);
-        if(generateUiForFile(currentFilePathToGenerate, currentFileTextStream, uiVariables)) //kek
+        if(generateUiForFile(currentFilePathToGenerate, currentFileTextStream, format)) //kek
         {
             qDebug() << "Generated:" << currentFileToGenerate.fileName();
         }

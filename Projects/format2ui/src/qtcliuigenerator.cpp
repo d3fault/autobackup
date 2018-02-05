@@ -10,15 +10,18 @@ QStringList QtCliUiGenerator::filesToGenerate() const
 {
     return QStringList { QtCliUiGenerator_SOURCE_FILEPATH, QtCliUiGenerator_HEADER_FILEPATH };
 }
-bool QtCliUiGenerator::generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables)
+bool QtCliUiGenerator::generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UIGeneratorFormat &format)
 {
     if(theRelativeFilePathInWhichToGenerate == QtCliUiGenerator_SOURCE_FILEPATH)
     {
-        if(!generateSource(currentFileTextStream, uiVariables))
+        if(!generateSource(currentFileTextStream, format))
             return false;
     }
     else if(theRelativeFilePathInWhichToGenerate == QtCliUiGenerator_HEADER_FILEPATH)
-        generateHeader(currentFileTextStream, uiVariables);
+    {
+        if(!generateHeader(currentFileTextStream, format))
+            return false;
+    }
     //etc
 
     return true;
@@ -32,7 +35,7 @@ bool QtCliUiGenerator::generateUiForFile(const QString &theRelativeFilePathInWhi
     return true;
 #endif
 }
-bool QtCliUiGenerator::generateSource(QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables)
+bool QtCliUiGenerator::generateSource(QTextStream &currentFileTextStream, const UIGeneratorFormat &format)
 {
     //isn't it better (faster, ezier, smarter) to generate code by copy/pasting the "compiling template example" and then strReplacing the fuck out of THAT? I mean it genuinely sounds like it'd be LESS work (and changes to the compiling template example needn't NECESSARILY require any changes to format2ui (although often times, changes _are_ necessary (more strReplace ez shit)). in any case, I'm surely going to experiment with the file-copy->strReplace strategy :-D. I might learn it sucks, but I'll learn something in any case!
     //TODOreq: the compiling template example(s) would then become project resources (.qrc) to be shipped/deployed inside the binary! neat
@@ -52,11 +55,11 @@ bool QtCliUiGenerator::generateSource(QTextStream &currentFileTextStream, const 
     QString whatToLookFor0 = "    QString firstName = query(\"First Name\", m_ArgParser.firstNameDefaultValueParsedFromProcessArg());\n    QString lastName = query(\"Last Name\", m_ArgParser.lastNameDefaultValueParsedFromProcessArg());";
     QString whatToReplaceItWith0;
 
-    QString whatToLookFor1 = "emit collectUiVariablesFinished(firstName, lastName);";
-    QString whatToReplaceItWith1("emit collectUiVariablesFinished(");
+    QString whatToLookFor1 = "firstName, lastName";
+    QString whatToReplaceItWith1;
 
     bool first = true;
-    for(QList<UIVariable>::const_iterator it = uiVariables.constBegin(); it != uiVariables.constEnd(); ++it)
+    for(QList<UIVariable>::const_iterator it = format.UIVariables.constBegin(); it != format.UIVariables.constEnd(); ++it)
     {
         const UIVariable &uiVariable = *it;
         if(uiVariable.Type == UIVariableType::LineEdit_String)
@@ -68,7 +71,6 @@ bool QtCliUiGenerator::generateSource(QTextStream &currentFileTextStream, const 
 
         first = false;
     }
-    whatToReplaceItWith1.append(");");
 
     compilingTemplateExampleSource.replace(whatToLookFor0, whatToReplaceItWith0);
     compilingTemplateExampleSource.replace(whatToLookFor1, whatToReplaceItWith1);
@@ -78,7 +80,50 @@ bool QtCliUiGenerator::generateSource(QTextStream &currentFileTextStream, const 
 
     return true;
 }
-void QtCliUiGenerator::generateHeader(QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables)
+bool QtCliUiGenerator::generateHeader(QTextStream &currentFileTextStream, const UIGeneratorFormat &format)
 {
+    //read in header from compiling template example
+    QFile compilingTemplateExampleHeaderFile("/home/user/text/Projects/format2ui/design/src/QtCliUiGeneratorOutputCompilingTemplateExample/src/qtcliuigeneratoroutputcompilingtemplateexample.h");
+    if(!compilingTemplateExampleHeaderFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qCritical() << "failed to open file for reading:" << compilingTemplateExampleHeaderFile.fileName();
+        return false;
+    }
+    QTextStream compilingTemplateExampleHeaderTextStream(&compilingTemplateExampleHeaderFile);
+    QString compilingTemplateExampleHeader = compilingTemplateExampleHeaderTextStream.readAll();
 
+    //strReplace shiz on the file contents
+
+    QString commandLineParserObjectName = format.Name + "CommandLineOptionParser";
+
+    QString whatToLookFor0 = "../../uishared/firstnamelastnameqobjectcommandlineoptionparser.h";
+    QString whatToReplaceItWith0("../uishared/" + commandLineParserObjectName.toLower() + ".h");
+
+    QString whatToLookFor1("FirstNameLastNameQObjectCommandLineOptionParser");
+    QString whatToReplaceItWith1(commandLineParserObjectName);
+
+    QString whatToLookFor2("const QString &firstName, const QString &lastName");
+    QString whatToReplaceItWith2;
+
+    bool first = true;
+    for(QList<UIVariable>::const_iterator it = format.UIVariables.constBegin(); it != format.UIVariables.constEnd(); ++it)
+    {
+        const UIVariable &uiVariable = *it;
+        if(uiVariable.Type == UIVariableType::LineEdit_String)
+        {
+            whatToReplaceItWith2 += QString(first ? "" : ", ") + QString("const QString &") + uiVariable.VariableName;
+        }
+        //etc
+
+        first = false;
+    }
+
+    compilingTemplateExampleHeader.replace(whatToLookFor0, whatToReplaceItWith0);
+    compilingTemplateExampleHeader.replace(whatToLookFor1, whatToReplaceItWith1);
+    compilingTemplateExampleHeader.replace(whatToLookFor2, whatToReplaceItWith2);
+
+    //write out to currentFileTextStream
+    currentFileTextStream << compilingTemplateExampleHeader;
+
+    return true;
 }

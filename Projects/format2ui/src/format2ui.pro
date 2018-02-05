@@ -18,7 +18,8 @@ HEADERS += format2ui.h \
     qtwidgetsuigenerator.h \
     uivariable.h \
     uigeneratorfactory.h \
-    qtcliuigenerator.h
+    qtcliuigenerator.h \
+    uigeneratorformat.h
 
 SOURCES += main.cpp \
     format2ui.cpp \

@@ -9,10 +9,10 @@ class QtWidgetsUiGenerator : public IUIGenerator
 {
 protected:
     QStringList filesToGenerate() const override;
-    bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables) override;
+    bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UIGeneratorFormat &format) override;
 private:
-    void generateSource(QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables);
-    void generateHeader(QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables);
+    void generateSource(QTextStream &currentFileTextStream, const UIGeneratorFormat &format);
+    void generateHeader(QTextStream &currentFileTextStream, const UIGeneratorFormat &format);
 };
 
 #endif // QTWIDGETSUIGENERATOR_H
