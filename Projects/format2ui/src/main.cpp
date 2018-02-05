@@ -11,5 +11,5 @@ int main(int argc, char *argv[])
     format2ui business;
     business.beginFormat2ui("/home/user/text/Projects/format2ui/sample.input.json", "--qtcli"); //TODOreq: connect to business::e etc!
 
-    return a.exec();
+    return 0;
 }

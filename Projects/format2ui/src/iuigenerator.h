@@ -1,9 +1,8 @@
 #ifndef IUIGENERATOR_H
 #define IUIGENERATOR_H
 
-#include <QJsonObject>
-#include <QList>
 #include <QTextStream>
+#include <QStringList>
 
 #include "uivariable.h"
 
@@ -12,9 +11,10 @@
 class IUIGenerator
 {
 public:
-    virtual bool generateUi(const QJsonObject &jsonUiFormatInput)=0;
+    bool generateUi(const QList<UIVariable> &uiVariables);
 protected:
-    void populateUiVariables(const QJsonObject &inputJsonObject, QList<UIVariable> *out_uiVariables);
+    virtual QStringList filesToGenerate() const=0;
+    virtual bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables)=0;
     static QString appendSlashIfNeeded(const QString &inputString)
     {
         if(inputString.endsWith("/"))

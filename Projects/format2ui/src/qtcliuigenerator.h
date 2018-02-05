@@ -6,9 +6,11 @@
 class QtCliUiGenerator : public IUIGenerator
 {
 protected:
-    bool generateUi(const QJsonObject &jsonUiFormatInput) override;
+    QStringList filesToGenerate() const override;
+    bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables) override;
 private:
-    void streamOutUiCliQueriesViaCinCoutShiz(QTextStream &outputSourceFileTextStream, const UIVariable &uiVariable);
+    void generateSource(QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables);
+    void generateHeader(QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables);
 };
 
 #endif // QTCLIUIGENERATOR_H
