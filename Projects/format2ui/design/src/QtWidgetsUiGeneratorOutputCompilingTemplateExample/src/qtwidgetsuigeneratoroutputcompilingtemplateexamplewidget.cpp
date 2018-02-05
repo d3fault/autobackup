@@ -52,6 +52,7 @@ bool QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::parseArgs()
 }
 void QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleOkButtonClicked_aka_SanitizeAllAreNotEmptyBeforeEmittingSuccess()
 {
+    /*format2ui-compiling-template-example_BEGIN_ldkjsflj238423084*/
     QString firstName = m_FirstNameLineEdit->text();
     if(firstName.isEmpty())
     {
@@ -64,6 +65,7 @@ void QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleOkButtonCli
         QMessageBox::critical(this, "Error", "Last Name cannot be empty");
         return;
     }
+    /*format2ui-compiling-template-example_END_ldkjsflj238423084*/
 
     emit finishedCollectingUiVariables(firstName, lastName);
     close(); //done. close so that the user can't change the line edits anymore

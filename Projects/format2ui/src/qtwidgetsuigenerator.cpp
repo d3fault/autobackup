@@ -17,7 +17,7 @@ bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathI
         if(!generateSource(currentFileTextStream, format))
             return false;
     }
-    else if(theRelativeFilePathInWhichToGenerate == QtWidgetsUiGenerator_SOURCE_FILEPATH)
+    else if(theRelativeFilePathInWhichToGenerate == QtWidgetsUiGenerator_HEADER_FILEPATH)
     {
         if(!generateHeader(currentFileTextStream, format))
             return false;
@@ -34,6 +34,15 @@ bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathI
     qDebug() << "your output is here:" << outputDir.path();
     return true;
 #endif
+}
+void QtWidgetsUiGenerator::replaceSpecialCommentSection(QString *out_Source, const QString &specialIdInTheSpecialComments, const QString &whatToReplaceItWith)
+{
+    int indexOfBegin = out_Source->indexOf("/*format2ui-compiling-template-example_BEGIN_" + specialIdInTheSpecialComments + "*/");
+    QString endKey = "/*format2ui-compiling-template-example_END_" + specialIdInTheSpecialComments + "*/";
+    int indexOfEnd = out_Source->indexOf(endKey);
+    int indexAfterLastCharOfEnd = indexOfEnd + endKey.size();
+    int len = indexAfterLastCharOfEnd-indexOfBegin;
+    out_Source->replace(indexOfBegin, len, whatToReplaceItWith);
 }
 bool QtWidgetsUiGenerator::generateSource(QTextStream &currentFileTextStream, const UIGeneratorFormat &format)
 {
@@ -61,8 +70,8 @@ bool QtWidgetsUiGenerator::generateSource(QTextStream &currentFileTextStream, co
     QString whatToLookFor3 = "        if(!m_ArgParser.firstNameDefaultValueParsedFromProcessArg().isEmpty())\n            m_FirstNameLineEdit->setText(m_ArgParser.firstNameDefaultValueParsedFromProcessArg());\n        if(!m_ArgParser.lastNameDefaultValueParsedFromProcessArg().isEmpty())\n            m_LastNameLineEdit->setText(m_ArgParser.lastNameDefaultValueParsedFromProcessArg());";
     QString whatToReplaceItWith3;
 
-    QString whatToLookFor4 = "    QString firstName = m_FirstNameLineEdit->text();\n    if(firstName.isEmpty())\n    {\n        QMessageBox::critical(this, \"Error\", \"First Name cannot be empty\");\n        return;\n    }\n    QString lastName = m_LastNameLineEdit->text();\n    if(lastName.isEmpty())\n    {        QMessageBox::critical(this, \"Error\", \"Last Name cannot be empty\");\n        return;\n    }";
-    QString whatToReplaceItWith4;
+    //QString whatToLookFor4 = "    QString firstName = m_FirstNameLineEdit->text();\n    if(firstName.isEmpty())\n    {\n        QMessageBox::critical(this, \"Error\", \"First Name cannot be empty\");\n        return;\n    }\n    QString lastName = m_LastNameLineEdit->text();\n    if(lastName.isEmpty())\n    {        QMessageBox::critical(this, \"Error\", \"Last Name cannot be empty\");\n        return;\n    }";
+    QString whatToReplaceItWith4_ldkjsflj238423084;
 
     QString whatToLookFor5("firstName, lastName");
     QString whatToReplaceItWith5;
@@ -73,12 +82,12 @@ bool QtWidgetsUiGenerator::generateSource(QTextStream &currentFileTextStream, co
         const UIVariable &uiVariable = *it;
         if(uiVariable.Type == UIVariableType::LineEdit_String)
         {
-            QString lineEditMemberVariableName = "m_" + firstLetterToUpper(uiVariable.VariableName) + "LineEdit";
+            QString lineEditMemberVariableName = lineEditVariableName(uiVariable.VariableName);
             whatToReplaceItWith0 += "    , " + lineEditMemberVariableName + "(new QLineEdit())\n";
             whatToReplaceItWith1 += "    " + lineEditMemberVariableName + "->setPlaceholderText(\"" + uiVariable.HumanReadableNameForShowingFinalEndUser + ":\");\n    myLayout->addWidget(" + lineEditMemberVariableName + ");\n";
             whatToReplaceItWith2 += "    connect(" + lineEditMemberVariableName + ", &QLineEdit::returnPressed, okButton, &QPushButton::click);\n";
             whatToReplaceItWith3 += "        if(!m_ArgParser." + uiVariable.VariableName + "DefaultValueParsedFromProcessArg().isEmpty())\n            " + lineEditMemberVariableName + "->setText(m_ArgParser." + uiVariable.VariableName + "DefaultValueParsedFromProcessArg());\n";
-            whatToReplaceItWith4 += "    QString " + uiVariable.VariableName + " = " + lineEditMemberVariableName + "->text();\n    if(" + uiVariable.VariableName + ".isEmpty())\n    {\n        QMessageBox::critical(this, \"Error\", \"" + uiVariable.HumanReadableNameForShowingFinalEndUser + " cannot be empty\");\n        return;\n    }\n";
+            whatToReplaceItWith4_ldkjsflj238423084 += "    QString " + uiVariable.VariableName + " = " + lineEditMemberVariableName + "->text();\n    if(" + uiVariable.VariableName + ".isEmpty())\n    {\n        QMessageBox::critical(this, \"Error\", \"" + uiVariable.HumanReadableNameForShowingFinalEndUser + " cannot be empty\");\n        return;\n    }\n";
             whatToReplaceItWith5 += QString(first ? "" : ", ") + uiVariable.VariableName;
         }
         //etc
@@ -91,8 +100,10 @@ bool QtWidgetsUiGenerator::generateSource(QTextStream &currentFileTextStream, co
     compilingTemplateExampleSource.replace(whatToLookFor1, whatToReplaceItWith1);
     compilingTemplateExampleSource.replace(whatToLookFor2, whatToReplaceItWith2);
     compilingTemplateExampleSource.replace(whatToLookFor3, whatToReplaceItWith3);
-    compilingTemplateExampleSource.replace(whatToLookFor4, whatToReplaceItWith4);
+    //compilingTemplateExampleSource.replace(whatToLookFor4, whatToReplaceItWith4_ldkjsflj238423084);
+    replaceSpecialCommentSection(&compilingTemplateExampleSource, "ldkjsflj238423084" , whatToReplaceItWith4_ldkjsflj238423084);
     compilingTemplateExampleSource.replace(whatToLookFor5, whatToReplaceItWith5);
+
 
     //write out to currentFileTextStream
     currentFileTextStream << compilingTemplateExampleSource;
@@ -101,5 +112,59 @@ bool QtWidgetsUiGenerator::generateSource(QTextStream &currentFileTextStream, co
 }
 bool QtWidgetsUiGenerator::generateHeader(QTextStream &currentFileTextStream, const UIGeneratorFormat &format)
 {
+    //read in header from compiling template example
+    QFile compilingTemplateExampleHeaderFile("/home/user/text/Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample/src/qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.h");
+    if(!compilingTemplateExampleHeaderFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qCritical() << "failed to open file for reading:" << compilingTemplateExampleHeaderFile.fileName();
+        return false;
+    }
+    QTextStream compilingTemplateExampleHeaderTextStream(&compilingTemplateExampleHeaderFile);
+    QString compilingTemplateExampleHeader = compilingTemplateExampleHeaderTextStream.readAll();
+
+    //strReplace shiz on the file contents
+
+    QString commandLineParserObjectName = format.Name + "CommandLineOptionParser";
+
+    QString whatToLookFor0 = "../../uishared/firstnamelastnameqobjectcommandlineoptionparser.h";
+    QString whatToReplaceItWith0("../uishared/" + commandLineParserObjectName.toLower() + ".h");
+
+    QString whatToLookFor1("FirstNameLastNameQObjectCommandLineOptionParser");
+    QString whatToReplaceItWith1(commandLineParserObjectName);
+
+    QString whatToLookFor2 = "    QLineEdit *m_FirstNameLineEdit;\n    QLineEdit *m_LastNameLineEdit;";
+    QString whatToReplaceItWith2;
+
+    QString whatToLookFor3("const QString &firstName, const QString &lastName");
+    QString whatToReplaceItWith3;
+
+    bool first = true;
+    for(QList<UIVariable>::const_iterator it = format.UIVariables.constBegin(); it != format.UIVariables.constEnd(); ++it)
+    {
+        const UIVariable &uiVariable = *it;
+        if(uiVariable.Type == UIVariableType::LineEdit_String)
+        {
+            QString lineEditMemberVariableName = lineEditVariableName(uiVariable.VariableName);
+            whatToReplaceItWith2 += "    QLineEdit *" + lineEditMemberVariableName + ";\n";
+            whatToReplaceItWith3 += QString(first ? "" : ", ") + QString("const QString &") + uiVariable.VariableName;
+        }
+        //etc
+
+        first = false;
+    }
+
+    compilingTemplateExampleHeader.replace(whatToLookFor0, whatToReplaceItWith0);
+    compilingTemplateExampleHeader.replace(whatToLookFor1, whatToReplaceItWith1);
+    compilingTemplateExampleHeader.replace(whatToLookFor2, whatToReplaceItWith2);
+    compilingTemplateExampleHeader.replace(whatToLookFor3, whatToReplaceItWith3);
+
+    //write out to currentFileTextStream
+    currentFileTextStream << compilingTemplateExampleHeader;
+
     return true;
+}
+QString QtWidgetsUiGenerator::lineEditVariableName(const QString &variableName)
+{
+    QString ret = "m_" + firstLetterToUpper(variableName) + "LineEdit";
+    return ret;
 }

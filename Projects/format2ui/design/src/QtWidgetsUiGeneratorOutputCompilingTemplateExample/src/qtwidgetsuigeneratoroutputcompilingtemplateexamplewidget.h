@@ -10,7 +10,6 @@ class QLineEdit;
 class QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget : public QWidget
 {
     Q_OBJECT
-
 public:
     QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget(QWidget *parent = 0);
     bool parseArgs();
