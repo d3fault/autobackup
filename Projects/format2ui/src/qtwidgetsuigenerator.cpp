@@ -13,9 +13,15 @@ QStringList QtWidgetsUiGenerator::filesToGenerate() const
 bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UIGeneratorFormat &format)
 {
     if(theRelativeFilePathInWhichToGenerate == QtWidgetsUiGenerator_SOURCE_FILEPATH)
-        generateSource(currentFileTextStream, format);
+    {
+        if(!generateSource(currentFileTextStream, format))
+            return false;
+    }
     else if(theRelativeFilePathInWhichToGenerate == QtWidgetsUiGenerator_SOURCE_FILEPATH)
-        generateHeader(currentFileTextStream, format);
+    {
+        if(!generateHeader(currentFileTextStream, format))
+            return false;
+    }
     //etc
 
     return true;
@@ -29,25 +35,71 @@ bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathI
     return true;
 #endif
 }
-void QtWidgetsUiGenerator::generateSource(QTextStream &currentFileTextStream, const UIGeneratorFormat &format)
+bool QtWidgetsUiGenerator::generateSource(QTextStream &currentFileTextStream, const UIGeneratorFormat &format)
 {
+    //read in source from compiling template example
+    QFile compilingTemplateExampleSourceFile("/home/user/text/Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample/src/qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.cpp");
+    if(!compilingTemplateExampleSourceFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qCritical() << "failed to open file for reading:" << compilingTemplateExampleSourceFile.fileName();
+        return false;
+    }
+    QTextStream compilingTemplateExampleSourceTextStream(&compilingTemplateExampleSourceFile);
+    QString compilingTemplateExampleSource = compilingTemplateExampleSourceTextStream.readAll();
+
+    //strReplace shiz on the file contents
+
+    QString whatToLookFor0 = "    , m_FirstNameLineEdit(new QLineEdit())\n    , m_LastNameLineEdit(new QLineEdit())";
+    QString whatToReplaceItWith0;
+
+    QString whatToLookFor1("    m_FirstNameLineEdit->setPlaceholderText(\"First Name:\");\n    myLayout->addWidget(m_FirstNameLineEdit);\n    m_LastNameLineEdit->setPlaceholderText(\"Last Name:\");\n    myLayout->addWidget(m_LastNameLineEdit);");
+    QString whatToReplaceItWith1;
+
+    QString whatToLookFor2("    connect(m_FirstNameLineEdit, &QLineEdit::returnPressed, okButton, &QPushButton::click);\n    connect(m_LastNameLineEdit, &QLineEdit::returnPressed, okButton, &QPushButton::click);");
+    QString whatToReplaceItWith2;
+
+    QString whatToLookFor3 = "        if(!m_ArgParser.firstNameDefaultValueParsedFromProcessArg().isEmpty())\n            m_FirstNameLineEdit->setText(m_ArgParser.firstNameDefaultValueParsedFromProcessArg());\n        if(!m_ArgParser.lastNameDefaultValueParsedFromProcessArg().isEmpty())\n            m_LastNameLineEdit->setText(m_ArgParser.lastNameDefaultValueParsedFromProcessArg());";
+    QString whatToReplaceItWith3;
+
+    QString whatToLookFor4 = "    QString firstName = m_FirstNameLineEdit->text();\n    if(firstName.isEmpty())\n    {\n        QMessageBox::critical(this, \"Error\", \"First Name cannot be empty\");\n        return;\n    }\n    QString lastName = m_LastNameLineEdit->text();\n    if(lastName.isEmpty())\n    {        QMessageBox::critical(this, \"Error\", \"Last Name cannot be empty\");\n        return;\n    }";
+    QString whatToReplaceItWith4;
+
+    QString whatToLookFor5("firstName, lastName");
+    QString whatToReplaceItWith5;
+
+    bool first = true;
     for(QList<UIVariable>::const_iterator it = format.UIVariables.constBegin(); it != format.UIVariables.constEnd(); ++it)
     {
         const UIVariable &uiVariable = *it;
         if(uiVariable.Type == UIVariableType::LineEdit_String)
         {
-            //TODOreq: this is old:
-            QString lineEditVariableName = uiVariable.VariableName + "LineEdit";
-            currentFileTextStream << TAB_format2ui << "QLineEdit *" << lineEditVariableName << " = new QLineEdit();" << endl;
-            currentFileTextStream << TAB_format2ui << lineEditVariableName << "->setPlaceholderText(\"" << uiVariable.HumanReadableNameForShowingFinalEndUser << "\");" << endl; //a QLabel off to the left would be better (use buddying, too!)
-            currentFileTextStream << TAB_format2ui << "myLayout.addWidget(" << lineEditVariableName << ");" << endl;
-            //TODOmb: connect to the line edit's signals? or do we wait until "ok" is pressed before we get the text results? either way works tbh. KISS [but do it right (aren't these contradictions?)]
+            QString lineEditMemberVariableName = "m_" + firstLetterToUpper(uiVariable.VariableName) + "LineEdit";
+            whatToReplaceItWith0 += "    , " + lineEditMemberVariableName + "(new QLineEdit())\n";
+            whatToReplaceItWith1 += "    " + lineEditMemberVariableName + "->setPlaceholderText(\"" + uiVariable.HumanReadableNameForShowingFinalEndUser + ":\");\n    myLayout->addWidget(" + lineEditMemberVariableName + ");\n";
+            whatToReplaceItWith2 += "    connect(" + lineEditMemberVariableName + ", &QLineEdit::returnPressed, okButton, &QPushButton::click);\n";
+            whatToReplaceItWith3 += "        if(!m_ArgParser." + uiVariable.VariableName + "DefaultValueParsedFromProcessArg().isEmpty())\n            " + lineEditMemberVariableName + "->setText(m_ArgParser." + uiVariable.VariableName + "DefaultValueParsedFromProcessArg());\n";
+            whatToReplaceItWith4 += "    QString " + uiVariable.VariableName + " = " + lineEditMemberVariableName + "->text();\n    if(" + uiVariable.VariableName + ".isEmpty())\n    {\n        QMessageBox::critical(this, \"Error\", \"" + uiVariable.HumanReadableNameForShowingFinalEndUser + " cannot be empty\");\n        return;\n    }\n";
+            whatToReplaceItWith5 += QString(first ? "" : ", ") + uiVariable.VariableName;
         }
         //etc
         //TODOreq: handle other types. could organize this much better ofc. would be great if we could use use pure virtuals to break compilation whenever any 1 ui generator doesn't implement any 1 UiVariableType. sounds ez tbh
-    }
-}
-void QtWidgetsUiGenerator::generateHeader(QTextStream &currentFileTextStream, const UIGeneratorFormat &format)
-{
 
+        first = false;
+    }
+
+    compilingTemplateExampleSource.replace(whatToLookFor0, whatToReplaceItWith0);
+    compilingTemplateExampleSource.replace(whatToLookFor1, whatToReplaceItWith1);
+    compilingTemplateExampleSource.replace(whatToLookFor2, whatToReplaceItWith2);
+    compilingTemplateExampleSource.replace(whatToLookFor3, whatToReplaceItWith3);
+    compilingTemplateExampleSource.replace(whatToLookFor4, whatToReplaceItWith4);
+    compilingTemplateExampleSource.replace(whatToLookFor5, whatToReplaceItWith5);
+
+    //write out to currentFileTextStream
+    currentFileTextStream << compilingTemplateExampleSource;
+
+    return true;
+}
+bool QtWidgetsUiGenerator::generateHeader(QTextStream &currentFileTextStream, const UIGeneratorFormat &format)
+{
+    return true;
 }

@@ -53,10 +53,15 @@ bool QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::parseArgs()
 void QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleOkButtonClicked_aka_SanitizeAllAreNotEmptyBeforeEmittingSuccess()
 {
     QString firstName = m_FirstNameLineEdit->text();
-    QString lastName = m_LastNameLineEdit->text();
-    if(firstName.isEmpty() || lastName.isEmpty())
+    if(firstName.isEmpty())
     {
-        QMessageBox::critical(this, "error", "no line edits can be empty");
+        QMessageBox::critical(this, "Error", "First Name cannot be empty");
+        return;
+    }
+    QString lastName = m_LastNameLineEdit->text();
+    if(lastName.isEmpty())
+    {
+        QMessageBox::critical(this, "Error", "Last Name cannot be empty");
         return;
     }
 

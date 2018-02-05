@@ -11,8 +11,8 @@ protected:
     QStringList filesToGenerate() const override;
     bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UIGeneratorFormat &format) override;
 private:
-    void generateSource(QTextStream &currentFileTextStream, const UIGeneratorFormat &format);
-    void generateHeader(QTextStream &currentFileTextStream, const UIGeneratorFormat &format);
+    bool generateSource(QTextStream &currentFileTextStream, const UIGeneratorFormat &format);
+    bool generateHeader(QTextStream &currentFileTextStream, const UIGeneratorFormat &format);
 };
 
 #endif // QTWIDGETSUIGENERATOR_H

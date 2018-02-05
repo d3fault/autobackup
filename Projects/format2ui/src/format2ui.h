@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include <QJsonObject>
+
 #include "uigeneratorfactory.h"
 
 class UIGeneratorFormat;
