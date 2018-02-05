@@ -30,8 +30,12 @@ QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::QtWidgetsUiGeneratorOu
     okCancelRow->addWidget(cancelButton);
     myLayout->addLayout(okCancelRow);
 
-    okButton->setDefault(true);
     connect(okButton, &QPushButton::clicked, this, &QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleOkButtonClicked_aka_SanitizeAllAreNotEmptyBeforeEmittingSuccess);
+
+    //okButton->setDefault(true);
+    connect(m_FirstNameLineEdit, &QLineEdit::returnPressed, okButton, &QPushButton::click);
+    connect(m_LastNameLineEdit, &QLineEdit::returnPressed, okButton, &QPushButton::click);
+
     connect(cancelButton, &QPushButton::clicked, this, &QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleCancelButtonClicked);
 }
 bool QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::parseArgs()

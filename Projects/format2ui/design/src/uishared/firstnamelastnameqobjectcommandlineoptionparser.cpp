@@ -10,7 +10,7 @@ FirstNameLastNameQObjectCommandLineOptionParser::FirstNameLastNameQObjectCommand
 
 bool FirstNameLastNameQObjectCommandLineOptionParser::parseArgs()
 {
-    //TODOoptional: use QCommandLineParser. but I think since I'm a code gen that the benefits of QCommandLineParser will become moot. they are for non code-gen application writing
+    //TODOoptional: use QCommandLineParser. but I think since I'm a code gen that the benefits of QCommandLineParser will become moot. they are for non code-gen application writing (NOT using QCommandLineParser gives me more flexibility, at the cost of more up front work)
 
     //TODOreq: [optionally] parse firstName and lastName, use as default values in query prompt
     QStringList argz = qApp->arguments();

@@ -1,0 +1,6 @@
+build for every ui mode
+or maybe just an --all flag to opt-in to the above
+the default action if no ui type is given (and neither is --all) is to fail/return-1;
+still I am almost tempted to say "build for EVERY ui mode" should be the default?
+there could, alternatively, be a ./buildAndRunForQtWidgets.sh (and so on for the other ui types) in the src dir. would target debian stable ofc. maybe `./buildAndRunFor --qtwidgets` is better? at the very least, perhaps using Qt is better than bash. yea actually making it a single app is fucking brilliant. there are only slight differences in the build commands.
+wait what? how would I build buildAndRunFor itself? I guess just a good ole qmake; make; sudo make install. but actually each OH FUCK IT THE IDEA ISN'T THAT COMPLELX
