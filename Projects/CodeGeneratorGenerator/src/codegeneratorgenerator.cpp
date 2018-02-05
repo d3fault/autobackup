@@ -82,7 +82,7 @@ void CodeGeneratorGenerator::generateCodeGenerator(const QString &directoryToCom
         }
     }
 
-    emit v("your output dir is here: " + outputDir.path());
+    emit o("your output dir is here: " + outputDir.path());
     scopedResponder.response()->setOutputDir(outputDir.path());
     scopedResponder.response()->setSuccess(true);
     return /*emit*/;

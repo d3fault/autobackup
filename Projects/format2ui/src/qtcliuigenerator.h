@@ -9,7 +9,7 @@ protected:
     QStringList filesToGenerate() const override;
     bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables) override;
 private:
-    void generateSource(QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables);
+    bool generateSource(QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables);
     void generateHeader(QTextStream &currentFileTextStream, const QList<UIVariable> &uiVariables);
 };
 
