@@ -5,8 +5,10 @@
 
 #include "../../uishared/firstnamelastnameqobjectcommandlineoptionparser.h"
 
+/*format2ui-compiling-template-example_BEGIN_dsfsflsjdflkjowe0834082934*/
 class QLineEdit;
-//class QPlainTextEdit;
+class QPlainTextEdit;
+/*format2ui-compiling-template-example_END_dsfsflsjdflkjowe0834082934*/
 
 class QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget : public QWidget
 {
@@ -17,9 +19,11 @@ public:
 private:
     FirstNameLastNameQObjectCommandLineOptionParser m_ArgParser;
 
+    /*format2ui-compiling-template-example_BEGIN_lskjdfouewr08084097342098*/
     QLineEdit *m_FirstNameLineEdit;
     QLineEdit *m_LastNameLineEdit;
-    //QPlainTextEdit *m_Top5MoviesPlainTextEdit;
+    QPlainTextEdit *m_Top5MoviesPlainTextEdit;
+    /*format2ui-compiling-template-example_END_lskjdfouewr08084097342098*/
 signals:
     void finishedCollectingUiVariables(const QString &firstName, const QString &lastName, const QStringList &top5Movies);
 private slots:
