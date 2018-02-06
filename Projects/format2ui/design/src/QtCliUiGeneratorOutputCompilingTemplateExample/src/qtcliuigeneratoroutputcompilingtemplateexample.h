@@ -21,7 +21,6 @@ private:
     QTextStream m_StdIn;
     QTextStream m_StdOut;
     FirstNameLastNameQObjectCommandLineOptionParser m_ArgParser;
-
 signals:
     void collectUiVariablesFinished(const QString &firstName, const QString &lastName, const QStringList &top5Movies);
 signals: //private

@@ -20,9 +20,12 @@ bool QtCliUiGeneratorOutputCompilingTemplateExample::parseArgs()
 //instead of having a 'bool success' in my 'finished' signal, we simply do not emit if there was an error. we have not yet engaged the business object, so it is better to not engage it than to engage it only to report an error to it (might change this in the future, KISS for now). maybe s/engaged/invoked
 void QtCliUiGeneratorOutputCompilingTemplateExample::collectUiVariables()
 {
+    /*format2ui-compiling-template-example_BEGIN_sdlkfjouedsflkjsdlf0983048324*/
     QString firstName = queryString("First Name", m_ArgParser.firstNameDefaultValueParsedFromProcessArg());
     QString lastName = queryString("Last Name", m_ArgParser.lastNameDefaultValueParsedFromProcessArg());
     QStringList top5Movies = queryStringList("Top 5 Movies", m_ArgParser.top5MoviesDefaultValueParsedFromProcessArg());
+    /*format2ui-compiling-template-example_END_sdlkfjouedsflkjsdlf0983048324*/
+
     emit collectUiVariablesFinished(firstName, lastName, top5Movies);
 }
 //TODOreq: maybe some [proper] way to quit during a query xD?

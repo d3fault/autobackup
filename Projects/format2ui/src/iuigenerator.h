@@ -16,6 +16,7 @@ public:
 protected:
     virtual QStringList filesToGenerate() const=0;
     virtual bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UIGeneratorFormat &format)=0;
+    void replaceSpecialCommentSection(QString *out_Source, const QString &specialIdInTheSpecialComments, const QString &whatToReplaceItWith);
 
     static QString appendSlashIfNeeded(const QString &inputString)
     {

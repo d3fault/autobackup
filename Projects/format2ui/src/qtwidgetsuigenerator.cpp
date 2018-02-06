@@ -36,15 +36,6 @@ bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathI
     return true;
 #endif
 }
-void QtWidgetsUiGenerator::replaceSpecialCommentSection(QString *out_Source, const QString &specialIdInTheSpecialComments, const QString &whatToReplaceItWith)
-{
-    int indexOfBegin = out_Source->indexOf("/*format2ui-compiling-template-example_BEGIN_" + specialIdInTheSpecialComments + "*/");
-    QString endKey = "/*format2ui-compiling-template-example_END_" + specialIdInTheSpecialComments + "*/";
-    int indexOfEnd = out_Source->indexOf(endKey);
-    int indexAfterLastCharOfEnd = indexOfEnd + endKey.size();
-    int len = indexAfterLastCharOfEnd-indexOfBegin;
-    out_Source->replace(indexOfBegin, len, whatToReplaceItWith);
-}
 bool QtWidgetsUiGenerator::generateSource(QTextStream &currentFileTextStream, const UIGeneratorFormat &format)
 {
     //read in source from compiling template example
