@@ -6,6 +6,7 @@
 #include "../../uishared/firstnamelastnameqobjectcommandlineoptionparser.h"
 
 class QLineEdit;
+//class QPlainTextEdit;
 
 class QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget : public QWidget
 {
@@ -18,8 +19,9 @@ private:
 
     QLineEdit *m_FirstNameLineEdit;
     QLineEdit *m_LastNameLineEdit;
+    //QPlainTextEdit *m_Top5MoviesPlainTextEdit;
 signals:
-    void finishedCollectingUiVariables(const QString &firstName, const QString &lastName);
+    void finishedCollectingUiVariables(const QString &firstName, const QString &lastName, const QStringList &top5Movies);
 private slots:
     void handleOkButtonClicked_aka_SanitizeAllAreNotEmptyBeforeEmittingSuccess();
     void handleCancelButtonClicked();

@@ -1,6 +1,7 @@
 #include "qtwidgetsuigenerator.h"
 
 #include <QFile>
+#include <QSet>
 #include <QDebug>
 
 #define QtWidgetsUiGenerator_SOURCE_FILEPATH "firstnamelastnameqtwidget.cpp"
@@ -80,15 +81,31 @@ bool QtWidgetsUiGenerator::generateSource(QTextStream &currentFileTextStream, co
     for(QList<UIVariable>::const_iterator it = format.UIVariables.constBegin(); it != format.UIVariables.constEnd(); ++it)
     {
         const UIVariable &uiVariable = *it;
-        if(uiVariable.Type == UIVariableType::LineEdit_String)
+        switch(uiVariable.Type)
         {
-            QString lineEditMemberVariableName = lineEditVariableName(uiVariable.VariableName);
-            whatToReplaceItWith0 += "    , " + lineEditMemberVariableName + "(new QLineEdit())\n";
-            whatToReplaceItWith1 += "    " + lineEditMemberVariableName + "->setPlaceholderText(\"" + uiVariable.HumanReadableNameForShowingFinalEndUser + ":\");\n    myLayout->addWidget(" + lineEditMemberVariableName + ");\n";
-            whatToReplaceItWith2 += "    connect(" + lineEditMemberVariableName + ", &QLineEdit::returnPressed, okButton, &QPushButton::click);\n";
-            whatToReplaceItWith3 += "        if(!m_ArgParser." + uiVariable.VariableName + "DefaultValueParsedFromProcessArg().isEmpty())\n            " + lineEditMemberVariableName + "->setText(m_ArgParser." + uiVariable.VariableName + "DefaultValueParsedFromProcessArg());\n";
-            whatToReplaceItWith4_ldkjsflj238423084 += "    QString " + uiVariable.VariableName + " = " + lineEditMemberVariableName + "->text();\n    if(" + uiVariable.VariableName + ".isEmpty())\n    {\n        QMessageBox::critical(this, \"Error\", \"" + uiVariable.HumanReadableNameForShowingFinalEndUser + " cannot be empty\");\n        return;\n    }\n";
-            whatToReplaceItWith5 += QString(first ? "" : ", ") + uiVariable.VariableName;
+            case UIVariableType::LineEdit_String:
+                {
+                    QString lineEditMemberName = lineEditMemberVariableName(uiVariable.VariableName);
+                    whatToReplaceItWith0 += "    , " + lineEditMemberName + "(new QLineEdit())\n";
+                    whatToReplaceItWith1 += "    " + lineEditMemberName + "->setPlaceholderText(\"" + uiVariable.HumanReadableNameForShowingFinalEndUser + ":\");\n    myLayout->addWidget(" + lineEditMemberName + ");\n";
+                    whatToReplaceItWith2 += "    connect(" + lineEditMemberName + ", &QLineEdit::returnPressed, okButton, &QPushButton::click);\n";
+                    whatToReplaceItWith3 += "        if(!m_ArgParser." + uiVariable.VariableName + "DefaultValueParsedFromProcessArg().isEmpty())\n            " + lineEditMemberName + "->setText(m_ArgParser." + uiVariable.VariableName + "DefaultValueParsedFromProcessArg());\n";
+                    whatToReplaceItWith4_ldkjsflj238423084 += "    QString " + uiVariable.VariableName + " = " + lineEditMemberName + "->text();\n    if(" + uiVariable.VariableName + ".isEmpty())\n    {\n        QMessageBox::critical(this, \"Error\", \"" + uiVariable.HumanReadableNameForShowingFinalEndUser + " cannot be empty\");\n        return;\n    }\n";
+                    whatToReplaceItWith5 += QString(first ? "" : ", ") + uiVariable.VariableName;
+                }
+                break;
+            case UIVariableType::PlainTextEdit_StringList:
+                {
+                    //TODOreq:
+                    QString plainTextEditMemberName = plainTextEditMemberVariableName(uiVariable.VariableName);
+                    whatToReplaceItWith1 += "    myLayout->addWidget(new QLabel(\"" + uiVariable.HumanReadableNameForShowingFinalEndUser + "\"));\n    myLayout->addWidget(" + plainTextEditMemberName + ");\n";
+
+                    whatToReplaceItWith4_ldkjsflj238423084 += "    QStringList " + uiVariable.VariableName + " = " + plainTextEditMemberName + "->toPlainText().split(\"\\n\");\n";
+                }
+                break;
+            default:
+                qWarning("unknown ui variable type");
+                break;
         }
         //etc
         //TODOreq: handle other types. could organize this much better ofc. would be great if we could use use pure virtuals to break compilation whenever any 1 ui generator doesn't implement any 1 UiVariableType. sounds ez tbh
@@ -138,33 +155,61 @@ bool QtWidgetsUiGenerator::generateHeader(QTextStream &currentFileTextStream, co
     QString whatToLookFor3("const QString &firstName, const QString &lastName");
     QString whatToReplaceItWith3;
 
+    QString whatToLookFor4("class QLineEdit;");
+    QSet<QString> whatToReplaceItWith4_forwardDeclareClasses;
+
     bool first = true;
     for(QList<UIVariable>::const_iterator it = format.UIVariables.constBegin(); it != format.UIVariables.constEnd(); ++it)
     {
         const UIVariable &uiVariable = *it;
-        if(uiVariable.Type == UIVariableType::LineEdit_String)
+        switch(uiVariable.Type)
         {
-            QString lineEditMemberVariableName = lineEditVariableName(uiVariable.VariableName);
-            whatToReplaceItWith2 += "    QLineEdit *" + lineEditMemberVariableName + ";\n";
-            whatToReplaceItWith3 += QString(first ? "" : ", ") + QString("const QString &") + uiVariable.VariableName;
+            case UIVariableType::LineEdit_String:
+                {
+                    whatToReplaceItWith4_forwardDeclareClasses.insert("QLineEdit");
+                    QString lineEditMemberName = lineEditMemberVariableName(uiVariable.VariableName);
+                    whatToReplaceItWith2 += "    QLineEdit *" + lineEditMemberName + ";\n";
+                    whatToReplaceItWith3 += QString(first ? "" : ", ") + QString("const QString &") + uiVariable.VariableName;
+                }
+                break;
+            case UIVariableType::PlainTextEdit_StringList:
+                {
+                    whatToReplaceItWith4_forwardDeclareClasses.insert("QPlainTextEdit");
+                    whatToReplaceItWith2 += "    QPlainTextEdit *" + plainTextEditMemberVariableName(uiVariable.VariableName) + ";\n";
+                }
+                break;
+                //etc
+            default:
+                qWarning("unknown uiVariable type");
+                break;
         }
-        //etc
 
         first = false;
+    }
+    QString whatToReplaceItWith4;
+    for(QSet<QString>::const_iterator it = whatToReplaceItWith4_forwardDeclareClasses.constBegin(); it != whatToReplaceItWith4_forwardDeclareClasses.constEnd(); ++it)
+    {
+        whatToReplaceItWith4 += "class " + (*it) + ";\n";
     }
 
     compilingTemplateExampleHeader.replace(whatToLookFor0, whatToReplaceItWith0);
     compilingTemplateExampleHeader.replace(whatToLookFor1, whatToReplaceItWith1);
     compilingTemplateExampleHeader.replace(whatToLookFor2, whatToReplaceItWith2);
     compilingTemplateExampleHeader.replace(whatToLookFor3, whatToReplaceItWith3);
+    compilingTemplateExampleHeader.replace(whatToLookFor4, whatToReplaceItWith4);
 
     //write out to currentFileTextStream
     currentFileTextStream << compilingTemplateExampleHeader;
 
     return true;
 }
-QString QtWidgetsUiGenerator::lineEditVariableName(const QString &variableName)
+QString QtWidgetsUiGenerator::lineEditMemberVariableName(const QString &variableName)
 {
     QString ret = "m_" + firstLetterToUpper(variableName) + "LineEdit";
+    return ret;
+}
+QString QtWidgetsUiGenerator::plainTextEditMemberVariableName(const QString &variableName)
+{
+    QString ret = "m_" + firstLetterToUpper(variableName) + "PlainTextEdit";
     return ret;
 }

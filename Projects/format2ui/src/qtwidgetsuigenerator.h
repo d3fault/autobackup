@@ -14,7 +14,8 @@ private:
     void replaceSpecialCommentSection(QString *out_Source, const QString &specialIdInTheSpecialComments, const QString &whatToReplaceItWith);
     bool generateSource(QTextStream &currentFileTextStream, const UIGeneratorFormat &format);
     bool generateHeader(QTextStream &currentFileTextStream, const UIGeneratorFormat &format);
-    static QString lineEditVariableName(const QString &variableName);
+    static QString lineEditMemberVariableName(const QString &variableName);
+    static QString plainTextEditMemberVariableName(const QString &variableName);
 };
 
 #endif // QTWIDGETSUIGENERATOR_H

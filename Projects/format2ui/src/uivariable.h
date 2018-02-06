@@ -32,6 +32,10 @@ private:
     {
         if(typeString == "String")
             return UIVariableType::LineEdit_String;
+        //if(typeString == "StringArray")
+            //return UIVariableType::ExpandingListOfLineEdits_StringArray;
+        if(typeString == "StringList")
+            return UIVariableType::PlainTextEdit_StringList; //one plain text edit is easier to deal with than many line edits, but I do think many line edits is the better way to do it
         //etc!
         qFatal("invalid type string");
         return UIVariableType::LineEdit_String;

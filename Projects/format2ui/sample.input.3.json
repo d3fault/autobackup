@@ -1,0 +1,12 @@
+{
+    "name" : "FullName",
+    "rootLayout" :
+    {
+        "verticalUiVariables" :
+        [
+            { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "First Name", "variableName" : "firstName", "variableValue" : "" },
+            { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Last Name", "variableName" : "lastName", "variableValue" : "" },
+            { "typeString" : "StringList", "humanReadableNameForShowingFinalEndUser" : "Top 5 Movies", "variableName" : "top5movies", "variableValue" : "" }
+        ]
+    }
+}

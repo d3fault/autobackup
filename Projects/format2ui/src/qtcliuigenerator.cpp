@@ -62,10 +62,22 @@ bool QtCliUiGenerator::generateSource(QTextStream &currentFileTextStream, const 
     for(QList<UIVariable>::const_iterator it = format.UIVariables.constBegin(); it != format.UIVariables.constEnd(); ++it)
     {
         const UIVariable &uiVariable = *it;
-        if(uiVariable.Type == UIVariableType::LineEdit_String)
+        switch(uiVariable.Type)
         {
-            whatToReplaceItWith0 += "    QString " + uiVariable.VariableName + " = query(\"" + uiVariable.HumanReadableNameForShowingFinalEndUser + "\", m_ArgParser." + uiVariable.VariableName + "DefaultValueParsedFromProcessArg());\n";
-            whatToReplaceItWith1 += (first ? "" : ", ") + uiVariable.VariableName;
+            case UIVariableType::LineEdit_String:
+                {
+                    whatToReplaceItWith0 += "    QString " + uiVariable.VariableName + " = query(\"" + uiVariable.HumanReadableNameForShowingFinalEndUser + "\", m_ArgParser." + uiVariable.VariableName + "DefaultValueParsedFromProcessArg());\n";
+                    whatToReplaceItWith1 += (first ? "" : ", ") + uiVariable.VariableName;
+                }
+                break;
+            case UIVariableType::PlainTextEdit_StringList:
+                {
+                    //TODOreq:
+                }
+                break;
+            default:
+                qWarning("unknown ui variable type");
+                break;
         }
         //etc
 
@@ -109,9 +121,21 @@ bool QtCliUiGenerator::generateHeader(QTextStream &currentFileTextStream, const 
     for(QList<UIVariable>::const_iterator it = format.UIVariables.constBegin(); it != format.UIVariables.constEnd(); ++it)
     {
         const UIVariable &uiVariable = *it;
-        if(uiVariable.Type == UIVariableType::LineEdit_String)
+        switch(uiVariable.Type)
         {
+            case UIVariableType::LineEdit_String:
+                {
             whatToReplaceItWith2 += QString(first ? "" : ", ") + QString("const QString &") + uiVariable.VariableName;
+                }
+                break;
+            case UIVariableType::PlainTextEdit_StringList:
+                {
+                    //TODOreq;
+                }
+                break;
+            default:
+                qWarning("unknown uiVariable type");
+                break;
         }
         //etc
 

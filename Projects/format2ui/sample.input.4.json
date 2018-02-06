@@ -1,0 +1,12 @@
+{
+    "name" : "ShitFuckSampleFormat4",
+    "rootLayout" :
+    {
+        "verticalUiVariables" :
+        [
+            { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Regular String 1", "variableName" : "regularString1", "variableValue" : "" },
+            { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Regular String 2", "variableName" : "regularString2", "variableValue" : "" },
+            { "typeString" : "StringList", "humanReadableNameForShowingFinalEndUser" : "Some Fucking List of Bullshit", "variableName" : "someFuckingListOfBullshit", "variableValue" : "" }
+        ]
+    }
+}
