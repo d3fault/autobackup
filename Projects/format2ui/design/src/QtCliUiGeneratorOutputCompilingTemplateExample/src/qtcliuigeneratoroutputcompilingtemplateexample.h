@@ -15,14 +15,15 @@ public:
     bool parseArgs();
     void collectUiVariables();
 private:
-    QString query(const QString &queryString, const QString &defaultValueParsedFromProcessArg);
+    QString queryString(const QString &queryString, const QString &defaultValueParsedFromProcessArg);
+    QStringList queryStringList(const QString &stringListQueryString, const QStringList &defaultValueParsedFromProcessArg);
 
     QTextStream m_StdIn;
     QTextStream m_StdOut;
     FirstNameLastNameQObjectCommandLineOptionParser m_ArgParser;
 
 signals:
-    void collectUiVariablesFinished(const QString &firstName, const QString &lastName);
+    void collectUiVariablesFinished(const QString &firstName, const QString &lastName, const QStringList &top5Movies);
 signals: //private
     //void exitRequested(int exitCode);
 };

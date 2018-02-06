@@ -96,7 +96,6 @@ bool QtWidgetsUiGenerator::generateSource(QTextStream &currentFileTextStream, co
                 break;
             case UIVariableType::PlainTextEdit_StringList:
                 {
-                    //TODOreq:
                     QString plainTextEditMemberName = plainTextEditMemberVariableName(uiVariable.VariableName);
                     whatToReplaceItWith1 += "    myLayout->addWidget(new QLabel(\"" + uiVariable.HumanReadableNameForShowingFinalEndUser + "\"));\n    myLayout->addWidget(" + plainTextEditMemberName + ");\n";
 

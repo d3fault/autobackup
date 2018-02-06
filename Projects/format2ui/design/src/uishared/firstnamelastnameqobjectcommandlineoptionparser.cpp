@@ -94,3 +94,7 @@ void FirstNameLastNameQObjectCommandLineOptionParser::showUsage() //used to be c
     m_StdErr << "Usage: ./app [--firstname Joe] [--lastname Schmoe]" << endl;
     //emit exitRequested(1); //TODOmb: just set some m_Success property to false and let the instantiator of this object do the actual exitting?
 }
+QStringList FirstNameLastNameQObjectCommandLineOptionParser::top5MoviesDefaultValueParsedFromProcessArg() const
+{
+    return QStringList(); //TODOreq:
+}

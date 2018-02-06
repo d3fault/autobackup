@@ -20,12 +20,13 @@ bool QtCliUiGeneratorOutputCompilingTemplateExample::parseArgs()
 //instead of having a 'bool success' in my 'finished' signal, we simply do not emit if there was an error. we have not yet engaged the business object, so it is better to not engage it than to engage it only to report an error to it (might change this in the future, KISS for now). maybe s/engaged/invoked
 void QtCliUiGeneratorOutputCompilingTemplateExample::collectUiVariables()
 {
-    QString firstName = query("First Name", m_ArgParser.firstNameDefaultValueParsedFromProcessArg());
-    QString lastName = query("Last Name", m_ArgParser.lastNameDefaultValueParsedFromProcessArg());
-    emit collectUiVariablesFinished(firstName, lastName);
+    QString firstName = queryString("First Name", m_ArgParser.firstNameDefaultValueParsedFromProcessArg());
+    QString lastName = queryString("Last Name", m_ArgParser.lastNameDefaultValueParsedFromProcessArg());
+    QStringList top5Movies = queryStringList("Top 5 Movies", m_ArgParser.top5MoviesDefaultValueParsedFromProcessArg());
+    emit collectUiVariablesFinished(firstName, lastName, top5Movies);
 }
 //TODOreq: maybe some [proper] way to quit during a query xD?
-QString QtCliUiGeneratorOutputCompilingTemplateExample::query(const QString &queryString, const QString &defaultValueParsedFromProcessArg)
+QString QtCliUiGeneratorOutputCompilingTemplateExample::queryString(const QString &queryString, const QString &defaultValueParsedFromProcessArg)
 {
     m_StdOut << queryString << " [" << defaultValueParsedFromProcessArg << "]: ";
     m_StdOut.flush();
@@ -36,9 +37,53 @@ QString QtCliUiGeneratorOutputCompilingTemplateExample::query(const QString &que
         if(!defaultValueParsedFromProcessArg.isEmpty())
         {
             if(lineMaybe.isEmpty())
-                return defaultValueParsedFromProcessArg; //or break; would have worked -- wait no it wouldn't have
+                return defaultValueParsedFromProcessArg;
         }
     }
     while(lineMaybe.isEmpty() || lineMaybe.isNull());
     return lineMaybe;
+}
+QStringList QtCliUiGeneratorOutputCompilingTemplateExample::queryStringList(const QString &stringListQueryString, const QStringList &defaultValueParsedFromProcessArg)
+{
+    QStringList ret;
+    m_StdOut << "Beginning collecting an array... (" << stringListQueryString << ")..." << endl;
+    if(!defaultValueParsedFromProcessArg.isEmpty())
+        m_StdOut << "The following array entries have been feed in via process arg. They are only supposed to be defaults, but currently there is no way to edit them" << endl; //TODOreq yet
+    for(QStringList::const_iterator it = defaultValueParsedFromProcessArg.constBegin(); it != defaultValueParsedFromProcessArg.constEnd(); ++it)
+    {
+        m_StdOut << (*it) << endl;
+        ret << (*it);
+    }
+    if(!defaultValueParsedFromProcessArg.isEmpty())
+        m_StdOut << endl << endl;
+
+    QString line;
+    do
+    {
+        line = queryString(stringListQueryString + " #" + QString::number(ret.size()), QString());
+        if(line == "q")
+        {
+            m_StdOut << "press q again to use literal q" << endl;
+            m_StdOut << "press qq to use break out of the array" << endl;
+            m_StdOut << "any other entry discards your first q and that entry" << endl;
+            line = queryString(stringListQueryString + " #" + QString::number(ret.size()), QString());
+            if(line == "q")
+            {
+                ret << line;
+                line = "a"; //to thwart the while statement at the bottom of this do-while
+                continue;
+            }
+            if(line == "qq")
+            {
+                break;
+            }
+        }
+        else
+        {
+            ret << line;
+        }
+    }while(line != "q");
+
+    m_StdOut << "...finished collecting an array (" << stringListQueryString << ")." << endl;
+    return ret;
 }

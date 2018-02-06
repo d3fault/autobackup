@@ -52,7 +52,7 @@ bool QtCliUiGenerator::generateSource(QTextStream &currentFileTextStream, const 
 
     //strReplace shiz on the file contents
 
-    QString whatToLookFor0 = "    QString firstName = query(\"First Name\", m_ArgParser.firstNameDefaultValueParsedFromProcessArg());\n    QString lastName = query(\"Last Name\", m_ArgParser.lastNameDefaultValueParsedFromProcessArg());";
+    QString whatToLookFor0 = "    QString firstName = queryString(\"First Name\", m_ArgParser.firstNameDefaultValueParsedFromProcessArg());\n    QString lastName = queryString(\"Last Name\", m_ArgParser.lastNameDefaultValueParsedFromProcessArg());";
     QString whatToReplaceItWith0;
 
     QString whatToLookFor1 = "firstName, lastName";
@@ -67,12 +67,11 @@ bool QtCliUiGenerator::generateSource(QTextStream &currentFileTextStream, const 
             case UIVariableType::LineEdit_String:
                 {
                     whatToReplaceItWith0 += "    QString " + uiVariable.VariableName + " = query(\"" + uiVariable.HumanReadableNameForShowingFinalEndUser + "\", m_ArgParser." + uiVariable.VariableName + "DefaultValueParsedFromProcessArg());\n";
-                    whatToReplaceItWith1 += (first ? "" : ", ") + uiVariable.VariableName;
                 }
                 break;
             case UIVariableType::PlainTextEdit_StringList:
                 {
-                    //TODOreq:
+                    whatToReplaceItWith0 += "    QStringList top5Movies = queryStringList(\"" + uiVariable.HumanReadableNameForShowingFinalEndUser + "\", m_ArgParser." + uiVariable.VariableName + "DefaultValueParsedFromProcessArg());";
                 }
                 break;
             default:
@@ -81,6 +80,7 @@ bool QtCliUiGenerator::generateSource(QTextStream &currentFileTextStream, const 
         }
         //etc
 
+        whatToReplaceItWith1 += (first ? "" : ", ") + uiVariable.VariableName;
         first = false;
     }
 
@@ -125,12 +125,12 @@ bool QtCliUiGenerator::generateHeader(QTextStream &currentFileTextStream, const 
         {
             case UIVariableType::LineEdit_String:
                 {
-            whatToReplaceItWith2 += QString(first ? "" : ", ") + QString("const QString &") + uiVariable.VariableName;
+
                 }
                 break;
             case UIVariableType::PlainTextEdit_StringList:
                 {
-                    //TODOreq;
+
                 }
                 break;
             default:
@@ -139,6 +139,7 @@ bool QtCliUiGenerator::generateHeader(QTextStream &currentFileTextStream, const 
         }
         //etc
 
+        whatToReplaceItWith2 += QString(first ? "" : ", ") + QString("const QString &") + uiVariable.VariableName;
         first = false;
     }
 
