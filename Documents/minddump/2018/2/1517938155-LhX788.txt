@@ -1,0 +1,24 @@
+On one hand I want to say "STOP FUCKING PROCREATING IRRESPONSIBLY YOU IDIOTS", but on the other hand if that were to actually happen then the human species would instantly go extinct. Err actually no it wouldn't, but what I mean to say is that "procreating irresponsibly" is the course that evolution probably took (as evident in our fucked up world). However now that I think of it, it is possible to stop. Possible, but extremely unlikely. But the future can/will be much different than this, so maybe it's possible eventually.
+
+Getting back to the point, "procreating irresponsibly" is probably a necessary "state" for a species fighting for survival. I mean we came from fish [eating fish] so you know what I'm sayin'?
+
+class Fish : public ILifeForm
+{
+public:
+	void onLive() override
+	{
+		eat();
+		fuck();
+		tryNotToGetEaten();
+	}
+};
+
+//we are that Fish object that evolved and became/is the top of the food chain.
+
+//on earth at least.
+
+kids with 1 of the 2 gender parents is missing makes me sad. to have a better chance at life, a human should know what a female relationship is like and what a male relationship is like. I primarily mean single parents.
+
+male and female might as well be separate species, because of the completely different experiences we receive from the universe.
+males: if you ever want to have a good time, dress up as a girl (passable) and go to a bar
+females: if you ever want to have a reeaaally boring time, dress up as a man (passable) and go walk around pretty much anywhere you want undisturbed (that's not to say you can tresspass or invade people's space without them getting defensive). you'll be surprised how much nobody says anything to you at all (compared to when you're perceived as girl).

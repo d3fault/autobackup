@@ -1,0 +1,10 @@
+class Gangsta : public ILifeForm
+{
+public:
+	void onLive() override
+	{
+		get();
+		fuck();
+		tryNotToGetGot();
+	}
+};
