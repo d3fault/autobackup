@@ -6,6 +6,7 @@
 #include <QJsonObject>
 
 #include "uigeneratorfactory.h"
+#include "uivariable.h"
 
 class UIGeneratorFormat;
 
@@ -17,7 +18,9 @@ public:
 public slots:
     void beginFormat2ui(const QString &filePathOfJsonUiFormatInput, const QString &cliArgUiTypeString);
 private:
-    void parseJsonUiFormatInput(const QJsonObject &inputJsonObject, UIGeneratorFormat *out_Format);
+    //void parseJsonUiFormatInput(const QJsonObject &inputJsonObject, UIGeneratorFormat *out_Format);
+    //void handleWidgetAkaContainerType(const UICollector &uiVariable, const QJsonObject &inputJsonObject, UIGeneratorFormat *out_Format);
+    //void handleDerivedFromWidgetAkaActualType(const UICollector &uiVariable, const QJsonObject &inputJsonObject, UIGeneratorFormat *out_Format);
 
     UIGeneratorFactory m_UIGeneratorFactory;
 #if 0

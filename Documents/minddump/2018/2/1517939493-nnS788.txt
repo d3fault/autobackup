@@ -4,7 +4,8 @@ public:
 	void onLive() override
 	{
 		get();
-		fuck();
 		tryNotToGetGot();
 	}
 };
+
+//"I know Ima get got. I just know Ima get mine more than I get got" -I forget his name but it was some Gangsta who might have been on death row but was at the very least incarcerated in the video

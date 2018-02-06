@@ -7,10 +7,10 @@ class QtCliUiGenerator : public IUIGenerator
 {
 protected:
     QStringList filesToGenerate() const override;
-    bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UIGeneratorFormat &format) override;
+    bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector) override;
 private:
-    bool generateSource(QTextStream &currentFileTextStream, const UIGeneratorFormat &format);
-    bool generateHeader(QTextStream &currentFileTextStream, const UIGeneratorFormat &format);
+    bool generateSource(QTextStream &currentFileTextStream, const UICollector &rootUiCollector);
+    bool generateHeader(QTextStream &currentFileTextStream, const UICollector &rootUiCollector);
 };
 
 #endif // QTCLIUIGENERATOR_H

@@ -1,0 +1,23 @@
+{
+    "typeString" : "Widget",
+    "name" : "FullName",
+    "rootLayout" :
+    {
+        "verticalUiVariables" :
+        [
+            { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Favorite Song", "variableName" : "favoriteSong", "variableValue" : "" },
+            { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Favorite Color", "variableName" : "favoriteColor", "variableValue" : "" },
+            {
+                "typeString" : "Widget",
+                "rootLayout" :
+                {
+		    "verticalUiVariables" :
+                    [
+                        { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Nested Shitfuck 1", "variableName" : "nestedShitfuck1", "variableValue" : "" },
+                        { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Nested Shitfuck 2", "variableName" : "nestedShitfuck2", "variableValue" : "" }
+                    ]
+                }
+            }
+        ]
+    }
+}

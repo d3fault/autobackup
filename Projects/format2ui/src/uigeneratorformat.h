@@ -5,10 +5,12 @@
 
 #include "uivariable.h"
 
+#if 0
 struct UIGeneratorFormat
 {
     QString Name;
     QList<UIVariable> UIVariables;
 };
+#endif
 
 #endif // UIGENERATORFORMAT_H

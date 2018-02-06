@@ -1,45 +1,81 @@
-#ifndef UIVARIABLE_H
-#define UIVARIABLE_H
+#ifndef UICOLLECTOR_H
+#define UICOLLECTOR_H
 
-class UIVariableType
+#include <QJsonObject>
+
+class UICollectorType
 {
 public:
     //these all describe INPUTS on the final gui, we need a special type to represent OUTPUTS on the final gui (they will be "static", such as QLabel, not doing any special processing [yet? I suppose dynamic shiz is psbl mindfuck.jpg], but possibly giving the user some very useful instructions, for example)
     enum UIVariableTypeEnum
     {
-          LineEdit_String = 0
-        , ScrollBox_Int = 1
-        , PlainTextEdit_StringList = 2
-        , PlainTextEdit_IntList = 3
+          Widget = 0
+        , LineEdit_String = 1
+        , ScrollBox_Int = 2
+        , PlainTextEdit_StringList = 3
+        , PlainTextEdit_IntList = 4
         //etc! can get very complex! custom widgets ofc
     };
 };
-struct UIVariable
+//helper methods around a QJsonObject
+class UICollector : public QJsonObject
 {
+public:
+    /*UICollector()
+        : QJsonObject()
+    {
+        initUiCollector();
+    }*/
+    UICollector(const QJsonObject &other)
+        : QJsonObject(other)
+    {
+        initUiCollector();
+    }
+#if 0
     UIVariable(const QString &typeString, const QString &humanReadableNameForShowingFinalEndUser, const QString &variableName, const QString &variableValue)
         : Type(uIVariableTypeStringToType(typeString))
         , HumanReadableNameForShowingFinalEndUser(humanReadableNameForShowingFinalEndUser)
         , VariableName(variableName)
         , VariableValue(variableValue)
     { }
+#endif
 
-    UIVariableType::UIVariableTypeEnum Type;
-    QString HumanReadableNameForShowingFinalEndUser;
-    QString VariableName;
-    QString VariableValue;
+    //Widget
+    QString name() const { return value("name").toString(); }
+    QJsonObject rootLayout() const { return value("rootLayout").toObject(); }
+
+    //Non-Widget
+    QString humanReadableNameForShowingFinalEndUser() const { return value("humanReadableNameForShowingFinalEndUser").toString(); }
+    QString variableName() const { return value("variableName").toString(); }
+    QString variableValue() const { return value("variableValue").toString(); }
+
+
+    UICollectorType::UIVariableTypeEnum Type;
+    //QString HumanReadableNameForShowingFinalEndUser;
+    //QString VariableName;
+    //QString VariableValue;
 private:
-    static UIVariableType::UIVariableTypeEnum uIVariableTypeStringToType(const QString &typeString)
+    void initUiCollector()
     {
+        QString typeString = value("typeString").toString();
+        if(typeString.isEmpty())
+            typeString = "Widget";
+        Type = uIVariableTypeStringToType(typeString);
+    }
+    static UICollectorType::UIVariableTypeEnum uIVariableTypeStringToType(const QString &typeString)
+    {
+        if(typeString == "Widget")
+            return UICollectorType::Widget;
         if(typeString == "String")
-            return UIVariableType::LineEdit_String;
+            return UICollectorType::LineEdit_String;
         //if(typeString == "StringArray")
             //return UIVariableType::ExpandingListOfLineEdits_StringArray;
         if(typeString == "StringList")
-            return UIVariableType::PlainTextEdit_StringList; //one plain text edit is easier to deal with than many line edits, but I do think many line edits is the better way to do it
+            return UICollectorType::PlainTextEdit_StringList; //one plain text edit is easier to deal with than many line edits, but I do think many line edits is the better way to do it
         //etc!
         qFatal("invalid type string");
-        return UIVariableType::LineEdit_String;
+        return UICollectorType::LineEdit_String;
     }
 };
 
-#endif // UIVARIABLE_H
+#endif // UICOLLECTOR_H

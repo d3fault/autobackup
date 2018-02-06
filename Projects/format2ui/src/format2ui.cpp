@@ -23,7 +23,10 @@ void format2ui::beginFormat2ui(const QString &filePathOfJsonUiFormatInput, const
     const QByteArray &rawJsonUiFormatInput = inputFile.readAll();
     QJsonParseError jsonParseError;
     QJsonDocument jsonDocUiFormatInput = QJsonDocument::fromJson(rawJsonUiFormatInput, &jsonParseError);
-    //TODOreq: handle jsonParseError
+    if(jsonParseError.error != QJsonParseError::NoError)
+    {
+        qWarning() << "json parse error:" << jsonParseError.errorString();
+    }
     const QJsonObject &jsonUiFormatInput = jsonDocUiFormatInput.object();
 
     IUIGenerator *uiGenerator = m_UIGeneratorFactory.uiGenerator(cliArgUiTypeString);
@@ -34,10 +37,12 @@ void format2ui::beginFormat2ui(const QString &filePathOfJsonUiFormatInput, const
         return;
     }
 
-    UIGeneratorFormat format;
-    parseJsonUiFormatInput(jsonUiFormatInput, &format);
+    //UIGeneratorFormat format;
+    //parseJsonUiFormatInput(jsonUiFormatInput, &format);
     //so now uiVariables is populated, time to iterate it and output shit (I guess this could be done during input _reading_, but eh stfu I can't think that pro. can probably refactor to that later ezily anyways -- hmm actually I think the above 'input reading' might be generic enough to even put in our interface/abstract-base-class for re-use in other sibling ui generator implementations (such as cli,qml,etc))
-    if(!uiGenerator->generateUi(format))
+    UICollector rootUiCollector(jsonUiFormatInput);
+
+    if(!uiGenerator->generateUi(rootUiCollector))
     {
         qDebug() << "failed to generate ui";
         emit finishedFormat2ui(false);
@@ -52,9 +57,27 @@ void format2ui::beginFormat2ui(const QString &filePathOfJsonUiFormatInput, const
         uiGenerator->generateUi(); //kek
 #endif
 }
+#if 0
+//recursion head: void format2ui::parseJsonUiFormatInput
 void format2ui::parseJsonUiFormatInput(const QJsonObject &inputJsonObject, UIGeneratorFormat *out_Format)
 {
-    out_Format->Name = inputJsonObject.value("name").toString();
+    UICollector thisUiCollector(/*typeString*/); //, humanReadableNameForShowingFinalEndUser, variableName, variableValue);
+    switch(thisUiCollector.Type)
+    {
+        case UICollectorType::Widget:
+            handleWidgetAkaContainerType(thisUiCollector, inputJsonObject, out_Format); //recursion path
+            break;
+        default:
+            handleDerivedFromWidgetAkaActualType(thisUiCollector, inputJsonObject, out_Format); //non-recursion path
+            break;
+    }
+    out_Format->UIVariables.append(thisUiCollector);
+}
+//everything inherits from widgets, yes, but only a widget by itself is considered a container
+void format2ui::handleWidgetAkaContainerType(const UICollector &uiVariable, const QJsonObject &inputJsonObject, UIGeneratorFormat *out_Format)
+{
+    //out_Format->Name = inputJsonObject.value("name").toString(); //TODOreq: only want the TOP-LEVEL name, not each sub-widget to overwrite this value
+    //uiVariable.setName(value("name")) wot
 
     //a ui format input is a series of layouts (containing "widgets" therein)
     //so as not to digress too fucking much, I'll start with a QVBoxLayout as my "root" layout. I use QVBoxLayout the most
@@ -65,14 +88,32 @@ void format2ui::parseJsonUiFormatInput(const QJsonObject &inputJsonObject, UIGen
     for(QJsonArray::const_iterator it = verticalUiVariables.constBegin(); it != verticalUiVariables.constEnd(); ++it)
     {
         const QJsonObject &currentUiVariableJsonObject = (*it).toObject();
-        QString typeString = currentUiVariableJsonObject.value("typeString").toString();
+        parseJsonUiFormatInput(currentUiVariableJsonObject, out_Format); //recursion call to head: void format2ui::parseJsonUiFormatInput
+#if 0
+        QString typeString2 = currentUiVariableJsonObject.value("typeString").toString();
         QString humanReadableNameForShowingFinalEndUser = currentUiVariableJsonObject.value("humanReadableNameForShowingFinalEndUser").toString();
-        QString variableName = currentUiVariableJsonObject.value("variableName").toString();
+        QString variableName = currentUiVariableJsonObject.value("variableName").toString(); //probably gonna take this out. not using it like I thought I would be
         QString variableValue = currentUiVariableJsonObject.value("variableValue").toString();
+#endif
 
-        out_Format->UIVariables.append(UIVariable(typeString, humanReadableNameForShowingFinalEndUser, variableName, variableValue));
+        //UIVariable uiVariable(typeString2, humanReadableNameForShowingFinalEndUser, variableName, variableValue);
+        //handleWidgetAkaContainerType(uiVariable, out_Format);
+#if 0
+        if(uiVariable.Type == UIVariableType::Widget)
+        {
+            //recursion call to head: void format2ui::parseJsonUiFormatInput
+            parseJsonUiFormatInput(currentUiVariableJsonObject, out_Format);
+        }
+#endif
+
+        //out_Format->UIVariables.append(uiVariable);
     }
 }
+void format2ui::handleDerivedFromWidgetAkaActualType(const UICollector &uiVariable, const QJsonObject &inputJsonObject, UIGeneratorFormat *out_Format)
+{
+    //uhh, hi? wat do here?
+}
+#endif
 #if 0
 const QMetaObject format2ui::cliArgUiTypeString2metaObject(const QString &cliArgUiTypeString)
 {
