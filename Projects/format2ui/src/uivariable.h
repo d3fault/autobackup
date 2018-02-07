@@ -14,6 +14,7 @@ public:
         , ScrollBox_Int = 2
         , PlainTextEdit_StringList = 3
         , PlainTextEdit_IntList = 4
+        , WidgetList = 5
         //etc! can get very complex! custom widgets ofc
     };
 };

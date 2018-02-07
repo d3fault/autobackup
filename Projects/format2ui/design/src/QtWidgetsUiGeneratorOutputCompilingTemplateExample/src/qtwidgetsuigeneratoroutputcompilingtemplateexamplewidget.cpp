@@ -5,15 +5,17 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QMessageBox>
-#include <QPlainTextEdit>
+#include <QListWidget>
 #include <QLabel>
+
+#include "top5movieslistwidget.h"
 
 QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget(QWidget *parent)
     : QWidget(parent)
     /*format2ui-compiling-template-example_BEGIN_liiueri93jrkjieruj*/
     , m_FirstNameLineEdit(new QLineEdit())
     , m_LastNameLineEdit(new QLineEdit())
-    , m_Top5MoviesPlainTextEdit(new QPlainTextEdit())
+    , m_Top5MoviesListWidget(new Top5MoviesListWidget())
     , m_FavoriteDinnerLineEdit(new QLineEdit())
     , m_FavoriteLunchLineEdit(new QLineEdit())
     /*format2ui-compiling-template-example_END_liiueri93jrkjieruj*/
@@ -25,12 +27,20 @@ QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::QtWidgetsUiGeneratorOu
     rootLayout->addWidget(m_FirstNameLineEdit);
     m_LastNameLineEdit->setPlaceholderText("Last Name:");
     rootLayout->addWidget(m_LastNameLineEdit);
+
     rootLayout->addWidget(new QLabel("Top 5 Movies:"));
-    rootLayout->addWidget(m_Top5MoviesPlainTextEdit);
-    QVBoxLayout *nestedLayout0 = new QVBoxLayout();
-    nestedLayout0->addWidget(m_FavoriteDinnerLineEdit);
-    nestedLayout0->addWidget(m_FavoriteLunchLineEdit);
-    rootLayout->addLayout(nestedLayout0);
+    rootLayout->addWidget(m_Top5MoviesListWidget);
+
+    QVBoxLayout *layout0 = new QVBoxLayout();
+    layout0->addWidget(m_FavoriteDinnerLineEdit);
+    layout0->addWidget(m_FavoriteLunchLineEdit);
+    rootLayout->addLayout(layout0);
+
+#if 0 //TODOreq:
+    QVBoxLayout *layout1_ForWidgetList = new QVBoxLayout();
+
+    rootLayout->addLayout(layout1_ForWidgetList);
+#endif
     /*format2ui-compiling-template-example_END_kldsfoiure8098347824*/
 
     QHBoxLayout *okCancelRow = new QHBoxLayout(); //I thought about changing 'this' to be a QDialog, but I don't want to subscribe to anything!
@@ -82,7 +92,10 @@ void QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleOkButtonCli
         QMessageBox::critical(this, "Error", "Last Name cannot be empty");
         return;
     }
-    QStringList top5Movies = m_Top5MoviesPlainTextEdit->toPlainText().split("\n");
+
+    //m_Top5MoviesListWidget->setSelectionMode(QAbstractItemView::NoSelection);
+    //QStringList top5Movies = m_Top5MoviesListWidget->toPlainText().split("\n");
+    QStringList top5Movies = m_Top5MoviesListWidget->top5Movies(); //TODOreq: maybe with these I should silently drop any/all EMPTY (after trimmed()), as my form of "sanitization"
     QString favoriteDinner = m_FavoriteDinnerLineEdit->text();
     if(favoriteDinner.isEmpty())
     {

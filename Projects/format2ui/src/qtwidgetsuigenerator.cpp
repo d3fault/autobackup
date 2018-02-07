@@ -47,8 +47,10 @@ bool QtWidgetsUiGenerator::generateSource(QTextStream &currentFileTextStream, co
     m_WhatToReplaceItWith2_lksdjoirueo230480894.clear();
     m_WhatToReplaceItWith3_lksdfjoiduf08340983409.clear();
     m_WhatToReplaceItWith4_ldkjsflj238423084.clear();
-
     m_WhatToReplaceItWith5_lksdfjodusodsfudsflkjdskl983402824.clear();
+
+    QString whatToSearchFor6("#include \"top5movieslistwidget.h\"");
+    m_WhatToReplaceItWith6.clear();
 
     m_FirstNonWidget = true;
     m_FirstWidget = true;
@@ -60,6 +62,7 @@ bool QtWidgetsUiGenerator::generateSource(QTextStream &currentFileTextStream, co
     replaceSpecialCommentSection(&compilingTemplateExampleSource, "lksdfjoiduf08340983409", m_WhatToReplaceItWith3_lksdfjoiduf08340983409);
     replaceSpecialCommentSection(&compilingTemplateExampleSource, "ldkjsflj238423084" , m_WhatToReplaceItWith4_ldkjsflj238423084);
     replaceSpecialCommentSection(&compilingTemplateExampleSource, "lksdfjodusodsfudsflkjdskl983402824", m_WhatToReplaceItWith5_lksdfjodusodsfudsflkjdskl983402824);
+    compilingTemplateExampleSource.replace(whatToSearchFor6, m_WhatToReplaceItWith6);
 
     //write out to currentFileTextStream
     currentFileTextStream << compilingTemplateExampleSource;
@@ -87,10 +90,12 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForSource(const UICollec
         break;
         case UICollectorType::PlainTextEdit_StringList:
             {
-                QString plainTextEditMemberName = plainTextEditMemberVariableName(uiCollector.variableName());
-                m_WhatToReplaceItWith1_kldsfoiure8098347824 += "    " + currentParentLayoutName() + "->addWidget(new QLabel(\"" + uiCollector.humanReadableNameForShowingFinalEndUser() + "\"));\n    " + currentParentLayoutName() + "->addWidget(" + plainTextEditMemberName + ");\n";
+                QString listWidgetMemberName = listWidgetMemberVariableName(uiCollector.variableName());
+                m_WhatToReplaceItWith0_liiueri93jrkjieruj += "    , " + listWidgetMemberName + "(new " + listWidgetTypeName(uiCollector.variableName()) + "())\n";
+                m_WhatToReplaceItWith1_kldsfoiure8098347824 += "    " + currentParentLayoutName() + "->addWidget(new QLabel(\"" + uiCollector.humanReadableNameForShowingFinalEndUser() + "\"));\n    " + currentParentLayoutName() + "->addWidget(" + listWidgetMemberName + ");\n";
 
-                m_WhatToReplaceItWith4_ldkjsflj238423084 += "    QStringList " + uiCollector.variableName() + " = " + plainTextEditMemberName + "->toPlainText().split(\"\\n\");\n";
+                m_WhatToReplaceItWith4_ldkjsflj238423084 += "    QStringList " + uiCollector.variableName() + " = " + listWidgetMemberName + "->" + uiCollector.variableName() + "();\n";
+                m_WhatToReplaceItWith6 += "#include \"" + uiCollector.variableName().toLower() + "\"\n";
             }
         break;
             //etc
@@ -236,8 +241,13 @@ QString QtWidgetsUiGenerator::lineEditMemberVariableName(const QString &variable
     QString ret = "m_" + firstLetterToUpper(variableName) + "LineEdit";
     return ret;
 }
-QString QtWidgetsUiGenerator::plainTextEditMemberVariableName(const QString &variableName)
+QString QtWidgetsUiGenerator::listWidgetTypeName(const QString &variableName)
 {
-    QString ret = "m_" + firstLetterToUpper(variableName) + "PlainTextEdit";
+    QString ret = firstLetterToUpper(variableName) + "ListWidget";
+    return ret;
+}
+QString QtWidgetsUiGenerator::listWidgetMemberVariableName(const QString &variableName)
+{
+    QString ret = "m_" + listWidgetTypeName(variableName);
     return ret;
 }

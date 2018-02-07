@@ -16,8 +16,10 @@ TEMPLATE = app
 SOURCES += main.cpp\
         qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.cpp \
     ../../shared/firstnamelastnameqobject.cpp \
-    ../../uishared/firstnamelastnameqobjectcommandlineoptionparser.cpp
+    ../../uishared/firstnamelastnameqobjectcommandlineoptionparser.cpp \
+    top5movieslistwidget.cpp
 
 HEADERS  += qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.h \
     ../../shared/firstnamelastnameqobject.h \
-    ../../uishared/firstnamelastnameqobjectcommandlineoptionparser.h
+    ../../uishared/firstnamelastnameqobjectcommandlineoptionparser.h \
+    top5movieslistwidget.h

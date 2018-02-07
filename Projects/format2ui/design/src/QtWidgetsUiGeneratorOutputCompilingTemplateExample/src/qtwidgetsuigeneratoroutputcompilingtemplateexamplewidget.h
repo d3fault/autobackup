@@ -7,7 +7,7 @@
 
 /*format2ui-compiling-template-example_BEGIN_dsfsflsjdflkjowe0834082934*/
 class QLineEdit;
-class QPlainTextEdit;
+class Top5MoviesListWidget;
 /*format2ui-compiling-template-example_END_dsfsflsjdflkjowe0834082934*/
 
 class QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget : public QWidget
@@ -22,7 +22,7 @@ private:
     /*format2ui-compiling-template-example_BEGIN_lskjdfouewr08084097342098*/
     QLineEdit *m_FirstNameLineEdit;
     QLineEdit *m_LastNameLineEdit;
-    QPlainTextEdit *m_Top5MoviesPlainTextEdit;
+    Top5MoviesListWidget *m_Top5MoviesListWidget;
     QLineEdit *m_FavoriteDinnerLineEdit;
     QLineEdit *m_FavoriteLunchLineEdit;
     /*format2ui-compiling-template-example_END_lskjdfouewr08084097342098*/
