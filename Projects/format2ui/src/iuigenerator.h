@@ -15,6 +15,7 @@ public:
     bool generateUi(const UICollector &rootUiCollector);
 protected:
     virtual QStringList filesToGenerate() const=0;
+    bool readAllFile(const QString &filePath, QString *out_FileContents);
     virtual bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)=0;
     void replaceSpecialCommentSection(QString *out_Source, const QString &specialIdInTheSpecialComments, const QString &whatToReplaceItWith);
 
@@ -34,6 +35,8 @@ protected:
         ret.replace(0, 1, firstChar);
         return ret;
     }
+private:
+    bool ensureMkPath(const QString &filePath_toAFileNotAdir_ToMakeSureParentDirsExist);
 };
 
 #endif // IUIGENERATOR_H

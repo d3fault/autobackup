@@ -13,7 +13,7 @@ protected:
     QStringList filesToGenerate() const override;
     bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector) override;
 private:
-    bool generateSource(QTextStream &currentFileTextStream, const UICollector &rootUiCollector);
+    bool generateSource(const QString &absoluteFilePathOfSourceFileToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector);
     void recursivelyProcessUiCollectorForSource(const UICollector &uiCollector);
     bool generateHeader(QTextStream &currentFileTextStream, const UICollector &rootUiCollector);
     int getNextUnusedLayoutInt();

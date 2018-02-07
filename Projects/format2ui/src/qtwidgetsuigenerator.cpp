@@ -3,20 +3,44 @@
 #include <QFile>
 #include <QSet>
 #include <QJsonArray>
+#include <QDirIterator>
+#include <QFileInfo>
 #include <QDebug>
 
-#define QtWidgetsUiGenerator_SOURCE_FILEPATH "firstnamelastnameqtwidget.cpp"
-#define QtWidgetsUiGenerator_HEADER_FILEPATH "firstnamelastnameqtwidget.h"
+#define QtWidgetsUiGenerator_PROJECT_SRCDIR_WITHSLASHAPPENDED "/home/user/text/Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample/src/"
 
+#define QtWidgetsUiGenerator_SOURCE_FILEPATH "qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.cpp"
+#define QtWidgetsUiGenerator_HEADER_FILEPATH "qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.h"
+
+//TODOreq: can callers handle relative subdirs? aka, will the paths be mkdir'd in dest output folder?
 QStringList QtWidgetsUiGenerator::filesToGenerate() const
 {
-    return QStringList { QtWidgetsUiGenerator_SOURCE_FILEPATH, QtWidgetsUiGenerator_HEADER_FILEPATH };
+    //return QStringList { QtWidgetsUiGenerator_SOURCE_FILEPATH, QtWidgetsUiGenerator_HEADER_FILEPATH };
+    QStringList ret;
+    QDir dir(QtWidgetsUiGenerator_PROJECT_SRCDIR_WITHSLASHAPPENDED);
+    QDirIterator dirIterator(dir, QDirIterator::Subdirectories); //TODOoptimization: cache the dir iteration results
+    while(dirIterator.hasNext())
+    {
+        dirIterator.next();
+        const QFileInfo &fileInfo = dirIterator.fileInfo();
+        if(fileInfo.isFile())
+        {
+            if(fileInfo.completeSuffix().toLower().endsWith("pro.user"))
+                continue;
+            QString filePath = fileInfo.absoluteFilePath();
+            //QString relativeFilePath = filePath.right(filePath.length() - absolutePathOfCompilingTemplateExample_DirWithSlashAppended.length());
+            QString relativeFilePath = dir.relativeFilePath(filePath);
+            ret << relativeFilePath;
+        }
+    }
+    return ret;
 }
 bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
 {
+    QString theAbsoluteFilePathInWhichToGenerate = QtWidgetsUiGenerator_PROJECT_SRCDIR_WITHSLASHAPPENDED + theRelativeFilePathInWhichToGenerate;
     if(theRelativeFilePathInWhichToGenerate == QtWidgetsUiGenerator_SOURCE_FILEPATH)
     {
-        if(!generateSource(currentFileTextStream, rootUiCollector))
+        if(!generateSource(theAbsoluteFilePathInWhichToGenerate, currentFileTextStream, rootUiCollector))
             return false;
     }
     else if(theRelativeFilePathInWhichToGenerate == QtWidgetsUiGenerator_HEADER_FILEPATH)
@@ -24,21 +48,24 @@ bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathI
         if(!generateHeader(currentFileTextStream, rootUiCollector))
             return false;
     }
+    else
+    {
+        qDebug() << "Copying file to 'generated' verbatim:" << theRelativeFilePathInWhichToGenerate;
+        QString sourceContents;
+        if(!readAllFile(theAbsoluteFilePathInWhichToGenerate, &sourceContents))
+            return false;
+        currentFileTextStream << sourceContents;
+    }
     //etc
 
     return true;
 }
-bool QtWidgetsUiGenerator::generateSource(QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
+bool QtWidgetsUiGenerator::generateSource(const QString &absoluteFilePathOfSourceFileToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
 {
     //read in source from compiling template example
-    QFile compilingTemplateExampleSourceFile("/home/user/text/Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample/src/qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.cpp");
-    if(!compilingTemplateExampleSourceFile.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        qCritical() << "failed to open file for reading:" << compilingTemplateExampleSourceFile.fileName();
+    QString compilingTemplateExampleSource;
+    if(!readAllFile(absoluteFilePathOfSourceFileToGenerate, &compilingTemplateExampleSource))
         return false;
-    }
-    QTextStream compilingTemplateExampleSourceTextStream(&compilingTemplateExampleSourceFile);
-    QString compilingTemplateExampleSource = compilingTemplateExampleSourceTextStream.readAll();
 
     //strReplace shiz on the file contents
 
