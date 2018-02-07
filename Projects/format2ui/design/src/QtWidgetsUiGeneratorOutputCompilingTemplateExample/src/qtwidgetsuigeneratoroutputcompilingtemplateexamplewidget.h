@@ -23,9 +23,11 @@ private:
     QLineEdit *m_FirstNameLineEdit;
     QLineEdit *m_LastNameLineEdit;
     QPlainTextEdit *m_Top5MoviesPlainTextEdit;
+    QLineEdit *m_FavoriteDinnerLineEdit;
+    QLineEdit *m_FavoriteLunchLineEdit;
     /*format2ui-compiling-template-example_END_lskjdfouewr08084097342098*/
 signals:
-    void finishedCollectingUiVariables(const QString &firstName, const QString &lastName, const QStringList &top5Movies);
+    void finishedCollectingUiVariables(const QString &firstName, const QString &lastName, const QStringList &top5Movies, const QString &favoriteDinner, const QString &favoriteLunch);
 private slots:
     void handleOkButtonClicked_aka_SanitizeAllAreNotEmptyBeforeEmittingSuccess();
     void handleCancelButtonClicked();

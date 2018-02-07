@@ -1,0 +1,55 @@
+{
+    "name" : "FullName",
+    "rootLayout" :
+    {
+        "verticalUiVariables" :
+            [
+            { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Favorite Song", "variableName" : "favoriteSong", "variableValue" : "" },
+            { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Favorite Color", "variableName" : "favoriteColor", "variableValue" : "" },
+            {
+                "typeString" : "Widget",
+                "rootLayout" :
+                {
+                    "verticalUiVariables" :
+                        [
+                        { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Nested Shitfuck 1", "variableName" : "nestedShitfuck1", "variableValue" : "" },
+                        { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Nested Shitfuck 2", "variableName" : "nestedShitfuck2", "variableValue" : "" },
+                        {
+                            "typeString" : "Widget",
+                            "rootLayout" :
+                            {
+                                "verticalUiVariables" :
+                                    [
+                                    { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Deeply Nested As Balls A1", "variableName" : "deeplyNestedAsBallsA1", "variableValue" : "" },
+                                    { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Deeply Nested As Balls A2", "variableName" : "deeplyNestedAsBallsA2", "variableValue" : "" }
+                                ]
+                            }
+                        },
+                        {
+                            "typeString" : "Widget",
+                            "rootLayout" :
+                            {
+                                "verticalUiVariables" :
+                                    [
+                                    { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Deeply Nested As Balls B1", "variableName" : "deeplyNestedAsBallsB1", "variableValue" : "" },
+                                    { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Deeply Nested As Balls B2", "variableName" : "deeplyNestedAsBallsB2", "variableValue" : "" }
+                                ]
+                            }
+                        },
+                        {
+                            "typeString" : "Widget",
+                            "rootLayout" :
+                            {
+                                "verticalUiVariables" :
+                                    [
+                                    { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Deeply Nested As Balls C1", "variableName" : "deeplyNestedAsBallsC1", "variableValue" : "" },
+                                    { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Deeply Nested As Balls C2", "variableName" : "deeplyNestedAsBallsC2", "variableValue" : "" }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

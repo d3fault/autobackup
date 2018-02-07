@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     format2ui business;
-    business.beginFormat2ui("/home/user/text/Projects/format2ui/sample.input.5.json", "--qtwidgets"); //TODOreq: connect to business::e etc!
+    business.beginFormat2ui("/home/user/text/Projects/format2ui/sample.input.6.json", "--qtwidgets"); //TODOreq: connect to business::e etc!
 
     return 0;
 }

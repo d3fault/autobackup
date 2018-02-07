@@ -14,18 +14,23 @@ QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::QtWidgetsUiGeneratorOu
     , m_FirstNameLineEdit(new QLineEdit())
     , m_LastNameLineEdit(new QLineEdit())
     , m_Top5MoviesPlainTextEdit(new QPlainTextEdit())
+    , m_FavoriteDinnerLineEdit(new QLineEdit())
+    , m_FavoriteLunchLineEdit(new QLineEdit())
     /*format2ui-compiling-template-example_END_liiueri93jrkjieruj*/
 {
-    QVBoxLayout *myLayout = new QVBoxLayout(this);
-
-    //for each uiVariable, create a QWidget
+    //for each uiVariable, create a QWidget derived object
     /*format2ui-compiling-template-example_BEGIN_kldsfoiure8098347824*/
+    QVBoxLayout *rootLayout = new QVBoxLayout(this);
     m_FirstNameLineEdit->setPlaceholderText("First Name:");
-    myLayout->addWidget(m_FirstNameLineEdit);
+    rootLayout->addWidget(m_FirstNameLineEdit);
     m_LastNameLineEdit->setPlaceholderText("Last Name:");
-    myLayout->addWidget(m_LastNameLineEdit);
-    myLayout->addWidget(new QLabel("Top 5 Movies:"));
-    myLayout->addWidget(m_Top5MoviesPlainTextEdit);
+    rootLayout->addWidget(m_LastNameLineEdit);
+    rootLayout->addWidget(new QLabel("Top 5 Movies:"));
+    rootLayout->addWidget(m_Top5MoviesPlainTextEdit);
+    QVBoxLayout *nestedLayout0 = new QVBoxLayout();
+    nestedLayout0->addWidget(m_FavoriteDinnerLineEdit);
+    nestedLayout0->addWidget(m_FavoriteLunchLineEdit);
+    rootLayout->addLayout(nestedLayout0);
     /*format2ui-compiling-template-example_END_kldsfoiure8098347824*/
 
     QHBoxLayout *okCancelRow = new QHBoxLayout(); //I thought about changing 'this' to be a QDialog, but I don't want to subscribe to anything!
@@ -33,7 +38,7 @@ QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::QtWidgetsUiGeneratorOu
     okCancelRow->addWidget(okButton);
     QPushButton *cancelButton = new QPushButton(tr("Cancel"));
     okCancelRow->addWidget(cancelButton);
-    myLayout->addLayout(okCancelRow);
+    rootLayout->addLayout(okCancelRow);
 
     connect(okButton, &QPushButton::clicked, this, &QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleOkButtonClicked_aka_SanitizeAllAreNotEmptyBeforeEmittingSuccess);
 
@@ -41,6 +46,8 @@ QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::QtWidgetsUiGeneratorOu
     /*format2ui-compiling-template-example_BEGIN_lksdjoirueo230480894*/
     connect(m_FirstNameLineEdit, &QLineEdit::returnPressed, okButton, &QPushButton::click);
     connect(m_LastNameLineEdit, &QLineEdit::returnPressed, okButton, &QPushButton::click);
+    connect(m_FavoriteDinnerLineEdit, &QLineEdit::returnPressed, okButton, &QPushButton::click);
+    connect(m_FavoriteLunchLineEdit, &QLineEdit::returnPressed, okButton, &QPushButton::click);
     /*format2ui-compiling-template-example_END_lksdjoirueo230480894*/
 
     connect(cancelButton, &QPushButton::clicked, this, &QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleCancelButtonClicked);
@@ -55,6 +62,7 @@ bool QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::parseArgs()
             m_FirstNameLineEdit->setText(m_ArgParser.firstNameDefaultValueParsedFromProcessArg());
         if(!m_ArgParser.lastNameDefaultValueParsedFromProcessArg().isEmpty())
             m_LastNameLineEdit->setText(m_ArgParser.lastNameDefaultValueParsedFromProcessArg());
+        //TODOreq: top5Movies and m_NestedLineEdit(s)
         /*format2ui-compiling-template-example_END_lksdfjoiduf08340983409*/
     }
     return ret;
@@ -75,9 +83,21 @@ void QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleOkButtonCli
         return;
     }
     QStringList top5Movies = m_Top5MoviesPlainTextEdit->toPlainText().split("\n");
+    QString favoriteDinner = m_FavoriteDinnerLineEdit->text();
+    if(favoriteDinner.isEmpty())
+    {
+        QMessageBox::critical(this, "Error", "Favorite Dinner cannot be empty");
+        return;
+    }
+    QString favoriteLunch = m_FavoriteLunchLineEdit->text();
+    if(favoriteLunch.isEmpty())
+    {
+        QMessageBox::critical(this, "Error", "Favorite Lunch cannot be empty");
+        return;
+    }
     /*format2ui-compiling-template-example_END_ldkjsflj238423084*/
 
-    emit finishedCollectingUiVariables(firstName, lastName, top5Movies);
+    emit finishedCollectingUiVariables(/*format2ui-compiling-template-example_BEGIN_lksdfjodusodsfudsflkjdskl983402824*/firstName, lastName, top5Movies, favoriteDinner, favoriteLunch/*format2ui-compiling-template-example_END_lksdfjodusodsfudsflkjdskl983402824*/);
     close(); //done. close so that the user can't change the line edits anymore
 }
 void QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleCancelButtonClicked()
