@@ -131,8 +131,8 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForSource(const UICollec
 
                 m_WhatToReplaceItWith4_ldkjsflj238423084 += "    QStringList " + uiCollector.variableName() + " = " + listWidgetMemberName + "->" + uiCollector.variableName() + "();\n";
                 m_WhatToReplaceItWith6 += "#include \"" + listWidgetTypeString.toLower() + ".h\"\n";
-                addInstanceOfSpecialFile("top5movieslistwidget.h", listWidgetTypeString);
-                addInstanceOfSpecialFile("top5movieslistwidget.cpp", listWidgetTypeString);
+                addInstanceOfSpecialFile("top5movieslistwidget.h", listWidgetTypeString, uiCollector);
+                addInstanceOfSpecialFile("top5movieslistwidget.cpp", listWidgetTypeString, uiCollector);
             }
         break;
             //etc
@@ -288,7 +288,7 @@ QString QtWidgetsUiGenerator::listWidgetMemberVariableName(const QString &variab
     QString ret = "m_" + listWidgetTypeName(variableName);
     return ret;
 }
-QString QtWidgetsUiGenerator::strReplaceSpecialFile(const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile)
+QString QtWidgetsUiGenerator::strReplaceSpecialFile(const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile, const UICollector &uiCollector)
 {
     QString ret = specialFilesContents().value(relativeFilePathOfSpecialFile);// = TO DOnereq; put file contents into ret for initial state
 
@@ -309,6 +309,8 @@ QString QtWidgetsUiGenerator::strReplaceSpecialFile(const QString &relativeFileP
     {
 #endif
             ret.replace(Top5Movies.toLower(), classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile.toLower());
+            QString top5MoviesHumanReadable("Top 5 Movies");
+            ret.replace(top5MoviesHumanReadable, uiCollector.humanReadableNameForShowingFinalEndUser());
         }
 #if 0
     }

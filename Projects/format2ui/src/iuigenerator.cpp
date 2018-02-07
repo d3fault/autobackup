@@ -70,27 +70,28 @@ void IUIGenerator::replaceSpecialCommentSection(QString *out_Source, const QStri
     int len = indexAfterLastCharOfEnd-indexOfBegin;
     out_Source->replace(indexOfBegin, len, whatToReplaceItWith);
 }
-void IUIGenerator::addInstanceOfSpecialFile(const QString &specialFileKey_aka_relativePath, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile)
+void IUIGenerator::addInstanceOfSpecialFile(const QString &specialFileKey_aka_relativePath, const QString &listWidgetTypeString, const UICollector &uiCollector)
 {
-    m_SpecialFilesInstances.insert(specialFileKey_aka_relativePath, classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile);
+    m_SpecialFilesInstances.insert(specialFileKey_aka_relativePath, SpecialFilesInstancesTypeEntry { uiCollector, listWidgetTypeString });
 }
 bool IUIGenerator::generateSpecialFilesToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes(const UICollector &rootUiCollector /*I don't need to, but I could have iterated rootUiCollector here and now and done the checking/generating...*/, const QString &outputPathWithSlashAppended)
 {
     for(SpecialFilesInstancesType::const_iterator it = m_SpecialFilesInstances.constBegin(); it != m_SpecialFilesInstances.constEnd(); ++it)
     {
         const QString &relativeFilePathOfSpecialFile = it.key();
-        QString classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile = it.value();
+        const SpecialFilesInstancesTypeEntry &entry = it.value();
+        QString classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile = entry.TypeString;
         //QString outputFilePath = outputPathWithSlashAppended + classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile.toLower() + ".h";
         QString outputFilePath = getOutputFilePathFromRelativeFilePath(outputPathWithSlashAppended, relativeFilePathOfSpecialFile, classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile);
         if(!ensureMkPath(outputFilePath))
             return false;
-        QString strReplacedSpecialFile = strReplaceSpecialFile(relativeFilePathOfSpecialFile, classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile);
-        //TODOreq: write out strReplacedSpecialFile
+        QString strReplacedSpecialFile = strReplaceSpecialFile(relativeFilePathOfSpecialFile, classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile, entry.UiCollector);
         QFile outputFile(outputFilePath);
         if(!myOpenFileForWriting(&outputFile))
             return false;
         QTextStream textStream(&outputFile);
         textStream << strReplacedSpecialFile;
+        qDebug() << "Generated file with special filename (relative to src dir):" << outputFilePath;
     }
     m_SpecialFilesInstances.clear();
     return true;

@@ -11,7 +11,13 @@
 #define TAB_format2ui "    "
 
 typedef QHash<QString /*relativeFilePath*/, QString /*fileContents*/> SpecialFilesContentsType;
-typedef QMultiHash<QString/*specialFileKey_aka_relativePath*/,QString/*classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile*/> SpecialFilesInstancesType;
+
+struct SpecialFilesInstancesTypeEntry
+{
+    UICollector UiCollector;
+    QString TypeString; //classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile
+};
+typedef QMultiHash<QString/*specialFileKey_aka_relativePath*/,SpecialFilesInstancesTypeEntry> SpecialFilesInstancesType;
 
 class QFile;
 
@@ -25,10 +31,10 @@ protected:
     bool readAllFile(const QString &filePath, QString *out_FileContents);
     virtual bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)=0;
     virtual void addSpecialFilesContentMarkers(SpecialFilesContentsType *out_SpecialFilesContents)=0;
-    virtual QString strReplaceSpecialFile(const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile)=0;
+    virtual QString strReplaceSpecialFile(const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile, const UICollector &uiCollector)=0;
     virtual QString getOutputFilePathFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile)=0;
     void replaceSpecialCommentSection(QString *out_Source, const QString &specialIdInTheSpecialComments, const QString &whatToReplaceItWith);
-    void addInstanceOfSpecialFile(const QString &specialFileKey_aka_relativePath, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile);
+    void addInstanceOfSpecialFile(const QString &specialFileKey_aka_relativePath, const QString &listWidgetTypeString, const UICollector &uiCollector);
     bool generateSpecialFilesToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes(const UICollector &rootUiCollector, const QString &outputPathWithSlashAppended);
     const SpecialFilesContentsType &specialFilesContents() const
     {

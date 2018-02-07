@@ -39,7 +39,7 @@ void QtCliUiGenerator::addSpecialFilesContentMarkers(SpecialFilesContentsType *o
 {
     //TODOreq:
 }
-QString QtCliUiGenerator::strReplaceSpecialFile(const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile)
+QString QtCliUiGenerator::strReplaceSpecialFile(const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile, const UICollector &uiCollector)
 {
     //TODOreq:
     return QString();

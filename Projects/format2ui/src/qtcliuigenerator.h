@@ -10,7 +10,7 @@ protected:
     QStringList filesToGenerate() const override;
     bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector) override;
     void addSpecialFilesContentMarkers(SpecialFilesContentsType *out_SpecialFilesContents) override;
-    QString strReplaceSpecialFile(const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile) override;
+    QString strReplaceSpecialFile(const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile, const UICollector &uiCollector) override;
     QString getOutputFilePathFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile) override;
 private:
     bool generateSource(QTextStream &currentFileTextStream, const UICollector &rootUiCollector);
