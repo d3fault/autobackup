@@ -1,0 +1,16 @@
+format2ui is a minimal-but-growable-on-demand user interface definition language that aims to facilitate "code once, run everywhere" practices. QtQml also aims to be the user interface definition language used for "code once, run everywhere", but not only is Qml too bloated with js (that's an aside), it also doesn't support Cli (Command Line mothafuckin' Interface) output. There is no Cli QPlatformAbastraction and there probably never will be (but there surely could be in theory).
+
+Rather than try to create a Cli QPlatformAbstraction which is an enormous task, I'm reinventing the user-interface-definition-language wheel (so many have done this, but the key is really to keep it minimal and compatible with QtWidgetsUiGenerator and, more challengingly, QtCliUiGenerator. The fact that I don't require a javascript interpreter blob in my deployment 7zip archive (if you target QtWidgetsUiGenerator or QtCliUiGenerator, but not if you target QtQmlUiGenerator (which, as of writing, doesn't [yet?] exist. fuck qml, no rush).
+
+Qml breaks the rule: "do one thing and do it really well". C++ developers needed a modernized user interface definition language (QWidgets is ancient and implemented wrong in various ways (but usable af tbh)), and #including <Qml> (or whatever) should solve TWO problems (user-interface-definition-language __AND__ a motherfucking javascript interpreter/runtime which duplicates TONS of functionality that C++ already provides). It is definitely a good idea to allow Qml to interface with QtScript(modernized instead of deprecated), but Qml shouldn't _depend_ on that QtScript just for non-scripting functionality (such as a user-interface-definition-language INTENDED FOR "code once, run everywhere").
+
+
+Cli is extremely valuable because it opens up a world of scripting interaction from the UNIVERSE of scripting languages (and even other C++ apps who don't want to depend on Qt, which is required to use my libs).
+
+Simultaneously, Gui is extremely valuable because the average human on a computer pretty much only knows how to "double click" on their desktop in order to run a program. Since most *nix-style apps are usually not "--interactive" by default, the app shows it's cli usage help and then exits returning 1; also if you can afford Gui, GUI is often much easier/faster to use than hacked together Cli counterparts (the "q" and "qq" shit in QtCliUiGenerator vs the "Add Row" shit in QtWidgetsUiGenerator)
+
+I want the best of both worlds, and Qml in it's presesnt state cannot solve it and it is probably far too complex for me to "solve" it (decouple js, add QCliPlatformAbstraction).
+
+hmm actually QCliPlatformAbstraction implemented using that one "text" and "colorText" mplayer "output" types. would be a fun as fuck hack to try to render a Qml scene in one of those. it might look great, since most pixels are the same [color] for your average GUI.
+
+Connect the output of the software QtQuick renderer to the input of the DrawColoredTextUsingThatOneLibThatMplayerUsesToPlayMoviesInColoredText (which is to be coded). I'm just rambling now xD
