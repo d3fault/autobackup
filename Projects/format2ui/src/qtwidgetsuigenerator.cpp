@@ -7,17 +7,19 @@
 #include <QFileInfo>
 #include <QDebug>
 
-#define QtWidgetsUiGenerator_PROJECT_SRCDIR_WITHSLASHAPPENDED "/home/user/text/Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample/src/"
-
 #define QtWidgetsUiGenerator_SOURCE_FILEPATH "qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.cpp"
 #define QtWidgetsUiGenerator_HEADER_FILEPATH "qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.h"
 
 //TODOreq: can callers handle relative subdirs? aka, will the paths be mkdir'd in dest output folder?
+QString QtWidgetsUiGenerator::projectSrcDirWithSlashAppended() const
+{
+    return "/home/user/text/Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample/src/";
+}
 QStringList QtWidgetsUiGenerator::filesToGenerate() const
 {
     //return QStringList { QtWidgetsUiGenerator_SOURCE_FILEPATH, QtWidgetsUiGenerator_HEADER_FILEPATH };
     QStringList ret;
-    QDir dir(QtWidgetsUiGenerator_PROJECT_SRCDIR_WITHSLASHAPPENDED);
+    QDir dir(projectSrcDirWithSlashAppended());
     QDirIterator dirIterator(dir, QDirIterator::Subdirectories); //TODOoptimization: cache the dir iteration results
     while(dirIterator.hasNext())
     {
@@ -37,7 +39,7 @@ QStringList QtWidgetsUiGenerator::filesToGenerate() const
 }
 bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
 {
-    QString theAbsoluteFilePathInWhichToGenerate = QtWidgetsUiGenerator_PROJECT_SRCDIR_WITHSLASHAPPENDED + theRelativeFilePathInWhichToGenerate;
+    QString theAbsoluteFilePathInWhichToGenerate = projectSrcDirWithSlashAppended() + theRelativeFilePathInWhichToGenerate;
     if(theRelativeFilePathInWhichToGenerate == QtWidgetsUiGenerator_SOURCE_FILEPATH)
     {
         if(!generateSource(theAbsoluteFilePathInWhichToGenerate, currentFileTextStream, rootUiCollector))
@@ -59,6 +61,11 @@ bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathI
     //etc
 
     return true;
+}
+void QtWidgetsUiGenerator::addSpecialFilesContentMarkers(SpecialFilesContentsType *out_SpecialFilesContents)
+{
+    out_SpecialFilesContents->insert("top5movieslistwidget.h", QString());
+    out_SpecialFilesContents->insert("top5movieslistwidget.cpp", QString());
 }
 bool QtWidgetsUiGenerator::generateSource(const QString &absoluteFilePathOfSourceFileToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
 {
@@ -118,11 +125,14 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForSource(const UICollec
         case UICollectorType::PlainTextEdit_StringList:
             {
                 QString listWidgetMemberName = listWidgetMemberVariableName(uiCollector.variableName());
-                m_WhatToReplaceItWith0_liiueri93jrkjieruj += "    , " + listWidgetMemberName + "(new " + listWidgetTypeName(uiCollector.variableName()) + "())\n";
+                QString listWidgetTypeString = listWidgetTypeName(uiCollector.variableName());
+                m_WhatToReplaceItWith0_liiueri93jrkjieruj += "    , " + listWidgetMemberName + "(new " + listWidgetTypeString + "())\n";
                 m_WhatToReplaceItWith1_kldsfoiure8098347824 += "    " + currentParentLayoutName() + "->addWidget(new QLabel(\"" + uiCollector.humanReadableNameForShowingFinalEndUser() + "\"));\n    " + currentParentLayoutName() + "->addWidget(" + listWidgetMemberName + ");\n";
 
                 m_WhatToReplaceItWith4_ldkjsflj238423084 += "    QStringList " + uiCollector.variableName() + " = " + listWidgetMemberName + "->" + uiCollector.variableName() + "();\n";
-                m_WhatToReplaceItWith6 += "#include \"" + uiCollector.variableName().toLower() + "\"\n";
+                m_WhatToReplaceItWith6 += "#include \"" + listWidgetTypeString.toLower() + ".h\"\n";
+                addInstanceOfSpecialFile("top5movieslistwidget.h", listWidgetTypeString);
+                addInstanceOfSpecialFile("top5movieslistwidget.cpp", listWidgetTypeString);
             }
         break;
             //etc
@@ -276,5 +286,51 @@ QString QtWidgetsUiGenerator::listWidgetTypeName(const QString &variableName)
 QString QtWidgetsUiGenerator::listWidgetMemberVariableName(const QString &variableName)
 {
     QString ret = "m_" + listWidgetTypeName(variableName);
+    return ret;
+}
+QString QtWidgetsUiGenerator::strReplaceSpecialFile(const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile)
+{
+    QString ret = specialFilesContents().value(relativeFilePathOfSpecialFile);// = TO DOnereq; put file contents into ret for initial state
+
+#if 0
+    if(relativeFilePathOfSpecialFile == "top5movieslistwidget.h")
+    {
+#endif
+        if(relativeFilePathOfSpecialFile == "top5movieslistwidget.cpp" || relativeFilePathOfSpecialFile == "top5movieslistwidget.h")
+        {
+            QString Top5Movies("Top5Movies");
+            //TODOreq:
+            ret.replace(Top5Movies, classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile);
+            ret.replace(Top5Movies.toUpper(), classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile.toUpper());
+            ret.replace(firstLetterToLower(Top5Movies), firstLetterToLower(classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile));
+#if 0
+    }
+    else if(relativeFilePathOfSpecialFile == "top5movieslistwidget.cpp")
+    {
+#endif
+            ret.replace(Top5Movies.toLower(), classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile.toLower());
+        }
+#if 0
+    }
+#endif
+
+    return ret;
+}
+QString QtWidgetsUiGenerator::getOutputFilePathFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile)
+{
+    QString ret = outputPathWithSlashAppended;
+    ret.append(classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile.toLower());
+    if(relativeFilePathOfSpecialFile == "top5movieslistwidget.cpp")
+    {
+        ret.append("listwidget.cpp");
+    }
+    else if(relativeFilePathOfSpecialFile == "top5movieslistwidget.h")
+    {
+        ret.append("listwidget.h");
+    }
+    else
+    {
+        qFatal("unknown blah this shouldn't have happened dlksjfldjsou08340293");
+    }
     return ret;
 }

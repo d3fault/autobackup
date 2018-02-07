@@ -3,6 +3,7 @@
 #include <QTemporaryDir>
 #include <QFileInfo>
 #include <QDir>
+#include <QMultiHash>
 #include <QDebug>
 
 bool IUIGenerator::generateUi(const UICollector &rootUiCollector)
@@ -11,20 +12,27 @@ bool IUIGenerator::generateUi(const UICollector &rootUiCollector)
     outputDir.setAutoRemove(false);
     QString outputPathWithSlashAppended = appendSlashIfNeeded(outputDir.path());
     QStringList filesToGenerate2 = filesToGenerate();
+    addSpecialFilesContentMarkers(&m_SpecialFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes);
     for(QStringList::const_iterator it = filesToGenerate2.constBegin(); it != filesToGenerate2.constEnd(); ++it)
     {
-        const QString &currentFilePathToGenerate = *it;
-        const QString &filePath = outputPathWithSlashAppended + currentFilePathToGenerate;
-        if(!ensureMkPath(filePath)) //TODOoptimization: could probably call this less
-            return false;
-        QFile currentFileToGenerate(filePath); //TODOreq: parse the "ui name" from the inputFormat json shiz
-        if(!currentFileToGenerate.open(QIODevice::WriteOnly | QIODevice::Text))
+        const QString &currentRelativeFilePathToGenerate = *it;
+        if(m_SpecialFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes.contains(currentRelativeFilePathToGenerate))
         {
-            qDebug() << "failed to open file:" << currentFileToGenerate.fileName();
-            return false;
+            QString fileContents;
+            QString fileSourceFilePath = projectSrcDirWithSlashAppended() + currentRelativeFilePathToGenerate;
+            if(!readAllFile(fileSourceFilePath, &fileContents))
+                return false;
+            m_SpecialFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes.insert(currentRelativeFilePathToGenerate, fileContents);
+            continue;
         }
+        const QString &outputFilePath = outputPathWithSlashAppended + currentRelativeFilePathToGenerate;
+        if(!ensureMkPath(outputFilePath)) //TODOoptimization: could probably call this less
+            return false;
+        QFile currentFileToGenerate(outputFilePath);
+        if(!myOpenFileForWriting(&currentFileToGenerate)) //TODOreq: parse the "ui name" from the inputFormat json shiz
+            return false;
         QTextStream currentFileTextStream(&currentFileToGenerate);
-        if(generateUiForFile(currentFilePathToGenerate, currentFileTextStream, rootUiCollector)) //kek
+        if(generateUiForFile(currentRelativeFilePathToGenerate, currentFileTextStream, rootUiCollector)) //kek
         {
             qDebug() << "Generated:" << currentFileToGenerate.fileName();
         }
@@ -33,6 +41,11 @@ bool IUIGenerator::generateUi(const UICollector &rootUiCollector)
             qCritical() << "failed to generate ui: " << currentFileToGenerate.fileName();
             return false;
         }
+    }
+    if(!generateSpecialFilesToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes(rootUiCollector, outputPathWithSlashAppended))
+    {
+        qCritical() << "failed to generate special file(s)";
+        return false;
     }
     return true;
 }
@@ -56,6 +69,40 @@ void IUIGenerator::replaceSpecialCommentSection(QString *out_Source, const QStri
     int indexAfterLastCharOfEnd = indexOfEnd + endKey.size();
     int len = indexAfterLastCharOfEnd-indexOfBegin;
     out_Source->replace(indexOfBegin, len, whatToReplaceItWith);
+}
+void IUIGenerator::addInstanceOfSpecialFile(const QString &specialFileKey_aka_relativePath, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile)
+{
+    m_SpecialFilesInstances.insert(specialFileKey_aka_relativePath, classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile);
+}
+bool IUIGenerator::generateSpecialFilesToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes(const UICollector &rootUiCollector /*I don't need to, but I could have iterated rootUiCollector here and now and done the checking/generating...*/, const QString &outputPathWithSlashAppended)
+{
+    for(SpecialFilesInstancesType::const_iterator it = m_SpecialFilesInstances.constBegin(); it != m_SpecialFilesInstances.constEnd(); ++it)
+    {
+        const QString &relativeFilePathOfSpecialFile = it.key();
+        QString classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile = it.value();
+        //QString outputFilePath = outputPathWithSlashAppended + classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile.toLower() + ".h";
+        QString outputFilePath = getOutputFilePathFromRelativeFilePath(outputPathWithSlashAppended, relativeFilePathOfSpecialFile, classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile);
+        if(!ensureMkPath(outputFilePath))
+            return false;
+        QString strReplacedSpecialFile = strReplaceSpecialFile(relativeFilePathOfSpecialFile, classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile);
+        //TODOreq: write out strReplacedSpecialFile
+        QFile outputFile(outputFilePath);
+        if(!myOpenFileForWriting(&outputFile))
+            return false;
+        QTextStream textStream(&outputFile);
+        textStream << strReplacedSpecialFile;
+    }
+    m_SpecialFilesInstances.clear();
+    return true;
+}
+bool IUIGenerator::myOpenFileForWriting(QFile *file)
+{
+    if(!file->open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        qWarning() << "failed to open file:" << file->fileName();
+        return false;
+    }
+    return true;
 }
 bool IUIGenerator::ensureMkPath(const QString &filePath_toAFileNotAdir_ToMakeSureParentDirsExist)
 {

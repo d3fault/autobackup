@@ -10,8 +10,12 @@
 class QtWidgetsUiGenerator : public IUIGenerator
 {
 protected:
+    QString projectSrcDirWithSlashAppended() const override;
     QStringList filesToGenerate() const override;
     bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector) override;
+    void addSpecialFilesContentMarkers(SpecialFilesContentsType *out_SpecialFilesContents) override;
+    QString strReplaceSpecialFile(const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile) override;
+    QString getOutputFilePathFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile) override;
 private:
     bool generateSource(const QString &absoluteFilePathOfSourceFileToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector);
     void recursivelyProcessUiCollectorForSource(const UICollector &uiCollector);

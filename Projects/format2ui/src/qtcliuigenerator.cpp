@@ -35,6 +35,20 @@ bool QtCliUiGenerator::generateUiForFile(const QString &theRelativeFilePathInWhi
     return true;
 #endif
 }
+void QtCliUiGenerator::addSpecialFilesContentMarkers(SpecialFilesContentsType *out_SpecialFilesContents)
+{
+    //TODOreq:
+}
+QString QtCliUiGenerator::strReplaceSpecialFile(const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile)
+{
+    //TODOreq:
+    return QString();
+}
+QString QtCliUiGenerator::getOutputFilePathFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile)
+{
+    //TODOreq:
+    return QString();
+}
 bool QtCliUiGenerator::generateSource(QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
 {
     //isn't it better (faster, ezier, smarter) to generate code by copy/pasting the "compiling template example" and then strReplacing the fuck out of THAT? I mean it genuinely sounds like it'd be LESS work (and changes to the compiling template example needn't NECESSARILY require any changes to format2ui (although often times, changes _are_ necessary (more strReplace ez shit)). in any case, I'm surely going to experiment with the file-copy->strReplace strategy :-D. I might learn it sucks, but I'll learn something in any case!
@@ -157,4 +171,9 @@ bool QtCliUiGenerator::generateHeader(QTextStream &currentFileTextStream, const 
     currentFileTextStream << compilingTemplateExampleHeader;
 
     return true;
+}
+QString QtCliUiGenerator::projectSrcDirWithSlashAppended() const
+{
+    //TODOreq:
+    return QString("/run/shm/");
 }
