@@ -7,6 +7,8 @@
 
 #include "uivariable.h"
 
+typedef QStack<QString> LayoutParentStackType;
+
 class QtWidgetsUiGenerator : public IUIGenerator
 {
 protected:
@@ -22,7 +24,6 @@ private:
     bool generateHeader(QTextStream &currentFileTextStream, const UICollector &rootUiCollector);
     int getNextUnusedLayoutInt();
     QString currentParentLayoutName() const;
-    void setCurrentParentLayoutName(const QString &parentLayoutName);
     static QString lineEditMemberVariableName(const QString &variableName);
     static QString listWidgetTypeName(const QString &variableName);
     static QString listWidgetMemberVariableName(const QString &variableName);
@@ -30,7 +31,7 @@ private:
     bool m_FirstNonWidget;
     bool m_FirstWidget;
     int m_CurrentLayoutInt = 0;
-    QStack<QString> m_LayoutParentStack;
+    LayoutParentStackType m_LayoutParentStack;
 
     QString m_WhatToReplaceItWith0_liiueri93jrkjieruj;
     QString m_WhatToReplaceItWith1_kldsfoiure8098347824;

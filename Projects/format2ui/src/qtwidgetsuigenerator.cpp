@@ -103,6 +103,19 @@ bool QtWidgetsUiGenerator::generateSource(const QString &absoluteFilePathOfSourc
 
     return true;
 }
+class LayoutParentStackScopedPopper
+{
+public:
+    LayoutParentStackScopedPopper(LayoutParentStackType *layoutParentStack, const QString &parentLayoutName)
+        : m_LayoutParentStack(layoutParentStack)
+    {
+        m_LayoutParentStack->push(parentLayoutName);
+    }
+    LayoutParentStackScopedPopper(const LayoutParentStackScopedPopper &other)=delete;
+    ~LayoutParentStackScopedPopper() { m_LayoutParentStack->pop(); }
+private:
+    LayoutParentStackType *m_LayoutParentStack;
+};
 void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForSource(const UICollector &uiCollector)
 {
     if(uiCollector.Type != UICollectorType::Widget)
@@ -147,7 +160,9 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForSource(const UICollec
 
                 QString parentLayoutName = currentParentLayoutName();
                 m_WhatToReplaceItWith1_kldsfoiure8098347824 += "    QVBoxLayout *" + layoutName + " = new QVBoxLayout(" + (m_FirstWidget ? "this" : "") + ");\n";
-                setCurrentParentLayoutName(layoutName); //become the parent layout for future widgets
+                //m_LayoutParentStack.push(parentLayoutName); //become the parent layout for future widgets -- TO DOneoptional: a stacked destruction call to .pop
+                LayoutParentStackScopedPopper layoutParentStackScopedPopper(&m_LayoutParentStack, parentLayoutName);
+                Q_UNUSED(layoutParentStackScopedPopper);
                 //iterate uiCollector's rootLayout, calling generateSource for each IWidget (Widget or DerivedFromWidget) therein
                 const QJsonObject &rootLayout = uiCollector.rootLayout();
                 const QJsonArray &verticalUiVariables = rootLayout.value("verticalUiVariables").toArray();
@@ -168,6 +183,7 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForSource(const UICollec
                     recursivelyProcessUiCollectorForSource(currentUiCollector);
                 }
                 m_WhatToReplaceItWith1_kldsfoiure8098347824 += codeGenToAppendAfterIteratingOurChildren; //we needed to set m_FirstWidget to false before doing the recursive call
+                //when layoutParentStackScopedPopper goes out of scope right here, we are no longer the parent layout for future widgets
             }
         break;
         default:
@@ -268,10 +284,6 @@ QString QtWidgetsUiGenerator::currentParentLayoutName() const
     if(m_LayoutParentStack.isEmpty())
         return "rootLayout";
     return m_LayoutParentStack.top();
-}
-void QtWidgetsUiGenerator::setCurrentParentLayoutName(const QString &parentLayoutName)
-{
-    m_LayoutParentStack.push(parentLayoutName);
 }
 QString QtWidgetsUiGenerator::lineEditMemberVariableName(const QString &variableName)
 {
