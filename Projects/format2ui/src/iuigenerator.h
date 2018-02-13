@@ -10,14 +10,14 @@
 
 #define TAB_format2ui "    "
 
-typedef QHash<QString /*relativeFilePath*/, QString /*fileContents*/> SpecialFilesContentsType;
+typedef QHash<QString /*relativeFilePath*/, QString /*fileContents*/> TriggeredFilesContentsType;
 
-struct SpecialFilesInstancesTypeEntry
+struct TriggeredFilesInstancesTypeEntry
 {
     UICollector UiCollector;
-    QString TypeString; //classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile
+    QString TypeString; //classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile
 };
-typedef QMultiHash<QString/*specialFileKey_aka_relativePath*/,SpecialFilesInstancesTypeEntry> SpecialFilesInstancesType;
+typedef QMultiHash<QString/*triggeredFileKey_aka_relativePath*/,TriggeredFilesInstancesTypeEntry> TriggeredFilesInstancesType;
 
 class QFile;
 
@@ -30,15 +30,15 @@ protected:
     virtual QStringList filesToGenerate() const=0;
     bool readAllFile(const QString &filePath, QString *out_FileContents);
     virtual bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)=0;
-    virtual void addSpecialFilesContentMarkers(SpecialFilesContentsType *out_SpecialFilesContents)=0;
-    virtual QString strReplaceSpecialFile(const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile, const UICollector &uiCollector)=0;
-    virtual QString getOutputFilePathFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile)=0;
+    virtual void addTriggeredFilesContentMarkers(TriggeredFilesContentsType *out_TriggeredFilesContents)=0;
+    virtual QString strReplaceTriggeredFile(const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile, const UICollector &uiCollector)=0;
+    virtual QString getOutputFilePathFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile)=0;
     void replaceSpecialCommentSection(QString *out_Source, const QString &specialIdInTheSpecialComments, const QString &whatToReplaceItWith);
-    void addInstanceOfSpecialFile(const QString &specialFileKey_aka_relativePath, const QString &listWidgetTypeString, const UICollector &uiCollector);
-    bool generateSpecialFilesToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes(const UICollector &rootUiCollector, const QString &outputPathWithSlashAppended);
-    const SpecialFilesContentsType &specialFilesContents() const
+    void addInstanceOfTriggeredFile(const QString &triggeredFileKey_aka_relativePath, const QString &listWidgetTypeString, const UICollector &uiCollector);
+    bool generateTriggeredFiles(const UICollector &rootUiCollector, const QString &outputPathWithSlashAppended);
+    const TriggeredFilesContentsType &triggeredFilesContents() const
     {
-        return m_SpecialFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes;
+        return m_TriggeredFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes;
     }
 
     static QString appendSlashIfNeeded(const QString &inputString)
@@ -71,8 +71,8 @@ private:
     bool myOpenFileForWriting(QFile *file);
     bool ensureMkPath(const QString &filePath_toAFileNotAdir_ToMakeSureParentDirsExist);
 
-    SpecialFilesContentsType m_SpecialFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes;
-    SpecialFilesInstancesType m_SpecialFilesInstances;
+    TriggeredFilesContentsType m_TriggeredFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes;
+    TriggeredFilesInstancesType m_TriggeredFilesInstances;
 };
 
 #endif // IUIGENERATOR_H

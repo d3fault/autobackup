@@ -35,16 +35,16 @@ bool QtCliUiGenerator::generateUiForFile(const QString &theRelativeFilePathInWhi
     return true;
 #endif
 }
-void QtCliUiGenerator::addSpecialFilesContentMarkers(SpecialFilesContentsType *out_SpecialFilesContents)
+void QtCliUiGenerator::addTriggeredFilesContentMarkers(TriggeredFilesContentsType *out_TriggeredFilesContents)
 {
     //TODOreq:
 }
-QString QtCliUiGenerator::strReplaceSpecialFile(const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile, const UICollector &uiCollector)
+QString QtCliUiGenerator::strReplaceTriggeredFile(const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile, const UICollector &uiCollector)
 {
     //TODOreq:
     return QString();
 }
-QString QtCliUiGenerator::getOutputFilePathFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile)
+QString QtCliUiGenerator::getOutputFilePathFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile)
 {
     //TODOreq:
     return QString();

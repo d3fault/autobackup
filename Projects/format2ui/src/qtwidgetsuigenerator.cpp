@@ -62,10 +62,10 @@ bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathI
 
     return true;
 }
-void QtWidgetsUiGenerator::addSpecialFilesContentMarkers(SpecialFilesContentsType *out_SpecialFilesContents)
+void QtWidgetsUiGenerator::addTriggeredFilesContentMarkers(TriggeredFilesContentsType *out_TriggeredFilesContents)
 {
-    out_SpecialFilesContents->insert("top5movieslistwidget.h", QString());
-    out_SpecialFilesContents->insert("top5movieslistwidget.cpp", QString());
+    out_TriggeredFilesContents->insert("top5movieslistwidget.h", QString());
+    out_TriggeredFilesContents->insert("top5movieslistwidget.cpp", QString());
 }
 bool QtWidgetsUiGenerator::generateSource(const QString &absoluteFilePathOfSourceFileToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
 {
@@ -144,8 +144,8 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForSource(const UICollec
 
                 m_WhatToReplaceItWith4_ldkjsflj238423084 += "    QStringList " + uiCollector.variableName() + " = " + listWidgetMemberName + "->" + uiCollector.variableName() + "();\n";
                 m_WhatToReplaceItWith6 += "#include \"" + listWidgetTypeString.toLower() + ".h\"\n";
-                addInstanceOfSpecialFile("top5movieslistwidget.h", listWidgetTypeString, uiCollector);
-                addInstanceOfSpecialFile("top5movieslistwidget.cpp", listWidgetTypeString, uiCollector);
+                addInstanceOfTriggeredFile("top5movieslistwidget.h", listWidgetTypeString, uiCollector);
+                addInstanceOfTriggeredFile("top5movieslistwidget.cpp", listWidgetTypeString, uiCollector);
             }
         break;
             //etc
@@ -300,27 +300,27 @@ QString QtWidgetsUiGenerator::listWidgetMemberVariableName(const QString &variab
     QString ret = "m_" + listWidgetTypeName(variableName);
     return ret;
 }
-QString QtWidgetsUiGenerator::strReplaceSpecialFile(const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile, const UICollector &uiCollector)
+QString QtWidgetsUiGenerator::strReplaceTriggeredFile(const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile, const UICollector &uiCollector)
 {
-    QString ret = specialFilesContents().value(relativeFilePathOfSpecialFile);// = TO DOnereq; put file contents into ret for initial state
+    QString ret = triggeredFilesContents().value(relativeFilePathOfTriggeredFile);// = TO DOnereq; put file contents into ret for initial state
 
 #if 0
-    if(relativeFilePathOfSpecialFile == "top5movieslistwidget.h")
+    if(relativeFilePathOfTriggeredFile == "top5movieslistwidget.h")
     {
 #endif
-        if(relativeFilePathOfSpecialFile == "top5movieslistwidget.cpp" || relativeFilePathOfSpecialFile == "top5movieslistwidget.h")
+        if(relativeFilePathOfTriggeredFile == "top5movieslistwidget.cpp" || relativeFilePathOfTriggeredFile == "top5movieslistwidget.h")
         {
             QString Top5Movies("Top5Movies");
             //TODOreq:
-            ret.replace(Top5Movies, classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile);
-            ret.replace(Top5Movies.toUpper(), classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile.toUpper());
-            ret.replace(firstLetterToLower(Top5Movies), firstLetterToLower(classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile));
+            ret.replace(Top5Movies, classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile);
+            ret.replace(Top5Movies.toUpper(), classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile.toUpper());
+            ret.replace(firstLetterToLower(Top5Movies), firstLetterToLower(classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile));
 #if 0
     }
-    else if(relativeFilePathOfSpecialFile == "top5movieslistwidget.cpp")
+    else if(relativeFilePathOfTriggeredFile == "top5movieslistwidget.cpp")
     {
 #endif
-            ret.replace(Top5Movies.toLower(), classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile.toLower());
+            ret.replace(Top5Movies.toLower(), classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile.toLower());
             QString top5MoviesHumanReadable("Top 5 Movies");
             ret.replace(top5MoviesHumanReadable, uiCollector.humanReadableNameForShowingFinalEndUser());
         }
@@ -330,15 +330,15 @@ QString QtWidgetsUiGenerator::strReplaceSpecialFile(const QString &relativeFileP
 
     return ret;
 }
-QString QtWidgetsUiGenerator::getOutputFilePathFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfSpecialFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile)
+QString QtWidgetsUiGenerator::getOutputFilePathFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile)
 {
     QString ret = outputPathWithSlashAppended;
-    ret.append(classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile.toLower());
-    if(relativeFilePathOfSpecialFile == "top5movieslistwidget.cpp")
+    ret.append(classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile.toLower());
+    if(relativeFilePathOfTriggeredFile == "top5movieslistwidget.cpp")
     {
         ret.append("listwidget.cpp");
     }
-    else if(relativeFilePathOfSpecialFile == "top5movieslistwidget.h")
+    else if(relativeFilePathOfTriggeredFile == "top5movieslistwidget.h")
     {
         ret.append("listwidget.h");
     }

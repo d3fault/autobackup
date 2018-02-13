@@ -12,17 +12,17 @@ bool IUIGenerator::generateUi(const UICollector &rootUiCollector)
     outputDir.setAutoRemove(false);
     QString outputPathWithSlashAppended = appendSlashIfNeeded(outputDir.path());
     QStringList filesToGenerate2 = filesToGenerate();
-    addSpecialFilesContentMarkers(&m_SpecialFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes);
+    addTriggeredFilesContentMarkers(&m_TriggeredFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes);
     for(QStringList::const_iterator it = filesToGenerate2.constBegin(); it != filesToGenerate2.constEnd(); ++it)
     {
         const QString &currentRelativeFilePathToGenerate = *it;
-        if(m_SpecialFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes.contains(currentRelativeFilePathToGenerate))
+        if(m_TriggeredFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes.contains(currentRelativeFilePathToGenerate))
         {
             QString fileContents;
             QString fileSourceFilePath = projectSrcDirWithSlashAppended() + currentRelativeFilePathToGenerate;
             if(!readAllFile(fileSourceFilePath, &fileContents))
                 return false;
-            m_SpecialFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes.insert(currentRelativeFilePathToGenerate, fileContents);
+            m_TriggeredFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes.insert(currentRelativeFilePathToGenerate, fileContents);
             continue;
         }
         const QString &outputFilePath = outputPathWithSlashAppended + currentRelativeFilePathToGenerate;
@@ -42,9 +42,9 @@ bool IUIGenerator::generateUi(const UICollector &rootUiCollector)
             return false;
         }
     }
-    if(!generateSpecialFilesToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes(rootUiCollector, outputPathWithSlashAppended))
+    if(!generateTriggeredFiles(rootUiCollector, outputPathWithSlashAppended))
     {
-        qCritical() << "failed to generate special file(s)";
+        qCritical() << "failed to generate triggered file(s)";
         return false;
     }
     return true;
@@ -70,30 +70,30 @@ void IUIGenerator::replaceSpecialCommentSection(QString *out_Source, const QStri
     int len = indexAfterLastCharOfEnd-indexOfBegin;
     out_Source->replace(indexOfBegin, len, whatToReplaceItWith);
 }
-void IUIGenerator::addInstanceOfSpecialFile(const QString &specialFileKey_aka_relativePath, const QString &listWidgetTypeString, const UICollector &uiCollector)
+void IUIGenerator::addInstanceOfTriggeredFile(const QString &triggeredFileKey_aka_relativePath, const QString &listWidgetTypeString, const UICollector &uiCollector)
 {
-    m_SpecialFilesInstances.insert(specialFileKey_aka_relativePath, SpecialFilesInstancesTypeEntry { uiCollector, listWidgetTypeString });
+    m_TriggeredFilesInstances.insert(triggeredFileKey_aka_relativePath, TriggeredFilesInstancesTypeEntry { uiCollector, listWidgetTypeString });
 }
-bool IUIGenerator::generateSpecialFilesToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes(const UICollector &rootUiCollector /*I don't need to, but I could have iterated rootUiCollector here and now and done the checking/generating...*/, const QString &outputPathWithSlashAppended)
+bool IUIGenerator::generateTriggeredFiles(const UICollector &rootUiCollector /*I don't need to, but I could have iterated rootUiCollector here and now and done the checking/generating...*/, const QString &outputPathWithSlashAppended)
 {
-    for(SpecialFilesInstancesType::const_iterator it = m_SpecialFilesInstances.constBegin(); it != m_SpecialFilesInstances.constEnd(); ++it)
+    for(TriggeredFilesInstancesType::const_iterator it = m_TriggeredFilesInstances.constBegin(); it != m_TriggeredFilesInstances.constEnd(); ++it)
     {
-        const QString &relativeFilePathOfSpecialFile = it.key();
-        const SpecialFilesInstancesTypeEntry &entry = it.value();
-        QString classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile = entry.TypeString;
-        //QString outputFilePath = outputPathWithSlashAppended + classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile.toLower() + ".h";
-        QString outputFilePath = getOutputFilePathFromRelativeFilePath(outputPathWithSlashAppended, relativeFilePathOfSpecialFile, classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile);
+        const QString &relativeFilePathOfTriggeredFile = it.key();
+        const TriggeredFilesInstancesTypeEntry &entry = it.value();
+        QString classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile = entry.TypeString;
+        //QString outputFilePath = outputPathWithSlashAppended + classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile.toLower() + ".h";
+        QString outputFilePath = getOutputFilePathFromRelativeFilePath(outputPathWithSlashAppended, relativeFilePathOfTriggeredFile, classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile);
         if(!ensureMkPath(outputFilePath))
             return false;
-        QString strReplacedSpecialFile = strReplaceSpecialFile(relativeFilePathOfSpecialFile, classNameToBeSubstitutedInDuringStrReplaceHacksInSpecialFile, entry.UiCollector);
+        QString strReplacedTriggeredFile = strReplaceTriggeredFile(relativeFilePathOfTriggeredFile, classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile, entry.UiCollector);
         QFile outputFile(outputFilePath);
         if(!myOpenFileForWriting(&outputFile))
             return false;
         QTextStream textStream(&outputFile);
-        textStream << strReplacedSpecialFile;
-        qDebug() << "Generated file with special filename (relative to src dir):" << outputFilePath;
+        textStream << strReplacedTriggeredFile;
+        qDebug() << "Generated file with triggered filename (relative to src dir):" << outputFilePath;
     }
-    m_SpecialFilesInstances.clear();
+    m_TriggeredFilesInstances.clear();
     return true;
 }
 bool IUIGenerator::myOpenFileForWriting(QFile *file)
