@@ -1,0 +1,12 @@
+"less is more"
+I usually hate when people say that. I am obviously against it, but I do understand what it's saying: the more verbose your work is, the more saturated your main point/argument [can] become[s].
+
+Usually artists (trying to look sophisticated) and marketing majors (trying to look like artists) use the phrase.
+
+But anyways back to the point: it's applicable as fuck (tm) to format2ui!
+
+The fewer "UiCollectorTypes" format2ui supports, the more portable format2ui will be with FUTURE user-interface-definition-formats.
+
+So I mean basically I want to always keep it as simple as "box layouts and string/int collectors" (possibly loops/lists of those, but still just those at the end of the day).
+
+OT but I want to write it somewhere: the format2ui "Widget" type (which I'm considering renaming to Layout, since I represent it in code using just a layout) contains a "list of widgets", and then so does the StringList(WIP)/WidgetList(TODOreq). It may seem like duplicate functionality, but it's not. The Widget/Layout type works on a statically sized "list" of UiCollectors, defined by the coder, and the list can be composed of different sub-widget types (heterogenus)... whereas the StringList/WidgetList type works on a dynamicaly sized "list" of UiCollectors, chosen at runtime by the end-user. The list is composed of same-type sub-widgets (at least, that's how I have it planned in my head) (homogenus)... but that "same type" could be (probably is) a Widget/Layout and therefore composed of many Widget-impls. Oh fuck I just realized the WidgetList of WidgetLists (recursive) use case: fffff my brain (but I can probably do it :-P).

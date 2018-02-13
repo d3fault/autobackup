@@ -1,0 +1,13 @@
+delegation of textstream (normal files) vs delegation of strReplace (special files)
+the delegation of strReplace one also has this implementation specific arg being passed along with the uiCollector. in this case it equals Top5MoviesListWidget. I should note that uiCollector is being passed in solely (at time of writing) because it contains the value "Top 5 Movies" in it's humanYadayada(). I'm considering some kind of catch-all arg, such as a qvariant-backed (maybe QVariant hash or something idfk) solution, but for some reason a part of me is hesitant to create one. I gotta consider the implications of my keystrokes: I am a code (had:god) generator.
+
+
+
+
+
+
+................is not a god the controller of an memory segment? such as a process.
+
+
+
+ok anyways back to what I was talking about:

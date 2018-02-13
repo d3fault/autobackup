@@ -176,7 +176,7 @@ Documents/minddump/2018/1/1516741895-nnS832.txt:1516741910
 Documents/minddump/2018/1/1516741928-Tik832.txt:1516742337
 Documents/minddump/2018/1/1516742550-MTJ875.txt:1516742898
 Documents/minddump/2018/1/1516742977-LhX875.txt:1516743093
-Documents/minddump/2018/2/:1518294090
+Documents/minddump/2018/2/:1518301774
 Documents/minddump/2018/2/1517520910-TJ1014.txt:1517521631
 Documents/minddump/2018/2/1517611989-TJ3270.txt:1517612067
 Documents/minddump/2018/2/1517614156-TJ3632.txt:1517614186
@@ -194,6 +194,10 @@ Documents/minddump/2018/2/1517938155-LhX788.txt:1517939251
 Documents/minddump/2018/2/1517939493-nnS788.txt:1517939981
 Documents/minddump/2018/2/1517940263-MTJ843.txt:1517940870
 Documents/minddump/2018/2/1518293977-MTJ796.txt:1518294076
+Documents/minddump/2018/2/1518298637-TJ1266.txt:1518298795
+Documents/minddump/2018/2/1518298845-TJ1273.txt:1518298967
+Documents/minddump/2018/2/1518299074-XM1273.txt:1518299308
+Documents/minddump/2018/2/1518301733-TJ1369.txt:1518301765
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -3250,7 +3254,7 @@ Pictures/trying.to.visualize.google.filesystem.but.failing.to.understand.NoSql-K
 Pictures/unfinished.comic.kaylees.feramones.are.a.sort.of.drug.and.the.weirdest.thing.is.that.it.is.actually.true.svg:1361527419
 Pictures/works.legality.span.svg:1355298125
 Pictures/yet.another.tangent.explained.and.for.some.reason.always.below.zero.until.launch.makes.sense.in.my.head.svg:1360730935
-Projects/:1517599458
+Projects/:1518298243
 Projects/AVMuxScript/:1427483860
 Projects/AVMuxScript/Morning/:1426017664
 Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/:1428924854
@@ -3480,6 +3484,8 @@ Projects/CopyFileContentsToClipboard/src/CopyFileContentsToClipboardGui.pro:1409
 Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.cpp:1409509743
 Projects/CopyFileContentsToClipboard/src/copyfilecontentstoclipboardwidget.h:1409507797
 Projects/CopyFileContentsToClipboard/src/main.cpp:1409508222
+Projects/CppCoreGuidelinesSuggestions/:1518298264
+Projects/CppCoreGuidelinesSuggestions/ldsjflajsdlfjsdlkfjlsdjflksdfj.too.lazy.to.submit.txt:1518298545
 Projects/D3faultNetLiveVideoStream/:1506206599
 Projects/D3faultNetLiveVideoStream/design/:1506208996
 Projects/D3faultNetLiveVideoStream/design/initial.idea.or.i.guess.this.idea.has.been.brewing.since.the.beginning.of.time.really.d3faultnetlivevideostream.txt:1506209055
@@ -6176,7 +6182,7 @@ Projects/eBookReaderBookmarksFileUrlExtractorCli/src/ebookreaderbookmarksfileurl
 Projects/eBookReaderBookmarksFileUrlExtractorCli/src/ebookreaderbookmarksfileurlextractorcli.h:1458593851
 Projects/eBookReaderBookmarksFileUrlExtractorCli/src/main.cpp:1458594320
 Projects/format2ui/:1517961225
-Projects/format2ui/design/:1518028487
+Projects/format2ui/design/:1518548662
 Projects/format2ui/design/src/:1517774989
 Projects/format2ui/design/src/QtCliUiGeneratorOutputCompilingTemplateExample/:1517620941
 Projects/format2ui/design/src/QtCliUiGeneratorOutputCompilingTemplateExample/src/:1517884482
@@ -6190,8 +6196,8 @@ Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample
 Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample/src/main.cpp:1517777469
 Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample/src/qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.cpp:1517971521
 Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample/src/qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.h:1517969084
-Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample/src/top5movieslistwidget.cpp:1517971300
-Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample/src/top5movieslistwidget.h:1517970884
+Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample/src/top5movieslistwidget.cpp:1518548109
+Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample/src/top5movieslistwidget.h:1518548127
 Projects/format2ui/design/src/shared/:1517957347
 Projects/format2ui/design/src/shared/firstnamelastnameqobject.cpp:1517957347
 Projects/format2ui/design/src/shared/firstnamelastnameqobject.h:1517957319
@@ -6200,16 +6206,18 @@ Projects/format2ui/design/src/uishared/firstnamelastnameqobjectcommandlineoption
 Projects/format2ui/design/src/uishared/firstnamelastnameqobjectcommandlineoptionparser.h:1517880645
 Projects/format2ui/design/build.for.every.ui.type.is.an.interesting.idea.but.idk.if.a.good.default.txt:1517849940
 Projects/format2ui/design/comparing.format2ui.to.userinterfaceskeletongenerator.txt:1517612293
+Projects/format2ui/design/format2ui.less.is.more.lolololololol.sdlfjlsdfjlsdjfldjsfldjs.txt:1518548662
 Projects/format2ui/design/initial.idea.format2ui.txt:1517609529
 Projects/format2ui/design/lsdjfljsdfkljdslkfjdklsjfkldsjfkldjsfkljsdfkljdsfkljdsklfjoiuerljlksdfjkldsjflk.txt:1517779128
 Projects/format2ui/design/sdlfkjsdklfjsdofulsdfjdosfulsdfjdslkfj.txt:1518028487
-Projects/format2ui/src/:1518295843
+Projects/format2ui/design/slkfjklsdjfklsdjfsdouwerjoidusfldsjfoiudlsfkjdsofulk.txt:1518301659
+Projects/format2ui/src/:1518548789
 Projects/format2ui/src/format2ui.cpp:1517953722
 Projects/format2ui/src/format2ui.h:1517948804
 Projects/format2ui/src/format2ui.pro:1517860214
 Projects/format2ui/src/iuigenerator.cpp:1517994074
 Projects/format2ui/src/iuigenerator.h:1517993857
-Projects/format2ui/src/main.cpp:1517973631
+Projects/format2ui/src/main.cpp:1518548038
 Projects/format2ui/src/qtcliuigenerator.cpp:1517993857
 Projects/format2ui/src/qtcliuigenerator.h:1517993857
 Projects/format2ui/src/qtwidgetsuigenerator.cpp:1518295799
@@ -6217,7 +6225,7 @@ Projects/format2ui/src/qtwidgetsuigenerator.h:1518295492
 Projects/format2ui/src/uigeneratorfactory.cpp:1517611514
 Projects/format2ui/src/uigeneratorfactory.h:1517611490
 Projects/format2ui/src/uigeneratorformat.h:1517946490
-Projects/format2ui/src/uivariable.h:1517965665
+Projects/format2ui/src/uivariable.h:1518300133
 Projects/format2ui/sample.input.2.json:1517860075
 Projects/format2ui/sample.input.3.json:1517875264
 Projects/format2ui/sample.input.4.json:1517879059

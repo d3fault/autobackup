@@ -1,0 +1,17 @@
+CppCoreGuideline
+
+When creating an "end()" method for use in a ranged-based for loop, don't return the value of your last enum + 1. That value might wrap around back to 0.
+
+Rationale: enums use static sizing, so doing +1 on, for example, a uint8-backed enum when your last enum value happens to equal 127, would give you 0 rather than 128.
+
+An alternative solution is to never return a wrappable type when using the enum in a mathematical equation? That could probably be constexpr calculated/deduced (but I'm not sure).
+
+
+
+
+OT'is maybe not:
+since the compiler has intrinsic knowledge of the enum, can't we hand off the responsiblity of calculating the value of "end()" when using enums (iterators are fine). what I mean is that end() or maybe last() should return "the value of the last enum" (remember: intrinsic) but then do a (WRAP-SAFE!) "+1" to it to auto-populated the body of "end()" for the coder.
+
+begin() points to begin(), last() points to last(), end() gets auto-gen'd (safely) based on last()
+
+this doc is not applicable to the "returning int/etc" from begin()/end() scenario (or wait, maybe it is, idk)

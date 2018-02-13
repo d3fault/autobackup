@@ -1,0 +1,3 @@
+It's fukken depressing/scary to get so balls deep into a refactor/addition (composed of MULTIPLE COMMITS) that you can't see the other side. Yea I know that's what branching is for, but still guh my workflow is so fucked already if I did branching I'd fuckken idk lose some fuckin timestamps or something (seriously I don't know, I can't consider the implications).
+
+for this format2ui refactor though, I'm just blindly forging through knowing I'm not taking all the same stupid detours (premature optimizations) as I would if I were younger

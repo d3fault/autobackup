@@ -22,11 +22,7 @@ public:
 class UICollector : public QJsonObject
 {
 public:
-    /*UICollector()
-        : QJsonObject()
-    {
-        initUiCollector();
-    }*/
+    UICollector()=delete;
     UICollector(const QJsonObject &other)
         : QJsonObject(other)
     {
@@ -70,7 +66,7 @@ private:
         if(typeString == "String")
             return UICollectorType::LineEdit_String;
         //if(typeString == "StringArray")
-            //return UIVariableType::ExpandingListOfLineEdits_StringArray;
+            //return UIVariableType::ExpandingListOfLineEdits_StringArray; //TODOreq: yes call it this (not the StringArray part), but not until after the refactor
         if(typeString == "StringList")
             return UICollectorType::PlainTextEdit_StringList; //one plain text edit is easier to deal with than many line edits, but I do think many line edits is the better way to do it
         //etc!
