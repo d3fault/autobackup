@@ -90,6 +90,7 @@ bool IUIGenerator::copyFileVerbatimWithMessage(const QString &theRelativeFilePat
     if(!readAllFile(theAbsoluteFilePathInWhichToGenerate, &sourceContents))
         return false;
     currentFileTextStream << sourceContents;
+    return true;
 }
 void IUIGenerator::replaceSpecialCommentSection(QString *out_Source, const QString &specialIdInTheSpecialComments, const QString &whatToReplaceItWith)
 {

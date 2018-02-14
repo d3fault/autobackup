@@ -43,6 +43,9 @@ QString QtCliUiGenerator::strReplaceTriggeredFile(const QString &relativeFilePat
 }
 QString QtCliUiGenerator::getOutputFilePathForTriggeredFileFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile)
 {
+    Q_UNUSED(outputPathWithSlashAppended);
+    Q_UNUSED(relativeFilePathOfTriggeredFile);
+    Q_UNUSED(classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile);
     qFatal("QtCliUiGenerator doesn't have any triggered files at the moment");
     return QString();
 }
@@ -134,51 +137,69 @@ bool QtCliUiGenerator::generateHeader(QTextStream &currentFileTextStream, const 
     QString commandLineParserObjectName = rootUiCollector.name() + "CommandLineOptionParser";
 
     QString whatToLookFor0 = "../../uishared/firstnamelastnameqobjectcommandlineoptionparser.h";
-    QString whatToReplaceItWith0("../uishared/" + commandLineParserObjectName.toLower() + ".h");
+    m_WhatToReplaceItWith0 = "../uishared/" + commandLineParserObjectName.toLower() + ".h";
 
     QString whatToLookFor1("FirstNameLastNameQObjectCommandLineOptionParser");
-    QString whatToReplaceItWith1(commandLineParserObjectName);
+    m_WhatToReplaceItWith1 = commandLineParserObjectName;
 
     QString whatToLookFor2("const QString &firstName, const QString &lastName, const QStringList &top5Movies");
-    QString whatToReplaceItWith2;
+    m_WhatToReplaceItWith2.clear();
 
-#if 0
-    bool first = true;
-    for(QList<UICollector>::const_iterator it = format.UIVariables.constBegin(); it != format.UIVariables.constEnd(); ++it)
-    {
-        const UICollector &uiVariable = *it;
-        whatToReplaceItWith2 += QString(first ? "" : ", ") + QString("const ");
-        switch(uiVariable.Type)
-        {
-            case UICollectorType::LineEdit_String:
-                {
-                    whatToReplaceItWith2 += "QString";
-                }
-                break;
-            case UICollectorType::PlainTextEdit_StringList:
-                {
-                    whatToReplaceItWith2 += "QStringList";
-                }
-                break;
-            default:
-                qWarning("unknown uiVariable type");
-                break;
-        }
-        //etc
+    m_FirstNonWidget = true;
+    recursivelyProcessUiCollectorForHeader(rootUiCollector);
 
-        whatToReplaceItWith2 += " &" + uiVariable.VariableName;
-        first = false;
-    }
-#endif
-
-    compilingTemplateExampleHeader.replace(whatToLookFor0, whatToReplaceItWith0);
-    compilingTemplateExampleHeader.replace(whatToLookFor1, whatToReplaceItWith1);
-    compilingTemplateExampleHeader.replace(whatToLookFor2, whatToReplaceItWith2);
+    compilingTemplateExampleHeader.replace(whatToLookFor0, m_WhatToReplaceItWith0);
+    compilingTemplateExampleHeader.replace(whatToLookFor1, m_WhatToReplaceItWith1);
+    compilingTemplateExampleHeader.replace(whatToLookFor2, m_WhatToReplaceItWith2);
 
     //write out to currentFileTextStream
     currentFileTextStream << compilingTemplateExampleHeader;
 
     return true;
+}
+void QtCliUiGenerator::recursivelyProcessUiCollectorForHeader(const UICollector &uiCollector)
+{
+    if(uiCollector.Type != UICollectorType::Widget)
+    {
+        m_WhatToReplaceItWith2 += QString(m_FirstNonWidget ? "" : ", ") + QString("const ");
+    }
+    switch(uiCollector.Type)
+    {
+        case UICollectorType::LineEdit_String:
+            {
+                m_WhatToReplaceItWith2 += "QString";
+            }
+        break;
+        case UICollectorType::PlainTextEdit_StringList:
+            {
+                m_WhatToReplaceItWith2 += "QStringList";
+            }
+        break;
+            //etc
+            //TODOreq: handle other types. could organize this much better ofc. would be great if we could use use pure virtuals to break compilation whenever any 1 ui generator doesn't implement any 1 UiVariableType. sounds ez tbh
+        case UICollectorType::Widget:
+            {
+                //iterate uiCollector's rootLayout, calling generateSource for each IWidget (Widget or DerivedFromWidget) therein
+                const QJsonObject &rootLayout = uiCollector.rootLayout();
+                const QJsonArray &verticalUiVariables = rootLayout.value("verticalUiVariables").toArray();
+                qDebug() << "Widget has" << verticalUiVariables.size() << " sub-widgets";
+                for(auto &&i : verticalUiVariables)
+                {
+                    const QJsonObject &currentUiCollectorJsonObject = i.toObject();
+                    UICollector currentUiCollector(currentUiCollectorJsonObject);
+                    recursivelyProcessUiCollectorForHeader(currentUiCollector);
+                }
+            }
+        break;
+        default:
+            qWarning() << "unknown UiCollector type";
+        break;
+    }
+    if(uiCollector.Type != UICollectorType::Widget)
+    {
+        m_WhatToReplaceItWith2 += " &" + uiCollector.variableName();
+        m_FirstNonWidget = false;
+    }
 }
 QString QtCliUiGenerator::absolutePathOfCompilingTemplateExampleProjectSrcDir_WithSlashAppended() const
 {

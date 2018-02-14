@@ -15,6 +15,7 @@ private:
     bool generateSource(const QString &absoluteFilePathOfSourceFileToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector);
     void recursivelyProcessUiCollectorForSource(const UICollector &uiCollector);
     bool generateHeader(QTextStream &currentFileTextStream, const UICollector &rootUiCollector);
+    void recursivelyProcessUiCollectorForHeader(const UICollector &uiCollector);
 
     bool m_FirstNonWidget;
 
@@ -23,7 +24,9 @@ private:
     QString m_WhatToReplaceItWith1_lsdkjflkdjsfouerooiuwerlkjou89234098234;
 
     //header
-
+    QString m_WhatToReplaceItWith0;
+    QString m_WhatToReplaceItWith1;
+    QString m_WhatToReplaceItWith2;
 };
 
 #endif // QTCLIUIGENERATOR_H
