@@ -1,4 +1,5 @@
 #include <QCoreApplication>
+#include <QStringList>
 
 #include "format2ui.h"
 
@@ -8,9 +9,18 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+    QStringList argz = a.arguments();
+    argz.removeFirst(); //app filePath
+    if(argz.size() != 2)
+    {
+        qDebug("usage: format2ui input.json --qtwidgets|--qtcli");
+        return 1;
+    }
+    QString inputFormatJsonFilePath = argz.takeFirst();
+    QString cliArgUiTypeString = argz.takeFirst();
 
     format2ui business;
-    business.beginFormat2ui("/home/user/text/Projects/format2ui/sample.input.4.json", "--qtwidgets"); //TODOreq: connect to business::e etc!
+    business.beginFormat2ui(inputFormatJsonFilePath, cliArgUiTypeString); //TODOreq: connect to business::e etc!
 
     return 0;
 }
