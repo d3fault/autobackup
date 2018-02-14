@@ -113,7 +113,7 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForSource(const UICollec
                 QString listWidgetMemberName = listWidgetMemberVariableName(uiCollector.variableName());
                 QString listWidgetTypeString = listWidgetTypeName(uiCollector.variableName());
                 m_WhatToReplaceItWith0_liiueri93jrkjieruj += "    , " + listWidgetMemberName + "(new " + listWidgetTypeString + "())\n";
-                m_WhatToReplaceItWith1_kldsfoiure8098347824 += "    " + currentParentLayoutName() + "->addWidget(new QLabel(\"" + uiCollector.humanReadableNameForShowingFinalEndUser() + "\"));\n    " + currentParentLayoutName() + "->addWidget(" + listWidgetMemberName + ");\n";
+                m_WhatToReplaceItWith1_kldsfoiure8098347824 += "    " + addSpaceForEachLayoutDepth() + currentParentLayoutName() + "->addWidget(new QLabel(\"" + uiCollector.humanReadableNameForShowingFinalEndUser() + "\"));\n    " + addSpaceForEachLayoutDepth() + currentParentLayoutName() + "->addWidget(" + listWidgetMemberName + ");\n";
 
                 m_WhatToReplaceItWith4_ldkjsflj238423084 += "    QStringList " + uiCollector.variableName() + " = " + listWidgetMemberName + "->" + uiCollector.variableName() + "();\n";
                 m_WhatToReplaceItWith6 += "#include \"" + listWidgetTypeString.toLower() + ".h\"\n";
@@ -132,9 +132,9 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForSource(const UICollec
                     layoutName = "layout" + QString::number(getNextUnusedLayoutInt());
 
                 QString parentLayoutName = currentParentLayoutName();
-                m_WhatToReplaceItWith1_kldsfoiure8098347824 += "    QVBoxLayout *" + layoutName + " = new QVBoxLayout(" + (m_FirstWidget ? "this" : "") + ");\n";
                 //m_LayoutParentStack.push(parentLayoutName);
-                LayoutParentStackScopedPopper layoutParentStackScopedPopper(&m_LayoutParentStack, parentLayoutName); //become the parent layout for future widgets -- TODOreq: shouldn't the 2nd arg being passed in here be layoutName instead of parentLayoutName?
+                LayoutParentStackScopedPopper layoutParentStackScopedPopper(&m_LayoutParentStack, layoutName); //become the parent layout for future widgets -- TODOreq: shouldn't the 2nd arg being passed in here be layoutName instead of parentLayoutName?
+                m_WhatToReplaceItWith1_kldsfoiure8098347824 += addSpaceForEachLayoutDepth() + "    QVBoxLayout *" + layoutName + " = new QVBoxLayout(" + (m_FirstWidget ? "this" : "") + ");\n";
                 Q_UNUSED(layoutParentStackScopedPopper);
                 //iterate uiCollector's rootLayout, calling generateSource for each IWidget (Widget or DerivedFromWidget) therein
                 const QJsonObject &rootLayout = uiCollector.rootLayout();
@@ -294,6 +294,18 @@ QString QtWidgetsUiGenerator::currentParentLayoutName() const
     if(m_LayoutParentStack.isEmpty())
         return "rootLayout";
     return m_LayoutParentStack.top();
+}
+QString QtWidgetsUiGenerator::addSpaceForEachLayoutDepth() const //CURRENTLY NOP
+{
+    QString ret;
+#if 0 //I need a "forget-free" way to do this... like calls shouldn't be implicit. the idea was just to show the nested layout depths using spaces for each N layout layer deep. you can see I started adding calls to this method, but I realized that too much of this class would require calls to that
+    const LayoutParentStackType &layoutParentStackAsConst = m_LayoutParentStack; //w2b qAsConst
+    for(auto &&i : layoutParentStackAsConst)
+    {
+        ret += " ";
+    }
+#endif
+    return ret;
 }
 QString QtWidgetsUiGenerator::lineEditMemberVariableName(const QString &variableName)
 {

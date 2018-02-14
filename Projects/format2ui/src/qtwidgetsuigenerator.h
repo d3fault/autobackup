@@ -25,6 +25,7 @@ private:
     void recursivelyProcessUiCollectorForHeader(const UICollector &uiCollector);
     int getNextUnusedLayoutInt();
     QString currentParentLayoutName() const;
+    QString addSpaceForEachLayoutDepth() const;
     static QString lineEditMemberVariableName(const QString &variableName);
     static QString listWidgetTypeName(const QString &variableName);
     static QString listWidgetMemberVariableName(const QString &variableName);
