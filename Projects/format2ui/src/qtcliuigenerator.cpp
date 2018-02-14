@@ -6,12 +6,6 @@
 #define QtCliUiGenerator_SOURCE_FILEPATH "firstnamelastnameqtcli.cpp"
 #define QtCliUiGenerator_HEADER_FILEPATH "firstnamelastnameqtcli.h"
 
-#if 0
-QStringList QtCliUiGenerator::filesToGenerate() const
-{
-    return QStringList { QtCliUiGenerator_SOURCE_FILEPATH, QtCliUiGenerator_HEADER_FILEPATH };
-}
-#endif
 bool QtCliUiGenerator::generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
 {
     if(theRelativeFilePathInWhichToGenerate == QtCliUiGenerator_SOURCE_FILEPATH)
@@ -27,28 +21,22 @@ bool QtCliUiGenerator::generateUiForFile(const QString &theRelativeFilePathInWhi
     //etc
 
     return true;
-#if 0
-    for(QList<UIVariable>::const_iterator it = uiVariables.constBegin(); it != uiVariables.constEnd(); ++it)
-    {
-        const UIVariable &currentUiVariable = (*it);
-        streamOutUiCliQueriesViaCinCoutShiz(outputSourceFileTextStream, currentUiVariable);
-    }
-    qDebug() << "your output is here:" << outputDir.path();
-    return true;
-#endif
 }
 void QtCliUiGenerator::addTriggeredFilesContentMarkers(TriggeredFilesContentsType *out_TriggeredFilesContents)
 {
-    //TODOreq:
+    Q_UNUSED(out_TriggeredFilesContents); //QtCliUiGenerator doesn't have any triggered files at the moment
 }
 QString QtCliUiGenerator::strReplaceTriggeredFile(const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile, const UICollector &uiCollector)
 {
-    //TODOreq:
+    //QtCliUiGenerator doesn't have any triggered files at the moment
+    Q_UNUSED(relativeFilePathOfTriggeredFile);
+    Q_UNUSED(classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile);
+    Q_UNUSED(uiCollector);
     return QString();
 }
-QString QtCliUiGenerator::getOutputFilePathFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile)
+QString QtCliUiGenerator::getOutputFilePathForTriggeredFileFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile)
 {
-    //TODOreq:
+    qFatal("QtCliUiGenerator doesn't have any triggered files at the moment");
     return QString();
 }
 bool QtCliUiGenerator::generateSource(QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
@@ -174,8 +162,7 @@ bool QtCliUiGenerator::generateHeader(QTextStream &currentFileTextStream, const 
 
     return true;
 }
-QString QtCliUiGenerator::projectSrcDirWithSlashAppended() const
+QString QtCliUiGenerator::absolutePathOfCompilingTemplateExampleProjectSrcDir_WithSlashAppended() const
 {
-    //TODOreq:
-    return QString("/run/shm/");
+    return "/home/user/text/Projects/format2ui/design/src/QtCliUiGeneratorOutputCompilingTemplateExample/src/";
 }

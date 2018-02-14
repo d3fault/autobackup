@@ -9,13 +9,13 @@
 #define QtWidgetsUiGenerator_HEADER_FILEPATH "qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.h"
 
 //TODOreq: can callers handle relative subdirs? aka, will the paths be mkdir'd in dest output folder?
-QString QtWidgetsUiGenerator::projectSrcDirWithSlashAppended() const
+QString QtWidgetsUiGenerator::absolutePathOfCompilingTemplateExampleProjectSrcDir_WithSlashAppended() const
 {
     return "/home/user/text/Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample/src/";
 }
 bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
 {
-    QString theAbsoluteFilePathInWhichToGenerate = projectSrcDirWithSlashAppended() + theRelativeFilePathInWhichToGenerate;
+    QString theAbsoluteFilePathInWhichToGenerate = absolutePathOfCompilingTemplateExampleProjectSrcDir_WithSlashAppended() + theRelativeFilePathInWhichToGenerate;
     if(theRelativeFilePathInWhichToGenerate == QtWidgetsUiGenerator_SOURCE_FILEPATH)
     {
         if(!generateSource(theAbsoluteFilePathInWhichToGenerate, currentFileTextStream, rootUiCollector))
@@ -343,7 +343,7 @@ QString QtWidgetsUiGenerator::strReplaceTriggeredFile(const QString &relativeFil
 
     return ret;
 }
-QString QtWidgetsUiGenerator::getOutputFilePathFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile)
+QString QtWidgetsUiGenerator::getOutputFilePathForTriggeredFileFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile)
 {
     QString ret = outputPathWithSlashAppended;
     ret.append(classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile.toLower());

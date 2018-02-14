@@ -20,7 +20,7 @@ bool IUIGenerator::generateUi(const UICollector &rootUiCollector)
         if(m_TriggeredFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes.contains(currentRelativeFilePathToGenerate))
         {
             QString fileContents;
-            QString fileSourceFilePath = projectSrcDirWithSlashAppended() + currentRelativeFilePathToGenerate;
+            QString fileSourceFilePath = absolutePathOfCompilingTemplateExampleProjectSrcDir_WithSlashAppended() + currentRelativeFilePathToGenerate;
             if(!readAllFile(fileSourceFilePath, &fileContents))
                 return false;
             m_TriggeredFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes.insert(currentRelativeFilePathToGenerate, fileContents);
@@ -54,7 +54,7 @@ QStringList IUIGenerator::allFilesToGenerate() const
 {
     //return QStringList { QtWidgetsUiGenerator_SOURCE_FILEPATH, QtWidgetsUiGenerator_HEADER_FILEPATH };
     QStringList ret;
-    QDir dir(projectSrcDirWithSlashAppended());
+    QDir dir(absolutePathOfCompilingTemplateExampleProjectSrcDir_WithSlashAppended());
     QDirIterator dirIterator(dir, QDirIterator::Subdirectories); //TODOoptimization: cache the dir iteration results
     while(dirIterator.hasNext())
     {
@@ -105,7 +105,7 @@ bool IUIGenerator::generateTriggeredFiles(const UICollector &rootUiCollector /*I
         const TriggeredFilesInstancesTypeEntry &entry = it.value();
         QString classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile = entry.TypeString;
         //QString outputFilePath = outputPathWithSlashAppended + classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile.toLower() + ".h";
-        QString outputFilePath = getOutputFilePathFromRelativeFilePath(outputPathWithSlashAppended, relativeFilePathOfTriggeredFile, classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile);
+        QString outputFilePath = getOutputFilePathForTriggeredFileFromRelativeFilePath(outputPathWithSlashAppended, relativeFilePathOfTriggeredFile, classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile);
         if(!ensureMkPath(outputFilePath))
             return false;
         QString strReplacedTriggeredFile = strReplaceTriggeredFile(relativeFilePathOfTriggeredFile, classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile, entry.UiCollector);
