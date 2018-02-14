@@ -12,8 +12,18 @@ protected:
     QString strReplaceTriggeredFile(const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile, const UICollector &uiCollector) override;
     QString getOutputFilePathForTriggeredFileFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile) override;
 private:
-    bool generateSource(QTextStream &currentFileTextStream, const UICollector &rootUiCollector);
+    bool generateSource(const QString &absoluteFilePathOfSourceFileToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector);
+    void recursivelyProcessUiCollectorForSource(const UICollector &uiCollector);
     bool generateHeader(QTextStream &currentFileTextStream, const UICollector &rootUiCollector);
+
+    bool m_FirstNonWidget;
+
+    //source
+    QString m_WhatToReplaceItWith0_sdlkfjouedsflkjsdlf0983048324;
+    QString m_WhatToReplaceItWith1_lsdkjflkdjsfouerooiuwerlkjou89234098234;
+
+    //header
+
 };
 
 #endif // QTCLIUIGENERATOR_H

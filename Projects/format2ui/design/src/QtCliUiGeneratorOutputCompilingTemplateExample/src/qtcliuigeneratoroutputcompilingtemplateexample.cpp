@@ -26,7 +26,7 @@ void QtCliUiGeneratorOutputCompilingTemplateExample::collectUiVariables()
     QStringList top5Movies = queryStringList("Top 5 Movies", m_ArgParser.top5MoviesDefaultValueParsedFromProcessArg());
     /*format2ui-compiling-template-example_END_sdlkfjouedsflkjsdlf0983048324*/
 
-    emit collectUiVariablesFinished(firstName, lastName, top5Movies);
+    emit collectUiVariablesFinished(/*format2ui-compiling-template-example_BEGIN_lsdkjflkdjsfouerooiuwerlkjou89234098234*/firstName, lastName, top5Movies/*format2ui-compiling-template-example_END_lsdkjflkdjsfouerooiuwerlkjou89234098234*/);
 }
 //TODOreq: maybe some [proper] way to quit during a query xD?
 QString QtCliUiGeneratorOutputCompilingTemplateExample::queryString(const QString &queryString, const QString &defaultValueParsedFromProcessArg)

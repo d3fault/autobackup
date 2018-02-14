@@ -29,6 +29,7 @@ protected:
     virtual QString absolutePathOfCompilingTemplateExampleProjectSrcDir_WithSlashAppended() const=0;
     virtual QStringList allFilesToGenerate() const;
     bool readAllFile(const QString &filePath, QString *out_FileContents);
+    bool copyFileVerbatimWithMessage(const QString &theRelativeFilePathInWhichToGenerate, const QString &theAbsoluteFilePathInWhichToGenerate, QTextStream &currentFileTextStream);
     virtual bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)=0;
     virtual void addTriggeredFilesContentMarkers(TriggeredFilesContentsType *out_TriggeredFilesContents)=0;
     virtual QString strReplaceTriggeredFile(const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile, const UICollector &uiCollector)=0;
@@ -38,7 +39,7 @@ protected:
     bool generateTriggeredFiles(const UICollector &rootUiCollector, const QString &outputPathWithSlashAppended);
     const TriggeredFilesContentsType &triggeredFilesContents() const
     {
-        return m_TriggeredFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes;
+        return m_TriggeredFilesContents;
     }
 
     static QString appendSlashIfNeeded(const QString &inputString)
@@ -71,7 +72,7 @@ private:
     bool myOpenFileForWriting(QFile *file);
     bool ensureMkPath(const QString &filePath_toAFileNotAdir_ToMakeSureParentDirsExist);
 
-    TriggeredFilesContentsType m_TriggeredFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes;
+    TriggeredFilesContentsType m_TriggeredFilesContents;
     TriggeredFilesInstancesType m_TriggeredFilesInstances;
 };
 

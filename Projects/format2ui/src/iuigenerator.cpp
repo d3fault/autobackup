@@ -13,17 +13,17 @@ bool IUIGenerator::generateUi(const UICollector &rootUiCollector)
     outputDir.setAutoRemove(false);
     QString outputPathWithSlashAppended = appendSlashIfNeeded(outputDir.path());
     const QStringList filesToGenerate = allFilesToGenerate();
-    addTriggeredFilesContentMarkers(&m_TriggeredFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes);
+    addTriggeredFilesContentMarkers(&m_TriggeredFilesContents);
     //for(QStringList::const_iterator it = filesToGenerate.constBegin(); it != filesToGenerate.constEnd(); ++it)
     for(auto &&currentRelativeFilePathToGenerate : filesToGenerate) //my first range-based for loop :-D
     {
-        if(m_TriggeredFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes.contains(currentRelativeFilePathToGenerate))
+        if(m_TriggeredFilesContents.contains(currentRelativeFilePathToGenerate))
         {
             QString fileContents;
             QString fileSourceFilePath = absolutePathOfCompilingTemplateExampleProjectSrcDir_WithSlashAppended() + currentRelativeFilePathToGenerate;
             if(!readAllFile(fileSourceFilePath, &fileContents))
                 return false;
-            m_TriggeredFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes.insert(currentRelativeFilePathToGenerate, fileContents);
+            m_TriggeredFilesContents.insert(currentRelativeFilePathToGenerate, fileContents);
             continue;
         }
         const QString &outputFilePath = outputPathWithSlashAppended + currentRelativeFilePathToGenerate;
@@ -52,7 +52,6 @@ bool IUIGenerator::generateUi(const UICollector &rootUiCollector)
 }
 QStringList IUIGenerator::allFilesToGenerate() const
 {
-    //return QStringList { QtWidgetsUiGenerator_SOURCE_FILEPATH, QtWidgetsUiGenerator_HEADER_FILEPATH };
     QStringList ret;
     QDir dir(absolutePathOfCompilingTemplateExampleProjectSrcDir_WithSlashAppended());
     QDirIterator dirIterator(dir, QDirIterator::Subdirectories); //TODOoptimization: cache the dir iteration results
@@ -83,6 +82,14 @@ bool IUIGenerator::readAllFile(const QString &filePath, QString *out_FileContent
     QTextStream compilingTemplateExampleSourceTextStream(&compilingTemplateExampleSourceFile);
     *out_FileContents = compilingTemplateExampleSourceTextStream.readAll();
     return true;
+}
+bool IUIGenerator::copyFileVerbatimWithMessage(const QString &theRelativeFilePathInWhichToGenerate, const QString &theAbsoluteFilePathInWhichToGenerate, QTextStream &currentFileTextStream)
+{
+    qDebug() << "Copying file to 'generated' verbatim:" << theRelativeFilePathInWhichToGenerate;
+    QString sourceContents;
+    if(!readAllFile(theAbsoluteFilePathInWhichToGenerate, &sourceContents))
+        return false;
+    currentFileTextStream << sourceContents;
 }
 void IUIGenerator::replaceSpecialCommentSection(QString *out_Source, const QString &specialIdInTheSpecialComments, const QString &whatToReplaceItWith)
 {

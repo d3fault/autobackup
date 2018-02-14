@@ -28,11 +28,8 @@ bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathI
     }
     else
     {
-        qDebug() << "Copying file to 'generated' verbatim:" << theRelativeFilePathInWhichToGenerate;
-        QString sourceContents;
-        if(!readAllFile(theAbsoluteFilePathInWhichToGenerate, &sourceContents))
+        if(!copyFileVerbatimWithMessage(theRelativeFilePathInWhichToGenerate, theAbsoluteFilePathInWhichToGenerate, currentFileTextStream))
             return false;
-        currentFileTextStream << sourceContents;
     }
     //etc
 
