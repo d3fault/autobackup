@@ -27,7 +27,7 @@ private:
     QLineEdit *m_FavoriteLunchLineEdit;
     /*format2ui-compiling-template-example_END_lskjdfouewr08084097342098*/
 signals:
-    void finishedCollectingUiVariables(const QString &firstName, const QString &lastName, const QStringList &top5Movies, const QString &favoriteDinner, const QString &favoriteLunch);
+    void finishedCollectingUiVariables(/*format2ui-compiling-template-example_BEGIN_sdlfkjsdklfjoure978234978234*/const QString &firstName, const QString &lastName, const QStringList &top5Movies, const QString &favoriteDinner, const QString &favoriteLunch/*format2ui-compiling-template-example_END_sdlfkjsdklfjoure978234978234*/);
 private slots:
     void handleOkButtonClicked_aka_SanitizeAllAreNotEmptyBeforeEmittingSuccess();
     void handleCancelButtonClicked();

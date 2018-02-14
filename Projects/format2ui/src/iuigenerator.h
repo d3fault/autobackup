@@ -27,7 +27,7 @@ public:
     bool generateUi(const UICollector &rootUiCollector);
 protected:
     virtual QString projectSrcDirWithSlashAppended() const=0;
-    virtual QStringList filesToGenerate() const=0;
+    virtual QStringList allFilesToGenerate() const;
     bool readAllFile(const QString &filePath, QString *out_FileContents);
     virtual bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)=0;
     virtual void addTriggeredFilesContentMarkers(TriggeredFilesContentsType *out_TriggeredFilesContents)=0;

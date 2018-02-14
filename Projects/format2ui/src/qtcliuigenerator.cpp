@@ -6,10 +6,12 @@
 #define QtCliUiGenerator_SOURCE_FILEPATH "firstnamelastnameqtcli.cpp"
 #define QtCliUiGenerator_HEADER_FILEPATH "firstnamelastnameqtcli.h"
 
+#if 0
 QStringList QtCliUiGenerator::filesToGenerate() const
 {
     return QStringList { QtCliUiGenerator_SOURCE_FILEPATH, QtCliUiGenerator_HEADER_FILEPATH };
 }
+#endif
 bool QtCliUiGenerator::generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
 {
     if(theRelativeFilePathInWhichToGenerate == QtCliUiGenerator_SOURCE_FILEPATH)

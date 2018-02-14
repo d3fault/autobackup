@@ -4,6 +4,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QMultiHash>
+#include <QDirIterator>
 #include <QDebug>
 
 bool IUIGenerator::generateUi(const UICollector &rootUiCollector)
@@ -11,11 +12,11 @@ bool IUIGenerator::generateUi(const UICollector &rootUiCollector)
     QTemporaryDir outputDir;
     outputDir.setAutoRemove(false);
     QString outputPathWithSlashAppended = appendSlashIfNeeded(outputDir.path());
-    QStringList filesToGenerate2 = filesToGenerate();
+    const QStringList filesToGenerate = allFilesToGenerate();
     addTriggeredFilesContentMarkers(&m_TriggeredFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes);
-    for(QStringList::const_iterator it = filesToGenerate2.constBegin(); it != filesToGenerate2.constEnd(); ++it)
+    //for(QStringList::const_iterator it = filesToGenerate.constBegin(); it != filesToGenerate.constEnd(); ++it)
+    for(auto &&currentRelativeFilePathToGenerate : filesToGenerate) //my first range-based for loop :-D
     {
-        const QString &currentRelativeFilePathToGenerate = *it;
         if(m_TriggeredFilesContentsToNotNecessarilyGenerateEveryTimeOrToPerhapsGenerateManyTimes.contains(currentRelativeFilePathToGenerate))
         {
             QString fileContents;
@@ -48,6 +49,28 @@ bool IUIGenerator::generateUi(const UICollector &rootUiCollector)
         return false;
     }
     return true;
+}
+QStringList IUIGenerator::allFilesToGenerate() const
+{
+    //return QStringList { QtWidgetsUiGenerator_SOURCE_FILEPATH, QtWidgetsUiGenerator_HEADER_FILEPATH };
+    QStringList ret;
+    QDir dir(projectSrcDirWithSlashAppended());
+    QDirIterator dirIterator(dir, QDirIterator::Subdirectories); //TODOoptimization: cache the dir iteration results
+    while(dirIterator.hasNext())
+    {
+        dirIterator.next();
+        const QFileInfo &fileInfo = dirIterator.fileInfo();
+        if(fileInfo.isFile())
+        {
+            if(fileInfo.completeSuffix().toLower().endsWith("pro.user"))
+                continue;
+            QString filePath = fileInfo.absoluteFilePath();
+            //QString relativeFilePath = filePath.right(filePath.length() - absolutePathOfCompilingTemplateExample_DirWithSlashAppended.length());
+            QString relativeFilePath = dir.relativeFilePath(filePath);
+            ret << relativeFilePath;
+        }
+    }
+    return ret;
 }
 bool IUIGenerator::readAllFile(const QString &filePath, QString *out_FileContents)
 {

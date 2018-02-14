@@ -1,9 +1,7 @@
 #include "qtwidgetsuigenerator.h"
 
 #include <QFile>
-#include <QSet>
 #include <QJsonArray>
-#include <QDirIterator>
 #include <QFileInfo>
 #include <QDebug>
 
@@ -15,28 +13,6 @@ QString QtWidgetsUiGenerator::projectSrcDirWithSlashAppended() const
 {
     return "/home/user/text/Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample/src/";
 }
-QStringList QtWidgetsUiGenerator::filesToGenerate() const
-{
-    //return QStringList { QtWidgetsUiGenerator_SOURCE_FILEPATH, QtWidgetsUiGenerator_HEADER_FILEPATH };
-    QStringList ret;
-    QDir dir(projectSrcDirWithSlashAppended());
-    QDirIterator dirIterator(dir, QDirIterator::Subdirectories); //TODOoptimization: cache the dir iteration results
-    while(dirIterator.hasNext())
-    {
-        dirIterator.next();
-        const QFileInfo &fileInfo = dirIterator.fileInfo();
-        if(fileInfo.isFile())
-        {
-            if(fileInfo.completeSuffix().toLower().endsWith("pro.user"))
-                continue;
-            QString filePath = fileInfo.absoluteFilePath();
-            //QString relativeFilePath = filePath.right(filePath.length() - absolutePathOfCompilingTemplateExample_DirWithSlashAppended.length());
-            QString relativeFilePath = dir.relativeFilePath(filePath);
-            ret << relativeFilePath;
-        }
-    }
-    return ret;
-}
 bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
 {
     QString theAbsoluteFilePathInWhichToGenerate = projectSrcDirWithSlashAppended() + theRelativeFilePathInWhichToGenerate;
@@ -47,7 +23,7 @@ bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathI
     }
     else if(theRelativeFilePathInWhichToGenerate == QtWidgetsUiGenerator_HEADER_FILEPATH)
     {
-        if(!generateHeader(currentFileTextStream, rootUiCollector))
+        if(!generateHeader(theAbsoluteFilePathInWhichToGenerate, currentFileTextStream, rootUiCollector))
             return false;
     }
     else
@@ -160,8 +136,8 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForSource(const UICollec
 
                 QString parentLayoutName = currentParentLayoutName();
                 m_WhatToReplaceItWith1_kldsfoiure8098347824 += "    QVBoxLayout *" + layoutName + " = new QVBoxLayout(" + (m_FirstWidget ? "this" : "") + ");\n";
-                //m_LayoutParentStack.push(parentLayoutName); //become the parent layout for future widgets -- TO DOneoptional: a stacked destruction call to .pop
-                LayoutParentStackScopedPopper layoutParentStackScopedPopper(&m_LayoutParentStack, parentLayoutName);
+                //m_LayoutParentStack.push(parentLayoutName);
+                LayoutParentStackScopedPopper layoutParentStackScopedPopper(&m_LayoutParentStack, parentLayoutName); //become the parent layout for future widgets -- TODOreq: shouldn't the 2nd arg being passed in here be layoutName instead of parentLayoutName?
                 Q_UNUSED(layoutParentStackScopedPopper);
                 //iterate uiCollector's rootLayout, calling generateSource for each IWidget (Widget or DerivedFromWidget) therein
                 const QJsonObject &rootLayout = uiCollector.rootLayout();
@@ -191,17 +167,12 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForSource(const UICollec
         break;
     }
 }
-bool QtWidgetsUiGenerator::generateHeader(QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
+bool QtWidgetsUiGenerator::generateHeader(const QString &absoluteFilePathOfHeaderFileToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
 {
-    //read in header from compiling template example
-    QFile compilingTemplateExampleHeaderFile("/home/user/text/Projects/format2ui/design/src/QtWidgetsUiGeneratorOutputCompilingTemplateExample/src/qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.h");
-    if(!compilingTemplateExampleHeaderFile.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        qCritical() << "failed to open file for reading:" << compilingTemplateExampleHeaderFile.fileName();
+    //read in source from compiling template example
+    QString compilingTemplateExampleHeader;
+    if(!readAllFile(absoluteFilePathOfHeaderFileToGenerate, &compilingTemplateExampleHeader))
         return false;
-    }
-    QTextStream compilingTemplateExampleHeaderTextStream(&compilingTemplateExampleHeaderFile);
-    QString compilingTemplateExampleHeader = compilingTemplateExampleHeaderTextStream.readAll();
 
     //strReplace shiz on the file contents
 
@@ -214,45 +185,17 @@ bool QtWidgetsUiGenerator::generateHeader(QTextStream &currentFileTextStream, co
     QString m_WhatToReplaceItWith1(commandLineParserObjectName);
 
     //QString whatToLookFor2 = "    QLineEdit *m_FirstNameLineEdit;\n    QLineEdit *m_LastNameLineEdit;";
-    QString m_WhatToReplaceItWith2_lskjdfouewr08084097342098;
+    m_WhatToReplaceItWith2_lskjdfouewr08084097342098.clear();
 
-    QString whatToLookFor3("const QString &firstName, const QString &lastName, const QStringList &top5Movies");
-    QString m_WhatToReplaceItWith3;
+    //QString whatToLookFor3("const QString &firstName, const QString &lastName, const QStringList &top5Movies");
+    m_WhatToReplaceItWith3_sdlfkjsdklfjoure978234978234.clear();
 
     //QString whatToLookFor4("class QLineEdit;");
-    QSet<QString> m_WhatToReplaceItWith4_forwardDeclareClasses_dsfsflsjdflkjowe0834082934;
+    m_WhatToReplaceItWith4_forwardDeclareClasses_dsfsflsjdflkjowe0834082934.clear();
 
-#if 0
-    bool first = true;
-    for(QList<UICollector>::const_iterator it = uiCollector.UIVariables.constBegin(); it != uiCollector.UIVariables.constEnd(); ++it)
-    {
-        const UICollector &uiVariable = *it;
-        switch(uiVariable.Type)
-        {
-            case UICollectorType::LineEdit_String:
-                {
-                    m_WhatToReplaceItWith4_forwardDeclareClasses_dsfsflsjdflkjowe0834082934.insert("QLineEdit");
-                    QString lineEditMemberName = lineEditMemberVariableName(uiVariable.VariableName);
-                    m_WhatToReplaceItWith2_lskjdfouewr08084097342098 += "    QLineEdit *" + lineEditMemberName + ";\n";
-                    m_WhatToReplaceItWith3 += QString(first ? "" : ", ") + QString("const QString &") + uiVariable.VariableName;
-                }
-            break;
-            case UICollectorType::PlainTextEdit_StringList:
-                {
-                    m_WhatToReplaceItWith4_forwardDeclareClasses_dsfsflsjdflkjowe0834082934.insert("QPlainTextEdit");
-                    m_WhatToReplaceItWith2_lskjdfouewr08084097342098 += "    QPlainTextEdit *" + plainTextEditMemberVariableName(uiVariable.VariableName) + ";\n";
-                    m_WhatToReplaceItWith3 += QString(first ? "" : ", ") + QString("const QStringList &") + uiVariable.VariableName;
-                }
-            break;
-                //etc
-            default:
-                qWarning("unknown uiVariable type");
-            break;
-        }
-
-        first = false;
-    }
-#endif
+    m_FirstNonWidget = true;
+    m_FirstWidget = true;
+    recursivelyProcessUiCollectorForHeader(rootUiCollector);
 
     QString m_WhatToReplaceItWith4_dsfsflsjdflkjowe0834082934;
     for(QSet<QString>::const_iterator it = m_WhatToReplaceItWith4_forwardDeclareClasses_dsfsflsjdflkjowe0834082934.constBegin(); it != m_WhatToReplaceItWith4_forwardDeclareClasses_dsfsflsjdflkjowe0834082934.constEnd(); ++it)
@@ -264,7 +207,8 @@ bool QtWidgetsUiGenerator::generateHeader(QTextStream &currentFileTextStream, co
     compilingTemplateExampleHeader.replace(whatToLookFor1, m_WhatToReplaceItWith1);
     //compilingTemplateExampleHeader.replace(whatToLookFor2, m_WhatToReplaceItWith2_lskjdfouewr08084097342098);
     replaceSpecialCommentSection(&compilingTemplateExampleHeader, "lskjdfouewr08084097342098", m_WhatToReplaceItWith2_lskjdfouewr08084097342098);
-    compilingTemplateExampleHeader.replace(whatToLookFor3, m_WhatToReplaceItWith3);
+    //compilingTemplateExampleHeader.replace(whatToLookFor3, m_WhatToReplaceItWith3_sdlfkjsdklfjoure978234978234);
+    replaceSpecialCommentSection(&compilingTemplateExampleHeader, "sdlfkjsdklfjoure978234978234", m_WhatToReplaceItWith3_sdlfkjsdklfjoure978234978234);
     //compilingTemplateExampleHeader.replace(whatToLookFor4, m_WhatToReplaceItWith4_dsfsflsjdflkjowe0834082934);
     replaceSpecialCommentSection(&compilingTemplateExampleHeader, "dsfsflsjdflkjowe0834082934", m_WhatToReplaceItWith4_dsfsflsjdflkjowe0834082934);
 
@@ -272,6 +216,75 @@ bool QtWidgetsUiGenerator::generateHeader(QTextStream &currentFileTextStream, co
     currentFileTextStream << compilingTemplateExampleHeader;
 
     return true;
+}
+void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForHeader(const UICollector &uiCollector)
+{
+    switch(uiCollector.Type)
+    {
+        case UICollectorType::LineEdit_String:
+            {
+                m_WhatToReplaceItWith4_forwardDeclareClasses_dsfsflsjdflkjowe0834082934.insert("QLineEdit");
+                QString lineEditMemberName = lineEditMemberVariableName(uiCollector.variableName());
+                m_WhatToReplaceItWith2_lskjdfouewr08084097342098 += "    QLineEdit *" + lineEditMemberName + ";\n";
+                m_WhatToReplaceItWith3_sdlfkjsdklfjoure978234978234 += QString(m_FirstNonWidget ? "" : ", ") + QString("const QString &") + uiCollector.variableName();
+            }
+        break;
+        case UICollectorType::PlainTextEdit_StringList:
+            {
+                m_WhatToReplaceItWith4_forwardDeclareClasses_dsfsflsjdflkjowe0834082934.insert("QPlainTextEdit");
+                QString listWidgetMemberName = listWidgetMemberVariableName(uiCollector.variableName());
+                QString listWidgetTypeString = listWidgetTypeName(uiCollector.variableName());
+                m_WhatToReplaceItWith2_lskjdfouewr08084097342098 += "    " + listWidgetTypeString + " *" + listWidgetMemberName + ";\n";
+                m_WhatToReplaceItWith3_sdlfkjsdklfjoure978234978234 += QString(m_FirstNonWidget ? "" : ", ") + QString("const QStringList &") + uiCollector.variableName();
+            }
+        break;
+            //etc
+            //TODOreq: handle other types. could organize this much better ofc. would be great if we could use use pure virtuals to break compilation whenever any 1 ui generator doesn't implement any 1 UiVariableType. sounds ez tbh
+        case UICollectorType::Widget:
+            {
+                QString layoutName;
+                if(m_FirstWidget)
+                    layoutName = "rootLayout";
+                else
+                    layoutName = "layout" + QString::number(getNextUnusedLayoutInt());
+
+                QString parentLayoutName = currentParentLayoutName();
+                //m_WhatToReplaceItWith1_kldsfoiure8098347824 += "    QVBoxLayout *" + layoutName + " = new QVBoxLayout(" + (m_FirstWidget ? "this" : "") + ");\n";
+                //m_LayoutParentStack.push(parentLayoutName);
+                LayoutParentStackScopedPopper layoutParentStackScopedPopper(&m_LayoutParentStack, parentLayoutName); //become the parent layout for future widgets -- TODOreq: shouldn't the 2nd arg being passed in here be layoutName instead of parentLayoutName?
+                Q_UNUSED(layoutParentStackScopedPopper);
+                //iterate uiCollector's rootLayout, calling generateSource for each IWidget (Widget or DerivedFromWidget) therein
+                const QJsonObject &rootLayout = uiCollector.rootLayout();
+                const QJsonArray &verticalUiVariables = rootLayout.value("verticalUiVariables").toArray();
+                QString codeGenToAppendAfterIteratingOurChildren = "";
+                if(!m_FirstWidget)
+                {
+                    //rootLayout->addLayout(nestedLayout0);
+                    //rootLayout doesn't need to do this, took care of this in it's constructor (besides it'd be QWidget::setLayout instead!~)
+                    codeGenToAppendAfterIteratingOurChildren += "    " + parentLayoutName + "->addLayout(" + layoutName + ");\n";
+
+                }
+                m_FirstWidget = false;
+                qDebug() << "Widget has" << verticalUiVariables.size() << " sub-widgets";
+                for(QJsonArray::const_iterator it = verticalUiVariables.constBegin(); it != verticalUiVariables.constEnd(); ++it)
+                {
+                    const QJsonObject &currentUiCollectorJsonObject = (*it).toObject();
+                    UICollector currentUiCollector(currentUiCollectorJsonObject);
+                    recursivelyProcessUiCollectorForHeader(currentUiCollector);
+                }
+                //m_WhatToReplaceItWith1_kldsfoiure8098347824 += codeGenToAppendAfterIteratingOurChildren; //we needed to set m_FirstWidget to false before doing the recursive call
+                //when layoutParentStackScopedPopper goes out of scope right here, we are no longer the parent layout for future widgets
+            }
+        break;
+        default:
+            qWarning() << "unknown UiCollector type";
+        break;
+    }
+    if(uiCollector.Type != UICollectorType::Widget)
+    {
+        //m_WhatToReplaceItWith5_lksdfjodusodsfudsflkjdskl983402824 += QString(m_FirstNonWidget ? "" : ", ") + uiCollector.variableName();
+        m_FirstNonWidget = false;
+    }
 }
 int QtWidgetsUiGenerator::getNextUnusedLayoutInt()
 {

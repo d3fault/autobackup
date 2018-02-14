@@ -1,0 +1,2 @@
+General Qt Thoughts:
+Signals should be publically-connectable, but privately (or protectedly) emittable. I heard that they changed from "protected:" to "public:", but I'm not sure if it's true or when (qt version) it happened or if it might even be in reverse idfk.
