@@ -173,12 +173,18 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForSource(const UICollec
         break;
         case UICollectorType::WidgetList:
             {
-                const QString &someWidgetListTypeString = firstLetterToUpper(uiCollector.variableName());
+                const QString &someWidgetListTypeString = listWidgetTypeName(uiCollector.variableName());
                 addInstanceOfTriggeredFile(QtWidgetsUiGenerator_SomeWidgetList_SOURCE_FILEPATH, someWidgetListTypeString, uiCollector);
                 addInstanceOfTriggeredFile(QtWidgetsUiGenerator_SomeWidgetList_HEADER_FILEPATH, someWidgetListTypeString, uiCollector);
-                const QString &someWidgetListEntryWidgetTypeString(someWidgetListTypeString + "EntryTypeWidget");
-                addInstanceOfTriggeredFile(QtWidgetsUiGenerator_SomeWidgetListEntryTypeWidget_SOURCE_FILEPATH, someWidgetListEntryWidgetTypeString, uiCollector);
-                addInstanceOfTriggeredFile(QtWidgetsUiGenerator_SomeWidgetListEntryTypeWidget_HEADER_FILEPATH, someWidgetListEntryWidgetTypeString, uiCollector);
+                addInstanceOfTriggeredFile(QtWidgetsUiGenerator_SomeWidgetListEntryTypeWidget_SOURCE_FILEPATH, someWidgetListEntryWidgetTypeString(uiCollector.variableName()), uiCollector);
+                addInstanceOfTriggeredFile(QtWidgetsUiGenerator_SomeWidgetListEntryTypeWidget_HEADER_FILEPATH, someWidgetListEntryWidgetTypeString(uiCollector.variableName()), uiCollector);
+
+                m_WhatToReplaceItWith0_liiueri93jrkjieruj += "    , " + listWidgetMemberVariableName(uiCollector.variableName()) + "(new " + someWidgetListTypeString + "())\n";
+                m_WhatToReplaceItWith1_kldsfoiure8098347824 += "    " + currentParentLayoutName() + "->addWidget(new QLabel(\"" + uiCollector.humanReadableNameForShowingFinalEndUser() + "\"));\n";
+                m_WhatToReplaceItWith1_kldsfoiure8098347824 += "    " + currentParentLayoutName() + "->addWidget(" + listWidgetMemberVariableName(uiCollector.variableName()) + ");\n";
+
+                //QList<SomeWidgetListEntryType> someWidgetListValues = m_SomeWidgetList->someWidgetListValues();
+                m_WhatToReplaceItWith4_ldkjsflj238423084 += "    QList<" + someWidgetListEntryWidgetTypeString(uiCollector.variableName()) + "> " + uiCollector.variableName() + " = " + listWidgetMemberVariableName(uiCollector.variableName()) + "->" + uiCollector.variableName() + "Values();\n";
             }
         break;
         //default:
@@ -212,6 +218,9 @@ bool QtWidgetsUiGenerator::generateHeader(const QString &absoluteFilePathOfHeade
     //QString whatToLookFor4("class QLineEdit;");
     m_WhatToReplaceItWith4_forwardDeclareClasses_dsfsflsjdflkjowe0834082934.clear();
 
+    QString whatToLookFor5("#include \"somewidgetlist.h\"");
+    m_WhatToReplaceItWith5.clear();
+
     m_FirstNonWidget = true;
     m_FirstWidget = true;
     recursivelyProcessUiCollectorForHeader(rootUiCollector);
@@ -230,6 +239,7 @@ bool QtWidgetsUiGenerator::generateHeader(const QString &absoluteFilePathOfHeade
     replaceSpecialCommentSection(&compilingTemplateExampleHeader, "sdlfkjsdklfjoure978234978234", m_WhatToReplaceItWith3_sdlfkjsdklfjoure978234978234);
     //compilingTemplateExampleHeader.replace(whatToLookFor4, m_WhatToReplaceItWith4_dsfsflsjdflkjowe0834082934);
     replaceSpecialCommentSection(&compilingTemplateExampleHeader, "dsfsflsjdflkjowe0834082934", m_WhatToReplaceItWith4_dsfsflsjdflkjowe0834082934);
+    compilingTemplateExampleHeader.replace(whatToLookFor5, m_WhatToReplaceItWith5);
 
     //write out to currentFileTextStream
     currentFileTextStream << compilingTemplateExampleHeader;
@@ -297,7 +307,9 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForHeader(const UICollec
         break;
         case UICollectorType::WidgetList:
             {
-                //TODOreq:
+                m_WhatToReplaceItWith5 += "#include \"" + uiCollector.variableName().toLower() + ".h\"\n";
+                m_WhatToReplaceItWith2_lskjdfouewr08084097342098 += "    " + listWidgetTypeName(uiCollector.variableName()) + " *" + listWidgetMemberVariableName(uiCollector.variableName()) + ";\n";
+                m_WhatToReplaceItWith3_sdlfkjsdklfjoure978234978234 += QString(m_FirstNonWidget ? "" : ", ") + QString("const QList<" + someWidgetListEntryWidgetTypeString(uiCollector.variableName()) + "> &") + uiCollector.variableName() + "Values";
             }
         break;
         //default:
@@ -348,6 +360,10 @@ QString QtWidgetsUiGenerator::listWidgetMemberVariableName(const QString &variab
 {
     QString ret = "m_" + listWidgetTypeName(variableName);
     return ret;
+}
+QString QtWidgetsUiGenerator::someWidgetListEntryWidgetTypeString(const QString &variableName)
+{
+    return listWidgetTypeName(variableName) + "EntryTypeWidget";
 }
 QString QtWidgetsUiGenerator::strReplaceTriggeredFile(const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile, const UICollector &uiCollector)
 {

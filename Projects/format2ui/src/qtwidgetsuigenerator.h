@@ -29,6 +29,7 @@ private:
     static QString lineEditMemberVariableName(const QString &variableName);
     static QString listWidgetTypeName(const QString &variableName);
     static QString listWidgetMemberVariableName(const QString &variableName);
+    static QString someWidgetListEntryWidgetTypeString(const QString &variableName);
 
     bool m_FirstNonWidget;
     bool m_FirstWidget;
@@ -48,6 +49,7 @@ private:
     QString m_WhatToReplaceItWith2_lskjdfouewr08084097342098;
     QString m_WhatToReplaceItWith3_sdlfkjsdklfjoure978234978234;
     QSet<QString> m_WhatToReplaceItWith4_forwardDeclareClasses_dsfsflsjdflkjowe0834082934;
+    QString m_WhatToReplaceItWith5;
 };
 
 #endif // QTWIDGETSUIGENERATOR_H
