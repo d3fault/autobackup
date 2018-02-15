@@ -1,0 +1,16 @@
+For sanity as a coder, I need to:
+a) always be compiling
+b) trying to always code in a "forget free" manner (scoped destruction (and RequestResponseContracts! :-D) should execute "close/free/finish/etc" code)
+
+git branches and well tested/studied/verified procedural code works too, but forget-free programming is more portable in the face of future changes to a given codebase. the programmer 10 years from now can't forget to do "free(var);" before "return;" because the programmer 10 years from now doesn't have that responsibility: some scoped destructor now does. RIP C.
+
+Never think you can out-stack the stack. The compiler will be more accurate (human errors yo) and just as efficient (if not more).
+
+
+the way I [tried to] implement "addSpaceForEachLayoutDepth" or whatever in format2ui just recently: I coded it so that I could easily #ifdef it out the core of it if the attempt failed halfway through (it DID!). what I think I might be saying is that for sanity as a coder, I need to always do that with my code. It's "less proper" coding style and this is where I really think "git branches and a well tested/studied/etc code base" is probably better (although maybe scoped destruction (forget free) stuff is worth the extra effort, coding stuff in a manner so that everything can be #ifdef'd out might uglify the fuck out of my code). but that's the thing, teams produce high quality software because they have checks (and balances?). They have a team of testers and a "std" (standardized testing document (and also reports to go along with them ;-P)). I am a one man army and I'm lucky if I even _run_ my code..... ONCE. So to have a different coding style than a "team" of coders is fine tbh (sanity > *). At least until I grow the balls to use git branching [and git submodules *gulp*]. I still don't understand what happens to the feature-branch once 'master' pulls it back in. Am I supposed to delete the feature-branch? Does record of it's existence... erm... exist? Just a mere mention might be nice "this set of commits were developed on a feature-branch callled NewFeatureBoob69". certainly better than squashing a set of commits into one xD. oh and my fucking QuickDirtyAutoBackupHalper shit (namely .lastModifiedTimestamps) has to factor into the git branch integration
+
+so MAYBE:
+c) code in a way that you can uncomment out "new features" while they are under development (or git gud at git branching) without breaking (a) always be compiling
+
+
+I mean let's be honest (a) always be compiling -- is just a pipe dream (unless you ONLY apply the rule to 'master' branch but don't apply it to feature-branches).

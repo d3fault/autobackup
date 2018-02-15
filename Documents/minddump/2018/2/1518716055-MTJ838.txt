@@ -1,0 +1,8 @@
+Qt Open Governance (and similar meritocratic projects) seems like a scam: "you code for free and they accept it and then they sell it", but it ain't. I got to control the direction of an open source architecture (or framework/toolkit or whatever you like)!
+
+The point is this: the amount of time I put into the initial patch is miniscule compared to the amount of time "The Qt Company" is going to put into supporting that patch over the years. The only barrier to entry was that they too thought it was a good idea (and that it was implemented correctly :-P).
+
+I'm obviously talking about my [first real] addition to Qt: QIODevice::NewOnly and QIODevice::ExistingOnly.
+
+
+When I flip it on it's head like that: the amount of man-hours that will go into supporting it.......... it almost seems like I'm scamming them! muahahaha I got to control the direction of an open source architecture!!!! Qt is fucking huge. I want the b58check-encoded sha1/commit-id of that NewOnly/ExistingOnly commit merged into qtbase engraved onto my tombstone.
