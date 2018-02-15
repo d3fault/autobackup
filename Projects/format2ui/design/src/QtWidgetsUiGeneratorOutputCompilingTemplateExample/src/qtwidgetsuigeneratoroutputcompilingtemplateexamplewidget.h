@@ -5,8 +5,11 @@
 
 #include "../../uishared/firstnamelastnameqobjectcommandlineoptionparser.h"
 
+#include "somewidgetlist.h"
+
 /*format2ui-compiling-template-example_BEGIN_dsfsflsjdflkjowe0834082934*/
 class QLineEdit;
+class QBoxLayout;
 class Top5MoviesListWidget;
 /*format2ui-compiling-template-example_END_dsfsflsjdflkjowe0834082934*/
 
@@ -16,6 +19,7 @@ class QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget : public QWidget
 public:
     QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget(QWidget *parent = 0);
     bool parseArgs();
+    static void addLineEditToLayout(const QString &humanReadable, QLineEdit *lineEdit, QBoxLayout *theLayout);
 private:
     FirstNameLastNameQObjectCommandLineOptionParser m_ArgParser;
 
@@ -25,9 +29,10 @@ private:
     Top5MoviesListWidget *m_Top5MoviesListWidget;
     QLineEdit *m_FavoriteDinnerLineEdit;
     QLineEdit *m_FavoriteLunchLineEdit;
+    SomeWidgetList *m_SomeWidgetList;
     /*format2ui-compiling-template-example_END_lskjdfouewr08084097342098*/
 signals:
-    void finishedCollectingUiVariables(/*format2ui-compiling-template-example_BEGIN_sdlfkjsdklfjoure978234978234*/const QString &firstName, const QString &lastName, const QStringList &top5Movies, const QString &favoriteDinner, const QString &favoriteLunch/*format2ui-compiling-template-example_END_sdlfkjsdklfjoure978234978234*/);
+    void finishedCollectingUiVariables(/*format2ui-compiling-template-example_BEGIN_sdlfkjsdklfjoure978234978234*/const QString &firstName, const QString &lastName, const QStringList &top5Movies, const QString &favoriteDinner, const QString &favoriteLunch, const QList<SomeWidgetListEntryType> &someWidgetListValues/*format2ui-compiling-template-example_END_sdlfkjsdklfjoure978234978234*/);
 private slots:
     void handleOkButtonClicked_aka_SanitizeAllAreNotEmptyBeforeEmittingSuccess();
     void handleCancelButtonClicked();

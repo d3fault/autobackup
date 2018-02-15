@@ -17,9 +17,13 @@ SOURCES += main.cpp\
         qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.cpp \
     ../../shared/firstnamelastnameqobject.cpp \
     ../../uishared/firstnamelastnameqobjectcommandlineoptionparser.cpp \
-    top5movieslistwidget.cpp
+    top5movieslistwidget.cpp \
+    somewidgetlist.cpp \
+    somewidgetlistentrytypewidget.cpp
 
 HEADERS  += qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.h \
     ../../shared/firstnamelastnameqobject.h \
     ../../uishared/firstnamelastnameqobjectcommandlineoptionparser.h \
-    top5movieslistwidget.h
+    top5movieslistwidget.h \
+    somewidgetlist.h \
+    somewidgetlistentrytypewidget.h

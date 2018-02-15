@@ -18,15 +18,15 @@ QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::QtWidgetsUiGeneratorOu
     , m_Top5MoviesListWidget(new Top5MoviesListWidget())
     , m_FavoriteDinnerLineEdit(new QLineEdit())
     , m_FavoriteLunchLineEdit(new QLineEdit())
+    , m_SomeWidgetList(new SomeWidgetList())
     /*format2ui-compiling-template-example_END_liiueri93jrkjieruj*/
 {
     //for each uiVariable, create a QWidget derived object
     /*format2ui-compiling-template-example_BEGIN_kldsfoiure8098347824*/
     QVBoxLayout *rootLayout = new QVBoxLayout(this);
-    m_FirstNameLineEdit->setPlaceholderText("First Name:");
-    rootLayout->addWidget(m_FirstNameLineEdit);
-    m_LastNameLineEdit->setPlaceholderText("Last Name:");
-    rootLayout->addWidget(m_LastNameLineEdit);
+
+    addLineEditToLayout("First Name", m_FirstNameLineEdit, rootLayout);
+    addLineEditToLayout("Last Name", m_LastNameLineEdit, rootLayout);
 
     rootLayout->addWidget(new QLabel("Top 5 Movies:"));
     rootLayout->addWidget(m_Top5MoviesListWidget);
@@ -35,6 +35,9 @@ QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::QtWidgetsUiGeneratorOu
     layout0->addWidget(m_FavoriteDinnerLineEdit);
     layout0->addWidget(m_FavoriteLunchLineEdit);
     rootLayout->addLayout(layout0);
+
+    rootLayout->addWidget(new QLabel("Some Widget List"));
+    rootLayout->addWidget(m_SomeWidgetList);
 
 #if 0 //TODOreq:
     QVBoxLayout *layout1_ForWidgetList = new QVBoxLayout();
@@ -72,10 +75,15 @@ bool QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::parseArgs()
             m_FirstNameLineEdit->setText(m_ArgParser.firstNameDefaultValueParsedFromProcessArg());
         if(!m_ArgParser.lastNameDefaultValueParsedFromProcessArg().isEmpty())
             m_LastNameLineEdit->setText(m_ArgParser.lastNameDefaultValueParsedFromProcessArg());
-        //TODOreq: top5Movies and m_NestedLineEdit(s)
+        //TODOreq: top5Movies and m_NestedLineEdit(s) and m_SomeWidgetList
         /*format2ui-compiling-template-example_END_lksdfjoiduf08340983409*/
     }
     return ret;
+}
+void QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::addLineEditToLayout(const QString &humanReadable, QLineEdit *lineEdit, QBoxLayout *theLayout)
+{
+    lineEdit->setPlaceholderText(humanReadable + ":");
+    theLayout->addWidget(lineEdit);
 }
 void QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleOkButtonClicked_aka_SanitizeAllAreNotEmptyBeforeEmittingSuccess()
 {
@@ -108,9 +116,10 @@ void QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleOkButtonCli
         QMessageBox::critical(this, "Error", "Favorite Lunch cannot be empty");
         return;
     }
+    QList<SomeWidgetListEntryType> someWidgetListValues = m_SomeWidgetList->someWidgetListValues();
     /*format2ui-compiling-template-example_END_ldkjsflj238423084*/
 
-    emit finishedCollectingUiVariables(/*format2ui-compiling-template-example_BEGIN_lksdfjodusodsfudsflkjdskl983402824*/firstName, lastName, top5Movies, favoriteDinner, favoriteLunch/*format2ui-compiling-template-example_END_lksdfjodusodsfudsflkjdskl983402824*/);
+    emit finishedCollectingUiVariables(/*format2ui-compiling-template-example_BEGIN_lksdfjodusodsfudsflkjdskl983402824*/firstName, lastName, top5Movies, favoriteDinner, favoriteLunch, someWidgetListValues/*format2ui-compiling-template-example_END_lksdfjodusodsfudsflkjdskl983402824*/);
     close(); //done. close so that the user can't change the line edits anymore
 }
 void QtWidgetsUiGeneratorOutputCompilingTemplateExampleWidget::handleCancelButtonClicked()

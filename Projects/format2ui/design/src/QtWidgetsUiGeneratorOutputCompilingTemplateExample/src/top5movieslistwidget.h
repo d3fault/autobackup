@@ -4,8 +4,6 @@
 
 #include <QWidget>
 
-#include <QVariantList>
-
 class QVBoxLayout;
 class QLineEdit;
 
