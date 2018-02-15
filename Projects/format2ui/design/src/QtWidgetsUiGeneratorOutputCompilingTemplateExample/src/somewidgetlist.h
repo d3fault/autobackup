@@ -4,6 +4,7 @@
 
 #include <QWidget>
 
+#include <QDebug>
 #include <QList>
 
 class QVBoxLayout;

@@ -16,5 +16,13 @@ void FirstNameLastNameQObject::someSlot(const QString &firstName, const QString 
     qDebug() << "backend says favoriteDinner is:" << favoriteDinner;
     qDebug() << "backend says favoriteLunch is:" << favoriteLunch;
     //qDebug() << "backend says someWidgetListValues is:" << someWidgetListValues;
+    int c = 0;
+    for(auto &&i : someWidgetListValues)
+    {
+        qDebug() << c;
+        qDebug() << "SomeWidgetList_AnEntry0:" << i.SomeWidgetList_AnEntry0;
+        qDebug() << "SomeWidgetList_AnotherEntry1:" << i.SomeWidgetList_AnotherEntry1;
+        ++c;
+    }
     QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
 }
