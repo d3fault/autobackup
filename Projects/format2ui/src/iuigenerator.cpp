@@ -7,6 +7,7 @@
 #include <QDirIterator>
 #include <QDebug>
 
+//TODOmb: a way to do "compiling project src template directory wide (incl subdirs recursively)" str-replace, but then also continuing to have a per-file str-replace
 bool IUIGenerator::generateUi(const UICollector &rootUiCollector)
 {
     QTemporaryDir outputDir;
@@ -26,7 +27,7 @@ bool IUIGenerator::generateUi(const UICollector &rootUiCollector)
             m_TriggeredFilesContents.insert(currentRelativeFilePathToGenerate, fileContents);
             continue;
         }
-        const QString &outputFilePath = outputPathWithSlashAppended + currentRelativeFilePathToGenerate;
+        const QString &outputFilePath = outputPathWithSlashAppended + getUiGeneratorTranslatedRelativeFilePath(rootUiCollector, currentRelativeFilePathToGenerate);
         if(!ensureMkPath(outputFilePath)) //TODOoptimization: could probably call this less
             return false;
         QFile currentFileToGenerate(outputFilePath);

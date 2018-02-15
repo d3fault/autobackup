@@ -10,12 +10,14 @@ protected:
     bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector) override;
     void addTriggeredFilesContentMarkers(TriggeredFilesContentsType *out_TriggeredFilesContents) override;
     QString strReplaceTriggeredFile(const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile, const UICollector &uiCollector) override;
+    QString getUiGeneratorTranslatedRelativeFilePath(const UICollector &rootUiCollector, const QString &inputRelativeFilePath) const override;
     QString getOutputFilePathForTriggeredFileFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile) override;
 private:
     bool generateSource(const QString &absoluteFilePathOfSourceFileToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector);
     void recursivelyProcessUiCollectorForSource(const UICollector &uiCollector);
-    bool generateHeader(QTextStream &currentFileTextStream, const UICollector &rootUiCollector);
+    bool generateHeader(const QString &absoluteFilePathOfHeaderFileToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector);
     void recursivelyProcessUiCollectorForHeader(const UICollector &uiCollector);
+    QString qtCliUiCollectorName(const QString &uiCollectorName) const;
 
     bool m_FirstNonWidget;
 

@@ -33,6 +33,11 @@ protected:
     virtual bool generateUiForFile(const QString &theRelativeFilePathInWhichToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)=0;
     virtual void addTriggeredFilesContentMarkers(TriggeredFilesContentsType *out_TriggeredFilesContents)=0;
     virtual QString strReplaceTriggeredFile(const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile, const UICollector &uiCollector)=0;
+    virtual QString getUiGeneratorTranslatedRelativeFilePath(const UICollector &rootUiCollector, const QString &inputRelativeFilePath) const
+    {
+        Q_UNUSED(rootUiCollector);
+        return inputRelativeFilePath;
+    }
     virtual QString getOutputFilePathForTriggeredFileFromRelativeFilePath(const QString &outputPathWithSlashAppended, const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile)=0;
     void replaceSpecialCommentSection(QString *out_Source, const QString &specialIdInTheSpecialComments, const QString &whatToReplaceItWith);
     void addInstanceOfTriggeredFile(const QString &triggeredFileKey_aka_relativePath, const QString &listWidgetTypeString, const UICollector &uiCollector);

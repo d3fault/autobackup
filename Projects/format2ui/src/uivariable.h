@@ -18,6 +18,7 @@ public:
         //etc! can get very complex! custom widgets ofc
     };
 };
+//TODOmb: s/UiCollector/UiVarCollector ?
 //helper methods around a QJsonObject
 class UICollector : public QJsonObject
 {

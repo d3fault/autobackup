@@ -17,7 +17,7 @@ bool QtCliUiGenerator::generateUiForFile(const QString &theRelativeFilePathInWhi
     }
     else if(theRelativeFilePathInWhichToGenerate == QtCliUiGenerator_HEADER_FILEPATH)
     {
-        if(!generateHeader(/*theAbsoluteFilePathInWhichToGenerate, */currentFileTextStream, rootUiCollector))
+        if(!generateHeader(theAbsoluteFilePathInWhichToGenerate, currentFileTextStream, rootUiCollector))
             return false;
     }
     else
@@ -67,6 +67,12 @@ bool QtCliUiGenerator::generateSource(const QString &absoluteFilePathOfSourceFil
     //QString whatToLookFor1 = "firstName, lastName, top5Movies";
     m_WhatToReplaceItWith1_lsdkjflkdjsfouerooiuwerlkjou89234098234.clear();
 
+    QString whatToLookFor2 = "QtCliUiGeneratorOutputCompilingTemplateExample";
+    QString whatToReplaceItWith2 = qtCliUiCollectorName(rootUiCollector.name());
+
+    QString whatToLookFor3 = whatToLookFor2.toLower();
+    QString whatToReplaceItWith3 = whatToReplaceItWith2.toLower();
+
     m_FirstNonWidget = true;
     recursivelyProcessUiCollectorForSource(rootUiCollector);
 
@@ -74,6 +80,8 @@ bool QtCliUiGenerator::generateSource(const QString &absoluteFilePathOfSourceFil
     replaceSpecialCommentSection(&compilingTemplateExampleSource, "sdlkfjouedsflkjsdlf0983048324", m_WhatToReplaceItWith0_sdlkfjouedsflkjsdlf0983048324);
     //compilingTemplateExampleSource.replace(whatToLookFor1, m_WhatToReplaceItWith1_lsdkjflkdjsfouerooiuwerlkjou89234098234);
     replaceSpecialCommentSection(&compilingTemplateExampleSource, "lsdkjflkdjsfouerooiuwerlkjou89234098234", m_WhatToReplaceItWith1_lsdkjflkdjsfouerooiuwerlkjou89234098234);
+    compilingTemplateExampleSource.replace(whatToLookFor2, whatToReplaceItWith2);
+    compilingTemplateExampleSource.replace(whatToLookFor3, whatToReplaceItWith3);
 
     //write out to currentFileTextStream
     currentFileTextStream << compilingTemplateExampleSource;
@@ -120,17 +128,12 @@ void QtCliUiGenerator::recursivelyProcessUiCollectorForSource(const UICollector 
         m_FirstNonWidget = false;
     }
 }
-bool QtCliUiGenerator::generateHeader(QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
+bool QtCliUiGenerator::generateHeader(const QString &absoluteFilePathOfHeaderFileToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
 {
     //read in header from compiling template example
-    QFile compilingTemplateExampleHeaderFile("/home/user/text/Projects/format2ui/design/src/QtCliUiGeneratorOutputCompilingTemplateExample/src/qtcliuigeneratoroutputcompilingtemplateexample.h");
-    if(!compilingTemplateExampleHeaderFile.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        qCritical() << "failed to open file for reading:" << compilingTemplateExampleHeaderFile.fileName();
+    QString compilingTemplateExampleHeader;
+    if(!readAllFile(absoluteFilePathOfHeaderFileToGenerate, &compilingTemplateExampleHeader))
         return false;
-    }
-    QTextStream compilingTemplateExampleHeaderTextStream(&compilingTemplateExampleHeaderFile);
-    QString compilingTemplateExampleHeader = compilingTemplateExampleHeaderTextStream.readAll();
 
     //strReplace shiz on the file contents
 
@@ -145,12 +148,20 @@ bool QtCliUiGenerator::generateHeader(QTextStream &currentFileTextStream, const 
     QString whatToLookFor2("const QString &firstName, const QString &lastName, const QStringList &top5Movies");
     m_WhatToReplaceItWith2.clear();
 
+    QString whatToLookFor3 = "QtCliUiGeneratorOutputCompilingTemplateExample";
+    QString whatToReplaceItWith3 = qtCliUiCollectorName(rootUiCollector.name());
+
+    QString whatToLookFor4 = whatToLookFor3.toUpper();
+    QString whatToReplaceItWith4 = whatToReplaceItWith3.toUpper();
+
     m_FirstNonWidget = true;
     recursivelyProcessUiCollectorForHeader(rootUiCollector);
 
     compilingTemplateExampleHeader.replace(whatToLookFor0, m_WhatToReplaceItWith0);
     compilingTemplateExampleHeader.replace(whatToLookFor1, m_WhatToReplaceItWith1);
     compilingTemplateExampleHeader.replace(whatToLookFor2, m_WhatToReplaceItWith2);
+    compilingTemplateExampleHeader.replace(whatToLookFor3, whatToReplaceItWith3);
+    compilingTemplateExampleHeader.replace(whatToLookFor4, whatToReplaceItWith4);
 
     //write out to currentFileTextStream
     currentFileTextStream << compilingTemplateExampleHeader;
@@ -201,7 +212,20 @@ void QtCliUiGenerator::recursivelyProcessUiCollectorForHeader(const UICollector 
         m_FirstNonWidget = false;
     }
 }
+QString QtCliUiGenerator::qtCliUiCollectorName(const QString &uiCollectorName) const
+{
+    return uiCollectorName + "QtCliUiCollector";
+}
 QString QtCliUiGenerator::absolutePathOfCompilingTemplateExampleProjectSrcDir_WithSlashAppended() const
 {
     return "/home/user/text/Projects/format2ui/design/src/QtCliUiGeneratorOutputCompilingTemplateExample/src/";
+}
+QString QtCliUiGenerator::getUiGeneratorTranslatedRelativeFilePath(const UICollector &rootUiCollector, const QString &inputRelativeFilePath) const
+{
+    QString rootCliUiCollector = qtCliUiCollectorName(rootUiCollector.name());
+    if(inputRelativeFilePath == QtCliUiGenerator_SOURCE_FILEPATH)
+        return (rootCliUiCollector.toLower() + ".cpp");
+    if(inputRelativeFilePath == QtCliUiGenerator_HEADER_FILEPATH)
+        return (rootCliUiCollector.toLower() + ".h");
+    return inputRelativeFilePath;
 }
