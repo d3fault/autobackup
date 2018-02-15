@@ -11,6 +11,11 @@
 #define QtWidgetsUiGenerator_Top5MoviesListWidget_SOURCE_FILEPATH "top5movieslistwidget.cpp"
 #define QtWidgetsUiGenerator_Top5MoviesListWidget_HEADER_FILEPATH "top5movieslistwidget.h"
 
+#define QtWidgetsUiGenerator_SomeWidgetList_SOURCE_FILEPATH "somewidgetlist.cpp"
+#define QtWidgetsUiGenerator_SomeWidgetList_HEADER_FILEPATH "somewidgetlist.h"
+#define QtWidgetsUiGenerator_SomeWidgetListEntryTypeWidget_SOURCE_FILEPATH "somewidgetlistentrytypewidget.cpp"
+#define QtWidgetsUiGenerator_SomeWidgetListEntryTypeWidget_HEADER_FILEPATH "somewidgetlistentrytypewidget.h"
+
 //TODOreq: can callers handle relative subdirs? aka, will the paths be mkdir'd in dest output folder?
 QString QtWidgetsUiGenerator::absolutePathOfCompilingTemplateExampleProjectSrcDir_WithSlashAppended() const
 {
@@ -42,6 +47,10 @@ void QtWidgetsUiGenerator::addTriggeredFilesContentMarkers(TriggeredFilesContent
 {
     out_TriggeredFilesContents->insert(QtWidgetsUiGenerator_Top5MoviesListWidget_HEADER_FILEPATH, QString());
     out_TriggeredFilesContents->insert(QtWidgetsUiGenerator_Top5MoviesListWidget_SOURCE_FILEPATH, QString());
+    out_TriggeredFilesContents->insert(QtWidgetsUiGenerator_SomeWidgetList_SOURCE_FILEPATH, QString());
+    out_TriggeredFilesContents->insert(QtWidgetsUiGenerator_SomeWidgetList_HEADER_FILEPATH, QString());
+    out_TriggeredFilesContents->insert(QtWidgetsUiGenerator_SomeWidgetListEntryTypeWidget_SOURCE_FILEPATH, QString());
+    out_TriggeredFilesContents->insert(QtWidgetsUiGenerator_SomeWidgetListEntryTypeWidget_HEADER_FILEPATH, QString());
 }
 bool QtWidgetsUiGenerator::generateSource(const QString &absoluteFilePathOfSourceFileToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
 {
@@ -136,7 +145,7 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForSource(const UICollec
 
                 QString parentLayoutName = currentParentLayoutName();
                 //m_LayoutParentStack.push(parentLayoutName);
-                LayoutParentStackScopedPopper layoutParentStackScopedPopper(&m_LayoutParentStack, layoutName); //become the parent layout for future widgets -- TODOreq: shouldn't the 2nd arg being passed in here be layoutName instead of parentLayoutName?
+                LayoutParentStackScopedPopper layoutParentStackScopedPopper(&m_LayoutParentStack, layoutName); //become the parent layout for future widgets
                 m_WhatToReplaceItWith1_kldsfoiure8098347824 += addSpaceForEachLayoutDepth() + "    QVBoxLayout *" + layoutName + " = new QVBoxLayout(" + (m_FirstWidget ? "this" : "") + ");\n";
                 Q_UNUSED(layoutParentStackScopedPopper);
                 //iterate uiCollector's rootLayout, calling generateSource for each IWidget (Widget or DerivedFromWidget) therein
@@ -146,7 +155,7 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForSource(const UICollec
                 if(!m_FirstWidget)
                 {
                     //rootLayout->addLayout(nestedLayout0);
-                    //rootLayout doesn't need to do this, took care of this in it's constructor (besides it'd be QWidget::setLayout instead!~)
+                    //rootLayout itself doesn't need to be added to anything, took care of this in it's constructor (besides it'd be QWidget::setLayout instead!~)
                     codeGenToAppendAfterIteratingOurChildren += "    " + parentLayoutName + "->addLayout(" + layoutName + ");\n";
 
                 }
@@ -162,9 +171,19 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForSource(const UICollec
                 //when layoutParentStackScopedPopper goes out of scope right here, we are no longer the parent layout for future widgets
             }
         break;
-        default:
-            qWarning() << "unknown UiCollector type";
+        case UICollectorType::WidgetList:
+            {
+                const QString &someWidgetListTypeString = firstLetterToUpper(uiCollector.variableName());
+                addInstanceOfTriggeredFile(QtWidgetsUiGenerator_SomeWidgetList_SOURCE_FILEPATH, someWidgetListTypeString, uiCollector);
+                addInstanceOfTriggeredFile(QtWidgetsUiGenerator_SomeWidgetList_HEADER_FILEPATH, someWidgetListTypeString, uiCollector);
+                const QString &someWidgetListEntryWidgetTypeString(someWidgetListTypeString + "EntryTypeWidget");
+                addInstanceOfTriggeredFile(QtWidgetsUiGenerator_SomeWidgetListEntryTypeWidget_SOURCE_FILEPATH, someWidgetListEntryWidgetTypeString, uiCollector);
+                addInstanceOfTriggeredFile(QtWidgetsUiGenerator_SomeWidgetListEntryTypeWidget_HEADER_FILEPATH, someWidgetListEntryWidgetTypeString, uiCollector);
+            }
         break;
+        //default:
+        //    qWarning() << "unknown UiCollector type";
+        //break;
     }
 }
 bool QtWidgetsUiGenerator::generateHeader(const QString &absoluteFilePathOfHeaderFileToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
@@ -276,9 +295,14 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForHeader(const UICollec
                 //when layoutParentStackScopedPopper goes out of scope right here, we are no longer the parent layout for future widgets
             }
         break;
-        default:
-            qWarning() << "unknown UiCollector type";
+        case UICollectorType::WidgetList:
+            {
+                //TODOreq:
+            }
         break;
+        //default:
+        //    qWarning() << "unknown UiCollector type";
+        //break;
     }
     if(uiCollector.Type != UICollectorType::Widget)
     {
@@ -327,31 +351,31 @@ QString QtWidgetsUiGenerator::listWidgetMemberVariableName(const QString &variab
 }
 QString QtWidgetsUiGenerator::strReplaceTriggeredFile(const QString &relativeFilePathOfTriggeredFile, const QString &classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile, const UICollector &uiCollector)
 {
+    //TODOmb: pretty sure classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile can be gathered from uiCollector on demand rather than it being passed in as a separate arg (initially I was only passing in classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile and not uiCollector). too lazy to "uncode" this atm
+
     QString ret = triggeredFilesContents().value(relativeFilePathOfTriggeredFile);// = TO DOnereq; put file contents into ret for initial state
 
-#if 0
-    if(relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_Top5MoviesListWidget_HEADER_FILEPATH)
+    if(relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_Top5MoviesListWidget_SOURCE_FILEPATH || relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_Top5MoviesListWidget_HEADER_FILEPATH)
     {
-#endif
-        if(relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_Top5MoviesListWidget_SOURCE_FILEPATH || relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_Top5MoviesListWidget_HEADER_FILEPATH)
-        {
-            QString Top5Movies("Top5Movies");
-            //TODOreq:
-            ret.replace(Top5Movies, classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile);
-            ret.replace(Top5Movies.toUpper(), classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile.toUpper());
-            ret.replace(firstLetterToLower(Top5Movies), firstLetterToLower(classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile));
-#if 0
+        QString Top5Movies("Top5Movies");
+        ret.replace(Top5Movies, classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile);
+        ret.replace(Top5Movies.toUpper(), classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile.toUpper());
+        ret.replace(firstLetterToLower(Top5Movies), firstLetterToLower(classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile));
+
+        ret.replace(Top5Movies.toLower(), classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile.toLower());
+        QString top5MoviesHumanReadable("Top 5 Movies");
+        ret.replace(top5MoviesHumanReadable, uiCollector.humanReadableNameForShowingFinalEndUser());
     }
-    else if(relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_Top5MoviesListWidget_SOURCE_FILEPATH)
+    else if(relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_SomeWidgetList_SOURCE_FILEPATH || relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_SomeWidgetList_HEADER_FILEPATH || relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_SomeWidgetListEntryTypeWidget_SOURCE_FILEPATH || relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_SomeWidgetListEntryTypeWidget_HEADER_FILEPATH)
     {
-#endif
-            ret.replace(Top5Movies.toLower(), classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile.toLower());
-            QString top5MoviesHumanReadable("Top 5 Movies");
-            ret.replace(top5MoviesHumanReadable, uiCollector.humanReadableNameForShowingFinalEndUser());
-        }
-#if 0
+        QString SomeWidgetList("SomeWidgetList");
+        ret.replace(SomeWidgetList, classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile);
+        ret.replace(SomeWidgetList.toUpper(), classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile.toUpper());
+        ret.replace(firstLetterToLower(SomeWidgetList), firstLetterToLower(classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile));
+        ret.replace(SomeWidgetList.toLower(), classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile.toLower());
+        QString someWidgetListHumanReadable("Some Widget List");
+        ret.replace(someWidgetListHumanReadable, uiCollector.humanReadableNameForShowingFinalEndUser());
     }
-#endif
 
     return ret;
 }
@@ -366,6 +390,22 @@ QString QtWidgetsUiGenerator::getOutputFilePathForTriggeredFileFromRelativeFileP
     else if(relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_Top5MoviesListWidget_HEADER_FILEPATH)
     {
         ret.append("listwidget.h");
+    }
+    else if(relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_SomeWidgetList_SOURCE_FILEPATH)
+    {
+        ret.append(".cpp");
+    }
+    else if(relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_SomeWidgetList_HEADER_FILEPATH)
+    {
+        ret.append(".h");
+    }
+    else if(relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_SomeWidgetListEntryTypeWidget_SOURCE_FILEPATH)
+    {
+        ret.append("entrytypewidget.cpp");
+    }
+    else if(relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_SomeWidgetListEntryTypeWidget_HEADER_FILEPATH)
+    {
+        ret.append("entrytypewidget.h");
     }
     else
     {

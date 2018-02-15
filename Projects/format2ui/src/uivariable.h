@@ -11,9 +11,9 @@ public:
     {
           Widget = 0
         , LineEdit_String = 1
-        , ScrollBox_Int = 2
+        //, ScrollBox_Int = 2
         , PlainTextEdit_StringList = 3
-        , PlainTextEdit_IntList = 4
+        //, PlainTextEdit_IntList = 4
         , WidgetList = 5
         //etc! can get very complex! custom widgets ofc
     };
@@ -70,6 +70,8 @@ private:
             //return UIVariableType::ExpandingListOfLineEdits_StringArray; //TODOreq: yes call it this (not the StringArray part), but not until after the refactor
         if(typeString == "StringList")
             return UICollectorType::PlainTextEdit_StringList; //one plain text edit is easier to deal with than many line edits, but I do think many line edits is the better way to do it
+        if(typeString == "WidgetList")
+            return UICollectorType::WidgetList;
         //etc!
         qFatal("invalid type string");
         return UICollectorType::LineEdit_String;
