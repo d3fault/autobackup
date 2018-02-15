@@ -1,0 +1,21 @@
+{
+    "name" : "WidgetListTest",
+    "rootLayout" :
+    {
+        "verticalUiVariables" :
+        [
+            { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "Normal String 0", "variableName" : "normalString0", "variableValue" : "" },
+            {
+                "typeString" : "WidgetList",
+                "widgetListEntryType" :
+                [
+                    { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "String in WidgetList 0", "variableName" : "stringInWidgetList0", "variableValue" : "" },
+                    { "typeString" : "String", "humanReadableNameForShowingFinalEndUser" : "String in WidgetList 1", "variableName" : "stringInWidgetList1", "variableValue" : "" }
+                ],
+                "humanReadableNameForShowingFinalEndUser" : "Widget Motherfucking List",
+                "variableName" : "widgetMotherfuckingList",
+                "variableValue" : ""
+            }
+        ]
+    }
+}

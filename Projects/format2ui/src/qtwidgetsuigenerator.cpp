@@ -8,6 +8,9 @@
 #define QtWidgetsUiGenerator_SOURCE_FILEPATH "qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.cpp"
 #define QtWidgetsUiGenerator_HEADER_FILEPATH "qtwidgetsuigeneratoroutputcompilingtemplateexamplewidget.h"
 
+#define QtWidgetsUiGenerator_Top5MoviesListWidget_SOURCE_FILEPATH "top5movieslistwidget.cpp"
+#define QtWidgetsUiGenerator_Top5MoviesListWidget_HEADER_FILEPATH "top5movieslistwidget.h"
+
 //TODOreq: can callers handle relative subdirs? aka, will the paths be mkdir'd in dest output folder?
 QString QtWidgetsUiGenerator::absolutePathOfCompilingTemplateExampleProjectSrcDir_WithSlashAppended() const
 {
@@ -37,8 +40,8 @@ bool QtWidgetsUiGenerator::generateUiForFile(const QString &theRelativeFilePathI
 }
 void QtWidgetsUiGenerator::addTriggeredFilesContentMarkers(TriggeredFilesContentsType *out_TriggeredFilesContents)
 {
-    out_TriggeredFilesContents->insert("top5movieslistwidget.h", QString());
-    out_TriggeredFilesContents->insert("top5movieslistwidget.cpp", QString());
+    out_TriggeredFilesContents->insert(QtWidgetsUiGenerator_Top5MoviesListWidget_HEADER_FILEPATH, QString());
+    out_TriggeredFilesContents->insert(QtWidgetsUiGenerator_Top5MoviesListWidget_SOURCE_FILEPATH, QString());
 }
 bool QtWidgetsUiGenerator::generateSource(const QString &absoluteFilePathOfSourceFileToGenerate, QTextStream &currentFileTextStream, const UICollector &rootUiCollector)
 {
@@ -56,7 +59,7 @@ bool QtWidgetsUiGenerator::generateSource(const QString &absoluteFilePathOfSourc
     m_WhatToReplaceItWith4_ldkjsflj238423084.clear();
     m_WhatToReplaceItWith5_lksdfjodusodsfudsflkjdskl983402824.clear();
 
-    QString whatToSearchFor6("#include \"top5movieslistwidget.h\"");
+    QString whatToSearchFor6("#include \"" QtWidgetsUiGenerator_Top5MoviesListWidget_HEADER_FILEPATH "\"");
     m_WhatToReplaceItWith6.clear();
 
     m_FirstNonWidget = true;
@@ -117,8 +120,8 @@ void QtWidgetsUiGenerator::recursivelyProcessUiCollectorForSource(const UICollec
 
                 m_WhatToReplaceItWith4_ldkjsflj238423084 += "    QStringList " + uiCollector.variableName() + " = " + listWidgetMemberName + "->" + uiCollector.variableName() + "();\n";
                 m_WhatToReplaceItWith6 += "#include \"" + listWidgetTypeString.toLower() + ".h\"\n";
-                addInstanceOfTriggeredFile("top5movieslistwidget.h", listWidgetTypeString, uiCollector);
-                addInstanceOfTriggeredFile("top5movieslistwidget.cpp", listWidgetTypeString, uiCollector);
+                addInstanceOfTriggeredFile(QtWidgetsUiGenerator_Top5MoviesListWidget_HEADER_FILEPATH, listWidgetTypeString, uiCollector);
+                addInstanceOfTriggeredFile(QtWidgetsUiGenerator_Top5MoviesListWidget_SOURCE_FILEPATH, listWidgetTypeString, uiCollector);
             }
         break;
             //etc
@@ -327,10 +330,10 @@ QString QtWidgetsUiGenerator::strReplaceTriggeredFile(const QString &relativeFil
     QString ret = triggeredFilesContents().value(relativeFilePathOfTriggeredFile);// = TO DOnereq; put file contents into ret for initial state
 
 #if 0
-    if(relativeFilePathOfTriggeredFile == "top5movieslistwidget.h")
+    if(relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_Top5MoviesListWidget_HEADER_FILEPATH)
     {
 #endif
-        if(relativeFilePathOfTriggeredFile == "top5movieslistwidget.cpp" || relativeFilePathOfTriggeredFile == "top5movieslistwidget.h")
+        if(relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_Top5MoviesListWidget_SOURCE_FILEPATH || relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_Top5MoviesListWidget_HEADER_FILEPATH)
         {
             QString Top5Movies("Top5Movies");
             //TODOreq:
@@ -339,7 +342,7 @@ QString QtWidgetsUiGenerator::strReplaceTriggeredFile(const QString &relativeFil
             ret.replace(firstLetterToLower(Top5Movies), firstLetterToLower(classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile));
 #if 0
     }
-    else if(relativeFilePathOfTriggeredFile == "top5movieslistwidget.cpp")
+    else if(relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_Top5MoviesListWidget_SOURCE_FILEPATH)
     {
 #endif
             ret.replace(Top5Movies.toLower(), classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile.toLower());
@@ -356,11 +359,11 @@ QString QtWidgetsUiGenerator::getOutputFilePathForTriggeredFileFromRelativeFileP
 {
     QString ret = outputPathWithSlashAppended;
     ret.append(classNameToBeSubstitutedInDuringStrReplaceHacksInTriggeredFile.toLower());
-    if(relativeFilePathOfTriggeredFile == "top5movieslistwidget.cpp")
+    if(relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_Top5MoviesListWidget_SOURCE_FILEPATH)
     {
         ret.append("listwidget.cpp");
     }
-    else if(relativeFilePathOfTriggeredFile == "top5movieslistwidget.h")
+    else if(relativeFilePathOfTriggeredFile == QtWidgetsUiGenerator_Top5MoviesListWidget_HEADER_FILEPATH)
     {
         ret.append("listwidget.h");
     }
