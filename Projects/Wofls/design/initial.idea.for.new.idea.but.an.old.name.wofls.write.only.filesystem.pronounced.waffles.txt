@@ -1,0 +1,37 @@
+Just like programming languages are being invented in order to make computer programming "safer" in the memory-safety context (such as Rust, which lol I have no faith in because it has to compete with C++. Modernizing C++ to be safer is a better solution than switching to Rust, methinks), I should motherfucking create a computer filesystem (and related lib/api for us coders) to make general computer _USE_ "safer" in the files and oh-shit-I-just-deleted-all-my-files context. Although this is a non-replicated solution, it is not meant to solve that problem (but can be used as a puzzle piece in a bigger/grander solution to solve the replication problem, ofc): it is meant to solve the "oops I just deleted my fucking file(s)" problem encountered by damn near every human in existence. From absolute noob to genius computer programmer (err unless the genius computer programmer was using a properly implemented version of the very app/idea of this doc), we accidentally delete files from time to time.
+
+Peace of mind is valuable.
+This is why insurance companies exist, and is also why the "Trash Can" exists in the Graphical Computers with Rectangles n' Web Browsers n' shit (tm).
+
+ok seriously tangent: "Rectangles n' Web Browsers n' Shit" is a good name for some of the projects I am working on. Like Osios2 for example, but not strictly limited to that. A lot of my ideas are merging and are [gonna be] rewritten, which is ironically why I have so very little written/accomplished. Wait not 100% sure that's "ironic" but still the flow of the sentence is there.
+
+Peace of mind from your AVERAGE (not all) "oops I just delete my file".
+
+Another hacky way to accomplish this (rather than create a libfuse-driven filesystem) is to simply overwrite/rename/etc the "rm" (remove) command. In either case we're still kinda implementing a "filesystem" so it's better to call it a filesystem (and be one) I'd say. Actually renaming the "rm" command strat SUCKS because you can't have "one filesystem (such as root fs) be delete-able" and "one filesystem (such as user's Documents fs) be non-delete-able (unless we introduced chroots or something gah more than one way to skin a cat fuck that libfuse strat is way better/saner/understandable/possibly-even-more-portable-but-I-havent-tested-the-ports-btw-you-should-always-test-ports-because-sometimes-they-are-limited-to-the-point-of-having-zero-value)".
+
+Well anyways what I'm saying is that I should fuggen implement it because I've looked at the libfuse api usage examples and it seemed ezpz to interface with (show me that (and a corresponding ezpz tut) for the Linux kernel, Linus, and maybe I'd un-toy it. Toys are more portable (and it's still C++, userland vs kernal performance diff doesn't bother me [much], so...). This also has a lot more usefulness than that gitfs (based on libfuse) idea I had a while ago (not sure what the point of this sentence is though (verbatim)).
+
+WriteOnlyFilesystem
+Wofls
+Pronounced: Waffles
+
+This "naming" idea is actually old as fuck but it seems to fit perfectly here so I might as well jack it :) (or maybe this is one of those infamous merges/finally-implemented-correctly/rewrites/whatevz).
+
+I think git (and therefore gitfs implemented in libfuse!?!? at the very least libfuse but eh the git binary itself would honestly do just fine at least initially) should be the backingstore. Life's too short to reinvent the wheel (OT: been thinking long and hard about using git as backingstore for TimeAndData_Timeline).
+
+a) git _CAN_ do a non-revision-based filesystem "perist to disk" (save file to disk) -- revision stuff should come later and I'm purposefully NOT mentioning it in this doc... even though yes it is desirable as fuck.
+b) git can also do revision-based filesystem "persist to disk" (save file to disk) -- so while it can do (a) with ease, it's still future proof as fuck for when I want to add revision stuff (LATER) to the idea that this doc describes (Wofls I guess now?).
+
+You do need a "regular fs" to be mounted "next to" this Wofls fs... as Wofls will DEPEND on that "regular fs". This isn't a big deal, just a mention. Might as well use Btrfs (aww shit there goes all my portability) for the same reason as using git: future proofing yesplz COW fs (err actually if we use git as backingstore, we get COW for freeeeeeeeeeeeeeeeeeeeeeeee (assuming the compressor picks it up, which it most likely will) :-DDDDDDDDDDDDDDD yay my portability is back :-DDDDDDDDDDD).
+
+
+Hmm actually you know what I almost got ready to save this file and just realized something: this idea is basically the SAME idea as gitfs (libgit integrated with libfuse), but with more functionality than gitfs's "initial version 1.0 target" had. Because I mean ultimately I _am_ going to end up adding revisions and
+
+wait no the 2 ideas are different!
+
+They are identical but with one MINOR/MAJOR difference (the change in the code is minor as fuck, but the implications it has are major).
+-Both gitfs and Wofls allow you to "soft delete" (aka delete but then able to restore the file through normal in-app routines)
+-Only gitfs allows you to do a "hard delete" (aka delete without the ability to restore the file through normal in-app routines (I'm excluding those non-normal scripty-porcelain-as-fuck methods of undeleting files, heh)) -- Woffles provides no such functionality to "hard delete". it would be counterproductive to the entire purpose of the app (Write_ONLY_FileSystem). To delete is to scrape off a write. That is not a write, therefore it is not allowed in a Write_ONLY_FileSystem (heh we might as well call it a Universe rather than a FileSystem). However to "mark a write as deleted" but to then be able to "unmark" it later (or at least to ALWAYS be able to recover it in the future. it's a part of the git commit history etc) _IS_ a write, so it is allowed in a "Write_ONLY_FileSystem".
+Other than that, though, they are pretty much the same and honestly they might as well share/be the same codebase. That is to say, Wofls "uses" the libgitfs (to be written), but the "usage" of it is basically just a copy/paste job of the libgitfs (literally), except when we go to implement the "bool delete(const QString &filePath);" virtual method that LibGitFs exposed to us (or however we use the LibGitFs interface!), we don't even attempt the delete (by calling return LibGitFs::delete(filepath);) simply return false to indicate the delete failed. we should also emit a warning I'd think)
+
+So basically I should code the libfuse-enabled gitfs (and libgitfs) simply for the purpose of coding Wofls. Wofls will use that libgitfs api and be MOSTLY just a wrapper around it.
