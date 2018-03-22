@@ -1,0 +1,8 @@
+I'm finding that prioritizing is my biggest difficulty. I've got assloads of shit tons of cool Projects I want to work on and am neglecting. 99% of them are software. oh and don't even get me started on "love".
+
+I feel like my head were a house made of ice cream sticks that fell from a height and shattered into pieces. All my various "Projects" are the pieces/building-blocks of my fuckin fantasy house (life? it is a metaphor after all) that I know is buildable but ehh is a decent amount of man hours to assemble. It's FUN to assemble, too, which doesn't help with the whole "premature optimization" (ie, prioritization FAILURE) thing. I can keep trucking along literally indefinitely on the most trivial of tasks.
+
+I do like to give a good look or two into the [technological] caves I happen to crawl into, but shit man my life and computers are so fucking intertwined that prioritizing efficiently is becoming an apparent NEED in my life. I won't necessarily die if I don't do this whole cyborg launch (no weapons/threats implied) shit, but I'll wither up in shame and regret and self loathing: my entire life wasted -- if I don't.
+
+
+The...... DESIGNS....... are the assembled "ice cream stick houses". It's easy to come up with DESIGNS. Takes seconds/minutes whereas coding implementations [usually] takes several orders of magnitude longer than coming up with the designs. I have a lot of unfinished Projects/Prototypes of pieces (modules) of the assembled house laying around, but no final finished [metaphorical] house.

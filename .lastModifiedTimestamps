@@ -49,7 +49,7 @@ Documents/minddump/2017/10/:1509414738
 Documents/minddump/2017/10/1507327644-MTJ793.txt:1507495672
 Documents/minddump/2017/10/1507349085-MTJ799.txt:1507349207
 Documents/minddump/2017/10/1507416281-MTJ833.txt:1507417095
-Documents/minddump/2017/10/1507435399-fuck.society-MTJ791.txt:1507435530
+Documents/minddump/2017/10/1507435399-fuck.society-MTJ791.txt:1521745473
 Documents/minddump/2017/10/1507440423-MTJ808.txt:1507441141
 Documents/minddump/2017/10/1507441194-LhX808.txt:1507441823
 Documents/minddump/2017/10/1507664668-MTJ889.txt:1507665391
@@ -204,9 +204,13 @@ Documents/minddump/2018/2/1518716055-MTJ838.txt:1518716472
 Documents/minddump/2018/2/1518800436-MTJ800.txt:1518802429
 Documents/minddump/2018/2/1519160949-MTJ910.txt:1519161343
 Documents/minddump/2018/2/1519161431-LhX910.txt:1519162402
-Documents/minddump/2018/3/:1520541758
+Documents/minddump/2018/3/:1521748756
 Documents/minddump/2018/3/1520541193-pretty.good.sometimes-MTJ794.txt:1520541267
 Documents/minddump/2018/3/1520541308-whiteboard.dump.some.not.all-LhX794.txt:1520541728
+Documents/minddump/2018/3/1520541944-MTJ897.txt:1520542583
+Documents/minddump/2018/3/1521744542-some.whiteboard.items-MTJ798.txt:1521745343
+Documents/minddump/2018/3/1521747318-MTJ893.txt:1521747321
+Documents/minddump/2018/3/1521747489-menage.a.trois-MTJ901.txt:1521748749
 Documents/minddump/couchbase/:1340207540
 Documents/minddump/couchbase/Couchbase.Questions.for.forum.or.something.txt:1340102585
 Documents/minddump/couchbase/asflksjdfoiuwerlkjsdfouwrlkjsdfasou.txt:1340015923
@@ -3263,7 +3267,7 @@ Pictures/trying.to.visualize.google.filesystem.but.failing.to.understand.NoSql-K
 Pictures/unfinished.comic.kaylees.feramones.are.a.sort.of.drug.and.the.weirdest.thing.is.that.it.is.actually.true.svg:1361527419
 Pictures/works.legality.span.svg:1355298125
 Pictures/yet.another.tangent.explained.and.for.some.reason.always.below.zero.until.launch.makes.sense.in.my.head.svg:1360730935
-Projects/:1519160431
+Projects/:1521745755
 Projects/AVMuxScript/:1427483860
 Projects/AVMuxScript/Morning/:1426017664
 Projects/AVMuxScript/Morning/SftpUploadAndRenameAllVideoSegmentsInFolder/:1428924854
@@ -4148,7 +4152,7 @@ Projects/Ideas/oh.the.joys.of.atomicity.and.oh.the.hacks.that.you.can.pull.using
 Projects/Ideas/one.click.in.the.market.to.download.compile.and.install.should.be.able.to.stop.and.reverse.what.is.done.so.far.and.the.recording.of.you.doing.that.is.private.but.it.shouldnt.be.because.it.inherently.isnt.or.something.txt:1323683733
 Projects/Ideas/one.gui.to.rule.them.all.txt:1342605404
 Projects/Ideas/online.surrogate.handling.packages.initiated.by.offline.private.messages.asdlfjsaldfjsadlk.txt:1338908149
-Projects/Ideas/open.and.close.windows.with.arduino.to.regulate.living.tempurature.comfort.in.cost.effective.as.fuck.way.because.heaters.and.ac.take.tons.of.energy.txt:1509333077
+Projects/Ideas/open.and.close.windows.with.arduino.to.regulate.living.tempurature.comfort.in.cost.effective.as.fuck.way.because.heaters.and.ac.take.tons.of.energy.txt:1521747168
 Projects/Ideas/open.news.consortium.abc.ad.revenue.based.txt:1354034979
 Projects/Ideas/p2p.taxiab.service.idk.what.i.mean.by.unlicensed.in.this.txt:1339059048
 Projects/Ideas/paxos.agreement.used.to.instantiate.and.deflateSlashTeardown.caches.among.couchbase.or.whatever.dht.clients.which.are.webservers.in.my.case.txt:1340459725
@@ -4512,6 +4516,9 @@ Projects/OsiosInNetworkVerifiedGraphicsView/OsiosInNetworkVerifiedGraphicsView/o
 Projects/OsiosInNetworkVerifiedGraphicsView/OsiosInNetworkVerifiedGraphicsView/osiosinnetworkverifiedgraphicsviewwidget.h:1414093971
 Projects/OsiosInNetworkVerifiedGraphicsView/design/:1414093718
 Projects/OsiosInNetworkVerifiedGraphicsView/design/osios.in.network.verified.graphics.view.initial.idea.txt:1414093718
+Projects/PODStruct2QImplicitlySharedData/:1521745716
+Projects/PODStruct2QImplicitlySharedData/design/:1521745740
+Projects/PODStruct2QImplicitlySharedData/design/initial.idea.podstruct2qimpliciatlyshareddata.txt:1521746690
 Projects/ProjectGoOutside/:1355727455
 Projects/ProjectGoOutside/aOS.implementation.of.it.using.fingers.input.and.audio.output.feedback.i.shouldnt.limit.it.to.audio.but.need.to.integrate.audio.physical.and.visual.feedbacks.together.and.exclusively.txt:1329915980
 Projects/ProjectGoOutside/do.it.for.the.live.not.the.money.but.skip.dht.version.of.app.store.its.too.much.of.a.longshot.but.MAYBE.LATER.txt:1329935156
@@ -6907,4 +6914,4 @@ scripts/zoom.backup.and.shred.sh:1351237228
 copyright.txt:1388203681
 license.dpl.txt:1388242176
 pseudo.git.submodules.temphack.txt:1442777728
-todo.txt:1509573745
+todo.txt:1521747271

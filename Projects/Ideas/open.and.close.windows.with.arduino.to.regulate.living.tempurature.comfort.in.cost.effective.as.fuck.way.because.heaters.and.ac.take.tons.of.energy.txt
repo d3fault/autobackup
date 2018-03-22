@@ -3,3 +3,13 @@ California has the perfect weather for this.
 Instead of using energy to cool or heat air, simply use energy to auto-regulate the airflow through a confined area (such as a cabover camper :-P) by gradually opening and/or gradually closing the windows until the desired temperature is met. would be easy to do this with Arduino.
 
 I find myself opening and closing windows all throughout the day to maintain tempurature. That would be a bad thing (waste of time) if I didn't know how to automate it. But it's nice that I noticed myself doing it, because that's evidence that California has the perfect weather for this. Cool how the first line of this doc fit so perfectly at the end of the last sentence, I really didn't plan that xD.
+
+edit: making a small (coffin sized. modifying a waterproof/breathable bivvy would be ideal) version of this JUST FOR SLEEPING IN would be pretty easy too. I find myself constantly unzipping/zipping my sleeping bag throughout the night in order to regulate body temp. if I had an arduino sliding that sleeping bag zipper back and forth FOR ME (based on a temp sensor reading), I could sleep much better and quality of life would significantly improve!
+
+building a small coffin shaped one with arduino-controlled hinges sounds easier than modifying a bivy/sleeping-bag.
+
+I would like to sleep in the nude but usually get too cold. with a arduino-controlled bivy/coffin (shell whatever) I could choose my preferred temp and blam just rely on the fact that my body pumps out enough heat to heat up that bivy/coffin (as long as we're not in -50 F weather ofc xD) and let the arduino periodically/autmatically vent the excess heat to decrease to the desired temp.
+
+AC/Heater operation could ofc be controlled by the arduino (at both ends of the temp spectrum) when merely "closing/opening" the vents isn't cutting it.
+
+eh what do I know maybe [un]venting-before-using-electricity is already a common strat in the HVAC world
