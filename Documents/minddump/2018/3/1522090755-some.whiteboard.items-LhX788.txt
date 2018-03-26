@@ -1,0 +1,17 @@
+anti-"demoralizing" law contradicts freedom of speech, directly through the heart
+
+
+while(true)
+{
+	wtf();
+	fuckIt();
+}
+
+
+QtCreator Refactor/"Quick Fix" Suggestion:
+-a private class member variable when right clicked on, can get generated: a Q_PROPERTY decl, getter+setter, and notification sig+usage
+
+
+Ambiguity
+-I love when artists do it. Example: David Lynch in his documentary said Bob Dylan's music, at a concert, was "so far away". Did he mean the music didn't resonate with him or that it was literally so far away that, for example, the volume was too low. Or perhaps both?
+-I hate when politicians do it. It makes me want to kill them. They are exploiting a vulnerability in the english language to do evil with an extremely powerful force (government).
